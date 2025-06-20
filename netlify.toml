@@ -1,8 +1,10 @@
 [build]
+  # Bouw in de repo-root
+  base    = "."
   command = "npm run build"
   publish = "dist"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from   = "/*"
+  to     = "/index.html"
   status = 200
