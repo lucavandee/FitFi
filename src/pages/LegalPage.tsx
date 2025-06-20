@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Shield, 
-  FileText, 
-  Cookie, 
-  UserCheck, 
-  Download, 
-  Mail 
+import {
+  Shield,
+  FileText,
+  Cookie,
+  UserCheck,
+  Download,
+  Mail
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 
@@ -82,16 +82,24 @@ const LegalPage: React.FC = () => {
         </div>
 
         {/* Privacy Policy Section */}
-        <div className={`mb-8 ${activeSection === 'privacy' ? 'block' : 'hidden'}`}>...privacy policy content...</div>
+        <div className={`mb-8 ${activeSection === 'privacy' ? 'block' : 'hidden'}`}>
+          {/* ...privacy policy content... */}
+        </div>
 
         {/* Terms of Service Section */}
-        <div className={`mb-8 ${activeSection === 'terms' ? 'block' : 'hidden'}`}>...terms content...</div>
+        <div className={`mb-8 ${activeSection === 'terms' ? 'block' : 'hidden'}`}>
+          {/* ...terms content... */}
+        </div>
 
         {/* Cookie Policy Section */}
-        <div className={`mb-8 ${activeSection === 'cookies' ? 'block' : 'hidden'}`}>...cookie policy content...</div>
+        <div className={`mb-8 ${activeSection === 'cookies' ? 'block' : 'hidden'}`}>
+          {/* ...cookie policy content... */}
+        </div>
 
         {/* GDPR Compliance Section */}
-        <div className={`mb-8 ${activeSection === 'gdpr' ? 'block' : 'hidden'}`}>...gdpr compliance content...</div>
+        <div className={`mb-8 ${activeSection === 'gdpr' ? 'block' : 'hidden'}`}>
+          {/* ...gdpr compliance content... */}
+        </div>
 
         {/* Data Request CTA */}
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 rounded-xl shadow-md overflow-hidden transition-colors mb-16">
@@ -105,15 +113,15 @@ const LegalPage: React.FC = () => {
               </p>
             </div>
             <div className="md:w-1/3 flex flex-col space-y-3">
-              <Button 
+              <Button
                 as={Link}
-                to="/privacy-request" 
+                to="/privacy-request"
                 variant="secondary"
                 className="bg-white text-orange-600 hover:bg-gray-100"
               >
                 AVG-verzoek indienen
               </Button>
-              <Button 
+              <Button
                 as="a"
                 href="mailto:privacy@fitfi.nl"
                 variant="outline"
@@ -133,29 +141,29 @@ const LegalPage: React.FC = () => {
             Juridische documenten
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a 
-              href="/documents/privacy-policy.pdf" 
+            <a
+              href="/documents/privacy-policy.pdf"
               className="bg-white dark:bg-gray-800 p-4 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Download size={16} className="mr-2 text-orange-500" />
               <span className="text-gray-700 dark:text-gray-300">Privacybeleid</span>
             </a>
-            <a 
-              href="/documents/terms-of-service.pdf" 
+            <a
+              href="/documents/terms-of-service.pdf"
               className="bg-white dark:bg-gray-800 p-4 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Download size={16} className="mr-2 text-orange-500" />
               <span className="text-gray-700 dark:text-gray-300">Algemene voorwaarden</span>
             </a>
-            <a 
-              href="/documents/cookie-policy.pdf" 
+            <a
+              href="/documents/cookie-policy.pdf"
               className="bg-white dark:bg-gray-800 p-4 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Download size={16} className="mr-2 text-orange-500" />
               <span className="text-gray-700 dark:text-gray-300">Cookiebeleid</span>
             </a>
-            <a 
-              href="/documents/gdpr-compliance.pdf" 
+            <a
+              href="/documents/gdpr-compliance.pdf"
               className="bg-white dark:bg-gray-800 p-4 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Download size={16} className="mr-2 text-orange-500" />
