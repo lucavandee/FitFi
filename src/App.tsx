@@ -8,6 +8,7 @@ import OnboardingPage from './pages/OnboardingPage';
 import GenderSelectPage from './pages/GenderSelectPage';
 import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
+import EnhancedResultsPage from './pages/EnhancedResultsPage';
 import DashboardPage from './pages/DashboardPage';
 import AboutPage from './pages/AboutPage';
 import ProductPage from './pages/ProductPage';
@@ -21,10 +22,10 @@ import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
 import FeedbackPage from './pages/FeedbackPage';
 import LegalPage from './pages/LegalPage';
-import DeploymentStatusPage from './pages/DeploymentStatusPage';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import './styles/animations.css';
 
 function App() {
@@ -36,27 +37,28 @@ function App() {
             <div className="min-h-screen flex flex-col bg-neutral-50 dark:bg-gray-900 transition-colors">
               <Navbar />
               <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="/gender" element={<GenderSelectPage />} />
-                  <Route path="/quiz/:step" element={<QuizPage />} />
-                  <Route path="/results" element={<ResultsPage />} />
-                  <Route path="/dashboard/*" element={<DashboardPage />} />
-                  <Route path="/over-ons" element={<AboutPage />} />
-                  <Route path="/product" element={<ProductPage />} />
-                  <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-                  <Route path="/prijzen" element={<PricingPage />} />
-                  <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
-                  <Route path="/blog" element={<BlogPage />} />
-                  <Route path="/ondersteuning" element={<SupportPage />} />
-                  <Route path="/helpcentrum" element={<HelpCenterPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/faq" element={<FAQPage />} />
-                  <Route path="/feedback" element={<FeedbackPage />} />
-                  <Route path="/juridisch" element={<LegalPage />} />
-                  <Route path="/deployment-status" element={<DeploymentStatusPage />} />
-                </Routes>
+                <ErrorBoundary>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/onboarding" element={<OnboardingPage />} />
+                    <Route path="/gender" element={<GenderSelectPage />} />
+                    <Route path="/quiz/:step" element={<QuizPage />} />
+                    <Route path="/results" element={<EnhancedResultsPage />} />
+                    <Route path="/dashboard/*" element={<DashboardPage />} />
+                    <Route path="/over-ons" element={<AboutPage />} />
+                    <Route path="/product" element={<ProductPage />} />
+                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                    <Route path="/prijzen" element={<PricingPage />} />
+                    <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
+                    <Route path="/blog" element={<BlogPage />} />
+                    <Route path="/ondersteuning" element={<SupportPage />} />
+                    <Route path="/helpcentrum" element={<HelpCenterPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
+                    <Route path="/juridisch" element={<LegalPage />} />
+                  </Routes>
+                </ErrorBoundary>
               </main>
               <Footer />
               <Toaster 
