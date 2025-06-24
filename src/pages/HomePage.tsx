@@ -9,7 +9,10 @@ import {
   Check,
   Mail,
   Camera,
-  Zap
+  Zap,
+  Star,
+  Users,
+  Award
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 
@@ -53,6 +56,42 @@ const HomePage: React.FC = () => {
     // Navigate to onboarding (not questionnaire)
     navigate('/onboarding');
   };
+
+  // Testimonials data
+  const testimonials = [
+    {
+      id: 1,
+      name: "Emma van der Berg",
+      role: "Marketing Professional",
+      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
+      quote: "FitFi heeft mijn garderobe en zelfvertrouwen compleet getransformeerd. Ik krijg nu regelmatig complimenten over mijn outfits!",
+      rating: 5
+    },
+    {
+      id: 2,
+      name: "Thomas Jansen",
+      role: "Software Engineer",
+      avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
+      quote: "Als man vond ik het altijd lastig om mijn eigen stijl te vinden. FitFi heeft me geholpen te begrijpen welke kleuren en pasvorm bij mijn lichaamsbouw passen.",
+      rating: 5
+    },
+    {
+      id: 3,
+      name: "Sophie Bakker",
+      role: "Ondernemer",
+      avatar: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
+      quote: "Ik kocht altijd kleding die ik uiteindelijk nauwelijks droeg. FitFi heeft me geholpen bewustere keuzes te maken en een capsule garderobe op te bouwen.",
+      rating: 5
+    }
+  ];
+
+  // Partner logos
+  const partners = [
+    { name: "Zalando", logo: "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=100&h=50&dpr=2" },
+    { name: "H&M", logo: "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=100&h=50&dpr=2" },
+    { name: "Wehkamp", logo: "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=100&h=50&dpr=2" },
+    { name: "ASOS", logo: "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=100&h=50&dpr=2" }
+  ];
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -138,7 +177,7 @@ const HomePage: React.FC = () => {
                       iconPosition="right"
                       className="hover-lift transition-transform"
                     >
-                      {isSubmitting ? 'Quiz starten...' : 'Start stijlquiz'}
+                      {isSubmitting ? 'Quiz starten...' : 'Doe de stijlscan'}
                     </Button>
                   </div>
                   
@@ -152,12 +191,12 @@ const HomePage: React.FC = () => {
               <div className="mt-6 text-center lg:text-left">
                 <Button 
                   as={Link}
-                  to="#how-it-works" 
+                  to="/hoe-het-werkt" 
                   size="sm" 
                   variant="ghost"
                   className="hover-lift transition-transform animate-fade-in"
                 >
-                  Meer informatie over FitFi
+                  Bekijk voorbeelden
                 </Button>
               </div>
             </div>
@@ -209,8 +248,63 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* USP Section - NEW */}
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Waarom kiezen voor FitFi?
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              Onze AI-technologie maakt het verschil in jouw stijlreis
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {/* USP 1 */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mb-4">
+                <Sparkles className="text-orange-500" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                100% AI-gestuurd stijladvies
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Onze geavanceerde AI analyseert duizenden modecombinaties om te vinden wat het beste bij jou past.
+              </p>
+            </div>
+
+            {/* USP 2 */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
+                <Camera className="text-blue-500" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Direct resultaat op basis van jouw look
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Upload een foto en ontvang binnen enkele minuten gepersonaliseerde outfits die perfect bij jouw lichaamsbouw en stijl passen.
+              </p>
+            </div>
+
+            {/* USP 3 */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                <Clock className="text-green-500" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Bespaar tijd & geld
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Stop met geld verspillen aan kleding die niet bij je past. Krijg gepersonaliseerd advies binnen enkele minuten.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 bg-white dark:bg-gray-900 transition-colors">
+      <section id="how-it-works" className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -297,8 +391,75 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Testimonials Section - NEW */}
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Wat onze gebruikers zeggen
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Duizenden mensen hebben hun stijl al getransformeerd met FitFi
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial) => (
+              <div key={testimonial.id} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 shadow-md transition-all hover:shadow-lg">
+                <div className="flex mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  ))}
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-6 italic">
+                  "{testimonial.quote}"
+                </p>
+                <div className="flex items-center">
+                  <img 
+                    src={testimonial.avatar} 
+                    alt={testimonial.name} 
+                    className="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                      {testimonial.role}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partners Section - NEW */}
+      <section className="py-12 bg-gray-50 dark:bg-gray-800 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-xl font-semibold text-gray-500 dark:text-gray-400">
+              Onze partners
+            </h2>
+          </div>
+          
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+            {partners.map((partner, index) => (
+              <div key={index} className="grayscale hover:grayscale-0 transition-all duration-300">
+                <img 
+                  src={partner.logo} 
+                  alt={partner.name} 
+                  className="h-8 md:h-10 object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800 transition-colors">
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -353,7 +514,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Pricing */}
-      <section className="py-16 bg-white dark:bg-gray-900 transition-colors">
+      <section className="py-16 bg-gray-50 dark:bg-gray-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -527,6 +688,58 @@ const HomePage: React.FC = () => {
           >
             Begin gratis
           </Button>
+        </div>
+      </section>
+
+      {/* Security & Privacy Section - NEW */}
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Jouw privacy is onze prioriteit
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Bij FitFi nemen we de beveiliging van je gegevens zeer serieus
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl text-center">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ShieldCheck className="text-green-500" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                End-to-end encryptie
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Je foto's en persoonlijke gegevens worden volledig versleuteld en veilig opgeslagen.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl text-center">
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="text-blue-500" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Geen data-sharing
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                We delen je gegevens nooit met derden zonder jouw expliciete toestemming.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl text-center">
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="text-purple-500" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                AVG/GDPR Compliant
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Volledig in overeenstemming met de Europese privacywetgeving voor jouw gemoedsrust.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>
