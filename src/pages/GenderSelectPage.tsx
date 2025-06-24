@@ -104,6 +104,7 @@ const GenderSelectPage: React.FC = () => {
                   src={imgSrc[selectedGender]} 
                   alt={`Ik ben ${selectedGender}`} 
                   className="mx-auto h-48 w-auto rounded-lg"
+                  loading="lazy"
                   onError={(e) => {
                     // Fallback if image doesn't exist
                     e.currentTarget.style.display = 'none';
@@ -130,6 +131,22 @@ const GenderSelectPage: React.FC = () => {
             Terug
           </button>
         </div>
+      </div>
+
+      {/* Mobile Sticky CTA - NEW */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-50">
+        <button
+          onClick={() => selectedGender && handleGenderSelect(selectedGender)}
+          disabled={!selectedGender}
+          className={`
+            w-full py-3 px-4 rounded-lg font-medium transition-colors
+            ${selectedGender 
+              ? 'bg-orange-500 text-white hover:bg-orange-600' 
+              : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'}
+          `}
+        >
+          {selectedGender ? 'Doorgaan' : 'Selecteer een optie'}
+        </button>
       </div>
     </div>
   );

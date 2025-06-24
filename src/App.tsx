@@ -21,6 +21,7 @@ import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
 import FeedbackPage from './pages/FeedbackPage';
 import LegalPage from './pages/LegalPage';
+import DeploymentStatusPage from './pages/DeploymentStatusPage';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
@@ -54,6 +55,7 @@ function App() {
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/feedback" element={<FeedbackPage />} />
                   <Route path="/juridisch" element={<LegalPage />} />
+                  <Route path="/deployment-status" element={<DeploymentStatusPage />} />
                 </Routes>
               </main>
               <Footer />

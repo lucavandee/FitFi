@@ -10,7 +10,8 @@ import {
   CheckCircle,
   Camera,
   Sparkles,
-  Star
+  Star,
+  Crown
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
@@ -348,7 +349,9 @@ const OnboardingPage: React.FC = () => {
                         </div>
                         <div className="ml-3 text-sm">
                           <label htmlFor="acceptTerms" className={`${errors.acceptTerms ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'}`}>
-                            Ik ga akkoord met de <a href="/juridisch" className="text-orange-500 hover:text-orange-600">algemene voorwaarden</a> en <a href="/juridisch" className="text-orange-500 hover:text-orange-600">privacybeleid</a>
+                            Ik ga akkoord met de{' '}
+                            <a href="/juridisch" className="text-orange-500 hover:text-orange-600 underline">algemene voorwaarden</a>{' '}en{' '}
+                            <a href="/juridisch" className="text-orange-500 hover:text-orange-600 underline">privacybeleid</a>
                           </label>
                         </div>
                       </div>
@@ -583,6 +586,33 @@ const OnboardingPage: React.FC = () => {
               </div>
             )}
 
+            {/* Privacy Notice - NEW */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl shadow-md overflow-hidden mb-8 border border-blue-200 dark:border-blue-800">
+              <div className="p-6">
+                <div className="flex items-start">
+                  <div className="mr-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-500">
+                      <ShieldCheck size={20} />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      Jouw privacy is gegarandeerd
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 text-sm mb-2">
+                      🔒 Jouw foto wordt direct verwijderd na analyse - we slaan deze nooit permanent op.
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300 text-sm">
+                      Al je gegevens worden end-to-end versleuteld en we delen nooit iets met derden zonder jouw expliciete toestemming.
+                    </p>
+                    <a href="/juridisch" className="text-blue-600 dark:text-blue-400 text-sm font-medium mt-2 inline-block hover:underline">
+                      Lees ons privacybeleid →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Benefits */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-8">
               <div className="p-6">
@@ -626,6 +656,7 @@ const OnboardingPage: React.FC = () => {
                         src={testimonial.avatar} 
                         alt={testimonial.name} 
                         className="w-10 h-10 rounded-full object-cover mr-4"
+                        loading="lazy"
                       />
                       <div>
                         <p className="text-gray-600 dark:text-gray-300 italic mb-1">
@@ -642,6 +673,56 @@ const OnboardingPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Mobile Sticky CTA - NEW */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-50">
+        {currentStep === 1 && (
+          <Button
+            type="button"
+            variant="primary"
+            fullWidth
+            onClick={handleNextStep}
+            icon={<ArrowRight size={18} />}
+            iconPosition="right"
+          >
+            Volgende stap
+          </Button>
+        )}
+        {currentStep === 2 && (
+          <div className="flex space-x-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePrevStep}
+              icon={<ArrowLeft size={18} />}
+              iconPosition="left"
+              className="flex-1"
+            >
+              Terug
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleNextStep}
+              icon={<ArrowRight size={18} />}
+              iconPosition="right"
+              className="flex-1"
+            >
+              Volgende
+            </Button>
+          </div>
+        )}
+        {currentStep === 3 && (
+          <Button
+            type="button"
+            variant="primary"
+            fullWidth
+            onClick={handleSubmit}
+          >
+            Start je stijlreis
+          </Button>
+        )}
       </div>
     </div>
   );
