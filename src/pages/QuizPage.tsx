@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Check, Upload, Info } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Upload, Info, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { DUTCH_ARCHETYPES } from '../config/profile-mapping.js';
@@ -32,6 +32,7 @@ const QuizPage: React.FC = () => {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   // Updated questions with Dutch archetypes
   const questions: Question[] = [
@@ -113,6 +114,17 @@ const QuizPage: React.FC = () => {
   const currentStep = 3;
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100 + (currentQuestionIndex / questions.length) * (100 / (totalSteps - 1));
 
+  // Track quiz progress
+  useEffect(() => {
+    if (typeof window.trackQuizProgress === 'function') {
+      window.trackQuizProgress(
+        currentQuestionIndex + 1, 
+        questions.length, 
+        currentQuestion?.category
+      );
+    }
+  }, [currentQuestionIndex, currentQuestion?.category, questions.length]);
+
   const handleSingleSelect = (optionId: string) => {
     setAnswers({ ...answers, [currentQuestion.id]: optionId });
   };
@@ -147,6 +159,11 @@ const QuizPage: React.FC = () => {
       reader.readAsDataURL(file);
       
       setAnswers({ ...answers, [currentQuestion.id]: file.name });
+      
+      // Track photo upload
+      if (typeof window.trackPhotoUpload === 'function') {
+        window.trackPhotoUpload('style_analysis');
+      }
     }
   };
 
@@ -189,6 +206,11 @@ const QuizPage: React.FC = () => {
       });
     }
     
+    // Track quiz completion
+    if (typeof window.trackQuizComplete === 'function') {
+      window.trackQuizComplete(120, questions.length, 'registered_user');
+    }
+    
     navigate('/results', { state: { answers } });
   };
 
@@ -229,6 +251,7 @@ const QuizPage: React.FC = () => {
                         src={option.image} 
                         alt={option.text} 
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                   )}
@@ -359,12 +382,22 @@ const QuizPage: React.FC = () => {
                         onChange={handlePhotoUpload}
                       />
                     </label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       PNG, JPG, GIF tot 10MB
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                      Gebruik een recente foto met goed licht voor de beste resultaten
                     </p>
                   </div>
                 </div>
               )}
+            </div>
+            
+            <div className="flex items-start p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md text-blue-700 dark:text-blue-300 text-sm">
+              <ShieldCheck size={16} className="mr-2 mt-0.5 flex-shrink-0" />
+              <p>
+                Je foto wordt veilig versleuteld en alleen gebruikt voor analyse. Het wordt direct verwijderd na verwerking en nooit gedeeld met derden. Je kunt je gegevens altijd verwijderen.
+              </p>
             </div>
           </div>
         );
@@ -377,7 +410,7 @@ const QuizPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 transition-colors">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        {/* Progress bar */}
+        {/* Enhanced Progress bar */}
         <div className="mb-10">
           <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
             <span>Vraag {currentQuestionIndex + 1} van {questions.length}</span>
@@ -390,6 +423,10 @@ const QuizPage: React.FC = () => {
             >
               <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
             </div>
+          </div>
+          <div className="flex justify-between mt-2 text-xs text-gray-400 dark:text-gray-500">
+            <span>Start</span>
+            <span>Voltooid</span>
           </div>
         </div>
 
@@ -406,9 +443,18 @@ const QuizPage: React.FC = () => {
                 </span>
               </div>
               
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                {currentQuestion.question}
-              </h2>
+              <div className="flex items-center mb-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                  {currentQuestion.question}
+                </h2>
+                <button
+                  onClick={() => setShowTooltip(!showTooltip)}
+                  className="ml-2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="Waarom deze vraag?"
+                >
+                  <Info size={20} />
+                </button>
+              </div>
               
               {currentQuestion.description && (
                 <p className="text-gray-600 dark:text-gray-400 mb-8">
@@ -420,11 +466,12 @@ const QuizPage: React.FC = () => {
             {renderQuestion()}
           </div>
           
-          {/* Navigation buttons */}
+          {/* Enhanced Navigation buttons */}
           <div className="px-6 sm:px-8 py-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center transition-colors">
             <Button
               variant="outline"
               onClick={prevQuestion}
+              disabled={currentQuestionIndex === 0}
               icon={<ArrowLeft size={16} />}
               iconPosition="left"
               className="min-w-[100px]"
@@ -460,7 +507,107 @@ const QuizPage: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {/* Progress summary */}
+        <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+          <p>
+            Je bent {Math.round(progress)}% klaar met je stijlanalyse
+          </p>
+          {currentQuestionIndex > 0 && (
+            <p className="mt-1">
+              Nog {questions.length - currentQuestionIndex - 1} vragen te gaan
+            </p>
+          )}
+        </div>
+
+        {/* Tooltip */}
+        {showTooltip && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div
+              role="tooltip"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-sm mx-4 animate-scale-in transition-colors"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Waarom deze vraag?
+                </h3>
+                <button
+                  onClick={() => setShowTooltip(false)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="Sluit uitleg"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                {currentQuestion.id === 'occasion' && (
+                  "Door te weten voor welke gelegenheden je je kleedt, kunnen we outfits aanbevelen die perfect passen bij jouw dagelijkse activiteiten en sociale situaties."
+                )}
+                {currentQuestion.id === 'style' && (
+                  "Je stijlvoorkeur helpt ons de juiste esthetiek en designprincipes te bepalen voor al je outfit aanbevelingen."
+                )}
+                {currentQuestion.id === 'comfort' && (
+                  "Je comfortniveau bepaalt welke materialen, pasvorm en stijlen we voorstellen. Dit zorgt ervoor dat je je altijd goed voelt in je outfits."
+                )}
+                {currentQuestion.id === 'photo' && (
+                  "Een foto helpt onze AI je lichaamsbouw, proporties en huidige stijl te analyseren voor nog betere, gepersonaliseerde aanbevelingen."
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Mobile Sticky CTA - NEW */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-40">
+        <div className="flex space-x-3">
+          <Button
+            variant="outline"
+            onClick={prevQuestion}
+            disabled={currentQuestionIndex === 0}
+            icon={<ArrowLeft size={16} />}
+            iconPosition="left"
+            className="flex-1"
+          >
+            Terug
+          </Button>
+          <Button
+            variant="primary"
+            onClick={nextQuestion}
+            disabled={isNextDisabled()}
+            icon={<ArrowRight size={16} />}
+            iconPosition="right"
+            className="flex-1"
+          >
+            {currentQuestionIndex === questions.length - 1 ? 'Voltooien' : 'Volgende'}
+          </Button>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          height: 20px;
+          width: 20px;
+          border-radius: 50%;
+          background: #f97316;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider::-moz-range-thumb {
+          height: 20px;
+          width: 20px;
+          border-radius: 50%;
+          background: #f97316;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+      `}</style>
     </div>
   );
 };
