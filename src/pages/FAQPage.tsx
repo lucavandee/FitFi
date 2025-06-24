@@ -10,7 +10,8 @@ import {
   Shirt, 
   Camera, 
   Shield, 
-  MessageCircle 
+  MessageCircle,
+  ArrowRight
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 
@@ -42,6 +43,16 @@ const FAQPage: React.FC = () => {
       answer: "Je kunt je account verwijderen via 'Dashboard' > 'Instellingen' > 'Account beheren' > 'Account verwijderen'. Let op: dit verwijdert permanent al je gegevens en kan niet ongedaan worden gemaakt.",
       category: "account"
     },
+    {
+      question: "Kan ik mijn e-mailadres wijzigen?",
+      answer: "Ja, je kunt je e-mailadres wijzigen via 'Dashboard' > 'Instellingen' > 'Accountgegevens'. Je ontvangt een bevestigingsmail op je nieuwe e-mailadres om de wijziging te bevestigen.",
+      category: "account"
+    },
+    {
+      question: "Hoe kan ik mijn profielfoto toevoegen of wijzigen?",
+      answer: "Je kunt je profielfoto toevoegen of wijzigen via 'Dashboard' > 'Profiel'. Klik op de profielfoto-placeholder of je huidige foto en upload een nieuwe afbeelding.",
+      category: "account"
+    },
     
     // Betalingen & Abonnementen
     {
@@ -57,6 +68,16 @@ const FAQPage: React.FC = () => {
     {
       question: "Krijg ik een factuur voor mijn aankoop?",
       answer: "Ja, na elke betaling ontvang je automatisch een factuur per e-mail. Je kunt al je facturen ook bekijken en downloaden via 'Dashboard' > 'Instellingen' > 'Facturen'.",
+      category: "billing"
+    },
+    {
+      question: "Kan ik wisselen tussen maandelijks en jaarlijks abonnement?",
+      answer: "Ja, je kunt op elk moment wisselen tussen maandelijkse en jaarlijkse facturering via 'Dashboard' > 'Instellingen' > 'Abonnement'. Bij overstap naar jaarlijks profiteer je direct van de korting.",
+      category: "billing"
+    },
+    {
+      question: "Is er een proefperiode voor Premium?",
+      answer: "Ja, we bieden een gratis proefperiode van 14 dagen voor ons Premium abonnement. Je kunt alle functies uitproberen zonder verplichtingen en op elk moment opzeggen.",
       category: "billing"
     },
     
@@ -76,6 +97,16 @@ const FAQPage: React.FC = () => {
       answer: "Basis gebruikers krijgen maandelijks nieuwe aanbevelingen. Premium gebruikers krijgen wekelijkse updates en seizoensgebonden vernieuwingen. Je kunt ook handmatig nieuwe aanbevelingen genereren door je voorkeuren aan te passen.",
       category: "styling"
     },
+    {
+      question: "Kan ik aanbevelingen krijgen voor speciale gelegenheden?",
+      answer: "Ja, je kunt specifieke gelegenheden selecteren in je stijlprofiel, zoals werk, casual, formeel of speciale evenementen. Onze AI zal outfits aanbevelen die geschikt zijn voor deze gelegenheden.",
+      category: "styling"
+    },
+    {
+      question: "Hoe kan ik feedback geven op aanbevelingen?",
+      answer: "Bij elke aanbeveling kun je aangeven of je deze leuk vindt of niet. Je kunt ook specifieke feedback geven over waarom een aanbeveling wel of niet bij je past. Deze feedback helpt onze AI om betere aanbevelingen te doen.",
+      category: "styling"
+    },
     
     // Winkelen
     {
@@ -91,6 +122,16 @@ const FAQPage: React.FC = () => {
     {
       question: "Wat als een item niet meer beschikbaar is?",
       answer: "Als een item niet meer beschikbaar is, proberen we vergelijkbare alternatieven aan te bieden. Je kunt ook feedback geven op niet-beschikbare items, zodat we onze database kunnen updaten.",
+      category: "shopping"
+    },
+    {
+      question: "Kan ik items opslaan voor later?",
+      answer: "Ja, je kunt items en complete outfits opslaan in je favorieten. Ga naar 'Dashboard' > 'Opgeslagen Outfits' om je opgeslagen items te bekijken.",
+      category: "shopping"
+    },
+    {
+      question: "Bieden jullie kortingen aan?",
+      answer: "Premium gebruikers krijgen toegang tot exclusieve kortingen en aanbiedingen van onze partnerretailers. Deze worden regelmatig bijgewerkt en zijn te vinden in de 'Aanbiedingen' sectie van je dashboard.",
       category: "shopping"
     },
     
@@ -110,6 +151,16 @@ const FAQPage: React.FC = () => {
       answer: "Ja, je kunt je foto's op elk moment verwijderen via 'Dashboard' > 'Privacy' > 'Mijn foto's beheren'. Verwijderde foto's worden permanent uit onze systemen verwijderd.",
       category: "photos"
     },
+    {
+      question: "Hoe lang worden mijn foto's bewaard?",
+      answer: "Je foto's worden bewaard zolang je account actief is, tenzij je ze handmatig verwijdert. Na analyse worden de originele foto's vervangen door geanonimiseerde data voor je stijlprofiel.",
+      category: "photos"
+    },
+    {
+      question: "Is er een limiet aan het aantal foto's dat ik kan uploaden?",
+      answer: "Basis gebruikers kunnen 1 foto per maand uploaden. Premium gebruikers hebben onbeperkte foto-uploads en kunnen meerdere foto's uploaden voor een nog nauwkeurigere analyse.",
+      category: "photos"
+    },
     
     // Privacy & Veiligheid
     {
@@ -125,6 +176,16 @@ const FAQPage: React.FC = () => {
     {
       question: "Hoe kan ik mijn gegevens laten verwijderen?",
       answer: "Je kunt verzoeken om al je gegevens te verwijderen via 'Dashboard' > 'Privacy' > 'Mijn gegevens verwijderen'. Dit verwijdert permanent al je persoonlijke informatie, foto's, voorkeuren en accountgegevens uit onze systemen.",
+      category: "privacy"
+    },
+    {
+      question: "Delen jullie mijn gegevens met derden?",
+      answer: "We delen je gegevens nooit met derden zonder jouw expliciete toestemming. We gebruiken je gegevens alleen om onze service te verbeteren en je persoonlijke aanbevelingen te doen.",
+      category: "privacy"
+    },
+    {
+      question: "Hoe zit het met cookies en tracking?",
+      answer: "We gebruiken cookies en vergelijkbare technologieën om je ervaring te verbeteren en onze service te optimaliseren. Je kunt je cookievoorkeuren beheren via de cookie-instellingen op onze website. Meer informatie vind je in ons cookiebeleid.",
       category: "privacy"
     }
   ];
@@ -284,6 +345,41 @@ const FAQPage: React.FC = () => {
                 </Button>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Popular Questions - NEW */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
+            Populaire vragen
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md transition-all hover:shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                Hoe werkt de stijlanalyse precies?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Onze AI analyseert je antwoorden op de stijlvragenlijst en (optioneel) je foto om je lichaamsbouw, kleurenpalet en stijlvoorkeuren te bepalen. Op basis hiervan matchen we je met een van onze stijlarchetypen en selecteren we kledingitems die perfect bij jou passen.
+              </p>
+              <Link to="/hoe-het-werkt" className="text-orange-500 hover:text-orange-600 font-medium flex items-center">
+                Meer over onze technologie
+                <ArrowRight size={16} className="ml-1" />
+              </Link>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md transition-all hover:shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                Wat is het verschil tussen Basis en Premium?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Met het Basis plan krijg je toegang tot de stijlvragenlijst, 1 foto-upload per maand en 3 outfit aanbevelingen. Premium gebruikers krijgen onbeperkte foto-uploads, onbeperkte aanbevelingen, gedetailleerd stijladvies, seizoensgebonden updates en prioriteit ondersteuning.
+              </p>
+              <Link to="/prijzen" className="text-orange-500 hover:text-orange-600 font-medium flex items-center">
+                Bekijk alle abonnementen
+                <ArrowRight size={16} className="ml-1" />
+              </Link>
+            </div>
           </div>
         </div>
 
