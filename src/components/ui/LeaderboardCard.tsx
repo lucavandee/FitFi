@@ -1,5 +1,6 @@
 import React from 'react';
 import { Trophy, Medal, Award, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface LeaderboardEntry {
   id: string;
@@ -59,18 +60,18 @@ const LeaderboardCard: React.FC = () => {
       case 3:
         return <Award className="text-amber-600" size={20} />;
       default:
-        return <span className="text-gray-500 font-bold">#{position}</span>;
+        return <span className="text-white/50 font-bold">#{position}</span>;
     }
   };
 
   const getLevelColor = (level: string) => {
     switch (level) {
       case 'master':
-        return 'text-purple-600 dark:text-purple-400';
+        return 'text-purple-400';
       case 'pro':
-        return 'text-orange-600 dark:text-orange-400';
+        return 'text-[#FF8600]';
       default:
-        return 'text-green-600 dark:text-green-400';
+        return 'text-green-400';
     }
   };
 
@@ -97,17 +98,22 @@ const LeaderboardCard: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors">
-      <div className="p-6 border-b dark:border-gray-700">
+    <motion.div 
+      className="glass-card overflow-hidden"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.2 }}
+    >
+      <div className="p-6 border-b border-white/10">
         <div className="flex items-center space-x-3">
-          <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
-            <TrendingUp className="text-purple-600 dark:text-purple-400" size={20} />
+          <div className="p-2 rounded-full bg-[#FF8600]/20">
+            <TrendingUp className="text-[#FF8600]" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            <h3 className="text-lg font-bold text-white">
               Ranglijst
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-white/70">
               Top stijlliefhebbers deze week
             </p>
           </div>
@@ -117,14 +123,15 @@ const LeaderboardCard: React.FC = () => {
       <div className="p-6">
         <div className="space-y-3">
           {leaderboardData.map((entry, index) => (
-            <div 
+            <motion.div 
               key={entry.id}
               className={`
-                flex items-center space-x-4 p-3 rounded-lg transition-all hover:scale-[1.02]
+                flex items-center space-x-4 p-3 rounded-lg transition-all
                 ${entry.isCurrentUser 
-                  ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800' 
-                  : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'}
+                  ? 'bg-[#FF8600]/10 border border-[#FF8600]/20' 
+                  : 'bg-white/5 hover:bg-white/10'}
               `}
+              whileHover={{ scale: 1.02 }}
             >
               {/* Rank */}
               <div className="flex items-center justify-center w-8">
@@ -138,9 +145,13 @@ const LeaderboardCard: React.FC = () => {
                     src={entry.avatar} 
                     alt={entry.name}
                     className="w-10 h-10 rounded-full object-cover"
+                    onError={(e) => { 
+                      e.currentTarget.onerror = null; 
+                      e.currentTarget.src = '/placeholder.png'; 
+                    }}
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF8600]/30 to-[#0ea5e9]/30 flex items-center justify-center text-white font-bold">
                     {entry.name.charAt(0)}
                   </div>
                 )}
@@ -156,12 +167,12 @@ const LeaderboardCard: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <p className={`font-medium truncate ${
                     entry.isCurrentUser 
-                      ? 'text-orange-700 dark:text-orange-300' 
-                      : 'text-gray-900 dark:text-white'
+                      ? 'text-[#FF8600]' 
+                      : 'text-white'
                   }`}>
                     {entry.name}
                     {entry.isCurrentUser && (
-                      <span className="ml-1 text-xs bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200 px-1 rounded">
+                      <span className="ml-1 text-xs bg-[#FF8600]/20 text-[#FF8600] px-1 rounded">
                         JIJ
                       </span>
                     )}
@@ -174,28 +185,28 @@ const LeaderboardCard: React.FC = () => {
               
               {/* Points */}
               <div className="text-right">
-                <p className="font-bold text-gray-900 dark:text-white">
+                <p className="font-bold text-white">
                   {entry.points.toLocaleString()}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-white/60">
                   punten
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
         
         {/* Footer */}
-        <div className="mt-6 pt-4 border-t dark:border-gray-700 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+        <div className="mt-6 pt-4 border-t border-white/10 text-center">
+          <p className="text-xs text-white/60 mb-2">
             🏆 Wedijver met andere stijlliefhebbers
           </p>
-          <button className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium transition-colors">
+          <button className="text-sm text-[#0ea5e9] hover:text-blue-400 font-medium transition-colors">
             Bekijk Volledige Ranglijst
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

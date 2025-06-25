@@ -3,6 +3,7 @@ import { X, Crown, Zap, Gift } from 'lucide-react';
 import Button from './Button';
 import { useGamification } from '../../context/GamificationContext';
 import { useUser } from '../../context/UserContext';
+import { motion } from 'framer-motion';
 
 const GamificationBanner: React.FC = () => {
   const { points, currentLevelInfo, nextLevelInfo, isSeasonalEventActive, getSeasonalMultiplier } = useGamification();
@@ -41,97 +42,117 @@ const GamificationBanner: React.FC = () => {
     const multiplier = getSeasonalMultiplier();
     
     return (
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 rounded-xl shadow-lg animate-fade-in relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse"></div>
-        
+      <motion.div 
+        className="glass-card p-6 border border-[#0ea5e9]/20 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="relative">
+          <button
+            onClick={handleDismiss}
+            className="absolute top-0 right-0 text-white/60 hover:text-white transition-colors"
+            aria-label="Banner sluiten"
+          >
+            <X size={20} />
+          </button>
+          
+          <div className="flex items-center space-x-4">
+            <div className="text-3xl animate-bounce">🎉</div>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg mb-1 text-white">
+                Winter Mode Week is Live!
+              </h3>
+              <p className="text-white/80 text-sm">
+                Verdien <strong>{multiplier}x punten</strong> op alle acties tijdens dit speciale evenement. 
+                Voltooi uitdagingen om exclusieve winter badges te ontgrendelen!
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Gift className="text-[#0ea5e9]" size={24} />
+              <span className="font-bold text-lg text-white">{multiplier}x</span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div 
+      className="glass-card p-6 border border-[#FF8600]/20 mb-6"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="relative">
         <button
           onClick={handleDismiss}
-          className="absolute top-2 right-2 text-white/80 hover:text-white transition-colors"
+          className="absolute top-0 right-0 text-white/60 hover:text-white transition-colors"
           aria-label="Banner sluiten"
         >
           <X size={20} />
         </button>
         
-        <div className="relative z-10 flex items-center space-x-4">
-          <div className="text-3xl animate-bounce">🎉</div>
+        <div className="flex items-center space-x-4">
+          <div className="p-3 rounded-full bg-[#FF8600]/20">
+            <Crown className="text-[#FF8600]" size={24} />
+          </div>
           <div className="flex-1">
-            <h3 className="font-bold text-lg mb-1">
-              Winter Mode Week is Live!
-            </h3>
-            <p className="text-white/90 text-sm">
-              Verdien <strong>{multiplier}x punten</strong> op alle acties tijdens dit speciale evenement. 
-              Voltooi uitdagingen om exclusieve winter badges te ontgrendelen!
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Gift className="text-yellow-300" size={24} />
-            <span className="font-bold text-lg">{multiplier}x</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-lg animate-fade-in relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-orange-600/20 animate-pulse"></div>
-      
-      <button
-        onClick={handleDismiss}
-        className="absolute top-3 right-3 text-white/80 hover:text-white transition-colors"
-        aria-label="Banner sluiten"
-      >
-        <X size={20} />
-      </button>
-      
-      <div className="relative z-10">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="bg-white/20 p-3 rounded-full">
-            <Crown className="text-yellow-300" size={28} />
-          </div>
-          <div>
-            <h3 className="font-bold text-xl">
+            <h3 className="font-bold text-lg mb-1 text-white">
               Gefeliciteerd! 🎉
             </h3>
-            <p className="text-white/90">
+            <p className="text-white/80 text-sm">
               Je hebt <strong>{currentLevelInfo?.name}</strong> level bereikt met {points} punten!
             </p>
           </div>
         </div>
         
-        <div className="bg-white/10 rounded-lg p-4 mb-4 backdrop-blur-sm">
-          <h4 className="font-semibold mb-2 flex items-center">
-            <Zap className="mr-2 text-yellow-300" size={18} />
+        <div className="bg-white/5 rounded-lg p-4 my-4">
+          <h4 className="font-semibold text-white mb-2 flex items-center">
+            <Zap className="mr-2 text-[#FF8600]" size={18} />
             Activeer Pro en krijg:
           </h4>
-          <ul className="text-sm space-y-1 text-white/90">
-            <li>• <strong>Dubbele punten</strong> op alle acties</li>
-            <li>• <strong>Premium uitdagingen</strong> met hogere beloningen</li>
-            <li>• <strong>Exclusieve aanbiedingen</strong> bij onze partners</li>
-            <li>• <strong>Onbeperkte aanbevelingen</strong> en styling advies</li>
+          <ul className="text-sm space-y-1 text-white/80">
+            <li className="flex items-start">
+              <span className="text-[#FF8600] mr-2">•</span>
+              <span><strong>Dubbele punten</strong> op alle acties</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#FF8600] mr-2">•</span>
+              <span><strong>Premium uitdagingen</strong> met hogere beloningen</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#FF8600] mr-2">•</span>
+              <span><strong>Exclusieve aanbiedingen</strong> bij onze partners</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#FF8600] mr-2">•</span>
+              <span><strong>Onbeperkte aanbevelingen</strong> en styling advies</span>
+            </li>
           </ul>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
           <Button
-            variant="secondary"
+            variant="primary"
             onClick={handleUpgrade}
-            className="flex-1 bg-white text-orange-600 hover:bg-gray-100 font-bold"
             icon={<Crown size={18} />}
             iconPosition="left"
+            className="flex-1"
           >
             Upgrade naar Pro
           </Button>
           <Button
             variant="ghost"
             onClick={handleDismiss}
-            className="text-white border-white/30 hover:bg-white/10"
+            className="text-white border border-white/20 hover:bg-white/10"
           >
             Misschien later
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
