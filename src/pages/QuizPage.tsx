@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, Upload, Info, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
-import { DUTCH_ARCHETYPES } from '../config/profile-mapping.js';
+import { motion } from 'framer-motion';
 
 interface QuestionOption {
   id: string;
@@ -76,16 +76,6 @@ const QuizPage: React.FC = () => {
           id: 'streetstyle', 
           text: 'Streetstyle - Authentieke streetwear', 
           image: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-        },
-        { 
-          id: 'retro', 
-          text: 'Retro - Vintage vibes', 
-          image: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-        },
-        { 
-          id: 'luxury', 
-          text: 'Luxury - Exclusieve topkwaliteit', 
-          image: 'https://images.pexels.com/photos/1049317/pexels-photo-1049317.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
         },
       ],
       category: 'preferences',
@@ -225,9 +215,17 @@ const QuizPage: React.FC = () => {
     switch (question.type) {
       case 'single':
         return (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-4">
             {question.options?.map(option => (
-              <div key={option.id} className="relative">
+              <motion.div 
+                key={option.id} 
+                className="relative"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 0 }}
+              >
                 <input
                   type="radio"
                   id={option.id}
@@ -239,47 +237,58 @@ const QuizPage: React.FC = () => {
                 <label
                   htmlFor={option.id}
                   className={`
-                    flex flex-col cursor-pointer rounded-lg p-4 border 
-                    peer-checked:border-orange-500 peer-checked:bg-orange-50 dark:peer-checked:bg-gray-700
-                    hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors
+                    flex flex-col cursor-pointer rounded-xl p-4 border 
+                    peer-checked:border-[#FF8600] peer-checked:bg-white/10
+                    hover:bg-white/5 transition-colors
                     ${option.image ? 'items-center' : ''}
                   `}
                 >
                   {option.image && (
-                    <div className="mb-3 w-full h-40 overflow-hidden rounded-md">
+                    <div className="mb-3 w-full h-40 overflow-hidden rounded-lg">
                       <img 
                         src={option.image} 
                         alt={option.text} 
                         className="w-full h-full object-cover"
-                        loading="lazy"
+                        onError={(e) => { 
+                          e.currentTarget.onerror = null; 
+                          e.currentTarget.src = '/placeholder.png'; 
+                        }}
                       />
                     </div>
                   )}
                   <div className="flex items-center justify-between w-full">
-                    <span className="text-gray-900 dark:text-white font-medium">{option.text}</span>
+                    <span className="text-white font-medium">{option.text}</span>
                     <div className={`
                       w-5 h-5 rounded-full flex items-center justify-center
                       ${answers[question.id] === option.id 
-                        ? 'bg-orange-500 text-white' 
-                        : 'bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500'}
+                        ? 'bg-[#FF8600] text-white' 
+                        : 'bg-white/20 border border-white/30'}
                     `}>
                       {answers[question.id] === option.id && <Check size={14} />}
                     </div>
                   </div>
                 </label>
-              </div>
+              </motion.div>
             ))}
           </div>
         );
       
       case 'multiple':
         return (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-4">
             {question.options?.map(option => {
               const isSelected = answers[question.id]?.includes(option.id) || false;
               
               return (
-                <div key={option.id} className="relative">
+                <motion.div 
+                  key={option.id} 
+                  className="relative"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 0 }}
+                >
                   <input
                     type="checkbox"
                     id={option.id}
@@ -291,24 +300,24 @@ const QuizPage: React.FC = () => {
                   <label
                     htmlFor={option.id}
                     className={`
-                      flex items-center justify-between cursor-pointer rounded-lg p-4 border 
+                      flex items-center justify-between cursor-pointer rounded-xl p-4 border 
                       ${isSelected 
-                        ? 'border-orange-500 bg-orange-50 dark:bg-gray-700' 
-                        : 'border-gray-200 dark:border-gray-700'}
-                      hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors
+                        ? 'border-[#FF8600] bg-white/10' 
+                        : 'border-white/30 hover:bg-white/5'}
+                      transition-colors
                     `}
                   >
-                    <span className="text-gray-900 dark:text-white font-medium">{option.text}</span>
+                    <span className="text-white font-medium">{option.text}</span>
                     <div className={`
                       w-5 h-5 rounded flex items-center justify-center
                       ${isSelected 
-                        ? 'bg-orange-500 text-white' 
-                        : 'bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500'}
+                        ? 'bg-[#FF8600] text-white' 
+                        : 'bg-white/20 border border-white/30'}
                     `}>
                       {isSelected && <Check size={14} />}
                     </div>
                   </label>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -318,7 +327,12 @@ const QuizPage: React.FC = () => {
         const value = answers[question.id] || Math.round((question.max! + question.min!) / 2);
         
         return (
-          <div className="space-y-6 animate-fade-in">
+          <motion.div 
+            className="space-y-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <div className="mb-6">
               <input
                 type="range"
@@ -328,30 +342,35 @@ const QuizPage: React.FC = () => {
                 step={question.step}
                 value={value}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                className="w-full h-2 bg-white/30 rounded-full appearance-none cursor-pointer"
               />
-              <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex justify-between mt-2 text-xs text-white/70">
                 <span>Minder belangrijk</span>
                 <span>Zeer belangrijk</span>
               </div>
             </div>
             <div className="text-center">
-              <span className="text-3xl font-bold text-orange-500">{value}</span>
-              <span className="text-gray-500 dark:text-gray-400 ml-1">/ {question.max}</span>
+              <span className="text-3xl font-bold text-[#FF8600]">{value}</span>
+              <span className="text-white/70 ml-1">/ {question.max}</span>
             </div>
-          </div>
+          </motion.div>
         );
       
       case 'upload':
         return (
-          <div className="space-y-6 animate-fade-in">
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
+          <motion.div 
+            className="space-y-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="border-2 border-dashed border-white/30 rounded-xl p-6 text-center">
               {photoPreview ? (
                 <div className="relative">
                   <img 
                     src={photoPreview} 
                     alt="Preview" 
-                    className="max-h-64 mx-auto rounded"
+                    className="max-h-64 mx-auto rounded-lg"
                   />
                   <button
                     onClick={() => {
@@ -359,18 +378,18 @@ const QuizPage: React.FC = () => {
                       setPhotoPreview(null);
                       setAnswers({ ...answers, [question.id]: undefined });
                     }}
-                    className="mt-3 text-red-500 hover:text-red-600 transition-colors"
+                    className="mt-3 text-red-300 hover:text-red-200 transition-colors"
                   >
                     Foto verwijderen
                   </button>
                 </div>
               ) : (
                 <div>
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <Upload className="mx-auto h-12 w-12 text-white/50" />
                   <div className="mt-2">
                     <label
                       htmlFor="file-upload"
-                      className="cursor-pointer rounded-md font-medium text-orange-500 hover:text-orange-600 transition-colors"
+                      className="cursor-pointer rounded-md font-medium text-[#FF8600] hover:text-orange-400 transition-colors"
                     >
                       Klik om een foto te uploaden
                       <input
@@ -382,24 +401,21 @@ const QuizPage: React.FC = () => {
                         onChange={handlePhotoUpload}
                       />
                     </label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-white/50 mt-1">
                       PNG, JPG, GIF tot 10MB
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-                      Gebruik een recente foto met goed licht voor de beste resultaten
                     </p>
                   </div>
                 </div>
               )}
             </div>
             
-            <div className="flex items-start p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md text-blue-700 dark:text-blue-300 text-sm">
-              <ShieldCheck size={16} className="mr-2 mt-0.5 flex-shrink-0" />
+            <div className="flex items-start p-4 bg-white/10 rounded-xl border border-white/20 text-white/90 text-sm">
+              <ShieldCheck size={16} className="mr-2 mt-0.5 flex-shrink-0 text-[#FF8600]" />
               <p>
-                Je foto wordt veilig versleuteld en alleen gebruikt voor analyse. Het wordt direct verwijderd na verwerking en nooit gedeeld met derden. Je kunt je gegevens altijd verwijderen.
+                Je foto wordt veilig versleuteld en alleen gebruikt voor analyse. Het wordt direct verwijderd na verwerking en nooit gedeeld met derden.
               </p>
             </div>
-          </div>
+          </motion.div>
         );
       
       default:
@@ -408,169 +424,172 @@ const QuizPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 transition-colors">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        {/* Enhanced Progress bar */}
-        <div className="mb-10">
-          <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
-            <span>Vraag {currentQuestionIndex + 1} van {questions.length}</span>
-            <span>{Math.round(progress)}% Voltooid</span>
-          </div>
-          <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-500 ease-in-out relative"
-              style={{ width: `${progress}%` }}
-            >
-              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
+      <div className="container-slim py-16">
+        <div className="max-w-2xl mx-auto">
+          {/* Progress bar */}
+          <div className="mb-10">
+            <div className="flex justify-between text-sm text-white/70 mb-2">
+              <span>Vraag {currentQuestionIndex + 1} van {questions.length}</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="progress-bar">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
           </div>
-          <div className="flex justify-between mt-2 text-xs text-gray-400 dark:text-gray-500">
-            <span>Start</span>
-            <span>Voltooid</span>
-          </div>
-        </div>
 
-        {/* Question card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors">
-          <div className="p-6 sm:p-8">
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
-                  {currentQuestion.category.charAt(0).toUpperCase() + currentQuestion.category.slice(1)}
-                </span>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {currentQuestionIndex + 1}/{questions.length}
-                </span>
+          {/* Question card */}
+          <motion.div 
+            className="glass-card overflow-hidden"
+            key={currentQuestionIndex}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="p-6">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white">
+                    {currentQuestion.category.charAt(0).toUpperCase() + currentQuestion.category.slice(1)}
+                  </span>
+                  <span className="text-sm text-white/70">
+                    {currentQuestionIndex + 1}/{questions.length}
+                  </span>
+                </div>
+                
+                <div className="flex items-center mb-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    {currentQuestion.question}
+                  </h2>
+                  <button
+                    onClick={() => setShowTooltip(!showTooltip)}
+                    className="ml-2 p-1 text-white/50 hover:text-white/80 transition-colors"
+                    aria-label="Waarom deze vraag?"
+                  >
+                    <Info size={20} />
+                  </button>
+                </div>
+                
+                {currentQuestion.description && (
+                  <p className="text-white/80 mb-8">
+                    {currentQuestion.description}
+                  </p>
+                )}
               </div>
               
-              <div className="flex items-center mb-3">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-                  {currentQuestion.question}
-                </h2>
-                <button
-                  onClick={() => setShowTooltip(!showTooltip)}
-                  className="ml-2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  aria-label="Waarom deze vraag?"
-                >
-                  <Info size={20} />
-                </button>
+              {renderQuestion()}
+            </div>
+            
+            {/* Navigation buttons */}
+            <div className="px-6 py-4 bg-white/5 flex justify-between items-center">
+              <Button
+                variant="ghost"
+                onClick={prevQuestion}
+                disabled={currentQuestionIndex === 0}
+                icon={<ArrowLeft size={16} />}
+                iconPosition="left"
+                className="min-w-[100px] text-white border border-white/30 hover:bg-white/10"
+              >
+                Terug
+              </Button>
+              
+              <div className="flex items-center space-x-2">
+                {questions.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`
+                      w-2 h-2 rounded-full transition-colors duration-300
+                      ${index === currentQuestionIndex 
+                        ? 'bg-[#FF8600]' 
+                        : index < currentQuestionIndex 
+                          ? 'bg-white' 
+                          : 'bg-white/30'}
+                    `}
+                  />
+                ))}
               </div>
               
-              {currentQuestion.description && (
-                <p className="text-gray-600 dark:text-gray-400 mb-8">
-                  {currentQuestion.description}
-                </p>
-              )}
+              <Button
+                variant="primary"
+                onClick={nextQuestion}
+                disabled={isNextDisabled()}
+                icon={<ArrowRight size={16} />}
+                iconPosition="right"
+                className="min-w-[100px]"
+              >
+                {currentQuestionIndex === questions.length - 1 ? 'Voltooien' : 'Volgende'}
+              </Button>
             </div>
-            
-            {renderQuestion()}
-          </div>
-          
-          {/* Enhanced Navigation buttons */}
-          <div className="px-6 sm:px-8 py-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center transition-colors">
-            <Button
-              variant="outline"
-              onClick={prevQuestion}
-              disabled={currentQuestionIndex === 0}
-              icon={<ArrowLeft size={16} />}
-              iconPosition="left"
-              className="min-w-[100px]"
-            >
-              Terug
-            </Button>
-            
-            <div className="flex items-center space-x-2">
-              {questions.map((_, index) => (
-                <div
-                  key={index}
-                  className={`
-                    w-2 h-2 rounded-full transition-colors duration-300
-                    ${index === currentQuestionIndex 
-                      ? 'bg-orange-500' 
-                      : index < currentQuestionIndex 
-                        ? 'bg-green-500' 
-                        : 'bg-gray-300 dark:bg-gray-600'}
-                  `}
-                />
-              ))}
-            </div>
-            
-            <Button
-              variant="primary"
-              onClick={nextQuestion}
-              disabled={isNextDisabled()}
-              icon={<ArrowRight size={16} />}
-              iconPosition="right"
-              className="min-w-[100px]"
-            >
-              {currentQuestionIndex === questions.length - 1 ? 'Voltooien' : 'Volgende'}
-            </Button>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* Progress summary */}
-        <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>
-            Je bent {Math.round(progress)}% klaar met je stijlanalyse
-          </p>
-          {currentQuestionIndex > 0 && (
-            <p className="mt-1">
-              Nog {questions.length - currentQuestionIndex - 1} vragen te gaan
+          {/* Progress summary */}
+          <div className="mt-6 text-center text-sm text-white/70">
+            <p>
+              Je bent {Math.round(progress)}% klaar met je stijlanalyse
             </p>
-          )}
-        </div>
-
-        {/* Tooltip */}
-        {showTooltip && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-            <div
-              role="tooltip"
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-sm mx-4 animate-scale-in transition-colors"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Waarom deze vraag?
-                </h3>
-                <button
-                  onClick={() => setShowTooltip(false)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  aria-label="Sluit uitleg"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-              <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                {currentQuestion.id === 'occasion' && (
-                  "Door te weten voor welke gelegenheden je je kleedt, kunnen we outfits aanbevelen die perfect passen bij jouw dagelijkse activiteiten en sociale situaties."
-                )}
-                {currentQuestion.id === 'style' && (
-                  "Je stijlvoorkeur helpt ons de juiste esthetiek en designprincipes te bepalen voor al je outfit aanbevelingen."
-                )}
-                {currentQuestion.id === 'comfort' && (
-                  "Je comfortniveau bepaalt welke materialen, pasvorm en stijlen we voorstellen. Dit zorgt ervoor dat je je altijd goed voelt in je outfits."
-                )}
-                {currentQuestion.id === 'photo' && (
-                  "Een foto helpt onze AI je lichaamsbouw, proporties en huidige stijl te analyseren voor nog betere, gepersonaliseerde aanbevelingen."
-                )}
-              </div>
-            </div>
+            {currentQuestionIndex > 0 && (
+              <p className="mt-1">
+                Nog {questions.length - currentQuestionIndex - 1} vragen te gaan
+              </p>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Mobile Sticky CTA - NEW */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-40">
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div
+            role="tooltip"
+            className="glass-card p-4 max-w-sm mx-4 animate-fade-in"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="font-semibold text-white">
+                Waarom deze vraag?
+              </h3>
+              <button
+                onClick={() => setShowTooltip(false)}
+                className="text-white/50 hover:text-white/80 transition-colors"
+                aria-label="Sluit uitleg"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="text-white/80 text-sm leading-relaxed">
+              {currentQuestion.id === 'occasion' && (
+                "Door te weten voor welke gelegenheden je je kleedt, kunnen we outfits aanbevelen die perfect passen bij jouw dagelijkse activiteiten en sociale situaties."
+              )}
+              {currentQuestion.id === 'style' && (
+                "Je stijlvoorkeur helpt ons de juiste esthetiek en designprincipes te bepalen voor al je outfit aanbevelingen."
+              )}
+              {currentQuestion.id === 'comfort' && (
+                "Je comfortniveau bepaalt welke materialen, pasvorm en stijlen we voorstellen. Dit zorgt ervoor dat je je altijd goed voelt in je outfits."
+              )}
+              {currentQuestion.id === 'photo' && (
+                "Een foto helpt onze AI je lichaamsbouw, proporties en huidige stijl te analyseren voor nog betere, gepersonaliseerde aanbevelingen."
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Sticky CTA */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0D1B2A] border-t border-white/10 p-4 z-40">
         <div className="flex space-x-3">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={prevQuestion}
             disabled={currentQuestionIndex === 0}
             icon={<ArrowLeft size={16} />}
             iconPosition="left"
-            className="flex-1"
+            className="flex-1 text-white border border-white/30 hover:bg-white/10"
           >
             Terug
           </Button>
@@ -586,28 +605,6 @@ const QuizPage: React.FC = () => {
           </Button>
         </div>
       </div>
-
-      <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          height: 20px;
-          width: 20px;
-          border-radius: 50%;
-          background: #f97316;
-          cursor: pointer;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .slider::-moz-range-thumb {
-          height: 20px;
-          width: 20px;
-          border-radius: 50%;
-          background: #f97316;
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-      `}</style>
     </div>
   );
 };

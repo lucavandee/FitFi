@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import { motion } from 'framer-motion';
+import Button from '../components/ui/Button';
 
 const GenderSelectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,10 +17,7 @@ const GenderSelectPage: React.FC = () => {
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'gender_selection', {
         event_category: 'questionnaire',
-        event_label: gender,
-        custom_parameter_1: 'demographic_data',
-        custom_parameter_2: 'user_profiling',
-        custom_parameter_3: 'questionnaire'
+        event_label: gender
       });
     }
     
@@ -29,124 +28,106 @@ const GenderSelectPage: React.FC = () => {
     navigate('/quiz/1');
   };
 
-  const imgSrc = {
-    male: '/images/gender/male.png',
-    female: '/images/gender/female.png',
-    neutral: '/images/gender/neutral.png'
-  };
-
   const totalSteps = 4;
   const currentStep = 2;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 transition-colors">
-      <div className="max-w-md mx-auto px-4 sm:px-6">
-        {/* Progress indicator */}
-        <div className="mb-10">
-          <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
-            <span>Stap {currentStep} van {totalSteps}</span>
-            <span>{Math.round((currentStep / totalSteps) * 100)}% Voltooid</span>
+    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
+      <div className="container-slim py-16">
+        <div className="max-w-md mx-auto">
+          {/* Progress indicator */}
+          <div className="mb-10">
+            <div className="flex justify-between text-sm text-white/70 mb-2">
+              <span>Stap {currentStep} van {totalSteps}</span>
+              <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
+            </div>
+            <div className="progress-bar">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              ></div>
+            </div>
           </div>
-          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-orange-500 transition-all duration-300 ease-in-out"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            ></div>
-          </div>
-        </div>
 
-        <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Hoe identificeer je jezelf?
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Dit helpt ons de juiste stijladvies voor je te vinden
-          </p>
-        </div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Hoe identificeer je jezelf?
+            </h1>
+            <p className="text-white/80">
+              Dit helpt ons de juiste stijladvies voor je te vinden
+            </p>
+          </motion.div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors animate-scale-in">
-          <div className="p-6 sm:p-8">
-            <div className="space-y-4">
-              {[
-                { id: 'male', label: 'Man', icon: '👨', description: 'Mannelijke stijladvies' },
-                { id: 'female', label: 'Vrouw', icon: '👩', description: 'Vrouwelijke stijladvies' },
-                { id: 'neutral', label: 'Gender Neutraal', icon: '🧑', description: 'Neutrale stijladvies' }
-              ].map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => handleGenderSelect(option.id as 'male' | 'female' | 'neutral')}
-                  className={`
-                    w-full p-4 rounded-lg border-2 transition-all duration-200 text-left hover:scale-105
-                    ${selectedGender === option.id
-                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-700'}
-                  `}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="text-3xl">{option.icon}</div>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">
-                        {option.label}
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {option.description}
+          <div className="glass-card overflow-hidden">
+            <div className="p-6">
+              <div className="space-y-4">
+                {[
+                  { id: 'male', label: 'Man', description: 'Mannelijke stijladvies' },
+                  { id: 'female', label: 'Vrouw', description: 'Vrouwelijke stijladvies' },
+                  { id: 'neutral', label: 'Gender Neutraal', description: 'Neutrale stijladvies' }
+                ].map((option) => (
+                  <motion.button
+                    key={option.id}
+                    onClick={() => handleGenderSelect(option.id as 'male' | 'female' | 'neutral')}
+                    className={`
+                      w-full p-4 rounded-xl border transition-all duration-200 text-left
+                      ${selectedGender === option.id
+                        ? 'border-[#FF8600] bg-white/10'
+                        : 'border-white/30 hover:border-[#FF8600] hover:bg-white/5'}
+                    `}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ y: 0 }}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div>
+                        <div className="font-medium text-white">
+                          {option.label}
+                        </div>
+                        <div className="text-sm text-white/70">
+                          {option.description}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </motion.button>
+                ))}
+              </div>
             </div>
 
-            {/* Illustration */}
-            {selectedGender && (
-              <div className="mt-8 text-center animate-fade-in">
-                <img 
-                  src={imgSrc[selectedGender]} 
-                  alt={`Ik ben ${selectedGender}`} 
-                  className="mx-auto h-48 w-auto rounded-lg"
-                  loading="lazy"
-                  onError={(e) => {
-                    // Fallback if image doesn't exist
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
+            {/* Privacy indicator */}
+            <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
+              <ShieldCheck size={18} className="text-[#FF8600]" />
+              <span className="text-sm text-white/80">Je gegevens zijn veilig en versleuteld</span>
+            </div>
           </div>
 
-          {/* Privacy indicator */}
-          <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex items-center justify-center space-x-2 transition-colors">
-            <ShieldCheck size={18} className="text-green-500" />
-            <span className="text-sm text-gray-600 dark:text-gray-300">Je gegevens zijn veilig en versleuteld</span>
+          {/* Back to onboarding link */}
+          <div className="mt-6 text-center">
+            <button 
+              onClick={() => navigate('/onboarding')}
+              className="inline-flex items-center text-sm text-white/70 hover:text-[#FF8600] transition-colors"
+            >
+              <ArrowLeft size={16} className="mr-1" />
+              Terug
+            </button>
           </div>
-        </div>
-
-        {/* Back to onboarding link */}
-        <div className="mt-6 text-center">
-          <button 
-            onClick={() => navigate('/onboarding')}
-            className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors"
-          >
-            <ArrowLeft size={16} className="mr-1" />
-            Terug
-          </button>
         </div>
       </div>
 
-      {/* Mobile Sticky CTA - NEW */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-50">
-        <button
+      {/* Mobile Sticky CTA */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0D1B2A] border-t border-white/10 p-4 z-50">
+        <Button
           onClick={() => selectedGender && handleGenderSelect(selectedGender)}
           disabled={!selectedGender}
-          className={`
-            w-full py-3 px-4 rounded-lg font-medium transition-colors
-            ${selectedGender 
-              ? 'bg-orange-500 text-white hover:bg-orange-600' 
-              : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'}
-          `}
+          variant="primary"
+          fullWidth
         >
           {selectedGender ? 'Doorgaan' : 'Selecteer een optie'}
-        </button>
+        </Button>
       </div>
     </div>
   );

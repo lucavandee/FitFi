@@ -53,14 +53,14 @@ class ErrorBoundary extends Component<Props, State> {
       // Custom fallback UI
       return this.props.fallback || (
         <div className="min-h-[50vh] flex items-center justify-center p-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-            <div className="bg-orange-100 dark:bg-orange-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-              <AlertTriangle className="text-orange-500" size={32} />
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 mx-auto mb-6 text-red-500">
+              <AlertTriangle size={32} />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-3">
               Oeps, er is iets misgegaan
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-neutral-600 dark:text-neutral-400 mb-6">
               We konden je stijladvies niet laden. Dit kan komen door een tijdelijk probleem. Probeer het opnieuw of ga terug naar de homepage.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -73,7 +73,7 @@ class ErrorBoundary extends Component<Props, State> {
                 Probeer opnieuw
               </Button>
               <Button 
-                variant="outline"
+                variant="secondary"
                 onClick={() => window.location.href = '/'}
               >
                 Terug naar home

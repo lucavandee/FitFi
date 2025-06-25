@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   disabled?: boolean;
@@ -37,24 +37,25 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const variantStyles = {
-      primary: 'bg-orange-500 hover:bg-orange-600 text-white border-orange-500 hover:border-orange-600 transform hover:scale-105 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:scale-100',
-      secondary: 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 transform hover:scale-105 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-100',
-      outline: 'bg-transparent hover:bg-gray-100 text-gray-700 border-gray-300 hover:border-orange-500 hover:text-orange-500 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-800 transform hover:scale-105 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:scale-100',
-      ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 border-transparent dark:text-gray-300 dark:hover:bg-gray-800 transform hover:scale-105 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:scale-100',
-      danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 transform hover:scale-105 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:scale-100',
+      primary: 'bg-[#FF8600] hover:bg-orange-600 text-white border-[#FF8600] hover:border-orange-600 focus:ring-[#FF8600]',
+      secondary: 'bg-[#0ea5e9] hover:bg-blue-600 text-white border-[#0ea5e9] hover:border-blue-600 focus:ring-[#0ea5e9]',
+      ghost: 'bg-transparent hover:bg-white/10 text-white border-transparent focus:ring-white',
+      danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 focus:ring-red-500',
     };
 
     const sizeStyles = {
       sm: 'px-3 py-1.5 text-sm',
       md: 'px-4 py-2',
-      lg: 'px-6 py-3 text-lg',
+      lg: 'px-6 py-3 text-base',
     };
 
     const baseStyle = `
       inline-flex items-center justify-center 
-      font-medium rounded-md 
+      font-medium rounded-full 
       border 
-      disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:scale-100 disabled:hover:shadow-none
+      transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-offset-2
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-inherit
     `;
 
     const widthStyle = fullWidth ? 'w-full' : '';

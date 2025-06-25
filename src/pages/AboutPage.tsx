@@ -98,7 +98,22 @@ const AboutPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Mission Section */}
+        {/* Tech Meets Style Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+          <div className="p-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              💡 Tech meets stijl — voor mensen die weten wat ze willen
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
+              Bij FitFi draait alles om stijl, identiteit en eenvoud. We combineren de kracht van AI met een scherp gevoel voor design — zodat jij in één klik ziet welke outfits echt bij je passen.
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              Geen gedoe, geen one-size-fits-all. Maar een persoonlijke stijlervaring die moeiteloos werkt.
+            </p>
+          </div>
+        </div>
+
+        {/* Why FitFi Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
           <div className="p-8">
             <div className="flex items-center mb-6">
@@ -106,16 +121,211 @@ const AboutPage: React.FC = () => {
                 <Target className="text-orange-500" size={24} />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Onze missie
+                🚀 Waarom FitFi is ontstaan
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
-              Onze missie is shoppen weer leuk, gemakkelijk en persoonlijk te maken. Met AI-gedreven stijladvies geven we je zelfvertrouwen én tijdwinst.
+              Stijladvies online is óf oppervlakkig, óf overweldigend. Je krijgt duizenden opties of saaie basics die niet bij je passen.
             </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              Wij wilden het anders:
+            </p>
+            <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+              <li>Slimmer dan standaard stylingapps</li>
+              <li>Eenvoudiger dan personal shoppers</li>
+              <li>Visueel en intuïtief zoals je dat van topmerken verwacht</li>
+            </ul>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-              Bij FitFi geloven we dat iedereen recht heeft op kleding die perfect past bij hun unieke stijl, lichaamsbouw en persoonlijkheid. 
-              Door geavanceerde AI-technologie te combineren met mode-expertise, maken we persoonlijk stijladvies toegankelijk voor iedereen.
+              FitFi is geboren uit die frustratie — en gebouwd met visie. Voor mensen die weten wat ze willen, maar wel even die AI-powered second opinion kunnen gebruiken.
             </p>
+          </div>
+        </div>
+
+        {/* What Makes FitFi Different Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+          <div className="p-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+              🧠 Wat maakt FitFi anders?
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="flex">
+                <div className="mr-4 flex-shrink-0">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-500">
+                    <Zap size={24} />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    🔍 AI die jou begrijpt
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Onze AI analyseert je voorkeuren, stijltype en wensen — en laat outfits zien die écht bij jou passen. Met uitleg waarom het werkt.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex">
+                <div className="mr-4 flex-shrink-0">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-500">
+                    <Sparkles size={24} />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    🧥 Outfits die kloppen
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Geen losse kledingstukken, maar complete looks met context. Van 'Smart Casual Italiaans' tot 'Edgy Streetwear' — elke combinatie past bij jouw profiel.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex">
+                <div className="mr-4 flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-500">
+                    <Clock size={24} />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    🤝 Shop & swipe coming soon
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Binnenkort koppel je je profiel aan je favoriete merken en bestel je outfits direct. Zo bespaar je tijd én miskopen.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex">
+                <div className="mr-4 flex-shrink-0">
+                  <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500">
+                    <ShieldCheck size={24} />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    🔒 Privacy by design
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    We verzamelen alleen wat nodig is. Jouw foto's en data zijn veilig, worden niet gedeeld, en kunnen op elk moment worden verwijderd. Volledige transparantie.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Our Values Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+          <div className="p-8">
+            <div className="flex items-center mb-6">
+              <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full mr-4">
+                <Heart className="text-purple-500" size={24} />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                🌍 Wat we belangrijk vinden
+              </h2>
+            </div>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              We bouwen FitFi met stijl, respect en visie. Dat betekent:
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start">
+                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mr-3 mt-0.5">
+                  <Users size={16} className="text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <span className="font-medium">💬 Inclusieve stijladviezen voor iedereen</span> — wat je maat, gender of voorkeur ook is
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full mr-3 mt-0.5">
+                  <Award size={16} className="text-green-500" />
+                </div>
+                <div>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <span className="font-medium">🧵 Bewuste keuzes</span> — we werken toe naar aanbevelingen op basis van kwaliteit, duurzaamheid en tijdloze stijl
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-full mr-3 mt-0.5">
+                  <Heart size={16} className="text-orange-500" />
+                </div>
+                <div>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <span className="font-medium">🖤 Geen algoritme zonder gevoel</span> — we combineren data met menselijke stijlprincipes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Roadmap Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+          <div className="p-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              🛠 Wat er nog aankomt
+            </h2>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              We bouwen FitFi in fases — met jou als gebruiker centraal:
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start">
+                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full mr-3">
+                  <span className="text-green-500 text-sm font-bold">✓</span>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Gepersonaliseerde stijlprofielen</span> (live)
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full mr-3">
+                  <span className="text-green-500 text-sm font-bold">✓</span>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">AI-outfits op basis van jouw voorkeuren</span> (live)
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mr-3">
+                  <span className="text-blue-500 text-sm font-bold">🔄</span>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Feedbacksysteem om stijladviezen te verfijnen</span> (in testfase)
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mr-3">
+                  <span className="text-blue-500 text-sm font-bold">🔄</span>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Direct shoppen via partnerwebshops</span> (in voorbereiding)
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-full mr-3">
+                  <span className="text-gray-500 dark:text-gray-400 text-sm font-bold">📱</span>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Mobile-first interface met swipe-functionaliteit</span> (Q3 gepland)
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -127,9 +337,17 @@ const AboutPage: React.FC = () => {
                 <Users className="text-blue-500" size={24} />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Ons team
+                🤝 Wie we zijn
               </h2>
             </div>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              FitFi is opgezet door een klein team met een grote visie. Wij combineren tech, branding en stijl in een ervaring die werkt.
+            </p>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              We zijn geen fashion goeroes. We zijn bouwers, denkers en perfectionisten — met één doel: Stijl toegankelijk maken voor iedereen, zonder oppervlakkigheid.
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {teamMembers.map((member, index) => (
@@ -224,58 +442,6 @@ const AboutPage: React.FC = () => {
                     <div className="md:w-1/2"></div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Values Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
-          <div className="p-8">
-            <div className="flex items-center mb-6">
-              <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full mr-4">
-                <Heart className="text-purple-500" size={24} />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Onze waarden
-              </h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Persoonlijke benadering
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  We geloven dat stijl persoonlijk is. Onze aanbevelingen zijn volledig afgestemd op jouw unieke voorkeuren en behoeften.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Innovatie
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  We blijven voortdurend innoveren om je de meest geavanceerde stijlervaring te bieden.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Inclusiviteit
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Mode is voor iedereen. We streven ernaar om inclusieve stijladvies te bieden voor alle lichaamstypes, genders en voorkeuren.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Duurzaamheid
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  We moedigen bewuste modekeuzes aan door te focussen op kwaliteit boven kwantiteit en duurzame merken te promoten.
-                </p>
               </div>
             </div>
           </div>
@@ -386,21 +552,21 @@ const AboutPage: React.FC = () => {
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 rounded-xl shadow-md overflow-hidden transition-colors">
           <div className="p-8 text-center">
             <h2 className="text-2xl font-bold text-white mb-4">
-              Word affiliate partner
+              ✨ Nieuwsgierig naar jouw stijltype?
             </h2>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Heb je een mode-blog, social media kanaal of website? Word partner en verdien commissie door jouw volgers te helpen hun perfecte stijl te vinden.
+              Doe de test en ontdek jouw AI-style match.
             </p>
             <Button
               as="a"
-              href="mailto:partner@fitfi.nl"
+              href="/onboarding"
               variant="secondary"
               size="lg"
               className="bg-white text-orange-600 hover:bg-gray-100"
               icon={<ArrowRight size={20} />}
               iconPosition="right"
             >
-              Word partner
+              Begin je stijlreis
             </Button>
           </div>
         </div>

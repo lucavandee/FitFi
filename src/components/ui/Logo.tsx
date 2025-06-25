@@ -3,18 +3,19 @@ import { Shirt, Sparkles } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
+  textColor?: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ className = 'h-8 w-auto' }) => {
+const Logo: React.FC<LogoProps> = ({ className = 'h-8 w-auto', textColor = 'text-white' }) => {
   return (
     <div className={`flex items-center ${className}`}>
       <div className="relative">
-        <Shirt className="text-orange-500" size={24} />
-        <Sparkles className="text-blue-600 absolute -top-1 -right-1" size={12} />
+        <Shirt className="text-[#FF8600]" size={24} />
+        <Sparkles className="text-[#0ea5e9] absolute -top-1 -right-1" size={12} />
       </div>
-      <span className="ml-2 font-bold text-xl">
-        <span className="text-orange-500">Fit</span>
-        <span className="text-blue-600">Fi</span>
+      <span className={`ml-2 font-display font-semibold text-xl ${textColor}`}>
+        <span className="text-[#FF8600]">Fit</span>
+        <span className="text-[#0ea5e9]">Fi</span>
       </span>
     </div>
   );
