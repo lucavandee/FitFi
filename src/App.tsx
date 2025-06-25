@@ -26,7 +26,6 @@ import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
 import ErrorBoundary from './components/ErrorBoundary';
-import './styles/animations.css';
 
 function App() {
   return (
@@ -34,7 +33,7 @@ function App() {
       <UserProvider>
         <GamificationProvider>
           <Router>
-            <div className="min-h-screen flex flex-col bg-neutral-50 dark:bg-gray-900 transition-colors">
+            <div className="min-h-screen flex flex-col">
               <Navbar />
               <main className="flex-grow">
                 <ErrorBoundary>
@@ -66,8 +65,11 @@ function App() {
                 toastOptions={{
                   duration: 4000,
                   style: {
-                    background: 'var(--toast-bg)',
-                    color: 'var(--toast-color)',
+                    background: 'var(--toast-bg, rgba(13, 27, 42, 0.95))',
+                    color: 'var(--toast-color, #fff)',
+                    borderRadius: '0.75rem',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                    border: '1px solid var(--toast-border, rgba(255,255,255,0.1))'
                   },
                 }}
               />

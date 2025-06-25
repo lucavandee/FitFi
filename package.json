@@ -12,9 +12,15 @@
     "image-check": "node scripts/image-check.js",
     "test:links": "npm run link-check",
     "test:images": "npm run image-check",
-    "test:all": "npm run lint && npm run link-check && npm run image-check && npm run build"
+    "test:all": "npm run lint && npm run link-check && npm run image-check && npm run build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "lhci": "lhci autorun",
+    "lighthouse": "npm run lhci"
   },
   "dependencies": {
+    "framer-motion": "^10.16.4",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -24,6 +30,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@lhci/cli": "^0.12.0",
+    "@playwright/test": "^1.40.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

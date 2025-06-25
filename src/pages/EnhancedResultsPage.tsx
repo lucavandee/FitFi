@@ -1,33 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
-  Heart, 
-  Share2, 
-  ShoppingBag, 
-  Sparkles, 
-  Bookmark,
-  BookmarkCheck,
-  Star,
-  Clock,
-  Zap,
-  Award,
-  TrendingUp,
-  ChevronDown,
-  ChevronUp,
+  ArrowRight, 
   ShieldCheck,
-  AlertTriangle,
-  RefreshCw,
+  RotateCw,
   ThumbsUp,
   ThumbsDown,
-  Send,
   CheckCircle
 } from 'lucide-react';
 import Button from '../components/ui/Button';
-import OutfitCard from '../components/ui/OutfitCard';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../context/GamificationContext';
 import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../config/profile-mapping.js';
 import curatedProducts from '../config/curated-products.json';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 interface Outfit {
   id: string;
@@ -81,16 +68,6 @@ const dailyStyleTips: DailyStyleTip[] = [
     id: '3',
     tip: 'De regel van derden: verdeel je outfit in 60% basis, 30% accent, 10% statement.',
     category: 'Proportions'
-  },
-  {
-    id: '4',
-    tip: 'Accessoires kunnen een simpele outfit instant upgraden naar chic.',
-    category: 'Styling'
-  },
-  {
-    id: '5',
-    tip: 'Zorg dat je kleding goed past - tailoring is de sleutel tot elegantie.',
-    category: 'Fit & Tailoring'
   }
 ];
 
@@ -152,34 +129,6 @@ const generateExplanation = (archetypeId: string, occasionType: string): string 
         "Deze formele outfit brengt een verrassende streetstyle twist naar een geklede setting, perfect voor jouw unieke stijl.",
         "Voor jouw streetstyle voorkeur hebben we deze formele look gecreëerd die de regels breekt maar toch gepast is voor speciale gelegenheden."
       ]
-    },
-    retro: {
-      werk: [
-        "Deze outfit brengt jouw retro stijl naar een professionele setting met vintage-geïnspireerde elementen die toch modern aanvoelen.",
-        "Voor jouw retro voorkeur hebben we deze werkoutfit samengesteld met een nostalgische uitstraling die toch professioneel is."
-      ],
-      casual: [
-        "Deze casual look viert jouw retro stijl met vintage elementen en een nostalgische uitstraling voor dagelijks gebruik.",
-        "Voor jouw retro smaak hebben we deze ontspannen outfit samengesteld die een eerbetoon is aan het verleden met een moderne twist."
-      ],
-      formeel: [
-        "Deze formele outfit brengt jouw retro stijl naar speciale gelegenheden met vintage-geïnspireerde elegantie.",
-        "Voor jouw retro voorkeur hebben we deze formele look gecreëerd die tijdperken overbrugt met een nostalgische maar toch hedendaagse uitstraling."
-      ]
-    },
-    luxury: {
-      werk: [
-        "Deze outfit weerspiegelt jouw luxe stijl met hoogwaardige materialen en verfijnde details, perfect voor een exclusieve werkomgeving.",
-        "Voor jouw luxe voorkeur hebben we deze werkoutfit samengesteld met premium kwaliteit en subtiele maar onmiskenbare elegantie."
-      ],
-      casual: [
-        "Deze casual look behoudt de exclusiviteit van jouw luxe stijl met hoogwaardige materialen en een ontspannen maar verfijnde uitstraling.",
-        "Voor jouw luxe smaak hebben we deze casual outfit samengesteld die comfort combineert met onberispelijke kwaliteit."
-      ],
-      formeel: [
-        "Deze formele outfit is een toonbeeld van jouw luxe stijl met exquise materialen en onberispelijke afwerking voor speciale gelegenheden.",
-        "Voor jouw luxe voorkeur hebben we deze formele look gecreëerd die uitzonderlijke kwaliteit en tijdloze elegantie uitstraalt."
-      ]
     }
   };
 
@@ -195,7 +144,7 @@ const generateExplanation = (archetypeId: string, occasionType: string): string 
 };
 
 // Generate outfits based on archetype and products
-const generateOutfits = (archetypeId: string, products: any[]): Outfit[] => {
+const generateOutfits = (archetypeId: string, products: any[], variationLevel: 'low' | 'medium' | 'high' = 'low'): Outfit[] => {
   if (!products || products.length < 4) {
     return [];
   }
@@ -229,7 +178,25 @@ const generateOutfits = (archetypeId: string, products: any[]): Outfit[] => {
     for (const category of majorCategories) {
       if (productsByCategory[category] && productsByCategory[category].length > 0) {
         // Get a random item from this category
-        const randomIndex = Math.floor(Math.random() * productsByCategory[category].length);
+        // For higher variation, we'll pick different items based on variationLevel
+        let randomIndex = 0;
+        
+        if (variationLevel === 'high') {
+          // For high variation, try to pick items we haven't used before
+          // or at least different from the first few items
+          randomIndex = Math.floor(Math.random() * productsByCategory[category].length);
+          if (randomIndex < 2 && productsByCategory[category].length > 3) {
+            randomIndex = 2 + Math.floor(Math.random() * (productsByCategory[category].length - 2));
+          }
+        } else if (variationLevel === 'medium') {
+          // For medium variation, avoid the first item if possible
+          randomIndex = productsByCategory[category].length > 1 ? 
+            1 + Math.floor(Math.random() * (productsByCategory[category].length - 1)) : 0;
+        } else {
+          // For low variation, just pick randomly
+          randomIndex = Math.floor(Math.random() * productsByCategory[category].length);
+        }
+        
         outfitItems.push(productsByCategory[category][randomIndex]);
         usedCategories.add(category);
       }
@@ -253,7 +220,16 @@ const generateOutfits = (archetypeId: string, products: any[]): Outfit[] => {
     }
 
     // Generate random match percentage between 85-98%
-    const matchPercentage = Math.floor(Math.random() * 14) + 85;
+    // For higher variation, we'll adjust the match percentage
+    let matchPercentageBase = 85;
+    if (variationLevel === 'high') {
+      // For high variation, we might have slightly lower match percentages
+      matchPercentageBase = 80;
+    } else if (variationLevel === 'medium') {
+      matchPercentageBase = 83;
+    }
+    
+    const matchPercentage = Math.floor(Math.random() * 14) + matchPercentageBase;
     
     // Generate random tags based on archetype
     const tags = [];
@@ -288,7 +264,7 @@ const generateOutfits = (archetypeId: string, products: any[]): Outfit[] => {
     
     // Create the outfit
     outfits.push({
-      id: `outfit_${archetypeId}_${index}`,
+      id: `outfit_${archetypeId}_${index}_${Date.now()}`, // Add timestamp for uniqueness
       title: `${archetype.displayName} ${occasion === 'werk' ? 'Werk' : occasion === 'formeel' ? 'Formele' : 'Casual'} Look`,
       description: `Een perfecte ${archetype.displayName.toLowerCase()} outfit voor ${occasion === 'werk' ? 'op kantoor' : occasion === 'formeel' ? 'speciale gelegenheden' : 'casual dagen'}.`,
       matchPercentage,
@@ -345,32 +321,37 @@ const ProfileIntroduction: React.FC<{ profile: PsychographicProfile; userName?: 
   userName 
 }) => {
   return (
-    <div className="py-8">
-      <div className="max-w-screen-md mx-auto px-4">
-        <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-8 animate-fade-in transition-colors">
-          <div className="flex items-start space-x-4">
+    <motion.div 
+      className="py-8"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="container-slim">
+        <div className="glass-card p-8">
+          <div className="flex items-start space-x-6">
             <div className="text-4xl">{profile.icon}</div>
             <div className="flex-1">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl font-bold text-white mb-3">
                 {userName ? `${userName}, jij bent` : 'Jij bent'} {profile.title}
               </h2>
               
-              <h3 className="text-lg text-gray-700 dark:text-gray-300 mb-4">
+              <h3 className="text-lg text-white/90 mb-4">
                 {profile.description}
               </h3>
               
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-white/80">
                 {profile.motivationalMessage}
               </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-const DailyStyleTipSection: React.FC = () => {
+const DailyStyleTip: React.FC = () => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   useEffect(() => {
@@ -382,28 +363,186 @@ const DailyStyleTipSection: React.FC = () => {
   const currentTip = dailyStyleTips[currentTipIndex];
 
   return (
-    <div className="py-8">
-      <div className="max-w-screen-md mx-auto px-4">
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800 transition-colors">
+    <motion.div 
+      className="py-8"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      <div className="container-slim">
+        <div className="glass-card p-6 border border-[#0ea5e9]/20">
           <div className="flex items-start space-x-4">
-            <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
-              <Sparkles className="text-purple-600 dark:text-purple-400" size={24} />
-            </div>
+            <div className="text-[#0ea5e9] text-2xl">💡</div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                💡 Daily Style Tip
+              <h3 className="text-lg font-bold text-white mb-2">
+                Dagelijkse stijltip
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-2">
+              <p className="text-white/90 mb-2">
                 {currentTip.tip}
               </p>
-              <span className="inline-block bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full text-xs font-medium">
+              <span className="inline-block bg-[#0ea5e9]/20 text-[#0ea5e9] px-2 py-1 rounded-full text-xs font-medium">
                 {currentTip.category}
               </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
+  );
+};
+
+const EnhancedResultsOutfitCard: React.FC<{ outfit: Outfit; onNewLook: () => void; isGenerating: boolean }> = ({ 
+  outfit, 
+  onNewLook,
+  isGenerating
+}) => {
+  const [showItems, setShowItems] = useState(false);
+  const navigate = useNavigate();
+
+  const handleProductClick = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <motion.div 
+      className="glass-card overflow-hidden"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Header with outfit image */}
+      <div className="relative">
+        <div className="aspect-[3/4] overflow-hidden bg-[#1B263B]">
+          <img 
+            src={outfit.imageUrl} 
+            alt={outfit.title}
+            className="w-full h-full object-cover"
+            onError={(e) => { 
+              e.currentTarget.onerror = null; 
+              e.currentTarget.src = '/placeholder.png'; 
+            }}
+          />
+          
+          {/* Match percentage badge */}
+          <div className="absolute top-4 left-4 bg-[#0D1B2A]/90 text-[#FF8600] px-3 py-1 rounded-full text-sm font-bold">
+            {outfit.matchPercentage}% Match
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        {/* Title and description */}
+        <div className="mb-6">
+          <h3 className="text-xl font-bold text-white mb-2">
+            {outfit.title}
+          </h3>
+          <p className="text-white/80 text-sm">
+            {outfit.description}
+          </p>
+        </div>
+
+        {/* Explanation */}
+        <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+          <p className="text-white/90 text-sm italic">
+            {outfit.explanation}
+          </p>
+        </div>
+
+        {/* New Look Generator Button */}
+        <div className="mb-6">
+          <Button
+            variant="secondary"
+            onClick={onNewLook}
+            disabled={isGenerating}
+            icon={isGenerating ? <RotateCw className="animate-spin" size={16} /> : <RotateCw size={16} />}
+            iconPosition="left"
+            fullWidth
+          >
+            {isGenerating ? 'Nieuwe look genereren...' : 'Toon een nieuwe look'}
+          </Button>
+        </div>
+
+        {/* Items toggle */}
+        <button
+          onClick={() => setShowItems(!showItems)}
+          className="w-full flex items-center justify-between text-sm font-medium text-white/80 hover:text-[#FF8600] transition-colors mb-4"
+        >
+          <span>Bekijk alle items ({outfit.items.length})</span>
+          <svg 
+            className={`w-5 h-5 transition-transform ${showItems ? 'rotate-180' : ''}`} 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Items list */}
+        {showItems && (
+          <div className="space-y-3 mb-6 animate-fade-in">
+            {outfit.items.map((item, index) => (
+              <div 
+                key={index}
+                className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
+                onClick={() => handleProductClick(item.url)}
+              >
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.name}
+                  className="w-12 h-12 object-cover rounded-lg"
+                  onError={(e) => { 
+                    e.currentTarget.onerror = null; 
+                    e.currentTarget.src = '/placeholder.png'; 
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-white truncate">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-white/60">
+                        {item.brand} • {item.category}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-white">
+                        €{item.price.toFixed(2)}
+                      </p>
+                      <div className="text-xs text-white/60">
+                        {item.retailer}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Price and CTA */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <span className="text-2xl font-bold text-white">
+              €{outfit.items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
+            </span>
+            <span className="text-sm text-white/60 ml-2">
+              complete look
+            </span>
+          </div>
+          
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => navigate('/dashboard')}
+          >
+            Shop Look
+          </Button>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -422,6 +561,11 @@ const EnhancedResultsPage: React.FC = () => {
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
+  
+  // New state for alternative outfit generation
+  const [generatingNewLook, setGeneratingNewLook] = useState<Record<string, boolean>>({});
+  const [regenerationCount, setRegenerationCount] = useState(0);
+  const [showRegenerationFeedback, setShowRegenerationFeedback] = useState(false);
 
   const quizAnswers = location.state?.answers || {};
 
@@ -466,103 +610,80 @@ const EnhancedResultsPage: React.FC = () => {
     fetchStyleRecommendations();
   }, [fetchStyleRecommendations]);
 
-  const handleSaveOutfit = (outfitId: string) => {
-    if (savedOutfits.includes(outfitId)) {
-      setSavedOutfits(savedOutfits.filter(id => id !== outfitId));
-    } else {
-      setSavedOutfits([...savedOutfits, outfitId]);
-      
-      // Save to user profile if logged in
-      if (user) {
-        saveRecommendation(outfitId);
-      }
-      
-      // Track save event
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'save_outfit', {
-          event_category: 'engagement',
-          event_label: outfitId
-        });
-      }
-    }
-  };
-
-  const handleLikeOutfit = (outfitId: string) => {
-    // Track like event
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'like_outfit', {
-        event_category: 'engagement',
-        event_label: outfitId
-      });
-    }
-  };
-
-  const handleDislikeOutfit = (outfitId: string) => {
-    // Track dislike event
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'dislike_outfit', {
-        event_category: 'engagement',
-        event_label: outfitId
-      });
-    }
-  };
-
-  const handleShopOutfit = (outfitId: string) => {
-    const outfit = outfits.find(o => o.id === outfitId);
-    if (!outfit) return;
+  // New function to generate alternative outfit
+  const handleGenerateNewLook = async (outfitId: string, index: number) => {
+    if (!psychographicProfile) return;
     
-    // Calculate total price
-    const totalPrice = outfit.items.reduce((sum, item) => sum + item.price, 0);
+    // Set loading state for this specific outfit
+    setGeneratingNewLook(prev => ({ ...prev, [outfitId]: true }));
     
-    // Track shop click
+    // Track regeneration event
     if (typeof window.gtag === 'function') {
-      window.gtag('event', 'shop_outfit', {
-        event_category: 'conversion',
+      window.gtag('event', 'next_look_clicked', {
+        event_category: 'engagement',
         event_label: outfitId,
-        value: totalPrice
+        value: regenerationCount + 1
       });
     }
     
-    // For now, just scroll to items
-    document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleProductClick = (item: any) => {
-    // Track product click
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'product_click', {
-        event_category: 'ecommerce',
-        event_label: `${item.retailer}_${item.id}`,
-        item_id: item.id,
-        item_name: item.name,
-        item_brand: item.brand,
-        item_category: item.category,
-        price: item.price,
-        currency: 'EUR'
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      
+      // Generate a new outfit with higher variation
+      const newOutfit = generateOutfits(
+        psychographicProfile.type, 
+        curatedItems, 
+        'high'
+      )[0];
+      
+      if (!newOutfit) {
+        throw new Error('Failed to generate new outfit');
+      }
+      
+      // Update the outfits array with the new outfit
+      setOutfits(prevOutfits => {
+        const updatedOutfits = [...prevOutfits];
+        updatedOutfits[index] = {
+          ...newOutfit,
+          id: `${outfitId}_alt_${Date.now()}` // Ensure unique ID
+        };
+        return updatedOutfits;
       });
+      
+      // Increment regeneration count
+      setRegenerationCount(prev => prev + 1);
+      
+      // Show regeneration feedback after 2+ regenerations
+      if (regenerationCount >= 1 && !showRegenerationFeedback) {
+        setShowRegenerationFeedback(true);
+      }
+      
+      // Show success toast
+      toast.success('Nieuwe look gegenereerd!');
+      
+    } catch (err) {
+      console.error('Error generating new look:', err);
+      toast.error('Kon geen nieuwe look genereren. Probeer het later opnieuw.');
+    } finally {
+      setGeneratingNewLook(prev => ({ ...prev, [outfitId]: false }));
     }
-    
-    // Open product page
-    window.open(item.url, '_blank', 'noopener,noreferrer');
   };
 
-  const handleFeedbackSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Track feedback submission
+  const handleRegenerationFeedback = (isHelpful: boolean) => {
+    // Track regeneration feedback
     if (typeof window.gtag === 'function') {
-      window.gtag('event', 'feedback_submit', {
+      window.gtag('event', 'regeneration_feedback', {
         event_category: 'engagement',
-        event_label: 'results_feedback'
+        event_label: isHelpful ? 'helpful' : 'not_helpful',
+        value: regenerationCount
       });
     }
     
-    setFeedbackGiven(true);
-    setShowFeedbackForm(false);
-    setFeedbackText('');
+    setShowRegenerationFeedback(false);
     
-    // Show success message or toast notification
-    alert('Bedankt voor je feedback!');
+    // Show thank you message
+    toast.success('Bedankt voor je feedback!');
   };
 
   const userName = user?.name?.split(' ')[0] || '';
@@ -570,13 +691,13 @@ const EnhancedResultsPage: React.FC = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="w-16 h-16 border-4 border-[#FF8600] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <h2 className="text-2xl font-bold text-white mb-2">
             Jouw stijladvies wordt gegenereerd...
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-white/80">
             Onze AI analyseert je voorkeuren en stelt je persoonlijke stijlprofiel samen
           </p>
         </div>
@@ -587,29 +708,34 @@ const EnhancedResultsPage: React.FC = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-          <div className="bg-red-100 dark:bg-red-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertTriangle className="text-red-500" size={32} />
+      <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] flex items-center justify-center p-4">
+        <div className="glass-card p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 mx-auto mb-6 text-red-500">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-            Oeps, er is iets misgegaan
+          <h2 className="text-2xl font-bold text-white mb-3">
+            Er is iets misgegaan
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-white/80 mb-6">
             We konden je stijladvies niet laden. Dit kan komen door een tijdelijk probleem. Probeer het opnieuw of ga terug naar de homepage.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button 
               variant="primary"
               onClick={fetchStyleRecommendations}
-              icon={<RefreshCw size={16} />}
+              icon={<RotateCw size={16} />}
               iconPosition="left"
             >
               Probeer opnieuw
             </Button>
             <Button 
-              variant="outline"
+              variant="ghost"
               onClick={() => navigate('/')}
+              className="text-white border border-white/30 hover:bg-white/10"
             >
               Terug naar home
             </Button>
@@ -620,7 +746,7 @@ const EnhancedResultsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
       {/* Profile Introduction */}
       {psychographicProfile && (
         <ProfileIntroduction 
@@ -629,50 +755,72 @@ const EnhancedResultsPage: React.FC = () => {
         />
       )}
 
-      {/* Outfits Carousel */}
+      {/* Outfits */}
       {outfits.length > 0 && (
         <div className="py-8">
-          <div className="max-w-screen-md mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+          <div className="container-slim">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Jouw persoonlijke outfit suggesties
             </h2>
             
-            <div className="space-y-8">
-              {outfits.map(outfit => (
-                <OutfitCard
+            <div className="space-y-12">
+              {outfits.map((outfit, index) => (
+                <EnhancedResultsOutfitCard 
                   key={outfit.id}
-                  id={outfit.id}
-                  title={outfit.title}
-                  description={outfit.description}
-                  matchPercentage={outfit.matchPercentage}
-                  imageUrl={outfit.imageUrl}
-                  items={outfit.items}
-                  tags={outfit.tags}
-                  occasions={outfit.occasions}
-                  explanation={outfit.explanation}
-                  isSaved={savedOutfits.includes(outfit.id)}
-                  onSave={handleSaveOutfit}
-                  onLike={handleLikeOutfit}
-                  onDislike={handleDislikeOutfit}
-                  onShopClick={handleShopOutfit}
+                  outfit={outfit}
+                  onNewLook={() => handleGenerateNewLook(outfit.id, index)}
+                  isGenerating={!!generatingNewLook[outfit.id]}
                 />
               ))}
             </div>
+            
+            {/* Regeneration Feedback */}
+            {showRegenerationFeedback && (
+              <motion.div 
+                className="mt-8 glass-card p-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h3 className="text-lg font-bold text-white mb-4 text-center">
+                  Heb je gevonden wat je zocht?
+                </h3>
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    variant="secondary"
+                    onClick={() => handleRegenerationFeedback(true)}
+                    icon={<ThumbsUp size={16} />}
+                    iconPosition="left"
+                  >
+                    Ja, perfect!
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleRegenerationFeedback(false)}
+                    icon={<ThumbsDown size={16} />}
+                    iconPosition="left"
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Nog niet helemaal
+                  </Button>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Daily Style Tip Section */}
-      <DailyStyleTipSection />
+      {/* Daily Style Tip */}
+      <DailyStyleTip />
 
       {/* Curated Products Section */}
       {curatedItems.length > 0 && (
-        <div id="products-section" className="py-8">
-          <div className="max-w-screen-md mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+        <div className="py-8" id="products-section">
+          <div className="container-slim">
+            <h2 className="text-2xl font-bold text-white mb-2 text-center">
               Curated voor jouw {psychographicProfile?.title} stijl
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
+            <p className="text-white/80 text-center mb-8">
               Handpicked items die perfect passen bij jouw persoonlijkheid
             </p>
             
@@ -680,8 +828,8 @@ const EnhancedResultsPage: React.FC = () => {
               {curatedItems.slice(0, 6).map(item => (
                 <div 
                   key={item.id} 
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                  onClick={() => handleProductClick(item)}
+                  className="glass-card overflow-hidden hover:border-[#FF8600]/50 transition-all duration-300 cursor-pointer"
+                  onClick={() => window.open(item.url, '_blank', 'noopener,noreferrer')}
                 >
                   <div className="relative">
                     <img 
@@ -689,64 +837,38 @@ const EnhancedResultsPage: React.FC = () => {
                       alt={item.name} 
                       className="w-full h-48 object-cover"
                       loading="lazy"
+                      onError={(e) => { 
+                        e.currentTarget.onerror = null; 
+                        e.currentTarget.src = '/placeholder.png'; 
+                      }}
                     />
-                    <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <div className="absolute top-3 right-3 bg-[#0D1B2A]/90 px-2 py-1 rounded-full text-xs font-medium text-white/90">
                       {item.retailer}
                     </div>
-                    {!item.inStock && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="text-white font-semibold">Uitverkocht</span>
-                      </div>
-                    )}
                   </div>
                   
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h3 className="font-medium text-white mb-1">
                       {item.name}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="text-sm text-white/60 mb-2">
                       {item.brand} • {item.category}
                     </p>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-lg font-bold text-gray-900 dark:text-white">
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-white">
                         €{item.price.toFixed(2)}
                       </span>
-                      <div className="flex items-center text-yellow-400">
-                        <Star size={14} className="fill-current" />
-                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">4.8</span>
-                      </div>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(item.url, '_blank', 'noopener,noreferrer');
+                        }}
+                      >
+                        Bekijk
+                      </Button>
                     </div>
-                    
-                    {/* Sizes */}
-                    <div className="mb-3">
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Beschikbare maten:</div>
-                      <div className="flex flex-wrap gap-1">
-                        {item.sizes.slice(0, 4).map((size: string, index: number) => (
-                          <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
-                            {size}
-                          </span>
-                        ))}
-                        {item.sizes.length > 4 && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            +{item.sizes.length - 4}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      fullWidth
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleProductClick(item);
-                      }}
-                      icon={<ShoppingBag size={14} />}
-                      iconPosition="left"
-                    >
-                      Koop bij {item.retailer}
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -757,54 +879,61 @@ const EnhancedResultsPage: React.FC = () => {
 
       {/* Privacy Reassurance */}
       <div className="py-8">
-        <div className="max-w-screen-md mx-auto px-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+        <div className="container-slim">
+          <motion.div 
+            className="glass-card p-6 border border-[#0ea5e9]/20"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             <div className="flex items-start">
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full mr-4 flex-shrink-0">
-                <ShieldCheck className="text-blue-600 dark:text-blue-400" size={24} />
+              <div className="text-[#0ea5e9] mr-4 flex-shrink-0">
+                <ShieldCheck size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-bold text-white mb-2">
                   Jouw privacy is onze prioriteit
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-2">
-                  🔒 Je foto is direct na analyse verwijderd en wordt nooit opgeslagen of gedeeld.
+                <p className="text-white/90 mb-2">
+                  Je foto is direct na analyse verwijderd en wordt nooit opgeslagen of gedeeld.
                 </p>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-white/90">
                   Al je gegevens zijn end-to-end versleuteld en worden alleen gebruikt om je persoonlijke stijladvies te verbeteren.
                 </p>
-                <a href="/juridisch" className="text-blue-600 dark:text-blue-400 font-medium mt-2 inline-block hover:underline">
-                  Meer over onze privacygarantie →
-                </a>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Pro Upsell Banner */}
       {user && !user.isPremium && (
         <div className="py-8">
-          <div className="max-w-screen-md mx-auto px-4">
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 rounded-xl text-white p-6">
+          <div className="container-slim">
+            <motion.div 
+              className="glass-card p-6 border border-[#FF8600]/20"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
               <div className="flex flex-col md:flex-row items-center">
                 <div className="md:w-2/3 mb-6 md:mb-0">
-                  <h3 className="text-xl font-bold mb-2">Upgrade naar Premium</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">Upgrade naar Premium</h3>
                   <p className="text-white/90 mb-4">
                     Krijg toegang tot onbeperkte outfit aanbevelingen, seizoensgebonden updates en persoonlijke styling tips.
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center">
-                      <CheckCircle className="text-white mr-2 flex-shrink-0" size={16} />
-                      <span>Onbeperkte outfit aanbevelingen</span>
+                      <CheckCircle className="text-[#FF8600] mr-2 flex-shrink-0" size={16} />
+                      <span className="text-white/90">Onbeperkte outfit aanbevelingen</span>
                     </div>
                     <div className="flex items-center">
-                      <CheckCircle className="text-white mr-2 flex-shrink-0" size={16} />
-                      <span>Seizoensgebonden garderobe updates</span>
+                      <CheckCircle className="text-[#FF8600] mr-2 flex-shrink-0" size={16} />
+                      <span className="text-white/90">Seizoensgebonden garderobe updates</span>
                     </div>
                     <div className="flex items-center">
-                      <CheckCircle className="text-white mr-2 flex-shrink-0" size={16} />
-                      <span>Gedetailleerd stijladvies</span>
+                      <CheckCircle className="text-[#FF8600] mr-2 flex-shrink-0" size={16} />
+                      <span className="text-white/90">Gedetailleerd stijladvies</span>
                     </div>
                   </div>
                 </div>
@@ -812,83 +941,25 @@ const EnhancedResultsPage: React.FC = () => {
                   <Button 
                     as="a"
                     href="/prijzen" 
-                    variant="secondary"
-                    className="bg-white text-orange-600 hover:bg-gray-100 w-full"
+                    variant="primary"
+                    fullWidth
                   >
                     Upgrade naar Premium
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       )}
 
-      {/* Feedback Section */}
-      <div className="py-8">
-        <div className="max-w-screen-md mx-auto px-4 text-center">
-          {!feedbackGiven && !showFeedbackForm ? (
-            <div>
-              <p className="text-gray-700 dark:text-gray-300 mb-4">
-                Hoe vond je deze stijlaanbevelingen?
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => setShowFeedbackForm(true)}
-                icon={<Send size={16} />}
-                iconPosition="left"
-              >
-                Stuur feedback
-              </Button>
-            </div>
-          ) : showFeedbackForm ? (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                Deel je gedachten over je stijladvies
-              </h3>
-              <form onSubmit={handleFeedbackSubmit}>
-                <textarea
-                  value={feedbackText}
-                  onChange={(e) => setFeedbackText(e.target.value)}
-                  placeholder="Wat vond je van je stijlaanbevelingen? Hoe kunnen we ze verbeteren?"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors mb-4"
-                  rows={4}
-                  required
-                ></textarea>
-                <div className="flex justify-end space-x-3">
-                  <Button
-                    variant="outline"
-                    type="button"
-                    onClick={() => setShowFeedbackForm(false)}
-                  >
-                    Annuleren
-                  </Button>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    disabled={!feedbackText.trim()}
-                  >
-                    Verstuur feedback
-                  </Button>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="text-green-600 dark:text-green-400 font-medium">
-              ✅ Bedankt voor je feedback!
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Navigation */}
-      <div className="py-10 max-w-screen-md mx-auto px-4 text-center">
+      <div className="py-10 container-slim text-center">
         <div className="space-y-4">
           <Button
             variant="primary"
             size="lg"
             onClick={() => navigate('/dashboard')}
-            className="w-full sm:w-auto"
           >
             Ga naar Dashboard
           </Button>
@@ -896,7 +967,7 @@ const EnhancedResultsPage: React.FC = () => {
           <div>
             <button
               onClick={() => navigate('/quiz/1')}
-              className="text-orange-500 hover:text-orange-600 transition-colors text-sm font-medium"
+              className="text-[#FF8600] hover:text-orange-400 transition-colors text-sm font-medium"
             >
               Quiz opnieuw doen
             </button>
@@ -905,19 +976,13 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
 
       {/* Mobile Sticky CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0D1B2A] border-t border-white/10 p-4 z-50">
         <Button
           variant="primary"
           fullWidth
-          onClick={() => {
-            // Scroll to products section
-            document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          icon={<ShoppingBag size={18} />}
-          iconPosition="left"
-          className="animate-pulse hover:animate-none"
+          onClick={() => navigate('/dashboard')}
         >
-          Shop Complete Look
+          Ga naar Dashboard
         </Button>
       </div>
     </div>

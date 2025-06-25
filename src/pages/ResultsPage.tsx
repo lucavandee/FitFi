@@ -14,7 +14,8 @@ import {
   TrendingUp,
   ChevronDown,
   ChevronUp,
-  ShieldCheck
+  ShieldCheck,
+  CheckCircle
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
@@ -126,7 +127,7 @@ const ProfileIntroduction: React.FC<{ profile: PsychographicProfile; userName?: 
 }) => {
   return (
     <div className="py-8">
-      <div className="max-w-screen-md mx-auto">
+      <div className="max-w-screen-md mx-auto px-4">
         <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-8 animate-fade-in transition-colors">
           <div className="flex items-start space-x-4">
             <div className="text-4xl">{profile.icon}</div>
@@ -163,7 +164,7 @@ const DailyStyleTipSection: React.FC = () => {
 
   return (
     <div className="py-8">
-      <div className="max-w-screen-md mx-auto">
+      <div className="max-w-screen-md mx-auto px-4">
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800 transition-colors">
           <div className="flex items-start space-x-4">
             <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
@@ -244,7 +245,7 @@ const ResultsPage: React.FC = () => {
     }
 
     viewRecommendation();
-  }, [quizAnswers]);
+  }, [quizAnswers, viewRecommendation]);
 
   const handleProductClick = (item: any) => {
     // Track product click
@@ -389,7 +390,7 @@ const ResultsPage: React.FC = () => {
 
       {/* Curated Products Section */}
       {curatedItems.length > 0 && (
-        <div className="py-8">
+        <div className="py-8" id="products-section">
           <div className="max-w-screen-md mx-auto px-4">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
               Curated voor jouw {psychographicProfile?.title} stijl
@@ -411,6 +412,10 @@ const ResultsPage: React.FC = () => {
                       alt={item.name} 
                       className="w-full h-48 object-cover"
                       loading="lazy"
+                      onError={(e) => { 
+                        e.currentTarget.onerror = null; 
+                        e.currentTarget.src = '/placeholder.png'; 
+                      }}
                     />
                     <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
                       {item.retailer}

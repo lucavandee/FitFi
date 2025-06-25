@@ -20,7 +20,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   width,
   height,
   quality = 80,
-  placeholder,
+  placeholder = '/placeholder.png',
   onLoad,
   onError
 }) => {
@@ -58,25 +58,34 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const handleError = () => {
     setHasError(true);
     onError?.();
+    
+    // Log error to analytics if available
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'image_load_error', {
+        event_category: 'error',
+        event_label: src,
+        non_interaction: true
+      });
+    }
   };
 
   return (
     <div className={`relative overflow-hidden ${className}`} ref={imgRef}>
       {/* Placeholder */}
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
+        <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 animate-pulse flex items-center justify-center">
           {placeholder ? (
             <img src={placeholder} alt="" className="w-full h-full object-cover opacity-50" />
           ) : (
-            <div className="w-8 h-8 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-2 border-neutral-300 border-t-orange-500 rounded-full animate-spin"></div>
           )}
         </div>
       )}
 
       {/* Error state */}
       {hasError && (
-        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-          <div className="text-center text-gray-500 dark:text-gray-400">
+        <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+          <div className="text-center text-neutral-500 dark:text-neutral-400">
             <div className="text-2xl mb-2">📷</div>
             <div className="text-sm">Image failed to load</div>
           </div>
