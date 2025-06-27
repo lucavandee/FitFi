@@ -2,16 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useUser } from "../context/UserContext";
 import { Card, CardContent } from "../components/ui/card";
 import { Loader } from "../components/Loader";
-import dutchProducts from "../data/dutchProducts"; 
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
 import { ShoppingBag } from "lucide-react";
-
-// Toggle to enable/disable Supabase
-const USE_SUPABASE = false;
+import { Product, UserProfile, Outfit, generateRecommendations } from "../engine";
 
 // Fallback user if there's no context or localStorage-user
-const fallbackUser = {
+const fallbackUser: UserProfile = {
   id: "fallback",
   name: "Stijlzoeker",
   email: "anoniem@fitfi.ai",
@@ -26,30 +23,6 @@ const fallbackUser = {
   isPremium: false,
   savedRecommendations: [],
 };
-
-// Product type definition
-interface Product {
-  id: string;
-  name: string;
-  imageUrl?: string;
-  type?: string;
-  styleTags?: string[];
-  description?: string;
-  price?: number;
-  brand?: string;
-  affiliateUrl?: string;
-  matchScore?: number;
-}
-
-// Outfit type definition
-interface Outfit {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  products: Product[];
-  matchPercentage: number;
-}
 
 const EnhancedResultsPage = () => {
   const { user: contextUser } = useUser() || {};
@@ -68,184 +41,41 @@ const EnhancedResultsPage = () => {
     return contextUser || localStorageUser || fallbackUser;
   }, [contextUser]);
 
-  // Calculate match score based on stylePreferences
-  const calculateScore = (product: Product) => {
-    if (!product.styleTags || !user?.stylePreferences) return 0;
-
-    return product.styleTags.reduce((score, tag) => {
-      const preference = user.stylePreferences[tag as keyof typeof user.stylePreferences] || 0;
-      return score + preference;
-    }, 0);
-  };
-
-  // Generate outfits from products
-  const generateOutfits = (products: Product[]): Outfit[] => {
-    if (products.length < 3) return [];
-    
-    // Group products by type
-    const productsByType: Record<string, Product[]> = {};
-    products.forEach(product => {
-      const type = product.type || 'Other';
-      if (!productsByType[type]) {
-        productsByType[type] = [];
-      }
-      productsByType[type].push(product);
-    });
-    
-    // Generate 3 outfits with different combinations
-    const outfits: Outfit[] = [];
-    
-    // Try to create outfits with different product types
-    for (let i = 0; i < 3; i++) {
-      const outfitProducts: Product[] = [];
-      
-      // Try to get one product of each type
-      Object.keys(productsByType).forEach(type => {
-        if (productsByType[type].length > 0) {
-          // Get a product we haven't used yet if possible
-          const availableProducts = productsByType[type].filter(
-            p => !outfits.some(o => o.products.some(op => op.id === p.id))
-          );
-          
-          if (availableProducts.length > 0) {
-            outfitProducts.push(availableProducts[0]);
-          } else if (productsByType[type].length > 0) {
-            // Reuse a product if necessary
-            outfitProducts.push(productsByType[type][0]);
-          }
-        }
-      });
-      
-      if (outfitProducts.length >= 2) {
-        // Calculate average match score for the outfit
-        const avgMatchScore = outfitProducts.reduce(
-          (sum, p) => sum + (p.matchScore || 0), 
-          0
-        ) / outfitProducts.length;
-        
-        outfits.push({
-          id: `outfit-${i + 1}`,
-          title: `Outfit ${i + 1}`,
-          description: `Een perfecte combinatie voor jouw ${user.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijl.`,
-          imageUrl: outfitProducts[0]?.imageUrl || '/placeholder.png',
-          products: outfitProducts,
-          matchPercentage: Math.round(avgMatchScore * 20) // Convert to percentage
-        });
-      }
-    }
-    
-    console.log('Generated outfits:', outfits.length);
-    return outfits;
-  };
-
-  // Fetch products and generate recommendations
+  // Generate recommendations using the recommendation engine
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadRecommendations = async () => {
       setLoading(true);
       setError(null);
       
       try {
-        // Determine user's style profile
-        const userStyle = determineUserStyle(user);
-        console.log('Profile type:', userStyle);
+        console.log('Generating recommendations for user:', user.name);
         
-        let products: Product[] = [];
+        // Use the recommendation engine to generate outfits
+        const generatedOutfits = generateRecommendations(user);
         
-        if (USE_SUPABASE) {
-          // This section is disabled but kept for future reactivation
-          console.log('Supabase is disabled – using fallback data');
-          
-          // Simulate Supabase products (would be replaced with actual Supabase call)
-          const supabaseProducts: Product[] = [];
-          console.log('Supabase products found:', supabaseProducts.length);
-          
-          if (supabaseProducts.length > 0) {
-            products = supabaseProducts;
-          } else {
-            console.log('No Supabase products found, using curated products fallback');
-            products = getCuratedProductsByStyle(userStyle);
-          }
-        } else {
-          // Use local data directly
-          console.log('Supabase uitgeschakeld – fallback actief');
-          products = getCuratedProductsByStyle(userStyle);
-        }
-        
-        // Calculate match scores and sort products
-        const productsWithScores = products.map(product => ({
-          ...product,
-          matchScore: calculateScore(product)
-        })).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
-        
-        console.log('Curated products found:', productsWithScores.length);
-        
-        // Ensure we have at least 6 products by duplicating if necessary
-        let finalProducts = [...productsWithScores];
-        while (finalProducts.length < 6 && productsWithScores.length > 0) {
-          finalProducts = [...finalProducts, ...productsWithScores.slice(0, Math.min(6 - finalProducts.length, productsWithScores.length))];
-        }
-        
-        setMatchedProducts(finalProducts);
-        
-        // Generate outfits from products
-        const generatedOutfits = generateOutfits(finalProducts);
-        console.log('Generated outfits:', generatedOutfits.length);
+        // Set outfits
         setOutfits(generatedOutfits);
         
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Er is een fout opgetreden bij het laden van de producten.');
+        // Extract all products from outfits for the product grid
+        const allProducts = generatedOutfits.flatMap(outfit => outfit.products);
         
-        // Use fallback products in case of error
-        const fallbackProducts = getCuratedProductsByStyle('casual_chic');
-        setMatchedProducts(fallbackProducts);
+        // Remove duplicates by ID
+        const uniqueProducts = allProducts.filter((product, index, self) => 
+          index === self.findIndex(p => p.id === product.id)
+        );
+        
+        setMatchedProducts(uniqueProducts);
+        
+      } catch (err) {
+        console.error('Error generating recommendations:', err);
+        setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
       } finally {
         setLoading(false);
       }
     };
     
-    fetchProducts();
+    loadRecommendations();
   }, [user]);
-
-  // Determine user style based on preferences
-  const determineUserStyle = (user: any): string => {
-    if (!user || !user.stylePreferences) return 'casual_chic';
-    
-    const prefs = user.stylePreferences;
-    
-    // Find the highest preference
-    const highestPref = Object.entries(prefs).reduce(
-      (highest, [key, value]) => (value > highest.value ? { key, value } : highest),
-      { key: '', value: 0 }
-    );
-    
-    // Map preference to style
-    const styleMap: Record<string, string> = {
-      casual: 'casual_chic',
-      formal: 'klassiek',
-      sporty: 'urban',
-      vintage: 'retro',
-      minimalist: 'luxury'
-    };
-    
-    return styleMap[highestPref.key] || 'casual_chic';
-  };
-
-  // Get curated products by style
-  const getCuratedProductsByStyle = (style: string): Product[] => {
-    // Convert Dutch products to our Product interface
-    return dutchProducts.map(product => ({
-      id: product.id,
-      name: product.name,
-      imageUrl: product.imageUrl || '/placeholder.png',
-      type: product.type,
-      styleTags: product.styleTags,
-      description: `Prachtige ${product.type?.toLowerCase() || 'item'} in ${product.styleTags?.join(', ') || 'veelzijdige'} stijl.`,
-      price: Math.floor(Math.random() * 100) + 20, // Random price between 20-120
-      brand: product.brand || 'FitFi Collection',
-      affiliateUrl: product.affiliateUrl || '#'
-    }));
-  };
 
   // Handle product click
   const handleProductClick = (product: Product) => {
@@ -261,6 +91,21 @@ const EnhancedResultsPage = () => {
     
     // Open product page or affiliate link
     window.open(product.affiliateUrl || '#', '_blank', 'noopener,noreferrer');
+  };
+
+  // Handle outfit click
+  const handleOutfitClick = (outfit: Outfit) => {
+    // Track click in analytics
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'outfit_click', {
+        event_category: 'ecommerce',
+        event_label: outfit.id,
+        outfit_id: outfit.id,
+        outfit_name: outfit.title,
+        outfit_archetype: outfit.archetype,
+        outfit_occasion: outfit.occasion
+      });
+    }
   };
 
   if (loading) return <Loader />;
@@ -299,10 +144,14 @@ const EnhancedResultsPage = () => {
           <h2 className="text-xl font-bold mb-4">Complete outfits voor jou</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {outfits.map((outfit) => (
-              <Card key={outfit.id} className="overflow-hidden">
+              <Card 
+                key={outfit.id} 
+                className="overflow-hidden hover:border-orange-500/50 transition-all cursor-pointer"
+                onClick={() => handleOutfitClick(outfit)}
+              >
                 <div className="relative h-60">
                   <ImageWithFallback
-                    src={outfit.imageUrl}
+                    src={outfit.imageUrl || outfit.products[0]?.imageUrl || '/placeholder.png'}
                     alt={outfit.title}
                     className="w-full h-full object-cover"
                     componentName="OutfitCard"
@@ -314,6 +163,21 @@ const EnhancedResultsPage = () => {
                 <CardContent className="p-4">
                   <h3 className="font-bold text-lg mb-1">{outfit.title}</h3>
                   <p className="text-sm text-gray-400 mb-3">{outfit.description}</p>
+                  
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {outfit.tags.slice(0, 3).map((tag, index) => (
+                      <span key={index} className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                        #{tag}
+                      </span>
+                    ))}
+                    {outfit.tags.length > 3 && (
+                      <span className="text-xs text-white/60">
+                        +{outfit.tags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                  
                   <div className="flex justify-between items-center">
                     <span className="text-sm">
                       {outfit.products.length} items • €{outfit.products.reduce((sum, p) => sum + (p.price || 0), 0).toFixed(2)}
@@ -323,6 +187,13 @@ const EnhancedResultsPage = () => {
                       size="sm"
                       icon={<ShoppingBag size={14} />}
                       iconPosition="left"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Open first product or do something else
+                        if (outfit.products[0]) {
+                          handleProductClick(outfit.products[0]);
+                        }
+                      }}
                     >
                       Shop Look
                     </Button>
