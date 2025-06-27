@@ -12,7 +12,7 @@ import { isValidImageUrl } from '../utils/imageUtils';
 const SIMULATED_DELAY = 800;
 
 // Simulated success rate (0-1)
-const SIMULATED_SUCCESS_RATE = 0.8;
+const SIMULATED_SUCCESS_RATE = 1.0;
 
 /**
  * Fetch data from the Bolt API with error handling and fallbacks
