@@ -1,34 +1,29 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react({
-      // Forceer de automatische JSX-runtime voor React 17+ syntax
-      jsxRuntime: 'automatic',
-      // Expliciet importSource voor consistentie
-      jsxImportSource: 'react',
+      jsxRuntime: "automatic",         // Voor React 17+ JSX
+      jsxImportSource: "react",        // Nodig voor dingen zoals emotion / styled-components
     }),
   ],
-  optimizeDeps: {
-    // Exclude lucide-react from dependency pre-bundling
-    exclude: ['lucide-react'],
-  },
   resolve: {
-    // Optioneel: alias configuratie voor overzichtelijke imports
     alias: {
-      '@': '/src',
+      "@": path.resolve(__dirname, "./src"), // Hiermee werkt @/ naar src/
     },
   },
+  optimizeDeps: {
+    exclude: ["lucide-react"], // Vermijd pre-bundling voor deze lib
+  },
   server: {
-    // Optioneel: configureer dev server poort en open browser
-    port: 3000,
-    open: true,
+    port: 3000,    // Start lokale server op poort 3000
+    open: true,    // Open browser automatisch
   },
   build: {
-    // Public base path of environment afhandelen
-    outDir: 'dist',
-    sourcemap: true,
+    outDir: "dist",     // Output folder
+    sourcemap: true,    // Handig voor debugging
   },
 });
