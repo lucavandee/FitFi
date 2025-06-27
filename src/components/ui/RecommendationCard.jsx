@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShoppingBag, ExternalLink } from 'lucide-react';
+import { ShoppingBag, ExternalLink, Clock } from 'lucide-react';
 import Button from './Button';
+import ImageWithFallback from './ImageWithFallback';
 
 const RecommendationCard = ({ item, className = '' }) => {
   const handleProductClick = () => {
@@ -24,16 +25,13 @@ const RecommendationCard = ({ item, className = '' }) => {
 
   return (
     <div className={`glass-card p-6 space-y-4 hover:border-[#FF8600]/50 transition-all duration-300 ${className}`}>
-      {/* Product Image */}
+      {/* Product Image with Dynamic Loading */}
       <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-[#1B263B]">
-        <img
+        <ImageWithFallback
           src={item.imageUrl}
           alt={item.name}
           className="h-full w-full object-cover"
-          onError={(e) => { 
-            e.currentTarget.onerror = null; 
-            e.currentTarget.src = '/placeholder.png'; 
-          }}
+          componentName="RecommendationCard"
         />
         
         {/* Retailer badge */}
@@ -83,6 +81,14 @@ const RecommendationCard = ({ item, className = '' }) => {
             </div>
           )}
         </div>
+
+        {/* Urgency indicator */}
+        {item.urgencyMessage && (
+          <div className="inline-flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full space-x-1 text-xs">
+            <Clock className="h-3 w-3" />
+            <span>{item.urgencyMessage}</span>
+          </div>
+        )}
 
         {/* Action buttons */}
         <Button

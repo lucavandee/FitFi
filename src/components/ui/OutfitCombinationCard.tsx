@@ -1,21 +1,47 @@
 import React, { useState } from 'react';
 import { 
-  Heart, 
-  Share2, 
-  ShoppingBag, 
-  Star, 
   ExternalLink, 
-  ChevronRight,
-  Eye,
-  Bookmark,
-  BookmarkCheck,
-  Clock,
-  Zap,
-  Award,
-  TrendingUp
+  Star, 
+  Clock, 
+  Zap, 
+  Award, 
+  TrendingUp,
+  ShoppingBag,
+  Heart,
+  ChevronRight
 } from 'lucide-react';
 import Button from './Button';
-import { OutfitCombination, trackCompleteOutfitClick, generateCompleteOutfitAffiliateLink } from '../../data/outfitCombinations';
+import ImageWithFallback from './ImageWithFallback';
+
+interface OutfitItem {
+  category: 'top' | 'bottom' | 'accessoire' | 'schoenen';
+  productId: string;
+  name: string;
+  brand: string;
+  price: number;
+  imageUrl: string;
+  retailer: string;
+  affiliateLink: string;
+}
+
+interface OutfitCombination {
+  id: string;
+  name: string;
+  description: string;
+  style: string;
+  occasion: string[];
+  mockupImageUrl: string;
+  items: OutfitItem[];
+  totalPrice: number;
+  matchPercentage: number;
+  tags: string[];
+  seasonality: 'lente' | 'zomer' | 'herfst' | 'winter' | 'alle_seizoenen';
+  psychologicalTrigger: string;
+  urgencyMessage: string;
+  personalizedMessage: string;
+  popularityIndicator?: string;
+  exclusiveOffer?: string;
+}
 
 interface OutfitCombinationCardProps {
   outfit: OutfitCombination;
@@ -31,28 +57,13 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
   className = '' 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleCompleteOutfitClick = () => {
-    trackCompleteOutfitClick(outfit, 'outfit_card');
-    const affiliateLink = generateCompleteOutfitAffiliateLink(outfit);
-    window.open(affiliateLink, '_blank', 'noopener,noreferrer');
+    // Track click and open affiliate link
+    window.open(outfit.items[0]?.affiliateLink || '#', '_blank', 'noopener,noreferrer');
   };
 
-  const handleItemClick = (item: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'individual_item_click', {
-        event_category: 'ecommerce',
-        event_label: `${item.retailer}_${item.productId}`,
-        item_id: item.productId,
-        item_name: item.name,
-        item_brand: item.brand,
-        item_category: item.category,
-        price: item.price,
-        currency: 'EUR'
-      });
-    }
-    
+  const handleItemClick = (item: OutfitItem) => {
     window.open(item.affiliateLink, '_blank', 'noopener,noreferrer');
   };
 
@@ -76,79 +87,35 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
     } else {
       // Fallback to clipboard
       navigator.clipboard.writeText(window.location.href);
-      // You could show a toast notification here
     }
-
-    if (typeof window.trackOutfitShare === 'function') {
-      window.trackOutfitShare(outfit.id, 'native_share');
-    }
-  };
-
-  const getRetailerColor = (retailer: string): string => {
-    const colors = {
-      'Zalando': 'bg-orange-500',
-      'Wehkamp': 'bg-blue-600',
-      'H&M NL': 'bg-red-500',
-      'ASOS NL': 'bg-black',
-      'Bol.com': 'bg-blue-500',
-      'De Bijenkorf': 'bg-purple-600'
-    };
-    return colors[retailer] || 'bg-gray-600';
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${className}`}>
-      {/* Header with outfit image and match percentage */}
+    <div className={`glass-card overflow-hidden transition-all duration-300 hover:border-[#FF8600]/50 cursor-pointer group ${className}`}>
+      {/* Header with outfit image */}
       <div className="relative">
-        <div className="aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-700">
-          {!imageLoaded && (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
-          <img 
+        <div className="aspect-[4/5] overflow-hidden bg-[#1B263B]">
+          <ImageWithFallback 
             src={outfit.mockupImageUrl} 
             alt={outfit.name}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setImageLoaded(true)}
+            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+            componentName="OutfitCombinationCard"
           />
           
           {/* Match percentage badge */}
-          <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center animate-pulse">
-            <Star size={14} className="mr-1 fill-current" />
+          <div className="absolute top-4 left-4 bg-[#0D1B2A]/90 text-[#FF8600] px-3 py-1 rounded-full text-sm font-bold flex items-center">
+            <Star size={14} className="mr-1" />
             {outfit.matchPercentage}% Match
           </div>
           
           {/* Popularity indicator */}
           {outfit.popularityIndicator && (
-            <div className="absolute top-4 right-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
+            <div className="absolute top-4 right-4 bg-[#0ea5e9]/90 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
               <TrendingUp size={12} className="mr-1" />
               HOT
             </div>
           )}
           
-          {/* Quick actions */}
-          <div className="absolute bottom-4 right-4 flex space-x-2">
-            <button 
-              onClick={handleSave}
-              className={`p-2 rounded-full transition-all ${
-                isSaved 
-                  ? 'bg-orange-100 text-orange-500 dark:bg-orange-900/30' 
-                  : 'bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800'
-              }`}
-              aria-label={isSaved ? 'Opgeslagen in favorieten' : 'Opslaan in favorieten'}
-            >
-              {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-            </button>
-            <button 
-              onClick={handleShare}
-              className="p-2 rounded-full bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 transition-colors"
-              aria-label="Deel outfit"
-            >
-              <Share2 size={16} />
-            </button>
-          </div>
-
           {/* Seasonality indicator */}
           <div className="absolute bottom-4 left-4 bg-black/70 text-white px-2 py-1 rounded-md text-xs">
             {outfit.seasonality === 'alle_seizoenen' ? '🌟 Alle seizoenen' : `🍂 ${outfit.seasonality.charAt(0).toUpperCase() + outfit.seasonality.slice(1)}`}
@@ -160,42 +127,27 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
       <div className="p-6">
         {/* Title and description */}
         <div className="mb-4">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h3 className="text-xl font-bold text-white mb-2">
             {outfit.name}
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+          <p className="text-white/80 text-sm leading-relaxed">
             {outfit.description}
           </p>
         </div>
 
         {/* Psychological Trigger */}
-        <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border-l-4 border-orange-500">
-          <p className="text-sm text-orange-700 dark:text-orange-300 font-medium flex items-center">
-            <Zap size={14} className="mr-2" />
+        <div className="mb-4 p-3 bg-[#FF8600]/10 rounded-lg border-l-2 border-[#FF8600]">
+          <p className="text-sm text-white/90 font-medium flex items-center">
+            <Zap size={14} className="mr-2 text-[#FF8600]" />
             {outfit.psychologicalTrigger}
           </p>
         </div>
 
         {/* Personalized Message */}
-        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <p className="text-sm text-blue-700 dark:text-blue-300 italic">
+        <div className="mb-4 p-3 bg-[#0ea5e9]/10 rounded-lg border border-[#0ea5e9]/20">
+          <p className="text-sm text-white/90 italic">
             💫 {outfit.personalizedMessage}
           </p>
-        </div>
-
-        {/* Popularity and Exclusive Offer */}
-        <div className="flex items-center justify-between mb-4">
-          {outfit.popularityIndicator && (
-            <div className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full flex items-center">
-              🔥 {outfit.popularityIndicator}
-            </div>
-          )}
-          {outfit.exclusiveOffer && (
-            <div className="text-xs text-purple-600 dark:text-purple-400 font-medium bg-purple-50 dark:bg-purple-900/20 px-2 py-1 rounded-full flex items-center">
-              <Award size={12} className="mr-1" />
-              {outfit.exclusiveOffer}
-            </div>
-          )}
         </div>
 
         {/* Tags */}
@@ -203,22 +155,22 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
           {outfit.tags.slice(0, 3).map((tag, index) => (
             <span 
               key={index}
-              className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md text-xs"
+              className="px-2 py-1 bg-white/5 text-white/80 rounded-md text-xs"
             >
               #{tag}
             </span>
           ))}
           {outfit.tags.length > 3 && (
-            <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-md text-xs">
+            <span className="px-2 py-1 bg-white/5 text-white/60 rounded-md text-xs">
               +{outfit.tags.length - 3} meer
             </span>
           )}
         </div>
 
         {/* Urgency Message */}
-        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-          <p className="text-sm text-red-700 dark:text-red-300 font-medium flex items-center">
-            <Clock size={14} className="mr-2" />
+        <div className="mb-4 p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+          <p className="text-sm text-white/90 font-medium flex items-center">
+            <Clock size={14} className="mr-2 text-red-400" />
             ⏰ {outfit.urgencyMessage}
           </p>
         </div>
@@ -226,10 +178,10 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
         {/* Price and main CTA */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+            <span className="text-2xl font-bold text-white">
               €{outfit.totalPrice.toFixed(2)}
             </span>
-            <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+            <span className="text-sm text-white/60 ml-2">
               complete look
             </span>
           </div>
@@ -240,19 +192,18 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
             onClick={handleCompleteOutfitClick}
             icon={<ShoppingBag size={16} />}
             iconPosition="left"
-            className="whitespace-nowrap animate-pulse hover:animate-none"
           >
-            Shop Complete Look
+            Shop Look
           </Button>
         </div>
 
         {/* Expandable items section */}
-        <div className="border-t dark:border-gray-700 pt-4">
+        <div className="border-t border-white/10 pt-4">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-orange-500 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-white/80 hover:text-[#FF8600] transition-colors"
           >
-            <span>Bekijk alle items ({outfit.items.length}) 👀</span>
+            <span>Bekijk alle items ({outfit.items.length})</span>
             <ChevronRight 
               size={16} 
               className={`transform transition-transform ${isExpanded ? 'rotate-90' : ''}`}
@@ -264,66 +215,40 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
               {outfit.items.map((item, index) => (
                 <div 
                   key={index}
-                  className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer group"
+                  className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer group"
                   onClick={() => handleItemClick(item)}
                 >
-                  <img 
+                  <ImageWithFallback 
                     src={item.imageUrl} 
                     alt={item.name}
                     className="w-12 h-12 object-cover rounded-md group-hover:scale-105 transition-transform"
+                    componentName={`OutfitCombinationCard_Item_${index}`}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        <p className="text-sm font-medium text-white truncate">
                           {item.name}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-white/60">
                           {item.brand} • {item.category}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-gray-900 dark:text-white">
+                        <p className="text-sm font-bold text-white">
                           €{item.price.toFixed(2)}
                         </p>
-                        <div className={`${getRetailerColor(item.retailer)} text-white px-2 py-0.5 rounded text-xs`}>
+                        <div className="text-xs text-white/60">
                           {item.retailer}
                         </div>
                       </div>
                     </div>
                   </div>
-                  <ExternalLink size={14} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+                  <ExternalLink size={14} className="text-white/40 group-hover:text-[#FF8600] transition-colors" />
                 </div>
               ))}
-              
-              {/* Individual items summary */}
-              <div className="flex justify-between items-center pt-2 border-t dark:border-gray-600 text-sm">
-                <span className="text-gray-600 dark:text-gray-400">
-                  💡 Of koop items apart:
-                </span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  €{outfit.items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
-                </span>
-              </div>
             </div>
           )}
-        </div>
-
-        {/* Occasions */}
-        <div className="mt-4 pt-4 border-t dark:border-gray-700">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-            <span>✨ Perfect voor:</span>
-            <div className="flex space-x-1">
-              {outfit.occasion.slice(0, 3).map((occ, index) => (
-                <span key={index} className="capitalize">
-                  {occ}{index < Math.min(outfit.occasion.length - 1, 2) ? ', ' : ''}
-                </span>
-              ))}
-              {outfit.occasion.length > 3 && (
-                <span>+{outfit.occasion.length - 3}</span>
-              )}
-            </div>
-          </div>
         </div>
       </div>
     </div>

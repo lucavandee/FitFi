@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './UserContext';
 import gamificationConfig from '../config/gamification.json';
+import { getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from '../services/supabaseService';
+import toast from 'react-hot-toast';
+import { isValidUUID, TEST_USER_ID } from '../lib/supabase';
 
 interface GamificationState {
   points: number;
@@ -51,7 +54,7 @@ interface GamificationContextType {
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
 
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useUser();
+  const { user, isSupabaseConnected } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [gamificationState, setGamificationState] = useState<GamificationState>({
     points: 0,
@@ -77,7 +80,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         level: 'beginner',
         badges: [],
         streak: 0,
-        dailyChallengeStatus: {},
+        dailyChallengeStatus: resetDailyChallenges(),
         referralCode: generateReferralCode(),
         lastCheckIn: null,
         completedChallenges: [],
@@ -88,21 +91,90 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setIsLoading(false);
   }, [user]);
 
-  const loadGamificationState = () => {
-    const savedState = localStorage.getItem(`fitfi-gamification-${user?.id}`);
-    if (savedState) {
-      try {
-        const parsed = JSON.parse(savedState);
-        setGamificationState({
-          ...parsed,
-          referralCode: parsed.referralCode || generateReferralCode()
-        });
-      } catch (error) {
-        console.error('Error loading gamification state:', error);
+  const loadGamificationState = async () => {
+    if (!user) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Try to get gamification data from Supabase
+      if (isSupabaseConnected) {
+        // Always use test user ID for development
+        const effectiveUserId = TEST_USER_ID;
+        
+        const gamificationData = await getUserGamification(effectiveUserId);
+        
+        if (gamificationData) {
+          const dailyChallengeStatus = await getDailyChallengeStatus(effectiveUserId);
+          
+          setGamificationState({
+            points: gamificationData.points || 0,
+            level: gamificationData.level || 'beginner',
+            badges: gamificationData.badges || [],
+            streak: gamificationData.streak || 0,
+            dailyChallengeStatus: dailyChallengeStatus || resetDailyChallenges(),
+            referralCode: gamificationData.referral_code || generateReferralCode(),
+            lastCheckIn: gamificationData.last_check_in,
+            completedChallenges: gamificationData.completed_challenges || [],
+            totalReferrals: gamificationData.total_referrals || 0,
+            seasonalEventProgress: gamificationData.seasonal_event_progress || {}
+          });
+          return;
+        }
+      }
+      
+      // Fallback to localStorage
+      const savedState = localStorage.getItem(`fitfi-gamification-${user.id}`);
+      if (savedState) {
+        try {
+          const parsed = JSON.parse(savedState);
+          setGamificationState({
+            ...parsed,
+            referralCode: parsed.referralCode || generateReferralCode(),
+            seasonalEventProgress: parsed.seasonalEventProgress || {}
+          });
+        } catch (error) {
+          console.error('Error loading gamification state:', error);
+          initializeNewUser();
+        }
+      } else {
         initializeNewUser();
       }
-    } else {
+    } catch (error) {
+      console.error('Error loading gamification state:', error);
       initializeNewUser();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getDailyChallengeStatus = async (userId: string): Promise<Record<string, boolean> | null> => {
+    try {
+      if (!isSupabaseConnected) return null;
+      
+      const challenges = await getDailyChallenges(userId);
+      
+      if (!challenges || challenges.length === 0) {
+        console.log('No daily challenges found, returning default status');
+        return resetDailyChallenges();
+      }
+      
+      const status: Record<string, boolean> = {};
+      
+      // Initialize all challenges as not completed
+      gamificationConfig.dailyChallenges.forEach(challenge => {
+        status[challenge.id] = false;
+      });
+      
+      // Update with completed challenges
+      challenges.forEach(challenge => {
+        status[challenge.challenge_id] = challenge.completed;
+      });
+      
+      return status;
+    } catch (error) {
+      console.error('Error getting daily challenge status:', error);
+      return resetDailyChallenges();
     }
   };
 
@@ -123,9 +195,36 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     saveGamificationState(newState);
   };
 
-  const saveGamificationState = (state: GamificationState) => {
-    if (user) {
-      localStorage.setItem(`fitfi-gamification-${user.id}`, JSON.stringify(state));
+  const saveGamificationState = async (state: GamificationState) => {
+    if (!user) return;
+    
+    // Save to localStorage as fallback
+    localStorage.setItem(`fitfi-gamification-${user.id}`, JSON.stringify(state));
+    
+    // Save to Supabase if connected
+    if (isSupabaseConnected) {
+      try {
+        // Always use test user ID for development
+        const effectiveUserId = TEST_USER_ID;
+        
+        if (!isValidUUID(effectiveUserId)) {
+          console.error('Invalid UUID format for saveGamificationState, skipping database update');
+          return;
+        }
+        
+        await updateUserGamification(effectiveUserId, {
+          points: state.points,
+          level: state.level,
+          badges: state.badges,
+          streak: state.streak,
+          last_check_in: state.lastCheckIn,
+          completed_challenges: state.completedChallenges,
+          total_referrals: state.totalReferrals,
+          seasonal_event_progress: state.seasonalEventProgress || {}
+        });
+      } catch (error) {
+        console.error('Error saving gamification state to Supabase:', error);
+      }
     }
   };
 
@@ -170,6 +269,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (newLevel !== gamificationState.level) {
       newState.level = newLevel;
       // Show level up notification
+      toast.success(`Level up! Je bent nu ${newLevel}!`);
+      
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'level_up', {
           event_category: 'gamification',
@@ -183,6 +284,14 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const newBadges = checkForNewBadges(newState, action);
     if (newBadges.length > 0) {
       newState.badges = [...new Set([...newState.badges, ...newBadges])];
+      
+      // Show badge notification
+      newBadges.forEach(badge => {
+        const badgeInfo = gamificationConfig.badges.find(b => b.id === badge);
+        if (badgeInfo) {
+          toast.success(`Nieuwe badge verdiend: ${badgeInfo.label}!`);
+        }
+      });
     }
 
     setGamificationState(newState);
@@ -279,7 +388,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const newState = {
       ...gamificationState,
       streak: newStreak,
-      lastCheckIn: today,
+      lastCheckIn: new Date().toISOString(),
       points: gamificationState.points + gamificationConfig.pointsPerAction.dailyCheckIn
     };
 
@@ -294,6 +403,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         value: newStreak
       });
     }
+    
+    toast.success(`Dagelijkse check-in: +${gamificationConfig.pointsPerAction.dailyCheckIn} punten!`);
   };
 
   const completeChallenge = async (challengeId: string) => {
@@ -304,6 +415,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const challenge = gamificationConfig.dailyChallenges.find(c => c.id === challengeId);
     if (!challenge) return;
 
+    // Update local state
     const newState = {
       ...gamificationState,
       dailyChallengeStatus: {
@@ -316,7 +428,25 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setGamificationState(newState);
     saveGamificationState(newState);
 
+    // Update Supabase if connected
+    if (user && isSupabaseConnected) {
+      try {
+        // Always use test user ID for development
+        const effectiveUserId = TEST_USER_ID;
+        
+        if (isValidUUID(effectiveUserId)) {
+          await completeSupabaseChallenge(effectiveUserId, challengeId);
+        } else {
+          console.error('Invalid UUID format for completeChallenge, skipping database update');
+        }
+      } catch (error) {
+        console.error('Error completing challenge in Supabase:', error);
+      }
+    }
+
     await addPoints(challenge.points, 'challenge');
+    
+    toast.success(`Uitdaging voltooid: +${challenge.points} punten!`);
   };
 
   const recordReferral = async (code: string) => {
@@ -333,6 +463,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // Bonus for multiple referrals
     if (newState.totalReferrals % gamificationConfig.referralRewards.bonusThreshold === 0) {
       await addPoints(gamificationConfig.referralRewards.bonusPoints, 'referral_bonus');
+      toast.success(`Referral bonus: +${gamificationConfig.referralRewards.bonusPoints} punten!`);
     }
   };
 
