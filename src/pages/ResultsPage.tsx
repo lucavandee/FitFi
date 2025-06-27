@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Heart, 
@@ -15,23 +15,23 @@ import {
   ChevronDown,
   ChevronUp,
   ShieldCheck,
-  CheckCircle
+  CheckCircle,
+  AlertCircle,
+  RotateCw
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../context/GamificationContext';
 import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../config/profile-mapping.js';
 import curatedProducts from '../config/curated-products.json';
+import ImageWithFallback from '../components/ui/ImageWithFallback';
 
 interface Outfit {
   id: string;
   title: string;
   description: string;
   matchPercentage: number;
-  imageUrlHero: string;
-  imageUrlMale?: string;
-  imageUrlFemale?: string;
-  imageUrlNeutral?: string;
+  imageUrl: string;
   items: {
     id: string;
     name: string;
@@ -44,9 +44,7 @@ interface Outfit {
   }[];
   tags: string[];
   occasions: string[];
-  psychologicalTrigger: string;
-  urgencyMessage: string;
-  personalizedMessage: string;
+  explanation: string;
 }
 
 interface PsychographicProfile {
@@ -221,6 +219,35 @@ const StarRating: React.FC<{ onRate: (rating: number) => void }> = ({ onRate }) 
   );
 };
 
+// Empty state component for when no products are found
+const EmptyState: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
+  return (
+    <div className="py-12 text-center">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
+        <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="text-orange-500" size={32} />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+          Geen producten gevonden
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          We konden geen producten vinden die bij jouw stijlprofiel passen. Dit kan een tijdelijk probleem zijn.
+        </p>
+        {onRetry && (
+          <Button
+            variant="primary"
+            onClick={onRetry}
+            icon={<RotateCw size={16} />}
+            iconPosition="left"
+          >
+            Probeer opnieuw
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -231,21 +258,69 @@ const ResultsPage: React.FC = () => {
   const [showCollapsiblePanel, setShowCollapsiblePanel] = useState(false);
   const [curatedItems, setCuratedItems] = useState<any[]>([]);
   const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const quizAnswers = location.state?.answers || {};
 
-  useEffect(() => {
-    const profile = analyzePsychographicProfile(quizAnswers);
-    setPsychographicProfile(profile);
+  // Fetch recommendations with timeout and error handling
+  const fetchRecommendations = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     
-    // Get curated products for this archetype
-    const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
-    if (curatedProfile && curatedProfile.items) {
-      setCuratedItems(curatedProfile.items.slice(0, 6)); // Show max 6 products
-    }
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+      setError("Het laden van de aanbevelingen duurde te lang. Probeer het opnieuw.");
+      console.error("Recommendation fetch timeout after 10 seconds");
+    }, 10000);
+    
+    try {
+      // Analyze profile
+      const profile = analyzePsychographicProfile(quizAnswers);
+      setPsychographicProfile(profile);
+      
+      // Get curated products for this archetype
+      const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
+      
+      // Log the profile and curated products for debugging
+      console.log('Profile type:', profile.type);
+      console.log('Found curated profile:', curatedProfile ? 'Yes' : 'No');
+      
+      if (curatedProfile && curatedProfile.items) {
+        console.log('Curated items found:', curatedProfile.items.length);
+        
+        // Map items to ensure imageUrl is used consistently
+        const mappedItems = curatedProfile.items.map(item => ({
+          ...item,
+          imageUrl: item.imageUrl || '/placeholder.png'
+        }));
+        
+        setCuratedItems(mappedItems.slice(0, 6)); // Show max 6 products
+      } else {
+        // Use fallback if no products found
+        console.warn("No products found for profile type:", profile.type);
+        setCuratedItems([]);
+      }
 
-    viewRecommendation();
+      viewRecommendation();
+      
+      // Clear the timeout since we're done
+      clearTimeout(timeoutId);
+      
+    } catch (err) {
+      console.error('Error fetching recommendations:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load recommendations');
+    } finally {
+      // Always clear the timeout and set loading to false
+      clearTimeout(timeoutId);
+      setIsLoading(false);
+    }
   }, [quizAnswers, viewRecommendation]);
+
+  useEffect(() => {
+    fetchRecommendations();
+  }, [fetchRecommendations]);
 
   const handleProductClick = (item: any) => {
     // Track product click
@@ -301,49 +376,62 @@ const ResultsPage: React.FC = () => {
 
   const userName = user?.name;
 
-  // Style tips based on archetype
-  const getStyleTips = (archetypeId: string): string[] => {
-    const tips: Record<string, string[]> = {
-      klassiek: [
-        "Investeer in tijdloze stukken van hoge kwaliteit die jaren meegaan.",
-        "Kies voor een neutrale kleurenpalet met navy, beige, wit en zwart als basis.",
-        "Let op de pasvorm - goed passende kleding is essentieel voor een klassieke look.",
-        "Accessoires houden het subtiel en elegant, zoals parels of een mooi horloge."
-      ],
-      casual_chic: [
-        "Mix casual items zoals jeans met meer verfijnde stukken zoals een blazer.",
-        "Kies voor comfortabele maar stijlvolle basics in natuurlijke materialen.",
-        "Accessoires kunnen je look upgraden - denk aan een statement tas of mooie sjaal.",
-        "Laagjes zijn je vriend voor een moeiteloze casual chic look."
-      ],
-      urban: [
-        "Functionele items met een stijlvolle twist zijn perfect voor jouw urban look.",
-        "Experimenteer met texturen en technische materialen voor een moderne uitstraling.",
-        "Sneakers zijn een must-have voor jouw stijl - investeer in een paar kwaliteitsmodellen.",
-        "Denk aan praktische accessoires zoals een crossbody tas of rugzak."
-      ],
-      streetstyle: [
-        "Durf te experimenteren met opvallende kleuren en prints.",
-        "Mix high-end met streetwear merken voor een authentieke look.",
-        "Oversized silhouetten en laagjes werken goed voor jouw stijl.",
-        "Statement sneakers of boots kunnen je hele outfit maken."
-      ],
-      retro: [
-        "Combineer vintage stukken met moderne basics voor een hedendaagse look.",
-        "Zoek naar kwaliteitsvolle vintage items die de tand des tijds doorstaan.",
-        "Experimenteer met verschillende decennia voor een unieke stijl.",
-        "Accessoires uit verschillende tijdperken kunnen je outfit compleet maken."
-      ],
-      luxury: [
-        "Investeer in hoogwaardige materialen zoals kasjmier, zijde en fijn leer.",
-        "Let op de details - perfecte afwerking en subtiele logo's zijn kenmerkend voor luxe.",
-        "Kies voor een verfijnde kleurenpalet met af en toe een statement stuk.",
-        "Kwaliteit boven kwantiteit - enkele perfecte stukken zijn beter dan veel middelmatige items."
-      ]
-    };
-    
-    return tips[archetypeId] || tips.casual_chic;
-  };
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Jouw stijladvies wordt gegenereerd...
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Onze AI analyseert je voorkeuren en stelt je persoonlijke stijlprofiel samen
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state with fallback content
+  if (error && !psychographicProfile) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+          <div className="bg-red-100 dark:bg-red-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="text-red-500" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            Er is iets misgegaan
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            We konden je stijladvies niet laden. Dit kan komen door een tijdelijk probleem. Probeer het opnieuw of ga terug naar de homepage.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button 
+              variant="primary"
+              onClick={fetchRecommendations}
+              icon={<RotateCw size={16} />}
+              iconPosition="left"
+            >
+              Probeer opnieuw
+            </Button>
+            
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/')}
+            >
+              Terug naar home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -371,7 +459,13 @@ const ResultsPage: React.FC = () => {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {getStyleTips(psychographicProfile.type).map((tip, index) => (
+                  {/* Fallback style tips if no specific ones are available */}
+                  {[
+                    "Investeer in tijdloze stukken van hoge kwaliteit die jaren meegaan.",
+                    "Kies voor een neutrale kleurenpalet als basis voor je garderobe.",
+                    "Let op de pasvorm - goed passende kleding is essentieel voor elke stijl.",
+                    "Accessoires kunnen je look upgraden - denk aan een statement tas of mooie sjaal."
+                  ].map((tip, index) => (
                     <div key={index} className="flex items-start">
                       <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full mr-3 mt-0.5">
                         <span className="text-purple-500 text-xs font-bold">{index + 1}</span>
@@ -389,16 +483,16 @@ const ResultsPage: React.FC = () => {
       )}
 
       {/* Curated Products Section */}
-      {curatedItems.length > 0 && (
-        <div className="py-8" id="products-section">
-          <div className="max-w-screen-md mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-              Curated voor jouw {psychographicProfile?.title} stijl
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
-              Handpicked items die perfect passen bij jouw persoonlijkheid
-            </p>
-            
+      <div className="py-8" id="products-section">
+        <div className="max-w-screen-md mx-auto px-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+            Curated voor jouw {psychographicProfile?.title} stijl
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
+            Handpicked items die perfect passen bij jouw persoonlijkheid
+          </p>
+          
+          {curatedItems && curatedItems.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {curatedItems.map(item => (
                 <div 
@@ -407,15 +501,11 @@ const ResultsPage: React.FC = () => {
                   onClick={() => handleProductClick(item)}
                 >
                   <div className="relative">
-                    <img 
+                    <ImageWithFallback 
                       src={item.imageUrl} 
                       alt={item.name} 
                       className="w-full h-48 object-cover"
-                      loading="lazy"
-                      onError={(e) => { 
-                        e.currentTarget.onerror = null; 
-                        e.currentTarget.src = '/placeholder.png'; 
-                      }}
+                      componentName={`ResultsPage_CuratedItem_${item.id}`}
                     />
                     <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
                       {item.retailer}
@@ -448,14 +538,22 @@ const ResultsPage: React.FC = () => {
                     <div className="mb-3">
                       <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Beschikbare maten:</div>
                       <div className="flex flex-wrap gap-1">
-                        {item.sizes.slice(0, 4).map((size: string, index: number) => (
-                          <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
-                            {size}
-                          </span>
-                        ))}
-                        {item.sizes.length > 4 && (
+                        {item.sizes && item.sizes.length > 0 ? (
+                          <>
+                            {item.sizes.slice(0, 4).map((size: string, index: number) => (
+                              <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
+                                {size}
+                              </span>
+                            ))}
+                            {item.sizes.length > 4 && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                +{item.sizes.length - 4}
+                              </span>
+                            )}
+                          </>
+                        ) : (
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            +{item.sizes.length - 4}
+                            Standaard maten
                           </span>
                         )}
                       </div>
@@ -478,9 +576,11 @@ const ResultsPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          ) : (
+            <EmptyState onRetry={fetchRecommendations} />
+          )}
         </div>
-      )}
+      </div>
 
       {/* Daily Style Tip Section */}
       <DailyStyleTipSection />
@@ -591,20 +691,24 @@ const ResultsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Sticky CTA - NEW */}
+      {/* Mobile Sticky CTA */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-50">
         <Button
           variant="primary"
           fullWidth
           onClick={() => {
-            // Scroll to products section
-            document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' });
+            // Scroll to products section if it exists, otherwise go to dashboard
+            const productsSection = document.getElementById('products-section');
+            if (productsSection) {
+              productsSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              navigate('/dashboard');
+            }
           }}
           icon={<ShoppingBag size={18} />}
           iconPosition="left"
-          className="animate-pulse hover:animate-none"
         >
-          Shop Complete Look
+          {curatedItems && curatedItems.length > 0 ? 'Bekijk producten' : 'Ga naar Dashboard'}
         </Button>
       </div>
     </div>

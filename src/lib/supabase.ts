@@ -1,20 +1,19 @@
 // src/lib/supabase.ts
 
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../types/supabase'; // Let op: pas dit pad aan als nodig
+import type { Database } from '../types/supabase'; // Let op: pad afhankelijk van jouw projectstructuur
+import type { UserProfile } from '../context/UserContext';
 
-// 1. Haal Supabase config uit env (met fallback voor development)
+// Supabase config ophalen
 const supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL || 'https://wojexzgjyhijuxzperhq.supabase.co';
-const supabaseAnonKey: string = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NTM2NDAsImV4cCI6MjA2NjQyOTY0MH0.nLozOsn1drQPvRuSWRl_gLsh0_EvgtjidiUxpdUnhg0';
+const supabaseAnonKey: string = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1Ni...'; // ingekort voor leesbaarheid
 
-// 2. Warn als env ontbreekt (mag NIET in productie, dus check je Netlify/Vercel!)
+// Fallback waarschuwing in development
 if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  console.warn(
-    '[Supabase] Supabase URL or anon key missing in .env – using hardcoded fallback. Zet altijd je env vars goed!'
-  );
+  console.warn('[Supabase] URL of anon key ontbreekt in .env – fallback actief!');
 }
 
-// 3. Maak de client aan, met beste settings voor frontend
+// Supabase client aanmaken
 const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -22,7 +21,7 @@ const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// 4. Utility: Error handling
+// Helpers
 export function handleSupabaseError(error: Error | null, fallbackMessage: string = 'Er ging iets mis') {
   if (error) {
     console.error('[Supabase] Error:', error);
@@ -31,27 +30,68 @@ export function handleSupabaseError(error: Error | null, fallbackMessage: string
   return fallbackMessage;
 }
 
-// 5. Utility: Connection check (gebruik in health checks)
 export async function checkSupabaseConnection(): Promise<boolean> {
   try {
     const { error } = await supabase.from('users').select('id').limit(1);
-    if (error) {
-      console.error('[Supabase] Connection check error:', error);
-    }
     return !error;
   } catch (err) {
-    console.error('[Supabase] Fatal connection error:', err);
+    console.error('[Supabase] Connection check failed:', err);
     return false;
   }
 }
 
-// 6. Utility: UUID validatie
 export function isValidUUID(uuid: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
 }
 
-// 7. (DEV) Test user voor lokale dev of test scenarios
 export const TEST_USER_ID = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
 
-// 8. Export default client voor gebruik door hele app
+// ---------- DATA FUNCTIES ----------
+
+export async function getUserById(id: string): Promise<UserProfile | null> {
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+  if (error) {
+    console.error('[Supabase] getUserById error:', error);
+    return null;
+  }
+  return data as UserProfile;
+}
+
+export async function createUser(profile: Partial<UserProfile>): Promise<UserProfile | null> {
+  const { data, error } = await supabase.from('users').insert(profile).select().single();
+  if (error) {
+    console.error('[Supabase] createUser error:', error);
+    return null;
+  }
+  return data as UserProfile;
+}
+
+export async function updateUser(id: string, updates: Partial<UserProfile>): Promise<UserProfile | null> {
+  const { data, error } = await supabase.from('users').update(updates).eq('id', id).select().single();
+  if (error) {
+    console.error('[Supabase] updateUser error:', error);
+    return null;
+  }
+  return data as UserProfile;
+}
+
+export async function saveOutfit(userId: string, outfitId: string): Promise<boolean> {
+  const { error } = await supabase.from('saved_outfits').insert({ user_id: userId, outfit_id: outfitId });
+  if (error) {
+    console.error('[Supabase] saveOutfit error:', error);
+    return false;
+  }
+  return true;
+}
+
+export async function unsaveOutfit(userId: string, outfitId: string): Promise<boolean> {
+  const { error } = await supabase.from('saved_outfits').delete().eq('user_id', userId).eq('outfit_id', outfitId);
+  if (error) {
+    console.error('[Supabase] unsaveOutfit error:', error);
+    return false;
+  }
+  return true;
+}
+
+// Export client als default
 export default supabase;

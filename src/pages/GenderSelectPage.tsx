@@ -4,6 +4,7 @@ import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
+import ImageWithFallback from '../components/ui/ImageWithFallback';
 
 const GenderSelectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,6 +27,12 @@ const GenderSelectPage: React.FC = () => {
     
     // Navigate to quiz
     navigate('/quiz/1');
+  };
+
+  const imgSrc = {
+    male: '/images/gender/male.png',
+    female: '/images/gender/female.png',
+    neutral: '/images/gender/neutral.png'
   };
 
   const totalSteps = 4;
@@ -96,6 +103,21 @@ const GenderSelectPage: React.FC = () => {
                   </motion.button>
                 ))}
               </div>
+
+              {/* Illustration */}
+              {selectedGender && (
+                <div className="mt-8 text-center animate-fade-in">
+                  <ImageWithFallback 
+                    src={imgSrc[selectedGender]} 
+                    alt={`Ik ben ${selectedGender}`} 
+                    className="mx-auto h-48 w-auto rounded-lg"
+                    onError={(originalSrc) => {
+                      console.warn(`Gender image failed to load: ${originalSrc}`);
+                    }}
+                    componentName="GenderSelectPage"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Privacy indicator */}
