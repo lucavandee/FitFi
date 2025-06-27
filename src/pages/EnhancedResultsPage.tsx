@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, RotateCw, ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
+import { ArrowRight, ShieldCheck, RotateCw, ThumbsUp, ThumbsDown, CheckCircle, AlertCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../context/GamificationContext';
@@ -10,7 +10,8 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import supabase from "../lib/supabase";
 import ImageWithFallback from '../components/ui/ImageWithFallback';
-
+import { Card, CardContent } from "../components/ui/card";
+import { Loader } from "../components/Loader";
 
 // Types
 interface Outfit {
@@ -115,11 +116,48 @@ const generateExplanation = (archetypeId: string, occasionType: string): string 
         "Deze formele outfit brengt een verrassende streetstyle twist naar een geklede setting, perfect voor jouw unieke stijl.",
         "Voor jouw streetstyle voorkeur hebben we deze formele look gecreëerd die de regels breekt maar toch gepast is voor speciale gelegenheden."
       ]
+    },
+    retro: {
+      werk: [
+        "Deze outfit brengt jouw retro stijl naar een professionele setting met vintage-geïnspireerde elementen die toch modern blijven.",
+        "Voor jouw retro voorkeur hebben we deze werkoutfit samengesteld die nostalgisch is maar toch professioneel."
+      ],
+      casual: [
+        "Deze casual look weerspiegelt jouw retro stijl met vintage elementen en een nostalgische uitstraling voor dagelijks gebruik.",
+        "Voor jouw retro smaak hebben we deze praktische maar stijlvolle outfit samengesteld die perfect is voor casual dagen."
+      ],
+      formeel: [
+        "Deze formele outfit brengt een retro twist naar een geklede setting, perfect voor jouw stijl bij speciale gelegenheden.",
+        "Voor jouw retro voorkeur hebben we deze formele look gecreëerd die nostalgisch en onderscheidend is."
+      ]
+    },
+    luxury: {
+      werk: [
+        "Deze outfit brengt jouw luxe stijl naar een professionele setting met hoogwaardige materialen en een verfijnde uitstraling.",
+        "Voor jouw luxe voorkeur hebben we deze werkoutfit samengesteld die exclusiviteit uitstraalt in een professionele context."
+      ],
+      casual: [
+        "Deze casual look weerspiegelt jouw luxe stijl met premium materialen en een verfijnde uitstraling voor dagelijks gebruik.",
+        "Voor jouw luxe smaak hebben we deze ontspannen maar stijlvolle outfit samengesteld die comfort combineert met exclusiviteit."
+      ],
+      formeel: [
+        "Deze formele outfit belichaamt jouw luxe stijl met exclusieve stukken en een onberispelijke uitstraling voor speciale gelegenheden.",
+        "Voor jouw luxe voorkeur hebben we deze formele look gecreëerd die pure elegantie en verfijning uitstraalt."
+      ]
     }
   };
-  const occasion = occasionType in (explanations[archetypeId] || {}) ? occasionType : 'casual';
-  const archetypeExplanations = explanations[archetypeId] || explanations.casual_chic;
-  const occasionExplanations = archetypeExplanations[occasion] || archetypeExplanations.casual;
+  
+  // Fallback to casual_chic if archetype not found
+  const defaultArchetype = 'casual_chic';
+  const archetype = archetypeId in explanations ? archetypeId : defaultArchetype;
+  
+  // Fallback to casual if occasion not found
+  const defaultOccasion = 'casual';
+  const occasion = occasionType in explanations[archetype] ? occasionType : defaultOccasion;
+  
+  const archetypeExplanations = explanations[archetype];
+  const occasionExplanations = archetypeExplanations[occasion];
+  
   return occasionExplanations[Math.floor(Math.random() * occasionExplanations.length)];
 };
 
@@ -137,20 +175,11 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
       explanation: "Deze outfit is samengesteld op basis van jouw stijlvoorkeuren. De combinatie van items creëert een gebalanceerde look die zowel stijlvol als comfortabel is."
     }];
   }
-  const archetype = DUTCH_ARCHETYPES[archetypeId];
-  if (!archetype) {
-    return [{
-      id: `fallback_outfit_${Date.now()}`,
-      title: "Stijlvolle Casual Look",
-      description: "Een veelzijdige outfit die perfect past bij jouw stijlvoorkeuren.",
-      matchPercentage: 85,
-      imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
-      items: [],
-      tags: ["casual", "veelzijdig", "stijlvol"],
-      occasions: ["casual", "dagelijks"],
-      explanation: "Deze outfit is samengesteld op basis van jouw stijlvoorkeuren. De combinatie van items creëert een gebalanceerde look die zowel stijlvol als comfortabel is."
-    }];
-  }
+  
+  // Fallback to casual_chic if archetype not found
+  const defaultArchetype = 'casual_chic';
+  const archetype = DUTCH_ARCHETYPES[archetypeId] || DUTCH_ARCHETYPES[defaultArchetype];
+  
   const productsByCategory: Record<string, any[]> = {};
   products.forEach(product => {
     if (!productsByCategory[product.category]) {
@@ -158,12 +187,15 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
     }
     productsByCategory[product.category].push(product);
   });
+  
   const occasions = ['werk', 'casual', 'formeel'];
   const outfits: Outfit[] = [];
+  
   occasions.forEach((occasion, index) => {
     const outfitItems = [];
     const usedCategories = new Set();
     const majorCategories = ['Tops', 'Broeken', 'Jassen', 'Schoenen', 'Accessoires'];
+    
     for (const category of majorCategories) {
       if (productsByCategory[category] && productsByCategory[category].length > 0) {
         let randomIndex = 0;
@@ -182,6 +214,8 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         usedCategories.add(category);
       }
     }
+    
+    // If we don't have enough items, add from other categories
     if (outfitItems.length < 3) {
       Object.entries(productsByCategory).forEach(([category, categoryProducts]) => {
         if (!usedCategories.has(category) && categoryProducts.length > 0 && outfitItems.length < 4) {
@@ -191,14 +225,18 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         }
       });
     }
+    
+    // If we still don't have enough items, add random products
     while (outfitItems.length < 3 && products.length > 0) {
       const randomIndex = Math.floor(Math.random() * products.length);
       outfitItems.push(products[randomIndex]);
     }
+    
     let matchPercentageBase = 85;
     if (variationLevel === 'high') matchPercentageBase = 80;
     else if (variationLevel === 'medium') matchPercentageBase = 83;
     const matchPercentage = Math.floor(Math.random() * 14) + matchPercentageBase;
+    
     const tags = [];
     if (archetype) {
       const keywords = [...archetype.keywords];
@@ -210,6 +248,7 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         }
       }
     }
+    
     const outfitOccasions = [];
     if (archetype) {
       const archetypeOccasions = [...archetype.occasions];
@@ -221,7 +260,9 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         }
       }
     }
+    
     const explanation = generateExplanation(archetypeId, occasion);
+    
     outfits.push({
       id: `outfit_${archetypeId}_${index}_${Date.now()}`,
       title: `${archetype.displayName} ${occasion === 'werk' ? 'Werk' : occasion === 'formeel' ? 'Formele' : 'Casual'} Look`,
@@ -243,6 +284,7 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
       explanation
     });
   });
+  
   return outfits;
 };
 
@@ -258,9 +300,11 @@ const analyzePsychographicProfile = (answers: Record<string, any>): Psychographi
       icon: '🌟'
     };
   }
+  
   const archetypeId = mapAnswersToArchetype(answers);
   const archetype = getArchetypeById(archetypeId);
   const gender = answers.gender;
+  
   return {
     type: archetypeId,
     title: archetype.displayName,
@@ -487,7 +531,7 @@ const EnhancedResultsPage: React.FC = () => {
     }, 10000);
 
     try {
-      // Analyze profiel
+      // Analyze profile
       const profile = analyzePsychographicProfile(quizAnswers);
       setPsychographicProfile(profile);
       
@@ -521,7 +565,40 @@ const EnhancedResultsPage: React.FC = () => {
       // If no products from Supabase, use curated products as fallback
       if (!products.length) {
         console.log("No Supabase products found, using curated products fallback");
-        const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
+        
+        // Find the exact profile type first
+        let curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
+        
+        // If not found, try to find a similar profile type
+        if (!curatedProfile) {
+          // Map from our profile type to one of the available curated profiles
+          const fallbackMappings: Record<string, string> = {
+            'klassiek': 'klassiek',
+            'casual_chic': 'casual_chic',
+            'urban': 'urban',
+            'streetstyle': 'streetstyle',
+            'retro': 'retro',
+            'luxury': 'luxury',
+            // Add fallbacks for any missing types
+            'mindful_minimalist': 'klassiek',
+            'refined_minimalist': 'klassiek',
+            'professional_classic': 'klassiek',
+            'timeless_elegance': 'klassiek',
+            'urban_trendsetter': 'urban',
+            'creative_individualist': 'streetstyle',
+            'free_spirit': 'retro',
+            'comfort_conscious': 'casual_chic',
+            'sophisticated_modern': 'luxury',
+            'balanced_explorer': 'casual_chic'
+          };
+          
+          // Get the fallback profile type or default to casual_chic
+          const fallbackType = fallbackMappings[profile.type] || 'casual_chic';
+          console.log(`Profile type ${profile.type} not found in curated products, using fallback: ${fallbackType}`);
+          
+          curatedProfile = curatedProducts.profiles.find(p => p.id === fallbackType);
+        }
+        
         products = (curatedProfile && curatedProfile.items) || [];
         
         // Ensure all products have imageUrl
