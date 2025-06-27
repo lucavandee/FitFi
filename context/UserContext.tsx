@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import supabase, {
   isValidUUID,
-  TEST_USER_ID,
+  TEST_USER_ID
+} from '../lib/supabase';
+import {
   getUserById,
   createUser,
   updateUser,
   saveOutfit,
   unsaveOutfit
-} from '../lib/supabase';
+} from '../services/supabaseService';
 import toast from 'react-hot-toast';
 
 export type StylePreference = {

@@ -4,10 +4,11 @@ import { Card, CardContent } from "../components/ui/card";
 import { Loader } from "../components/Loader";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
-import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info } from "lucide-react";
+import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit, generateRecommendations, getRecommendedProducts } from "../engine";
 import { getCurrentSeason, getDutchSeasonName, getProductCategory } from "../engine/helpers";
 import { fetchProductsFromSupabase } from "../lib/supabaseService";
+import { getZalandoProducts } from "../data/zalandoProductsAdapter";
 
 // Fallback user if there's no context or localStorage-user
 const fallbackUser: UserProfile = {
@@ -37,7 +38,7 @@ const EnhancedResultsPage = () => {
   const [regenerationCount, setRegenerationCount] = useState<number>(0);
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [outfitCompleteness, setOutfitCompleteness] = useState<Record<string, number>>({});
-  const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<'supabase' | 'zalando' | 'local'>('local');
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -69,22 +70,11 @@ const EnhancedResultsPage = () => {
         
         // Check if we got products from Supabase
         if (supabaseProducts && supabaseProducts.length > 0) {
-          // Convert Supabase products to our internal format
-          const formattedProducts = supabaseProducts.map(product => ({
-            id: product.id,
-            name: product.name,
-            imageUrl: product.image_url,
-            description: product.description,
-            affiliateUrl: product.affiliate_url,
-            type: product.type,
-            brand: product.brand,
-            price: product.price ? parseFloat(product.price) : undefined,
-            tags: product.tags,
-            // Add any other necessary fields
-          }));
+          console.log("Supabase products loaded:", supabaseProducts.length);
+          setDataSource('supabase');
           
           // Use the recommendation engine with Supabase products
-          const generatedOutfits = generateRecommendations(user);
+          const generatedOutfits = await generateRecommendations(user);
           
           // Set outfits
           setOutfits(generatedOutfits);
@@ -103,42 +93,71 @@ const EnhancedResultsPage = () => {
           setOutfitCompleteness(completeness);
           
           // Get recommended individual products
-          const recommendedProducts = getRecommendedProducts(user, 9, season);
+          const recommendedProducts = await getRecommendedProducts(user, 9, season);
           setMatchedProducts(recommendedProducts);
-          
-          setIsUsingFallback(false);
         } else {
-          // Fallback to local data
-          console.log('Supabase uitgeschakeld – fallback actief');
-          setIsUsingFallback(true);
+          // Try to load Zalando products
+          const zalandoProducts = await getZalandoProducts();
           
-          // Use the recommendation engine to generate outfits
-          const generatedOutfits = generateRecommendations(user);
-          
-          // Track shown outfit IDs
-          const outfitIds = generatedOutfits.map(outfit => outfit.id);
-          setShownOutfitIds(outfitIds);
-          
-          // Set outfits
-          setOutfits(generatedOutfits);
-          
-          // Track completeness
-          const completeness: Record<string, number> = {};
-          generatedOutfits.forEach(outfit => {
-            if (outfit.completeness) {
-              completeness[outfit.id] = outfit.completeness;
-            }
-          });
-          setOutfitCompleteness(completeness);
-          
-          // Get recommended individual products
-          const recommendedProducts = getRecommendedProducts(user, 9, season);
-          setMatchedProducts(recommendedProducts);
+          if (zalandoProducts && zalandoProducts.length > 0) {
+            console.log('[FitFi] Zalando fallback actief – producten geladen:', zalandoProducts.length);
+            setDataSource('zalando');
+            
+            // Use the recommendation engine with Zalando products
+            const generatedOutfits = await generateRecommendations(user, { useZalandoProducts: true });
+            
+            // Set outfits
+            setOutfits(generatedOutfits);
+            
+            // Track shown outfit IDs
+            const outfitIds = generatedOutfits.map(outfit => outfit.id);
+            setShownOutfitIds(outfitIds);
+            
+            // Track completeness
+            const completeness: Record<string, number> = {};
+            generatedOutfits.forEach(outfit => {
+              if (outfit.completeness) {
+                completeness[outfit.id] = outfit.completeness;
+              }
+            });
+            setOutfitCompleteness(completeness);
+            
+            // Get recommended individual products
+            const recommendedProducts = await getRecommendedProducts(user, 9, season, true);
+            setMatchedProducts(recommendedProducts);
+          } else {
+            // Fallback to local data
+            console.log('Supabase uitgeschakeld – lokale fallback actief');
+            setDataSource('local');
+            
+            // Use the recommendation engine to generate outfits
+            const generatedOutfits = await generateRecommendations(user, { useZalandoProducts: false });
+            
+            // Track shown outfit IDs
+            const outfitIds = generatedOutfits.map(outfit => outfit.id);
+            setShownOutfitIds(outfitIds);
+            
+            // Set outfits
+            setOutfits(generatedOutfits);
+            
+            // Track completeness
+            const completeness: Record<string, number> = {};
+            generatedOutfits.forEach(outfit => {
+              if (outfit.completeness) {
+                completeness[outfit.id] = outfit.completeness;
+              }
+            });
+            setOutfitCompleteness(completeness);
+            
+            // Get recommended individual products
+            const recommendedProducts = await getRecommendedProducts(user, 9, season, false);
+            setMatchedProducts(recommendedProducts);
+          }
         }
       } catch (err) {
         console.error('Error generating recommendations:', err);
         setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
-        setIsUsingFallback(true);
+        setDataSource('local');
       } finally {
         setLoading(false);
       }
@@ -206,18 +225,15 @@ const EnhancedResultsPage = () => {
       // Get current season
       const season = getCurrentSeason();
       
-      // Use the recommendation engine to generate a new outfit
-      // We'll use all products and filter by season in the engine
-      const allProducts = [...matchedProducts];
-      
       // Generate a new outfit with the same parameters but excluding shown IDs
-      const generatedOutfits = generateRecommendations(user, {
+      const generatedOutfits = await generateRecommendations(user, {
         excludeIds: shownOutfitIds,
         count: 1,
         preferredOccasions: [occasion],
         variationLevel: 'high', // Use high variation for regeneration
         enforceCompletion: true,
-        minCompleteness: 90 // Higher completeness for regenerated outfits
+        minCompleteness: 90, // Higher completeness for regenerated outfits
+        useZalandoProducts: dataSource === 'zalando'
       });
       
       if (generatedOutfits.length === 0) {
@@ -293,7 +309,11 @@ const EnhancedResultsPage = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <p className="text-white/80 mb-2 md:mb-0">
             Hallo {user.name || 'daar'}! Deze aanbevelingen zijn gebaseerd op jouw {user.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijlvoorkeuren.
-            {isUsingFallback && <span className="ml-2 text-orange-400">(Fallback modus actief)</span>}
+            {dataSource !== 'supabase' && (
+              <span className="ml-2 text-orange-400">
+                ({dataSource === 'zalando' ? 'Zalando' : 'Lokale'} fallback actief)
+              </span>
+            )}
           </p>
           <div className="flex items-center bg-white/10 px-3 py-1 rounded-full">
             <Calendar size={16} className="mr-2 text-orange-500" />
@@ -301,6 +321,37 @@ const EnhancedResultsPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Data source info banner */}
+      {dataSource === 'zalando' && (
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <Info size={20} className="text-blue-400 mr-3 mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium text-white mb-1">Zalando producten geladen</h3>
+              <p className="text-white/70 text-sm">
+                We gebruiken momenteel Zalando producten voor je aanbevelingen. 
+                Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {dataSource === 'local' && (
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <AlertTriangle size={20} className="text-orange-400 mr-3 mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium text-white mb-1">Lokale fallback actief</h3>
+              <p className="text-white/70 text-sm">
+                We gebruiken momenteel lokale data voor je aanbevelingen. 
+                Verbinding met externe productbronnen is niet beschikbaar.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Outfits section */}
       {outfits.length > 0 && (
@@ -527,23 +578,24 @@ const EnhancedResultsPage = () => {
       </div>
       
       {/* Data source info */}
-      {isUsingFallback && (
-        <div className="mt-8 p-4 bg-white/5 rounded-lg">
-          <div className="flex items-start">
-            <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
-            <div>
-              <h3 className="font-medium text-white mb-1">Fallback modus actief</h3>
-              <p className="text-white/70 text-sm">
-                We gebruiken momenteel lokale data voor je aanbevelingen. 
-                Verbinding met de database is niet beschikbaar.
-              </p>
-            </div>
+      <div className="mt-8 p-4 bg-white/5 rounded-lg">
+        <div className="flex items-start">
+          <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
+          <div>
+            <h3 className="font-medium text-white mb-1">Databron: {dataSource === 'supabase' ? 'Supabase' : dataSource === 'zalando' ? 'Zalando' : 'Lokaal'}</h3>
+            <p className="text-white/70 text-sm">
+              {dataSource === 'supabase' 
+                ? 'We gebruiken Supabase als databron voor je aanbevelingen.'
+                : dataSource === 'zalando'
+                  ? 'We gebruiken Zalando producten als fallback voor je aanbevelingen.'
+                  : 'We gebruiken lokale data als fallback voor je aanbevelingen.'}
+            </p>
           </div>
         </div>
-      )}
+      </div>
       
       {/* Regeneration info */}
-      <div className="mt-8 p-4 bg-white/5 rounded-lg">
+      <div className="mt-4 p-4 bg-white/5 rounded-lg">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
           <div>
