@@ -1,38 +1,45 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Star, Heart, ShoppingBag, ExternalLink, Clock, Zap, Award, TrendingUp } from 'lucide-react';
-import { DutchProduct, trackAffiliateClick } from '../../data/dutchProducts';
 import Button from './Button';
+import ImageWithFallback from './ImageWithFallback';
 
-interface ProductCarouselProps {
-  products: DutchProduct[];
-  title: string;
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  price: number;
+  originalPrice?: number;
+  imageUrl: string;
+  retailer: string;
+  url: string;
   category: string;
+  description?: string;
+  rating?: number;
+  reviewCount?: number;
 }
 
-const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, category }) => {
+interface ProductCarouselProps {
+  products: Product[];
+  title: string;
+  category: string;
+  onProductClick?: (productId: string) => void;
+  className?: string;
+}
+
+const ProductCarousel: React.FC<ProductCarouselProps> = ({ 
+  products, 
+  title, 
+  category,
+  onProductClick,
+  className = ''
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Auto-play functionality (disabled by default for better UX)
-  useEffect(() => {
-    if (!isAutoPlaying || products.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
-        prevIndex === products.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, products.length]);
-
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 8000);
   };
 
   const goToPrevious = () => {
@@ -69,48 +76,33 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
     }
   };
 
-  const handleAffiliateClick = (product: DutchProduct) => {
-    trackAffiliateClick(product, 'product_carousel');
-    window.open(product.affiliateLink, '_blank', 'noopener,noreferrer');
-  };
-
-  const getRetailerColor = (retailer: string): string => {
-    const colors = {
-      'Zalando': 'bg-orange-500',
-      'Wehkamp': 'bg-blue-600',
-      'H&M NL': 'bg-red-500',
-      'ASOS NL': 'bg-black',
-      'Bol.com': 'bg-blue-500',
-      'De Bijenkorf': 'bg-purple-600'
-    };
-    return colors[retailer] || 'bg-gray-600';
+  const handleProductClick = (product: Product) => {
+    if (onProductClick) {
+      onProductClick(product.id);
+    } else {
+      window.open(product.url, '_blank', 'noopener,noreferrer');
+    }
   };
 
   if (products.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{title}</h3>
-        <p className="text-gray-500 dark:text-gray-400">Geen producten beschikbaar in deze categorie.</p>
+      <div className="glass-card p-6 transition-colors">
+        <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
+        <p className="text-white/70">Geen producten beschikbaar in deze categorie.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors">
+    <div className={`glass-card overflow-hidden transition-colors ${className}`}>
       {/* Header */}
-      <div className="p-6 border-b dark:border-gray-700">
+      <div className="p-6 border-b border-white/10">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <h3 className="text-xl font-bold text-white">{title}</h3>
+            <p className="text-sm text-white/70 mt-1">
               {products.length} producten beschikbaar • Speciaal voor jouw stijl geselecteerd
             </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="text-orange-500" size={16} />
-            <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              {category}
-            </span>
           </div>
         </div>
       </div>
@@ -134,11 +126,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
                   <div className="flex flex-col lg:flex-row gap-6">
                     {/* Product Image */}
                     <div className="lg:w-1/3">
-                      <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 group">
-                        <img 
+                      <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-[#1B263B] group">
+                        <ImageWithFallback 
                           src={product.imageUrl} 
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          componentName="ProductCarousel"
                         />
                         
                         {/* Discount badge */}
@@ -148,27 +141,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
                           </div>
                         )}
                         
-                        {/* Limited edition badge */}
-                        {product.limitedEdition && (
-                          <div className="absolute top-3 right-3 bg-purple-600 text-white px-2 py-1 rounded-md text-xs font-bold flex items-center">
-                            <Award size={12} className="mr-1" />
-                            LIMITED
-                          </div>
-                        )}
-                        
                         {/* Quick actions */}
                         <div className="absolute bottom-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="bg-white/90 dark:bg-gray-800/90 p-2 rounded-full hover:bg-white dark:hover:bg-gray-800 transition-colors">
-                            <Heart size={16} className="text-gray-600 dark:text-gray-300" />
+                          <button className="bg-white/90 dark:bg-[#0D1B2A]/90 p-2 rounded-full hover:bg-white dark:hover:bg-[#0D1B2A] transition-colors">
+                            <Heart size={16} className="text-[#FF8600]" />
                           </button>
                         </div>
-                        
-                        {/* Stock indicator */}
-                        {!product.inStock && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="text-white font-semibold">Uitverkocht</span>
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -177,143 +155,34 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
                       <div>
                         {/* Brand and Name */}
                         <div className="mb-3">
-                          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                          <div className="text-sm text-white/70 mb-1">
                             {product.brand}
                           </div>
-                          <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                          <h4 className="text-xl font-bold text-white">
                             {product.name}
                           </h4>
                         </div>
 
-                        {/* Psychological Trigger */}
-                        <div className="mb-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border-l-4 border-orange-500">
-                          <p className="text-sm text-orange-700 dark:text-orange-300 font-medium flex items-center">
-                            <Zap size={14} className="mr-2" />
-                            {product.psychologicalTrigger}
-                          </p>
-                        </div>
-
-                        {/* Personalized Message */}
-                        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                          <p className="text-sm text-blue-700 dark:text-blue-300 italic">
-                            💫 {product.personalizedMessage}
-                          </p>
-                        </div>
-
-                        {/* Rating and Popularity */}
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                size={14} 
-                                className={`${i < Math.floor(product.rating) 
-                                  ? 'text-yellow-400 fill-current' 
-                                  : 'text-gray-300 dark:text-gray-600'}`}
-                              />
-                            ))}
-                            <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
-                              {product.rating} ({product.reviewCount} reviews)
-                            </span>
-                          </div>
-                          {product.popularityIndicator && (
-                            <div className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
-                              🔥 {product.popularityIndicator}
-                            </div>
-                          )}
-                        </div>
-
                         {/* Description */}
-                        <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-                          {product.description}
-                        </p>
-
-                        {/* Features badges */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {product.freeShipping && (
-                            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-md text-xs font-medium">
-                              ✅ Gratis verzending
-                            </span>
-                          )}
-                          {product.fastDelivery && (
-                            <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-xs font-medium">
-                              ⚡ 24u levering
-                            </span>
-                          )}
-                          {product.limitedEdition && (
-                            <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-xs font-medium">
-                              💎 Limited Edition
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {product.tags.slice(0, 3).map((tag, index) => (
-                            <span 
-                              key={index}
-                              className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md text-xs"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Colors and Sizes */}
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Kleuren:</span>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {product.colors.slice(0, 3).map((color, index) => (
-                                <span key={index} className="text-xs text-gray-500 dark:text-gray-400">
-                                  {color}{index < product.colors.length - 1 && index < 2 ? ', ' : ''}
-                                </span>
-                              ))}
-                              {product.colors.length > 3 && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  +{product.colors.length - 3} meer
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Maten:</span>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {product.sizes.slice(0, 4).map((size, index) => (
-                                <span key={index} className="text-xs text-gray-500 dark:text-gray-400">
-                                  {size}{index < product.sizes.length - 1 && index < 3 ? ', ' : ''}
-                                </span>
-                              ))}
-                              {product.sizes.length > 4 && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  +{product.sizes.length - 4}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Urgency Message */}
-                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-                        <p className="text-sm text-red-700 dark:text-red-300 font-medium flex items-center">
-                          <Clock size={14} className="mr-2" />
-                          ⏰ {product.urgencyMessage}
-                        </p>
+                        {product.description && (
+                          <p className="text-white/80 mb-4 leading-relaxed">
+                            {product.description}
+                          </p>
+                        )}
                       </div>
 
                       {/* Price and CTA */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                          <span className="text-2xl font-bold text-white">
                             €{product.price.toFixed(2)}
                           </span>
                           {product.originalPrice && (
                             <div className="flex flex-col">
-                              <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
+                              <span className="text-sm text-white/60 line-through">
                                 €{product.originalPrice.toFixed(2)}
                               </span>
-                              <span className="text-xs text-green-600 dark:text-green-400 font-bold">
+                              <span className="text-xs text-[#FF8600] font-bold">
                                 Bespaar €{(product.originalPrice - product.price).toFixed(2)}!
                               </span>
                             </div>
@@ -322,7 +191,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
 
                         <div className="flex items-center space-x-3">
                           {/* Retailer badge */}
-                          <div className={`${getRetailerColor(product.retailer)} text-white px-3 py-1 rounded-full text-xs font-medium`}>
+                          <div className="bg-[#0D1B2A]/90 text-white px-3 py-1 rounded-full text-xs font-medium">
                             {product.retailer}
                           </div>
 
@@ -330,13 +199,11 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
                           <Button
                             variant="primary"
                             size="md"
-                            onClick={() => handleAffiliateClick(product)}
-                            disabled={!product.inStock}
-                            icon={<ExternalLink size={16} />}
+                            onClick={() => handleProductClick(product)}
+                            icon={<ChevronRight size={16} />}
                             iconPosition="right"
-                            className="whitespace-nowrap animate-pulse hover:animate-none"
                           >
-                            {product.inStock ? 'Koop Nu' : 'Uitverkocht'}
+                            Bekijk
                           </Button>
                         </div>
                       </div>
@@ -353,7 +220,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-700 rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-105 text-gray-600 dark:text-gray-300 z-10"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-[#0D1B2A]/90 text-white rounded-full p-3 shadow-lg hover:bg-[#0D1B2A] transition-all hover:scale-105 z-10"
               aria-label="Vorig product"
             >
               <ChevronLeft size={20} />
@@ -361,7 +228,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
             
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-700 rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-105 text-gray-600 dark:text-gray-300 z-10"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-[#0D1B2A]/90 text-white rounded-full p-3 shadow-lg hover:bg-[#0D1B2A] transition-all hover:scale-105 z-10"
               aria-label="Volgend product"
             >
               <ChevronRight size={20} />
@@ -379,8 +246,8 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
                 className={`
                   w-3 h-3 rounded-full transition-all duration-300
                   ${index === currentIndex 
-                    ? 'bg-orange-500 scale-110' 
-                    : 'bg-gray-300 dark:bg-gray-600 hover:bg-orange-300 dark:hover:bg-orange-700'}
+                    ? 'bg-[#FF8600] scale-110' 
+                    : 'bg-white/30 hover:bg-white/50'}
                 `}
                 aria-label={`Ga naar product ${index + 1}`}
               />
@@ -390,12 +257,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({ products, title, cate
       </div>
 
       {/* Footer with category link */}
-      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t dark:border-gray-600 transition-colors">
+      <div className="px-6 py-4 bg-white/5 border-t border-white/10 transition-colors">
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            💝 Bekijk alle {category.toLowerCase()} bij onze partners - speciaal voor jou geselecteerd
+          <span className="text-sm text-white/70">
+            Bekijk alle {category.toLowerCase()} bij onze partners
           </span>
-          <Button variant="outline" size="sm">
+          <Button variant="ghost" size="sm" className="text-white border border-white/20 hover:bg-white/10">
             Meer {category}
           </Button>
         </div>

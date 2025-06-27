@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trophy, Medal, Award, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ImageWithFallback from './ImageWithFallback';
 
 interface LeaderboardEntry {
   id: string;
@@ -16,38 +17,38 @@ const LeaderboardCard: React.FC = () => {
   const leaderboardData: LeaderboardEntry[] = [
     {
       id: '1',
-      name: 'Emma van der Berg',
+      name: "Emma van der Berg",
       points: 8750,
       level: 'master',
-      avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2'
+      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
     },
     {
       id: '2',
-      name: 'Lars Janssen',
+      name: "Lars Janssen",
       points: 7200,
       level: 'master',
-      avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2'
+      avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
     },
     {
       id: '3',
-      name: 'Sophie Bakker',
+      name: "Sophie Bakker",
       points: 6890,
       level: 'master',
-      avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2'
+      avatar: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
     },
     {
       id: '4',
-      name: 'Jij', // Current user
+      name: "Jij", // Current user
       points: 1250,
       level: 'pro',
       isCurrentUser: true
     },
     {
       id: '5',
-      name: 'Mike de Vries',
+      name: "Mike de Vries",
       points: 980,
       level: 'beginner',
-      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2'
+      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
     }
   ];
 
@@ -141,14 +142,11 @@ const LeaderboardCard: React.FC = () => {
               {/* Avatar */}
               <div className="relative">
                 {entry.avatar ? (
-                  <img 
+                  <ImageWithFallback 
                     src={entry.avatar} 
                     alt={entry.name}
                     className="w-10 h-10 rounded-full object-cover"
-                    onError={(e) => { 
-                      e.currentTarget.onerror = null; 
-                      e.currentTarget.src = '/placeholder.png'; 
-                    }}
+                    componentName="LeaderboardCard_Avatar"
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF8600]/30 to-[#0ea5e9]/30 flex items-center justify-center text-white font-bold">

@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import supabase, { isValidUUID, TEST_USER_ID } from '../lib/supabase';
+import toast from 'react-hot-toast';
+import { getUserById, createUser, updateUser, saveOutfit, unsaveOutfit } from '../services/supabaseService';
 
 export type StylePreference = {
   casual: number;
@@ -17,6 +20,7 @@ export type UserProfile = {
   stylePreferences: StylePreference;
   isPremium: boolean;
   savedRecommendations: string[];
+  password?: string; // Only used for registration, not stored in state
 };
 
 type UserContextType = {
@@ -28,6 +32,8 @@ type UserContextType = {
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
   saveRecommendation: (recommendationId: string) => Promise<void>;
+  unsaveRecommendation: (recommendationId: string) => Promise<void>;
+  isSupabaseConnected: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,21 +42,109 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean>(true);
 
+  // Check Supabase connection and initialize user session
   useEffect(() => {
-    const savedUser = localStorage.getItem('fitfi-user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
+    const initializeUser = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Check if we have an active session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Error getting session:', sessionError);
+          setIsSupabaseConnected(false);
+          throw sessionError;
+        }
+
+        // For development, always use the test user ID
+        const userProfile = await getUserById(TEST_USER_ID);
+        
+        if (userProfile) {
+          setUser(userProfile);
+          setIsSupabaseConnected(true);
+        } else {
+          // If test user doesn't exist, create it
+          console.log('Test user not found, creating...');
+          const newProfile = await createUser({
+            name: 'Test User',
+            email: 'test@example.com',
+          });
+          
+          if (newProfile) {
+            setUser(newProfile);
+            setIsSupabaseConnected(true);
+          } else {
+            throw new Error('Failed to create test user');
+          }
+        }
+        
+      } catch (err) {
+        console.error('Error initializing user:', err);
+        setError('Failed to initialize user session');
+        setIsSupabaseConnected(false);
+        
+        // Create a mock user as fallback
+        const mockUser: UserProfile = {
+          id: TEST_USER_ID,
+          name: 'Test User',
+          email: 'test@example.com',
+          gender: 'neutral',
+          stylePreferences: {
+            casual: 3,
+            formal: 3,
+            sporty: 3,
+            vintage: 3,
+            minimalist: 3
+          },
+          isPremium: false,
+          savedRecommendations: []
+        };
+        
+        setUser(mockUser);
+        localStorage.setItem('fitfi-user', JSON.stringify(mockUser));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeUser();
   }, []);
+
+  // Save user to localStorage when it changes (as fallback)
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('fitfi-user', JSON.stringify(user));
+    }
+  }, [user]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
+    
     try {
+      // For development, always use the test user
+      const userProfile = await getUserById(TEST_USER_ID);
+      
+      if (userProfile) {
+        setUser(userProfile);
+        setIsSupabaseConnected(true);
+        toast.success('Succesvol ingelogd!');
+      } else {
+        throw new Error('Test user not found');
+      }
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Failed to login. Please try again.');
+      toast.error('Inloggen mislukt. Controleer je gegevens en probeer opnieuw.');
+      setIsSupabaseConnected(false);
+      
+      // Fallback to mock login
       const mockUser: UserProfile = {
-        id: '123',
+        id: TEST_USER_ID,
         name: 'Test User',
         email,
         stylePreferences: {
@@ -66,9 +160,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(mockUser);
       localStorage.setItem('fitfi-user', JSON.stringify(mockUser));
-    } catch (err) {
-      setError('Failed to login. Please try again.');
-      console.error(err);
+      toast.success('Succesvol ingelogd (mock)!');
     } finally {
       setIsLoading(false);
     }
@@ -77,9 +169,40 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     setError(null);
+    
     try {
+      // For development, always use the test user
+      const userProfile = await getUserById(TEST_USER_ID);
+      
+      if (userProfile) {
+        setUser(userProfile);
+        setIsSupabaseConnected(true);
+        toast.success('Account succesvol aangemaakt!');
+      } else {
+        // Create test user if it doesn't exist
+        const newProfile = await createUser({
+          name,
+          email,
+          password,
+        });
+        
+        if (newProfile) {
+          setUser(newProfile);
+          setIsSupabaseConnected(true);
+          toast.success('Account succesvol aangemaakt!');
+        } else {
+          throw new Error('Failed to create user profile');
+        }
+      }
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Failed to register. Please try again.');
+      toast.error('Registratie mislukt. Probeer het opnieuw.');
+      setIsSupabaseConnected(false);
+      
+      // Fallback to mock registration
       const mockUser: UserProfile = {
-        id: Date.now().toString(),
+        id: TEST_USER_ID,
         name,
         email,
         stylePreferences: {
@@ -95,9 +218,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(mockUser);
       localStorage.setItem('fitfi-user', JSON.stringify(mockUser));
-    } catch (err) {
-      setError('Failed to register. Please try again.');
-      console.error(err);
+      toast.success('Account succesvol aangemaakt (mock)!');
     } finally {
       setIsLoading(false);
     }
@@ -105,12 +226,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     setIsLoading(true);
+    
     try {
-      localStorage.removeItem('fitfi-user');
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
       setUser(null);
-    } catch (err) {
-      setError('Failed to logout. Please try again.');
-      console.error(err);
+      localStorage.removeItem('fitfi-user');
+      toast.success('Je bent uitgelogd');
+    } catch (err: any) {
+      console.error('Logout error:', err);
+      toast.error('Uitloggen mislukt. Probeer het opnieuw.');
+      
+      // Force logout even if Supabase fails
+      setUser(null);
+      localStorage.removeItem('fitfi-user');
     } finally {
       setIsLoading(false);
     }
@@ -119,13 +249,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProfile = async (updates: Partial<UserProfile>) => {
     setIsLoading(true);
     setError(null);
+    
     try {
       if (!user) {
         // Create a new user profile if none exists
         const newUser: UserProfile = {
-          id: Date.now().toString(),
-          name: updates.name || '',
-          email: updates.email || '',
+          id: TEST_USER_ID,
+          name: updates.name || 'Test User',
+          email: updates.email || 'test@example.com',
           gender: updates.gender,
           stylePreferences: updates.stylePreferences || {
             casual: 3,
@@ -140,14 +271,27 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         setUser(newUser);
         localStorage.setItem('fitfi-user', JSON.stringify(newUser));
+        return;
+      }
+      
+      // Update user in Supabase
+      const updatedUser = await updateUser(TEST_USER_ID, updates);
+      
+      if (updatedUser) {
+        setUser(updatedUser);
+        setIsSupabaseConnected(true);
+        toast.success('Profiel bijgewerkt');
       } else {
+        // Fallback to local update if Supabase fails
         const updatedUser = { ...user, ...updates };
         setUser(updatedUser);
         localStorage.setItem('fitfi-user', JSON.stringify(updatedUser));
+        toast.success('Profiel bijgewerkt (lokaal)');
       }
-    } catch (err) {
-      setError('Failed to update profile. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Update profile error:', err);
+      setError(err.message || 'Failed to update profile. Please try again.');
+      toast.error('Profiel bijwerken mislukt. Probeer het opnieuw.');
     } finally {
       setIsLoading(false);
     }
@@ -156,9 +300,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const saveRecommendation = async (recommendationId: string) => {
     setIsLoading(true);
     setError(null);
+    
     try {
       if (!user) throw new Error('User not logged in');
       
+      // Save to Supabase
+      const success = await saveOutfit(TEST_USER_ID, recommendationId);
+      
+      // Update local state regardless of Supabase result
       const savedRecommendations = [...user.savedRecommendations];
       
       if (!savedRecommendations.includes(recommendationId)) {
@@ -171,10 +320,44 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         setUser(updatedUser);
         localStorage.setItem('fitfi-user', JSON.stringify(updatedUser));
+        toast.success('Outfit opgeslagen');
       }
-    } catch (err) {
-      setError('Failed to save recommendation. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Save recommendation error:', err);
+      setError(err.message || 'Failed to save recommendation. Please try again.');
+      toast.error('Outfit opslaan mislukt. Probeer het opnieuw.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const unsaveRecommendation = async (recommendationId: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      if (!user) throw new Error('User not logged in');
+      
+      // Remove from Supabase
+      const success = await unsaveOutfit(TEST_USER_ID, recommendationId);
+      
+      // Update local state regardless of Supabase result
+      const savedRecommendations = user.savedRecommendations.filter(
+        id => id !== recommendationId
+      );
+      
+      const updatedUser = { 
+        ...user, 
+        savedRecommendations 
+      };
+      
+      setUser(updatedUser);
+      localStorage.setItem('fitfi-user', JSON.stringify(updatedUser));
+      toast.success('Outfit verwijderd uit favorieten');
+    } catch (err: any) {
+      console.error('Unsave recommendation error:', err);
+      setError(err.message || 'Failed to remove recommendation. Please try again.');
+      toast.error('Outfit verwijderen mislukt. Probeer het opnieuw.');
     } finally {
       setIsLoading(false);
     }
@@ -190,7 +373,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register, 
         logout, 
         updateProfile,
-        saveRecommendation
+        saveRecommendation,
+        unsaveRecommendation,
+        isSupabaseConnected
       }}
     >
       {children}

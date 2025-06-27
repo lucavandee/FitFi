@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import ImageWithFallback from './ImageWithFallback';
 
 const LazyProductImage = ({ 
   retailer, 
@@ -21,9 +22,17 @@ const LazyProductImage = ({
     try {
       setImageState(prev => ({ ...prev, loading: true, error: false }));
       
-      const response = await fetch(
+      // Set a timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 5000)
+      );
+      
+      const fetchPromise = fetch(
         `/.netlify/functions/product?retailer=${encodeURIComponent(retailer)}&id=${encodeURIComponent(productId)}`
       );
+      
+      // Race between fetch and timeout
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
       
       if (!response.ok) {
         throw new Error(`API responded with status: ${response.status}`);
@@ -65,6 +74,19 @@ const LazyProductImage = ({
     if (retailer && productId) {
       fetchProductImage();
     }
+    
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      setImageState(prev => {
+        if (prev.loading) {
+          console.warn(`Image loading timeout for ${retailer}:${productId}`);
+          return { ...prev, loading: false, error: true };
+        }
+        return prev;
+      });
+    }, 8000);
+    
+    return () => clearTimeout(timeoutId);
   }, [retailer, productId]);
 
   const handleRetry = () => {
@@ -72,19 +94,11 @@ const LazyProductImage = ({
     fetchProductImage();
   };
 
-  const handleImageError = () => {
-    setImageState(prev => ({ ...prev, error: true, loading: false }));
-  };
-
-  const handleImageLoad = () => {
-    setImageState(prev => ({ ...prev, loading: false }));
-  };
-
   // Loading skeleton
   if (imageState.loading) {
     return (
-      <div className={`${className} bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}>
-        <div className="text-center text-gray-400 dark:text-gray-500">
+      <div className={`${className} bg-[#1B263B] animate-pulse flex items-center justify-center`}>
+        <div className="text-center text-white/50">
           <RefreshCw className="animate-spin mx-auto mb-2" size={24} />
           <div className="text-xs">Loading...</div>
         </div>
@@ -95,14 +109,14 @@ const LazyProductImage = ({
   // Error state with retry option
   if (imageState.error || !imageState.imageUrl) {
     return (
-      <div className={`${className} bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-4`}>
+      <div className={`${className} bg-[#1B263B] flex flex-col items-center justify-center text-white/50 p-4`}>
         <AlertCircle size={32} className="mb-2" />
         <div className="text-center">
           <div className="text-sm font-medium mb-1">Image not available</div>
           <div className="text-xs mb-3">Failed to load from {retailer}</div>
           <button
             onClick={handleRetry}
-            className="text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded transition-colors"
+            className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors"
           >
             Retry
           </button>
@@ -111,16 +125,17 @@ const LazyProductImage = ({
     );
   }
 
-  // Success state - show the actual product image
+  // Success state - show the actual product image with fallback
   return (
-    <img
+    <ImageWithFallback
       src={imageState.imageUrl}
       alt={alt}
       className={className}
-      onError={handleImageError}
-      onLoad={handleImageLoad}
-      loading="lazy"
-      decoding="async"
+      fallbackSrc={fallbackSrc}
+      onError={(originalSrc) => {
+        console.warn(`Product image failed to load: ${originalSrc}`);
+      }}
+      componentName="LazyProductImage"
     />
   );
 };

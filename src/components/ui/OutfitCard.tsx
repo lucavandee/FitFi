@@ -13,72 +13,56 @@ import {
   ChevronUp
 } from 'lucide-react';
 import Button from './Button';
+import ImageWithFallback from './ImageWithFallback';
 
-interface OutfitItem {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  imageUrl: string;
-  url: string;
-  retailer: string;
-  category: string;
-}
-
-interface OutfitProps {
+interface Outfit {
   id: string;
   title: string;
   description: string;
   matchPercentage: number;
   imageUrl: string;
-  items: OutfitItem[];
+  items: {
+    id: string;
+    name: string;
+    brand: string;
+    price: number;
+    imageUrl: string;
+    url: string;
+    retailer: string;
+    category: string;
+  }[];
   tags: string[];
   occasions: string[];
   explanation: string;
-  isSaved?: boolean;
-  onSave?: (id: string) => void;
-  onLike?: (id: string) => void;
-  onDislike?: (id: string) => void;
-  onShopClick?: (id: string) => void;
-  className?: string;
 }
 
-const OutfitCard: React.FC<OutfitProps> = ({
-  id,
-  title,
-  description,
-  matchPercentage,
-  imageUrl,
-  items,
-  tags,
-  occasions,
-  explanation,
-  isSaved = false,
-  onSave,
-  onLike,
-  onDislike,
-  onShopClick,
-  className = ''
+interface OutfitCardProps {
+  outfit: Outfit;
+  onNewLook: () => void;
+  isGenerating: boolean;
+}
+
+const OutfitCard: React.FC<OutfitCardProps> = ({
+  outfit, onNewLook, isGenerating
 }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [showItems, setShowItems] = useState(false);
   const [feedback, setFeedback] = useState<'liked' | 'disliked' | null>(null);
-
-  const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
-
-  const handleSave = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onSave) {
-      onSave(id);
-    }
-  };
-
+  
+  const handleProductClick = (url: string) => window.open(url, '_blank', 'noopener,noreferrer');
+  
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (feedback !== 'liked') {
       setFeedback('liked');
-      if (onLike) {
-        onLike(id);
+      
+      // Track in analytics
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'outfit_like', {
+          event_category: 'engagement',
+          event_label: outfit.id,
+          outfit_id: outfit.id,
+          outfit_title: outfit.title
+        });
       }
     }
   };
@@ -87,86 +71,44 @@ const OutfitCard: React.FC<OutfitProps> = ({
     e.stopPropagation();
     if (feedback !== 'disliked') {
       setFeedback('disliked');
-      if (onDislike) {
-        onDislike(id);
-      }
-    }
-  };
-
-  const handleShopClick = () => {
-    if (onShopClick) {
-      onShopClick(id);
-    }
-  };
-
-  const handleItemClick = (url: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleShare = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `FitFi Outfit: ${title}`,
-          text: description,
-          url: window.location.href
+      
+      // Track in analytics
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'outfit_dislike', {
+          event_category: 'engagement',
+          event_label: outfit.id,
+          outfit_id: outfit.id,
+          outfit_title: outfit.title
         });
-      } catch (error) {
-        console.log('Share cancelled');
       }
-    } else {
-      // Fallback to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      // You could show a toast notification here
     }
   };
 
   return (
-    <div className={`glass-card overflow-hidden transition-all duration-300 ${className}`}>
+    <div className="glass-card overflow-hidden">
       {/* Header with outfit image */}
       <div className="relative">
         <div className="aspect-[4/5] overflow-hidden bg-[#1B263B]">
-          {!imageLoaded && (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-[#FF8600] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
-          <img 
-            src={imageUrl} 
-            alt={title}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setImageLoaded(true)}
-            loading="lazy"
-            onError={(e) => { 
-              e.currentTarget.onerror = null; 
-              e.currentTarget.src = '/placeholder.png'; 
-            }}
+          <ImageWithFallback 
+            src={outfit.imageUrl} 
+            alt={outfit.title}
+            className="w-full h-full object-cover"
+            componentName="OutfitCard"
           />
-          
-          {/* Match percentage badge */}
           <div className="absolute top-4 left-4 bg-[#0D1B2A]/90 text-[#FF8600] px-3 py-1 rounded-full text-sm font-bold flex items-center">
             <Star size={14} className="mr-1" />
-            {matchPercentage}% Match
+            {outfit.matchPercentage}% Match
           </div>
           
           {/* Quick actions */}
           <div className="absolute bottom-4 right-4 flex space-x-2">
             <button 
-              onClick={handleSave}
-              className={`p-2 rounded-full transition-all ${
-                isSaved 
-                  ? 'bg-[#FF8600]/20 text-[#FF8600]' 
-                  : 'bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white'
-              }`}
-              aria-label={isSaved ? 'Opgeslagen in favorieten' : 'Opslaan in favorieten'}
+              className="p-2 rounded-full bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white transition-colors"
+              aria-label="Opslaan in favorieten"
             >
-              {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+              <Bookmark size={16} />
             </button>
             <button 
-              onClick={handleShare}
               className="p-2 rounded-full bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white transition-colors"
               aria-label="Deel outfit"
             >
@@ -176,7 +118,7 @@ const OutfitCard: React.FC<OutfitProps> = ({
 
           {/* Occasions indicator */}
           <div className="absolute bottom-4 left-4 bg-black/70 text-white px-2 py-1 rounded-md text-xs">
-            {occasions.length > 0 ? occasions.slice(0, 2).join(', ') : 'Alle gelegenheden'}
+            {outfit.occasions.length > 0 ? outfit.occasions.slice(0, 2).join(', ') : 'Alle gelegenheden'}
           </div>
         </div>
       </div>
@@ -186,23 +128,23 @@ const OutfitCard: React.FC<OutfitProps> = ({
         {/* Title and description */}
         <div className="mb-4">
           <h3 className="text-xl font-bold text-white mb-2">
-            {title}
+            {outfit.title}
           </h3>
           <p className="text-white/80 text-sm leading-relaxed">
-            {description}
+            {outfit.description}
           </p>
         </div>
 
         {/* Explanation */}
         <div className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10">
           <p className="text-white/90 text-sm italic">
-            {explanation}
+            {outfit.explanation}
           </p>
         </div>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {tags.slice(0, 3).map((tag, index) => (
+          {outfit.tags.slice(0, 3).map((tag, index) => (
             <span 
               key={index}
               className="px-2 py-1 bg-white/5 text-white/80 rounded-md text-xs"
@@ -210,9 +152,9 @@ const OutfitCard: React.FC<OutfitProps> = ({
               #{tag}
             </span>
           ))}
-          {tags.length > 3 && (
+          {outfit.tags.length > 3 && (
             <span className="px-2 py-1 bg-white/5 text-white/60 rounded-md text-xs">
-              +{tags.length - 3} meer
+              +{outfit.tags.length - 3} meer
             </span>
           )}
         </div>
@@ -249,7 +191,7 @@ const OutfitCard: React.FC<OutfitProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div>
             <span className="text-2xl font-bold text-white">
-              €{totalPrice.toFixed(2)}
+              €{outfit.items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
             </span>
             <span className="text-sm text-white/60 ml-2">
               complete look
@@ -259,7 +201,6 @@ const OutfitCard: React.FC<OutfitProps> = ({
           <Button
             variant="primary"
             size="md"
-            onClick={handleShopClick}
             icon={<ShoppingBag size={16} />}
             iconPosition="left"
           >
@@ -273,7 +214,7 @@ const OutfitCard: React.FC<OutfitProps> = ({
             onClick={() => setShowItems(!showItems)}
             className="w-full flex items-center justify-between text-sm font-medium text-white/80 hover:text-[#FF8600] transition-colors"
           >
-            <span>Bekijk alle items ({items.length})</span>
+            <span>Bekijk alle items ({outfit.items.length})</span>
             {showItems ? (
               <ChevronUp size={16} />
             ) : (
@@ -283,21 +224,17 @@ const OutfitCard: React.FC<OutfitProps> = ({
 
           {showItems && (
             <div className="mt-4 space-y-3 animate-fade-in">
-              {items.map((item, index) => (
+              {outfit.items.map((item, index) => (
                 <div 
                   key={index}
                   className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer group"
-                  onClick={(e) => handleItemClick(item.url, e)}
+                  onClick={() => handleProductClick(item.url)}
                 >
-                  <img 
+                  <ImageWithFallback 
                     src={item.imageUrl} 
                     alt={item.name}
                     className="w-12 h-12 object-cover rounded-md group-hover:scale-105 transition-transform"
-                    loading="lazy"
-                    onError={(e) => { 
-                      e.currentTarget.onerror = null; 
-                      e.currentTarget.src = '/placeholder.png'; 
-                    }}
+                    componentName={`OutfitCard_Item_${index}`}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">

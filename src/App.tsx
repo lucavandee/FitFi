@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/layout/Navbar';
@@ -9,7 +9,6 @@ import GenderSelectPage from './pages/GenderSelectPage';
 import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
 import EnhancedResultsPage from './pages/EnhancedResultsPage';
-import DashboardPage from './pages/DashboardPage';
 import AboutPage from './pages/AboutPage';
 import ProductPage from './pages/ProductPage';
 import HowItWorksPage from './pages/HowItWorksPage';
@@ -26,6 +25,10 @@ import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import LoadingFallback from './components/ui/LoadingFallback';
+
+// Lazy load the dashboard page to improve initial load time
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 
 function App() {
   return (
@@ -34,7 +37,10 @@ function App() {
         <GamificationProvider>
           <Router>
             <div className="min-h-screen flex flex-col">
-              <Navbar />
+              <ErrorBoundary>
+                <Navbar />
+              </ErrorBoundary>
+              
               <main className="flex-grow">
                 <ErrorBoundary>
                   <Routes>
@@ -43,7 +49,11 @@ function App() {
                     <Route path="/gender" element={<GenderSelectPage />} />
                     <Route path="/quiz/:step" element={<QuizPage />} />
                     <Route path="/results" element={<EnhancedResultsPage />} />
-                    <Route path="/dashboard/*" element={<DashboardPage />} />
+                    <Route path="/dashboard/*" element={
+                      <Suspense fallback={<LoadingFallback message="Dashboard laden..." fullScreen />}>
+                        <DashboardPage />
+                      </Suspense>
+                    } />
                     <Route path="/over-ons" element={<AboutPage />} />
                     <Route path="/product" element={<ProductPage />} />
                     <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
@@ -59,7 +69,11 @@ function App() {
                   </Routes>
                 </ErrorBoundary>
               </main>
-              <Footer />
+              
+              <ErrorBoundary>
+                <Footer />
+              </ErrorBoundary>
+              
               <Toaster 
                 position="top-center"
                 toastOptions={{
