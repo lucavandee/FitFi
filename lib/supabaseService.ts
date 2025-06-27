@@ -1,9 +1,10 @@
 import supabase from './supabase';
 import { Product } from '../types/Product';
+import { isValidImageUrl } from '../utils/imageUtils';
 
 /**
- * Fetches products from Supabase database
- * @returns Array of products
+ * Fetches products from Supabase database and filters out products with invalid images
+ * @returns Array of products with valid images
  */
 export const fetchProductsFromSupabase = async (): Promise<Product[]> => {
   try {
@@ -17,7 +18,29 @@ export const fetchProductsFromSupabase = async (): Promise<Product[]> => {
       return [];
     }
     
-    return data as Product[];
+    if (!data || data.length === 0) {
+      console.warn('No products found in Supabase');
+      return [];
+    }
+    
+    console.log(`[Supabase] Fetched ${data.length} products, validating images...`);
+    
+    // Filter out products with invalid image URLs
+    const validProducts = data.filter(product => {
+      const imageUrl = product.image_url || product.imageUrl;
+      const isValid = imageUrl && isValidImageUrl(imageUrl);
+      
+      if (!isValid) {
+        console.warn(`⚠️ Broken image gefilterd: ${imageUrl} (${product.name})`);
+      }
+      
+      return isValid;
+    });
+    
+    console.log(`[Supabase] Filtered out ${data.length - validProducts.length} products with invalid images`);
+    console.log(`[Supabase] Returning ${validProducts.length} valid products`);
+    
+    return validProducts as Product[];
   } catch (error) {
     console.error('Exception when fetching products from Supabase:', error);
     return [];
@@ -31,8 +54,21 @@ export const fetchProductsFromSupabase = async (): Promise<Product[]> => {
  */
 export const uploadProductsToSupabase = async (products: any[]): Promise<boolean> => {
   try {
+    // Filter out products with invalid image URLs before uploading
+    const validProducts = products.filter(product => {
+      const isValid = product.imageUrl && isValidImageUrl(product.imageUrl);
+      
+      if (!isValid) {
+        console.warn(`⚠️ Skipping upload of product with broken image: ${product.imageUrl} (${product.name})`);
+      }
+      
+      return isValid;
+    });
+    
+    console.log(`[Supabase] Uploading ${validProducts.length} products (filtered out ${products.length - validProducts.length} with invalid images)`);
+    
     // Format products for Supabase schema
-    const formattedProducts = products.map(product => ({
+    const formattedProducts = validProducts.map(product => ({
       id: product.id,
       name: product.name,
       description: product.description,
@@ -61,7 +97,7 @@ export const uploadProductsToSupabase = async (products: any[]): Promise<boolean
       const { error } = await supabase
         .from('products')
         .upsert(batch, { onConflict: 'id' });
-      
+
       if (error) {
         console.error('Error uploading batch to Supabase:', error);
         return false;

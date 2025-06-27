@@ -1,6 +1,8 @@
-import supabase from '../lib/supabase';
+import supabase, { isValidUUID, TEST_USER_ID } from '../lib/supabase';
 import { StylePreference, UserProfile } from '../context/UserContext';
 import toast from 'react-hot-toast';
+import { USE_SUPABASE } from '../config/app-config';
+import { generateMockUser, generateMockGamification, generateMockOutfits } from '../utils/mockDataUtils';
 
 /**
  * @fileoverview Centralized Supabase service for all CRUD operations
@@ -50,6 +52,11 @@ async function executeWithRetry<T>(
   fallback: T | null = null,
   retries: number = MAX_RETRIES
 ): Promise<T | null> {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – skipping database operation');
+    return fallback;
+  }
+
   let lastError: Error | null = null;
   
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -86,9 +93,29 @@ async function executeWithRetry<T>(
  * @returns The created user profile or null if failed
  */
 export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePreferences' | 'savedRecommendations'>): Promise<UserProfile | null> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock user creation');
+    // Return mock user as fallback
+    return {
+      id: TEST_USER_ID,
+      name: userData.name,
+      email: userData.email,
+      gender: userData.gender as 'male' | 'female' | undefined,
+      isPremium: false,
+      stylePreferences: {
+        casual: 3,
+        formal: 3,
+        sporty: 3,
+        vintage: 3,
+        minimalist: 3,
+      },
+      savedRecommendations: [],
+    };
+  }
+
   try {
     // First, create auth user if not in mock mode
-    let userId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    let userId = TEST_USER_ID;
     
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: userData.email,
@@ -161,7 +188,7 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
     if (USE_MOCK_DATA_FALLBACK) {
       // Return mock user as fallback
       return {
-        id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
+        id: TEST_USER_ID,
         name: userData.name,
         email: userData.email,
         gender: userData.gender as 'male' | 'female' | undefined,
@@ -187,9 +214,14 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
  * @returns The user profile or null if not found
  */
 export const getUserById = async (userId: string): Promise<UserProfile | null> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock user data');
+    return generateMockUser(userId);
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -312,21 +344,7 @@ export const getUserById = async (userId: string): Promise<UserProfile | null> =
     
     if (USE_MOCK_DATA_FALLBACK) {
       // Return mock user as fallback
-      return {
-        id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
-        name: 'Test User',
-        email: 'test@example.com',
-        gender: 'neutral',
-        isPremium: false,
-        stylePreferences: {
-          casual: 3,
-          formal: 3,
-          sporty: 3,
-          vintage: 3,
-          minimalist: 3,
-        },
-        savedRecommendations: [],
-      };
+      return generateMockUser(userId);
     }
     
     return null;
@@ -340,9 +358,23 @@ export const getUserById = async (userId: string): Promise<UserProfile | null> =
  * @returns The updated user profile or null if failed
  */
 export const updateUser = async (userId: string, updates: Partial<UserProfile>): Promise<UserProfile | null> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock user update');
+    // Return mock updated user
+    const mockUser = generateMockUser(userId);
+    return {
+      ...mockUser,
+      ...updates,
+      stylePreferences: {
+        ...mockUser.stylePreferences,
+        ...(updates.stylePreferences || {})
+      }
+    };
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -441,6 +473,20 @@ export const updateUser = async (userId: string, updates: Partial<UserProfile>):
   } catch (error) {
     console.error('Error updating user:', error);
     toast.error('Failed to update user profile. Please try again.');
+    
+    if (USE_MOCK_DATA_FALLBACK) {
+      // Return mock updated user
+      const mockUser = generateMockUser(userId);
+      return {
+        ...mockUser,
+        ...updates,
+        stylePreferences: {
+          ...mockUser.stylePreferences,
+          ...(updates.stylePreferences || {})
+        }
+      };
+    }
+    
     return null;
   }
 };
@@ -452,9 +498,14 @@ export const updateUser = async (userId: string, updates: Partial<UserProfile>):
  * @returns Success status
  */
 export const saveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock outfit save');
+    return true;
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -491,9 +542,14 @@ export const saveOutfit = async (userId: string, outfitId: string): Promise<bool
  * @returns Success status
  */
 export const unsaveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock outfit unsave');
+    return true;
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -528,9 +584,14 @@ export const unsaveOutfit = async (userId: string, outfitId: string): Promise<bo
  * @returns The user gamification data or null if not found
  */
 export const getUserGamification = async (userId: string): Promise<UserGamification | null> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock gamification data');
+    return generateMockGamification(userId);
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -590,20 +651,7 @@ export const getUserGamification = async (userId: string): Promise<UserGamificat
     
     if (USE_MOCK_DATA_FALLBACK) {
       // Return mock gamification data as fallback
-      return {
-        id: 'mock-gamification-id',
-        user_id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
-        points: 0,
-        level: 'beginner',
-        badges: [],
-        streak: 0,
-        last_check_in: null,
-        completed_challenges: [],
-        total_referrals: 0,
-        seasonal_event_progress: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      return generateMockGamification(userId);
     }
     
     return null;
@@ -617,9 +665,19 @@ export const getUserGamification = async (userId: string): Promise<UserGamificat
  * @returns The updated gamification data or null if failed
  */
 export const updateUserGamification = async (userId: string, updates: Partial<Omit<UserGamification, 'id' | 'user_id' | 'created_at' | 'updated_at'>>): Promise<UserGamification | null> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock gamification update');
+    const mockData = generateMockGamification(userId);
+    return {
+      ...mockData,
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -652,6 +710,17 @@ export const updateUserGamification = async (userId: string, updates: Partial<Om
   } catch (error) {
     console.error('Error updating user gamification:', error);
     toast.error('Failed to update gamification data. Please try again.');
+    
+    if (USE_MOCK_DATA_FALLBACK) {
+      // Return mock updated gamification data
+      const mockData = generateMockGamification(userId);
+      return {
+        ...mockData,
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
+    }
+    
     return null;
   }
 };
@@ -663,9 +732,14 @@ export const updateUserGamification = async (userId: string, updates: Partial<Om
  * @returns Success status
  */
 export const completeChallenge = async (userId: string, challengeId: string): Promise<boolean> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock challenge completion');
+    return true;
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -715,9 +789,36 @@ export const completeChallenge = async (userId: string, challengeId: string): Pr
  * @returns Array of daily challenges
  */
 export const getDailyChallenges = async (userId: string): Promise<DailyChallenge[]> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – using mock daily challenges');
+    return [
+      {
+        id: 'mock-challenge-1',
+        user_id: userId,
+        challenge_id: 'daily_style_quiz',
+        completed: false,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: 'mock-challenge-2',
+        user_id: userId,
+        challenge_id: 'save_outfit',
+        completed: false,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: 'mock-challenge-3',
+        user_id: userId,
+        challenge_id: 'share_look',
+        completed: false,
+        created_at: new Date().toISOString(),
+      }
+    ];
+  }
+
   try {
     // Always use test user ID for development
-    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    const effectiveUserId = TEST_USER_ID;
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -747,18 +848,25 @@ export const getDailyChallenges = async (userId: string): Promise<DailyChallenge
       return [
         {
           id: 'mock-challenge-1',
-          user_id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
+          user_id: userId,
           challenge_id: 'daily_style_quiz',
           completed: false,
           created_at: new Date().toISOString(),
         },
         {
           id: 'mock-challenge-2',
-          user_id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
+          user_id: userId,
           challenge_id: 'save_outfit',
           completed: false,
           created_at: new Date().toISOString(),
         },
+        {
+          id: 'mock-challenge-3',
+          user_id: userId,
+          challenge_id: 'share_look',
+          completed: false,
+          created_at: new Date().toISOString(),
+        }
       ];
     }
     
@@ -766,16 +874,42 @@ export const getDailyChallenges = async (userId: string): Promise<DailyChallenge
   }
 };
 
-// Helpers
-
 /**
- * Checks if a string is a valid UUID
- * @param uuid - String to check
- * @returns Whether the string is a valid UUID
+ * Fetches products from Supabase database and filters out products with invalid images
+ * @returns Array of products with valid images
  */
-function isValidUUID(uuid: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
-}
+export const fetchProductsFromSupabase = async (): Promise<any[]> => {
+  if (!USE_SUPABASE) {
+    console.log('[Fallback] Supabase disabled – skipping product fetch from Supabase');
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching products from Supabase:', error);
+      return [];
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn('No products found in Supabase');
+      return [];
+    }
+    
+    console.log(`[Supabase] Fetched ${data.length} products`);
+    
+    return data;
+  } catch (error) {
+    console.error('Exception when fetching products from Supabase:', error);
+    return [];
+  }
+};
+
+// Helpers
 
 /**
  * Generates a random password
@@ -783,4 +917,17 @@ function isValidUUID(uuid: string): boolean {
  */
 const generateRandomPassword = (): string => {
   return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+};
+
+export default {
+  createUser,
+  getUserById,
+  updateUser,
+  saveOutfit,
+  unsaveOutfit,
+  getUserGamification,
+  updateUserGamification,
+  completeChallenge,
+  getDailyChallenges,
+  fetchProductsFromSupabase
 };

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import supabase, { isValidUUID, TEST_USER_ID } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import { USE_SUPABASE } from '../config/app-config';
+import { generateMockUser, generateMockGamification } from '../utils/mockDataUtils';
 
 /**
  * Configuration for the useSupabase hook
@@ -75,6 +77,21 @@ export function useSupabase<T>(
    * Executes the Supabase query with retry logic and timeout handling
    */
   const execute = useCallback(async () => {
+    if (!USE_SUPABASE) {
+      console.log('[Fallback] Supabase disabled – using mock data');
+      setState({
+        data: mockData,
+        isLoading: false,
+        error: null,
+        isExecuted: true,
+        isRetrying: false,
+        retryCount: 0,
+        isTimedOut: false,
+        isMockData: true
+      });
+      return mockData;
+    }
+
     setState(prev => ({
       ...prev,
       isLoading: true,
@@ -209,6 +226,11 @@ export function useSupabaseQuery<T>(
   const supabase = useSupabase(queryFn, mockData, restConfig);
   
   useEffect(() => {
+    if (!USE_SUPABASE) {
+      console.log('[Fallback] Supabase disabled – skipping automatic query execution');
+      return;
+    }
+
     if (executeOnMount) {
       supabase.execute();
     }
@@ -232,6 +254,14 @@ export function useUserGamification() {
   useEffect(() => {
     const fetchGamification = async () => {
       setIsLoading(true);
+      
+      if (!USE_SUPABASE) {
+        console.log('[Fallback] Supabase disabled – using mock gamification data');
+        setData(generateMockGamification(TEST_USER_ID));
+        setIsLoading(false);
+        return;
+      }
+
       try {
         // Always use test user ID for development
         const effectiveUserId = TEST_USER_ID;
@@ -257,13 +287,14 @@ export function useUserGamification() {
         setData({
           id: 'mock_gamification',
           user_id: TEST_USER_ID,
-          points: 0,
+          points: 120,
           level: 'beginner',
-          badges: [],
-          streak: 0,
-          last_check_in: null,
-          completed_challenges: [],
-          total_referrals: 0
+          badges: ['first_quiz'],
+          streak: 2,
+          last_check_in: new Date().toISOString(),
+          completed_challenges: ['view3', 'shareLook'],
+          total_referrals: 1,
+          seasonal_event_progress: {}
         });
       } finally {
         setIsLoading(false);

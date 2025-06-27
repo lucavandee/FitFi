@@ -143,6 +143,25 @@ export const preloadImages = async (urls: string[]): Promise<void[]> => {
   return Promise.all(validUrls.map(url => preloadImage(url)));
 };
 
+/**
+ * Checks if an image URL is valid by making a HEAD request
+ * @param url - The image URL to check
+ * @returns Promise that resolves to true if the image is valid
+ */
+export const validateImageUrl = async (url: string): Promise<boolean> => {
+  if (!isValidImageUrl(url)) {
+    return false;
+  }
+  
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok && response.headers.get('content-type')?.startsWith('image/');
+  } catch (error) {
+    console.warn(`Failed to validate image URL: ${url}`, error);
+    return false;
+  }
+};
+
 export default {
   isValidImageUrl,
   extractDomain,
@@ -150,5 +169,6 @@ export default {
   optimizeImageUrl,
   preloadImage,
   preloadImages,
+  validateImageUrl,
   PROBLEMATIC_DOMAINS
 };
