@@ -4,6 +4,7 @@ import generateOutfits from './generateOutfits';
 import { analyzeUserProfile, determineArchetypesFromAnswers, getStyleKeywords } from './profile-mapping';
 import dutchProducts from '../data/dutchProducts';
 import { getCurrentSeason, isProductInSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
+import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 
 /**
  * Interface for recommendation options
@@ -17,6 +18,7 @@ interface RecommendationOptions {
   variationLevel?: VariationLevel;
   enforceCompletion?: boolean;
   minCompleteness?: number;
+  useZalandoProducts?: boolean;
 }
 
 /**
@@ -42,74 +44,99 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
   console.log("Weather condition:", weather);
   
   // Step 3: Get all available products from local data
-  const allProducts = getProductsFromLocalData();
+  const useZalandoProducts = options?.useZalandoProducts !== undefined ? options.useZalandoProducts : true;
   
-  // Step 4: Filter products by season
-  const seasonalProducts = allProducts.filter(product => isProductInSeason(product, currentSeason));
-  console.log("Products suitable for season:", seasonalProducts.length);
-  
-  // Step 5: Determine user's archetypes (primary and secondary)
-  const { primaryArchetype, secondaryArchetype, mixFactor } = determineUserArchetypes(user);
-  console.log(`Determined archetypes: ${primaryArchetype} (${Math.round((1-mixFactor)*100)}%) + ${secondaryArchetype} (${Math.round(mixFactor*100)}%)`);
-  
-  // Step 6: Filter and sort products based on user preferences
-  // Use seasonal products if we have enough, otherwise fall back to all products
-  const productsToUse = seasonalProducts.length >= 10 ? seasonalProducts : allProducts;
-  const sortedProducts = filterAndSortProducts(productsToUse, user);
-  console.log(`Filtered and sorted ${sortedProducts.length} products`);
-  
-  // Log product category distribution
-  logProductCategoryDistribution(sortedProducts);
-  
-  // Step 7: Generate outfits with options
-  const count = options?.count || 3;
-  const excludeIds = options?.excludeIds || [];
-  const preferredOccasions = options?.preferredOccasions;
-  const variationLevel = options?.variationLevel || 'medium';
-  const enforceCompletion = options?.enforceCompletion !== undefined ? options.enforceCompletion : true;
-  const minCompleteness = options?.minCompleteness || 80;
-  
-  // Generate outfits with options
-  const outfits = generateOutfits(
-    primaryArchetype, 
-    sortedProducts, 
-    count, 
-    secondaryArchetype, 
-    mixFactor,
-    {
-      excludeIds,
-      preferredOccasions,
-      preferredSeasons: preferredSeasons || [currentSeason],
-      weather,
-      maxAttempts: 10,
-      variationLevel,
-      enforceCompletion,
-      minCompleteness
+  // Use an async IIFE to handle the async product loading
+  return (async () => {
+    let allProducts: Product[] = [];
+    
+    // Try to get Zalando products if enabled
+    if (useZalandoProducts) {
+      try {
+        const zalandoProducts = await getZalandoProducts();
+        if (zalandoProducts && zalandoProducts.length > 0) {
+          console.log('[FitFi] Zalando producten geladen:', zalandoProducts.length);
+          allProducts = zalandoProducts;
+        } else {
+          console.log('[FitFi] Geen Zalando producten beschikbaar, terugvallen op lokale data');
+          allProducts = getProductsFromLocalData();
+        }
+      } catch (error) {
+        console.error('Error loading Zalando products:', error);
+        console.log('[FitFi] Fout bij laden Zalando producten, terugvallen op lokale data');
+        allProducts = getProductsFromLocalData();
+      }
+    } else {
+      allProducts = getProductsFromLocalData();
     }
-  );
-  console.log(`Generated ${outfits.length} outfits`);
-  
-  // Log outfit composition
-  outfits.forEach((outfit, index) => {
-    console.log(`Outfit ${index + 1} composition:`, 
-      outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).join(', ')
+    
+    // Step 4: Filter products by season
+    const seasonalProducts = allProducts.filter(product => isProductInSeason(product, currentSeason));
+    console.log("Products suitable for season:", seasonalProducts.length);
+    
+    // Step 5: Determine user's archetypes (primary and secondary)
+    const { primaryArchetype, secondaryArchetype, mixFactor } = determineUserArchetypes(user);
+    console.log(`Determined archetypes: ${primaryArchetype} (${Math.round((1-mixFactor)*100)}%) + ${secondaryArchetype} (${Math.round(mixFactor*100)}%)`);
+    
+    // Step 6: Filter and sort products based on user preferences
+    // Use seasonal products if we have enough, otherwise fall back to all products
+    const productsToUse = seasonalProducts.length >= 10 ? seasonalProducts : allProducts;
+    const sortedProducts = filterAndSortProducts(productsToUse, user);
+    console.log(`Filtered and sorted ${sortedProducts.length} products`);
+    
+    // Log product category distribution
+    logProductCategoryDistribution(sortedProducts);
+    
+    // Step 7: Generate outfits with options
+    const count = options?.count || 3;
+    const excludeIds = options?.excludeIds || [];
+    const preferredOccasions = options?.preferredOccasions;
+    const variationLevel = options?.variationLevel || 'medium';
+    const enforceCompletion = options?.enforceCompletion !== undefined ? options.enforceCompletion : true;
+    const minCompleteness = options?.minCompleteness || 80;
+    
+    // Generate outfits with options
+    const outfits = generateOutfits(
+      primaryArchetype, 
+      sortedProducts, 
+      count, 
+      secondaryArchetype, 
+      mixFactor,
+      {
+        excludeIds,
+        preferredOccasions,
+        preferredSeasons: preferredSeasons || [currentSeason],
+        weather,
+        maxAttempts: 10,
+        variationLevel,
+        enforceCompletion,
+        minCompleteness
+      }
     );
+    console.log(`Generated ${outfits.length} outfits`);
     
-    // Log structure if available
-    if (outfit.structure) {
-      console.log(`Outfit ${index + 1} structure:`, outfit.structure.join(', '));
-    }
+    // Log outfit composition
+    outfits.forEach((outfit, index) => {
+      console.log(`Outfit ${index + 1} composition:`, 
+        outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).join(', ')
+      );
+      
+      // Log structure if available
+      if (outfit.structure) {
+        console.log(`Outfit ${index + 1} structure:`, outfit.structure.join(', '));
+      }
+      
+      // Log completeness and category ratio
+      console.log(`Outfit ${index + 1} completeness:`, outfit.completeness);
+      console.log(`Outfit ${index + 1} category ratio:`, outfit.categoryRatio);
+      
+      // Log season and weather
+      console.log(`Outfit ${index + 1} season:`, outfit.season);
+      console.log(`Outfit ${index + 1} weather:`, outfit.weather);
+    });
     
-    // Log completeness and category ratio
-    console.log(`Outfit ${index + 1} completeness:`, outfit.completeness);
-    console.log(`Outfit ${index + 1} category ratio:`, outfit.categoryRatio);
-    
-    // Log season and weather
-    console.log(`Outfit ${index + 1} season:`, outfit.season);
-    console.log(`Outfit ${index + 1} weather:`, outfit.weather);
-  });
-  
-  return outfits;
+    return outfits;
+  })();
 }
 
 /**
@@ -238,32 +265,57 @@ function getComfortLevel(preferences: Record<string, number>): number {
  * @param user - The user profile to get recommendations for
  * @param count - Number of products to recommend
  * @param season - Optional specific season to filter by
+ * @param useZalandoProducts - Whether to use Zalando products
  * @returns Array of recommended products
  */
 export function getRecommendedProducts(
   user: UserProfile, 
   count: number = 9, 
-  season?: Season
+  season?: Season,
+  useZalandoProducts: boolean = true
 ): Product[] {
-  // Get current season or use specified season
-  const activeSeason = season || getCurrentSeason();
-  console.log("Active season for product recommendations:", activeSeason);
-  
-  // Get all available products
-  const allProducts = getProductsFromLocalData();
-  
-  // Filter products by season
-  const seasonalProducts = allProducts.filter(product => isProductInSeason(product, activeSeason));
-  console.log("Products suitable for season:", seasonalProducts.length);
-  
-  // Use seasonal products if we have enough, otherwise fall back to all products
-  const productsToUse = seasonalProducts.length >= count ? seasonalProducts : allProducts;
-  
-  // Filter and sort products based on user preferences
-  const sortedProducts = filterAndSortProducts(productsToUse, user);
-  
-  // Get top products by type to ensure diversity
-  return getTopProductsByType(sortedProducts, Math.ceil(count / 3));
+  // Use an async IIFE to handle the async product loading
+  return (async () => {
+    // Get current season or use specified season
+    const activeSeason = season || getCurrentSeason();
+    console.log("Active season for product recommendations:", activeSeason);
+    
+    // Get all available products
+    let allProducts: Product[] = [];
+    
+    // Try to get Zalando products if enabled
+    if (useZalandoProducts) {
+      try {
+        const zalandoProducts = await getZalandoProducts();
+        if (zalandoProducts && zalandoProducts.length > 0) {
+          console.log('[FitFi] Zalando producten geladen voor aanbevelingen:', zalandoProducts.length);
+          allProducts = zalandoProducts;
+        } else {
+          console.log('[FitFi] Geen Zalando producten beschikbaar, terugvallen op lokale data');
+          allProducts = getProductsFromLocalData();
+        }
+      } catch (error) {
+        console.error('Error loading Zalando products:', error);
+        console.log('[FitFi] Fout bij laden Zalando producten, terugvallen op lokale data');
+        allProducts = getProductsFromLocalData();
+      }
+    } else {
+      allProducts = getProductsFromLocalData();
+    }
+    
+    // Filter products by season
+    const seasonalProducts = allProducts.filter(product => isProductInSeason(product, activeSeason));
+    console.log("Products suitable for season:", seasonalProducts.length);
+    
+    // Use seasonal products if we have enough, otherwise fall back to all products
+    const productsToUse = seasonalProducts.length >= count ? seasonalProducts : allProducts;
+    
+    // Filter and sort products based on user preferences
+    const sortedProducts = filterAndSortProducts(productsToUse, user);
+    
+    // Get top products by type to ensure diversity
+    return getTopProductsByType(sortedProducts, Math.ceil(count / 3));
+  })();
 }
 
 export default {

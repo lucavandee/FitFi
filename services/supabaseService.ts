@@ -1,4 +1,4 @@
-import supabase, { handleSupabaseError, isValidUUID, TEST_USER_ID } from '../lib/supabase';
+import supabase from '../lib/supabase';
 import { StylePreference, UserProfile } from '../context/UserContext';
 import toast from 'react-hot-toast';
 
@@ -13,6 +13,30 @@ const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // ms
 const REQUEST_TIMEOUT = 10000; // 10 seconds
 const USE_MOCK_DATA_FALLBACK = true;
+
+// Types for gamification
+export interface UserGamification {
+  id: string;
+  user_id: string;
+  points: number;
+  level: string;
+  badges: string[];
+  streak: number;
+  last_check_in: string | null;
+  completed_challenges: string[];
+  total_referrals: number;
+  seasonal_event_progress: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DailyChallenge {
+  id: string;
+  user_id: string;
+  challenge_id: string;
+  completed: boolean;
+  created_at: string;
+}
 
 /**
  * Executes a Supabase query with retry logic and timeout
@@ -64,7 +88,7 @@ async function executeWithRetry<T>(
 export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePreferences' | 'savedRecommendations'>): Promise<UserProfile | null> => {
   try {
     // First, create auth user if not in mock mode
-    let userId = TEST_USER_ID;
+    let userId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
     
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: userData.email,
@@ -119,7 +143,7 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
       id: data.id,
       name: data.name,
       email: data.email,
-      gender: data.gender as 'male' | 'female' | 'neutral' | undefined,
+      gender: data.gender as 'male' | 'female' | undefined,
       isPremium: data.is_premium,
       stylePreferences: {
         casual: 3,
@@ -137,10 +161,10 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
     if (USE_MOCK_DATA_FALLBACK) {
       // Return mock user as fallback
       return {
-        id: TEST_USER_ID,
+        id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
         name: userData.name,
         email: userData.email,
-        gender: userData.gender as 'male' | 'female' | 'neutral' | undefined,
+        gender: userData.gender as 'male' | 'female' | undefined,
         isPremium: false,
         stylePreferences: {
           casual: 3,
@@ -165,7 +189,7 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
 export const getUserById = async (userId: string): Promise<UserProfile | null> => {
   try {
     // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -289,7 +313,7 @@ export const getUserById = async (userId: string): Promise<UserProfile | null> =
     if (USE_MOCK_DATA_FALLBACK) {
       // Return mock user as fallback
       return {
-        id: TEST_USER_ID,
+        id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
         name: 'Test User',
         email: 'test@example.com',
         gender: 'neutral',
@@ -318,7 +342,7 @@ export const getUserById = async (userId: string): Promise<UserProfile | null> =
 export const updateUser = async (userId: string, updates: Partial<UserProfile>): Promise<UserProfile | null> => {
   try {
     // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -421,227 +445,6 @@ export const updateUser = async (userId: string, updates: Partial<UserProfile>):
   }
 };
 
-// Gamification Services
-
-/**
- * Gets a user's gamification data
- * @param userId - User ID
- * @returns Gamification data or null if not found
- */
-export const getUserGamification = async (userId: string): Promise<any | null> => {
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for getUserGamification, returning mock data`);
-      return {
-        id: 'mock_gamification_' + userId,
-        user_id: userId,
-        points: 0,
-        level: 'beginner',
-        badges: [],
-        streak: 0,
-        last_check_in: null,
-        completed_challenges: [],
-        total_referrals: 0,
-        seasonal_event_progress: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-    }
-
-    const getGamificationOperation = async () => {
-      const { data, error } = await supabase
-        .from('user_gamification')
-        .select('*')
-        .eq('user_id', effectiveUserId)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    };
-
-    const data = await executeWithRetry(getGamificationOperation);
-
-    if (!data) {
-      // If no record found, create one using upsert
-      console.log('No gamification record found, creating new one');
-      const createGamificationOperation = async () => {
-        const { data: newData, error: insertError } = await supabase
-          .from('user_gamification')
-          .upsert({
-            user_id: effectiveUserId,
-            points: 0,
-            level: 'beginner',
-            badges: [],
-            streak: 0,
-            completed_challenges: [],
-            total_referrals: 0,
-            seasonal_event_progress: {},
-          }, { 
-            onConflict: 'user_id' 
-          })
-          .select()
-          .single();
-
-        if (insertError) throw insertError;
-        return newData;
-      };
-
-      const newData = await executeWithRetry(createGamificationOperation);
-      
-      if (!newData) {
-        throw new Error('Failed to create gamification record');
-      }
-      
-      return newData;
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Error fetching user gamification:', error);
-    
-    // Return mock data as fallback
-    return {
-      id: 'mock_gamification_' + userId,
-      user_id: userId,
-      points: 0,
-      level: 'beginner',
-      badges: [],
-      streak: 0,
-      last_check_in: null,
-      completed_challenges: [],
-      total_referrals: 0,
-      seasonal_event_progress: {},
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-  }
-};
-
-/**
- * Updates a user's gamification data
- * @param userId - User ID
- * @param updates - Gamification data updates
- * @returns Success status
- */
-export const updateUserGamification = async (userId: string, updates: any): Promise<boolean> => {
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for updateUserGamification, skipping database query`);
-      return false;
-    }
-
-    // Ensure seasonal_event_progress is included if not provided
-    const updatesWithDefaults = {
-      ...updates,
-      seasonal_event_progress: updates.seasonal_event_progress || {},
-    };
-
-    const updateGamificationOperation = async () => {
-      // Use upsert to handle both insert and update cases
-      const { error } = await supabase
-        .from('user_gamification')
-        .upsert({
-          user_id: effectiveUserId,
-          ...updatesWithDefaults,
-          updated_at: new Date().toISOString(),
-        }, { 
-          onConflict: 'user_id' 
-        });
-
-      if (error) throw error;
-      return true;
-    };
-
-    return await executeWithRetry(updateGamificationOperation, false);
-  } catch (error) {
-    console.error('Error updating user gamification:', error);
-    return false;
-  }
-};
-
-/**
- * Gets a user's daily challenges
- * @param userId - User ID
- * @returns Array of daily challenges or empty array if failed
- */
-export const getDailyChallenges = async (userId: string): Promise<any[] | null> => {
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for getDailyChallenges, returning empty array`);
-      return [];
-    }
-
-    const getDailyChallengesOperation = async () => {
-      const { data, error } = await supabase
-        .from('daily_challenges')
-        .select('*')
-        .eq('user_id', effectiveUserId);
-
-      if (error) throw error;
-      return data;
-    };
-
-    return await executeWithRetry(getDailyChallengesOperation, []);
-  } catch (error) {
-    console.error('Error fetching daily challenges:', error);
-    return [];
-  }
-};
-
-/**
- * Completes a daily challenge for a user
- * @param userId - User ID
- * @param challengeId - Challenge ID to complete
- * @returns Success status
- */
-export const completeChallenge = async (userId: string, challengeId: string): Promise<boolean> => {
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for completeChallenge, skipping database query`);
-      return false;
-    }
-
-    const completeChallengeOperation = async () => {
-      // Use upsert to handle both insert and update cases
-      const { error } = await supabase
-        .from('daily_challenges')
-        .upsert({
-          user_id: effectiveUserId,
-          challenge_id: challengeId,
-          completed: true,
-        }, { 
-          onConflict: 'user_id,challenge_id' 
-        });
-
-      if (error) throw error;
-      return true;
-    };
-
-    return await executeWithRetry(completeChallengeOperation, false);
-  } catch (error) {
-    console.error('Error completing challenge:', error);
-    return false;
-  }
-};
-
-// Outfit Services
-
 /**
  * Saves an outfit to a user's favorites
  * @param userId - User ID
@@ -651,7 +454,7 @@ export const completeChallenge = async (userId: string, challengeId: string): Pr
 export const saveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
   try {
     // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -690,7 +493,7 @@ export const saveOutfit = async (userId: string, outfitId: string): Promise<bool
 export const unsaveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
   try {
     // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
     
     // Validate UUID before making database query
     if (!isValidUUID(effectiveUserId)) {
@@ -717,7 +520,262 @@ export const unsaveOutfit = async (userId: string, outfitId: string): Promise<bo
   }
 };
 
-// Helper functions
+// Gamification Services
+
+/**
+ * Gets user gamification data from the database
+ * @param userId - User ID to fetch gamification data for
+ * @returns The user gamification data or null if not found
+ */
+export const getUserGamification = async (userId: string): Promise<UserGamification | null> => {
+  try {
+    // Always use test user ID for development
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    
+    // Validate UUID before making database query
+    if (!isValidUUID(effectiveUserId)) {
+      console.error(`Invalid UUID format for getUserGamification: ${effectiveUserId}`);
+      throw new Error('Invalid UUID format');
+    }
+
+    const getGamificationOperation = async () => {
+      const { data, error } = await supabase
+        .from('user_gamification')
+        .select('*')
+        .eq('user_id', effectiveUserId)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    };
+
+    const gamificationData = await executeWithRetry(getGamificationOperation);
+    
+    if (!gamificationData) {
+      // Create default gamification record if it doesn't exist
+      const createGamificationOperation = async () => {
+        const { data, error } = await supabase
+          .from('user_gamification')
+          .upsert({
+            user_id: effectiveUserId,
+            points: 0,
+            level: 'beginner',
+            badges: [],
+            streak: 0,
+            completed_challenges: [],
+            total_referrals: 0,
+            seasonal_event_progress: {},
+          }, { 
+            onConflict: 'user_id' 
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      };
+
+      const newGamificationData = await executeWithRetry(createGamificationOperation);
+      
+      if (!newGamificationData) {
+        throw new Error('Failed to create gamification record');
+      }
+      
+      return newGamificationData as UserGamification;
+    }
+
+    return gamificationData as UserGamification;
+  } catch (error) {
+    console.error('Error fetching user gamification:', error);
+    
+    if (USE_MOCK_DATA_FALLBACK) {
+      // Return mock gamification data as fallback
+      return {
+        id: 'mock-gamification-id',
+        user_id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
+        points: 0,
+        level: 'beginner',
+        badges: [],
+        streak: 0,
+        last_check_in: null,
+        completed_challenges: [],
+        total_referrals: 0,
+        seasonal_event_progress: {},
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+    }
+    
+    return null;
+  }
+};
+
+/**
+ * Updates user gamification data in the database
+ * @param userId - User ID to update
+ * @param updates - Gamification updates
+ * @returns The updated gamification data or null if failed
+ */
+export const updateUserGamification = async (userId: string, updates: Partial<Omit<UserGamification, 'id' | 'user_id' | 'created_at' | 'updated_at'>>): Promise<UserGamification | null> => {
+  try {
+    // Always use test user ID for development
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    
+    // Validate UUID before making database query
+    if (!isValidUUID(effectiveUserId)) {
+      console.error(`Invalid UUID format for updateUserGamification: ${effectiveUserId}`);
+      throw new Error('Invalid UUID format');
+    }
+
+    const updateGamificationOperation = async () => {
+      const { data, error } = await supabase
+        .from('user_gamification')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', effectiveUserId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    };
+
+    const updatedData = await executeWithRetry(updateGamificationOperation);
+    
+    if (!updatedData) {
+      throw new Error('Failed to update gamification data');
+    }
+
+    return updatedData as UserGamification;
+  } catch (error) {
+    console.error('Error updating user gamification:', error);
+    toast.error('Failed to update gamification data. Please try again.');
+    return null;
+  }
+};
+
+/**
+ * Completes a challenge for a user
+ * @param userId - User ID
+ * @param challengeId - Challenge ID to complete
+ * @returns Success status
+ */
+export const completeChallenge = async (userId: string, challengeId: string): Promise<boolean> => {
+  try {
+    // Always use test user ID for development
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    
+    // Validate UUID before making database query
+    if (!isValidUUID(effectiveUserId)) {
+      console.error(`Invalid UUID format for completeChallenge: ${effectiveUserId}`);
+      throw new Error('Invalid UUID format');
+    }
+
+    const completeChallengeOperation = async () => {
+      const { error } = await supabase
+        .from('daily_challenges')
+        .upsert({
+          user_id: effectiveUserId,
+          challenge_id: challengeId,
+          completed: true,
+        }, { 
+          onConflict: 'user_id,challenge_id' 
+        });
+
+      if (error) throw error;
+      return true;
+    };
+
+    const success = await executeWithRetry(completeChallengeOperation, false);
+    
+    if (success) {
+      // Update user gamification to add the challenge to completed_challenges
+      const currentGamification = await getUserGamification(effectiveUserId);
+      if (currentGamification && !currentGamification.completed_challenges.includes(challengeId)) {
+        await updateUserGamification(effectiveUserId, {
+          completed_challenges: [...currentGamification.completed_challenges, challengeId],
+          points: currentGamification.points + 10, // Award 10 points for completing a challenge
+        });
+      }
+    }
+
+    return success;
+  } catch (error) {
+    console.error('Error completing challenge:', error);
+    toast.error('Failed to complete challenge. Please try again.');
+    return false;
+  }
+};
+
+/**
+ * Gets daily challenges for a user
+ * @param userId - User ID to fetch challenges for
+ * @returns Array of daily challenges
+ */
+export const getDailyChallenges = async (userId: string): Promise<DailyChallenge[]> => {
+  try {
+    // Always use test user ID for development
+    const effectiveUserId = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+    
+    // Validate UUID before making database query
+    if (!isValidUUID(effectiveUserId)) {
+      console.error(`Invalid UUID format for getDailyChallenges: ${effectiveUserId}`);
+      throw new Error('Invalid UUID format');
+    }
+
+    const getChallengesOperation = async () => {
+      const { data, error } = await supabase
+        .from('daily_challenges')
+        .select('*')
+        .eq('user_id', effectiveUserId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    };
+
+    const challengesData = await executeWithRetry(getChallengesOperation, []);
+    
+    return (challengesData || []) as DailyChallenge[];
+  } catch (error) {
+    console.error('Error fetching daily challenges:', error);
+    
+    if (USE_MOCK_DATA_FALLBACK) {
+      // Return mock challenges as fallback
+      return [
+        {
+          id: 'mock-challenge-1',
+          user_id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
+          challenge_id: 'daily_style_quiz',
+          completed: false,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'mock-challenge-2',
+          user_id: 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8',
+          challenge_id: 'save_outfit',
+          completed: false,
+          created_at: new Date().toISOString(),
+        },
+      ];
+    }
+    
+    return [];
+  }
+};
+
+// Helpers
+
+/**
+ * Checks if a string is a valid UUID
+ * @param uuid - String to check
+ * @returns Whether the string is a valid UUID
+ */
+function isValidUUID(uuid: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
+}
 
 /**
  * Generates a random password
