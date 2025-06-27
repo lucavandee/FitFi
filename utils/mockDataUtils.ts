@@ -13,7 +13,7 @@ export const generateMockUser = (userId: string) => {
     id: userId,
     name: 'Test User',
     email: 'test@example.com',
-    gender: 'neutral',
+    gender: 'female',
     stylePreferences: {
       casual: 3,
       formal: 3,
@@ -35,13 +35,14 @@ export const generateMockGamification = (userId: string) => {
   return {
     id: `mock_gamification_${userId}`,
     user_id: userId,
-    points: 0,
+    points: 120,
     level: 'beginner',
-    badges: [],
-    streak: 0,
-    last_check_in: null,
-    completed_challenges: [],
-    total_referrals: 0,
+    badges: ['first_quiz'],
+    streak: 2,
+    last_check_in: new Date().toISOString(),
+    completed_challenges: ['view3', 'shareLook'],
+    total_referrals: 1,
+    seasonal_event_progress: {},
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   };

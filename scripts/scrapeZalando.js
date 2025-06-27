@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
 // Load environment variables
 dotenv.config();
@@ -189,6 +190,46 @@ async function extractSizes(page, productUrl) {
   }
 }
 
+/**
+ * Validates if an image URL is accessible and returns a valid image
+ * @param {string} url - The image URL to validate
+ * @returns {Promise<boolean>} - Whether the image is valid
+ */
+async function validateImageUrl(url, retries = 0) {
+  try {
+    // Set up timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    // Make a HEAD request to check if the image exists
+    const response = await fetch(url, { 
+      method: 'HEAD',
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+    
+    clearTimeout(timeoutId);
+    
+    // Check if the response is OK and is an image
+    const contentType = response.headers.get('content-type');
+    const isImage = contentType && contentType.startsWith('image/');
+    
+    return response.ok && isImage;
+  } catch (error) {
+    // If we have retries left, try again
+    if (retries < 2) {
+      console.log(`Retrying validation for ${url} (${retries + 1}/2)`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+      return validateImageUrl(url, retries + 1);
+    }
+    
+    console.error(`Error validating image URL ${url}:`, error.message);
+    return false;
+  }
+}
+
 // Main scraping function
 async function scrapeZalando() {
   console.log('Starting Zalando scraper...');
@@ -284,6 +325,14 @@ async function scrapeZalando() {
         const product = productsToProcess[i];
         console.log(`Processing product ${i+1}/${productsToProcess.length}: ${product.name}`);
         
+        // Validate image URL
+        const isValidImage = await validateImageUrl(product.imageUrl);
+        
+        if (!isValidImage) {
+          console.log(`❌ Invalid image: ${product.imageUrl} (${product.name})`);
+          continue; // Skip this product
+        }
+        
         // Extract sizes from product page (with rate limiting)
         const sizes = await extractSizes(detailsPage, product.productUrl);
         await page.waitForTimeout(500); // Wait between requests to avoid rate limiting
@@ -332,11 +381,20 @@ async function scrapeZalando() {
     const dataDir = path.join(__dirname, '..', 'src', 'data');
     await fs.mkdir(dataDir, { recursive: true });
     
-    // Write the products to a JSON file
-    const outputPath = path.join(dataDir, 'zalandoProducts.json');
-    await fs.writeFile(outputPath, JSON.stringify(allProducts, null, 2));
+    // Create the public data directory if it doesn't exist
+    const publicDataDir = path.join(__dirname, '..', 'public', 'data');
+    await fs.mkdir(publicDataDir, { recursive: true });
     
-    console.log(`Successfully scraped ${allProducts.length} products and saved to ${outputPath}`);
+    // Write the products to JSON files
+    const srcOutputPath = path.join(dataDir, 'zalandoProducts.json');
+    const publicOutputPath = path.join(publicDataDir, 'zalandoProducts.json');
+    
+    await fs.writeFile(srcOutputPath, JSON.stringify(allProducts, null, 2));
+    await fs.writeFile(publicOutputPath, JSON.stringify(allProducts, null, 2));
+    
+    console.log(`Successfully scraped ${allProducts.length} products and saved to:`);
+    console.log(`- ${srcOutputPath}`);
+    console.log(`- ${publicOutputPath}`);
     
     // If running in daily mode, automatically upload to Supabase
     if (isDaily) {

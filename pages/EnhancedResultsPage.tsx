@@ -1,14 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useUser } from "../context/UserContext";
 import { Card, CardContent } from "../components/ui/card";
 import { Loader } from "../components/Loader";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
-import { Product, UserProfile, Outfit, generateRecommendations, getRecommendedProducts } from "../engine";
-import { getCurrentSeason, getDutchSeasonName, getProductCategory } from "../engine/helpers";
-import { fetchProductsFromSupabase } from "../lib/supabaseService";
-import { getZalandoProducts } from "../data/zalandoProductsAdapter";
+import { Product, UserProfile, Outfit } from "../engine";
+import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
+import { getOutfits, getRecommendedProducts, getDataSource, getFetchDiagnostics, clearCache } from "../services/DataRouter";
+import DevDataPanel from "../components/DevDataPanel";
+import { BoltProduct } from "../types/BoltProduct";
+import { USE_SUPABASE } from "../config/app-config";
+import ProductList from "../components/products/ProductList";
+import ProductPreviewList from "../components/products/ProductPreviewList";
 
 // Fallback user if there's no context or localStorage-user
 const fallbackUser: UserProfile = {
@@ -31,6 +35,7 @@ const EnhancedResultsPage = () => {
   const { user: contextUser } = useUser() || {};
   const [matchedProducts, setMatchedProducts] = useState<Product[]>([]);
   const [outfits, setOutfits] = useState<Outfit[]>([]);
+  const [boltProducts, setBoltProducts] = useState<BoltProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSeason, setCurrentSeason] = useState<string>("");
@@ -38,7 +43,8 @@ const EnhancedResultsPage = () => {
   const [regenerationCount, setRegenerationCount] = useState<number>(0);
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [outfitCompleteness, setOutfitCompleteness] = useState<Record<string, number>>({});
-  const [dataSource, setDataSource] = useState<'supabase' | 'zalando' | 'local'>('local');
+  const [dataSource, setDataSource] = useState<'supabase' | 'bolt' | 'zalando' | 'local'>(getDataSource());
+  const [showAllBoltProducts, setShowAllBoltProducts] = useState(false);
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -53,128 +59,93 @@ const EnhancedResultsPage = () => {
     return contextUser || localStorageUser || fallbackUser;
   }, [contextUser]);
 
-  // Generate recommendations using the recommendation engine
-  useEffect(() => {
-    const loadRecommendations = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // Get current season
-        const season = getCurrentSeason();
-        setCurrentSeason(season);
-        console.log("Actief seizoen:", season);
-        
-        // Try to fetch products from Supabase
-        const supabaseProducts = await fetchProductsFromSupabase();
-        
-        // Check if we got products from Supabase
-        if (supabaseProducts && supabaseProducts.length > 0) {
-          console.log("Supabase products loaded:", supabaseProducts.length);
-          setDataSource('supabase');
-          
-          // Use the recommendation engine with Supabase products
-          const generatedOutfits = await generateRecommendations(user);
-          
-          // Set outfits
-          setOutfits(generatedOutfits);
-          
-          // Track shown outfit IDs
-          const outfitIds = generatedOutfits.map(outfit => outfit.id);
-          setShownOutfitIds(outfitIds);
-          
-          // Track completeness
-          const completeness: Record<string, number> = {};
-          generatedOutfits.forEach(outfit => {
-            if (outfit.completeness) {
-              completeness[outfit.id] = outfit.completeness;
-            }
-          });
-          setOutfitCompleteness(completeness);
-          
-          // Get recommended individual products
-          const recommendedProducts = await getRecommendedProducts(user, 9, season);
-          setMatchedProducts(recommendedProducts);
-        } else {
-          // Try to load Zalando products
-          const zalandoProducts = await getZalandoProducts();
-          
-          if (zalandoProducts && zalandoProducts.length > 0) {
-            console.log('[FitFi] Zalando fallback actief – producten geladen:', zalandoProducts.length);
-            setDataSource('zalando');
-            
-            // Use the recommendation engine with Zalando products
-            const generatedOutfits = await generateRecommendations(user, { useZalandoProducts: true });
-            
-            // Set outfits
-            setOutfits(generatedOutfits);
-            
-            // Track shown outfit IDs
-            const outfitIds = generatedOutfits.map(outfit => outfit.id);
-            setShownOutfitIds(outfitIds);
-            
-            // Track completeness
-            const completeness: Record<string, number> = {};
-            generatedOutfits.forEach(outfit => {
-              if (outfit.completeness) {
-                completeness[outfit.id] = outfit.completeness;
-              }
-            });
-            setOutfitCompleteness(completeness);
-            
-            // Get recommended individual products
-            const recommendedProducts = await getRecommendedProducts(user, 9, season, true);
-            setMatchedProducts(recommendedProducts);
-          } else {
-            // Fallback to local data
-            console.log('Supabase uitgeschakeld – lokale fallback actief');
-            setDataSource('local');
-            
-            // Use the recommendation engine to generate outfits
-            const generatedOutfits = await generateRecommendations(user, { useZalandoProducts: false });
-            
-            // Track shown outfit IDs
-            const outfitIds = generatedOutfits.map(outfit => outfit.id);
-            setShownOutfitIds(outfitIds);
-            
-            // Set outfits
-            setOutfits(generatedOutfits);
-            
-            // Track completeness
-            const completeness: Record<string, number> = {};
-            generatedOutfits.forEach(outfit => {
-              if (outfit.completeness) {
-                completeness[outfit.id] = outfit.completeness;
-              }
-            });
-            setOutfitCompleteness(completeness);
-            
-            // Get recommended individual products
-            const recommendedProducts = await getRecommendedProducts(user, 9, season, false);
-            setMatchedProducts(recommendedProducts);
-          }
-        }
-      } catch (err) {
-        console.error('Error generating recommendations:', err);
-        setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
-        setDataSource('local');
-      } finally {
-        setLoading(false);
+  // Load BoltProducts from JSON file
+  const loadBoltProducts = useCallback(async () => {
+    try {
+      const response = await fetch('/src/data/boltProducts.json');
+      if (!response.ok) {
+        throw new Error('Failed to load BoltProducts');
       }
-    };
+      const data = await response.json();
+      setBoltProducts(data);
+      return data;
+    } catch (error) {
+      console.error('Error loading BoltProducts:', error);
+      setBoltProducts([]);
+      return [];
+    }
+  }, []);
+
+  // Load recommendations using the DataRouter
+  const loadRecommendations = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     
+    try {
+      // Get current season
+      const season = getCurrentSeason();
+      setCurrentSeason(season);
+      console.log("Actief seizoen:", season);
+      
+      if (!USE_SUPABASE) {
+        // Load BoltProducts from JSON file when Supabase is disabled
+        const loadedBoltProducts = await loadBoltProducts();
+        if (loadedBoltProducts && loadedBoltProducts.length > 0) {
+          setBoltProducts(loadedBoltProducts);
+          console.log(`Loaded ${loadedBoltProducts.length} BoltProducts from JSON file`);
+        } else {
+          console.warn('No BoltProducts found in JSON file');
+        }
+      }
+      
+      // Get outfits using the DataRouter
+      const generatedOutfits = await getOutfits(user);
+      
+      // Set outfits
+      setOutfits(generatedOutfits);
+      
+      // Track shown outfit IDs
+      const outfitIds = generatedOutfits.map(outfit => outfit.id);
+      setShownOutfitIds(outfitIds);
+      
+      // Track completeness
+      const completeness: Record<string, number> = {};
+      generatedOutfits.forEach(outfit => {
+        if (outfit.completeness) {
+          completeness[outfit.id] = outfit.completeness;
+        }
+      });
+      setOutfitCompleteness(completeness);
+      
+      // Get recommended individual products
+      const recommendedProducts = await getRecommendedProducts(user, 9, season);
+      setMatchedProducts(recommendedProducts);
+      
+      // Get the data source being used
+      setDataSource(getDataSource());
+    } catch (err) {
+      console.error('Error generating recommendations:', err);
+      setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
+      setDataSource(getDataSource());
+    } finally {
+      setLoading(false);
+    }
+  }, [user, loadBoltProducts]);
+
+  // Generate recommendations on component mount
+  useEffect(() => {
     loadRecommendations();
-  }, [user]);
+  }, [loadRecommendations]);
 
   // Handle product click
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = (product: Product | BoltProduct) => {
     // Track click in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'product_click', {
         event_category: 'ecommerce',
         event_label: product.id,
         item_id: product.id,
-        item_name: product.name,
+        item_name: product.name || product.title,
         item_brand: product.brand,
         item_category: product.type || product.category,
         price: product.price,
@@ -226,14 +197,13 @@ const EnhancedResultsPage = () => {
       const season = getCurrentSeason();
       
       // Generate a new outfit with the same parameters but excluding shown IDs
-      const generatedOutfits = await generateRecommendations(user, {
+      const generatedOutfits = await getOutfits(user, {
         excludeIds: shownOutfitIds,
         count: 1,
         preferredOccasions: [occasion],
         variationLevel: 'high', // Use high variation for regeneration
         enforceCompletion: true,
         minCompleteness: 90, // Higher completeness for regenerated outfits
-        useZalandoProducts: dataSource === 'zalando'
       });
       
       if (generatedOutfits.length === 0) {
@@ -263,6 +233,9 @@ const EnhancedResultsPage = () => {
       
       // Increment regeneration count
       setRegenerationCount(prev => prev + 1);
+      
+      // Update data source
+      setDataSource(getDataSource());
       
       // Track regeneration in analytics
       if (typeof window.gtag === 'function') {
@@ -309,11 +282,6 @@ const EnhancedResultsPage = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <p className="text-white/80 mb-2 md:mb-0">
             Hallo {user.name || 'daar'}! Deze aanbevelingen zijn gebaseerd op jouw {user.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijlvoorkeuren.
-            {dataSource !== 'supabase' && (
-              <span className="ml-2 text-orange-400">
-                ({dataSource === 'zalando' ? 'Zalando' : 'Lokale'} fallback actief)
-              </span>
-            )}
           </p>
           <div className="flex items-center bg-white/10 px-3 py-1 rounded-full">
             <Calendar size={16} className="mr-2 text-orange-500" />
@@ -323,12 +291,42 @@ const EnhancedResultsPage = () => {
       </div>
       
       {/* Data source info banner */}
+      {dataSource === 'supabase' && (
+        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <CheckCircle size={20} className="text-green-400 mr-3 mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium text-white mb-1">📦 Supabase data geladen</h3>
+              <p className="text-white/70 text-sm">
+                We gebruiken Supabase als databron voor je aanbevelingen.
+                Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {dataSource === 'bolt' && (
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <Info size={20} className="text-purple-400 mr-3 mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium text-white mb-1">⚡ Bolt API data geladen</h3>
+              <p className="text-white/70 text-sm">
+                We gebruiken de Bolt API als databron voor je aanbevelingen.
+                Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {dataSource === 'zalando' && (
         <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6">
           <div className="flex items-start">
             <Info size={20} className="text-blue-400 mr-3 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-medium text-white mb-1">Zalando producten geladen</h3>
+              <h3 className="font-medium text-white mb-1">🛍️ Zalando producten geladen</h3>
               <p className="text-white/70 text-sm">
                 We gebruiken momenteel Zalando producten voor je aanbevelingen. 
                 Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
@@ -343,7 +341,7 @@ const EnhancedResultsPage = () => {
           <div className="flex items-start">
             <AlertTriangle size={20} className="text-orange-400 mr-3 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-medium text-white mb-1">Lokale fallback actief</h3>
+              <h3 className="font-medium text-white mb-1">🧪 Lokale fallback actief</h3>
               <p className="text-white/70 text-sm">
                 We gebruiken momenteel lokale data voor je aanbevelingen. 
                 Verbinding met externe productbronnen is niet beschikbaar.
@@ -351,6 +349,53 @@ const EnhancedResultsPage = () => {
             </div>
           </div>
         </div>
+      )}
+      
+      {/* BoltProducts section - only shown when Supabase is disabled */}
+      {!USE_SUPABASE && boltProducts.length > 0 && (
+        <>
+          {/* Preview list for compact view */}
+          {!showAllBoltProducts && (
+            <div className="mb-8">
+              <ProductPreviewList 
+                products={boltProducts}
+                title="Op basis van jouw stijl-DNA hebben we deze items geselecteerd"
+                subtitle="Bekijk alle items die passen bij jouw persoonlijke stijl"
+                archetypeFilter="casual_chic"
+                minMatchScore={0.5}
+                maxItems={3}
+                onProductClick={handleProductClick}
+                onViewMore={() => setShowAllBoltProducts(true)}
+              />
+            </div>
+          )}
+          
+          {/* Full product list when expanded */}
+          {showAllBoltProducts && (
+            <div className="mb-8">
+              <ProductList 
+                products={boltProducts}
+                title="Op basis van jouw stijl-DNA hebben we deze items geselecteerd"
+                subtitle="Items die perfect passen bij jouw persoonlijke stijl"
+                archetypeFilter="casual_chic"
+                minMatchScore={0.5}
+                onProductClick={handleProductClick}
+              />
+              
+              {boltProducts.length > 3 && (
+                <div className="mt-4 text-center">
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setShowAllBoltProducts(false)}
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Toon minder
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
       
       {/* Outfits section */}
@@ -563,6 +608,17 @@ const EnhancedResultsPage = () => {
               </CardContent>
             </Card>
           ))
+        ) : !USE_SUPABASE && boltProducts.length === 0 ? (
+          <div className="col-span-3 text-center py-8">
+            <p className="text-white/70">Geen BoltProducts gevonden. Zorg ervoor dat het boltProducts.json bestand correct is ingesteld.</p>
+            <Button 
+              variant="primary" 
+              className="mt-4"
+              onClick={() => loadBoltProducts()}
+            >
+              Probeer opnieuw
+            </Button>
+          </div>
         ) : (
           <div className="col-span-3 text-center py-8">
             <p className="text-white/70">Geen producten gevonden die bij jouw stijl passen.</p>
@@ -582,13 +638,17 @@ const EnhancedResultsPage = () => {
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
           <div>
-            <h3 className="font-medium text-white mb-1">Databron: {dataSource === 'supabase' ? 'Supabase' : dataSource === 'zalando' ? 'Zalando' : 'Lokaal'}</h3>
+            <h3 className="font-medium text-white mb-1">
+              Databron: {dataSource === 'supabase' ? '📦 Supabase' : dataSource === 'bolt' ? '⚡ Bolt API' : dataSource === 'zalando' ? '🛍️ Zalando' : '🧪 Lokaal'}
+            </h3>
             <p className="text-white/70 text-sm">
               {dataSource === 'supabase' 
                 ? 'We gebruiken Supabase als databron voor je aanbevelingen.'
-                : dataSource === 'zalando'
-                  ? 'We gebruiken Zalando producten als fallback voor je aanbevelingen.'
-                  : 'We gebruiken lokale data als fallback voor je aanbevelingen.'}
+                : dataSource === 'bolt'
+                  ? 'We gebruiken de Bolt API als databron voor je aanbevelingen.'
+                  : dataSource === 'zalando'
+                    ? 'We gebruiken Zalando producten als fallback voor je aanbevelingen.'
+                    : 'We gebruiken lokale data als fallback voor je aanbevelingen.'}
             </p>
           </div>
         </div>
@@ -608,6 +668,9 @@ const EnhancedResultsPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Dev Data Panel - only visible in development mode */}
+      <DevDataPanel onRefresh={loadRecommendations} />
     </div>
   );
 };
