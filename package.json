@@ -1,5 +1,5 @@
 {
-  "name": "fitfi-site",
+  "name": "fitfi-zalando-scraper",
   "version": "1.0.0",
   "description": "AI-powered personal style recommendations platform",
   "type": "module",
@@ -17,12 +17,19 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "lhci": "lhci autorun",
-    "lighthouse": "npm run lhci"
+    "lighthouse": "npm run lhci",
+    "scrape": "node scripts/scrapeZalando.js",
+    "upload": "node scripts/uploadToSupabase.js",
+    "scrape:daily": "node scripts/scrapeZalando.js --daily",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.2",
+    "cheerio": "^1.1.0",
+    "dotenv": "^16.6.0",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.344.0",
+    "puppeteer": "^22.15.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
