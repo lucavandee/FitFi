@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './UserContext';
 import gamificationConfig from '../config/gamification.json';
-import { getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from '../services/supabaseService';
+import { 
+  getGamificationData, 
+  updateGamificationData, 
+  completeChallenge as completeDataRouterChallenge,
+  getDailyChallengesData 
+} from '../services/DataRouter';
 import toast from 'react-hot-toast';
 import { isValidUUID, TEST_USER_ID } from '../lib/supabase';
 
@@ -97,30 +102,25 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setIsLoading(true);
     
     try {
-      // Try to get gamification data from Supabase
-      if (isSupabaseConnected) {
-        // Always use test user ID for development
-        const effectiveUserId = TEST_USER_ID;
+      // Get gamification data using DataRouter
+      const gamificationData = await getGamificationData(TEST_USER_ID);
+      
+      if (gamificationData) {
+        const dailyChallengeStatus = await getDailyChallengeStatus(TEST_USER_ID);
         
-        const gamificationData = await getUserGamification(effectiveUserId);
-        
-        if (gamificationData) {
-          const dailyChallengeStatus = await getDailyChallengeStatus(effectiveUserId);
-          
-          setGamificationState({
-            points: gamificationData.points || 0,
-            level: gamificationData.level || 'beginner',
-            badges: gamificationData.badges || [],
-            streak: gamificationData.streak || 0,
-            dailyChallengeStatus: dailyChallengeStatus || resetDailyChallenges(),
-            referralCode: gamificationData.referral_code || generateReferralCode(),
-            lastCheckIn: gamificationData.last_check_in,
-            completedChallenges: gamificationData.completed_challenges || [],
-            totalReferrals: gamificationData.total_referrals || 0,
-            seasonalEventProgress: gamificationData.seasonal_event_progress || {}
-          });
-          return;
-        }
+        setGamificationState({
+          points: gamificationData.points || 0,
+          level: gamificationData.level || 'beginner',
+          badges: gamificationData.badges || [],
+          streak: gamificationData.streak || 0,
+          dailyChallengeStatus: dailyChallengeStatus || resetDailyChallenges(),
+          referralCode: gamificationData.referral_code || generateReferralCode(),
+          lastCheckIn: gamificationData.last_check_in,
+          completedChallenges: gamificationData.completed_challenges || [],
+          totalReferrals: gamificationData.total_referrals || 0,
+          seasonalEventProgress: gamificationData.seasonal_event_progress || {}
+        });
+        return;
       }
       
       // Fallback to localStorage
@@ -150,9 +150,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const getDailyChallengeStatus = async (userId: string): Promise<Record<string, boolean> | null> => {
     try {
-      if (!isSupabaseConnected) return null;
-      
-      const challenges = await getDailyChallenges(userId);
+      // Get daily challenges using DataRouter
+      const challenges = await getDailyChallengesData(userId);
       
       if (!challenges || challenges.length === 0) {
         console.log('No daily challenges found, returning default status');
@@ -201,30 +200,28 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // Save to localStorage as fallback
     localStorage.setItem(`fitfi-gamification-${user.id}`, JSON.stringify(state));
     
-    // Save to Supabase if connected
-    if (isSupabaseConnected) {
-      try {
-        // Always use test user ID for development
-        const effectiveUserId = TEST_USER_ID;
-        
-        if (!isValidUUID(effectiveUserId)) {
-          console.error('Invalid UUID format for saveGamificationState, skipping database update');
-          return;
-        }
-        
-        await updateUserGamification(effectiveUserId, {
-          points: state.points,
-          level: state.level,
-          badges: state.badges,
-          streak: state.streak,
-          last_check_in: state.lastCheckIn,
-          completed_challenges: state.completedChallenges,
-          total_referrals: state.totalReferrals,
-          seasonal_event_progress: state.seasonalEventProgress || {}
-        });
-      } catch (error) {
-        console.error('Error saving gamification state to Supabase:', error);
+    // Save to database using DataRouter
+    try {
+      // Always use test user ID for development
+      const effectiveUserId = TEST_USER_ID;
+      
+      if (!isValidUUID(effectiveUserId)) {
+        console.error('Invalid UUID format for saveGamificationState, skipping database update');
+        return;
       }
+      
+      await updateGamificationData(effectiveUserId, {
+        points: state.points,
+        level: state.level,
+        badges: state.badges,
+        streak: state.streak,
+        last_check_in: state.lastCheckIn,
+        completed_challenges: state.completedChallenges,
+        total_referrals: state.totalReferrals,
+        seasonal_event_progress: state.seasonalEventProgress || {}
+      });
+    } catch (error) {
+      console.error('Error saving gamification state:', error);
     }
   };
 
@@ -428,19 +425,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setGamificationState(newState);
     saveGamificationState(newState);
 
-    // Update Supabase if connected
-    if (user && isSupabaseConnected) {
+    // Update database using DataRouter
+    if (user) {
       try {
         // Always use test user ID for development
         const effectiveUserId = TEST_USER_ID;
         
         if (isValidUUID(effectiveUserId)) {
-          await completeSupabaseChallenge(effectiveUserId, challengeId);
+          await completeDataRouterChallenge(effectiveUserId, challengeId);
         } else {
           console.error('Invalid UUID format for completeChallenge, skipping database update');
         }
       } catch (error) {
-        console.error('Error completing challenge in Supabase:', error);
+        console.error('Error completing challenge:', error);
       }
     }
 

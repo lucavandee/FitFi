@@ -1,16 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import supabase, {
-  isValidUUID,
-  TEST_USER_ID
-} from '../lib/supabase';
-import {
-  getUserById,
-  createUser,
-  updateUser,
-  saveOutfit,
-  unsaveOutfit
-} from '../services/supabaseService';
+import { getUserData } from '../services/DataRouter';
 import toast from 'react-hot-toast';
+import { TEST_USER_ID } from '../lib/supabase';
+import { USE_SUPABASE } from '../config/app-config';
 
 export type StylePreference = {
   casual: number;
@@ -51,7 +43,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(true);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(USE_SUPABASE);
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -59,42 +51,69 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
 
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) throw sessionError;
-
-        const userProfile = await getUserById(TEST_USER_ID);
+        // Get user data using DataRouter
+        const userProfile = await getUserData(TEST_USER_ID);
+        
         if (userProfile) {
           setUser(userProfile);
+          setIsSupabaseConnected(true);
         } else {
-          const newUser = await createUser({ name: 'Test User', email: 'test@example.com' });
-          if (newUser) setUser(newUser);
-          else throw new Error('Kon testgebruiker niet aanmaken');
+          throw new Error('Kon gebruiker niet laden');
         }
-
-        setIsSupabaseConnected(true);
       } catch (err) {
-        console.error('Init error:', err);
+        console.error('User initialization error:', err);
         setError('Fout bij inladen gebruiker');
         setIsSupabaseConnected(false);
 
-        const mockUser: UserProfile = {
-          id: TEST_USER_ID,
-          name: 'Test User',
-          email: 'test@example.com',
-          gender: 'female', // Changed from 'neutral' to 'female'
-          stylePreferences: {
-            casual: 3,
-            formal: 3,
-            sporty: 3,
-            vintage: 3,
-            minimalist: 3
-          },
-          isPremium: false,
-          savedRecommendations: []
-        };
-
-        setUser(mockUser);
-        localStorage.setItem('fitfi-user', JSON.stringify(mockUser));
+        // Use fallback from localStorage if available
+        const savedUser = localStorage.getItem('fitfi-user');
+        if (savedUser) {
+          try {
+            setUser(JSON.parse(savedUser));
+          } catch (parseError) {
+            console.error('Error parsing saved user:', parseError);
+            
+            // Create default user as last resort
+            const mockUser: UserProfile = {
+              id: TEST_USER_ID,
+              name: 'Test User',
+              email: 'test@example.com',
+              gender: 'female',
+              stylePreferences: {
+                casual: 3,
+                formal: 3,
+                sporty: 3,
+                vintage: 3,
+                minimalist: 3
+              },
+              isPremium: false,
+              savedRecommendations: []
+            };
+            
+            setUser(mockUser);
+            localStorage.setItem('fitfi-user', JSON.stringify(mockUser));
+          }
+        } else {
+          // Create default user if no saved user
+          const mockUser: UserProfile = {
+            id: TEST_USER_ID,
+            name: 'Test User',
+            email: 'test@example.com',
+            gender: 'female',
+            stylePreferences: {
+              casual: 3,
+              formal: 3,
+              sporty: 3,
+              vintage: 3,
+              minimalist: 3
+            },
+            isPremium: false,
+            savedRecommendations: []
+          };
+          
+          setUser(mockUser);
+          localStorage.setItem('fitfi-user', JSON.stringify(mockUser));
+        }
       } finally {
         setIsLoading(false);
       }
@@ -114,7 +133,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
 
     try {
-      const userProfile = await getUserById(TEST_USER_ID);
+      // For demo purposes, we'll just use the test user
+      const userProfile = await getUserData(TEST_USER_ID);
+      
       if (userProfile) {
         setUser(userProfile);
         toast.success('Ingelogd!');
@@ -124,9 +145,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err: any) {
       console.error(err);
-      toast.error('Login mislukt (mock)');
+      toast.error('Login mislukt');
       setIsSupabaseConnected(false);
 
+      // Create mock user as fallback
       const mockUser: UserProfile = {
         id: TEST_USER_ID,
         name: 'Test User',
@@ -155,30 +177,35 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
 
     try {
-      const existing = await getUserById(TEST_USER_ID);
-      if (existing) {
-        setUser(existing);
-        toast.success('Account al aanwezig!');
+      // For demo purposes, we'll just use the test user
+      const userProfile = await getUserData(TEST_USER_ID);
+      
+      if (userProfile) {
+        // Update the user with the new name and email
+        const updatedUser = {
+          ...userProfile,
+          name,
+          email
+        };
+        
+        setUser(updatedUser);
+        localStorage.setItem('fitfi-user', JSON.stringify(updatedUser));
+        toast.success('Account aangemaakt!');
+        setIsSupabaseConnected(true);
       } else {
-        const created = await createUser({ name, email, password });
-        if (created) {
-          setUser(created);
-          toast.success('Registratie succesvol!');
-        } else {
-          throw new Error('Aanmaken mislukt');
-        }
+        throw new Error('Kon geen account aanmaken');
       }
-
-      setIsSupabaseConnected(true);
     } catch (err: any) {
       console.error(err);
+      toast.error('Registratie mislukt');
       setIsSupabaseConnected(false);
 
+      // Create mock user as fallback
       const mockUser: UserProfile = {
         id: TEST_USER_ID,
         name,
         email,
-        gender: 'female', // Changed from 'neutral' to 'female'
+        gender: 'female',
         stylePreferences: {
           casual: 3,
           formal: 3,
@@ -201,13 +228,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setIsLoading(true);
     try {
-      await supabase.auth.signOut();
-    } catch (err) {
-      console.warn('Logout geforceerd ondanks fout:', err);
-    } finally {
+      // Just clear the user state
       setUser(null);
       localStorage.removeItem('fitfi-user');
       toast.success('Uitgelogd');
+    } catch (err) {
+      console.warn('Logout geforceerd ondanks fout:', err);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -215,18 +242,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProfile = async (updates: Partial<UserProfile>) => {
     setIsLoading(true);
     try {
-      const updated = await updateUser(TEST_USER_ID, updates);
-      if (updated) {
-        setUser(updated);
-        toast.success('Profiel bijgewerkt');
-      } else {
-        setUser(prev => {
-          const fallback = { ...prev!, ...updates };
-          localStorage.setItem('fitfi-user', JSON.stringify(fallback));
-          return fallback;
-        });
-        toast.success('Profiel lokaal bijgewerkt');
+      if (!user) {
+        throw new Error('Geen gebruiker om bij te werken');
       }
+      
+      // Update user locally
+      const updatedUser = {
+        ...user,
+        ...updates,
+        stylePreferences: {
+          ...user.stylePreferences,
+          ...(updates.stylePreferences || {})
+        }
+      };
+      
+      setUser(updatedUser);
+      localStorage.setItem('fitfi-user', JSON.stringify(updatedUser));
+      toast.success('Profiel bijgewerkt');
     } catch (err) {
       console.error(err);
       toast.error('Fout bij bijwerken profiel');
@@ -239,7 +271,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     setIsLoading(true);
     try {
-      await saveOutfit(user.id, id);
+      // Update locally
       const updated = { ...user, savedRecommendations: [...user.savedRecommendations, id] };
       setUser(updated);
       localStorage.setItem('fitfi-user', JSON.stringify(updated));
@@ -256,7 +288,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     setIsLoading(true);
     try {
-      await unsaveOutfit(user.id, id);
+      // Update locally
       const updated = {
         ...user,
         savedRecommendations: user.savedRecommendations.filter(r => r !== id)
