@@ -9,9 +9,9 @@ import ImageWithFallback from '../components/ui/ImageWithFallback';
 const GenderSelectPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateProfile } = useUser();
-  const [selectedGender, setSelectedGender] = useState<'male' | 'female' | 'neutral' | null>(null);
+  const [selectedGender, setSelectedGender] = useState<'male' | 'female' | null>(null);
 
-  const handleGenderSelect = async (gender: 'male' | 'female' | 'neutral') => {
+  const handleGenderSelect = async (gender: 'male' | 'female') => {
     setSelectedGender(gender);
     
     // Track gender selection
@@ -31,8 +31,7 @@ const GenderSelectPage: React.FC = () => {
 
   const imgSrc = {
     male: '/images/gender/male.png',
-    female: '/images/gender/female.png',
-    neutral: '/images/gender/neutral.png'
+    female: '/images/gender/female.png'
   };
 
   const totalSteps = 4;
@@ -75,12 +74,11 @@ const GenderSelectPage: React.FC = () => {
               <div className="space-y-4">
                 {[
                   { id: 'male', label: 'Man', description: 'Mannelijke stijladvies' },
-                  { id: 'female', label: 'Vrouw', description: 'Vrouwelijke stijladvies' },
-                  { id: 'neutral', label: 'Gender Neutraal', description: 'Neutrale stijladvies' }
+                  { id: 'female', label: 'Vrouw', description: 'Vrouwelijke stijladvies' }
                 ].map((option) => (
                   <motion.button
                     key={option.id}
-                    onClick={() => handleGenderSelect(option.id as 'male' | 'female' | 'neutral')}
+                    onClick={() => handleGenderSelect(option.id as 'male' | 'female')}
                     className={`
                       w-full p-4 rounded-xl border transition-all duration-200 text-left
                       ${selectedGender === option.id

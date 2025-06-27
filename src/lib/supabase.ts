@@ -55,7 +55,7 @@ export async function getUserById(id: string): Promise<UserProfile | null> {
       id: TEST_USER_ID,
       name: 'Test User',
       email: 'test@example.com',
-      gender: 'neutral',
+      gender: 'female', // Changed from 'neutral' to 'female'
       isPremium: false,
       stylePreferences: {
         casual: 4,
@@ -79,7 +79,7 @@ export async function createUser(profile: Partial<UserProfile>): Promise<UserPro
       id: TEST_USER_ID,
       name: profile.name || 'Test User',
       email: profile.email || 'test@example.com',
-      gender: profile.gender as 'male' | 'female' | 'neutral' | undefined,
+      gender: profile.gender as 'male' | 'female' | undefined,
       isPremium: false,
       stylePreferences: {
         casual: 3,
@@ -103,7 +103,7 @@ export async function updateUser(id: string, updates: Partial<UserProfile>): Pro
       id: TEST_USER_ID,
       name: updates.name || 'Test User',
       email: updates.email || 'test@example.com',
-      gender: updates.gender as 'male' | 'female' | 'neutral' | undefined,
+      gender: updates.gender as 'male' | 'female' | undefined,
       isPremium: updates.isPremium || false,
       stylePreferences: updates.stylePreferences || {
         casual: 4,
