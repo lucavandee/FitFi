@@ -22,7 +22,7 @@ export type UserProfile = {
   id: string;
   name: string;
   email: string;
-  gender?: 'male' | 'female' | 'neutral';
+  gender?: 'male' | 'female';
   photoUrl?: string;
   stylePreferences: StylePreference;
   isPremium: boolean;
@@ -79,7 +79,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: TEST_USER_ID,
           name: 'Test User',
           email: 'test@example.com',
-          gender: 'neutral',
+          gender: 'female', // Changed from 'neutral' to 'female'
           stylePreferences: {
             casual: 3,
             formal: 3,
@@ -176,6 +176,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: TEST_USER_ID,
         name,
         email,
+        gender: 'female', // Changed from 'neutral' to 'female'
         stylePreferences: {
           casual: 3,
           formal: 3,
