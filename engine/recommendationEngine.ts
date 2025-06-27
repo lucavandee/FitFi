@@ -5,6 +5,9 @@ import { analyzeUserProfile, determineArchetypesFromAnswers, getStyleKeywords } 
 import dutchProducts from '../data/dutchProducts';
 import { getCurrentSeason, isProductInSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
+import { isValidImageUrl } from '../utils/imageUtils';
+import { USE_SUPABASE } from '../config/app-config';
+import { fetchProductsFromSupabase } from '../services/supabaseService';
 
 /**
  * Interface for recommendation options
@@ -29,7 +32,9 @@ interface RecommendationOptions {
  * @returns Array of recommended outfits
  */
 export function generateRecommendations(user: UserProfile, options?: RecommendationOptions): Outfit[] {
-  console.log('Supabase uitgeschakeld – fallback actief');
+  if (!USE_SUPABASE) {
+    console.log('Supabase uitgeschakeld – fallback actief');
+  }
   
   // Step 1: Get current season or preferred season
   const preferredSeasons = options?.preferredSeasons;
@@ -50,8 +55,38 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
   return (async () => {
     let allProducts: Product[] = [];
     
-    // Try to get Zalando products if enabled
-    if (useZalandoProducts) {
+    // Try to get Supabase products if enabled
+    if (USE_SUPABASE) {
+      try {
+        const supabaseProducts = await fetchProductsFromSupabase();
+        if (supabaseProducts && supabaseProducts.length > 0) {
+          console.log('[FitFi] Supabase producten geladen:', supabaseProducts.length);
+          
+          // Convert to Product format
+          allProducts = supabaseProducts.map(p => ({
+            id: p.id,
+            name: p.name,
+            imageUrl: p.image_url || p.imageUrl,
+            type: p.type || p.category,
+            category: p.category,
+            styleTags: p.tags || ['casual'],
+            description: p.description || `${p.name} van ${p.brand || 'onbekend merk'}`,
+            price: typeof p.price === 'number' ? p.price : parseFloat(p.price || '0'),
+            brand: p.brand,
+            affiliateUrl: p.url || p.affiliate_url,
+            season: ['spring', 'summer', 'autumn', 'winter'] // Default all seasons
+          }));
+        } else {
+          console.log('[FitFi] Geen Supabase producten beschikbaar, terugvallen op Zalando of lokale data');
+        }
+      } catch (error) {
+        console.error('Error loading Supabase products:', error);
+        console.log('[FitFi] Fout bij laden Supabase producten, terugvallen op Zalando of lokale data');
+      }
+    }
+    
+    // If no Supabase products, try Zalando if enabled
+    if (allProducts.length === 0 && useZalandoProducts) {
       try {
         const zalandoProducts = await getZalandoProducts();
         if (zalandoProducts && zalandoProducts.length > 0) {
@@ -66,12 +101,27 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
         console.log('[FitFi] Fout bij laden Zalando producten, terugvallen op lokale data');
         allProducts = getProductsFromLocalData();
       }
-    } else {
+    } else if (allProducts.length === 0) {
+      // If Zalando not enabled or no products from Supabase, use local data
       allProducts = getProductsFromLocalData();
     }
     
+    // Ensure all products have valid image URLs
+    const validProducts = allProducts.filter(product => {
+      const isValid = product.imageUrl && isValidImageUrl(product.imageUrl);
+      
+      if (!isValid) {
+        console.warn(`⚠️ Broken image gefilterd: ${product.imageUrl} (${product.name})`);
+      }
+      
+      return isValid;
+    });
+    
+    console.log(`[FitFi] Filtered out ${allProducts.length - validProducts.length} products with invalid images`);
+    console.log(`[FitFi] Using ${validProducts.length} products with valid images`);
+    
     // Step 4: Filter products by season
-    const seasonalProducts = allProducts.filter(product => isProductInSeason(product, currentSeason));
+    const seasonalProducts = validProducts.filter(product => isProductInSeason(product, currentSeason));
     console.log("Products suitable for season:", seasonalProducts.length);
     
     // Step 5: Determine user's archetypes (primary and secondary)
@@ -80,7 +130,7 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
     
     // Step 6: Filter and sort products based on user preferences
     // Use seasonal products if we have enough, otherwise fall back to all products
-    const productsToUse = seasonalProducts.length >= 10 ? seasonalProducts : allProducts;
+    const productsToUse = seasonalProducts.length >= 10 ? seasonalProducts : validProducts;
     const sortedProducts = filterAndSortProducts(productsToUse, user);
     console.log(`Filtered and sorted ${sortedProducts.length} products`);
     
@@ -159,7 +209,7 @@ function logProductCategoryDistribution(products: Product[]): void {
  */
 function getProductsFromLocalData(): Product[] {
   // Convert Dutch products to our Product interface
-  return dutchProducts.map(product => ({
+  const products = dutchProducts.map(product => ({
     id: product.id,
     name: product.name,
     imageUrl: product.imageUrl || '/placeholder.png',
@@ -172,6 +222,22 @@ function getProductsFromLocalData(): Product[] {
     affiliateUrl: '#',
     season: product.season // Include season information
   }));
+  
+  // Filter out products with invalid image URLs
+  const validProducts = products.filter(product => {
+    const isValid = product.imageUrl && isValidImageUrl(product.imageUrl);
+    
+    if (!isValid) {
+      console.warn(`⚠️ Broken image gefilterd: ${product.imageUrl} (${product.name})`);
+    }
+    
+    return isValid;
+  });
+  
+  console.log(`[FitFi] Filtered out ${products.length - validProducts.length} local products with invalid images`);
+  console.log(`[FitFi] Using ${validProducts.length} local products with valid images`);
+  
+  return validProducts;
 }
 
 /**
@@ -283,8 +349,38 @@ export function getRecommendedProducts(
     // Get all available products
     let allProducts: Product[] = [];
     
-    // Try to get Zalando products if enabled
-    if (useZalandoProducts) {
+    // Try to get Supabase products if enabled
+    if (USE_SUPABASE) {
+      try {
+        const supabaseProducts = await fetchProductsFromSupabase();
+        if (supabaseProducts && supabaseProducts.length > 0) {
+          console.log('[FitFi] Supabase producten geladen voor aanbevelingen:', supabaseProducts.length);
+          
+          // Convert to Product format
+          allProducts = supabaseProducts.map(p => ({
+            id: p.id,
+            name: p.name,
+            imageUrl: p.image_url || p.imageUrl,
+            type: p.type || p.category,
+            category: p.category,
+            styleTags: p.tags || ['casual'],
+            description: p.description || `${p.name} van ${p.brand || 'onbekend merk'}`,
+            price: typeof p.price === 'number' ? p.price : parseFloat(p.price || '0'),
+            brand: p.brand,
+            affiliateUrl: p.url || p.affiliate_url,
+            season: ['spring', 'summer', 'autumn', 'winter'] // Default all seasons
+          }));
+        } else {
+          console.log('[FitFi] Geen Supabase producten beschikbaar, terugvallen op Zalando of lokale data');
+        }
+      } catch (error) {
+        console.error('Error loading Supabase products:', error);
+        console.log('[FitFi] Fout bij laden Supabase producten, terugvallen op Zalando of lokale data');
+      }
+    }
+    
+    // If no Supabase products, try Zalando if enabled
+    if (allProducts.length === 0 && useZalandoProducts) {
       try {
         const zalandoProducts = await getZalandoProducts();
         if (zalandoProducts && zalandoProducts.length > 0) {
@@ -299,16 +395,30 @@ export function getRecommendedProducts(
         console.log('[FitFi] Fout bij laden Zalando producten, terugvallen op lokale data');
         allProducts = getProductsFromLocalData();
       }
-    } else {
+    } else if (allProducts.length === 0) {
+      // If Zalando not enabled or no products from Supabase, use local data
       allProducts = getProductsFromLocalData();
     }
     
+    // Ensure all products have valid image URLs
+    const validProducts = allProducts.filter(product => {
+      const isValid = product.imageUrl && isValidImageUrl(product.imageUrl);
+      
+      if (!isValid) {
+        console.warn(`⚠️ Broken image gefilterd: ${product.imageUrl} (${product.name})`);
+      }
+      
+      return isValid;
+    });
+    
+    console.log(`[FitFi] Using ${validProducts.length} products with valid images for recommendations`);
+    
     // Filter products by season
-    const seasonalProducts = allProducts.filter(product => isProductInSeason(product, activeSeason));
+    const seasonalProducts = validProducts.filter(product => isProductInSeason(product, activeSeason));
     console.log("Products suitable for season:", seasonalProducts.length);
     
     // Use seasonal products if we have enough, otherwise fall back to all products
-    const productsToUse = seasonalProducts.length >= count ? seasonalProducts : allProducts;
+    const productsToUse = seasonalProducts.length >= count ? seasonalProducts : validProducts;
     
     // Filter and sort products based on user preferences
     const sortedProducts = filterAndSortProducts(productsToUse, user);

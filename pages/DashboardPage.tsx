@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { 
   User, 
@@ -19,6 +19,7 @@ import ReferralWidget from '../components/ui/ReferralWidget';
 import GamificationBanner from '../components/ui/GamificationBanner';
 import { useGamification } from '../context/GamificationContext';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
+import { getDataSource } from '../services/DataRouter';
 
 // Define types for profile attributes
 interface ProfileAttributes {
@@ -38,6 +39,15 @@ const DashboardPage: React.FC = () => {
   const { user, isLoading, error } = useUser();
   const { points, level, streak } = useGamification();
   const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'saved' | 'settings'>('overview');
+  const [dataSource, setDataSource] = useState<'supabase' | 'zalando' | 'local'>(getDataSource());
+
+  // Update data source when it changes
+  useEffect(() => {
+    const currentSource = getDataSource();
+    if (dataSource !== currentSource) {
+      setDataSource(currentSource);
+    }
+  }, []);
 
   // Safe access to profile attributes with fallbacks
   const profileAttributes: ProfileAttributes = {
@@ -137,6 +147,20 @@ const DashboardPage: React.FC = () => {
               <p className="text-white/60 text-sm mb-1">Abonnement</p>
               <p className="text-white font-medium">{user.isPremium ? 'Premium' : 'Basis'}</p>
             </div>
+          </div>
+          
+          {/* Data source indicator */}
+          <div className="mt-6 bg-white/5 p-4 rounded-xl">
+            <p className="text-white/60 text-sm mb-1">Databron</p>
+            <p className="text-white font-medium flex items-center">
+              {dataSource === 'supabase' ? (
+                <>📦 Supabase</>
+              ) : dataSource === 'zalando' ? (
+                <>🛍️ Zalando</>
+              ) : (
+                <>🧪 Lokaal</>
+              )}
+            </p>
           </div>
         </div>
 
@@ -359,6 +383,29 @@ const DashboardPage: React.FC = () => {
                   </Button>
                 </div>
               )}
+            </div>
+            
+            {/* Data source settings */}
+            <div className="bg-white/5 p-4 rounded-xl">
+              <h3 className="text-lg font-semibold text-white mb-3">Databron</h3>
+              <div className="space-y-3">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <p className="text-white font-medium">Huidige databron</p>
+                  <p className="text-white/70 text-sm flex items-center mt-1">
+                    {dataSource === 'supabase' ? (
+                      <>📦 Supabase</>
+                    ) : dataSource === 'zalando' ? (
+                      <>🛍️ Zalando</>
+                    ) : (
+                      <>🧪 Lokaal</>
+                    )}
+                  </p>
+                </div>
+                <p className="text-white/60 text-xs">
+                  De databron wordt automatisch bepaald op basis van beschikbaarheid.
+                  Supabase heeft de hoogste prioriteit, gevolgd door Zalando en lokale data.
+                </p>
+              </div>
             </div>
           </div>
         </div>

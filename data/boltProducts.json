@@ -1,0 +1,194 @@
+[
+  {
+    "id": "bolt-hugo-boss-beige-colbert-van-hugo-boss",
+    "title": "Beige colbert van Hugo Boss",
+    "brand": "Hugo Boss",
+    "type": "colbert",
+    "gender": "male",
+    "color": "beige",
+    "dominantColorHex": "#F5F5DC",
+    "styleTags": [
+      "smart",
+      "clean",
+      "italian"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "klassiek": 1,
+      "luxury": 0.67
+    },
+    "material": "Wol en polyester blend",
+    "price": 189.95,
+    "imageUrl": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/hugo123",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-nike-witte-sneakers-van-nike",
+    "title": "Witte sneakers van Nike",
+    "brand": "Nike",
+    "type": "sneaker",
+    "gender": "male",
+    "color": "white",
+    "dominantColorHex": "#FFFFFF",
+    "styleTags": [
+      "sporty",
+      "athletic",
+      "street"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "streetstyle": 1,
+      "urban": 0.33
+    },
+    "material": "Leer en mesh",
+    "price": 109.95,
+    "imageUrl": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/nike456",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-zara-elegant-blouse-with-bow",
+    "title": "Elegant blouse with bow",
+    "brand": "Zara",
+    "type": "blouse",
+    "gender": "female",
+    "color": "white",
+    "dominantColorHex": "#FFFFFF",
+    "styleTags": [
+      "elegant",
+      "feminine",
+      "minimal"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "klassiek": 0.8,
+      "casual_chic": 0.5
+    },
+    "material": "Viscose",
+    "price": 39.95,
+    "imageUrl": "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/zara123",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-levis-high-waist-mom-jeans",
+    "title": "High waist mom jeans",
+    "brand": "Levi's",
+    "type": "jeans",
+    "gender": "female",
+    "color": "blue",
+    "dominantColorHex": "#0000FF",
+    "styleTags": [
+      "casual",
+      "denim",
+      "american"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "casual_chic": 0.9,
+      "retro": 0.6
+    },
+    "material": "Denim katoen",
+    "price": 99.95,
+    "imageUrl": "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/levis123",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-mango-oversized-wool-coat",
+    "title": "Oversized wool coat",
+    "brand": "Mango",
+    "type": "jas",
+    "gender": "female",
+    "color": "beige",
+    "dominantColorHex": "#F5F5DC",
+    "styleTags": [
+      "minimal",
+      "clean",
+      "quality"
+    ],
+    "season": "winter",
+    "archetypeMatch": {
+      "casual_chic": 0.7,
+      "klassiek": 0.6
+    },
+    "material": "Wol en polyester blend",
+    "price": 149.95,
+    "imageUrl": "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/mango123",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-adidas-stan-smith-sneakers",
+    "title": "Stan Smith sneakers",
+    "brand": "Adidas",
+    "type": "sneaker",
+    "gender": "female",
+    "color": "white",
+    "dominantColorHex": "#FFFFFF",
+    "styleTags": [
+      "sporty",
+      "minimal",
+      "clean"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "casual_chic": 0.8,
+      "streetstyle": 0.5
+    },
+    "material": "Leer",
+    "price": 99.95,
+    "imageUrl": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/adidas123",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-michael-kors-leather-tote-bag",
+    "title": "Leather tote bag",
+    "brand": "Michael Kors",
+    "type": "tas",
+    "gender": "female",
+    "color": "black",
+    "dominantColorHex": "#000000",
+    "styleTags": [
+      "luxury",
+      "minimal",
+      "versatile"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "luxury": 0.8,
+      "klassiek": 0.7
+    },
+    "material": "Leer",
+    "price": 199.95,
+    "imageUrl": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/mk123",
+    "source": "zalando"
+  },
+  {
+    "id": "bolt-cos-oversized-cotton-shirt",
+    "title": "Oversized cotton shirt",
+    "brand": "COS",
+    "type": "shirt",
+    "gender": "female",
+    "color": "white",
+    "dominantColorHex": "#FFFFFF",
+    "styleTags": [
+      "minimal",
+      "clean",
+      "scandinavian"
+    ],
+    "season": "all_season",
+    "archetypeMatch": {
+      "casual_chic": 0.9,
+      "urban": 0.4
+    },
+    "material": "Katoen",
+    "price": 59.95,
+    "imageUrl": "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    "affiliateUrl": "https://partner.zalando.nl/cos123",
+    "source": "zalando"
+  }
+]

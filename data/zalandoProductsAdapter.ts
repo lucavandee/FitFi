@@ -1,4 +1,5 @@
 import type { Product } from "../engine/types";
+import { isValidImageUrl } from "../utils/imageUtils";
 
 export async function fetchZalandoProducts(): Promise<Product[]> {
   try {
@@ -14,15 +15,19 @@ export async function fetchZalandoProducts(): Promise<Product[]> {
 
 /**
  * Converts Zalando product format to FitFi Product format
+ * and filters out products with invalid image URLs
  * @param zalandoProducts - Products in Zalando format
- * @returns Products in FitFi format
+ * @returns Products in FitFi format with valid images
  */
 function convertZalandoProducts(zalandoProducts: any[]): Product[] {
   if (!zalandoProducts || !Array.isArray(zalandoProducts) || zalandoProducts.length === 0) {
     return [];
   }
 
-  return zalandoProducts.map(product => {
+  console.log(`[ZalandoAdapter] Processing ${zalandoProducts.length} products`);
+  
+  // First, convert all products
+  const convertedProducts = zalandoProducts.map(product => {
     // Convert price from string to number
     let price: number | undefined;
     if (product.price) {
@@ -48,11 +53,27 @@ function convertZalandoProducts(zalandoProducts: any[]): Product[] {
       season: product.seasons || ['spring', 'summer', 'autumn', 'winter']
     };
   });
+  
+  // Then, filter out products with invalid image URLs
+  const validProducts = convertedProducts.filter(product => {
+    const isValid = product.imageUrl && isValidImageUrl(product.imageUrl);
+    
+    if (!isValid) {
+      console.warn(`⚠️ Broken image gefilterd: ${product.imageUrl} (${product.name})`);
+    }
+    
+    return isValid;
+  });
+  
+  console.log(`[ZalandoAdapter] Filtered out ${convertedProducts.length - validProducts.length} products with invalid images`);
+  console.log(`[ZalandoAdapter] Returning ${validProducts.length} valid products`);
+  
+  return validProducts;
 }
 
 /**
  * Gets Zalando products converted to FitFi format
- * @returns Promise that resolves to an array of FitFi Products
+ * @returns Promise that resolves to an array of FitFi Products with valid images
  */
 export async function getZalandoProducts(): Promise<Product[]> {
   try {
