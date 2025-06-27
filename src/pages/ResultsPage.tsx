@@ -114,7 +114,7 @@ const analyzePsychographicProfile = (answers: Record<string, any>): Psychographi
     description: archetype.description,
     characteristics: archetype.keywords,
     styleKeywords: archetype.keywords,
-    motivationalMessage: `${gender === 'man' ? 'Voor de moderne man' : gender === 'vrouw' ? 'Voor de zelfverzekerde vrouw' : 'Voor jou'} hebben we outfits geselecteerd die jouw ${archetype.displayName.toLowerCase()} smaak weerspiegelen.`,
+    motivationalMessage: `${gender === 'male' ? 'Voor de moderne man' : 'Voor de zelfverzekerde vrouw'} hebben we outfits geselecteerd die jouw ${archetype.displayName.toLowerCase()} smaak weerspiegelen.`,
     icon: archetype.icon
   };
 };
@@ -125,7 +125,7 @@ const ProfileIntroduction: React.FC<{ profile: PsychographicProfile; userName?: 
 }) => {
   return (
     <div className="py-8">
-      <div className="max-w-screen-md mx-auto px-4">
+      <div className="max-w-screen-md mx-auto">
         <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-8 animate-fade-in transition-colors">
           <div className="flex items-start space-x-4">
             <div className="text-4xl">{profile.icon}</div>
@@ -162,7 +162,7 @@ const DailyStyleTipSection: React.FC = () => {
 
   return (
     <div className="py-8">
-      <div className="max-w-screen-md mx-auto px-4">
+      <div className="max-w-screen-md mx-auto">
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800 transition-colors">
           <div className="flex items-start space-x-4">
             <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
@@ -263,64 +263,18 @@ const ResultsPage: React.FC = () => {
 
   const quizAnswers = location.state?.answers || {};
 
-  // Fetch recommendations with timeout and error handling
-  const fetchRecommendations = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    // Set a timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      setIsLoading(false);
-      setError("Het laden van de aanbevelingen duurde te lang. Probeer het opnieuw.");
-      console.error("Recommendation fetch timeout after 10 seconds");
-    }, 10000);
-    
-    try {
-      // Analyze profile
-      const profile = analyzePsychographicProfile(quizAnswers);
-      setPsychographicProfile(profile);
-      
-      // Get curated products for this archetype
-      const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
-      
-      // Log the profile and curated products for debugging
-      console.log('Profile type:', profile.type);
-      console.log('Found curated profile:', curatedProfile ? 'Yes' : 'No');
-      
-      if (curatedProfile && curatedProfile.items) {
-        console.log('Curated items found:', curatedProfile.items.length);
-        
-        // Map items to ensure imageUrl is used consistently
-        const mappedItems = curatedProfile.items.map(item => ({
-          ...item,
-          imageUrl: item.imageUrl || '/placeholder.png'
-        }));
-        
-        setCuratedItems(mappedItems.slice(0, 6)); // Show max 6 products
-      } else {
-        // Use fallback if no products found
-        console.warn("No products found for profile type:", profile.type);
-        setCuratedItems([]);
-      }
-
-      viewRecommendation();
-      
-      // Clear the timeout since we're done
-      clearTimeout(timeoutId);
-      
-    } catch (err) {
-      console.error('Error fetching recommendations:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load recommendations');
-    } finally {
-      // Always clear the timeout and set loading to false
-      clearTimeout(timeoutId);
-      setIsLoading(false);
-    }
-  }, [quizAnswers, viewRecommendation]);
-
   useEffect(() => {
-    fetchRecommendations();
-  }, [fetchRecommendations]);
+    const profile = analyzePsychographicProfile(quizAnswers);
+    setPsychographicProfile(profile);
+    
+    // Get curated products for this archetype
+    const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
+    if (curatedProfile && curatedProfile.items) {
+      setCuratedItems(curatedProfile.items.slice(0, 6)); // Show max 6 products
+    }
+
+    viewRecommendation();
+  }, [quizAnswers]);
 
   const handleProductClick = (item: any) => {
     // Track product click
@@ -341,27 +295,6 @@ const ResultsPage: React.FC = () => {
     window.open(item.url, '_blank', 'noopener,noreferrer');
   };
 
-  const handleSaveOutfit = (outfitId: string) => {
-    if (savedOutfits.includes(outfitId)) {
-      setSavedOutfits(savedOutfits.filter(id => id !== outfitId));
-    } else {
-      setSavedOutfits([...savedOutfits, outfitId]);
-      
-      // Save to user profile if logged in
-      if (user) {
-        saveRecommendation(outfitId);
-      }
-      
-      // Track save event
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'save_outfit', {
-          event_category: 'engagement',
-          event_label: outfitId
-        });
-      }
-    }
-  };
-
   const recordFeedback = (rating: number) => {
     setFeedbackGiven(true);
     
@@ -376,63 +309,6 @@ const ResultsPage: React.FC = () => {
 
   const userName = user?.name;
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Jouw stijladvies wordt gegenereerd...
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Onze AI analyseert je voorkeuren en stelt je persoonlijke stijlprofiel samen
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state with fallback content
-  if (error && !psychographicProfile) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-          <div className="bg-red-100 dark:bg-red-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="text-red-500" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-            Er is iets misgegaan
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            We konden je stijladvies niet laden. Dit kan komen door een tijdelijk probleem. Probeer het opnieuw of ga terug naar de homepage.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button 
-              variant="primary"
-              onClick={fetchRecommendations}
-              icon={<RotateCw size={16} />}
-              iconPosition="left"
-            >
-              Probeer opnieuw
-            </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={() => navigate('/')}
-            >
-              Terug naar home
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Profile Introduction */}
@@ -443,56 +319,17 @@ const ResultsPage: React.FC = () => {
         />
       )}
 
-      {/* Style Tips Section - NEW */}
-      {psychographicProfile && (
+      {/* Curated Products Section */}
+      {curatedItems.length > 0 && (
         <div className="py-8">
           <div className="max-w-screen-md mx-auto px-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full mr-4">
-                    <Sparkles className="text-purple-500" size={20} />
-                  </div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Stijltips voor jouw {psychographicProfile.title} look
-                  </h2>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Fallback style tips if no specific ones are available */}
-                  {[
-                    "Investeer in tijdloze stukken van hoge kwaliteit die jaren meegaan.",
-                    "Kies voor een neutrale kleurenpalet als basis voor je garderobe.",
-                    "Let op de pasvorm - goed passende kleding is essentieel voor elke stijl.",
-                    "Accessoires kunnen je look upgraden - denk aan een statement tas of mooie sjaal."
-                  ].map((tip, index) => (
-                    <div key={index} className="flex items-start">
-                      <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full mr-3 mt-0.5">
-                        <span className="text-purple-500 text-xs font-bold">{index + 1}</span>
-                      </div>
-                      <p className="text-gray-700 dark:text-gray-300">
-                        {tip}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Curated Products Section */}
-      <div className="py-8" id="products-section">
-        <div className="max-w-screen-md mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-            Curated voor jouw {psychographicProfile?.title} stijl
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
-            Handpicked items die perfect passen bij jouw persoonlijkheid
-          </p>
-          
-          {curatedItems && curatedItems.length > 0 ? (
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+              Curated voor jouw {psychographicProfile?.title} stijl
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
+              Handpicked items die perfect passen bij jouw persoonlijkheid
+            </p>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {curatedItems.map(item => (
                 <div 
@@ -501,11 +338,10 @@ const ResultsPage: React.FC = () => {
                   onClick={() => handleProductClick(item)}
                 >
                   <div className="relative">
-                    <ImageWithFallback 
+                    <img 
                       src={item.imageUrl} 
                       alt={item.name} 
                       className="w-full h-48 object-cover"
-                      componentName={`ResultsPage_CuratedItem_${item.id}`}
                     />
                     <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
                       {item.retailer}
@@ -538,22 +374,14 @@ const ResultsPage: React.FC = () => {
                     <div className="mb-3">
                       <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Beschikbare maten:</div>
                       <div className="flex flex-wrap gap-1">
-                        {item.sizes && item.sizes.length > 0 ? (
-                          <>
-                            {item.sizes.slice(0, 4).map((size: string, index: number) => (
-                              <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
-                                {size}
-                              </span>
-                            ))}
-                            {item.sizes.length > 4 && (
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                +{item.sizes.length - 4}
-                              </span>
-                            )}
-                          </>
-                        ) : (
+                        {item.sizes.slice(0, 4).map((size: string, index: number) => (
+                          <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
+                            {size}
+                          </span>
+                        ))}
+                        {item.sizes.length > 4 && (
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            Standaard maten
+                            +{item.sizes.length - 4}
                           </span>
                         )}
                       </div>
@@ -576,79 +404,23 @@ const ResultsPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : (
-            <EmptyState onRetry={fetchRecommendations} />
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Daily Style Tip Section */}
       <DailyStyleTipSection />
-
-      {/* Privacy Reassurance - NEW */}
-      <div className="py-8">
-        <div className="max-w-screen-md mx-auto px-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-            <div className="flex items-start">
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full mr-4 flex-shrink-0">
-                <ShieldCheck className="text-blue-600 dark:text-blue-400" size={24} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                  Jouw privacy is onze prioriteit
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-2">
-                  🔒 Je foto is direct na analyse verwijderd en wordt nooit opgeslagen of gedeeld.
-                </p>
-                <p className="text-gray-700 dark:text-gray-300">
-                  Al je gegevens zijn end-to-end versleuteld en worden alleen gebruikt om je persoonlijke stijladvies te verbeteren.
-                </p>
-                <a href="/juridisch" className="text-blue-600 dark:text-blue-400 font-medium mt-2 inline-block hover:underline">
-                  Meer over onze privacygarantie →
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Pro Upsell Banner */}
       {user && !user.isPremium && (
         <div className="py-8">
           <div className="max-w-screen-md mx-auto px-4">
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 rounded-xl text-white p-6">
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="md:w-2/3 mb-6 md:mb-0">
-                  <h3 className="text-xl font-bold mb-2">Upgrade naar Premium</h3>
-                  <p className="text-white/90 mb-4">
-                    Krijg toegang tot onbeperkte outfit aanbevelingen, seizoensgebonden updates en persoonlijke styling tips.
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center">
-                      <CheckCircle className="text-white mr-2 flex-shrink-0" size={16} />
-                      <span>Onbeperkte outfit aanbevelingen</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="text-white mr-2 flex-shrink-0" size={16} />
-                      <span>Seizoensgebonden garderobe updates</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="text-white mr-2 flex-shrink-0" size={16} />
-                      <span>Gedetailleerd stijladvies</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="md:w-1/3 md:pl-6">
-                  <Button 
-                    as="a"
-                    href="/prijzen" 
-                    variant="secondary"
-                    className="bg-white text-orange-600 hover:bg-gray-100 w-full"
-                  >
-                    Upgrade naar Premium
-                  </Button>
-                </div>
-              </div>
+            <div className="bg-blue-600 text-white p-6 rounded-xl text-center">
+              <h3 className="text-lg font-bold mb-2">Upgrade naar Premium</h3>
+              <p className="mb-4">Krijg toegang tot exclusieve items en onbeperkte aanbevelingen</p>
+              <Button variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
+                Start gratis proef
+              </Button>
             </div>
           </div>
         </div>
@@ -666,50 +438,6 @@ const ResultsPage: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="py-10 max-w-screen-md mx-auto px-4 text-center">
-        <div className="space-y-4">
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => navigate('/dashboard')}
-            className="w-full sm:w-auto"
-          >
-            Ga naar Dashboard
-          </Button>
-          
-          <div>
-            <button
-              onClick={() => navigate('/quiz/1')}
-              className="text-orange-500 hover:text-orange-600 transition-colors text-sm font-medium"
-            >
-              Quiz opnieuw doen
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Sticky CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-50">
-        <Button
-          variant="primary"
-          fullWidth
-          onClick={() => {
-            // Scroll to products section if it exists, otherwise go to dashboard
-            const productsSection = document.getElementById('products-section');
-            if (productsSection) {
-              productsSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-              navigate('/dashboard');
-            }
-          }}
-          icon={<ShoppingBag size={18} />}
-          iconPosition="left"
-        >
-          {curatedItems && curatedItems.length > 0 ? 'Bekijk producten' : 'Ga naar Dashboard'}
-        </Button>
       </div>
     </div>
   );
