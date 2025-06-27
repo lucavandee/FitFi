@@ -1,0 +1,53 @@
+{
+  "pointsPerAction": {
+    "quizComplete": 50,
+    "purchase": 100,
+    "dailyCheckIn": 10,
+    "challengeComplete": 75,
+    "referralSignup": 50
+  },
+  "levels": [
+    {"id": "beginner", "threshold": 0, "name": "Style Starter", "icon": "🌱", "color": "#10b981"},
+    {"id": "pro", "threshold": 1000, "name": "Style Pro", "icon": "⭐", "color": "#f59e0b"},
+    {"id": "master", "threshold": 5000, "name": "Style Master", "icon": "👑", "color": "#8b5cf6"}
+  ],
+  "badges": [
+    {"id": "first_quiz", "label": "First Quiz", "icon": "⭐", "description": "Completed your first style quiz"},
+    {"id": "seven_day_streak", "label": "7-Day Streak", "icon": "🔥", "description": "Checked in for 7 consecutive days"},
+    {"id": "referrer", "label": "Referral Pro", "icon": "🤝", "description": "Referred 3 friends to FitFi"},
+    {"id": "pro_purchaser", "label": "Pro Purchaser", "icon": "🏆", "description": "Made your first purchase"},
+    {"id": "style_explorer", "label": "Style Explorer", "icon": "🧭", "description": "Viewed 50 style recommendations"},
+    {"id": "trendsetter", "label": "Trendsetter", "icon": "✨", "description": "Shared 10 looks on social media"},
+    {"id": "challenge_master", "label": "Challenge Master", "icon": "🎯", "description": "Completed 20 daily challenges"},
+    {"id": "premium_member", "label": "Premium Member", "icon": "💎", "description": "Upgraded to Premium subscription"}
+  ],
+  "dailyChallenges": [
+    {"id": "view3", "label": "Bekijk 3 stijladviezen", "points": 20, "icon": "👀"},
+    {"id": "shareLook", "label": "Deel je Look", "points": 30, "icon": "📱"},
+    {"id": "saveOutfit", "label": "Bewaar een outfit", "points": 15, "icon": "💾"},
+    {"id": "completeProfile", "label": "Voltooi je profiel", "points": 25, "icon": "👤"},
+    {"id": "visitShop", "label": "Bezoek partner shop", "points": 10, "icon": "🛍️"}
+  ],
+  "subscriptionTiers": [
+    {"id": "free", "features": ["basicChallenges", "limitedRecommendations"]},
+    {"id": "pro", "features": ["premiumChallenges", "exclusiveSales", "doublePoints", "unlimitedRecommendations", "prioritySupport"]}
+  ],
+  "referralRewards": {
+    "pointsForReferrer": 50,
+    "pointsForReferral": 50,
+    "bonusThreshold": 5,
+    "bonusPoints": 100
+  },
+  "seasonalEvents": [
+    {
+      "id": "winter_fashion_week",
+      "name": "Winter Fashion Week",
+      "startDate": "2025-01-15",
+      "endDate": "2025-01-31",
+      "bonusMultiplier": 2,
+      "specialBadges": [
+        {"id": "winter_warrior", "label": "Winter Warrior", "icon": "❄️", "description": "Participated in Winter Fashion Week"}
+      ]
+    }
+  ]
+}

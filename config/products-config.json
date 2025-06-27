@@ -1,0 +1,62 @@
+{
+  "profiles": [
+    {
+      "id": "urban_minimalist",
+      "displayName": "Urban Minimalist",
+      "saleItems": [
+        {
+          "id": "1234",
+          "name": "Minimalist White Sneakers",
+          "retailer": "zalando",
+          "productId": "XYZ123",
+          "apiSource": "zalando",
+          "price": 69.99,
+          "category": "Schoenen",
+          "imageUrlMale": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlFemale": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlNeutral": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "defaultImage": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2"
+        },
+        {
+          "id": "1235",
+          "name": "Clean Line Wool Coat",
+          "retailer": "aboutyou",
+          "productId": "ABC456",
+          "apiSource": "aboutyou",
+          "price": 139.99,
+          "category": "Jassen",
+          "imageUrlMale": "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlFemale": "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlNeutral": "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "defaultImage": "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2"
+        },
+        {
+          "id": "1236",
+          "name": "Structured Crossbody Bag",
+          "retailer": "wehkamp",
+          "productId": "DEF789",
+          "apiSource": "wehkamp",
+          "price": 49.99,
+          "category": "Accessoires",
+          "imageUrlMale": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlFemale": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlNeutral": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "defaultImage": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2"
+        },
+        {
+          "id": "1237",
+          "name": "Slim Fit Chinos",
+          "retailer": "hmnl",
+          "productId": "GHI012",
+          "apiSource": "hmnl",
+          "price": 24.99,
+          "category": "Broeken",
+          "imageUrlMale": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlFemale": "https://images.pexels.com/photos/2529157/pexels-photo-2529157.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "imageUrlNeutral": "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+          "defaultImage": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2"
+        }
+      ]
+    }
+  ]
+}
