@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  ShieldCheck,
-  RotateCw,
-  ThumbsUp,
-  ThumbsDown,
-  CheckCircle
-} from 'lucide-react';
+import { ArrowRight, ShieldCheck, RotateCw, ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../context/GamificationContext';
@@ -15,7 +8,11 @@ import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../co
 import curatedProducts from '../config/curated-products.json';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import supabase from "../lib/supabase";
+import ImageWithFallback from '../components/ui/ImageWithFallback';
 
+
+// Types
 interface Outfit {
   id: string;
   title: string;
@@ -53,25 +50,14 @@ interface DailyStyleTip {
   category: string;
 }
 
+// Data
 const dailyStyleTips: DailyStyleTip[] = [
-  {
-    id: '1',
-    tip: 'Draag nooit meer dan 3 kleuren tegelijk voor een gebalanceerde look.',
-    category: 'Color Theory'
-  },
-  {
-    id: '2',
-    tip: 'Investeer in kwaliteitsschoenen - ze maken of breken je outfit.',
-    category: 'Investment Pieces'
-  },
-  {
-    id: '3',
-    tip: 'De regel van derden: verdeel je outfit in 60% basis, 30% accent, 10% statement.',
-    category: 'Proportions'
-  }
+  { id: '1', tip: 'Draag nooit meer dan 3 kleuren tegelijk voor een gebalanceerde look.', category: 'Color Theory' },
+  { id: '2', tip: 'Investeer in kwaliteitsschoenen - ze maken of breken je outfit.', category: 'Investment Pieces' },
+  { id: '3', tip: 'De regel van derden: verdeel je outfit in 60% basis, 30% accent, 10% statement.', category: 'Proportions' },
 ];
 
-// Generate explanations based on archetype and style
+// Helpers
 const generateExplanation = (archetypeId: string, occasionType: string): string => {
   const explanations: Record<string, Record<string, string[]>> = {
     klassiek: {
@@ -131,30 +117,40 @@ const generateExplanation = (archetypeId: string, occasionType: string): string 
       ]
     }
   };
-
-  // Default to casual if occasion not found
   const occasion = occasionType in (explanations[archetypeId] || {}) ? occasionType : 'casual';
-  
-  // Get explanations for this archetype and occasion
   const archetypeExplanations = explanations[archetypeId] || explanations.casual_chic;
   const occasionExplanations = archetypeExplanations[occasion] || archetypeExplanations.casual;
-  
-  // Return random explanation from the available options
   return occasionExplanations[Math.floor(Math.random() * occasionExplanations.length)];
 };
 
-// Generate outfits based on archetype and products
 const generateOutfits = (archetypeId: string, products: any[], variationLevel: 'low' | 'medium' | 'high' = 'low'): Outfit[] => {
   if (!products || products.length < 4) {
-    return [];
+    return [{
+      id: `fallback_outfit_${Date.now()}`,
+      title: "Stijlvolle Casual Look",
+      description: "Een veelzijdige outfit die perfect past bij jouw stijlvoorkeuren.",
+      matchPercentage: 85,
+      imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+      items: [],
+      tags: ["casual", "veelzijdig", "stijlvol"],
+      occasions: ["casual", "dagelijks"],
+      explanation: "Deze outfit is samengesteld op basis van jouw stijlvoorkeuren. De combinatie van items creëert een gebalanceerde look die zowel stijlvol als comfortabel is."
+    }];
   }
-
   const archetype = DUTCH_ARCHETYPES[archetypeId];
   if (!archetype) {
-    return [];
+    return [{
+      id: `fallback_outfit_${Date.now()}`,
+      title: "Stijlvolle Casual Look",
+      description: "Een veelzijdige outfit die perfect past bij jouw stijlvoorkeuren.",
+      matchPercentage: 85,
+      imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+      items: [],
+      tags: ["casual", "veelzijdig", "stijlvol"],
+      occasions: ["casual", "dagelijks"],
+      explanation: "Deze outfit is samengesteld op basis van jouw stijlvoorkeuren. De combinatie van items creëert een gebalanceerde look die zowel stijlvol als comfortabel is."
+    }];
   }
-
-  // Group products by category
   const productsByCategory: Record<string, any[]> = {};
   products.forEach(product => {
     if (!productsByCategory[product.category]) {
@@ -162,47 +158,30 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
     }
     productsByCategory[product.category].push(product);
   });
-
-  // Create 3 outfits with different occasions
   const occasions = ['werk', 'casual', 'formeel'];
   const outfits: Outfit[] = [];
-
   occasions.forEach((occasion, index) => {
-    // Select one item from each available category
     const outfitItems = [];
     const usedCategories = new Set();
-    
-    // First pass: try to get one item from each major category
     const majorCategories = ['Tops', 'Broeken', 'Jassen', 'Schoenen', 'Accessoires'];
-    
     for (const category of majorCategories) {
       if (productsByCategory[category] && productsByCategory[category].length > 0) {
-        // Get a random item from this category
-        // For higher variation, we'll pick different items based on variationLevel
         let randomIndex = 0;
-        
         if (variationLevel === 'high') {
-          // For high variation, try to pick items we haven't used before
-          // or at least different from the first few items
           randomIndex = Math.floor(Math.random() * productsByCategory[category].length);
           if (randomIndex < 2 && productsByCategory[category].length > 3) {
             randomIndex = 2 + Math.floor(Math.random() * (productsByCategory[category].length - 2));
           }
         } else if (variationLevel === 'medium') {
-          // For medium variation, avoid the first item if possible
-          randomIndex = productsByCategory[category].length > 1 ? 
+          randomIndex = productsByCategory[category].length > 1 ?
             1 + Math.floor(Math.random() * (productsByCategory[category].length - 1)) : 0;
         } else {
-          // For low variation, just pick randomly
           randomIndex = Math.floor(Math.random() * productsByCategory[category].length);
         }
-        
         outfitItems.push(productsByCategory[category][randomIndex]);
         usedCategories.add(category);
       }
     }
-    
-    // Second pass: fill in with any remaining categories if needed
     if (outfitItems.length < 3) {
       Object.entries(productsByCategory).forEach(([category, categoryProducts]) => {
         if (!usedCategories.has(category) && categoryProducts.length > 0 && outfitItems.length < 4) {
@@ -212,29 +191,16 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         }
       });
     }
-    
-    // If we still don't have enough items, just add random products
     while (outfitItems.length < 3 && products.length > 0) {
       const randomIndex = Math.floor(Math.random() * products.length);
       outfitItems.push(products[randomIndex]);
     }
-
-    // Generate random match percentage between 85-98%
-    // For higher variation, we'll adjust the match percentage
     let matchPercentageBase = 85;
-    if (variationLevel === 'high') {
-      // For high variation, we might have slightly lower match percentages
-      matchPercentageBase = 80;
-    } else if (variationLevel === 'medium') {
-      matchPercentageBase = 83;
-    }
-    
+    if (variationLevel === 'high') matchPercentageBase = 80;
+    else if (variationLevel === 'medium') matchPercentageBase = 83;
     const matchPercentage = Math.floor(Math.random() * 14) + matchPercentageBase;
-    
-    // Generate random tags based on archetype
     const tags = [];
     if (archetype) {
-      // Add 3-5 random keywords from the archetype
       const keywords = [...archetype.keywords];
       const numTags = Math.min(5, keywords.length);
       for (let j = 0; j < numTags; j++) {
@@ -244,11 +210,8 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         }
       }
     }
-    
-    // Generate random occasions based on archetype
     const outfitOccasions = [];
     if (archetype) {
-      // Add 2-3 random occasions from the archetype
       const archetypeOccasions = [...archetype.occasions];
       const numOccasions = Math.min(3, archetypeOccasions.length);
       for (let j = 0; j < numOccasions; j++) {
@@ -258,13 +221,9 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
         }
       }
     }
-    
-    // Generate explanation based on archetype and occasion
     const explanation = generateExplanation(archetypeId, occasion);
-    
-    // Create the outfit
     outfits.push({
-      id: `outfit_${archetypeId}_${index}_${Date.now()}`, // Add timestamp for uniqueness
+      id: `outfit_${archetypeId}_${index}_${Date.now()}`,
       title: `${archetype.displayName} ${occasion === 'werk' ? 'Werk' : occasion === 'formeel' ? 'Formele' : 'Casual'} Look`,
       description: `Een perfecte ${archetype.displayName.toLowerCase()} outfit voor ${occasion === 'werk' ? 'op kantoor' : occasion === 'formeel' ? 'speciale gelegenheden' : 'casual dagen'}.`,
       matchPercentage,
@@ -284,7 +243,6 @@ const generateOutfits = (archetypeId: string, products: any[], variationLevel: '
       explanation
     });
   });
-  
   return outfits;
 };
 
@@ -300,11 +258,9 @@ const analyzePsychographicProfile = (answers: Record<string, any>): Psychographi
       icon: '🌟'
     };
   }
-
   const archetypeId = mapAnswersToArchetype(answers);
   const archetype = getArchetypeById(archetypeId);
   const gender = answers.gender;
-
   return {
     type: archetypeId,
     title: archetype.displayName,
@@ -316,73 +272,42 @@ const analyzePsychographicProfile = (answers: Record<string, any>): Psychographi
   };
 };
 
-const ProfileIntroduction: React.FC<{ profile: PsychographicProfile; userName?: string }> = ({ 
-  profile, 
-  userName 
-}) => {
-  return (
-    <motion.div 
-      className="py-8"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="container-slim">
-        <div className="glass-card p-8">
-          <div className="flex items-start space-x-6">
-            <div className="text-4xl">{profile.icon}</div>
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-white mb-3">
-                {userName ? `${userName}, jij bent` : 'Jij bent'} {profile.title}
-              </h2>
-              
-              <h3 className="text-lg text-white/90 mb-4">
-                {profile.description}
-              </h3>
-              
-              <p className="text-white/80">
-                {profile.motivationalMessage}
-              </p>
-            </div>
+// ProfileIntroduction component
+const ProfileIntroduction: React.FC<{ profile: PsychographicProfile; userName?: string }> = ({ profile, userName }) => (
+  <motion.div className="py-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+    <div className="container-slim">
+      <div className="glass-card p-8">
+        <div className="flex items-start space-x-6">
+          <div className="text-4xl">{profile.icon}</div>
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-white mb-3">{userName ? `${userName}, jij bent` : 'Jij bent'} {profile.title}</h2>
+            <h3 className="text-lg text-white/90 mb-4">{profile.description}</h3>
+            <p className="text-white/80">{profile.motivationalMessage}</p>
           </div>
         </div>
       </div>
-    </motion.div>
-  );
-};
+    </div>
+  </motion.div>
+);
 
 const DailyStyleTip: React.FC = () => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-
   useEffect(() => {
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
     setCurrentTipIndex(dayOfYear % dailyStyleTips.length);
   }, []);
-
   const currentTip = dailyStyleTips[currentTipIndex];
-
   return (
-    <motion.div 
-      className="py-8"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
+    <motion.div className="py-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
       <div className="container-slim">
         <div className="glass-card p-6 border border-[#0ea5e9]/20">
           <div className="flex items-start space-x-4">
             <div className="text-[#0ea5e9] text-2xl">💡</div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-white mb-2">
-                Dagelijkse stijltip
-              </h3>
-              <p className="text-white/90 mb-2">
-                {currentTip.tip}
-              </p>
-              <span className="inline-block bg-[#0ea5e9]/20 text-[#0ea5e9] px-2 py-1 rounded-full text-xs font-medium">
-                {currentTip.category}
-              </span>
+              <h3 className="text-lg font-bold text-white mb-2">Dagelijkse stijltip</h3>
+              <p className="text-white/90 mb-2">{currentTip.tip}</p>
+              <span className="inline-block bg-[#0ea5e9]/20 text-[#0ea5e9] px-2 py-1 rounded-full text-xs font-medium">{currentTip.category}</span>
             </div>
           </div>
         </div>
@@ -391,65 +316,73 @@ const DailyStyleTip: React.FC = () => {
   );
 };
 
-const EnhancedResultsOutfitCard: React.FC<{ outfit: Outfit; onNewLook: () => void; isGenerating: boolean }> = ({ 
-  outfit, 
-  onNewLook,
-  isGenerating
+// Empty state component for when no outfits are found
+const EmptyState: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => (
+  <motion.div className="py-12" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+    <div className="container-slim">
+      <div className="glass-card p-8 text-center">
+        <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="text-orange-500" size={32} />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3">
+          Geen outfits gevonden
+        </h3>
+        <p className="text-white/80 mb-6">
+          We konden geen outfits vinden die bij jouw stijlprofiel passen. Dit kan een tijdelijk probleem zijn.
+        </p>
+        {onRetry && (
+          <Button
+            variant="primary"
+            onClick={onRetry}
+            icon={<RotateCw size={16} />}
+            iconPosition="left"
+          >
+            Probeer opnieuw
+          </Button>
+        )}
+      </div>
+    </div>
+  </motion.div>
+);
+
+const EnhancedResultsOutfitCard: React.FC<{ outfit: Outfit; onNewLook: () => void; isGenerating: boolean }> = ({
+  outfit, onNewLook, isGenerating
 }) => {
   const [showItems, setShowItems] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
-
-  const handleProductClick = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
+  const handleProductClick = (url: string) => window.open(url, '_blank', 'noopener,noreferrer');
+  
   return (
-    <motion.div 
-      className="glass-card overflow-hidden"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Header with outfit image */}
+    <motion.div className="glass-card overflow-hidden" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
       <div className="relative">
         <div className="aspect-[3/4] overflow-hidden bg-[#1B263B]">
-          <img 
-            src={outfit.imageUrl} 
+          <ImageWithFallback
+            src={outfit.imageUrl}
             alt={outfit.title}
             className="w-full h-full object-cover"
-            onError={(e) => { 
-              e.currentTarget.onerror = null; 
-              e.currentTarget.src = '/placeholder.png'; 
+            onLoad={() => setImageLoaded(true)}
+            onError={(originalSrc) => {
+              console.warn(`Outfit image failed to load: ${originalSrc}`);
+              setImageError(true);
+              setImageLoaded(true);
             }}
+            componentName="EnhancedResultsOutfitCard"
           />
-          
-          {/* Match percentage badge */}
           <div className="absolute top-4 left-4 bg-[#0D1B2A]/90 text-[#FF8600] px-3 py-1 rounded-full text-sm font-bold">
             {outfit.matchPercentage}% Match
           </div>
         </div>
       </div>
-
-      {/* Content */}
       <div className="p-6">
-        {/* Title and description */}
         <div className="mb-6">
-          <h3 className="text-xl font-bold text-white mb-2">
-            {outfit.title}
-          </h3>
-          <p className="text-white/80 text-sm">
-            {outfit.description}
-          </p>
+          <h3 className="text-xl font-bold text-white mb-2">{outfit.title}</h3>
+          <p className="text-white/80 text-sm">{outfit.description}</p>
         </div>
-
-        {/* Explanation */}
         <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
-          <p className="text-white/90 text-sm italic">
-            {outfit.explanation}
-          </p>
+          <p className="text-white/90 text-sm italic">{outfit.explanation}</p>
         </div>
-
-        {/* New Look Generator Button */}
         <div className="mb-6">
           <Button
             variant="secondary"
@@ -462,40 +395,31 @@ const EnhancedResultsOutfitCard: React.FC<{ outfit: Outfit; onNewLook: () => voi
             {isGenerating ? 'Nieuwe look genereren...' : 'Toon een nieuwe look'}
           </Button>
         </div>
-
-        {/* Items toggle */}
         <button
           onClick={() => setShowItems(!showItems)}
           className="w-full flex items-center justify-between text-sm font-medium text-white/80 hover:text-[#FF8600] transition-colors mb-4"
         >
           <span>Bekijk alle items ({outfit.items.length})</span>
-          <svg 
-            className={`w-5 h-5 transition-transform ${showItems ? 'rotate-180' : ''}`} 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
+          <svg className={`w-5 h-5 transition-transform ${showItems ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-
-        {/* Items list */}
         {showItems && (
           <div className="space-y-3 mb-6 animate-fade-in">
             {outfit.items.map((item, index) => (
-              <div 
+              <div
                 key={index}
                 className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
                 onClick={() => handleProductClick(item.url)}
               >
-                <img 
-                  src={item.imageUrl} 
+                <ImageWithFallback
+                  src={item.imageUrl}
                   alt={item.name}
                   className="w-12 h-12 object-cover rounded-lg"
-                  onError={(e) => { 
-                    e.currentTarget.onerror = null; 
-                    e.currentTarget.src = '/placeholder.png'; 
+                  onError={(originalSrc) => {
+                    console.warn(`Outfit item image failed to load: ${originalSrc}`);
                   }}
+                  componentName={`EnhancedResultsOutfitCard_Item_${index}`}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
@@ -521,25 +445,14 @@ const EnhancedResultsOutfitCard: React.FC<{ outfit: Outfit; onNewLook: () => voi
             ))}
           </div>
         )}
-
-        {/* Price and CTA */}
         <div className="flex items-center justify-between mb-4">
           <div>
             <span className="text-2xl font-bold text-white">
               €{outfit.items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
             </span>
-            <span className="text-sm text-white/60 ml-2">
-              complete look
-            </span>
+            <span className="text-sm text-white/60 ml-2">complete look</span>
           </div>
-          
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => navigate('/dashboard')}
-          >
-            Shop Look
-          </Button>
+          <Button variant="primary" size="md" onClick={() => navigate('/dashboard')}>Shop Look</Button>
         </div>
       </div>
     </motion.div>
@@ -549,146 +462,133 @@ const EnhancedResultsOutfitCard: React.FC<{ outfit: Outfit; onNewLook: () => voi
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, saveRecommendation } = useUser();
-  const { viewRecommendation, saveOutfit } = useGamification();
-  
+  const { user } = useUser();
+  const { viewRecommendation } = useGamification();
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [psychographicProfile, setPsychographicProfile] = useState<PsychographicProfile | null>(null);
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [curatedItems, setCuratedItems] = useState<any[]>([]);
-  const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
-  const [feedbackGiven, setFeedbackGiven] = useState(false);
-  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
-  const [feedbackText, setFeedbackText] = useState('');
-  
-  // New state for alternative outfit generation
   const [generatingNewLook, setGeneratingNewLook] = useState<Record<string, boolean>>({});
   const [regenerationCount, setRegenerationCount] = useState(0);
   const [showRegenerationFeedback, setShowRegenerationFeedback] = useState(false);
 
   const quizAnswers = location.state?.answers || {};
 
-  // Simulate API call to get style recommendations
+  // API call
   const fetchStyleRecommendations = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+      setError("Het laden duurde te lang. Probeer het opnieuw.");
+      console.error("Recommendation fetch timeout after 10 seconds");
+    }, 10000);
+
     try {
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Analyze profile
+      // Analyze profiel
       const profile = analyzePsychographicProfile(quizAnswers);
       setPsychographicProfile(profile);
       
-      // Get curated products for this archetype
-      const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
-      if (curatedProfile && curatedProfile.items) {
-        const products = curatedProfile.items;
-        setCuratedItems(products);
+      console.log("Profile type:", profile.type);
+      
+      // Supabase products
+      let products = [];
+      try {
+        const { data, error: sbError } = await supabase
+          .from('products')
+          .select('*')
+          .ilike('archetype', `%${profile.type}%`);
+          
+        if (sbError) {
+          console.error("Supabase error:", sbError);
+          throw sbError;
+        }
         
-        // Generate outfit combinations
-        const generatedOutfits = generateOutfits(profile.type, products);
-        setOutfits(generatedOutfits);
-      } else {
-        throw new Error('No products found for this style profile');
+        products = data || [];
+        console.log("Supabase products found:", products.length);
+        
+        // Map any image_url to imageUrl for consistency
+        products = products.map(p => ({
+          ...p,
+          imageUrl: p.imageUrl || p.image_url || '/placeholder.png'
+        }));
+      } catch (err) { 
+        console.error("Error fetching from Supabase:", err);
       }
       
-      // Track view
-      viewRecommendation();
+      // If no products from Supabase, use curated products as fallback
+      if (!products.length) {
+        console.log("No Supabase products found, using curated products fallback");
+        const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
+        products = (curatedProfile && curatedProfile.items) || [];
+        
+        // Ensure all products have imageUrl
+        products = products.map(p => ({
+          ...p,
+          imageUrl: p.imageUrl || '/placeholder.png'
+        }));
+        
+        console.log("Curated products found:", products.length);
+      }
       
-    } catch (err) {
-      console.error('Error fetching recommendations:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load recommendations');
+      setCuratedItems(products);
+      
+      // Generate outfits from products
+      if (products.length > 0) {
+        const generatedOutfits = generateOutfits(profile.type, products);
+        console.log("Generated outfits:", generatedOutfits.length);
+        setOutfits(generatedOutfits);
+      } else {
+        console.warn("No products available to generate outfits");
+        // Use fallback outfits
+        setOutfits(generateOutfits('casual_chic', [], 'low'));
+      }
+      
+      viewRecommendation();
+      clearTimeout(timeoutId);
+    } catch (err: any) {
+      console.error('Error in fetchStyleRecommendations:', err);
+      setError(err?.message || "Onbekende fout");
+      toast.error('Er ging iets mis bij het laden van je aanbevelingen. Probeer opnieuw.');
+      
+      // Use fallback outfits even on error
+      setOutfits(generateOutfits('casual_chic', [], 'low'));
     } finally {
+      clearTimeout(timeoutId);
       setIsLoading(false);
     }
   }, [quizAnswers, viewRecommendation]);
 
-  useEffect(() => {
-    fetchStyleRecommendations();
-  }, [fetchStyleRecommendations]);
+  useEffect(() => { fetchStyleRecommendations(); }, [fetchStyleRecommendations]);
 
-  // New function to generate alternative outfit
   const handleGenerateNewLook = async (outfitId: string, index: number) => {
     if (!psychographicProfile) return;
-    
-    // Set loading state for this specific outfit
     setGeneratingNewLook(prev => ({ ...prev, [outfitId]: true }));
-    
-    // Track regeneration event
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'next_look_clicked', {
-        event_category: 'engagement',
-        event_label: outfitId,
-        value: regenerationCount + 1
-      });
-    }
-    
     try {
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1200));
-      
-      // Generate a new outfit with higher variation
-      const newOutfit = generateOutfits(
-        psychographicProfile.type, 
-        curatedItems, 
-        'high'
-      )[0];
-      
-      if (!newOutfit) {
-        throw new Error('Failed to generate new outfit');
-      }
-      
-      // Update the outfits array with the new outfit
-      setOutfits(prevOutfits => {
-        const updatedOutfits = [...prevOutfits];
-        updatedOutfits[index] = {
-          ...newOutfit,
-          id: `${outfitId}_alt_${Date.now()}` // Ensure unique ID
-        };
-        return updatedOutfits;
+      const newOutfit = generateOutfits(psychographicProfile.type, curatedItems, 'high')[0];
+      if (!newOutfit) throw new Error('Failed to generate new outfit');
+      setOutfits(prev => {
+        const copy = [...prev];
+        copy[index] = { ...newOutfit, id: `${outfitId}_alt_${Date.now()}` };
+        return copy;
       });
-      
-      // Increment regeneration count
       setRegenerationCount(prev => prev + 1);
-      
-      // Show regeneration feedback after 2+ regenerations
-      if (regenerationCount >= 1 && !showRegenerationFeedback) {
-        setShowRegenerationFeedback(true);
-      }
-      
-      // Show success toast
+      if (regenerationCount >= 1 && !showRegenerationFeedback) setShowRegenerationFeedback(true);
       toast.success('Nieuwe look gegenereerd!');
-      
     } catch (err) {
-      console.error('Error generating new look:', err);
+      console.error("Error generating new look:", err);
       toast.error('Kon geen nieuwe look genereren. Probeer het later opnieuw.');
     } finally {
       setGeneratingNewLook(prev => ({ ...prev, [outfitId]: false }));
     }
   };
 
-  const handleRegenerationFeedback = (isHelpful: boolean) => {
-    // Track regeneration feedback
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'regeneration_feedback', {
-        event_category: 'engagement',
-        event_label: isHelpful ? 'helpful' : 'not_helpful',
-        value: regenerationCount
-      });
-    }
-    
-    setShowRegenerationFeedback(false);
-    
-    // Show thank you message
-    toast.success('Bedankt voor je feedback!');
-  };
-
   const userName = user?.name?.split(' ')[0] || '';
 
-  // Loading state
+  // Loading
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] flex items-center justify-center">
@@ -705,8 +605,8 @@ const EnhancedResultsPage: React.FC = () => {
     );
   }
 
-  // Error state
-  if (error) {
+  // Error
+  if (error && outfits.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] flex items-center justify-center p-4">
         <div className="glass-card p-8 max-w-md w-full text-center">
@@ -732,6 +632,7 @@ const EnhancedResultsPage: React.FC = () => {
             >
               Probeer opnieuw
             </Button>
+            
             <Button 
               variant="ghost"
               onClick={() => navigate('/')}
@@ -747,25 +648,18 @@ const EnhancedResultsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
-      {/* Profile Introduction */}
       {psychographicProfile && (
-        <ProfileIntroduction 
-          profile={psychographicProfile} 
-          userName={userName}
-        />
+        <ProfileIntroduction profile={psychographicProfile} userName={userName} />
       )}
-
-      {/* Outfits */}
-      {outfits.length > 0 && (
+      {outfits.length > 0 ? (
         <div className="py-8">
           <div className="container-slim">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Jouw persoonlijke outfit suggesties
             </h2>
-            
             <div className="space-y-12">
               {outfits.map((outfit, index) => (
-                <EnhancedResultsOutfitCard 
+                <EnhancedResultsOutfitCard
                   key={outfit.id}
                   outfit={outfit}
                   onNewLook={() => handleGenerateNewLook(outfit.id, index)}
@@ -773,47 +667,12 @@ const EnhancedResultsPage: React.FC = () => {
                 />
               ))}
             </div>
-            
-            {/* Regeneration Feedback */}
-            {showRegenerationFeedback && (
-              <motion.div 
-                className="mt-8 glass-card p-6"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h3 className="text-lg font-bold text-white mb-4 text-center">
-                  Heb je gevonden wat je zocht?
-                </h3>
-                <div className="flex justify-center space-x-4">
-                  <Button
-                    variant="secondary"
-                    onClick={() => handleRegenerationFeedback(true)}
-                    icon={<ThumbsUp size={16} />}
-                    iconPosition="left"
-                  >
-                    Ja, perfect!
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleRegenerationFeedback(false)}
-                    icon={<ThumbsDown size={16} />}
-                    iconPosition="left"
-                    className="text-white border border-white/30 hover:bg-white/10"
-                  >
-                    Nog niet helemaal
-                  </Button>
-                </div>
-              </motion.div>
-            )}
           </div>
         </div>
+      ) : (
+        <EmptyState onRetry={fetchStyleRecommendations} />
       )}
-
-      {/* Daily Style Tip */}
       <DailyStyleTip />
-
-      {/* Curated Products Section */}
       {curatedItems.length > 0 && (
         <div className="py-8" id="products-section">
           <div className="container-slim">
@@ -823,41 +682,33 @@ const EnhancedResultsPage: React.FC = () => {
             <p className="text-white/80 text-center mb-8">
               Handpicked items die perfect passen bij jouw persoonlijkheid
             </p>
-            
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {curatedItems.slice(0, 6).map(item => (
-                <div 
-                  key={item.id} 
+                <div
+                  key={item.id}
                   className="glass-card overflow-hidden hover:border-[#FF8600]/50 transition-all duration-300 cursor-pointer"
                   onClick={() => window.open(item.url, '_blank', 'noopener,noreferrer')}
                 >
                   <div className="relative">
-                    <img 
-                      src={item.imageUrl} 
-                      alt={item.name} 
+                    <ImageWithFallback
+                      src={item.imageUrl}
+                      alt={item.name}
                       className="w-full h-48 object-cover"
                       loading="lazy"
-                      onError={(e) => { 
-                        e.currentTarget.onerror = null; 
-                        e.currentTarget.src = '/placeholder.png'; 
+                      onError={(originalSrc) => {
+                        console.warn(`Curated item image failed to load: ${originalSrc}`);
                       }}
+                      componentName={`CuratedItem_${item.id}`}
                     />
                     <div className="absolute top-3 right-3 bg-[#0D1B2A]/90 px-2 py-1 rounded-full text-xs font-medium text-white/90">
                       {item.retailer}
                     </div>
                   </div>
-                  
                   <div className="p-4">
-                    <h3 className="font-medium text-white mb-1">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-white/60 mb-2">
-                      {item.brand} • {item.category}
-                    </p>
+                    <h3 className="font-medium text-white mb-1">{item.name}</h3>
+                    <p className="text-sm text-white/60 mb-2">{item.brand} • {item.category}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-white">
-                        €{item.price.toFixed(2)}
-                      </span>
+                      <span className="text-lg font-bold text-white">€{item.price.toFixed(2)}</span>
                       <Button
                         variant="primary"
                         size="sm"
@@ -876,16 +727,9 @@ const EnhancedResultsPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Privacy Reassurance */}
       <div className="py-8">
         <div className="container-slim">
-          <motion.div 
-            className="glass-card p-6 border border-[#0ea5e9]/20"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
+          <motion.div className="glass-card p-6 border border-[#0ea5e9]/20" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
             <div className="flex items-start">
               <div className="text-[#0ea5e9] mr-4 flex-shrink-0">
                 <ShieldCheck size={24} />
@@ -905,17 +749,10 @@ const EnhancedResultsPage: React.FC = () => {
           </motion.div>
         </div>
       </div>
-
-      {/* Pro Upsell Banner */}
       {user && !user.isPremium && (
         <div className="py-8">
           <div className="container-slim">
-            <motion.div 
-              className="glass-card p-6 border border-[#FF8600]/20"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
+            <motion.div className="glass-card p-6 border border-[#FF8600]/20" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
               <div className="flex flex-col md:flex-row items-center">
                 <div className="md:w-2/3 mb-6 md:mb-0">
                   <h3 className="text-xl font-bold text-white mb-2">Upgrade naar Premium</h3>
@@ -938,12 +775,7 @@ const EnhancedResultsPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="md:w-1/3 md:pl-6">
-                  <Button 
-                    as="a"
-                    href="/prijzen" 
-                    variant="primary"
-                    fullWidth
-                  >
+                  <Button as="a" href="/prijzen" variant="primary" fullWidth>
                     Upgrade naar Premium
                   </Button>
                 </div>
@@ -952,37 +784,30 @@ const EnhancedResultsPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Navigation */}
       <div className="py-10 container-slim text-center">
         <div className="space-y-4">
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => navigate('/dashboard')}
-          >
-            Ga naar Dashboard
-          </Button>
-          
+          <Button variant="primary" size="lg" onClick={() => navigate('/dashboard')}>Ga naar Dashboard</Button>
           <div>
-            <button
-              onClick={() => navigate('/quiz/1')}
-              className="text-[#FF8600] hover:text-orange-400 transition-colors text-sm font-medium"
-            >
+            <button onClick={() => navigate('/quiz/1')} className="text-[#FF8600] hover:text-orange-400 transition-colors text-sm font-medium">
               Quiz opnieuw doen
             </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile Sticky CTA */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0D1B2A] border-t border-white/10 p-4 z-50">
         <Button
           variant="primary"
           fullWidth
-          onClick={() => navigate('/dashboard')}
+          onClick={() => {
+            const productsSection = document.getElementById('products-section');
+            if (productsSection) {
+              productsSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              navigate('/dashboard');
+            }
+          }}
         >
-          Ga naar Dashboard
+          {curatedItems.length > 0 ? 'Bekijk producten' : 'Ga naar Dashboard'}
         </Button>
       </div>
     </div>

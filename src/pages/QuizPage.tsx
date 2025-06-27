@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Check, Upload, Info, ShieldCheck } from 'lucide-
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
+import ImageWithFallback from '../components/ui/ImageWithFallback';
 
 interface QuestionOption {
   id: string;
@@ -245,14 +246,11 @@ const QuizPage: React.FC = () => {
                 >
                   {option.image && (
                     <div className="mb-3 w-full h-40 overflow-hidden rounded-lg">
-                      <img 
+                      <ImageWithFallback 
                         src={option.image} 
                         alt={option.text} 
                         className="w-full h-full object-cover"
-                        onError={(e) => { 
-                          e.currentTarget.onerror = null; 
-                          e.currentTarget.src = '/placeholder.png'; 
-                        }}
+                        componentName="QuizPage_StyleOption"
                       />
                     </div>
                   )}
@@ -367,10 +365,11 @@ const QuizPage: React.FC = () => {
             <div className="border-2 border-dashed border-white/30 rounded-xl p-6 text-center">
               {photoPreview ? (
                 <div className="relative">
-                  <img 
+                  <ImageWithFallback 
                     src={photoPreview} 
                     alt="Preview" 
                     className="max-h-64 mx-auto rounded-lg"
+                    componentName="QuizPage_PhotoPreview"
                   />
                   <button
                     onClick={() => {

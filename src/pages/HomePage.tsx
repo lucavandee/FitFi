@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { motion } from 'framer-motion';
+import ImageWithFallback from '../components/ui/ImageWithFallback';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -145,14 +146,13 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <div className="relative h-[420px] w-[320px] rounded-2xl overflow-hidden glass-card">
-                <img 
+                <ImageWithFallback 
                   src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
                   alt="Stijlvolle persoon met gepersonaliseerde outfit" 
                   className="h-full w-full object-cover"
                   loading="lazy"
-                  onError={(e) => { 
-                    e.currentTarget.onerror = null; 
-                    e.currentTarget.src = '/placeholder.png'; 
+                  onError={(originalSrc) => {
+                    console.warn(`Hero image failed to load: ${originalSrc}`);
                   }}
                 />
               </div>
@@ -279,13 +279,12 @@ const HomePage: React.FC = () => {
                 "FitFi heeft mijn garderobe en zelfvertrouwen compleet getransformeerd. Ik krijg nu regelmatig complimenten over mijn outfits!"
               </p>
               <div className="flex items-center">
-                <img 
+                <ImageWithFallback 
                   src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
                   alt="Emma van der Berg"
                   className="w-10 h-10 rounded-full object-cover mr-3"
-                  onError={(e) => { 
-                    e.currentTarget.onerror = null; 
-                    e.currentTarget.src = '/placeholder.png'; 
+                  onError={(originalSrc) => {
+                    console.warn(`Testimonial image failed to load: ${originalSrc}`);
                   }}
                 />
                 <div>
@@ -311,13 +310,12 @@ const HomePage: React.FC = () => {
                 "Als man vond ik het altijd lastig om mijn eigen stijl te vinden. FitFi heeft me geholpen te begrijpen welke kleuren en pasvorm bij mijn lichaamsbouw passen."
               </p>
               <div className="flex items-center">
-                <img 
+                <ImageWithFallback 
                   src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
                   alt="Thomas Jansen"
                   className="w-10 h-10 rounded-full object-cover mr-3"
-                  onError={(e) => { 
-                    e.currentTarget.onerror = null; 
-                    e.currentTarget.src = '/placeholder.png'; 
+                  onError={(originalSrc) => {
+                    console.warn(`Testimonial image failed to load: ${originalSrc}`);
                   }}
                 />
                 <div>
@@ -343,13 +341,12 @@ const HomePage: React.FC = () => {
                 "Ik kocht altijd kleding die ik uiteindelijk nauwelijks droeg. FitFi heeft me geholpen bewustere keuzes te maken en een capsule garderobe op te bouwen."
               </p>
               <div className="flex items-center">
-                <img 
+                <ImageWithFallback 
                   src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
                   alt="Sophie Bakker"
                   className="w-10 h-10 rounded-full object-cover mr-3"
-                  onError={(e) => { 
-                    e.currentTarget.onerror = null; 
-                    e.currentTarget.src = '/placeholder.png'; 
+                  onError={(originalSrc) => {
+                    console.warn(`Testimonial image failed to load: ${originalSrc}`);
                   }}
                 />
                 <div>

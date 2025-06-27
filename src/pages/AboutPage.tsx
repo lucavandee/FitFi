@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, Users, Zap, Heart, Award, ShieldCheck, Sparkles, Clock, Target } from 'lucide-react';
 import Button from '../components/ui/Button';
+import ImageWithFallback from '../components/ui/ImageWithFallback';
 
 const AboutPage: React.FC = () => {
   // Team members data
@@ -353,10 +354,13 @@ const AboutPage: React.FC = () => {
               {teamMembers.map((member, index) => (
                 <div key={index} className="flex flex-col items-center text-center group">
                   <div className="relative mb-4 overflow-hidden rounded-xl">
-                    <img 
+                    <ImageWithFallback 
                       src={member.avatar} 
                       alt={member.name} 
                       className="w-40 h-40 object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
+                      onError={(originalSrc) => {
+                        console.warn(`Team member avatar failed to load: ${originalSrc}`);
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
                       <div className="flex space-x-3">
@@ -466,10 +470,13 @@ const AboutPage: React.FC = () => {
               <div className="flex flex-wrap justify-center gap-8 md:gap-16">
                 {partners.map((partner, index) => (
                   <div key={index} className="grayscale hover:grayscale-0 transition-all duration-300">
-                    <img 
+                    <ImageWithFallback 
                       src={partner.logo} 
                       alt={partner.name} 
                       className="h-10 object-contain"
+                      onError={(originalSrc) => {
+                        console.warn(`Partner logo failed to load: ${originalSrc}`);
+                      }}
                     />
                   </div>
                 ))}
