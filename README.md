@@ -1,179 +1,106 @@
-# FitFi - AI-Powered Personal Style Recommendations
+# FitFi Zalando Scraper
 
-FitFi is a modern web application that uses AI to provide personalized clothing and lifestyle recommendations. Users complete a style questionnaire, upload photos, and receive tailored outfit suggestions based on their preferences and body type.
+This project scrapes product data from Zalando.nl and formats it for use in the FitFi style recommendation platform.
 
-## 🌟 Features
+## Features
 
-- **AI-Powered Recommendations**: Advanced algorithms analyze user preferences and photos
-- **Interactive Questionnaire**: Comprehensive style assessment with multiple question types
-- **Photo Upload & Analysis**: Secure photo processing for personalized recommendations
-- **User Dashboard**: Complete profile management and saved outfits
-- **Responsive Design**: Optimized for all devices with dark/light mode support
-- **Premium Features**: Advanced styling options and unlimited recommendations
+- Scrapes products from multiple categories (T-shirts, Jeans, Sneakers, Bags)
+- Supports both men's and women's clothing
+- Extracts product details including name, price, image URL, and more
+- Categorizes products as top, bottom, footwear, or accessory
+- Adds style tags based on product name and description
+- Determines appropriate seasons for each product
+- Saves data to a structured JSON file
+- Uploads data to Supabase database
+- Supports daily automated scraping via GitHub Actions
 
-## 🚀 Live Demo
+## Getting Started
 
-Visit the live application: [https://dapper-sunflower-9949c9.netlify.app](https://dapper-sunflower-9949c9.netlify.app)
+### Prerequisites
 
-## 🛠️ Tech Stack
+- Node.js 18 or higher
+- npm or yarn
 
-- **Frontend**: React 18 + TypeScript
-- **Styling**: Tailwind CSS with custom animations
-- **Icons**: Lucide React
-- **Routing**: React Router DOM
-- **State Management**: React Context API
-- **Build Tool**: Vite
-- **Deployment**: Netlify
-- **Notifications**: React Hot Toast
+### Installation
 
-## 📁 Project Structure
-
-```
-src/
-├── components/
-│   ├── layout/
-│   │   ├── Navbar.tsx          # Main navigation component
-│   │   └── Footer.tsx          # Site footer
-│   └── ui/
-│       ├── Button.tsx          # Reusable button component
-│       └── Logo.tsx            # Brand logo component
-├── context/
-│   ├── UserContext.tsx         # User authentication & profile management
-│   └── ThemeContext.tsx        # Dark/light theme management
-├── pages/
-│   ├── HomePage.tsx            # Landing page with hero, features, pricing
-│   ├── OnboardingPage.tsx      # User registration and login
-│   ├── QuestionnairePage.tsx   # Style assessment questionnaire
-│   ├── RecommendationsPage.tsx # AI-generated outfit recommendations
-│   └── DashboardPage.tsx       # User profile and settings
-├── styles/
-│   └── animations.css          # Custom CSS animations
-└── App.tsx                     # Main application component
-```
-
-## 🎨 Key Components
-
-### HomePage
-- Hero section with compelling value proposition
-- Feature highlights with animations
-- Pricing tiers (Free vs Premium)
-- Trust indicators and social proof
-- Responsive design with mobile optimization
-
-### QuestionnairePage
-- Multi-step form with progress tracking
-- Various question types: single select, multiple choice, sliders, photo upload
-- Secure photo handling with preview functionality
-- Smooth transitions between questions
-
-### RecommendationsPage
-- AI-generated outfit suggestions with match percentages
-- Detailed outfit breakdowns with individual items
-- Save/bookmark functionality
-- Shopping integration with price calculations
-- Filter and search capabilities
-
-### DashboardPage
-- Complete user profile management
-- Saved outfits collection
-- Activity history tracking
-- Privacy settings and data management
-- Premium upgrade options
-
-## 🔧 Installation & Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone [repository-url]
-   cd fitfi
-   ```
-
-2. **Install dependencies**
+1. Clone the repository
+2. Install dependencies:
    ```bash
    npm install
    ```
+3. Create a `.env` file based on `.env.example` with your Supabase credentials
 
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
+### Usage
 
-4. **Build for production**
-   ```bash
-   npm run build
-   ```
+Run the scraper:
 
-## 🎯 User Flow
+```bash
+npm run scrape
+```
 
-1. **Landing** → User visits homepage and learns about FitFi
-2. **Onboarding** → User creates account or logs in
-3. **Questionnaire** → User completes style assessment and uploads photo
-4. **Recommendations** → AI generates personalized outfit suggestions
-5. **Dashboard** → User manages profile, saves outfits, and tracks history
+This will:
+1. Launch a headless browser
+2. Visit Zalando.nl category pages
+3. Extract product information
+4. Save the data to `src/data/zalandoProducts.json`
 
-## 🔒 Privacy & Security
+### Uploading to Supabase
 
-- End-to-end encryption for photo uploads
-- Secure user authentication
-- GDPR-compliant data handling
-- User-controlled data deletion
-- Privacy-first approach with transparent policies
+To upload the scraped data to Supabase:
 
-## 🎨 Design Philosophy
+```bash
+npm run upload
+```
 
-- **Apple-level aesthetics**: Clean, sophisticated, and intuitive
-- **Micro-interactions**: Thoughtful animations and hover states
-- **Accessibility**: WCAG compliant with proper contrast ratios
-- **Performance**: Optimized loading and smooth transitions
-- **Mobile-first**: Responsive design for all screen sizes
+### Automated Daily Scraping
 
-## 📱 Responsive Breakpoints
+The project includes a GitHub Action that runs the scraper daily and uploads the results to Supabase. The action is defined in `.github/workflows/daily-scrape.yml`.
 
-- Mobile: 320px - 768px
-- Tablet: 768px - 1024px
-- Desktop: 1024px+
+To use this feature:
+1. Add your Supabase credentials as GitHub repository secrets:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+2. The action will run automatically at 3 AM UTC every day
+3. You can also trigger it manually from the Actions tab in GitHub
 
-## 🌙 Theme Support
+## Data Structure
 
-- Light mode (default)
-- Dark mode with system preference detection
-- Smooth theme transitions
-- Persistent theme selection
+The scraped data follows this structure:
 
-## 🚀 Deployment
+```typescript
+{
+  id: string,
+  name: string,
+  description: string,
+  imageUrl: string,
+  price: string,
+  affiliateUrl: string,
+  category: 'top' | 'bottom' | 'footwear' | 'accessory',
+  gender: 'male' | 'female',
+  tags: string[], // such as ['casual', 'minimalist']
+  seasons: string[], // such as ['spring', 'summer']
+  brand: string,
+  sizes: string[],
+  created_at: string
+}
+```
 
-The application is deployed on Netlify with:
-- Automatic builds from main branch
-- Custom domain support
-- SSL certificates
-- CDN optimization
-- Form handling capabilities
+## Customization
 
-## 📊 Performance Optimizations
+You can customize the scraper by modifying:
 
-- Code splitting with React.lazy
-- Image optimization and lazy loading
-- CSS purging with Tailwind
-- Bundle size optimization
-- Caching strategies
+- `CATEGORIES` array in `scripts/scrapeZalando.js` to target different product categories
+- `STYLE_TAG_MAPPING` to adjust how style tags are assigned
+- `SEASON_MAPPING` to change how seasons are determined
+- Environment variables in `.env` to control scraper behavior
 
-## 🔮 Future Enhancements
+## Limitations
 
-- Real AI integration (currently mock data)
-- Backend API development
-- Payment processing for Premium features
-- Social sharing capabilities
-- Mobile app development
-- Advanced analytics dashboard
+- The scraper is designed for educational purposes only
+- Rate limiting is implemented to avoid overloading Zalando's servers
+- The script may need adjustments if Zalando changes their website structure
+- Zalando may block automated scraping, so use responsibly
 
-## 🤝 Contributing
+## License
 
-This is a demonstration project showcasing modern React development practices and UI/UX design principles.
-
-## 📄 License
-
-This project is for demonstration purposes.
-
----
-
-Built with ❤️ using React, TypeScript, and Tailwind CSS
+This project is for demonstration purposes only.
