@@ -32,7 +32,7 @@ const QuestionnairePage: React.FC = () => {
 
   // State management for multi-step flow
   const [showGenderSelection, setShowGenderSelection] = useState(true);
-  const [selectedGender, setSelectedGender] = useState<'man' | 'vrouw' | 'neutraal' | null>(null);
+  const [selectedGender, setSelectedGender] = useState<'man' | 'vrouw' | null>(null);
   const [showEmailOptIn, setShowEmailOptIn] = useState(false);
   const [emailOptInData, setEmailOptInData] = useState({
     name: '',
@@ -176,7 +176,7 @@ const QuestionnairePage: React.FC = () => {
     setTooltipOpenId(questionId);
   };
 
-  const handleGenderSelect = (gender: 'man' | 'vrouw' | 'neutraal') => {
+  const handleGenderSelect = (gender: 'man' | 'vrouw') => {
     setSelectedGender(gender);
     
     // Track gender selection
@@ -192,7 +192,7 @@ const QuestionnairePage: React.FC = () => {
     
     // Save to user profile if logged in
     if (user) {
-      updateProfile({ gender });
+      updateProfile({ gender: gender === 'man' ? 'male' : 'female' });
     }
     
     // Move to email opt-in
@@ -326,7 +326,7 @@ const QuestionnairePage: React.FC = () => {
     // Set some mock style preferences based on answers
     if (user) {
       await updateProfile({
-        gender: selectedGender || undefined,
+        gender: selectedGender === 'man' ? 'male' : 'female',
         stylePreferences: {
           casual: 4,
           formal: 3,
@@ -385,12 +385,11 @@ const QuestionnairePage: React.FC = () => {
               <div className="space-y-4">
                 {[
                   { id: 'man', label: 'Man', icon: '👨', description: 'Mannelijke stijladvies' },
-                  { id: 'vrouw', label: 'Vrouw', icon: '👩', description: 'Vrouwelijke stijladvies' },
-                  { id: 'neutraal', label: 'Gender Neutraal', icon: '🧑', description: 'Neutrale stijladvies' }
+                  { id: 'vrouw', label: 'Vrouw', icon: '👩', description: 'Vrouwelijke stijladvies' }
                 ].map((option) => (
                   <button
                     key={option.id}
-                    onClick={() => handleGenderSelect(option.id as 'man' | 'vrouw' | 'neutraal')}
+                    onClick={() => handleGenderSelect(option.id as 'man' | 'vrouw')}
                     className={`
                       w-full p-4 rounded-lg border-2 transition-all duration-200 text-left
                       ${selectedGender === option.id
