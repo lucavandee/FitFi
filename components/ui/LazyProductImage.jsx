@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import ImageWithFallback from './ImageWithFallback';
+import { isValidImageUrl } from '../../utils/imageUtils';
 
 const LazyProductImage = ({ 
   retailer, 
@@ -40,7 +41,7 @@ const LazyProductImage = ({
       
       const data = await response.json();
       
-      if (data.success && data.imageUrl) {
+      if (data.success && data.imageUrl && isValidImageUrl(data.imageUrl)) {
         setImageState({
           loading: false,
           error: false,
@@ -48,7 +49,7 @@ const LazyProductImage = ({
           retryCount
         });
       } else {
-        throw new Error(data.error || 'No image URL in response');
+        throw new Error(data.error || 'No valid image URL in response');
       }
       
     } catch (error) {
