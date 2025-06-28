@@ -12,7 +12,7 @@ interface Window {
     }
   ) => void;
   
-  // Legacy tracking functions (to be migrated to analyticsService)
+  // Analytics tracking functions
   trackQuizStart?: (quizType: string) => void;
   trackQuizProgress?: (currentStep: number, totalSteps: number, category: string) => void;
   trackQuizComplete?: (timeInSeconds: number, totalSteps: number, userSegment: string) => void;
