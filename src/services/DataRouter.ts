@@ -1,4 +1,4 @@
-import { USE_SUPABASE, USE_BOLT, API_CONFIG, DEBUG_MODE } from '../config/app-config';
+import { USE_SUPABASE, USE_BOLT, USE_ZALANDO, API_CONFIG, DEBUG_MODE } from '../config/app-config';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations, getRecommendedProducts } from '../engine/recommendationEngine';
@@ -8,6 +8,9 @@ import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUser
 import boltService from './boltService';
 import { TEST_USER_ID } from '../lib/supabase';
 import { enrichZalandoProducts } from './productEnricher';
+import { BoltProduct } from '../types/BoltProduct';
+import outfitGenerator from './outfitGenerator';
+import outfitEnricher from './outfitEnricher';
 
 // Data source type
 export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
@@ -52,6 +55,9 @@ let fetchDiagnostics: FetchDiagnostics = {
   finalSource: 'local',
   cacheUsed: false
 };
+
+// In-memory storage for BoltProducts
+let boltProductsCache: BoltProduct[] = [];
 
 /**
  * Clear the cache
@@ -210,6 +216,42 @@ function saveToCache<T>(key: string, data: T, source: DataSource): void {
 }
 
 /**
+ * Load BoltProducts from JSON file
+ * @returns Promise that resolves to an array of BoltProducts
+ */
+async function loadBoltProducts(): Promise<BoltProduct[]> {
+  // If we already have BoltProducts in memory, return them
+  if (boltProductsCache.length > 0) {
+    return boltProductsCache;
+  }
+  
+  try {
+    // Fetch BoltProducts from JSON file
+    const response = await fetch('/src/data/boltProducts.json');
+    
+    if (!response.ok) {
+      throw new Error(`Failed to load BoltProducts: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid BoltProducts data: not an array');
+    }
+    
+    // Store in memory cache
+    boltProductsCache = data;
+    
+    console.log(`[🧠 DataRouter] Loaded ${data.length} BoltProducts from JSON file`);
+    
+    return data;
+  } catch (error) {
+    console.error('[🧠 DataRouter] Error loading BoltProducts:', error);
+    return [];
+  }
+}
+
+/**
  * Get outfits for a user
  * @param user - User profile
  * @param options - Optional generation options
@@ -330,43 +372,86 @@ export async function getOutfits(
   }
   
   // Try Zalando if Supabase and Bolt failed
-  const zalandoStartTime = Date.now();
-  
-  try {
-    // Fetch products from Zalando
-    const zalandoProducts = await getZalandoProducts();
+  if (USE_ZALANDO) {
+    const zalandoStartTime = Date.now();
     
-    const zalandoEndTime = Date.now();
-    const zalandoDuration = zalandoEndTime - zalandoStartTime;
-    
-    if (zalandoProducts && zalandoProducts.length > 0) {
-      // Generate outfits
-      const outfits = await generateRecommendations(user, {
-        ...options,
-        useZalandoProducts: true
-      });
+    try {
+      // Try to load BoltProducts from JSON file
+      const boltProducts = await loadBoltProducts();
       
-      // Add attempt to diagnostics
-      addAttempt('zalando', true, undefined, zalandoDuration);
-      setFinalSource('zalando');
+      if (boltProducts && boltProducts.length > 0) {
+        console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts to generate outfits`);
+        
+        // Generate outfits from BoltProducts
+        const outfits = outfitGenerator.generateOutfitsFromBoltProducts(
+          boltProducts,
+          user.stylePreferences.casual > user.stylePreferences.formal ? 'casual_chic' : 'klassiek',
+          user.gender === 'male' ? 'male' : 'female',
+          options?.count || 3
+        );
+        
+        const zalandoEndTime = Date.now();
+        const zalandoDuration = zalandoEndTime - zalandoStartTime;
+        
+        if (outfits && outfits.length > 0) {
+          // Add attempt to diagnostics
+          addAttempt('zalando', true, undefined, zalandoDuration);
+          setFinalSource('zalando');
+          
+          // Cache the result
+          saveToCache(cacheKey, outfits, 'zalando');
+          
+          return outfits;
+        }
+      }
       
-      // Cache the result
-      saveToCache(cacheKey, outfits, 'zalando');
+      // If BoltProducts failed, try using Zalando products directly
+      const zalandoProducts = await getZalandoProducts();
       
-      return outfits;
-    }
-    
-    // Add failed attempt to diagnostics
-    addAttempt('zalando', false, 'No products found', zalandoDuration);
-  } catch (error) {
-    const zalandoEndTime = Date.now();
-    const zalandoDuration = zalandoEndTime - zalandoStartTime;
-    
-    // Add failed attempt to diagnostics
-    addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
-    
-    if (DEBUG_MODE) {
-      console.error('[🧠 DataRouter] Zalando error:', error);
+      if (zalandoProducts && zalandoProducts.length > 0) {
+        // Generate outfits
+        const outfits = await generateRecommendations(user, {
+          ...options,
+          useZalandoProducts: true
+        });
+        
+        // Try to enrich outfits with BoltProducts
+        const enrichedOutfits = outfits.map(outfit => {
+          try {
+            return outfitEnricher.enrichOutfitWithBoltProducts(outfit, boltProducts);
+          } catch (error) {
+            console.error('[🧠 DataRouter] Error enriching outfit:', error);
+            return outfit;
+          }
+        });
+        
+        const zalandoEndTime = Date.now();
+        const zalandoDuration = zalandoEndTime - zalandoStartTime;
+        
+        // Add attempt to diagnostics
+        addAttempt('zalando', true, undefined, zalandoDuration);
+        setFinalSource('zalando');
+        
+        // Cache the result
+        saveToCache(cacheKey, enrichedOutfits, 'zalando');
+        
+        return enrichedOutfits;
+      }
+      
+      // Add failed attempt to diagnostics
+      const zalandoEndTime = Date.now();
+      const zalandoDuration = zalandoEndTime - zalandoStartTime;
+      addAttempt('zalando', false, 'No products found', zalandoDuration);
+    } catch (error) {
+      const zalandoEndTime = Date.now();
+      const zalandoDuration = zalandoEndTime - zalandoStartTime;
+      
+      // Add failed attempt to diagnostics
+      addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
+      
+      if (DEBUG_MODE) {
+        console.error('[🧠 DataRouter] Zalando error:', error);
+      }
     }
   }
   
@@ -530,40 +615,105 @@ export async function getRecommendedProducts(
   }
   
   // Try Zalando if Supabase and Bolt failed
-  const zalandoStartTime = Date.now();
-  
-  try {
-    // Fetch products from Zalando
-    const zalandoProducts = await getZalandoProducts();
+  if (USE_ZALANDO) {
+    const zalandoStartTime = Date.now();
     
-    const zalandoEndTime = Date.now();
-    const zalandoDuration = zalandoEndTime - zalandoStartTime;
-    
-    if (zalandoProducts && zalandoProducts.length > 0) {
-      // Get recommended products
-      const recommendedProducts = await getRecommendedProducts(user, count, season);
+    try {
+      // Try to load BoltProducts from JSON file
+      const boltProducts = await loadBoltProducts();
       
-      // Add attempt to diagnostics
-      addAttempt('zalando', true, undefined, zalandoDuration);
-      setFinalSource('zalando');
+      if (boltProducts && boltProducts.length > 0) {
+        console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts as recommended products`);
+        
+        // Filter BoltProducts by archetype match
+        const archetypeProducts = boltProducts.filter(product => {
+          // Determine primary archetype based on user preferences
+          let primaryArchetype = 'casual_chic';
+          if (user.stylePreferences.formal > user.stylePreferences.casual) {
+            primaryArchetype = 'klassiek';
+          } else if (user.stylePreferences.sporty > user.stylePreferences.casual) {
+            primaryArchetype = 'streetstyle';
+          } else if (user.stylePreferences.vintage > user.stylePreferences.casual) {
+            primaryArchetype = 'retro';
+          } else if (user.stylePreferences.minimalist > user.stylePreferences.casual) {
+            primaryArchetype = 'urban';
+          }
+          
+          // Check if product matches archetype
+          const score = product.archetypeMatch[primaryArchetype] || 0;
+          return score >= 0.5;
+        });
+        
+        // Filter by gender
+        const genderProducts = archetypeProducts.filter(product => 
+          product.gender === (user.gender === 'male' ? 'male' : 'female')
+        );
+        
+        // Convert to Product format
+        const products = genderProducts.map(p => ({
+          id: p.id,
+          name: p.title,
+          imageUrl: p.imageUrl,
+          type: p.type,
+          category: p.type,
+          styleTags: p.styleTags,
+          description: `${p.title} van ${p.brand}`,
+          price: p.price,
+          brand: p.brand,
+          affiliateUrl: p.affiliateUrl,
+          season: [p.season === 'all_season' ? 'autumn' : p.season] // Convert to array
+        }));
+        
+        // Limit to requested count
+        const limitedProducts = products.slice(0, count);
+        
+        const zalandoEndTime = Date.now();
+        const zalandoDuration = zalandoEndTime - zalandoStartTime;
+        
+        // Add attempt to diagnostics
+        addAttempt('zalando', true, undefined, zalandoDuration);
+        setFinalSource('zalando');
+        
+        // Cache the result
+        saveToCache(cacheKey, limitedProducts, 'zalando');
+        
+        return limitedProducts;
+      }
       
-      // Cache the result
-      saveToCache(cacheKey, recommendedProducts, 'zalando');
+      // If BoltProducts failed, try using Zalando products directly
+      const zalandoProducts = await getZalandoProducts();
       
-      return recommendedProducts;
-    }
-    
-    // Add failed attempt to diagnostics
-    addAttempt('zalando', false, 'No products found', zalandoDuration);
-  } catch (error) {
-    const zalandoEndTime = Date.now();
-    const zalandoDuration = zalandoEndTime - zalandoStartTime;
-    
-    // Add failed attempt to diagnostics
-    addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
-    
-    if (DEBUG_MODE) {
-      console.error('[🧠 DataRouter] Zalando error:', error);
+      if (zalandoProducts && zalandoProducts.length > 0) {
+        // Get recommended products
+        const recommendedProducts = await getRecommendedProducts(user, count, season);
+        
+        const zalandoEndTime = Date.now();
+        const zalandoDuration = zalandoEndTime - zalandoStartTime;
+        
+        // Add attempt to diagnostics
+        addAttempt('zalando', true, undefined, zalandoDuration);
+        setFinalSource('zalando');
+        
+        // Cache the result
+        saveToCache(cacheKey, recommendedProducts, 'zalando');
+        
+        return recommendedProducts;
+      }
+      
+      // Add failed attempt to diagnostics
+      const zalandoEndTime = Date.now();
+      const zalandoDuration = zalandoEndTime - zalandoStartTime;
+      addAttempt('zalando', false, 'No products found', zalandoDuration);
+    } catch (error) {
+      const zalandoEndTime = Date.now();
+      const zalandoDuration = zalandoEndTime - zalandoStartTime;
+      
+      // Add failed attempt to diagnostics
+      addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
+      
+      if (DEBUG_MODE) {
+        console.error('[🧠 DataRouter] Zalando error:', error);
+      }
     }
   }
   
@@ -1320,6 +1470,14 @@ export async function convertZalandoToBoltProducts(products: any[]): Promise<any
   }
 }
 
+/**
+ * Get BoltProducts
+ * @returns Array of BoltProducts
+ */
+export async function getBoltProducts(): Promise<BoltProduct[]> {
+  return loadBoltProducts();
+}
+
 // Feature flags
 const FEATURES = {
   caching: true
@@ -1334,6 +1492,7 @@ export default {
   completeChallenge,
   getDailyChallengesData,
   convertZalandoToBoltProducts,
+  getBoltProducts,
   getDataSource,
   getFetchDiagnostics,
   getFetchDiagnosticsSummary,

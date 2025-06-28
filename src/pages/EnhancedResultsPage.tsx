@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { Card, CardContent } from "../components/ui/card";
 import { Loader } from "../components/Loader";
@@ -7,32 +8,25 @@ import Button from "../components/ui/Button";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
-import { getOutfits, getRecommendedProducts, getDataSource, getFetchDiagnostics, clearCache } from "../services/DataRouter";
+import { getOutfits, getRecommendedProducts, getDataSource, getFetchDiagnostics, clearCache, getBoltProducts } from "../services/DataRouter";
 import DevDataPanel from "../components/DevDataPanel";
 import { BoltProduct } from "../types/BoltProduct";
 import { USE_SUPABASE } from "../config/app-config";
 import ProductList from "../components/products/ProductList";
 import ProductPreviewList from "../components/products/ProductPreviewList";
+import OutfitCard from "../components/ui/OutfitCard";
+import ResultsLoader from "../components/ui/ResultsLoader";
+import { useGamification } from "../context/GamificationContext";
+import { useOnboarding } from "../context/OnboardingContext";
+import { getSafeUser, getSafeGender } from "../utils/userUtils";
+import { defaultUser } from "../constants/defaultUser";
 
-// Fallback user if there's no context or localStorage-user
-const fallbackUser: UserProfile = {
-  id: "fallback",
-  name: "Stijlzoeker",
-  email: "anoniem@fitfi.ai",
-  gender: "female", // Default to female instead of neutral
-  stylePreferences: {
-    casual: 3,
-    formal: 3,
-    sporty: 3,
-    vintage: 3,
-    minimalist: 3,
-  },
-  isPremium: false,
-  savedRecommendations: [],
-};
-
-const EnhancedResultsPage = () => {
+const EnhancedResultsPage: React.FC = () => {
+  const location = useLocation();
   const { user: contextUser } = useUser() || {};
+  const { viewRecommendation } = useGamification();
+  const { data: onboardingData } = useOnboarding();
+  
   const [matchedProducts, setMatchedProducts] = useState<Product[]>([]);
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [boltProducts, setBoltProducts] = useState<BoltProduct[]>([]);
@@ -56,19 +50,36 @@ const EnhancedResultsPage = () => {
       : null;
     
     // Use context user, then localStorage user, then fallback
-    return contextUser || localStorageUser || fallbackUser;
+    return getSafeUser(contextUser || localStorageUser);
   }, [contextUser]);
+  
+  // Apply onboarding data to user if available
+  const enhancedUser = useMemo(() => {
+    if (!onboardingData || Object.keys(onboardingData).length === 0) {
+      return user;
+    }
+    
+    // Create enhanced user with onboarding data
+    return {
+      ...user,
+      gender: onboardingData.gender === 'man' ? 'male' : 'female',
+      name: onboardingData.name || user.name,
+      stylePreferences: {
+        casual: onboardingData.archetypes?.includes('casual_chic') ? 5 : 3,
+        formal: onboardingData.archetypes?.includes('klassiek') ? 5 : 3,
+        sporty: onboardingData.archetypes?.includes('streetstyle') ? 5 : 3,
+        vintage: onboardingData.archetypes?.includes('retro') ? 5 : 3,
+        minimalist: onboardingData.archetypes?.includes('urban') ? 5 : 3,
+      }
+    };
+  }, [user, onboardingData]);
 
   // Load BoltProducts from JSON file
   const loadBoltProducts = useCallback(async () => {
     try {
-      const response = await fetch('/src/data/boltProducts.json');
-      if (!response.ok) {
-        throw new Error('Failed to load BoltProducts');
-      }
-      const data = await response.json();
-      setBoltProducts(data);
-      return data;
+      const products = await getBoltProducts();
+      setBoltProducts(products);
+      return products;
     } catch (error) {
       console.error('Error loading BoltProducts:', error);
       setBoltProducts([]);
@@ -83,7 +94,7 @@ const EnhancedResultsPage = () => {
     
     try {
       // Get current season
-      const season = getCurrentSeason();
+      const season = onboardingData?.season ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
       setCurrentSeason(season);
       console.log("Actief seizoen:", season);
       
@@ -98,8 +109,15 @@ const EnhancedResultsPage = () => {
         }
       }
       
-      // Get outfits using the DataRouter
-      const generatedOutfits = await getOutfits(user);
+      // Get outfits using the DataRouter with onboarding preferences
+      const options = {
+        count: 3,
+        preferredSeasons: [season as any],
+        preferredOccasions: onboardingData?.occasions || undefined,
+        variationLevel: 'high' as const
+      };
+      
+      const generatedOutfits = await getOutfits(enhancedUser, options);
       
       // Set outfits
       setOutfits(generatedOutfits);
@@ -118,11 +136,29 @@ const EnhancedResultsPage = () => {
       setOutfitCompleteness(completeness);
       
       // Get recommended individual products
-      const recommendedProducts = await getRecommendedProducts(user, 9, season);
+      const recommendedProducts = await getRecommendedProducts(enhancedUser, 9, season as any);
       setMatchedProducts(recommendedProducts);
       
       // Get the data source being used
       setDataSource(getDataSource());
+      
+      // Track page view with outfit data
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'view_recommendations', {
+          event_category: 'engagement',
+          event_label: 'results_page',
+          outfits_count: generatedOutfits.length,
+          products_count: recommendedProducts.length,
+          data_source: getDataSource(),
+          archetypes: onboardingData?.archetypes?.join(',') || 'none',
+          season: season,
+          occasions: onboardingData?.occasions?.join(',') || 'none'
+        });
+      }
+      
+      // Record recommendation view for gamification
+      viewRecommendation();
+      
     } catch (err) {
       console.error('Error generating recommendations:', err);
       setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
@@ -130,7 +166,7 @@ const EnhancedResultsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, loadBoltProducts]);
+  }, [enhancedUser, loadBoltProducts, onboardingData, viewRecommendation]);
 
   // Generate recommendations on component mount
   useEffect(() => {
@@ -194,13 +230,14 @@ const EnhancedResultsPage = () => {
       console.log(`Excluding previously shown outfits: ${shownOutfitIds.join(', ')}`);
       
       // Get current season
-      const season = getCurrentSeason();
+      const season = onboardingData?.season ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
       
       // Generate a new outfit with the same parameters but excluding shown IDs
-      const generatedOutfits = await getOutfits(user, {
+      const generatedOutfits = await getOutfits(enhancedUser, {
         excludeIds: shownOutfitIds,
         count: 1,
         preferredOccasions: [occasion],
+        preferredSeasons: [season as any],
         variationLevel: 'high', // Use high variation for regeneration
         enforceCompletion: true,
         minCompleteness: 90, // Higher completeness for regenerated outfits
@@ -253,8 +290,20 @@ const EnhancedResultsPage = () => {
       setIsRegenerating(false);
     }
   };
+  
+  // Helper function to map Dutch season to English
+  const mapSeasonToEnglish = (dutchSeason: string): string => {
+    const seasonMap: Record<string, string> = {
+      'lente': 'spring',
+      'zomer': 'summer',
+      'herfst': 'autumn',
+      'winter': 'winter'
+    };
+    
+    return seasonMap[dutchSeason] || 'autumn';
+  };
 
-  if (loading) return <Loader />;
+  if (loading) return <ResultsLoader />;
 
   if (error) {
     return (
@@ -281,7 +330,7 @@ const EnhancedResultsPage = () => {
       <div className="bg-white/5 p-4 rounded-lg mb-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <p className="text-white/80 mb-2 md:mb-0">
-            Hallo {user.name || 'daar'}! Deze aanbevelingen zijn gebaseerd op jouw {user.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijlvoorkeuren.
+            Hallo {enhancedUser.name || 'daar'}! Deze aanbevelingen zijn gebaseerd op jouw {enhancedUser.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijlvoorkeuren.
           </p>
           <div className="flex items-center bg-white/10 px-3 py-1 rounded-full">
             <Calendar size={16} className="mr-2 text-orange-500" />
@@ -361,7 +410,7 @@ const EnhancedResultsPage = () => {
                 products={boltProducts}
                 title="Op basis van jouw stijl-DNA hebben we deze items geselecteerd"
                 subtitle="Bekijk alle items die passen bij jouw persoonlijke stijl"
-                archetypeFilter="casual_chic"
+                archetypeFilter={onboardingData?.archetypes?.[0] || "casual_chic"}
                 minMatchScore={0.5}
                 maxItems={3}
                 onProductClick={handleProductClick}
@@ -377,7 +426,7 @@ const EnhancedResultsPage = () => {
                 products={boltProducts}
                 title="Op basis van jouw stijl-DNA hebben we deze items geselecteerd"
                 subtitle="Items die perfect passen bij jouw persoonlijke stijl"
-                archetypeFilter="casual_chic"
+                archetypeFilter={onboardingData?.archetypes?.[0] || "casual_chic"}
                 minMatchScore={0.5}
                 onProductClick={handleProductClick}
               />
@@ -404,158 +453,13 @@ const EnhancedResultsPage = () => {
           <h2 className="text-xl font-bold mb-4">Complete outfits voor jou</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {outfits.map((outfit, index) => (
-              <Card 
-                key={outfit.id} 
-                className="overflow-hidden hover:border-orange-500/50 transition-all cursor-pointer"
-                onClick={() => handleOutfitClick(outfit)}
-              >
-                <div className="relative h-60">
-                  <ImageWithFallback
-                    src={outfit.imageUrl || outfit.products[0]?.imageUrl || '/placeholder.png'}
-                    alt={outfit.title}
-                    className="w-full h-full object-cover"
-                    componentName="OutfitCard"
-                  />
-                  <div className="absolute bottom-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
-                    <Star size={12} className="mr-1" />
-                    {outfit.matchPercentage}% Match
-                  </div>
-                  {outfit.season && (
-                    <div className="absolute top-2 left-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
-                      {getDutchSeasonName(outfit.season as any)}
-                    </div>
-                  )}
-                  
-                  {/* Show archetype mix if applicable */}
-                  {outfit.secondaryArchetype && outfit.mixFactor && outfit.mixFactor > 0.1 && (
-                    <div className="absolute top-2 right-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                      <Users size={12} className="mr-1" />
-                      Hybride stijl
-                    </div>
-                  )}
-                  
-                  {/* Completeness indicator */}
-                  {outfit.completeness && (
-                    <div className="absolute bottom-2 left-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                      <CheckCircle size={12} className="mr-1" />
-                      {outfit.completeness}% Compleet
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-lg mb-1">{outfit.title}</h3>
-                  <p className="text-sm text-gray-400 mb-3">{outfit.description}</p>
-                  
-                  {/* Explanation */}
-                  <div className="mb-3 text-xs bg-white/10 p-2 rounded-lg">
-                    <p className="text-white/80 italic">
-                      {outfit.explanation}
-                    </p>
-                  </div>
-                  
-                  {/* Archetype info */}
-                  {outfit.secondaryArchetype && outfit.mixFactor && outfit.mixFactor > 0.1 ? (
-                    <div className="mb-3 text-xs bg-white/10 p-2 rounded-lg">
-                      <span className="text-white/70">
-                        {Math.round((1 - outfit.mixFactor) * 100)}% {getArchetypeName(outfit.archetype)} + {Math.round(outfit.mixFactor * 100)}% {getArchetypeName(outfit.secondaryArchetype)}
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="mb-3 text-xs bg-white/10 p-2 rounded-lg">
-                      <span className="text-white/70">
-                        100% {getArchetypeName(outfit.archetype)}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Structure info */}
-                  {outfit.structure && outfit.structure.length > 0 && (
-                    <div className="mb-3 text-xs bg-white/10 p-2 rounded-lg">
-                      <span className="text-white/70">
-                        Outfit structuur: {outfit.structure.map(cat => cat.toLowerCase()).join(' + ')}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Season and weather info */}
-                  {outfit.season && (
-                    <div className="mb-3 text-xs bg-white/10 p-2 rounded-lg">
-                      <span className="text-white/70">
-                        Seizoen: {getDutchSeasonName(outfit.season as any)}
-                        {outfit.weather && ` • Weer: ${outfit.weather}`}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Product categories */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {outfit.products.map((product, index) => (
-                      <span key={index} className="text-xs bg-white/10 px-2 py-0.5 rounded-full flex items-center">
-                        <Tag size={10} className="mr-1" />
-                        {product.type || product.category}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {outfit.tags.slice(0, 3).map((tag, index) => (
-                      <span key={index} className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
-                        #{tag}
-                      </span>
-                    ))}
-                    {outfit.tags.length > 3 && (
-                      <span className="text-xs text-white/60">
-                        +{outfit.tags.length - 3}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">
-                      {outfit.products.length} items • €{outfit.products.reduce((sum, p) => sum + (p.price || 0), 0).toFixed(2)}
-                    </span>
-                    <div className="flex space-x-2">
-                      <Button 
-                        variant="secondary" 
-                        size="sm"
-                        icon={<RefreshCw size={14} />}
-                        iconPosition="left"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRegenerateOutfit(index);
-                        }}
-                        disabled={isRegenerating || regenerationCount >= MAX_REGENERATIONS}
-                        className="text-xs"
-                      >
-                        {isRegenerating ? 'Laden...' : 'Nieuwe look'}
-                      </Button>
-                      <Button 
-                        variant="primary" 
-                        size="sm"
-                        icon={<ShoppingBag size={14} />}
-                        iconPosition="left"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Open first product or do something else
-                          if (outfit.products[0]) {
-                            handleProductClick(outfit.products[0]);
-                          }
-                        }}
-                      >
-                        Shop Look
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {/* Regeneration limit warning */}
-                  {regenerationCount >= MAX_REGENERATIONS && (
-                    <div className="mt-2 text-xs text-orange-400">
-                      Je hebt het maximale aantal regeneraties bereikt.
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              <OutfitCard 
+                key={outfit.id}
+                outfit={outfit}
+                onNewLook={() => handleRegenerateOutfit(index)}
+                isGenerating={isRegenerating}
+                user={enhancedUser}
+              />
             ))}
           </div>
         </div>
@@ -674,19 +578,5 @@ const EnhancedResultsPage = () => {
     </div>
   );
 };
-
-// Helper function to get a readable archetype name
-function getArchetypeName(archetypeId: string): string {
-  const archetypeNames: Record<string, string> = {
-    'klassiek': 'Klassiek',
-    'casual_chic': 'Casual Chic',
-    'urban': 'Urban',
-    'streetstyle': 'Streetstyle',
-    'retro': 'Retro',
-    'luxury': 'Luxury'
-  };
-  
-  return archetypeNames[archetypeId] || archetypeId;
-}
 
 export default EnhancedResultsPage;
