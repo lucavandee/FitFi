@@ -1,235 +1,158 @@
 /**
- * Analytics service for tracking user interactions and errors
- * This service provides a centralized way to track events, errors, and performance metrics
+ * Analytics service for tracking user interactions with outfit explanations
+ * This service provides a centralized way to track events related to explanations
  */
 
 // Event categories
 export enum EventCategory {
   ENGAGEMENT = 'engagement',
   CONVERSION = 'conversion',
-  ERROR = 'error',
-  PERFORMANCE = 'performance',
-  ECOMMERCE = 'ecommerce',
-  GAMIFICATION = 'gamification'
+  EXPLANATION = 'explanation'
 }
 
 // Event types
 export enum EventType {
-  // Engagement events
-  PAGE_VIEW = 'page_view',
-  QUIZ_START = 'quiz_start',
-  QUIZ_COMPLETE = 'quiz_complete',
-  QUIZ_STEP = 'quiz_step',
-  RECOMMENDATION_VIEW = 'recommendation_view',
+  // Explanation events
+  EXPLANATION_GENERATED = 'explanation_generated',
+  EXPLANATION_VIEWED = 'explanation_viewed',
+  EXPLANATION_CLICKED = 'explanation_clicked',
+  EXPLANATION_EXPANDED = 'explanation_expanded',
+  EXPLANATION_SHARED = 'explanation_shared',
+  
+  // Outfit events
+  OUTFIT_CLICK = 'outfit_click',
   OUTFIT_LIKE = 'outfit_like',
   OUTFIT_DISLIKE = 'outfit_dislike',
   OUTFIT_SAVE = 'outfit_save',
   OUTFIT_SHARE = 'outfit_share',
   
-  // Conversion events
+  // Product events
   PRODUCT_CLICK = 'product_click',
-  SHOP_OUTFIT = 'shop_outfit',
-  SIGNUP = 'signup',
-  LOGIN = 'login',
-  PREMIUM_UPGRADE = 'premium_upgrade',
-  
-  // Error events
-  API_ERROR = 'api_error',
-  IMAGE_ERROR = 'image_error',
-  JS_ERROR = 'js_error',
-  
-  // Performance events
-  PAGE_LOAD = 'page_load',
-  API_LATENCY = 'api_latency',
-  
-  // Gamification events
-  POINTS_EARNED = 'points_earned',
-  BADGE_EARNED = 'badge_earned',
-  LEVEL_UP = 'level_up',
-  CHALLENGE_COMPLETE = 'challenge_complete'
+  PRODUCT_VIEW = 'product_view',
+  PRODUCT_SAVE = 'product_save'
 }
 
 /**
- * Tracks an event in the analytics system
+ * Tracks an explanation event in the analytics system
  * @param eventType - Type of event
- * @param category - Event category
- * @param label - Event label
- * @param value - Event value
- * @param additionalParams - Additional parameters
+ * @param outfitId - Outfit ID
+ * @param outfitTitle - Outfit title
+ * @param outfitArchetype - Outfit archetype
+ * @param explanation - The explanation text
  */
-export const trackEvent = (
+export const trackExplanationEvent = (
   eventType: EventType,
-  category: EventCategory,
-  label?: string,
-  value?: number,
-  additionalParams?: Record<string, any>
+  outfitId: string,
+  outfitTitle: string,
+  outfitArchetype: string,
+  explanation: string
 ): void => {
   // Use Google Analytics if available
   if (typeof window.gtag === 'function') {
     window.gtag('event', eventType, {
-      event_category: category,
-      event_label: label,
-      value,
-      ...additionalParams
+      event_category: EventCategory.EXPLANATION,
+      event_label: outfitId,
+      outfit_id: outfitId,
+      outfit_title: outfitTitle,
+      outfit_archetype: outfitArchetype,
+      explanation_length: explanation.length,
+      explanation_preview: explanation.substring(0, 50) + '...'
     });
   }
   
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
-    console.log(`📊 Analytics: ${eventType} (${category})`, {
-      label,
-      value,
-      ...additionalParams
+    console.log(`📊 Analytics: ${eventType} (${EventCategory.EXPLANATION})`, {
+      outfitId,
+      outfitTitle,
+      outfitArchetype,
+      explanation: explanation.substring(0, 50) + '...'
     });
   }
 };
 
 /**
- * Tracks a page view
- * @param pagePath - Page path
- * @param pageTitle - Page title
+ * Tracks an outfit interaction event
+ * @param eventType - Type of event
+ * @param outfit - The outfit object
  */
-export const trackPageView = (pagePath: string, pageTitle?: string): void => {
-  if (typeof window.gtag === 'function') {
-    window.gtag('config', 'G-XXXXXXXXXX', {
-      page_path: pagePath,
-      page_title: pageTitle || document.title
-    });
-  }
-  
-  trackEvent(EventType.PAGE_VIEW, EventCategory.ENGAGEMENT, pagePath);
-};
-
-/**
- * Tracks an error
- * @param errorType - Type of error
- * @param errorMessage - Error message
- * @param errorDetails - Additional error details
- */
-export const trackError = (
-  errorType: 'api' | 'image' | 'js' | 'other',
-  errorMessage: string,
-  errorDetails?: Record<string, any>
-): void => {
-  const eventType = errorType === 'api' 
-    ? EventType.API_ERROR 
-    : errorType === 'image' 
-      ? EventType.IMAGE_ERROR 
-      : EventType.JS_ERROR;
-  
-  trackEvent(
-    eventType,
-    EventCategory.ERROR,
-    errorMessage,
-    undefined,
-    {
-      error_type: errorType,
-      error_message: errorMessage,
-      ...errorDetails
-    }
-  );
-};
-
-/**
- * Tracks a broken image
- * @param imageUrl - URL of the broken image
- * @param componentName - Name of the component where the image is used
- */
-export const trackBrokenImage = (imageUrl: string, componentName: string): void => {
-  trackError('image', 'Image failed to load', {
-    image_url: imageUrl,
-    component: componentName
-  });
-  
-  // Store broken image URL in localStorage for future reference
-  const brokenImagesKey = 'fitfi-broken-images';
-  const brokenImages = JSON.parse(localStorage.getItem(brokenImagesKey) || '[]');
-  
-  if (!brokenImages.includes(imageUrl)) {
-    brokenImages.push(imageUrl);
-    localStorage.setItem(brokenImagesKey, JSON.stringify(brokenImages));
-  }
-};
-
-/**
- * Tracks a product click
- * @param product - Product that was clicked
- * @param source - Source of the click
- */
-export const trackProductClick = (
-  product: {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    category: string;
-    retailer: string;
-  },
-  source: string = 'recommendations'
-): void => {
-  trackEvent(
-    EventType.PRODUCT_CLICK,
-    EventCategory.ECOMMERCE,
-    `${product.retailer}_${product.id}`,
-    product.price,
-    {
-      item_id: product.id,
-      item_name: product.name,
-      item_brand: product.brand,
-      item_category: product.category,
-      price: product.price,
-      currency: 'EUR',
-      source
-    }
-  );
-};
-
-/**
- * Tracks an outfit shop action
- * @param outfit - Outfit that was shopped
- */
-export const trackOutfitShop = (
+export const trackOutfitEvent = (
+  eventType: EventType,
   outfit: {
     id: string;
     title: string;
-    totalPrice: number;
-    items: Array<{
-      id: string;
-      name: string;
-      brand: string;
-      price: number;
-      category: string;
-    }>;
+    archetype?: string;
+    matchPercentage?: number;
   }
 ): void => {
-  trackEvent(
-    EventType.SHOP_OUTFIT,
-    EventCategory.CONVERSION,
-    outfit.id,
-    outfit.totalPrice,
-    {
+  // Use Google Analytics if available
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', eventType, {
+      event_category: EventCategory.ENGAGEMENT,
+      event_label: outfit.id,
       outfit_id: outfit.id,
       outfit_title: outfit.title,
-      value: outfit.totalPrice,
-      currency: 'EUR',
-      items: outfit.items.map(item => ({
-        item_id: item.id,
-        item_name: item.name,
-        item_brand: item.brand,
-        item_category: item.category,
-        price: item.price
-      }))
-    }
-  );
+      outfit_archetype: outfit.archetype || 'unknown',
+      match_percentage: outfit.matchPercentage || 0
+    });
+  }
+  
+  // Log to console in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`📊 Analytics: ${eventType} (${EventCategory.ENGAGEMENT})`, {
+      outfitId: outfit.id,
+      outfitTitle: outfit.title,
+      outfitArchetype: outfit.archetype || 'unknown',
+      matchPercentage: outfit.matchPercentage || 0
+    });
+  }
+};
+
+/**
+ * Tracks a product interaction event
+ * @param eventType - Type of event
+ * @param product - The product object
+ */
+export const trackProductEvent = (
+  eventType: EventType,
+  product: {
+    id: string;
+    name: string;
+    brand?: string;
+    price?: number;
+    category?: string;
+  }
+): void => {
+  // Use Google Analytics if available
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', eventType, {
+      event_category: EventCategory.ENGAGEMENT,
+      event_label: product.id,
+      item_id: product.id,
+      item_name: product.name,
+      item_brand: product.brand || 'unknown',
+      item_category: product.category || 'unknown',
+      price: product.price || 0,
+      currency: 'EUR'
+    });
+  }
+  
+  // Log to console in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`📊 Analytics: ${eventType} (${EventCategory.ENGAGEMENT})`, {
+      productId: product.id,
+      productName: product.name,
+      productBrand: product.brand || 'unknown',
+      productCategory: product.category || 'unknown',
+      price: product.price || 0
+    });
+  }
 };
 
 export default {
-  trackEvent,
-  trackPageView,
-  trackError,
-  trackBrokenImage,
-  trackProductClick,
-  trackOutfitShop,
+  trackExplanationEvent,
+  trackOutfitEvent,
+  trackProductEvent,
   EventCategory,
   EventType
 };

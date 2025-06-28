@@ -1,376 +1,118 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
+import { useOnboarding } from '../context/OnboardingContext';
 
 const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { updateProfile } = useUser();
+  const { updateData, completeStep, goToNextStep } = useOnboarding();
   
-  // Get URL parameters
-  const searchParams = new URLSearchParams(location.search);
-  const isPremium = searchParams.get('plan') === 'premium';
-  
-  // State for form and steps
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    acceptTerms: false
-  });
-  const [currentStep, setCurrentStep] = useState(1);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Check for stored lead data
+  // Track when the component is mounted
   useEffect(() => {
-    const leadData = localStorage.getItem('fitfi-lead-data');
-    if (leadData) {
-      try {
-        const parsedData = JSON.parse(leadData);
-        setFormData(prev => ({
-          ...prev,
-          name: parsedData.name || '',
-          email: parsedData.email || ''
-        }));
-      } catch (error) {
-        console.error('Error parsing lead data:', error);
-      }
-    }
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-    
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
+    // Track quiz start in analytics
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'quiz_start', {
+        event_category: 'questionnaire',
+        event_label: 'welcome',
+        referrer: document.referrer,
+        timestamp: new Date().toISOString()
       });
     }
-  };
-
-  const validateStep = () => {
-    const newErrors: Record<string, string> = {};
     
-    if (currentStep === 1) {
-      if (!formData.name.trim()) {
-        newErrors.name = 'Naam is verplicht';
-      }
-      
-      if (!formData.email.trim()) {
-        newErrors.email = 'E-mail is verplicht';
-      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = 'Voer een geldig e-mailadres in';
-      }
-    }
+    // Update onboarding data with start time
+    updateData({
+      startTime: Date.now()
+    });
+  }, [updateData]);
+  
+  const handleStart = () => {
+    // Mark welcome step as completed
+    completeStep('welcome');
     
-    if (currentStep === 2) {
-      if (!formData.password) {
-        newErrors.password = 'Wachtwoord is verplicht';
-      } else if (formData.password.length < 8) {
-        newErrors.password = 'Wachtwoord moet minimaal 8 tekens bevatten';
-      }
-      
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Wachtwoorden komen niet overeen';
-      }
-      
-      if (!formData.acceptTerms) {
-        newErrors.acceptTerms = 'Je moet akkoord gaan met de voorwaarden';
-      }
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Go to next step
+    goToNextStep();
   };
-
-  const handleNextStep = () => {
-    if (validateStep()) {
-      setCurrentStep(prev => prev + 1);
-    }
-  };
-
-  const handlePrevStep = () => {
-    setCurrentStep(prev => prev - 1);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateStep()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      // Save to UserContext
-      await updateProfile({
-        name: formData.name,
-        email: formData.email
-      });
-      
-      // Track registration event
-      if (typeof window.trackUserRegistration === 'function') {
-        window.trackUserRegistration('email', isPremium ? 'premium_user' : 'free_user');
-      }
-      
-      // Clear lead data from localStorage
-      localStorage.removeItem('fitfi-lead-data');
-      
-      // Navigate to gender selection
-      navigate('/gender');
-    } catch (error) {
-      console.error('Error during onboarding:', error);
-      setErrors({ submit: 'Er is een fout opgetreden. Probeer het later opnieuw.' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const totalSteps = 3; // personal info, account setup, confirmation
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
       <div className="container-slim py-16">
         <div className="max-w-md mx-auto">
-          {/* Progress indicator */}
-          <div className="mb-10">
-            <div className="flex justify-between text-sm text-white/70 mb-2">
-              <span>Stap {currentStep} van {totalSteps}</span>
-              <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-bar-fill"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
           <motion.div
-            key={currentStep}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">
-                {currentStep === 1 && 'Welkom bij FitFi'}
-                {currentStep === 2 && 'Beveilig je account'}
-                {currentStep === 3 && 'Klaar om te beginnen'}
+              <h1 className="text-4xl font-bold text-white mb-4">
+                Ontdek je perfecte stijl
               </h1>
-              <p className="text-white/80">
-                {currentStep === 1 && 'Laten we beginnen met je persoonlijke stijlanalyse'}
-                {currentStep === 2 && 'Maak een veilig wachtwoord aan voor je account'}
-                {currentStep === 3 && 'Je account is aangemaakt en klaar voor gebruik'}
+              <p className="text-xl text-white/90 mb-2">
+                Met hulp van AI. Slimmer shoppen, beter kleden.
+              </p>
+              <p className="text-white/70">
+                Beantwoord enkele vragen en ontvang gepersonaliseerde outfits die perfect bij jou passen.
               </p>
             </div>
 
             <div className="glass-card overflow-hidden">
               <div className="p-6">
-                <form onSubmit={handleSubmit}>
-                  {/* Step 1: Personal Information */}
-                  {currentStep === 1 && (
-                    <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Features */}
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <div className="bg-[#FF8600]/20 p-2 rounded-full mr-3 mt-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M20.24 12.24C21.3658 11.1142 21.9983 9.58722 21.9983 7.99504C21.9983 6.40285 21.3658 4.87588 20.24 3.75004C19.1142 2.62419 17.5872 1.9917 15.995 1.9917C14.4028 1.9917 12.8758 2.62419 11.75 3.75004L5 10.5V19H13.5L20.24 12.24Z" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M16 8L2 22" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M17.5 15H9" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
                       <div>
-                        <label htmlFor="name" className="label text-white">
-                          Naam
-                        </label>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          className={`input ${errors.name ? 'border-red-500' : ''}`}
-                          placeholder="Je volledige naam"
-                        />
-                        {errors.name && (
-                          <p className="mt-1 text-sm text-red-300">{errors.name}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="email" className="label text-white">
-                          E-mailadres
-                        </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className={`input ${errors.email ? 'border-red-500' : ''}`}
-                          placeholder="je@email.com"
-                        />
-                        {errors.email && (
-                          <p className="mt-1 text-sm text-red-300">{errors.email}</p>
-                        )}
-                      </div>
-
-                      <Button
-                        type="button"
-                        variant="primary"
-                        size="lg"
-                        fullWidth
-                        onClick={handleNextStep}
-                        icon={<ArrowRight size={20} />}
-                        iconPosition="right"
-                        className="mt-6"
-                      >
-                        Volgende
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Step 2: Account Setup */}
-                  {currentStep === 2 && (
-                    <div className="space-y-4">
-                      <div>
-                        <label htmlFor="password" className="label text-white">
-                          Wachtwoord
-                        </label>
-                        <input
-                          type="password"
-                          id="password"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          className={`input ${errors.password ? 'border-red-500' : ''}`}
-                          placeholder="Minimaal 8 tekens"
-                        />
-                        {errors.password && (
-                          <p className="mt-1 text-sm text-red-300">{errors.password}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="confirmPassword" className="label text-white">
-                          Bevestig wachtwoord
-                        </label>
-                        <input
-                          type="password"
-                          id="confirmPassword"
-                          name="confirmPassword"
-                          value={formData.confirmPassword}
-                          onChange={handleInputChange}
-                          className={`input ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                          placeholder="Herhaal je wachtwoord"
-                        />
-                        {errors.confirmPassword && (
-                          <p className="mt-1 text-sm text-red-300">{errors.confirmPassword}</p>
-                        )}
-                      </div>
-
-                      <div className="flex items-start mt-6">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="acceptTerms"
-                            name="acceptTerms"
-                            type="checkbox"
-                            checked={formData.acceptTerms}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 text-[#FF8600] focus:ring-[#FF8600] border-white/30 rounded"
-                          />
-                        </div>
-                        <div className="ml-3 text-sm">
-                          <label htmlFor="acceptTerms" className={`${errors.acceptTerms ? 'text-red-300' : 'text-white/80'}`}>
-                            Ik ga akkoord met de{' '}
-                            <a href="/juridisch" className="text-[#FF8600] hover:text-orange-400 underline">algemene voorwaarden</a>{' '}en{' '}
-                            <a href="/juridisch" className="text-[#FF8600] hover:text-orange-400 underline">privacybeleid</a>
-                          </label>
-                        </div>
-                      </div>
-                      {errors.acceptTerms && (
-                        <p className="mt-1 text-sm text-red-300">{errors.acceptTerms}</p>
-                      )}
-
-                      <div className="flex space-x-3 mt-6">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="lg"
-                          onClick={handlePrevStep}
-                          icon={<ArrowLeft size={20} />}
-                          iconPosition="left"
-                          className="flex-1 text-white border border-white/30 hover:bg-white/10"
-                        >
-                          Terug
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="primary"
-                          size="lg"
-                          onClick={handleNextStep}
-                          icon={<ArrowRight size={20} />}
-                          iconPosition="right"
-                          className="flex-1"
-                        >
-                          Volgende
-                        </Button>
+                        <h3 className="font-medium text-white">Persoonlijke stijlanalyse</h3>
+                        <p className="text-sm text-white/70">Ontdek welke stijlen het beste bij jou passen</p>
                       </div>
                     </div>
-                  )}
-
-                  {/* Step 3: Confirmation */}
-                  {currentStep === 3 && (
-                    <div className="space-y-6">
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-[#FF8600]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-8 h-8 text-[#FF8600]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-2">
-                          Account aangemaakt
-                        </h3>
-                        <p className="text-white/80 mb-6">
-                          Je bent nu klaar om je persoonlijke stijlreis te beginnen met FitFi.
-                        </p>
+                    
+                    <div className="flex items-start">
+                      <div className="bg-[#FF8600]/20 p-2 rounded-full mr-3 mt-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M20.84 4.60999C20.3292 4.09946 19.7228 3.69352 19.0554 3.41708C18.388 3.14064 17.6725 2.99918 16.95 2.99918C16.2275 2.99918 15.512 3.14064 14.8446 3.41708C14.1772 3.69352 13.5708 4.09946 13.06 4.60999L12 5.66999L10.94 4.60999C9.9083 3.5783 8.50903 2.9987 7.05 2.9987C5.59096 2.9987 4.19169 3.5783 3.16 4.60999C2.1283 5.64169 1.54871 7.04096 1.54871 8.49999C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.3505 11.8792 21.7565 11.2728 22.0329 10.6054C22.3094 9.93801 22.4508 9.22249 22.4508 8.49999C22.4508 7.7775 22.3094 7.06198 22.0329 6.39461C21.7565 5.72723 21.3505 5.12081 20.84 4.60999Z" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                       </div>
-
-                      <div className="flex space-x-3">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="lg"
-                          onClick={handlePrevStep}
-                          icon={<ArrowLeft size={20} />}
-                          iconPosition="left"
-                          className="flex-1 text-white border border-white/30 hover:bg-white/10"
-                        >
-                          Terug
-                        </Button>
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          size="lg"
-                          disabled={isSubmitting}
-                          className="flex-1"
-                        >
-                          {isSubmitting ? 'Even geduld...' : 'Start je stijlreis'}
-                        </Button>
+                      <div>
+                        <h3 className="font-medium text-white">Gepersonaliseerde outfits</h3>
+                        <p className="text-sm text-white/70">Complete looks die perfect bij jouw stijl passen</p>
                       </div>
-                      
-                      {errors.submit && (
-                        <p className="mt-4 text-sm text-center text-red-300">{errors.submit}</p>
-                      )}
                     </div>
-                  )}
-                </form>
+                    
+                    <div className="flex items-start">
+                      <div className="bg-[#FF8600]/20 p-2 rounded-full mr-3 mt-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 6V12L16 14" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-white">Tijdbesparend</h3>
+                        <p className="text-sm text-white/70">Geen eindeloos zoeken meer naar de juiste kleding</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    onClick={handleStart}
+                    icon={<ArrowRight size={20} />}
+                    iconPosition="right"
+                    className="mt-6"
+                  >
+                    Start de stijlquiz
+                  </Button>
+                </div>
               </div>
 
               {/* Privacy indicator */}
@@ -380,62 +122,17 @@ const OnboardingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Back to home link */}
+            {/* Skip link */}
             <div className="mt-6 text-center">
               <button 
-                onClick={() => navigate('/')}
-                className="inline-flex items-center text-sm text-white/70 hover:text-[#FF8600] transition-colors"
+                onClick={() => navigate('/results')}
+                className="text-sm text-white/70 hover:text-[#FF8600] transition-colors"
               >
-                <ArrowLeft size={16} className="mr-1" />
-                Terug naar home
+                Sla over en bekijk direct aanbevelingen
               </button>
             </div>
           </motion.div>
         </div>
-      </div>
-
-      {/* Mobile Sticky CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0D1B2A] border-t border-white/10 p-4 z-50">
-        {currentStep === 1 && (
-          <Button
-            type="button"
-            variant="primary"
-            fullWidth
-            onClick={handleNextStep}
-          >
-            Volgende stap
-          </Button>
-        )}
-        {currentStep === 2 && (
-          <div className="flex space-x-3">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handlePrevStep}
-              className="flex-1 text-white border border-white/30 hover:bg-white/10"
-            >
-              Terug
-            </Button>
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleNextStep}
-              className="flex-1"
-            >
-              Volgende
-            </Button>
-          </div>
-        )}
-        {currentStep === 3 && (
-          <Button
-            type="button"
-            variant="primary"
-            fullWidth
-            onClick={handleSubmit}
-          >
-            Start je stijlreis
-          </Button>
-        )}
       </div>
     </div>
   );

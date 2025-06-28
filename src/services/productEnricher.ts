@@ -512,6 +512,35 @@ function estimateMaterial(type: string, brand: string): string {
 }
 
 /**
+ * Validate and normalize image URL
+ * @param imageUrl - The image URL to validate
+ * @returns Valid image URL or fallback
+ */
+function validateAndNormalizeImageUrl(imageUrl: string): string {
+  // Check if URL is valid
+  if (!imageUrl || !isValidImageUrl(imageUrl)) {
+    console.warn(`Invalid image URL detected: ${imageUrl}, using fallback`);
+    return '/placeholder.png';
+  }
+  
+  // Check for problematic domains
+  const problematicDomains = [
+    'debijenkorf.nl',
+    'massimo-dutti',
+    'bijenkorf',
+    'cdn.debijenkorf',
+    'media.s-bol.com'
+  ];
+  
+  if (problematicDomains.some(domain => imageUrl.includes(domain))) {
+    console.warn(`Problematic domain detected in image URL: ${imageUrl}, using fallback`);
+    return '/placeholder.png';
+  }
+  
+  return imageUrl;
+}
+
+/**
  * Convert a raw Zalando product to a BoltProduct
  * @param product - Raw Zalando product
  * @returns BoltProduct
@@ -551,8 +580,8 @@ export function convertToBoltProduct(product: RawZalandoProduct): BoltProduct {
   // Estimate material
   const material = estimateMaterial(type, brand);
   
-  // Validate image URL
-  const imageUrl = isValidImageUrl(image) ? image : 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2';
+  // Validate and normalize image URL
+  const imageUrl = validateAndNormalizeImageUrl(image);
   
   // Create and return the BoltProduct
   return {

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { motion } from 'framer-motion';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
+import StylePreviewSection from '../components/StylePreviewSection';
+import { getCurrentSeason } from '../engine/helpers';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +14,12 @@ const HomePage: React.FC = () => {
     email: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentSeason, setCurrentSeason] = useState<string>('');
+
+  // Get current season on component mount
+  useEffect(() => {
+    setCurrentSeason(getCurrentSeason());
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -160,6 +168,12 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Style Preview Section */}
+      <StylePreviewSection 
+        archetype="casual_chic" 
+        season={currentSeason}
+      />
 
       {/* How It Works Section */}
       <section id="how-it-works" className="py-24 bg-[#1B263B] subtle-line">
