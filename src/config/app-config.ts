@@ -14,6 +14,12 @@ export const USE_SUPABASE = false;
 export const USE_BOLT = true;
 
 /**
+ * Toggle for Zalando integration
+ * When set to true, the app will try to use Zalando products when Supabase is unavailable
+ */
+export const USE_ZALANDO = true;
+
+/**
  * Debug mode toggle
  * When enabled, additional console logs will be shown
  */
@@ -50,5 +56,7 @@ export const FEATURES = {
   // Enable premium features
   premium: true,
   // Enable data caching
-  caching: true
+  caching: true,
+  // Enable outfit explanations
+  outfitExplanations: true
 };

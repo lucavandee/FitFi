@@ -1,9 +1,74 @@
-import React from 'react';
-import { ShoppingBag, ExternalLink, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, ExternalLink, Clock, Info } from 'lucide-react';
 import Button from './Button';
 import ImageWithFallback from './ImageWithFallback';
+import { generateOutfitExplanation } from '../../engine/explainOutfit';
 
-const RecommendationCard = ({ item, className = '' }) => {
+const RecommendationCard = ({ item, className = '', user }) => {
+  const [showExplanationTooltip, setShowExplanationTooltip] = useState(false);
+  const [explanation, setExplanation] = useState(item.explanation || '');
+  
+  useEffect(() => {
+    // If explanation is not provided, generate a simple one
+    if (!item.explanation && item.archetype) {
+      try {
+        // Create a simplified outfit object for the explanation generator
+        const simpleOutfit = {
+          id: item.id || 'recommendation',
+          title: item.name,
+          description: item.description || `${item.name} van ${item.brand}`,
+          archetype: item.archetype || 'casual_chic',
+          occasion: item.occasion || 'Casual',
+          products: [
+            {
+              id: item.id,
+              name: item.name,
+              brand: item.brand,
+              price: item.price,
+              category: item.category
+            }
+          ],
+          tags: item.tags || ['casual'],
+          matchPercentage: item.matchPercentage || 85,
+          season: item.season?.[0] || 'autumn'
+        };
+        
+        const generatedExplanation = generateOutfitExplanation(
+          simpleOutfit,
+          simpleOutfit.archetype,
+          simpleOutfit.occasion,
+          user?.name?.split(' ')?.[0]
+        );
+        
+        // Simplify the explanation for a single product
+        const simplifiedExplanation = generatedExplanation
+          .replace(/Deze outfit/g, 'Dit item')
+          .replace(/combinatie/g, 'keuze')
+          .replace(/producten/g, 'product');
+        
+        setExplanation(simplifiedExplanation);
+        
+        // Log the generated explanation
+        console.log(`Generated explanation for product ${item.id}:`, simplifiedExplanation);
+        
+        // Track explanation generation in analytics
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'product_explanation_generated', {
+            event_category: 'engagement',
+            event_label: item.id,
+            product_id: item.id,
+            product_name: item.name
+          });
+        }
+      } catch (error) {
+        console.error('Error generating explanation:', error);
+        setExplanation('Past bij jouw stijlvoorkeuren');
+      }
+    } else {
+      setExplanation(item.explanation || 'Past bij jouw stijlvoorkeuren');
+    }
+  }, [item, user]);
+  
   const handleProductClick = () => {
     // Track product click
     if (typeof window.gtag === 'function') {
@@ -22,9 +87,24 @@ const RecommendationCard = ({ item, className = '' }) => {
     // Open product page
     window.open(item.url, '_blank', 'noopener,noreferrer');
   };
+  
+  const handleExplanationClick = (e) => {
+    e.stopPropagation();
+    setShowExplanationTooltip(!showExplanationTooltip);
+    
+    // Track explanation click in analytics
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'product_explanation_click', {
+        event_category: 'engagement',
+        event_label: item.id,
+        product_id: item.id,
+        product_name: item.name
+      });
+    }
+  };
 
   return (
-    <div className={`glass-card p-6 space-y-4 hover:border-[#FF8600]/50 transition-all duration-300 ${className}`}>
+    <div className={`glass-card p-6 space-y-4 hover:border-orange-500/50 transition-all duration-300 ${className}`}>
       {/* Product Image with Dynamic Loading */}
       <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-[#1B263B]">
         <ImageWithFallback
@@ -63,6 +143,32 @@ const RecommendationCard = ({ item, className = '' }) => {
           <p className="text-sm text-white/60">
             {item.category} • {item.brand}
           </p>
+        </div>
+        
+        {/* Explanation with info icon */}
+        <div className="p-2 bg-white/5 rounded-lg border border-white/10 relative">
+          <div className="flex items-start">
+            <p className="text-white/80 text-xs italic flex-1 pr-6">
+              {explanation || 'Past bij jouw stijlvoorkeuren'}
+            </p>
+            <button 
+              onClick={handleExplanationClick}
+              className="absolute top-2 right-2 text-white/50 hover:text-white/80 transition-colors"
+              aria-label="Meer informatie"
+            >
+              <Info size={14} />
+            </button>
+          </div>
+          
+          {/* Explanation tooltip */}
+          {showExplanationTooltip && (
+            <div className="mt-2 pt-2 border-t border-white/10">
+              <p className="text-white/70 text-xs">
+                Deze uitleg is gegenereerd door onze AI op basis van jouw stijlvoorkeuren
+                en de kenmerken van dit product.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Price */}

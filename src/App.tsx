@@ -24,11 +24,19 @@ import LegalPage from './pages/LegalPage';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
+import { OnboardingProvider } from './context/OnboardingContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/ui/LoadingFallback';
 
 // Lazy load the dashboard page to improve initial load time
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+
+// Lazy load onboarding steps
+const GenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
+const ArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
+const SeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
+const OccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
+const PreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
 
 function App() {
   return (
@@ -36,58 +44,93 @@ function App() {
       <UserProvider>
         <GamificationProvider>
           <Router>
-            <div className="min-h-screen flex flex-col">
-              <ErrorBoundary>
-                <Navbar />
-              </ErrorBoundary>
-              
-              <main className="flex-grow">
+            <OnboardingProvider>
+              <div className="min-h-screen flex flex-col">
                 <ErrorBoundary>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/onboarding" element={<OnboardingPage />} />
-                    <Route path="/gender" element={<GenderSelectPage />} />
-                    <Route path="/quiz/:step" element={<QuizPage />} />
-                    <Route path="/results" element={<EnhancedResultsPage />} />
-                    <Route path="/dashboard/*" element={
-                      <Suspense fallback={<LoadingFallback message="Dashboard laden..." fullScreen />}>
-                        <DashboardPage />
-                      </Suspense>
-                    } />
-                    <Route path="/over-ons" element={<AboutPage />} />
-                    <Route path="/product" element={<ProductPage />} />
-                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-                    <Route path="/prijzen" element={<PricingPage />} />
-                    <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
-                    <Route path="/blog" element={<BlogPage />} />
-                    <Route path="/ondersteuning" element={<SupportPage />} />
-                    <Route path="/helpcentrum" element={<HelpCenterPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/faq" element={<FAQPage />} />
-                    <Route path="/feedback" element={<FeedbackPage />} />
-                    <Route path="/juridisch" element={<LegalPage />} />
-                  </Routes>
+                  <Navbar />
                 </ErrorBoundary>
-              </main>
-              
-              <ErrorBoundary>
-                <Footer />
-              </ErrorBoundary>
-              
-              <Toaster 
-                position="top-center"
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: 'var(--toast-bg, rgba(13, 27, 42, 0.95))',
-                    color: 'var(--toast-color, #fff)',
-                    borderRadius: '0.75rem',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                    border: '1px solid var(--toast-border, rgba(255,255,255,0.1))'
-                  },
-                }}
-              />
-            </div>
+                
+                <main className="flex-grow">
+                  <ErrorBoundary>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      
+                      {/* Onboarding Flow */}
+                      <Route path="/onboarding" element={<OnboardingPage />} />
+                      <Route path="/onboarding/gender-name" element={
+                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                          <GenderNameStep />
+                        </Suspense>
+                      } />
+                      <Route path="/onboarding/archetype" element={
+                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                          <ArchetypeStep />
+                        </Suspense>
+                      } />
+                      <Route path="/onboarding/season" element={
+                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                          <SeasonStep />
+                        </Suspense>
+                      } />
+                      <Route path="/onboarding/occasion" element={
+                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                          <OccasionStep />
+                        </Suspense>
+                      } />
+                      <Route path="/onboarding/preferences" element={
+                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                          <PreferencesStep />
+                        </Suspense>
+                      } />
+                      
+                      {/* Legacy Routes */}
+                      <Route path="/gender" element={<GenderSelectPage />} />
+                      <Route path="/quiz/:step" element={<QuizPage />} />
+                      
+                      {/* Results Pages */}
+                      <Route path="/results" element={<EnhancedResultsPage />} />
+                      <Route path="/results/legacy" element={<ResultsPage />} />
+                      
+                      <Route path="/dashboard/*" element={
+                        <Suspense fallback={<LoadingFallback message="Dashboard laden..." fullScreen />}>
+                          <DashboardPage />
+                        </Suspense>
+                      } />
+                      <Route path="/over-ons" element={<AboutPage />} />
+                      <Route path="/product" element={<ProductPage />} />
+                      <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                      <Route path="/prijzen" element={<PricingPage />} />
+                      <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
+                      <Route path="/blog" element={<BlogPage />} />
+                      <Route path="/ondersteuning" element={<SupportPage />} />
+                      <Route path="/helpcentrum" element={<HelpCenterPage />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/faq" element={<FAQPage />} />
+                      <Route path="/feedback" element={<FeedbackPage />} />
+                      <Route path="/juridisch" element={<LegalPage />} />
+                    </Routes>
+                  </ErrorBoundary>
+                </main>
+                
+                <ErrorBoundary>
+                  <Footer />
+                </ErrorBoundary>
+                
+                <Toaster 
+                  position="top-center"
+                  toastOptions={{
+                    duration: 4000,
+                    style: {
+                      background: 'var(--toast-bg, rgba(13, 27, 42, 0.95))',
+                      color: 'var(--toast-color, #fff)',
+                      borderRadius: '0.75rem',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      border: '1px solid var(--toast-border, rgba(255,255,255,0.1))'
+                    },
+                  }}
+                />
+              </div>
+            </OnboardingProvider>
           </Router>
         </GamificationProvider>
       </UserProvider>
