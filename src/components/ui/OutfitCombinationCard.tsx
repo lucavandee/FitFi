@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ExternalLink, 
   Star, 
@@ -8,10 +8,13 @@ import {
   TrendingUp,
   ShoppingBag,
   Heart,
-  ChevronRight
+  ChevronRight,
+  Info
 } from 'lucide-react';
 import Button from './Button';
 import ImageWithFallback from './ImageWithFallback';
+import { generateOutfitExplanation } from '../../engine/explainOutfit';
+import { UserProfile } from '../../context/UserContext';
 
 interface OutfitItem {
   category: 'top' | 'bottom' | 'accessoire' | 'schoenen';
@@ -41,6 +44,15 @@ interface OutfitCombination {
   personalizedMessage: string;
   popularityIndicator?: string;
   exclusiveOffer?: string;
+  explanation?: string;
+  archetype?: string;
+  secondaryArchetype?: string;
+  mixFactor?: number;
+  season?: string;
+  weather?: string;
+  structure?: string[];
+  categoryRatio?: Record<string, number>;
+  completeness?: number;
 }
 
 interface OutfitCombinationCardProps {
@@ -48,15 +60,83 @@ interface OutfitCombinationCardProps {
   onSave?: (outfitId: string) => void;
   isSaved?: boolean;
   className?: string;
+  user?: UserProfile;
 }
 
 const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({ 
   outfit, 
   onSave, 
   isSaved = false,
-  className = '' 
+  className = '',
+  user
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showExplanationTooltip, setShowExplanationTooltip] = useState(false);
+  
+  // Generate explanation if not provided
+  const [explanation, setExplanation] = useState<string>(outfit.explanation || '');
+  
+  useEffect(() => {
+    // If explanation is not provided, generate one
+    if (!outfit.explanation && outfit.style) {
+      try {
+        // Map style to archetype
+        const archetype = mapStyleToArchetype(outfit.style);
+        
+        // Generate explanation
+        const generatedExplanation = generateOutfitExplanation(
+          {
+            id: outfit.id,
+            title: outfit.name,
+            description: outfit.description,
+            archetype: archetype,
+            secondaryArchetype: outfit.secondaryArchetype,
+            mixFactor: outfit.mixFactor,
+            occasion: outfit.occasion[0] || 'Casual',
+            products: outfit.items.map(item => ({
+              id: item.productId,
+              name: item.name,
+              brand: item.brand,
+              price: item.price,
+              category: mapCategoryToProductCategory(item.category)
+            })),
+            tags: outfit.tags,
+            matchPercentage: outfit.matchPercentage,
+            explanation: '',
+            season: mapSeasonalityToSeason(outfit.seasonality),
+            structure: outfit.structure,
+            weather: outfit.weather,
+            categoryRatio: outfit.categoryRatio,
+            completeness: outfit.completeness
+          },
+          archetype,
+          outfit.occasion[0] || 'Casual',
+          user?.name?.split(' ')?.[0]
+        );
+        
+        setExplanation(generatedExplanation);
+        
+        // Log the generated explanation
+        console.log(`Generated explanation for outfit ${outfit.id}:`, generatedExplanation);
+        
+        // Track explanation generation in analytics
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'explanation_generated', {
+            event_category: 'engagement',
+            event_label: outfit.id,
+            outfit_id: outfit.id,
+            outfit_title: outfit.name,
+            outfit_style: outfit.style
+          });
+        }
+      } catch (error) {
+        console.error('Error generating explanation:', error);
+        setExplanation('Past bij jouw stijlvoorkeuren');
+      }
+    } else {
+      setExplanation(outfit.explanation || 'Past bij jouw stijlvoorkeuren');
+    }
+  }, [outfit, user]);
 
   const handleCompleteOutfitClick = () => {
     // Track click and open affiliate link
@@ -72,22 +152,59 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
       onSave(outfit.id);
     }
   };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `FitFi Outfit: ${outfit.name}`,
-          text: outfit.description,
-          url: window.location.href
-        });
-      } catch (error) {
-        console.log('Share cancelled');
-      }
-    } else {
-      // Fallback to clipboard
-      navigator.clipboard.writeText(window.location.href);
+  
+  const handleExplanationClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowExplanationTooltip(!showExplanationTooltip);
+    
+    // Track explanation click in analytics
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'explanation_click', {
+        event_category: 'engagement',
+        event_label: outfit.id,
+        outfit_id: outfit.id,
+        outfit_title: outfit.name
+      });
     }
+  };
+  
+  // Helper function to map style to archetype
+  const mapStyleToArchetype = (style: string): string => {
+    const styleToArchetype: Record<string, string> = {
+      'casual_urban': 'urban',
+      'minimalist_professional': 'klassiek',
+      'cozy_weekend': 'casual_chic',
+      'bohemian_chic': 'retro',
+      'streetstyle': 'streetstyle',
+      'luxury': 'luxury'
+    };
+    
+    return styleToArchetype[style] || 'casual_chic';
+  };
+  
+  // Helper function to map seasonality to season
+  const mapSeasonalityToSeason = (seasonality: 'lente' | 'zomer' | 'herfst' | 'winter' | 'alle_seizoenen'): string => {
+    const seasonalityToSeason: Record<string, string> = {
+      'lente': 'spring',
+      'zomer': 'summer',
+      'herfst': 'autumn',
+      'winter': 'winter',
+      'alle_seizoenen': 'autumn' // Default to autumn for all seasons
+    };
+    
+    return seasonalityToSeason[seasonality] || 'autumn';
+  };
+  
+  // Helper function to map category to product category
+  const mapCategoryToProductCategory = (category: string): string => {
+    const categoryMapping: Record<string, string> = {
+      'top': 'top',
+      'bottom': 'bottom',
+      'accessoire': 'accessory',
+      'schoenen': 'footwear'
+    };
+    
+    return categoryMapping[category] || category;
   };
 
   return (
@@ -133,6 +250,32 @@ const OutfitCombinationCard: React.FC<OutfitCombinationCardProps> = ({
           <p className="text-white/80 text-sm leading-relaxed">
             {outfit.description}
           </p>
+        </div>
+
+        {/* Explanation with info icon */}
+        <div className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10 relative">
+          <div className="flex items-start">
+            <p className="text-white/90 text-sm italic flex-1 pr-6">
+              {explanation || 'Past bij jouw stijlvoorkeuren'}
+            </p>
+            <button 
+              onClick={handleExplanationClick}
+              className="absolute top-3 right-3 text-white/50 hover:text-white/80 transition-colors"
+              aria-label="Meer informatie"
+            >
+              <Info size={16} />
+            </button>
+          </div>
+          
+          {/* Explanation tooltip */}
+          {showExplanationTooltip && (
+            <div className="mt-3 pt-3 border-t border-white/10">
+              <p className="text-white/70 text-xs">
+                Deze uitleg is gegenereerd door onze AI op basis van jouw stijlvoorkeuren, 
+                de geselecteerde items, en de gelegenheid waarvoor deze outfit is samengesteld.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Psychological Trigger */}

@@ -1,5 +1,5 @@
 import { Product, Outfit, Season, ProductCategory, OutfitGenerationOptions, Weather, CategoryRatio, VariationLevel } from './types';
-import { calculateMatchScore, calculateMatchPercentage } from './calculateMatchScore';
+import { calculateMatchScore } from './calculateMatchScore';
 import { generateOutfitTitle, generateOutfitDescription } from './generateOutfitDescriptions';
 import { generateOutfitExplanation } from './explainOutfit';
 import { 
@@ -724,17 +724,14 @@ function calculateCategoryRatio(products: Product[]): CategoryRatio {
  * Groups products by their category
  */
 function groupProductsByCategory(products: Product[]): Record<ProductCategory, Product[]> {
-  const result: Record<ProductCategory, Product[]> = {
-    [ProductCategory.TOP]: [],
-    [ProductCategory.BOTTOM]: [],
-    [ProductCategory.FOOTWEAR]: [],
-    [ProductCategory.ACCESSORY]: [],
-    [ProductCategory.OUTERWEAR]: [],
-    [ProductCategory.DRESS]: [],
-    [ProductCategory.JUMPSUIT]: [],
-    [ProductCategory.OTHER]: []
-  };
+  const result: Record<ProductCategory, Product[]> = {} as Record<ProductCategory, Product[]>;
   
+  // Initialize empty arrays for each category
+  Object.values(ProductCategory).forEach(category => {
+    result[category] = [];
+  });
+  
+  // Group products by category
   products.forEach(product => {
     const category = getProductCategory(product);
     result[category].push(product);
