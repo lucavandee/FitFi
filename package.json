@@ -18,10 +18,10 @@
     "test:e2e:headed": "playwright test --headed",
     "lhci": "lhci autorun",
     "lighthouse": "npm run lhci",
-    "convert-products": "ts-node --esm src/scripts/convertZalandoToBolt.ts",
-    "scrape-zalando": "ts-node --esm src/scripts/scrapeZalando.ts",
-    "validate-products": "ts-node --esm src/scripts/validateBoltProducts.ts",
-    "upload-products": "ts-node --esm src/scripts/uploadBoltProductsToSupabase.ts",
+    "convert-products": "node --loader ts-node/esm src/scripts/convertZalandoToBolt.ts",
+    "scrape-zalando": "node --loader ts-node/esm src/scripts/scrapeZalando.ts",
+    "validate-products": "node --loader ts-node/esm src/scripts/validateBoltProducts.ts",
+    "upload-products": "node --loader ts-node/esm src/scripts/uploadBoltProductsToSupabase.ts",
     "scrape-and-convert": "npm run scrape-zalando && npm run validate-products"
   },
   "dependencies": {
