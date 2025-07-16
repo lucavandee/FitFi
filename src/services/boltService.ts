@@ -1,5 +1,6 @@
 // src/services/boltService.ts
 import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
+import dutchProducts from '../data/dutchProducts';
 
 /**
  * Maps API endpoints to JSON filenames
@@ -16,6 +17,115 @@ const mapEndpointToFilename = (endpoint: string): string => {
 
   return cleanEndpoint;
 };
+
+// Create fallback outfits using dutchProducts
+const fallbackOutfits = [
+  {
+    id: "mock-outfit-1",
+    title: "Casual Chic Look",
+    description: "Een moeiteloze combinatie van comfort en stijl, perfect voor dagelijks gebruik.",
+    archetype: "casual_chic",
+    occasion: "Casual",
+    products: dutchProducts.slice(0, 3).map(p => ({
+      id: p.id,
+      name: p.name,
+      brand: p.brand || "FitFi",
+      price: p.price || 49.99,
+      imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+      type: p.type || "top",
+      category: p.category || "top",
+      styleTags: p.styleTags || ["casual"]
+    })),
+    imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+    tags: ["casual", "comfortable", "everyday", "minimal"],
+    matchPercentage: 92,
+    explanation: "Deze outfit combineert comfort met stijl, perfect voor jouw casual chic voorkeuren. De neutrale kleuren en clean lijnen zorgen voor een tijdloze look die je gemakkelijk kunt dragen voor verschillende gelegenheden.",
+    season: "autumn",
+    structure: ["top", "bottom", "footwear"],
+    weather: "mild",
+    categoryRatio: {
+      top: 33,
+      bottom: 33,
+      footwear: 33,
+      accessory: 0,
+      outerwear: 0,
+      dress: 0,
+      jumpsuit: 0,
+      other: 0
+    },
+    completeness: 100
+  },
+  {
+    id: "mock-outfit-2",
+    title: "Klassieke Werkoutfit",
+    description: "Een tijdloze combinatie voor een professionele uitstraling op kantoor.",
+    archetype: "klassiek",
+    occasion: "Werk",
+    products: dutchProducts.slice(3, 7).map(p => ({
+      id: p.id,
+      name: p.name,
+      brand: p.brand || "FitFi",
+      price: p.price || 79.99,
+      imageUrl: p.imageUrl || "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+      type: p.type || "blouse",
+      category: p.category || "top",
+      styleTags: p.styleTags || ["formal"]
+    })),
+    imageUrl: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+    tags: ["formal", "business", "professional", "elegant"],
+    matchPercentage: 95,
+    explanation: "Deze outfit straalt professionaliteit en elegantie uit, perfect voor jouw klassieke stijlvoorkeuren. De tijdloze kleuren en hoogwaardige materialen zorgen voor een verfijnde look die respect afdwingt op kantoor.",
+    season: "autumn",
+    structure: ["top", "bottom", "footwear", "accessory"],
+    weather: "mild",
+    categoryRatio: {
+      top: 25,
+      bottom: 25,
+      footwear: 25,
+      accessory: 25,
+      outerwear: 0,
+      dress: 0,
+      jumpsuit: 0,
+      other: 0
+    },
+    completeness: 100
+  },
+  {
+    id: "mock-outfit-3",
+    title: "Urban Streetstyle Look",
+    description: "Een stoere, trendy outfit voor een avond uit met vrienden.",
+    archetype: "streetstyle",
+    occasion: "Uitgaan",
+    products: dutchProducts.slice(7, 10).map(p => ({
+      id: p.id,
+      name: p.name,
+      brand: p.brand || "FitFi",
+      price: p.price || 69.99,
+      imageUrl: p.imageUrl || "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+      type: p.type || "shirt",
+      category: p.category || "top",
+      styleTags: p.styleTags || ["street"]
+    })),
+    imageUrl: "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+    tags: ["street", "urban", "trendy", "casual"],
+    matchPercentage: 88,
+    explanation: "Deze outfit is perfect voor jouw streetstyle voorkeuren. De combinatie van statement items en comfortabele pasvorm zorgt voor een authentieke urban look die opvalt tijdens een avond uit.",
+    season: "autumn",
+    structure: ["top", "bottom", "footwear"],
+    weather: "mild",
+    categoryRatio: {
+      top: 33,
+      bottom: 33,
+      footwear: 33,
+      accessory: 0,
+      outerwear: 0,
+      dress: 0,
+      jumpsuit: 0,
+      other: 0
+    },
+    completeness: 100
+  }
+];
 
 /**
  * Mock data for fallback when JSON files are not available
@@ -37,97 +147,27 @@ const mockData: Record<string, any> = {
       completed: false
     }
   ],
-  products: [
-    {
-      id: "mock-product-1",
-      title: "Mock T-shirt",
-      brand: "FitFi",
-      type: "shirt",
-      gender: "female",
-      color: "white",
-      dominantColorHex: "#FFFFFF",
-      styleTags: ["casual", "minimal", "clean"],
-      season: "all_season",
-      archetypeMatch: {
-        "casual_chic": 0.9,
-        "urban": 0.6
-      },
-      material: "Cotton",
-      price: 29.99,
-      imageUrl: "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-      affiliateUrl: "https://example.com/product/mock-1",
-      source: "mock"
+  products: dutchProducts.map(p => ({
+    id: `bolt-${p.id}`,
+    title: p.name,
+    brand: p.brand || "FitFi Brand",
+    type: p.type || p.category || "top",
+    gender: p.id.includes("female") ? "female" : "male",
+    color: p.styleTags?.includes("black") ? "black" : "beige",
+    dominantColorHex: p.styleTags?.includes("black") ? "#000000" : "#F5F5DC",
+    styleTags: p.styleTags || ["casual"],
+    season: "all_season",
+    archetypeMatch: {
+      "casual_chic": 0.8,
+      "klassiek": 0.6
     },
-    {
-      id: "mock-product-2",
-      title: "Mock Jeans",
-      brand: "FitFi",
-      type: "jeans",
-      gender: "female",
-      color: "blue",
-      dominantColorHex: "#0000FF",
-      styleTags: ["casual", "denim"],
-      season: "all_season",
-      archetypeMatch: {
-        "casual_chic": 0.8,
-        "streetstyle": 0.7
-      },
-      material: "Denim",
-      price: 59.99,
-      imageUrl: "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-      affiliateUrl: "https://example.com/product/mock-2",
-      source: "mock"
-    }
-  ],
-  outfits: [
-    {
-      id: "mock-outfit-1",
-      title: "Casual Chic Look",
-      description: "Een moeiteloze combinatie van comfort en stijl, perfect voor dagelijks gebruik.",
-      archetype: "casual_chic",
-      occasion: "Casual",
-      products: [
-        {
-          id: "mock-product-1",
-          name: "Mock T-shirt",
-          brand: "FitFi",
-          price: 29.99,
-          imageUrl: "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          type: "shirt",
-          category: "top",
-          styleTags: ["casual", "minimal", "clean"]
-        },
-        {
-          id: "mock-product-2",
-          name: "Mock Jeans",
-          brand: "FitFi",
-          price: 59.99,
-          imageUrl: "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          type: "jeans",
-          category: "bottom",
-          styleTags: ["casual", "denim"]
-        }
-      ],
-      imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
-      tags: ["casual", "comfortable", "everyday", "minimal"],
-      matchPercentage: 92,
-      explanation: "Deze outfit combineert comfort met stijl, perfect voor jouw casual chic voorkeuren.",
-      season: "autumn",
-      structure: ["top", "bottom"],
-      weather: "mild",
-      categoryRatio: {
-        top: 50,
-        bottom: 50,
-        footwear: 0,
-        accessory: 0,
-        outerwear: 0,
-        dress: 0,
-        jumpsuit: 0,
-        other: 0
-      },
-      completeness: 80
-    }
-  ],
+    material: "Mixed materials",
+    price: p.price || 49.99,
+    imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+    affiliateUrl: `https://example.com/product/${p.id}`,
+    source: "zalando"
+  })),
+  outfits: fallbackOutfits,
   gamification: {
     id: "mock-gamification",
     user_id: "mock-user",
