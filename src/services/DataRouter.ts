@@ -4,15 +4,14 @@ import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations, getRecommendedProducts } from '../engine/recommendationEngine';
 import { generateMockUser, generateMockGamification, generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
-import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from '../services/supabaseService';
+import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from './supabaseService';
 import boltService from './boltService';
 import { TEST_USER_ID } from '../lib/supabase';
 import { enrichZalandoProducts } from './productEnricher';
 import { BoltProduct } from '../types/BoltProduct';
 import outfitGenerator from './outfitGenerator';
 import outfitEnricher from './outfitEnricher';
-import { getBoltProductsFromJSON } from '../utils/boltProductsUtils';
-import { safeFetch, fetchWithRetry, safeFetchWithFallback } from '../utils/fetchUtils';
+import { getBoltProductsFromJSON, generateMockBoltProducts } from '../utils/boltProductsUtils';
 import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
 
 // Data source type
@@ -48,7 +47,7 @@ interface FetchDiagnostics {
 const cache = new Map<string, CacheItem<any>>();
 
 // Current data source
-let currentDataSource: DataSource = 'local';
+let currentDataSource: DataSource = 'local'; // Default to local for testing
 
 // Fetch diagnostics
 let fetchDiagnostics: FetchDiagnostics = {
@@ -225,6 +224,7 @@ function saveToCache<T>(key: string, data: T, source: DataSource): void {
 async function loadBoltProducts(): Promise<BoltProduct[]> {
   // If we already have BoltProducts in memory, return them
   if (boltProductsCache.length > 0) {
+    console.log(`[🧠 DataRouter] Using ${boltProductsCache.length} cached BoltProducts`);
     return boltProductsCache;
   }
   
@@ -232,15 +232,15 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     // Try to load BoltProducts from API
     if (USE_BOLT) {
       try {
-        const boltProducts = await boltService.fetchProducts();
+        const response = await boltService.fetchProducts();
         
-        if (boltProducts && boltProducts.length > 0) {
-          console.log(`[🧠 DataRouter] Loaded ${boltProducts.length} BoltProducts from API`);
+        if (response && response.length > 0) {
+          console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
           
           // Store in memory cache
-          boltProductsCache = boltProducts;
+          boltProductsCache = response;
           
-          return boltProducts;
+          return response;
         }
       } catch (apiError) {
         console.error('[🧠 DataRouter] Error loading BoltProducts from API:', apiError);
@@ -263,7 +263,15 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     return [];
   } catch (error) {
     console.error('[🧠 DataRouter] Error loading BoltProducts:', error);
-    return [];
+    
+    // Generate mock products as last resort
+    const mockProducts = generateMockBoltProducts();
+    console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts as fallback`);
+    
+    // Store in memory cache
+    boltProductsCache = mockProducts;
+    
+    return mockProducts;
   }
 }
 
@@ -353,7 +361,6 @@ export async function getOutfits(
   // Try Bolt API if enabled
   if (USE_BOLT) {
     const boltStartTime = Date.now();
-    
     try {
       // Fetch outfits from boltService (with fallback)
       const boltOutfits = await boltService.fetchOutfits();
@@ -365,7 +372,18 @@ export async function getOutfits(
         // Add attempt to diagnostics
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
-        
+
+        // Log outfits for debugging
+        console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
+        if (boltOutfits.length > 0) {
+          console.log(`[🧠 DataRouter] First outfit:`, {
+            id: boltOutfits[0].id,
+            title: boltOutfits[0].title,
+            products: boltOutfits[0].products?.length || 0,
+            matchPercentage: boltOutfits[0].matchPercentage
+          });
+        }
+
         // Cache the result
         saveToCache(cacheKey, boltOutfits, 'bolt');
         
@@ -390,7 +408,6 @@ export async function getOutfits(
   // Try Zalando if Supabase and Bolt failed
   if (USE_ZALANDO) {
     const zalandoStartTime = Date.now();
-    
     try {
       // Try to load BoltProducts from JSON file
       const boltProducts = await loadBoltProducts();
@@ -398,23 +415,34 @@ export async function getOutfits(
       if (boltProducts && boltProducts.length > 0) {
         console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts to generate outfits`);
         
-        // Generate outfits from BoltProducts
-        const outfits = outfitGenerator.generateOutfitsFromBoltProducts(
-          boltProducts,
-          user.stylePreferences.casual > user.stylePreferences.formal ? 'casual_chic' : 'klassiek',
-          user.gender === 'male' ? 'male' : 'female',
-        )
-      }
-      // Try to load BoltProducts from local JSON
-      const response = await boltService.fetchProducts();
-      
-      if (response && response.length > 0) {
-        console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from local JSON`);
-        
-        // Store in memory cache
-        boltProductsCache = response;
-        
-        return response;
+        try {
+          // Generate outfits from BoltProducts
+          const outfits = outfitGenerator.generateOutfitsFromBoltProducts(
+            boltProducts,
+            user.stylePreferences.casual > user.stylePreferences.formal ? 'casual_chic' : 'klassiek',
+            user.gender === 'male' ? 'male' : 'female',
+            3 // Generate at least 3 outfits
+          );
+          
+          if (outfits && outfits.length > 0) {
+            const zalandoEndTime = Date.now();
+            const zalandoDuration = zalandoEndTime - zalandoStartTime;
+            
+            // Add attempt to diagnostics
+            addAttempt('zalando', true, undefined, zalandoDuration);
+            setFinalSource('zalando');
+            
+            // Log outfits for debugging
+            console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from Zalando`);
+            
+            // Cache the result
+            saveToCache(cacheKey, outfits, 'zalando');
+            
+            return outfits;
+          }
+        } catch (outfitError) {
+          console.error('[🧠 DataRouter] Error generating outfits from BoltProducts:', outfitError);
+        }
       }
       
       // If BoltProducts failed, try using Zalando products directly
@@ -443,7 +471,10 @@ export async function getOutfits(
         // Add attempt to diagnostics
         addAttempt('zalando', true, undefined, zalandoDuration);
         setFinalSource('zalando');
-        
+
+        // Log outfits for debugging
+        console.log(`[🧠 DataRouter] getOutfits() returning ${enrichedOutfits.length} enriched outfits from Zalando`);
+
         // Cache the result
         saveToCache(cacheKey, enrichedOutfits, 'zalando');
         
@@ -472,10 +503,24 @@ export async function getOutfits(
   
   try {
     // Generate outfits from local data
-    const outfits = await generateRecommendations(user, {
-      ...options,
-      useZalandoProducts: false
-    });
+    let outfits;
+    
+    // First try to get outfits directly from boltService
+    const boltOutfits = await boltService.fetchOutfits();
+    if (boltOutfits && boltOutfits.length > 0) {
+      outfits = boltOutfits;
+    } else {
+      // If that fails, generate outfits from local data
+      outfits = await generateRecommendations(user, {
+        ...options,
+        useZalandoProducts: false
+      });
+      
+      // If still no outfits, use mock outfits
+      if (!outfits || outfits.length === 0) {
+        outfits = generateMockOutfits(3);
+      }
+    }
     
     const localEndTime = Date.now();
     const localDuration = localEndTime - localStartTime;
@@ -483,7 +528,18 @@ export async function getOutfits(
     // Add attempt to diagnostics
     addAttempt('local', true, undefined, localDuration);
     setFinalSource('local');
-    
+
+    // Log outfits for debugging
+    console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from local data`);
+    if (outfits.length > 0) {
+      console.log(`[🧠 DataRouter] First outfit:`, {
+        id: outfits[0].id,
+        title: outfits[0].title,
+        products: outfits[0].products?.length || 0,
+        matchPercentage: outfits[0].matchPercentage
+      });
+    }
+
     // Cache the result
     saveToCache(cacheKey, outfits, 'local');
     
@@ -589,7 +645,6 @@ export async function getRecommendedProducts(
   // Try Bolt API if enabled
   if (USE_BOLT) {
     const boltStartTime = Date.now();
-    
     try {
       // Fetch products from boltService (with fallback)
       const boltProducts = await boltService.fetchProducts();
@@ -601,7 +656,18 @@ export async function getRecommendedProducts(
         // Add attempt to diagnostics
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
-        
+
+        // Log products for debugging
+        console.log(`[🧠 DataRouter] getRecommendedProducts() returning ${boltProducts.length} products from Bolt API`);
+        if (boltProducts.length > 0) {
+          console.log(`[🧠 DataRouter] First product:`, {
+            id: boltProducts[0].id,
+            title: boltProducts[0].title,
+            price: boltProducts[0].price,
+            archetypeMatch: boltProducts[0].archetypeMatch
+          });
+        }
+
         // Cache the result
         saveToCache(cacheKey, boltProducts, 'bolt');
         
@@ -626,7 +692,6 @@ export async function getRecommendedProducts(
   // Try Zalando if Supabase and Bolt failed
   if (USE_ZALANDO) {
     const zalandoStartTime = Date.now();
-    
     try {
       // Try to load BoltProducts from JSON file
       const boltProducts = await loadBoltProducts();
@@ -682,7 +747,10 @@ export async function getRecommendedProducts(
         // Add attempt to diagnostics
         addAttempt('zalando', true, undefined, zalandoDuration);
         setFinalSource('zalando');
-        
+
+        // Log products for debugging
+        console.log(`[🧠 DataRouter] getRecommendedProducts() returning ${limitedProducts.length} products from Zalando`);
+
         // Cache the result
         saveToCache(cacheKey, limitedProducts, 'zalando');
         
@@ -731,7 +799,29 @@ export async function getRecommendedProducts(
   
   try {
     // Generate mock products
-    const mockProducts = generateMockProducts(undefined, count);
+    // First try to get products directly from boltService
+    const boltProducts = await boltService.fetchProducts();
+    let mockProducts;
+    
+    if (boltProducts && boltProducts.length > 0) {
+      // Convert BoltProducts to Product format
+      mockProducts = boltProducts.slice(0, count).map(p => ({
+        id: p.id,
+        name: p.title,
+        imageUrl: p.imageUrl,
+        type: p.type,
+        category: p.type,
+        styleTags: p.styleTags,
+        description: `${p.title} van ${p.brand}`,
+        price: p.price,
+        brand: p.brand,
+        affiliateUrl: p.affiliateUrl,
+        season: [p.season === 'all_season' ? 'autumn' : p.season] // Convert to array
+      }));
+    } else {
+      // If that fails, generate mock products
+      mockProducts = generateMockProducts(undefined, count);
+    }
     
     const localEndTime = Date.now();
     const localDuration = localEndTime - localStartTime;
@@ -739,7 +829,18 @@ export async function getRecommendedProducts(
     // Add attempt to diagnostics
     addAttempt('local', true, undefined, localDuration);
     setFinalSource('local');
-    
+
+    // Log products for debugging
+    console.log(`[🧠 DataRouter] getRecommendedProducts() returning ${mockProducts.length} products from local data`);
+    if (mockProducts.length > 0) {
+      console.log(`[🧠 DataRouter] First product:`, {
+        id: mockProducts[0].id,
+        name: mockProducts[0].name,
+        price: mockProducts[0].price,
+        styleTags: mockProducts[0].styleTags
+      });
+    }
+
     // Cache the result
     saveToCache(cacheKey, mockProducts, 'local');
     
