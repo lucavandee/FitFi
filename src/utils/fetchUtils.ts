@@ -38,7 +38,7 @@ export const safeFetchWithFallback = async <T>(url: string, fallbackData: T): Pr
     const contentType = response.headers.get("content-type") || "";
 
     if (!response.ok || !contentType.includes("application/json")) {
-      console.warn("[⚠️ safeFetch] Response was not JSON or not OK. Using fallback.");
+      console.warn("[⚠️ safeFetch] Response was not JSON or not OK. Using fallback:", url);
       return fallbackData;
     }
 
