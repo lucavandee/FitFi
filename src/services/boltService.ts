@@ -13,7 +13,7 @@ const mapEndpointToFilename = (endpoint: string): string => {
     // For endpoints like "challenges/complete", just use the first part
     return cleanEndpoint.split('/')[0];
   }
-  
+
   return cleanEndpoint;
 };
 
@@ -28,6 +28,10 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
 
   try {
     return await safeFetch<T>(url);
+  } catch (error) {
+    console.error("[❌ fetchFromBolt] Error fetching", endpoint, error);
+    return null;
+  }
 };
 
 /**
