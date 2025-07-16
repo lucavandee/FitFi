@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useOnboarding } from '../context/OnboardingContext';
 
 const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep } = useOnboarding();
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
   
   // Track quiz start and update onboarding data when component mounts
   useEffect(() => {
@@ -28,15 +29,29 @@ const OnboardingPage: React.FC = () => {
   }, [updateData]);
   
   /**
-   * Handles the start button click:
-   * 1. Marks welcome step as completed
-   * 2. Navigates to the next step (gender_name)
+   * Handles the start button click immediately without blocking the UI:
+   * 1. Shows button feedback animation
+   * 2. Marks welcome step as completed
+   * 3. Navigates to the next step (gender_name)
    */
-  const handleStart = () => {
-    // Mark welcome step as completed
-    completeStep('welcome');
-    // Go to next step (gender_name)
-    goToNextStep();
+  const handleStart = React.useCallback(() => {
+    if (isButtonClicked) return; // Prevent multiple clicks
+    
+    // Show button feedback
+    setIsButtonClicked(true);
+    
+    // Use setTimeout with 0ms to defer execution to next tick
+    // This ensures UI updates before navigation
+    setTimeout(() => {
+      // Mark welcome step as completed
+      completeStep('welcome');
+      // Go to next step (gender_name)
+      goToNextStep();
+      
+      // Scroll to top of next page
+      window.scrollTo(0, 0);
+    }, 0);
+  }, [completeStep, goToNextStep, isButtonClicked]);
   };
 
   return (
@@ -105,16 +120,26 @@ const OnboardingPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                    onClick={handleStart}
-                    icon={<ArrowRight size={20} />}
-                    iconPosition="right"
-                  >
-                    Start de stijlquiz
-                  </Button>
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 1 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.1 }}
+                    >
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        fullWidth
+                        onClick={handleStart}
+                        icon={<ArrowRight size={20} />}
+                        iconPosition="right"
+                        disabled={isButtonClicked}
+                        className={isButtonClicked ? "opacity-80" : ""}
+                      >
+                        {isButtonClicked ? "Even geduld..." : "Start de stijlquiz"}
+                      </Button>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -128,7 +153,11 @@ const OnboardingPage: React.FC = () => {
             {/* Skip link */}
             <div className="mt-6 text-center">
               <button 
-                onClick={() => navigate('/results')}
+                onClick={() => {
+                  // Prevent navigation if main button was clicked
+                  if (isButtonClicked) return;
+                  navigate('/results');
+                }}
                 className="text-sm text-white/60 hover:text-[#FF8600] transition-colors"
               >
                 Sla over en bekijk direct aanbevelingen

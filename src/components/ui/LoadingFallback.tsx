@@ -4,6 +4,7 @@ interface LoadingFallbackProps {
   message?: string;
   size?: 'sm' | 'md' | 'lg';
   fullScreen?: boolean;
+  className?: string;
 }
 
 /**
@@ -13,6 +14,7 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   message = 'Laden...',
   size = 'md',
   fullScreen = false
+  className = ''
 }) => {
   const spinnerSizes = {
     sm: 'w-6 h-6',
@@ -27,7 +29,7 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   };
   
   const content = (
-    <div className="flex flex-col items-center justify-center">
+    <div className={`flex flex-col items-center justify-center ${className}`}>
       <div className={`${spinnerSizes[size]} border-4 border-[#FF8600] border-t-transparent rounded-full animate-spin mb-4`}></div>
       <p className={`${textSizes[size]} text-white/80 font-medium`}>{message}</p>
     </div>
