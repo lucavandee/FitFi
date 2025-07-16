@@ -5,6 +5,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Loader } from "../components/Loader";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
+import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
@@ -486,13 +487,6 @@ const EnhancedResultsPage: React.FC = () => {
                 {product.season && product.season.length > 0 && (
                   <div className="absolute top-2 right-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
                     {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
-                  </div>
-                )}
-                <div className="absolute bottom-2 left-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
-                  {product.type || product.category}
-                </div>
-              </div>
-              <CardContent className="p-4">
                 <h3 className="font-bold mb-1">{product.name}</h3>
                 <p className="text-sm text-gray-400 mb-3 line-clamp-2">{product.description}</p>
                 <div className="flex justify-between items-center">
