@@ -23,12 +23,15 @@ const mapEndpointToFilename = (endpoint: string): string => {
 export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
   const filename = mapEndpointToFilename(endpoint);
   const url = `/data/bolt/${filename}.json`;
-  
+
   console.log("[🧠 boltService] Fetching from local file:", url);
 
   try {
     return await safeFetch<T>(url);
-    
+  } catch (error) {
+    console.error("[❌ fetchFromBolt] Error fetching", endpoint, error);
+    return null;
+  }
 };
 
 /**
