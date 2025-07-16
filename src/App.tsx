@@ -3,6 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { GamificationProvider } from './context/GamificationContext';
+import { OnboardingProvider } from './context/OnboardingContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import LoadingFallback from './components/ui/LoadingFallback';
+
+// Import regular components
 import HomePage from './pages/HomePage';
 import OnboardingPage from './pages/OnboardingPage';
 import GenderSelectPage from './pages/GenderSelectPage';
@@ -21,23 +29,17 @@ import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
 import FeedbackPage from './pages/FeedbackPage';
 import LegalPage from './pages/LegalPage';
-import { UserProvider } from './context/UserContext';
-import { ThemeProvider } from './context/ThemeContext';
-import { GamificationProvider } from './context/GamificationContext';
-import { OnboardingProvider } from './context/OnboardingContext';
-import ErrorBoundary from './components/ErrorBoundary';
-import LoadingFallback from './components/ui/LoadingFallback';
 
 // Lazy load the dashboard page to improve initial load time
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 
 // Lazy load onboarding steps
-const GenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
-const ArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
-const ResultsStep = React.lazy(() => import('./pages/onboarding/ResultsStep'));
-const SeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
-const OccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
-const PreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
+const LazyGenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
+const LazyArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
+const LazyResultsStep = React.lazy(() => import('./pages/onboarding/ResultsStep'));
+const LazySeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
+const LazyOccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
+const LazyPreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
 
 function App() {
   return (
@@ -60,32 +62,32 @@ function App() {
                       <Route path="/onboarding" element={<OnboardingPage />} />
                       <Route path="/onboarding/gender-name" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <GenderNameStep />
+                          <LazyGenderNameStep />
                         </Suspense>
                       } />
                       <Route path="/onboarding/archetype" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <ArchetypeStep />
+                          <LazyArchetypeStep />
                         </Suspense>
                       } />
                       <Route path="/onboarding/season" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <SeasonStep />
+                          <LazySeasonStep />
                         </Suspense>
                       } />
                       <Route path="/onboarding/occasion" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <OccasionStep />
+                          <LazyOccasionStep />
                         </Suspense>
                       } />
                       <Route path="/onboarding/preferences" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <PreferencesStep />
+                          <LazyPreferencesStep />
                         </Suspense>
                       } />
                       <Route path="/onboarding/results" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <ResultsStep />
+                          <LazyResultsStep />
                         </Suspense>
                       } />
                       

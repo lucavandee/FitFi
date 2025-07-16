@@ -23,13 +23,13 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
   const filename = mapEndpointToFilename(endpoint);
   const url = `/data/bolt/${filename}.json`;
   
-  console.log("[🔧 boltService] Fetching from local file:", url);
+  console.log("[🧠 boltService] Fetching from local file:", url);
 
   try {
     const response = await fetch(url);
     
     if (!response.ok) {
-      console.error("[❌ Bolt Service Fout]", {
+      console.error("[🧠 boltService] Fetch error:", {
         endpoint,
         url,
         status: response.status,
@@ -41,7 +41,7 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
 
     const contentType = response.headers.get("content-type");
     if (!contentType?.includes("application/json")) {
-      console.warn(`[🧠 boltService] Ongeldige content-type voor ${endpoint}: ${contentType}`);
+      console.warn(`[🧠 boltService] Invalid content-type for ${endpoint}: ${contentType}`);
       return null;
     }
 
