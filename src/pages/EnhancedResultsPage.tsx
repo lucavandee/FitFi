@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { Card, CardContent } from "../components/ui/card";
-import { Loader } from "../components/Loader";
+import LoadingFallback from "../components/ui/LoadingFallback";
+import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
-import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
@@ -16,10 +16,11 @@ import { USE_SUPABASE } from "../config/app-config";
 import ProductList from "../components/products/ProductList";
 import ProductPreviewList from "../components/products/ProductPreviewList";
 import OutfitCard from "../components/ui/OutfitCard";
-import ResultsLoader from "../components/ui/ResultsLoader";
 import { useGamification } from "../context/GamificationContext";
 import { useOnboarding } from "../context/OnboardingContext";
 import { getSafeUser } from "../utils/userUtils";
+import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import ResultsLoader from "../components/ui/ResultsLoader";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
@@ -487,22 +488,19 @@ const EnhancedResultsPage: React.FC = () => {
           // Skeleton loading state for products using SkeletonPlaceholder
           <>
             {Array(9).fill(0).map((_, index) => (
-              <Card 
-                key={`skeleton-product-${index}`} 
-                className="overflow-hidden"
-              >
-                <div className="h-60 bg-[#1B263B] relative">
+              <div key={`skeleton-product-${index}`} className="overflow-hidden bg-white/5 rounded-lg shadow-sm">
+                <div className="h-60 relative">
                   <SkeletonPlaceholder height="h-full" width="w-full" rounded="rounded-none" />
                 </div>
-                <CardContent className="p-4 space-y-3">
+                <div className="p-4 space-y-3">
                   <SkeletonPlaceholder height="h-5" width="w-3/4" />
                   <SkeletonPlaceholder height="h-4" width="w-full" />
                   <div className="flex justify-between items-center pt-2">
                     <SkeletonPlaceholder height="h-5" width="w-1/4" />
                     <SkeletonPlaceholder height="h-8" width="w-1/4" rounded="rounded-lg" />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </>
         ) : matchedProducts.length > 0 ? (
@@ -517,9 +515,9 @@ const EnhancedResultsPage: React.FC = () => {
                   src={product.imageUrl || '/placeholder.png'}
                   alt={product.name}
                   className="w-full h-full object-cover"
-                  componentName="ProductCard"
+                  componentName="EnhancedResultsPage_ProductCard"
                 />
-                <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs">
+                <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs shadow-sm">
                   {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
                 </div>
               </div>
@@ -570,7 +568,7 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
       
       {/* Data source info */}
-      <div className="mt-8 p-4 bg-white/5 rounded-lg shadow-sm">
+      <div className="mt-8 p-4 bg-white/5 rounded-lg shadow-md">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
           <div className="flex-1">
@@ -591,7 +589,7 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
       
       {/* Regeneration info */}
-      <div className="mt-4 p-4 bg-white/5 rounded-lg shadow-sm">
+      <div className="mt-4 p-4 bg-white/5 rounded-lg shadow-md">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
           <div className="flex-1">
