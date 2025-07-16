@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
-  // ✅ .env automatisch laden op basis van mode (development, production, etc.)
   const env = loadEnv(mode, process.cwd());
 
   return {
@@ -18,6 +17,14 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    define: {
+      "import.meta.env": {
+        ...Object.entries(env).reduce((acc, [key, val]) => {
+          acc[key] = JSON.stringify(val);
+          return acc;
+        }, {}),
+      },
+    },
     optimizeDeps: {
       exclude: ["lucide-react"],
     },
@@ -29,11 +36,5 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
       sourcemap: true,
     },
-    // ✅ Injecteer alle .env variabelen in import.meta.env
-    define: {
-      'import.meta.env': {
-        ...Object.fromEntries(Object.entries(env).map(([key, val]) => [key, JSON.stringify(val)]))
-      }
-    }
   };
 });
