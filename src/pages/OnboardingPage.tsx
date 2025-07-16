@@ -9,6 +9,7 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep } = useOnboarding();
   
+  // Track quiz start and update onboarding data when component mounts
   useEffect(() => {
     // Track quiz start in analytics
     if (typeof window.gtag === 'function') {
@@ -26,6 +27,11 @@ const OnboardingPage: React.FC = () => {
     });
   }, [updateData]);
   
+  /**
+   * Handles the start button click:
+   * 1. Marks welcome step as completed
+   * 2. Navigates to the next step (gender_name)
+   */
   const handleStart = () => {
     // Mark welcome step as completed
     completeStep('welcome');
