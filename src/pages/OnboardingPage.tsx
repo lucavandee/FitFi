@@ -9,7 +9,6 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep } = useOnboarding();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
   
   // Track quiz start and update onboarding data when component mounts
   useEffect(() => {
@@ -35,29 +34,12 @@ const OnboardingPage: React.FC = () => {
    * 2. Marks welcome step as completed
    * 3. Navigates to the next step (gender_name)
    */
-  /**
-   * Handles the start button click immediately without blocking the UI:
-   * 1. Shows button feedback animation
-   * 2. Marks welcome step as completed
-   * 3. Navigates to the next step (gender_name)
-   */
   const handleStart = () => {
     if (isButtonClicked) return; // Prevent multiple clicks
     
     // Show button feedback
     setIsButtonClicked(true);
     
-    // Use setTimeout with 0ms to defer execution to next tick
-    // This ensures UI updates before navigation
-    setTimeout(() => {
-      // Mark welcome step as completed
-      completeStep('welcome');
-      // Go to next step (gender_name)
-      goToNextStep();
-      
-      // Scroll to top of next page
-      window.scrollTo(0, 0);
-    }, 0);
     // Use setTimeout with 0ms to defer execution to next tick
     // This ensures UI updates before navigation
     setTimeout(() => {
@@ -151,17 +133,8 @@ const OnboardingPage: React.FC = () => {
                     iconPosition="right"
                     disabled={isButtonClicked}
                     className={isButtonClicked ? "opacity-80" : ""}
-                    disabled={isButtonClicked}
-                    className={isButtonClicked ? "opacity-80" : ""}
                   >
                     {isButtonClicked ? (
-                      <span className="flex items-center justify-center">
-                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                        Even geduld...
-                      </span>
-                    ) : (
-                      "Start de stijlquiz"
-                    )}
                       <span className="flex items-center justify-center">
                         <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
                         Even geduld...
@@ -185,14 +158,6 @@ const OnboardingPage: React.FC = () => {
             <div className="mt-6 text-center">
               <button 
                 onClick={() => {
-                  // Prevent navigation if main button was clicked
-                  if (isButtonClicked) return;
-                  navigate('/results');
-                }}
-                className={`text-sm text-white/60 hover:text-[#FF8600] transition-colors ${
-                  isButtonClicked ? 'opacity-50 pointer-events-none' : ''
-                }`}
-                  if (isButtonClicked) return;
                   // Prevent navigation if main button was clicked
                   if (isButtonClicked) return;
                   navigate('/results');
