@@ -44,26 +44,8 @@ export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
         return generateMockBoltProducts();
       }
     }
-        const products = await safeFetchWithFallback<BoltProduct[]>('/src/data/boltProducts.json', []);
-        
-        if (!Array.isArray(products)) {
-          throw new Error('Invalid BoltProducts data: not an array');
-        }
-        
-        console.log(`Loaded ${products.length} BoltProducts from src JSON file`);
-        return products;
-      } catch (srcError) {
-        console.warn(`Could not load BoltProducts from src path: ${srcError.message}`);
-        console.log('Falling back to generating mock BoltProducts');
-        
-        // If both files don't exist or are invalid, generate mock products
-        return generateMockBoltProducts();
-      }
-    }
   } catch (error) {
     console.error('Error loading BoltProducts:', error);
-    
-    // Return empty array as last resort
     
     // Return empty array as last resort
     return [];
