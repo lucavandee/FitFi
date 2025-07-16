@@ -11,7 +11,6 @@ import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
 import { getOutfits, getRecommendedProducts, getDataSource, getFetchDiagnostics, clearCache, getBoltProducts } from "../services/DataRouter";
 import DevDataPanel from "../components/DevDataPanel";
-import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { BoltProduct } from "../types/BoltProduct";
 import { USE_SUPABASE } from "../config/app-config";
 import ProductList from "../components/products/ProductList";
