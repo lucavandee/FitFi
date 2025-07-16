@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
@@ -9,9 +10,13 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep } = useOnboarding();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const hasTrackedRef = useRef(false);
   
   // Track quiz start and update onboarding data when component mounts
   useEffect(() => {
+    // Only run this effect once
+    if (hasTrackedRef.current) return;
+    
     // Track quiz start in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'quiz_start', {
@@ -26,6 +31,9 @@ const OnboardingPage: React.FC = () => {
     updateData({
       startTime: Date.now()
     });
+    
+    // Mark as tracked to prevent infinite loop
+    hasTrackedRef.current = true;
   }, [updateData]);
   
   /**
