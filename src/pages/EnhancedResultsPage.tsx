@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { Card, CardContent } from "../components/ui/card";
-import { Loader } from "../components/Loader"; 
+import { Loader } from "../components/Loader";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
@@ -18,8 +18,9 @@ import ProductPreviewList from "../components/products/ProductPreviewList";
 import OutfitCard from "../components/ui/OutfitCard";
 import ResultsLoader from "../components/ui/ResultsLoader";
 import { useGamification } from "../context/GamificationContext";
-import { useOnboarding } from "../context/OnboardingContext"; 
+import { useOnboarding } from "../context/OnboardingContext";
 import { getSafeUser } from "../utils/userUtils";
+import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
@@ -331,7 +332,7 @@ const EnhancedResultsPage: React.FC = () => {
           <p className="text-white/80 mb-2 md:mb-0">
             Hallo {enhancedUser.name || 'daar'}! Deze aanbevelingen zijn gebaseerd op jouw {enhancedUser.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijlvoorkeuren.
           </p>
-          <div className="flex items-center bg-white/10 px-3 py-1 rounded-full">
+          <div className="flex items-center bg-white/10 px-3 py-1 rounded-full shadow-sm">
             <Calendar size={16} className="mr-2 text-orange-500" />
             <span className="text-sm font-medium">Seizoen: {getDutchSeasonName(currentSeason as any)}</span>
           </div>
@@ -484,8 +485,8 @@ const EnhancedResultsPage: React.FC = () => {
       <h2 className="text-xl font-bold mb-4">Individuele items voor jou</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
         {productsLoading ? (
-          // Skeleton loading state for products
-          <React.Fragment>
+          // Skeleton loading state for products using SkeletonPlaceholder
+          <>
             {Array(9).fill(0).map((_, index) => (
               <Card 
                 key={`skeleton-product-${index}`} 
@@ -504,7 +505,7 @@ const EnhancedResultsPage: React.FC = () => {
                 </CardContent>
               </Card>
             ))}
-          </React.Fragment>
+          </>
         ) : matchedProducts.length > 0 ? (
           matchedProducts.map((product, index) => (
             <Card 
@@ -570,7 +571,7 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
       
       {/* Data source info */}
-      <div className="mt-8 p-4 bg-white/5 rounded-lg">
+      <div className="mt-8 p-4 bg-white/5 rounded-lg shadow-sm">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
           <div className="flex-1">
@@ -591,7 +592,7 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
       
       {/* Regeneration info */}
-      <div className="mt-4 p-4 bg-white/5 rounded-lg">
+      <div className="mt-4 p-4 bg-white/5 rounded-lg shadow-sm">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
           <div className="flex-1">

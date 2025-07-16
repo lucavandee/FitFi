@@ -19,17 +19,23 @@ interface LoadingFallbackProps {
   size?: 'sm' | 'md' | 'lg';
   fullScreen?: boolean;
   className?: string;
+}
+
+interface LoadingFallbackProps {
+  message?: string;
+  size?: 'sm' | 'md' | 'lg';
+  fullScreen?: boolean;
+  className?: string;
   className?: string;
 }
 
 /**
  * A reusable loading component with customizable size and message
  */
-const LoadingFallback: React.FC<LoadingFallbackProps> = ({
+const LoadingFallback: React.FC<LoadingFallbackProps> = ({ 
   message = 'Laden...',
   size = 'md',
   fullScreen = false,
-  className = ''
   className = ''
 }) => {
   const spinnerSizes = {
@@ -45,22 +51,22 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   };
   
   const content = (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div className={`${spinnerSizes[size]} border-4 border-[#FF8600] border-t-transparent rounded-full animate-spin mb-4`}></div>
+    <div className={`flex flex-col items-center justify-center ${className}`} aria-hidden="true">
+      <div className={`${spinnerSizes[size]} border-4 border-[#FF8600] border-t-transparent rounded-full animate-spin mb-4`} aria-hidden="true"></div>
       <p className={`${textSizes[size]} text-white/80 font-medium`}>{message}</p>
     </div>
   );
   
   if (fullScreen) {
     return (
-      <div className={`fixed inset-0 bg-[#0D1B2A]/90 backdrop-blur-sm flex items-center justify-center z-50 ${className}`}>
+      <div className={`fixed inset-0 bg-[#0D1B2A]/90 backdrop-blur-sm flex items-center justify-center z-50`}>
         {content}
       </div>
     );
   }
   
   return (
-    <div className={`flex items-center justify-center p-8 ${className}`}>
+    <div className={`flex items-center justify-center p-8`}>
       {content}
     </div>
   );
