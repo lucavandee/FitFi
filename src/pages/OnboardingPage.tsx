@@ -32,7 +32,7 @@ const OnboardingPage: React.FC = () => {
     completeStep('welcome');
     
     // Go to gender-name step
-    setStep('gender_name');
+    goToNextStep();
   };
 
   return (
