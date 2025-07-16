@@ -719,4 +719,24 @@ const EnhancedResultsPage: React.FC = () => {
   );
 };
 
+
+{process.env.NODE_ENV === 'development' && (
+  <div className="bg-black text-green-400 text-xs p-4 mt-8 rounded-md whitespace-pre-wrap">
+    <strong>DEBUG OUTPUT</strong>
+    <br />
+    <strong>DataSource:</strong> {dataSource}
+    <br />
+    <strong># Outfits:</strong> {outfits.length}
+    <br />
+    <strong># Matched Products:</strong> {matchedProducts.length}
+    <br />
+    <strong>First Outfit:</strong> {outfits.length > 0 ? JSON.stringify(outfits[0], null, 2).slice(0, 500) : '—'}
+    <br />
+    <strong>First Product:</strong> {matchedProducts.length > 0 ? JSON.stringify(matchedProducts[0], null, 2).slice(0, 500) : '—'}
+    <br />
+    <strong>EnhancedUser:</strong> {JSON.stringify(enhancedUser, null, 2).slice(0, 500)}
+  </div>
+)}
+
+
 export default EnhancedResultsPage;
