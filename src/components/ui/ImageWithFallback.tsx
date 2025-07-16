@@ -53,7 +53,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   // Use fallback immediately if URL is invalid
   useEffect(() => {
     if (!isValidImageUrl(imgSrc)) {
-      console.warn(`[${componentName}] Invalid image URL, using fallback: ${imgSrc}`);
+      console.warn(`[${componentName || 'ImageWithFallback'}] Invalid image URL, using fallback: ${imgSrc}`);
       setImgSrc(fallbackSrc);
       setHasError(true);
       setIsLoading(false);
@@ -70,7 +70,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     // Only update if we haven't already fallen back
     if (imgSrc !== fallbackSrc) {
       // Log the error for tracking purposes
-      console.warn(`[${componentName}] Image failed to load: ${imgSrc}`);
+      console.warn(`[${componentName || 'ImageWithFallback'}] Image failed to load: ${imgSrc}`);
       
       // Try to retry loading the image
       if (retryCount.current < MAX_RETRIES) {
@@ -82,7 +82,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
           ? `${src}&cb=${Date.now()}` 
           : `${src}${cacheBuster}`;
         
-        console.log(`[${componentName}] Retrying image load (${retryCount.current}/${MAX_RETRIES}): ${srcWithCacheBuster}`);
+        console.log(`[${componentName || 'ImageWithFallback'}] Retrying image load (${retryCount.current}/${MAX_RETRIES}): ${srcWithCacheBuster}`);
         setImgSrc(srcWithCacheBuster);
         return;
       }
@@ -100,7 +100,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       trackBrokenImage(src, componentName);
     } else if (imgSrc === fallbackSrc) {
       // If even the fallback fails, log a critical error
-      console.error(`[${componentName}] Critical: Fallback image also failed to load: ${fallbackSrc}`);
+      console.error(`[${componentName || 'ImageWithFallback'}] Critical: Fallback image also failed to load: ${fallbackSrc}`);
       
       // Use an inline SVG as last resort
       setImgSrc(`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%23f0f0f0'/%3E%3Cpath d='M30,50 L70,50 M50,30 L50,70' stroke='%23999' stroke-width='4'/%3E%3C/svg%3E`);
@@ -206,7 +206,7 @@ const optimizeImageUrl = (
 // Track broken image for analytics
 const trackBrokenImage = (imageUrl: string, componentName: string): void => {
   // In a real app, you would send this to your analytics service
-  console.warn(`[Analytics] Broken image tracked: ${imageUrl} in ${componentName}`);
+  console.warn(`[Analytics] Broken image tracked: ${imageUrl} in ${componentName || 'Unknown'}`);
   
   // Store broken image URL in localStorage for future reference
   const brokenImagesKey = 'fitfi-broken-images';

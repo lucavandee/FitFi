@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
                     className="flex items-center space-x-2 text-white hover:text-[#FF8600] transition-colors"
                   >
                     <User size={20} />
-                    <span className="font-medium">{user.name.split(' ')[0]}</span>
+                    <span className="font-medium">{user?.name?.split(' ')[0] || 'Gebruiker'}</span>
                   </Link>
                   <Button 
                     variant="ghost" 
@@ -266,10 +266,10 @@ const Navbar: React.FC = () => {
                       <User size={24} className="text-white/70" />
                       <div className="flex-1">
                         <div className="font-medium text-white">
-                          {user.name}
+                          {user?.name || 'Gebruiker'}
                         </div>
                         <div className="text-sm text-white/70">
-                          {user.email}
+                          {user?.email || 'gebruiker@fitfi.app'}
                         </div>
                       </div>
                     </div>
