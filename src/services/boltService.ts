@@ -28,10 +28,6 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
 
   try {
     return await safeFetch<T>(url);
-  } catch (error) {
-    console.error("[❌ fetchFromBolt] Error fetching", endpoint, error);
-    return null;
-  }
 };
 
 /**

@@ -8,37 +8,23 @@
  * @param options - Fetch options
  * @returns The parsed response data
  */
-export async function safeFetch<T>(url: string, options?: RequestInit): Promise<T> {
-  try {
-    const response = await fetch(url, options);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
-    }
-    
-    const contentType = response.headers.get('content-type');
-    
-    // Check if content type is JSON
-    if (!contentType || !contentType.includes('application/json')) {
-      console.warn(`[⚠️ JSON Warning] Invalid content-type for ${url}: ${contentType}`);
-      
-      // Try to parse as JSON anyway as a fallback
-      try {
-        return await response.json() as T;
-      } catch (parseError) {
-        console.error('[⚠️ JSON Error] Failed to parse response as JSON:', parseError);
-        
-        // Return empty object or array as fallback
-        return (Array.isArray({})) ? [] as unknown as T : {} as T;
-      }
-    }
-    
-    return await response.json() as T;
-  } catch (error: any) {
-    console.error(`[⚠️ Fetch Error] for ${url}:`, error.message);
-    throw error;
+export const safeFetch = async <T>(url: string): Promise<T> => {
+  const response = await fetch(url);
+
+  const contentType = response.headers.get("content-type") || "";
+
+  if (!response.ok) {
+    throw new Error(`[❌ Fetch Error] ${response.status}: ${response.statusText}`);
   }
-}
+
+  if (contentType.includes("application/json")) {
+    return await response.json();
+  } else {
+    const text = await response.text();
+    console.warn("[⚠️ JSON Error] Unexpected content type:", contentType, "\nPreview:", text.slice(0, 100));
+    throw new Error("Expected JSON but received something else");
+  }
+};
 
 /**
  * Fetches JSON data with retry logic
@@ -56,7 +42,7 @@ export async function fetchWithRetry<T>(
   
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      return await safeFetch<T>(url, options);
+      return await safeFetch<T>(url);
     } catch (error) {
       lastError = error as Error;
       console.warn(`[⚠️ Retry] Fetch attempt ${attempt + 1}/${retries} failed:`, error);
