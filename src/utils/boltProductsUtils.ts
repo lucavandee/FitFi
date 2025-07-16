@@ -44,8 +44,26 @@ export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
         return generateMockBoltProducts();
       }
     }
+        const products = await safeFetchWithFallback<BoltProduct[]>('/src/data/boltProducts.json', []);
+        
+        if (!Array.isArray(products)) {
+          throw new Error('Invalid BoltProducts data: not an array');
+        }
+        
+        console.log(`Loaded ${products.length} BoltProducts from src JSON file`);
+        return products;
+      } catch (srcError) {
+        console.warn(`Could not load BoltProducts from src path: ${srcError.message}`);
+        console.log('Falling back to generating mock BoltProducts');
+        
+        // If both files don't exist or are invalid, generate mock products
+        return generateMockBoltProducts();
+      }
+    }
   } catch (error) {
     console.error('Error loading BoltProducts:', error);
+    
+    // Return empty array as last resort
     
     // Return empty array as last resort
     return [];
@@ -101,23 +119,23 @@ export function generateMockBoltProducts(): BoltProduct[] {
     // Determine archetype match
     const archetypeMatch: Record<string, number> = {};
     
-    if (styleTags.includes('casual')) {
+    if (styleTags.includes('casual') || styleTags.includes('comfortable')) {
       archetypeMatch['casual_chic'] = 0.8;
     }
     
-    if (styleTags.includes('formal')) {
+    if (styleTags.includes('formal') || styleTags.includes('elegant')) {
       archetypeMatch['klassiek'] = 0.9;
     }
     
-    if (styleTags.includes('sporty')) {
+    if (styleTags.includes('sporty') || styleTags.includes('athletic')) {
       archetypeMatch['streetstyle'] = 0.7;
     }
     
-    if (styleTags.includes('vintage')) {
+    if (styleTags.includes('vintage') || styleTags.includes('retro')) {
       archetypeMatch['retro'] = 0.85;
     }
     
-    if (styleTags.includes('minimalist')) {
+    if (styleTags.includes('minimalist') || styleTags.includes('minimal')) {
       archetypeMatch['urban'] = 0.75;
     }
     
@@ -146,7 +164,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
       material: 'Mixed materials',
       price: product.price || 49.99,
       imageUrl: imageUrl,
-      affiliateUrl: product.url || '#',
+      affiliateUrl: product.url || `https://example.com/product/${product.id}`,
       source: 'zalando'
     };
   });
