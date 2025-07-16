@@ -1,6 +1,7 @@
 // src/services/boltService.ts
 import { safeFetchWithFallback } from '../utils/fetchUtils';
 import dutchProducts from '../data/dutchProducts';
+import { BoltProduct } from '../types/BoltProduct';
 
 /**
  * Maps API endpoints to JSON filenames
@@ -62,7 +63,7 @@ const fallbackOutfits = [
     imageUrl: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
     tags: ["formal", "business", "professional", "elegant"],
     matchPercentage: 95,
-    explanation: "Elegant en professioneel met tijdloze kleuren.",
+    explanation: "Elegante en professionele look met tijdloze kleuren.",
     season: "autumn",
     structure: ["top", "bottom", "footwear", "accessory"],
     weather: "mild",
