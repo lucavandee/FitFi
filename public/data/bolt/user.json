@@ -1,0 +1,15 @@
+{
+  "id": "f8993892-a1c1-4d7d-89e9-5886e3f5a3e8",
+  "name": "Test User",
+  "email": "test@example.com",
+  "gender": "female",
+  "stylePreferences": {
+    "casual": 3,
+    "formal": 3,
+    "sporty": 3,
+    "vintage": 3,
+    "minimalist": 3
+  },
+  "isPremium": false,
+  "savedRecommendations": []
+}

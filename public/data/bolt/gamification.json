@@ -1,0 +1,14 @@
+{
+  "id": "gamification-f8993892-a1c1-4d7d-89e9-5886e3f5a3e8",
+  "user_id": "f8993892-a1c1-4d7d-89e9-5886e3f5a3e8",
+  "points": 120,
+  "level": "beginner",
+  "badges": ["first_quiz"],
+  "streak": 2,
+  "last_check_in": "2025-06-27T12:00:00.000Z",
+  "completed_challenges": ["view3", "shareLook"],
+  "total_referrals": 1,
+  "seasonal_event_progress": {},
+  "created_at": "2025-06-01T12:00:00.000Z",
+  "updated_at": "2025-06-27T12:00:00.000Z"
+}
