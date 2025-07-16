@@ -5,7 +5,7 @@
  * and suppress future version warnings.
  */
 
-import { UNSAFE_enhanceManualRouteObjects } from 'react-router-dom';
+// No longer importing UNSAFE_enhanceManualRouteObjects as it's removed in react-router-dom v6.22.3
 
 /**
  * Configures React Router future flags
@@ -23,13 +23,6 @@ export function configureRouterFutureFlags() {
   }
 }
 
-/**
- * Enhances route objects with future flags
- * Use this when defining your routes
- */
-export const enhanceRoutes = UNSAFE_enhanceManualRouteObjects;
-
 export default {
-  configureRouterFutureFlags,
-  enhanceRoutes
+  configureRouterFutureFlags
 };
