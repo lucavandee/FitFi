@@ -1,5 +1,8 @@
 // src/lib/supabase.ts
+import { validateEnv } from "./envValidator";
 import { createClient } from '@supabase/supabase-js';
+
+validateEnv(); // Voert directe check uit bij startup
 
 // 🔐 Supabase configuratie
 const supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL;
