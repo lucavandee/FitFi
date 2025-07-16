@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
@@ -52,7 +52,6 @@ const OnboardingPage: React.FC = () => {
       window.scrollTo(0, 0);
     }, 0);
   }, [completeStep, goToNextStep, isButtonClicked]);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
