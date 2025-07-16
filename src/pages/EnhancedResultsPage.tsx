@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useGamification } from "../context/GamificationContext";
@@ -54,9 +54,6 @@ const EnhancedResultsPage: React.FC = () => {
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<'supabase' | 'bolt' | 'zalando' | 'local'>(getDataSource());
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
-  
-  // Prevent multiple clicks
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -163,15 +160,8 @@ const EnhancedResultsPage: React.FC = () => {
     loadRecommendations();
   }, [loadRecommendations]);
 
-  // Handle product click with debounce to prevent multiple clicks
-  const handleProductClick = useCallback((product: Product) => {
-    // Prevent multiple rapid clicks
-    if (clickTimeoutRef.current) return;
-    
-    clickTimeoutRef.current = setTimeout(() => {
-      clickTimeoutRef.current = null;
-    }, 300);
-    
+  // Handle product click
+  const handleProductClick = (product: Product) => {
     // Track click in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'product_click', {
@@ -188,10 +178,10 @@ const EnhancedResultsPage: React.FC = () => {
     
     // Open product page or affiliate link
     window.open(product.affiliateUrl || '#', '_blank', 'noopener,noreferrer');
-  }, []);
+  };
 
   // Handle outfit click
-  const handleOutfitClick = useCallback((outfit: Outfit) => {
+  const handleOutfitClick = (outfit: Outfit) => {
     // Track click in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'outfit_click', {
@@ -203,10 +193,10 @@ const EnhancedResultsPage: React.FC = () => {
         outfit_occasion: outfit.occasion
       });
     }
-  }, []);
+  };
   
   // Handle regenerate outfit
-  const handleRegenerateOutfit = useCallback(async (outfitIndex: number) => {
+  const handleRegenerateOutfit = async (outfitIndex: number) => {
     if (regenerationCount >= MAX_REGENERATIONS) {
       alert(`Je hebt het maximale aantal regeneraties (${MAX_REGENERATIONS}) voor deze sessie bereikt.`);
       return;
@@ -275,10 +265,10 @@ const EnhancedResultsPage: React.FC = () => {
     } finally {
       setIsRegenerating(false);
     }
-  }, [enhancedUser, onboardingData, outfits, regenerationCount, shownOutfitIds]);
+  };
   
   // Record feedback
-  const handleFeedback = useCallback((rating: number) => {
+  const handleFeedback = (rating: number) => {
     setFeedbackGiven(true);
     
     if (typeof window.gtag === 'function') {
@@ -288,7 +278,7 @@ const EnhancedResultsPage: React.FC = () => {
         value: rating
       });
     }
-  }, []);
+  };
   
   // Helper function to map Dutch season to English
   const mapSeasonToEnglish = (dutchSeason: string): string => {
@@ -595,7 +585,7 @@ const EnhancedResultsPage: React.FC = () => {
                   const normalizedProduct = normalizeProduct(product);
                   return (
                     <motion.div
-                      key={normalizedProduct.id || `product-${index}`}
+                      key={normalizedProduct.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.1 + (index * 0.05) }}
@@ -608,7 +598,7 @@ const EnhancedResultsPage: React.FC = () => {
                           alt={normalizedProduct.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/placeholder.png';
+                            e.currentTarget.src = '/placeholder.png';
                           }}
                         />
                         <div className="absolute top-2 right-2 bg-white/80 text-[#0D1B2A] px-2 py-1 rounded-full text-xs font-medium">
@@ -666,7 +656,7 @@ const EnhancedResultsPage: React.FC = () => {
                 <p className="text-white/70 mb-6">
                   Je feedback helpt ons om betere aanbevelingen te doen in de toekomst.
                 </p>
-                <div className="flex flex-wrap justify-center gap-4">
+                <div className="flex justify-center space-x-4">
                   <Button
                     variant="outline"
                     onClick={() => handleFeedback(5)}
