@@ -20,13 +20,13 @@ export async function safeFetch<T>(url: string, options?: RequestInit): Promise<
     
     // Check if content type is JSON
     if (!contentType || !contentType.includes('application/json')) {
-      console.warn(`Invalid content-type for ${url}: ${contentType}`);
+      console.warn(`[⚠️ JSON Warning] Invalid content-type for ${url}: ${contentType}`);
       
       // Try to parse as JSON anyway as a fallback
       try {
         return await response.json() as T;
       } catch (parseError) {
-        console.error('Failed to parse response as JSON:', parseError);
+        console.error('[⚠️ JSON Error] Failed to parse response as JSON:', parseError);
         
         // Return empty object or array as fallback
         return (Array.isArray({})) ? [] as unknown as T : {} as T;
@@ -35,7 +35,7 @@ export async function safeFetch<T>(url: string, options?: RequestInit): Promise<
     
     return await response.json() as T;
   } catch (error: any) {
-    console.error(`Fetch error for ${url}:`, error.message);
+    console.error(`[⚠️ Fetch Error] for ${url}:`, error.message);
     throw error;
   }
 }
@@ -59,7 +59,7 @@ export async function fetchWithRetry<T>(
       return await safeFetch<T>(url, options);
     } catch (error) {
       lastError = error as Error;
-      console.warn(`Fetch attempt ${attempt + 1}/${retries} failed:`, error);
+      console.warn(`[⚠️ Retry] Fetch attempt ${attempt + 1}/${retries} failed:`, error);
       
       // Wait before retrying (exponential backoff)
       if (attempt < retries - 1) {

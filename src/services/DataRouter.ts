@@ -13,6 +13,7 @@ import outfitGenerator from './outfitGenerator';
 import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON } from '../utils/boltProductsUtils';
 import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
+import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
 
 // Data source type
 export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
@@ -231,7 +232,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     // Try to load BoltProducts from API
     if (USE_BOLT) {
       try {
-        const response = await boltService.fetchFromBolt<{ products: BoltProduct[] }>('/products');
+        const response = await safeFetch<{ products: BoltProduct[] }>('/data/bolt/products.json');
         
         if (response && response.products && response.products.length > 0) {
           console.log(`[🧠 DataRouter] Loaded ${response.products.length} BoltProducts from API`);
