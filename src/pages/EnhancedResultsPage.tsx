@@ -479,44 +479,11 @@ const EnhancedResultsPage: React.FC = () => {
               ))}
             </div>
           )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {outfits.map((outfit, index) => (
-                <OutfitCard 
-                  key={outfit.id}
-                  outfit={outfit}
-                  onNewLook={() => handleRegenerateOutfit(index)}
-                  isGenerating={isRegenerating}
-                  user={enhancedUser}
-                />
-              ))}
-            </div>
-          )}
         </div>
       )}
       
       {/* Individual products */}
       <h2 className="text-xl font-bold mb-4">Individuele items voor jou</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
-        {productsLoading ? (
-          // Skeleton loading state for products
-          <React.Fragment>
-            {Array(9).fill(0).map((_, index) => (
-              <Card 
-                key={`skeleton-product-${index}`} 
-                className="overflow-hidden"
-              >
-                <div className="h-60 bg-[#1B263B] relative">
-                  <SkeletonPlaceholder height="h-full" width="w-full" rounded="rounded-none" />
-                </div>
-                <CardContent className="p-4 space-y-3">
-                  <SkeletonPlaceholder height="h-5" width="w-3/4" />
-                  <SkeletonPlaceholder height="h-4" width="w-full" />
-                  <div className="flex justify-between items-center pt-2">
-                    <SkeletonPlaceholder height="h-5" width="w-1/4" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
         {productsLoading ? (
           // Skeleton loading state for products
