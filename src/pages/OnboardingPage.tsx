@@ -9,7 +9,6 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep } = useOnboarding();
   
-  // Track when the component is mounted
   useEffect(() => {
     // Track quiz start in analytics
     if (typeof window.gtag === 'function') {
@@ -30,8 +29,7 @@ const OnboardingPage: React.FC = () => {
   const handleStart = () => {
     // Mark welcome step as completed
     completeStep('welcome');
-    goToNextStep();
-    // Go to next step
+    // Go to next step (gender_name)
     goToNextStep();
   };
 

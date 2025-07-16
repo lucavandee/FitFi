@@ -11,8 +11,8 @@ import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
 import { getOutfits, getRecommendedProducts, getDataSource, getFetchDiagnostics, clearCache, getBoltProducts } from "../services/DataRouter";
 import DevDataPanel from "../components/DevDataPanel";
-import { BoltProduct } from "../types/BoltProduct";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import { BoltProduct } from "../types/BoltProduct";
 import { USE_SUPABASE } from "../config/app-config";
 import ProductList from "../components/products/ProductList";
 import ProductPreviewList from "../components/products/ProductPreviewList";
@@ -487,9 +487,6 @@ const EnhancedResultsPage: React.FC = () => {
                 {product.season && product.season.length > 0 && (
                   <div className="absolute top-2 right-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
                     {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
-                  </div>
-                )}
-              </div>
               <CardContent className="p-4">
                 <h3 className="font-bold mb-1">{product.name}</h3>
                 <p className="text-sm text-gray-400 mb-3 line-clamp-2">{product.description}</p>
