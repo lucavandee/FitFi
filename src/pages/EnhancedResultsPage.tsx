@@ -6,6 +6,7 @@ import { Loader } from "../components/Loader";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
@@ -20,7 +21,7 @@ import ResultsLoader from "../components/ui/ResultsLoader";
 import { useGamification } from "../context/GamificationContext";
 import { useOnboarding } from "../context/OnboardingContext"; 
 import { getSafeUser } from "../utils/userUtils";
-import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
@@ -478,11 +479,44 @@ const EnhancedResultsPage: React.FC = () => {
               ))}
             </div>
           )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {outfits.map((outfit, index) => (
+                <OutfitCard 
+                  key={outfit.id}
+                  outfit={outfit}
+                  onNewLook={() => handleRegenerateOutfit(index)}
+                  isGenerating={isRegenerating}
+                  user={enhancedUser}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
       
       {/* Individual products */}
       <h2 className="text-xl font-bold mb-4">Individuele items voor jou</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
+        {productsLoading ? (
+          // Skeleton loading state for products
+          <React.Fragment>
+            {Array(9).fill(0).map((_, index) => (
+              <Card 
+                key={`skeleton-product-${index}`} 
+                className="overflow-hidden"
+              >
+                <div className="h-60 bg-[#1B263B] relative">
+                  <SkeletonPlaceholder height="h-full" width="w-full" rounded="rounded-none" />
+                </div>
+                <CardContent className="p-4 space-y-3">
+                  <SkeletonPlaceholder height="h-5" width="w-3/4" />
+                  <SkeletonPlaceholder height="h-4" width="w-full" />
+                  <div className="flex justify-between items-center pt-2">
+                    <SkeletonPlaceholder height="h-5" width="w-1/4" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
         {productsLoading ? (
           // Skeleton loading state for products
@@ -520,8 +554,7 @@ const EnhancedResultsPage: React.FC = () => {
                   className="w-full h-full object-cover"
                   componentName="ProductCard"
                 />
-                  {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
-                )}
+                {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
               </div>
               <CardContent className="p-4">
                 <h3 className="font-bold mb-1">{product.name}</h3>

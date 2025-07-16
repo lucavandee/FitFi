@@ -5,13 +5,20 @@ interface LoadingFallbackProps {
   size?: 'sm' | 'md' | 'lg';
   fullScreen?: boolean;
   className?: string;
+}
+
+interface LoadingFallbackProps {
+  message?: string;
+  size?: 'sm' | 'md' | 'lg';
+  fullScreen?: boolean;
+  className?: string;
   className?: string;
 }
 
 /**
  * A reusable loading component with customizable size and message
  */
-const LoadingFallback: React.FC<LoadingFallbackProps> = ({
+const LoadingFallback: React.FC<LoadingFallbackProps> = ({ 
   message = 'Laden...',
   size = 'md',
   fullScreen = false,
@@ -39,14 +46,14 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-[#0D1B2A]/90 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-[#0D1B2A]/90 backdrop-blur-sm flex items-center justify-center z-50 ${className}">
         {content}
       </div>
     );
   }
   
   return (
-    <div className="flex items-center justify-center p-8">
+    <div className="flex items-center justify-center p-8 ${className}">
       {content}
     </div>
   );
