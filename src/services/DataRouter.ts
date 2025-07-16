@@ -4,7 +4,7 @@ import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations, getRecommendedProducts } from '../engine/recommendationEngine';
 import { generateMockUser, generateMockGamification, generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
-import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge, getDailyChallenges } from '../services/supabaseService';
+import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from '../services/supabaseService';
 import boltService from './boltService';
 import { TEST_USER_ID } from '../lib/supabase';
 import { enrichZalandoProducts } from './productEnricher';
@@ -12,7 +12,7 @@ import { BoltProduct } from '../types/BoltProduct';
 import outfitGenerator from './outfitGenerator';
 import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON } from '../utils/boltProductsUtils';
-import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
+import { safeFetch, fetchWithRetry, safeFetchWithFallback } from '../utils/fetchUtils';
 import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
 
 // Data source type
@@ -232,15 +232,15 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     // Try to load BoltProducts from API
     if (USE_BOLT) {
       try {
-        const response = await safeFetch<{ products: BoltProduct[] }>('/data/bolt/products.json');
+        const boltProducts = await boltService.fetchProducts();
         
-        if (response && response.products && response.products.length > 0) {
-          console.log(`[🧠 DataRouter] Loaded ${response.products.length} BoltProducts from API`);
+        if (boltProducts && boltProducts.length > 0) {
+          console.log(`[🧠 DataRouter] Loaded ${boltProducts.length} BoltProducts from API`);
           
           // Store in memory cache
-          boltProductsCache = response.products;
+          boltProductsCache = boltProducts;
           
-          return response.products;
+          return boltProducts;
         }
       } catch (apiError) {
         console.error('[🧠 DataRouter] Error loading BoltProducts from API:', apiError);
@@ -355,21 +355,21 @@ export async function getOutfits(
     const boltStartTime = Date.now();
     
     try {
-      // Fetch outfits from local JSON
-      const response = await boltService.fetchOutfits();
+      // Fetch outfits from boltService (with fallback)
+      const boltOutfits = await boltService.fetchOutfits();
       
       const boltEndTime = Date.now();
       const boltDuration = boltEndTime - boltStartTime;
       
-      if (response && response.length > 0) {
+      if (boltOutfits && boltOutfits.length > 0) {
         // Add attempt to diagnostics
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
         
         // Cache the result
-        saveToCache(cacheKey, response, 'bolt');
+        saveToCache(cacheKey, boltOutfits, 'bolt');
         
-        return response;
+        return boltOutfits;
       }
       
       // Add failed attempt to diagnostics
@@ -591,21 +591,21 @@ export async function getRecommendedProducts(
     const boltStartTime = Date.now();
     
     try {
-      // Fetch products from local JSON
-      const response = await boltService.fetchProducts();
+      // Fetch products from boltService (with fallback)
+      const boltProducts = await boltService.fetchProducts();
       
       const boltEndTime = Date.now();
       const boltDuration = boltEndTime - boltStartTime;
       
-      if (response && response.length > 0) {
+      if (boltProducts && boltProducts.length > 0) {
         // Add attempt to diagnostics
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
         
         // Cache the result
-        saveToCache(cacheKey, response, 'bolt');
+        saveToCache(cacheKey, boltProducts, 'bolt');
         
-        return response;
+        return boltProducts;
       }
       
       // Add failed attempt to diagnostics
@@ -1164,7 +1164,7 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
   if (USE_SUPABASE) {
     try {
       // Complete challenge in Supabase
-      const success = await completeChallenge(userId, challengeId);
+      const success = await completeSupabaseChallenge(userId, challengeId);
       
       const endTime = Date.now();
       const duration = endTime - startTime;
