@@ -1,7 +1,7 @@
 import { USE_SUPABASE, USE_BOLT, USE_ZALANDO, API_CONFIG, DEBUG_MODE } from '../config/app-config';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
-import { generateRecommendations, getRecommendedProducts } from '../engine/recommendationEngine';
+import { generateRecommendations } from '../engine/recommendationEngine';
 import { generateMockUser, generateMockGamification, generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from './supabaseService';
@@ -11,8 +11,8 @@ import { enrichZalandoProducts } from './productEnricher';
 import { BoltProduct } from '../types/BoltProduct';
 import outfitGenerator from './outfitGenerator';
 import outfitEnricher from './outfitEnricher';
-import { getBoltProductsFromJSON, generateMockBoltProducts } from '../utils/boltProductsUtils';
-import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
+import { getBoltProductsFromJSON, generateMockBoltProducts, filterProductsByGender } from '../utils/boltProductsUtils';
+import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
 
 // Data source type
 export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
@@ -60,6 +60,32 @@ let fetchDiagnostics: FetchDiagnostics = {
 
 // In-memory storage for BoltProducts
 let boltProductsCache: BoltProduct[] = [];
+
+// Check if environment variables are available
+const checkEnvironmentVariables = (): void => {
+  const requiredVars = [
+    'VITE_SUPABASE_URL',
+    'VITE_SUPABASE_ANON_KEY',
+    'VITE_BOLT_API_URL',
+    'VITE_BOLT_API_KEY'
+  ];
+  
+  const missingVars = requiredVars.filter(
+    varName => !import.meta.env[varName] || import.meta.env[varName] === ''
+  );
+  
+  if (missingVars.length > 0) {
+    console.warn(`
+[⚠️ DataRouter] Ontbrekende omgevingsvariabelen:
+${missingVars.map(v => `- ${v}`).join('\n')}
+
+Fallback-data zal worden gebruikt voor ontbrekende functionaliteit.
+    `);
+  }
+};
+
+// Check environment variables on module load
+checkEnvironmentVariables();
 
 /**
  * Clear the cache
@@ -224,7 +250,7 @@ function saveToCache<T>(key: string, data: T, source: DataSource): void {
 async function loadBoltProducts(): Promise<BoltProduct[]> {
   // If we already have BoltProducts in memory, return them
   if (boltProductsCache.length > 0) {
-    console.log(`[🧠 DataRouter] Using ${boltProductsCache.length} cached BoltProducts`);
+    console.log(`[🧠 DataRouter] Using ${boltProductsCache.length} cached BoltProducts from memory`);
     return boltProductsCache;
   }
   
@@ -232,6 +258,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     // Try to load BoltProducts from API
     if (USE_BOLT) {
       try {
+        console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
         const response = await boltService.fetchProducts();
         
         if (response && response.length > 0) {
@@ -248,6 +275,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     }
     
     // If API failed or is disabled, try to load from JSON file
+    console.log(`[🧠 DataRouter] Attempting to load BoltProducts from JSON file`);
     const products = await getBoltProductsFromJSON();
     
     if (products && products.length > 0) {
@@ -260,7 +288,15 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     }
     
     console.warn('[🧠 DataRouter] No BoltProducts found, returning empty array');
-    return [];
+    
+    // Generate mock products as last resort
+    const mockProducts = generateMockBoltProducts();
+    console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts as fallback`);
+    
+    // Store in memory cache
+    boltProductsCache = mockProducts;
+    
+    return mockProducts;
   } catch (error) {
     console.error('[🧠 DataRouter] Error loading BoltProducts:', error);
     
@@ -361,14 +397,16 @@ export async function getOutfits(
   // Try Bolt API if enabled
   if (USE_BOLT) {
     const boltStartTime = Date.now();
+    
     try {
       // Fetch outfits from boltService (with fallback)
+      console.log('[🧠 DataRouter] Attempting to fetch outfits from boltService');
       const boltOutfits = await boltService.fetchOutfits();
       
       const boltEndTime = Date.now();
       const boltDuration = boltEndTime - boltStartTime;
       
-      if (boltOutfits && boltOutfits.length > 0) {
+      if (boltOutfits && Array.isArray(boltOutfits) && boltOutfits.length > 0) {
         // Add attempt to diagnostics
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
@@ -408,8 +446,10 @@ export async function getOutfits(
   // Try Zalando if Supabase and Bolt failed
   if (USE_ZALANDO) {
     const zalandoStartTime = Date.now();
+    
     try {
       // Try to load BoltProducts from JSON file
+      console.log('[🧠 DataRouter] Attempting to load BoltProducts for Zalando fallback');
       const boltProducts = await loadBoltProducts();
       
       if (boltProducts && boltProducts.length > 0) {
@@ -418,7 +458,7 @@ export async function getOutfits(
         try {
           // Generate outfits from BoltProducts
           const outfits = outfitGenerator.generateOutfitsFromBoltProducts(
-            boltProducts,
+            boltProducts.slice(0, 20), // Limit to 20 products for performance
             user.stylePreferences.casual > user.stylePreferences.formal ? 'casual_chic' : 'klassiek',
             user.gender === 'male' ? 'male' : 'female',
             3 // Generate at least 3 outfits
@@ -446,6 +486,7 @@ export async function getOutfits(
       }
       
       // If BoltProducts failed, try using Zalando products directly
+      console.log('[🧠 DataRouter] Attempting to load Zalando products');
       const zalandoProducts = await getZalandoProducts();
       
       if (zalandoProducts && zalandoProducts.length > 0) {
@@ -500,24 +541,27 @@ export async function getOutfits(
   
   // Fallback to local data
   const localStartTime = Date.now();
+  console.log('[🧠 DataRouter] Using local fallback for outfits');
   
   try {
     // Generate outfits from local data
     let outfits;
     
     // First try to get outfits directly from boltService
+    console.log('[🧠 DataRouter] Attempting to get outfits from boltService (final attempt)');
     const boltOutfits = await boltService.fetchOutfits();
-    if (boltOutfits && boltOutfits.length > 0) {
+    
+    if (boltOutfits && Array.isArray(boltOutfits) && boltOutfits.length > 0) {
       outfits = boltOutfits;
+      console.log(`[🧠 DataRouter] Got ${boltOutfits.length} outfits from boltService`);
     } else {
       // If that fails, generate outfits from local data
-      outfits = await generateRecommendations(user, {
-        ...options,
-        useZalandoProducts: false
-      });
+      console.log('[🧠 DataRouter] Generating mock outfits from fallback data');
+      outfits = generateMockOutfits(3);
       
       // If still no outfits, use mock outfits
       if (!outfits || outfits.length === 0) {
+        console.log('[🧠 DataRouter] No outfits generated, using hardcoded mock outfits');
         outfits = generateMockOutfits(3);
       }
     }
@@ -528,7 +572,7 @@ export async function getOutfits(
     // Add attempt to diagnostics
     addAttempt('local', true, undefined, localDuration);
     setFinalSource('local');
-
+    
     // Log outfits for debugging
     console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from local data`);
     if (outfits.length > 0) {
@@ -561,15 +605,15 @@ export async function getOutfits(
 }
 
 /**
- * Get recommended products for a user
- * @param user - User profile
+ * Gets recommended products for a user
+ * @param userId - User ID
  * @param count - Number of products to recommend
  * @param season - Optional season to filter by
  * @returns Array of recommended products
  */
 export async function getRecommendedProducts(
-  user: UserProfile,
-  count: number = 9,
+  user: UserProfile, 
+  count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
   // Reset diagnostics
@@ -586,226 +630,42 @@ export async function getRecommendedProducts(
     }
   }
   
-  // Start timing
-  const startTime = Date.now();
-  
-  // Try Supabase first if enabled
-  if (USE_SUPABASE) {
-    try {
-      // Fetch products from Supabase
-      const supabaseProducts = await fetchProductsFromSupabase();
-      
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      if (supabaseProducts && supabaseProducts.length > 0) {
-        // Convert to Product format
-        const products = supabaseProducts.map(p => ({
-          id: p.id,
-          name: p.name,
-          imageUrl: p.image_url || p.imageUrl,
-          type: p.type || p.category,
-          category: p.category,
-          styleTags: p.tags || ['casual'],
-          description: p.description || `${p.name} van ${p.brand || 'onbekend merk'}`,
-          price: typeof p.price === 'number' ? p.price : parseFloat(p.price || '0'),
-          brand: p.brand,
-          affiliateUrl: p.url || p.affiliate_url,
-          season: ['spring', 'summer', 'autumn', 'winter'] // Default all seasons
-        }));
-        
-        // Get recommended products
-        const recommendedProducts = await getRecommendedProducts(user, count, season);
-        
-        // Add attempt to diagnostics
-        addAttempt('supabase', true, undefined, duration);
-        setFinalSource('supabase');
-        
-        // Cache the result
-        saveToCache(cacheKey, recommendedProducts, 'supabase');
-        
-        return recommendedProducts;
-      }
-      
-      // Add failed attempt to diagnostics
-      addAttempt('supabase', false, 'No products found', duration);
-    } catch (error) {
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
-      
-      if (DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Supabase error:', error);
-      }
-    }
-  }
-  
-  // Try Bolt API if enabled
-  if (USE_BOLT) {
-    const boltStartTime = Date.now();
-    try {
-      // Fetch products from boltService (with fallback)
-      const boltProducts = await boltService.fetchProducts();
-      
-      const boltEndTime = Date.now();
-      const boltDuration = boltEndTime - boltStartTime;
-      
-      if (boltProducts && boltProducts.length > 0) {
-        // Add attempt to diagnostics
-        addAttempt('bolt', true, undefined, boltDuration);
-        setFinalSource('bolt');
-
-        // Log products for debugging
-        console.log(`[🧠 DataRouter] getRecommendedProducts() returning ${boltProducts.length} products from Bolt API`);
-        if (boltProducts.length > 0) {
-          console.log(`[🧠 DataRouter] First product:`, {
-            id: boltProducts[0].id,
-            title: boltProducts[0].title,
-            price: boltProducts[0].price,
-            archetypeMatch: boltProducts[0].archetypeMatch
-          });
-        }
-
-        // Cache the result
-        saveToCache(cacheKey, boltProducts, 'bolt');
-        
-        return boltProducts;
-      }
-      
-      // Add failed attempt to diagnostics
-      addAttempt('bolt', false, 'No products found', boltDuration);
-    } catch (error) {
-      const boltEndTime = Date.now();
-      const boltDuration = boltEndTime - boltStartTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
-      
-      if (DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Bolt API error:', error);
-      }
-    }
-  }
-  
-  // Try Zalando if Supabase and Bolt failed
-  if (USE_ZALANDO) {
-    const zalandoStartTime = Date.now();
-    try {
-      // Try to load BoltProducts from JSON file
-      const boltProducts = await loadBoltProducts();
-      
-      if (boltProducts && boltProducts.length > 0) {
-        console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts as recommended products`);
-        
-        // Filter BoltProducts by archetype match
-        const archetypeProducts = boltProducts.filter(product => {
-          // Determine primary archetype based on user preferences
-          let primaryArchetype = 'casual_chic';
-          if (user.stylePreferences.formal > user.stylePreferences.casual) {
-            primaryArchetype = 'klassiek';
-          } else if (user.stylePreferences.sporty > user.stylePreferences.casual) {
-            primaryArchetype = 'streetstyle';
-          } else if (user.stylePreferences.vintage > user.stylePreferences.casual) {
-            primaryArchetype = 'retro';
-          } else if (user.stylePreferences.minimalist > user.stylePreferences.casual) {
-            primaryArchetype = 'urban';
-          }
-          
-          // Check if product matches archetype
-          const score = product.archetypeMatch[primaryArchetype] || 0;
-          return score >= 0.5;
-        });
-        
-        // Filter by gender
-        const genderProducts = archetypeProducts.filter(product => 
-          product.gender === (user.gender === 'male' ? 'male' : 'female')
-        );
-        
-        // Convert to Product format
-        const products = genderProducts.map(p => ({
-          id: p.id,
-          name: p.title,
-          imageUrl: p.imageUrl,
-          type: p.type,
-          category: p.type,
-          styleTags: p.styleTags,
-          description: `${p.title} van ${p.brand}`,
-          price: p.price,
-          brand: p.brand,
-          affiliateUrl: p.affiliateUrl,
-          season: [p.season === 'all_season' ? 'autumn' : p.season] // Convert to array
-        }));
-        
-        // Limit to requested count
-        const limitedProducts = products.slice(0, count);
-        
-        const zalandoEndTime = Date.now();
-        const zalandoDuration = zalandoEndTime - zalandoStartTime;
-        
-        // Add attempt to diagnostics
-        addAttempt('zalando', true, undefined, zalandoDuration);
-        setFinalSource('zalando');
-
-        // Log products for debugging
-        console.log(`[🧠 DataRouter] getRecommendedProducts() returning ${limitedProducts.length} products from Zalando`);
-
-        // Cache the result
-        saveToCache(cacheKey, limitedProducts, 'zalando');
-        
-        return limitedProducts;
-      }
-      
-      // If BoltProducts failed, try using Zalando products directly
-      const zalandoProducts = await getZalandoProducts();
-      
-      if (zalandoProducts && zalandoProducts.length > 0) {
-        // Get recommended products
-        const recommendedProducts = await getRecommendedProducts(user, count, season);
-        
-        const zalandoEndTime = Date.now();
-        const zalandoDuration = zalandoEndTime - zalandoStartTime;
-        
-        // Add attempt to diagnostics
-        addAttempt('zalando', true, undefined, zalandoDuration);
-        setFinalSource('zalando');
-        
-        // Cache the result
-        saveToCache(cacheKey, recommendedProducts, 'zalando');
-        
-        return recommendedProducts;
-      }
-      
-      // Add failed attempt to diagnostics
-      const zalandoEndTime = Date.now();
-      const zalandoDuration = zalandoEndTime - zalandoStartTime;
-      addAttempt('zalando', false, 'No products found', zalandoDuration);
-    } catch (error) {
-      const zalandoEndTime = Date.now();
-      const zalandoDuration = zalandoEndTime - zalandoStartTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
-      
-      if (DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Zalando error:', error);
-      }
-    }
-  }
-  
-  // Fallback to local data
-  const localStartTime = Date.now();
+  console.log('[🧠 DataRouter] Fetching recommended products');
   
   try {
-    // Generate mock products
-    // First try to get products directly from boltService
-    const boltProducts = await boltService.fetchProducts();
-    let mockProducts;
+    // Try to load BoltProducts
+    const boltProducts = await loadBoltProducts();
     
     if (boltProducts && boltProducts.length > 0) {
-      // Convert BoltProducts to Product format
-      mockProducts = boltProducts.slice(0, count).map(p => ({
+      console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts for recommendations`);
+      
+      // Filter by gender
+      const genderFiltered = filterProductsByGender(boltProducts, user.gender === 'male' ? 'male' : 'female');
+      console.log(`[🧠 DataRouter] Filtered to ${genderFiltered.length} products matching gender: ${user.gender}`);
+      
+      // Filter by archetype match
+      const archetypeFiltered = genderFiltered.filter(product => {
+        // Determine primary archetype based on user preferences
+        let primaryArchetype = 'casual_chic';
+        if (user.stylePreferences.formal > user.stylePreferences.casual) {
+          primaryArchetype = 'klassiek';
+        } else if (user.stylePreferences.sporty > user.stylePreferences.casual) {
+          primaryArchetype = 'streetstyle';
+        } else if (user.stylePreferences.vintage > user.stylePreferences.casual) {
+          primaryArchetype = 'retro';
+        } else if (user.stylePreferences.minimalist > user.stylePreferences.casual) {
+          primaryArchetype = 'urban';
+        }
+        
+        // Check if product matches archetype
+        const score = product.archetypeMatch[primaryArchetype] || 0;
+        return score >= 0.3; // Lower threshold to ensure we have enough products
+      });
+      
+      console.log(`[🧠 DataRouter] Filtered to ${archetypeFiltered.length} products matching archetype preferences`);
+      
+      // Convert to Product format
+      const products = archetypeFiltered.map(p => ({
         id: p.id,
         name: p.title,
         imageUrl: p.imageUrl,
@@ -816,48 +676,51 @@ export async function getRecommendedProducts(
         price: p.price,
         brand: p.brand,
         affiliateUrl: p.affiliateUrl,
-        season: [p.season === 'all_season' ? 'autumn' : p.season] // Convert to array
+        season: [p.season === 'all_season' ? 'autumn' : p.season], // Convert to array
+        matchScore: p.archetypeMatch['casual_chic'] || 0.5 // Default match score
       }));
-    } else {
-      // If that fails, generate mock products
-      mockProducts = generateMockProducts(undefined, count);
+      
+      // Limit to requested count and ensure we have at least some products
+      const limitedProducts = products.length >= count 
+        ? products.slice(0, count) 
+        : [...products, ...generateMockProducts(undefined, count - products.length)];
+      
+      // Set data source
+      setFinalSource(products.length >= count ? 'bolt' : 'local');
+      
+      // Cache the result
+      saveToCache(cacheKey, limitedProducts, getDataSource());
+      
+      console.log(`[🧠 DataRouter] Returning ${limitedProducts.length} recommended products`);
+      return limitedProducts;
     }
     
-    const localEndTime = Date.now();
-    const localDuration = localEndTime - localStartTime;
+    // If no BoltProducts, use mock products
+    console.log('[🧠 DataRouter] No BoltProducts available, using mock products');
+    const mockProducts = generateMockProducts(undefined, count);
     
-    // Add attempt to diagnostics
-    addAttempt('local', true, undefined, localDuration);
+    // Set data source
     setFinalSource('local');
-
-    // Log products for debugging
-    console.log(`[🧠 DataRouter] getRecommendedProducts() returning ${mockProducts.length} products from local data`);
-    if (mockProducts.length > 0) {
-      console.log(`[🧠 DataRouter] First product:`, {
-        id: mockProducts[0].id,
-        name: mockProducts[0].name,
-        price: mockProducts[0].price,
-        styleTags: mockProducts[0].styleTags
-      });
-    }
-
+    
     // Cache the result
     saveToCache(cacheKey, mockProducts, 'local');
     
+    console.log(`[🧠 DataRouter] Returning ${mockProducts.length} mock products`);
     return mockProducts;
   } catch (error) {
-    const localEndTime = Date.now();
-    const localDuration = localEndTime - localStartTime;
+    console.error('[🧠 DataRouter] Error getting recommended products:', error);
     
-    // Add failed attempt to diagnostics
-    addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
+    // Use mock products as fallback
+    const mockProducts = generateMockProducts(undefined, count);
     
-    if (DEBUG_MODE) {
-      console.error('[🧠 DataRouter] Local data error:', error);
-    }
+    // Set data source
+    setFinalSource('local');
     
-    // Return empty array as last resort
-    return [];
+    // Cache the result
+    saveToCache(cacheKey, mockProducts, 'local');
+    
+    console.log(`[🧠 DataRouter] Returning ${mockProducts.length} fallback mock products after error`);
+    return mockProducts;
   }
 }
 
