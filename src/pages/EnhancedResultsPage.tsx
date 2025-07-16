@@ -21,7 +21,6 @@ import { useGamification } from "../context/GamificationContext";
 import { useOnboarding } from "../context/OnboardingContext";
 import { getSafeUser } from "../utils/userUtils";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
-import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
