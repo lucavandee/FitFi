@@ -8,6 +8,18 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
+        beige: {
+          50: '#FAF8F6',
+          100: '#F5F0EA',
+          200: '#EBE2D5',
+          300: '#DFD2C2',
+          400: '#CFBFAA',
+          500: '#bfae9f',
+          600: '#a89a8c',
+          700: '#8c7f73',
+          800: '#6e645a',
+          900: '#4d4640',
+        },
         primary: {
           50: '#e6f7ff',
           100: '#b3e0ff',
@@ -51,6 +63,7 @@ export default {
             light: '#0ea5e9',
           },
           orange: '#FF8600',
+          beige: '#bfae9f',
         },
       },
       spacing: {
