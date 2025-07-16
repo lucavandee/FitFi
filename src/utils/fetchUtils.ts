@@ -27,6 +27,29 @@ export const safeFetch = async <T>(url: string): Promise<T> => {
 };
 
 /**
+ * Fetches data with fallback if the fetch fails or returns non-JSON
+ * @param url - The URL to fetch from
+ * @param fallbackData - Fallback data to return if fetch fails
+ * @returns The parsed response data or fallback data
+ */
+export const safeFetchWithFallback = async <T>(url: string, fallbackData: T): Promise<T> => {
+  try {
+    const response = await fetch(url);
+    const contentType = response.headers.get("content-type") || "";
+
+    if (!response.ok || !contentType.includes("application/json")) {
+      console.warn("[⚠️ safeFetch] Response was not JSON or not OK. Using fallback.");
+      return fallbackData;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("[❌ safeFetchWithFallback] Error fetching", url, error);
+    return fallbackData;
+  }
+};
+
+/**
  * Fetches JSON data with retry logic
  * @param url - The URL to fetch from
  * @param options - Fetch options
@@ -59,5 +82,6 @@ export async function fetchWithRetry<T>(
 
 export default {
   safeFetch,
+  safeFetchWithFallback,
   fetchWithRetry
 };
