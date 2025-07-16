@@ -1,7 +1,8 @@
 // src/services/boltService.ts
-import { safeFetchWithFallback } from '../utils/fetchUtils';
+import { safeFetchWithFallback, fetchWithRetry } from '../utils/fetchUtils';
 import dutchProducts from '../data/dutchProducts';
 import { BoltProduct } from '../types/BoltProduct';
+import { generateMockBoltProducts } from '../utils/boltProductsUtils';
 
 /**
  * Maps API endpoints to JSON filenames
@@ -12,26 +13,7 @@ const mapEndpointToFilename = (endpoint: string): string => {
 };
 
 // Fallback: products getransformeerd naar BoltProduct structuur
-const fallbackProducts = dutchProducts.map((p, i) => ({
-  id: `bolt-${p.id}`,
-  title: p.name,
-  brand: p.brand || "FitFi Brand",
-  type: p.type || p.category || "top",
-  gender: i % 2 === 0 ? "female" : "male",
-  color: p.styleTags?.includes("black") ? "black" : "beige",
-  dominantColorHex: p.styleTags?.includes("black") ? "#000000" : "#F5F5DC",
-  styleTags: p.styleTags || ["casual"],
-  season: "all_season",
-  archetypeMatch: {
-    casual_chic: 0.8,
-    klassiek: 0.6
-  },
-  material: "Mixed materials",
-  price: p.price || 49.99,
-  imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-  affiliateUrl: `https://example.com/product/${p.id}`,
-  source: "mock"
-}));
+const fallbackProducts = generateMockBoltProducts();
 
 // Fallback: outfits met mock producten
 const fallbackOutfits = [
@@ -39,6 +21,8 @@ const fallbackOutfits = [
     id: "mock-outfit-1",
     title: "Casual Chic Look",
     archetype: "casual_chic",
+    secondaryArchetype: "urban",
+    mixFactor: 0.3,
     occasion: "Casual",
     products: fallbackProducts.slice(0, 3),
     imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
@@ -58,6 +42,8 @@ const fallbackOutfits = [
     id: "mock-outfit-2",
     title: "Klassieke Werkoutfit",
     archetype: "klassiek",
+    secondaryArchetype: "casual_chic",
+    mixFactor: 0.2,
     occasion: "Werk",
     products: fallbackProducts.slice(3, 6),
     imageUrl: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
@@ -77,6 +63,8 @@ const fallbackOutfits = [
     id: "mock-outfit-3",
     title: "Urban Streetstyle Look",
     archetype: "streetstyle",
+    secondaryArchetype: "urban",
+    mixFactor: 0.4,
     occasion: "Uitgaan",
     products: fallbackProducts.slice(6, 9),
     imageUrl: "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
@@ -96,8 +84,14 @@ const fallbackOutfits = [
 
 // Complete fallback dataset per endpoint
 const mockData: Record<string, any> = {
-  products: fallbackProducts,
-  outfits: fallbackOutfits,
+  products: fallbackProducts.slice(0, 20), // Limit to 20 products for performance
+  outfits: fallbackOutfits.map(outfit => ({
+    ...outfit,
+    products: outfit.products.map(p => ({
+      ...p,
+      imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2"
+    }))
+  })),
   challenges: [
     {
       id: "challenge-1",
@@ -148,14 +142,19 @@ const mockData: Record<string, any> = {
 /**
  * Fetch data from local JSON files in /public/data/bolt/
  */
-export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
+export const fetchFromBolt = async <T>(endpoint: string, retries: number = 1): Promise<T | null> => {
   const filename = mapEndpointToFilename(endpoint);
   const url = `/data/bolt/${filename}.json`;
   const fallback = mockData[filename] ?? null;
 
-  console.log("[🧠 boltService] Fetching from local file:", url);
+  console.log(`[🧠 boltService] Fetching from local file: ${url} (with ${retries} retries)`);
 
-  return await safeFetchWithFallback<T>(url, fallback as T);
+  try {
+    return await safeFetchWithFallback<T>(url, fallback as T, retries);
+  } catch (error) {
+    console.warn(`[🧠 boltService] Error fetching from ${url}, using fallback:`, error);
+    return fallback as T;
+  }
 };
 
 /**
@@ -163,10 +162,15 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
  */
 export const fetchChallenges = async () => {
   try {
-    return await fetchFromBolt("challenges");
+    const challenges = await fetchFromBolt("challenges");
+    if (!challenges || (Array.isArray(challenges) && challenges.length === 0)) {
+      console.log("[🧠 boltService] No challenges found, using fallback");
+      return mockData.challenges;
+    }
+    return challenges;
   } catch (error) {
     console.error("[❌ fetchChallenges] Error:", error);
-    return null;
+    return mockData.challenges;
   }
 };
 
@@ -183,10 +187,15 @@ export const completeChallenge = async (userId: string, challengeId: string) => 
 
 export const fetchGamification = async () => {
   try {
-    return await fetchFromBolt("gamification");
+    const gamification = await fetchFromBolt("gamification");
+    if (!gamification) {
+      console.log("[🧠 boltService] No gamification data found, using fallback");
+      return mockData.gamification;
+    }
+    return gamification;
   } catch (error) {
     console.error("[❌ fetchGamification] Error:", error);
-    return null;
+    return mockData.gamification;
   }
 };
 
@@ -203,30 +212,77 @@ export const updateGamification = async (userId: string, updates: any) => {
 
 export const fetchUser = async () => {
   try {
-    return await fetchFromBolt("user");
+    const user = await fetchFromBolt("user");
+    if (!user) {
+      console.log("[🧠 boltService] No user data found, using fallback");
+      return mockData.user;
+    }
+    return user;
   } catch (error) {
     console.error("[❌ fetchUser] Error:", error);
-    return null;
+    return mockData.user;
   }
 };
 
 export const fetchProducts = async () => {
   try {
-    return await fetchFromBolt("products");
+    const products = await fetchFromBolt("products", 2);
+    if (!products || (Array.isArray(products) && products.length === 0)) {
+      console.log("[🧠 boltService] No products found, using fallback");
+      return mockData.products;
+    }
+    return products;
   } catch (error) {
     console.error("[❌ fetchProducts] Error:", error);
-    return null;
+    return mockData.products;
   }
 };
 
 export const fetchOutfits = async () => {
   try {
-    return await fetchFromBolt("outfits");
+    const outfits = await fetchFromBolt("outfits", 2);
+    if (!outfits || (Array.isArray(outfits) && outfits.length === 0)) {
+      console.log("[🧠 boltService] No outfits found, using fallback");
+      return mockData.outfits;
+    }
+    return outfits;
   } catch (error) {
     console.error("[❌ fetchOutfits] Error:", error);
-    return null;
+    return mockData.outfits;
   }
 };
+
+/**
+ * Check if all required environment variables are available
+ * @returns Whether all required environment variables are available
+ */
+export const checkEnvironmentVariables = (): boolean => {
+  const requiredVars = [
+    'VITE_SUPABASE_URL',
+    'VITE_SUPABASE_ANON_KEY',
+    'VITE_BOLT_API_URL',
+    'VITE_BOLT_API_KEY'
+  ];
+  
+  const missingVars = requiredVars.filter(
+    varName => !import.meta.env[varName] || import.meta.env[varName] === ''
+  );
+  
+  if (missingVars.length > 0) {
+    console.warn(`
+[⚠️ boltService] Ontbrekende omgevingsvariabelen:
+${missingVars.map(v => `- ${v}`).join('\n')}
+
+Fallback-data zal worden gebruikt voor ontbrekende functionaliteit.
+    `);
+    return false;
+  }
+  
+  return true;
+};
+
+// Check environment variables on module load
+checkEnvironmentVariables();
 
 export default {
   fetchFromBolt,
