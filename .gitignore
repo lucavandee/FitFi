@@ -1,5 +1,5 @@
-# Logs
-logs
+# ✅ Logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,117 +7,58 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Runtime data
-pids
+# ✅ Runtime data
+pids/
 *.pid
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage
+# ✅ Coverage
+coverage/
 *.lcov
+.nyc_output/
 
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
+# ✅ Dependencies
 node_modules/
 jspm_packages/
-
-# Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional stylelint cache
-.stylelintcache
-
-# Microbundle cache
 .rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
+.rts2_cache_*/
+.pnp.*
+.yarn/
+.yarnrc.yml
+.yarnrc
 .yarn-integrity
 
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+# ✅ Vite + TS Build artifacts
+dist/
+*.tsbuildinfo
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-out
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
+# ✅ Temporary caches & build tools
 .cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
-
-# vuepress build output
-.vuepress/dist
-
-# vuepress v2.x temp and cache directory
-.temp
-.cache
-
-# Docusaurus cache and generated files
-.docusaurus
-
-# Serverless directories
+.parcel-cache/
+.temp/
+.docusaurus/
 .serverless/
-
-# FuseBox cache
 .fusebox/
-
-# DynamoDB Local files
 .dynamodb/
+.next/
+.nuxt/
+out/
+.vite/
 
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# IDE
-.vscode/
-.idea/
+# ✅ REPL history & local state
+.node_repl_history
+*.tgz
 *.swp
 *.swo
 
-# OS
+# ✅ IDE config
+.vscode/
+.idea/
+*.iml
+
+# ✅ System files
 .DS_Store
 .DS_Store?
 ._*
@@ -126,8 +67,26 @@ dist
 ehthumbs.db
 Thumbs.db
 
-# Netlify
-.netlify/
+# ✅ dotenv environment variables
+.env
+.env.*
+!.env.example
 
-# Local Netlify folder
-.netlify
+# ✅ Netlify
+.netlify/
+.netlify/*
+
+# ✅ Local static/public (optioneel)
+public/
+
+# ✅ Bolt & scraping
+/data/bolt/
+scraper-output/
+scraper-cache/
+scraper-logs/
+
+# ✅ Optional project files
+*.bak
+*.orig
+*.rej
+*.log
