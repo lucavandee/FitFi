@@ -2,6 +2,11 @@
 // This file centralizes important app-wide settings
 
 /**
+ * Base URL for Bolt API or static JSON files
+ */
+export const BOLT_API_URL = "/data/bolt";
+
+/**
  * Toggle for Supabase integration
  * When set to false, the app will use local fallback data instead of making Supabase API calls
  */

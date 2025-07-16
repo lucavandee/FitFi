@@ -31,8 +31,8 @@ const OnboardingPage: React.FC = () => {
     // Mark welcome step as completed
     completeStep('welcome');
     
-    // Go to next step
-    goToNextStep();
+    // Go to gender-name step
+    setStep('gender_name');
   };
 
   return (
@@ -57,7 +57,7 @@ const OnboardingPage: React.FC = () => {
             </div>
 
             <div className="glass-card overflow-hidden">
-              <div className="p-6">
+              <div className="p-6 bg-white rounded-t-2xl">
                 <div className="space-y-6">
                   {/* Features */}
                   <div className="space-y-4">
@@ -108,7 +108,7 @@ const OnboardingPage: React.FC = () => {
                     onClick={handleStart}
                     icon={<ArrowRight size={20} />}
                     iconPosition="right"
-                    className="mt-6"
+                    className="mt-6 bg-[#bfae9f] hover:bg-[#a89a8c]"
                   >
                     Start de stijlquiz
                   </Button>
@@ -116,9 +116,9 @@ const OnboardingPage: React.FC = () => {
               </div>
 
               {/* Privacy indicator */}
-              <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-[#FF8600]" />
-                <span className="text-sm text-white/80">Je gegevens zijn veilig en versleuteld</span>
+              <div className="px-6 py-4 bg-gray-50 flex items-center justify-center space-x-2">
+                <ShieldCheck size={18} className="text-[#bfae9f]" />
+                <span className="text-sm text-gray-600">Je gegevens zijn veilig en versleuteld</span>
               </div>
             </div>
 
@@ -126,7 +126,7 @@ const OnboardingPage: React.FC = () => {
             <div className="mt-6 text-center">
               <button 
                 onClick={() => navigate('/results')}
-                className="text-sm text-white/70 hover:text-[#FF8600] transition-colors"
+                className="text-sm text-gray-500 hover:text-[#bfae9f] transition-colors"
               >
                 Sla over en bekijk direct aanbevelingen
               </button>

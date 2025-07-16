@@ -34,6 +34,7 @@ const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 // Lazy load onboarding steps
 const GenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
 const ArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
+const ResultsStep = React.lazy(() => import('./pages/onboarding/ResultsStep'));
 const SeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
 const OccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
 const PreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
@@ -80,6 +81,11 @@ function App() {
                       <Route path="/onboarding/preferences" element={
                         <Suspense fallback={<LoadingFallback message="Laden..." />}>
                           <PreferencesStep />
+                        </Suspense>
+                      } />
+                      <Route path="/onboarding/results" element={
+                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                          <ResultsStep />
                         </Suspense>
                       } />
                       

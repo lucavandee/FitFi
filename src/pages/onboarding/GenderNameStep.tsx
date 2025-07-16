@@ -101,19 +101,19 @@ const GenderNameStep: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
+    <div className="min-h-screen bg-[#FAF8F6]">
       <div className="container-slim py-16">
         <div className="max-w-md mx-auto">
           {/* Progress indicator */}
           <div className="mb-10">
-            <div className="flex justify-between text-sm text-white/70 mb-2">
-              <span>Stap 1 van 4</span>
-              <span>25%</span>
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>Stap 1 van 3</span>
+              <span>33%</span>
             </div>
-            <div className="progress-bar">
+            <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="progress-bar-fill"
-                style={{ width: '25%' }}
+                className="h-full bg-[#bfae9f] rounded-full transition-all duration-300"
+                style={{ width: '33%' }}
               ></div>
             </div>
           </div>
@@ -121,23 +121,23 @@ const GenderNameStep: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 font-display">
                 Wie ben je?
               </h1>
-              <p className="text-white/80">
+              <p className="text-gray-600">
                 We gebruiken deze informatie om je stijladvies te personaliseren
               </p>
             </div>
 
-            <div className="glass-card overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
               <form onSubmit={handleSubmit} className="p-6">
                 <div className="space-y-6">
                   {/* Gender Selection */}
                   <div>
-                    <label className="block text-white font-medium mb-3">
+                    <label className="block text-gray-700 font-medium mb-3">
                       Hoe identificeer je jezelf? <span className="text-red-400">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
@@ -147,13 +147,13 @@ const GenderNameStep: React.FC = () => {
                         className={`
                           p-4 rounded-xl border transition-all
                           ${formData.gender === 'man'
-                            ? 'border-[#FF8600] bg-white/10'
-                            : 'border-white/30 hover:border-white/50 hover:bg-white/5'}
+                            ? 'border-[#bfae9f] bg-[#bfae9f]/5'
+                            : 'border-gray-200 hover:border-[#bfae9f]/50 hover:bg-[#bfae9f]/5'}
                         `}
                       >
                         <div className="text-center">
                           <div className="text-3xl mb-2">👨</div>
-                          <div className="font-medium text-white">Man</div>
+                          <div className="font-medium text-gray-900">Man</div>
                         </div>
                       </button>
                       
@@ -163,29 +163,29 @@ const GenderNameStep: React.FC = () => {
                         className={`
                           p-4 rounded-xl border transition-all
                           ${formData.gender === 'vrouw'
-                            ? 'border-[#FF8600] bg-white/10'
-                            : 'border-white/30 hover:border-white/50 hover:bg-white/5'}
+                            ? 'border-[#bfae9f] bg-[#bfae9f]/5'
+                            : 'border-gray-200 hover:border-[#bfae9f]/50 hover:bg-[#bfae9f]/5'}
                         `}
                       >
                         <div className="text-center">
                           <div className="text-3xl mb-2">👩</div>
-                          <div className="font-medium text-white">Vrouw</div>
+                          <div className="font-medium text-gray-900">Vrouw</div>
                         </div>
                       </button>
                     </div>
                     {errors.gender && (
-                      <p className="mt-2 text-sm text-red-400">{errors.gender}</p>
+                      <p className="mt-2 text-sm text-red-500">{errors.gender}</p>
                     )}
                   </div>
 
                   {/* Name Input */}
                   <div>
-                    <label htmlFor="name" className="block text-white font-medium mb-2">
-                      Hoe mogen we je noemen? <span className="text-white/60">(optioneel)</span>
+                    <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
+                      Hoe mogen we je noemen? <span className="text-gray-500">(optioneel)</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User size={18} className="text-white/50" />
+                        <User size={18} className="text-gray-400" />
                       </div>
                       <input
                         type="text"
@@ -193,7 +193,7 @@ const GenderNameStep: React.FC = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-3 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#FF8600] focus:border-transparent"
+                        className="w-full pl-10 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-transparent"
                         placeholder="Je voornaam"
                       />
                     </div>
@@ -207,7 +207,7 @@ const GenderNameStep: React.FC = () => {
                       onClick={goToPreviousStep}
                       icon={<ArrowLeft size={18} />}
                       iconPosition="left"
-                      className="flex-1 text-white border border-white/30 hover:bg-white/10"
+                      className="flex-1 text-gray-700 border border-gray-200 hover:bg-gray-50"
                     >
                       Terug
                     </Button>
@@ -216,7 +216,7 @@ const GenderNameStep: React.FC = () => {
                       variant="primary"
                       icon={<ArrowRight size={18} />}
                       iconPosition="right"
-                      className="flex-1"
+                      className="flex-1 bg-[#bfae9f] hover:bg-[#a89a8c]"
                     >
                       Volgende
                     </Button>
@@ -225,9 +225,9 @@ const GenderNameStep: React.FC = () => {
               </form>
 
               {/* Privacy indicator */}
-              <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-[#FF8600]" />
-                <span className="text-sm text-white/80">Je gegevens zijn veilig en versleuteld</span>
+              <div className="px-6 py-4 bg-gray-50 flex items-center justify-center space-x-2">
+                <ShieldCheck size={18} className="text-[#bfae9f]" />
+                <span className="text-sm text-gray-600">Je gegevens zijn veilig en versleuteld</span>
               </div>
             </div>
           </motion.div>

@@ -56,7 +56,7 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 // Define the step order
 const STEP_ORDER = [
   'welcome',
-  'gender-name',
+  'gender_name',
   'archetype',
   'season',
   'occasion',
@@ -152,23 +152,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       case 'welcome':
         navigate('/onboarding');
         break;
-      case 'gender-name':
+      case 'gender_name':
         navigate('/onboarding/gender-name');
         break;
       case 'archetype':
         navigate('/onboarding/archetype');
         break;
-      case 'season':
-        navigate('/onboarding/season');
-        break;
-      case 'occasion':
-        navigate('/onboarding/occasion');
-        break;
-      case 'preferences':
-        navigate('/onboarding/preferences');
-        break;
       case 'results':
-        navigate('/results');
+        navigate('/onboarding/results');
         break;
       default:
         navigate('/onboarding');
