@@ -28,6 +28,7 @@ export function normalizeProduct(product: any) {
  * Safely gets a product's season as a string
  * 
  * @param product - The product to get the season from
+ * @param formatter - Optional function to format each season string
  * @returns A comma-separated string of seasons
  */
 export function getProductSeasonText(product: any, formatter?: (season: string) => string): string {
