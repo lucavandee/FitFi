@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import Navbar from "../components/layout/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useGamification } from "../context/GamificationContext";
@@ -25,6 +24,16 @@ import {
   MessageSquare,
   ArrowRight
 } from "lucide-react";
+
+// Component for showing loading state when no results are found
+const ResultsLoader: React.FC<{ message?: string }> = ({ 
+  message = "We genereren je persoonlijke outfits. Dit kan even duren..." 
+}) => (
+  <div className="flex flex-col items-center justify-center py-12">
+    <div className="w-16 h-16 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mb-6"></div>
+    <p className="text-white/80 text-center max-w-md">{message}</p>
+  </div>
+);
 
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
