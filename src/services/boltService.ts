@@ -1,136 +1,102 @@
 // src/services/boltService.ts
-import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
+import { safeFetchWithFallback } from '../utils/fetchUtils';
 import dutchProducts from '../data/dutchProducts';
 
 /**
  * Maps API endpoints to JSON filenames
  */
 const mapEndpointToFilename = (endpoint: string): string => {
-  // Remove leading slash and convert to filename
   const cleanEndpoint = endpoint.replace(/^\//, '');
-  
-  // Handle nested endpoints
-  if (cleanEndpoint.includes('/')) {
-    // For endpoints like "challenges/complete", just use the first part
-    return cleanEndpoint.split('/')[0];
-  }
-
-  return cleanEndpoint;
+  return cleanEndpoint.includes('/') ? cleanEndpoint.split('/')[0] : cleanEndpoint;
 };
 
-// Create fallback outfits using dutchProducts
+// Fallback: products getransformeerd naar BoltProduct structuur
+const fallbackProducts = dutchProducts.map((p, i) => ({
+  id: `bolt-${p.id}`,
+  title: p.name,
+  brand: p.brand || "FitFi Brand",
+  type: p.type || p.category || "top",
+  gender: i % 2 === 0 ? "female" : "male",
+  color: p.styleTags?.includes("black") ? "black" : "beige",
+  dominantColorHex: p.styleTags?.includes("black") ? "#000000" : "#F5F5DC",
+  styleTags: p.styleTags || ["casual"],
+  season: "all_season",
+  archetypeMatch: {
+    casual_chic: 0.8,
+    klassiek: 0.6
+  },
+  material: "Mixed materials",
+  price: p.price || 49.99,
+  imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+  affiliateUrl: `https://example.com/product/${p.id}`,
+  source: "mock"
+}));
+
+// Fallback: outfits met mock producten
 const fallbackOutfits = [
   {
     id: "mock-outfit-1",
     title: "Casual Chic Look",
-    description: "Een moeiteloze combinatie van comfort en stijl, perfect voor dagelijks gebruik.",
     archetype: "casual_chic",
     occasion: "Casual",
-    products: dutchProducts.slice(0, 3).map(p => ({
-      id: p.id,
-      name: p.name,
-      brand: p.brand || "FitFi",
-      price: p.price || 49.99,
-      imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-      type: p.type || "top",
-      category: p.category || "top",
-      styleTags: p.styleTags || ["casual"]
-    })),
+    products: fallbackProducts.slice(0, 3),
     imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
     tags: ["casual", "comfortable", "everyday", "minimal"],
     matchPercentage: 92,
-    explanation: "Deze outfit combineert comfort met stijl, perfect voor jouw casual chic voorkeuren. De neutrale kleuren en clean lijnen zorgen voor een tijdloze look die je gemakkelijk kunt dragen voor verschillende gelegenheden.",
+    explanation: "Comfortabel en stijlvol, met neutrale kleuren en cleane lijnen.",
     season: "autumn",
     structure: ["top", "bottom", "footwear"],
     weather: "mild",
     categoryRatio: {
-      top: 33,
-      bottom: 33,
-      footwear: 33,
-      accessory: 0,
-      outerwear: 0,
-      dress: 0,
-      jumpsuit: 0,
-      other: 0
+      top: 33, bottom: 33, footwear: 33,
+      accessory: 0, outerwear: 0, dress: 0, jumpsuit: 0, other: 0
     },
     completeness: 100
   },
   {
     id: "mock-outfit-2",
     title: "Klassieke Werkoutfit",
-    description: "Een tijdloze combinatie voor een professionele uitstraling op kantoor.",
     archetype: "klassiek",
     occasion: "Werk",
-    products: dutchProducts.slice(3, 7).map(p => ({
-      id: p.id,
-      name: p.name,
-      brand: p.brand || "FitFi",
-      price: p.price || 79.99,
-      imageUrl: p.imageUrl || "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-      type: p.type || "blouse",
-      category: p.category || "top",
-      styleTags: p.styleTags || ["formal"]
-    })),
+    products: fallbackProducts.slice(3, 6),
     imageUrl: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
     tags: ["formal", "business", "professional", "elegant"],
     matchPercentage: 95,
-    explanation: "Deze outfit straalt professionaliteit en elegantie uit, perfect voor jouw klassieke stijlvoorkeuren. De tijdloze kleuren en hoogwaardige materialen zorgen voor een verfijnde look die respect afdwingt op kantoor.",
+    explanation: "Elegant en professioneel met tijdloze kleuren.",
     season: "autumn",
     structure: ["top", "bottom", "footwear", "accessory"],
     weather: "mild",
     categoryRatio: {
-      top: 25,
-      bottom: 25,
-      footwear: 25,
-      accessory: 25,
-      outerwear: 0,
-      dress: 0,
-      jumpsuit: 0,
-      other: 0
+      top: 25, bottom: 25, footwear: 25, accessory: 25,
+      outerwear: 0, dress: 0, jumpsuit: 0, other: 0
     },
     completeness: 100
   },
   {
     id: "mock-outfit-3",
     title: "Urban Streetstyle Look",
-    description: "Een stoere, trendy outfit voor een avond uit met vrienden.",
     archetype: "streetstyle",
     occasion: "Uitgaan",
-    products: dutchProducts.slice(7, 10).map(p => ({
-      id: p.id,
-      name: p.name,
-      brand: p.brand || "FitFi",
-      price: p.price || 69.99,
-      imageUrl: p.imageUrl || "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-      type: p.type || "shirt",
-      category: p.category || "top",
-      styleTags: p.styleTags || ["street"]
-    })),
+    products: fallbackProducts.slice(6, 9),
     imageUrl: "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
     tags: ["street", "urban", "trendy", "casual"],
     matchPercentage: 88,
-    explanation: "Deze outfit is perfect voor jouw streetstyle voorkeuren. De combinatie van statement items en comfortabele pasvorm zorgt voor een authentieke urban look die opvalt tijdens een avond uit.",
+    explanation: "Statement items en comfort voor een avond uit.",
     season: "autumn",
     structure: ["top", "bottom", "footwear"],
     weather: "mild",
     categoryRatio: {
-      top: 33,
-      bottom: 33,
-      footwear: 33,
-      accessory: 0,
-      outerwear: 0,
-      dress: 0,
-      jumpsuit: 0,
-      other: 0
+      top: 33, bottom: 33, footwear: 33,
+      accessory: 0, outerwear: 0, dress: 0, jumpsuit: 0, other: 0
     },
     completeness: 100
   }
 ];
 
-/**
- * Mock data for fallback when JSON files are not available
- */
+// Complete fallback dataset per endpoint
 const mockData: Record<string, any> = {
+  products: fallbackProducts,
+  outfits: fallbackOutfits,
   challenges: [
     {
       id: "challenge-1",
@@ -147,27 +113,6 @@ const mockData: Record<string, any> = {
       completed: false
     }
   ],
-  products: dutchProducts.map(p => ({
-    id: `bolt-${p.id}`,
-    title: p.name,
-    brand: p.brand || "FitFi Brand",
-    type: p.type || p.category || "top",
-    gender: p.id.includes("female") ? "female" : "male",
-    color: p.styleTags?.includes("black") ? "black" : "beige",
-    dominantColorHex: p.styleTags?.includes("black") ? "#000000" : "#F5F5DC",
-    styleTags: p.styleTags || ["casual"],
-    season: "all_season",
-    archetypeMatch: {
-      "casual_chic": 0.8,
-      "klassiek": 0.6
-    },
-    material: "Mixed materials",
-    price: p.price || 49.99,
-    imageUrl: p.imageUrl || "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-    affiliateUrl: `https://example.com/product/${p.id}`,
-    source: "zalando"
-  })),
-  outfits: fallbackOutfits,
   gamification: {
     id: "mock-gamification",
     user_id: "mock-user",
@@ -213,25 +158,19 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
 };
 
 /**
- * Haalt alle gamification challenges op
+ * Data service functies
  */
 export const fetchChallenges = async () => {
   try {
-    const data = await fetchFromBolt("challenges");
-    return data;
+    return await fetchFromBolt("challenges");
   } catch (error) {
     console.error("[❌ fetchChallenges] Error:", error);
     return null;
   }
 };
 
-/**
- * Markeert een challenge als voltooid (mock implementation)
- */
 export const completeChallenge = async (userId: string, challengeId: string) => {
   console.log(`[✅ MOCK] Challenge completed: ${challengeId} for user ${userId}`);
-  
-  // Simulate successful completion
   return {
     success: true,
     message: `Challenge ${challengeId} completed successfully`,
@@ -241,26 +180,17 @@ export const completeChallenge = async (userId: string, challengeId: string) => 
   };
 };
 
-/**
- * Haalt gamification data op
- */
-export const fetchGamification = async (userId?: string) => {
+export const fetchGamification = async () => {
   try {
-    const data = await fetchFromBolt("gamification");
-    return data;
+    return await fetchFromBolt("gamification");
   } catch (error) {
     console.error("[❌ fetchGamification] Error:", error);
     return null;
   }
 };
 
-/**
- * Update gamification data (mock implementation)
- */
 export const updateGamification = async (userId: string, updates: any) => {
   console.log(`[✅ MOCK] Gamification updated for user ${userId}`, updates);
-  
-  // Simulate successful update
   return {
     success: true,
     message: "Gamification data updated successfully",
@@ -270,39 +200,27 @@ export const updateGamification = async (userId: string, updates: any) => {
   };
 };
 
-/**
- * Haalt user data op
- */
-export const fetchUser = async (userId?: string) => {
+export const fetchUser = async () => {
   try {
-    const data = await fetchFromBolt("user");
-    return data;
+    return await fetchFromBolt("user");
   } catch (error) {
     console.error("[❌ fetchUser] Error:", error);
     return null;
   }
 };
 
-/**
- * Haalt products op
- */
 export const fetchProducts = async () => {
   try {
-    const data = await fetchFromBolt("products");
-    return data;
+    return await fetchFromBolt("products");
   } catch (error) {
     console.error("[❌ fetchProducts] Error:", error);
     return null;
   }
 };
 
-/**
- * Haalt outfits op
- */
 export const fetchOutfits = async () => {
   try {
-    const data = await fetchFromBolt("outfits");
-    return data;
+    return await fetchFromBolt("outfits");
   } catch (error) {
     console.error("[❌ fetchOutfits] Error:", error);
     return null;
@@ -317,5 +235,5 @@ export default {
   updateGamification,
   fetchUser,
   fetchProducts,
-  fetchOutfits,
+  fetchOutfits
 };
