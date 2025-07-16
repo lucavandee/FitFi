@@ -12,6 +12,7 @@ import { BoltProduct } from '../types/BoltProduct';
 import outfitGenerator from './outfitGenerator';
 import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON } from '../utils/boltProductsUtils';
+import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
 
 // Data source type
 export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
