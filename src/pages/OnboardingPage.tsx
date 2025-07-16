@@ -10,7 +10,6 @@ const OnboardingPage: React.FC = () => {
   const { updateData, completeStep, goToNextStep } = useOnboarding();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const hasTrackedRef = useRef(false);
-  const hasTrackedRef = useRef(false);
   
   // Track quiz start and update onboarding data when component mounts
   useEffect(() => {
