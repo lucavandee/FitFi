@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useOnboarding } from '../context/OnboardingContext';
 
 const OnboardingPage: React.FC = () => {
@@ -34,7 +34,7 @@ const OnboardingPage: React.FC = () => {
    * 2. Marks welcome step as completed
    * 3. Navigates to the next step (gender_name)
    */
-  const handleStart = React.useCallback(() => {
+  const handleStart = () => {
     if (isButtonClicked) return; // Prevent multiple clicks
     
     // Show button feedback
@@ -51,7 +51,7 @@ const OnboardingPage: React.FC = () => {
       // Scroll to top of next page
       window.scrollTo(0, 0);
     }, 0);
-  }, [completeStep, goToNextStep, isButtonClicked]);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
@@ -120,26 +120,31 @@ const OnboardingPage: React.FC = () => {
                   </div>
 
                   <AnimatePresence>
-                    <motion.div
-                      initial={{ opacity: 1 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ duration: 0.1 }}
-                    >
-                      <Button
-                        variant="primary"
-                        size="lg"
-                        fullWidth
-                        onClick={handleStart}
-                        icon={<ArrowRight size={20} />}
-                        iconPosition="right"
-                        disabled={isButtonClicked}
-                        className={isButtonClicked ? "opacity-80" : ""}
-                      >
-                        {isButtonClicked ? "Even geduld..." : "Start de stijlquiz"}
-                      </Button>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
+                <motion.div
+                  initial={{ opacity: 1 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.1 }}
+                >
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    onClick={handleStart}
+                    icon={isButtonClicked ? undefined : <ArrowRight size={20} />}
+                    iconPosition="right"
+                    disabled={isButtonClicked}
+                    className={isButtonClicked ? "opacity-80" : ""}
+                  >
+                    {isButtonClicked ? (
+                      <span className="flex items-center justify-center">
+                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                        Even geduld...
+                      </span>
+                    ) : (
+                      "Start de stijlquiz"
+                    )}
+                  </Button>
+                </motion.div>
               </div>
 
               {/* Privacy indicator */}
@@ -157,7 +162,9 @@ const OnboardingPage: React.FC = () => {
                   if (isButtonClicked) return;
                   navigate('/results');
                 }}
-                className="text-sm text-white/60 hover:text-[#FF8600] transition-colors"
+                className={`text-sm text-white/60 hover:text-[#FF8600] transition-colors ${
+                  isButtonClicked ? 'opacity-50 pointer-events-none' : ''
+                }`}
               >
                 Sla over en bekijk direct aanbevelingen
               </button>

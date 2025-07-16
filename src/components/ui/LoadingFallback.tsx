@@ -5,6 +5,7 @@ interface LoadingFallbackProps {
   size?: 'sm' | 'md' | 'lg';
   fullScreen?: boolean;
   className?: string;
+  className?: string;
 }
 
 /**
@@ -13,7 +14,8 @@ interface LoadingFallbackProps {
 const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   message = 'Laden...',
   size = 'md',
-  fullScreen = false
+  fullScreen = false,
+  className = ''
   className = ''
 }) => {
   const spinnerSizes = {

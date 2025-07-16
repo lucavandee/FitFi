@@ -9,7 +9,7 @@ import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
-import { getOutfits, getRecommendedProducts, getDataSource, getFetchDiagnostics, clearCache, getBoltProducts } from "../services/DataRouter";
+import { getOutfits, getRecommendedProducts, getDataSource, getBoltProducts } from "../services/DataRouter";
 import DevDataPanel from "../components/DevDataPanel";
 import { BoltProduct } from "../types/BoltProduct";
 import { USE_SUPABASE } from "../config/app-config";
@@ -18,9 +18,10 @@ import ProductPreviewList from "../components/products/ProductPreviewList";
 import OutfitCard from "../components/ui/OutfitCard";
 import ResultsLoader from "../components/ui/ResultsLoader";
 import { useGamification } from "../context/GamificationContext";
-import { useOnboarding } from "../context/OnboardingContext";
-import { getSafeUser, getSafeGender } from "../utils/userUtils";
-import { defaultUser } from "../constants/defaultUser"; 
+import { useOnboarding } from "../context/OnboardingContext"; 
+import { getSafeUser } from "../utils/userUtils";
+import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
@@ -48,7 +49,7 @@ const EnhancedResultsPage: React.FC = () => {
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
 
-  // Combine context, localStorage or fallback as source for user info
+  // Combine context, localStorage as source for user info
   const user = useMemo(() => {
     const localStorageUser = localStorage.getItem("fitfi-user") 
       ? JSON.parse(localStorage.getItem("fitfi-user") || "null") 
@@ -79,19 +80,6 @@ const EnhancedResultsPage: React.FC = () => {
     };
   }, [user, onboardingData]);
 
-  // Load BoltProducts from JSON file
-  const loadBoltProducts = useCallback(async () => {
-    try {
-      const products = await getBoltProducts();
-      setBoltProducts(products);
-      return products;
-    } catch (error) {
-      console.error('Error loading BoltProducts:', error);
-      setBoltProducts([]);
-      return [];
-    }
-  }, []);
-
   // Load recommendations using the DataRouter
   const loadRecommendations = useCallback(async () => {
     setLoading(true);
@@ -107,7 +95,7 @@ const EnhancedResultsPage: React.FC = () => {
       
       if (!USE_SUPABASE) {
         // Load BoltProducts from JSON file when Supabase is disabled
-        const loadedBoltProducts = await loadBoltProducts();
+        const loadedBoltProducts = await getBoltProducts();
         if (loadedBoltProducts && loadedBoltProducts.length > 0) {
           setBoltProducts(loadedBoltProducts);
           console.log(`Loaded ${loadedBoltProducts.length} BoltProducts from JSON file`);
@@ -177,7 +165,7 @@ const EnhancedResultsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [enhancedUser, loadBoltProducts, onboardingData, viewRecommendation]);
+  }, [enhancedUser, onboardingData, viewRecommendation]);
 
   // Generate recommendations on component mount
   useEffect(() => {
@@ -498,22 +486,26 @@ const EnhancedResultsPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
         {productsLoading ? (
           // Skeleton loading state for products
-          Array(9).fill(0).map((_, index) => (
-            <Card 
-              key={`skeleton-product-${index}`} 
-              className="overflow-hidden animate-pulse"
-            >
-              <div className="h-60 bg-white/5"></div>
-              <CardContent className="p-4 space-y-3">
-                <div className="h-5 bg-white/5 rounded w-3/4"></div>
-                <div className="h-4 bg-white/5 rounded w-full"></div>
-                <div className="flex justify-between items-center pt-2">
-                  <div className="h-5 bg-white/5 rounded w-1/4"></div>
-                  <div className="h-8 bg-white/5 rounded w-1/4"></div>
+          <React.Fragment>
+            {Array(9).fill(0).map((_, index) => (
+              <Card 
+                key={`skeleton-product-${index}`} 
+                className="overflow-hidden"
+              >
+                <div className="h-60 bg-[#1B263B] relative">
+                  <SkeletonPlaceholder height="h-full" width="w-full" rounded="rounded-none" />
                 </div>
-              </CardContent>
-            </Card>
-          ))
+                <CardContent className="p-4 space-y-3">
+                  <SkeletonPlaceholder height="h-5" width="w-3/4" />
+                  <SkeletonPlaceholder height="h-4" width="w-full" />
+                  <div className="flex justify-between items-center pt-2">
+                    <SkeletonPlaceholder height="h-5" width="w-1/4" />
+                    <SkeletonPlaceholder height="h-8" width="w-1/4" rounded="rounded-lg" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </React.Fragment>
         ) : matchedProducts.length > 0 ? (
           matchedProducts.map((product, index) => (
             <Card 
@@ -528,10 +520,7 @@ const EnhancedResultsPage: React.FC = () => {
                   className="w-full h-full object-cover"
                   componentName="ProductCard"
                 />
-                {product.season && product.season.length > 0 && (
-                  <div className="absolute top-2 right-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
-                    {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
-                  </div>
+                  {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
                 )}
               </div>
               <CardContent className="p-4">
@@ -559,9 +548,9 @@ const EnhancedResultsPage: React.FC = () => {
           <div className="col-span-3 text-center py-8">
             <p className="text-white/70">Geen BoltProducts gevonden. Zorg ervoor dat het boltProducts.json bestand correct is ingesteld.</p>
             <Button 
-              variant="primary" 
+              variant="primary"
               className="mt-4"
-              onClick={() => loadBoltProducts()}
+              onClick={() => getBoltProducts().then(products => setBoltProducts(products))}
             >
               Probeer opnieuw
             </Button>
@@ -584,7 +573,7 @@ const EnhancedResultsPage: React.FC = () => {
       <div className="mt-8 p-4 bg-white/5 rounded-lg">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
-          <div>
+          <div className="flex-1">
             <h3 className="font-medium text-white mb-1">
               Databron: {dataSource === 'supabase' ? '📦 Supabase' : dataSource === 'bolt' ? '⚡ Bolt API' : dataSource === 'zalando' ? '🛍️ Zalando' : '🧪 Lokaal'}
             </h3>
@@ -605,7 +594,7 @@ const EnhancedResultsPage: React.FC = () => {
       <div className="mt-4 p-4 bg-white/5 rounded-lg">
         <div className="flex items-start">
           <Info size={20} className="text-orange-500 mr-3 mt-1 flex-shrink-0" />
-          <div>
+          <div className="flex-1">
             <h3 className="font-medium text-white mb-1">Over outfit regeneratie</h3>
             <p className="text-white/70 text-sm">
               Je kunt per sessie maximaal {MAX_REGENERATIONS} keer een nieuwe look genereren. 
