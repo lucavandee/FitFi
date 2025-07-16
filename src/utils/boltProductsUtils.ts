@@ -1,6 +1,7 @@
 import { BoltProduct } from '../types/BoltProduct';
 import { isValidImageUrl } from './imageUtils';
 import dutchProducts from '../data/dutchProducts';
+import { safeFetchWithFallback } from './fetchUtils';
 
 /**
  * Utility functions for working with BoltProducts
@@ -14,13 +15,7 @@ export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
   try {
     // Try to load from public/data/bolt/products.json first
     try {
-      const response = await fetch('/data/bolt/products.json');
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load from public path: ${response.status} ${response.statusText}`);
-      }
-      
-      const products = await response.json();
+      const products = await safeFetchWithFallback<BoltProduct[]>('/data/bolt/products.json', []);
       
       if (!Array.isArray(products)) {
         throw new Error('Invalid BoltProducts data: not an array');
@@ -33,13 +28,7 @@ export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
       
       // Try to load from src/data/boltProducts.json as fallback
       try {
-        const response = await fetch('/src/data/boltProducts.json');
-        
-        if (!response.ok) {
-          throw new Error(`Failed to load from src path: ${response.status} ${response.statusText}`);
-        }
-        
-        const products = await response.json();
+        const products = await safeFetchWithFallback<BoltProduct[]>('/src/data/boltProducts.json', []);
         
         if (!Array.isArray(products)) {
           throw new Error('Invalid BoltProducts data: not an array');
