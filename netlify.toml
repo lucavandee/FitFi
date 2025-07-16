@@ -1,5 +1,4 @@
 [build]
-  # Bouw in de repo-root
   base    = "."
   command = "npm run build"
   publish = "dist"
@@ -17,3 +16,9 @@
   from   = "/*"
   to     = "/index.html"
   status = 200
+
+[build.environment]
+  VITE_SUPABASE_URL = "https://wojexzgjyhijuxzperhq.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NTM2NDAsImV4cCI6MjA2NjQyOTY0MH0.nLozOsn1drQPvRuSWRl_gLsh0_EvgtjidiUxpdUnhg0"
+  VITE_BOLT_API_URL = "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--3001--96435430.local-credentialless.webcontainer-api.io/api"
+  VITE_BOLT_API_KEY = "fitfi_9xY72jKfA2vTqEoN83mLpZcW"
