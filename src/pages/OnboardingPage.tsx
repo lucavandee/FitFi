@@ -30,7 +30,7 @@ const OnboardingPage: React.FC = () => {
   const handleStart = () => {
     // Mark welcome step as completed
     completeStep('welcome');
-
+    goToNextStep();
     // Go to next step
     goToNextStep();
   };
