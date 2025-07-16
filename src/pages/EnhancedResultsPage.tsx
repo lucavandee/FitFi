@@ -6,7 +6,6 @@ import { Loader } from "../components/Loader";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
-import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { ShoppingBag, Star, Calendar, Tag, Users, RefreshCw, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
@@ -21,7 +20,6 @@ import ResultsLoader from "../components/ui/ResultsLoader";
 import { useGamification } from "../context/GamificationContext";
 import { useOnboarding } from "../context/OnboardingContext"; 
 import { getSafeUser } from "../utils/userUtils";
-import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
@@ -521,7 +519,9 @@ const EnhancedResultsPage: React.FC = () => {
                   className="w-full h-full object-cover"
                   componentName="ProductCard"
                 />
-                {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
+                <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs">
+                  {getProductSeasonText(product, s => getDutchSeasonName(s as any))}
+                </div>
               </div>
               <CardContent className="p-4">
                 <h3 className="font-bold mb-1">{product.name}</h3>
