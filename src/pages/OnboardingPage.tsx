@@ -9,7 +9,6 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep } = useOnboarding();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
   
   // Track quiz start and update onboarding data when component mounts
   useEffect(() => {
@@ -35,12 +34,6 @@ const OnboardingPage: React.FC = () => {
    * 2. Marks welcome step as completed
    * 3. Navigates to the next step (gender_name)
    */
-  /**
-   * Handles the start button click immediately without blocking the UI:
-   * 1. Shows button feedback animation
-   * 2. Marks welcome step as completed
-   * 3. Navigates to the next step (gender_name)
-   */
   const handleStart = () => {
     if (isButtonClicked) return; // Prevent multiple clicks
     
@@ -59,18 +52,6 @@ const OnboardingPage: React.FC = () => {
       window.scrollTo(0, 0);
     }, 0);
   };
-    // Show button feedback
-    setIsButtonClicked(true);
-    
-    // Use setTimeout with 0ms to defer execution to next tick
-    // This ensures UI updates before navigation
-    setTimeout(() => {
-      // Mark welcome step as completed
-      completeStep('welcome');
-      // Go to next step (gender_name)
-      goToNextStep();
-      
-      // Scroll to top of next page
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
@@ -138,34 +119,31 @@ const OnboardingPage: React.FC = () => {
                     </div>
                   </div>
 
-                <motion.div
-                  initial={{ opacity: 1 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  onClick={handleStart}
-                  icon={isButtonClicked ? undefined : <ArrowRight size={20} />}
-                  iconPosition="right"
-                  disabled={isButtonClicked}
-                  className={isButtonClicked ? "opacity-80" : ""}
-                >
-                  {isButtonClicked ? (
-                    <span className="flex items-center justify-center">
-                      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                      Even geduld...
-                    </span>
-                  ) : (
-                    "Start de stijlquiz"
-                  )}
-                </Button>
+                  <motion.div
+                    initial={{ opacity: 1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.1 }}
+                  >
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      fullWidth
+                      onClick={handleStart}
+                      icon={isButtonClicked ? undefined : <ArrowRight size={20} />}
+                      iconPosition="right"
+                      disabled={isButtonClicked}
+                      className={isButtonClicked ? "opacity-80" : ""}
+                    >
+                      {isButtonClicked ? (
+                        <span className="flex items-center justify-center">
+                          <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                          Even geduld...
+                        </span>
+                      ) : (
+                        "Start de stijlquiz"
+                      )}
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
 
@@ -181,12 +159,6 @@ const OnboardingPage: React.FC = () => {
               <button 
                 onClick={() => {
                   // Prevent navigation if main button was clicked
-                  if (isButtonClicked) return;
-                  navigate('/results');
-                }}
-                className={`text-sm text-white/60 hover:text-[#FF8600] transition-colors ${
-                  isButtonClicked ? 'opacity-50 pointer-events-none' : ''
-                }`}
                   if (isButtonClicked) return;
                   navigate('/results');
                 }}
