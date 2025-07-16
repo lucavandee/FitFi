@@ -21,7 +21,6 @@ import { useOnboarding } from "../context/OnboardingContext";
 import { getSafeUser } from "../utils/userUtils";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import ResultsLoader from "../components/ui/ResultsLoader";
-import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
