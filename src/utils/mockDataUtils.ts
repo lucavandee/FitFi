@@ -168,10 +168,3 @@ export const generateMockProducts = (category?: string, count: number = 10) => {
   
   return allProducts.slice(0, count);
 };
-
-export default {
-  generateMockUser,
-  generateMockGamification,
-  generateMockOutfits,
-  generateMockProducts
-};

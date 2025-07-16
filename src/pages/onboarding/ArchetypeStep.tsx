@@ -36,65 +36,51 @@ const ArchetypeStep: React.FC = () => {
   
   const archetypeOptions: ArchetypeOption[] = [
     {
-      id: 'smart_casual',
-      name: 'Smart Casual',
-      description: 'Verfijnde casual stijl met een elegante twist',
+      id: 'modern_minimalist',
+      name: 'Modern Minimalist',
+      description: 'Strakke lijnen, neutrale kleuren en tijdloze stukken',
+      imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
+    },
+    {
+      id: 'casual_chic',
+      name: 'Casual Chic',
+      description: 'Moeiteloze elegantie met een relaxte twist',
       imageUrl: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
+    },
+    {
+      id: 'business_casual',
+      name: 'Business Casual',
+      description: 'Professioneel maar comfortabel voor kantoor',
+      imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
     },
     {
       id: 'streetstyle',
       name: 'Streetstyle',
-      description: 'Stoere, urban look geïnspireerd door straatcultuur',
+      description: 'Authentieke streetwear met attitude',
       imageUrl: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
     },
     {
-      id: 'minimal',
-      name: 'Minimal',
-      description: 'Strakke, tijdloze stijl met focus op eenvoud',
-      imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'business',
-      name: 'Business',
-      description: 'Professionele, formele stijl voor zakelijke omgevingen',
-      imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'boho',
-      name: 'Boho',
-      description: 'Vrije, artistieke stijl met natuurlijke elementen',
+      id: 'classic_elegant',
+      name: 'Klassiek Elegant',
+      description: 'Tijdloze elegantie en verfijnde details',
       imageUrl: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
     },
     {
-      id: 'techwear',
-      name: 'Techwear',
-      description: 'Functionele, futuristische stijl met technische details',
-      imageUrl: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'y2k',
-      name: 'Y2K',
-      description: 'Nostalgische stijl geïnspireerd door de vroege 2000s',
-      imageUrl: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'vintage',
-      name: 'Vintage',
-      description: 'Tijdloze stijl geïnspireerd door het verleden',
+      id: 'urban_sporty',
+      name: 'Urban Sporty',
+      description: 'Sportieve elementen met een stadse twist',
       imageUrl: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
     }
   ];
   
   // Map style IDs to archetypes
   const styleToArchetype: Record<string, string> = {
-    'smart_casual': 'casual_chic',
+    'modern_minimalist': 'urban',
+    'casual_chic': 'casual_chic',
+    'business_casual': 'klassiek',
     'streetstyle': 'streetstyle',
-    'minimal': 'urban',
-    'business': 'klassiek',
-    'boho': 'retro',
-    'techwear': 'urban',
-    'y2k': 'retro',
-    'vintage': 'retro'
+    'classic_elegant': 'klassiek',
+    'urban_sporty': 'urban'
   };
   
   const toggleArchetype = (id: string) => {
@@ -149,19 +135,19 @@ const ArchetypeStep: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
+    <div className="min-h-screen bg-[#FAF8F6]">
       <div className="container-slim py-16">
         <div className="max-w-4xl mx-auto">
           {/* Progress indicator */}
           <div className="mb-10">
-            <div className="flex justify-between text-sm text-white/70 mb-2">
-              <span>Stap 2 van 4</span>
-              <span>50%</span>
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>Stap 2 van 3</span>
+              <span>66%</span>
             </div>
-            <div className="progress-bar">
+            <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="progress-bar-fill"
-                style={{ width: '50%' }}
+                className="h-full bg-[#bfae9f] rounded-full transition-all duration-300"
+                style={{ width: '66%' }}
               ></div>
             </div>
           </div>
@@ -169,20 +155,20 @@ const ArchetypeStep: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 font-display">
                 Wat past het beste bij jouw stijl?
               </h1>
-              <p className="text-white/80">
+              <p className="text-gray-600">
                 Kies maximaal twee stijlen die jou het meest aanspreken
               </p>
             </div>
 
-            <div className="glass-card overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
               <form onSubmit={handleSubmit} className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   {archetypeOptions.map((option) => (
                     <div key={option.id} className="relative">
                       <button
@@ -191,12 +177,12 @@ const ArchetypeStep: React.FC = () => {
                         className={`
                           w-full p-4 rounded-xl border text-left transition-all
                           ${selectedArchetypes.includes(option.id)
-                            ? 'border-[#FF8600] bg-white/10'
-                            : 'border-white/30 hover:border-white/50 hover:bg-white/5'}
+                            ? 'border-[#bfae9f] bg-[#bfae9f]/5'
+                            : 'border-gray-200 hover:border-[#bfae9f]/50 hover:bg-[#bfae9f]/5'}
                         `}
                       >
                         <div className="flex flex-col md:flex-row items-center md:items-start space-y-3 md:space-y-0 md:space-x-4">
-                          <div className="w-full md:w-24 h-24 overflow-hidden rounded-lg">
+                          <div className="w-full md:w-24 h-24 overflow-hidden rounded-lg shadow-md">
                             <ImageWithFallback
                               src={option.imageUrl}
                               alt={option.name}
@@ -205,15 +191,15 @@ const ArchetypeStep: React.FC = () => {
                             />
                           </div>
                           <div className="flex-1 text-center md:text-left">
-                            <h3 className="font-medium text-white text-lg mb-1">{option.name}</h3>
-                            <p className="text-white/70 text-sm">{option.description}</p>
+                            <h3 className="font-medium text-gray-900 text-lg mb-1">{option.name}</h3>
+                            <p className="text-gray-600 text-sm">{option.description}</p>
                           </div>
                           <div className="absolute top-4 right-4">
                             <div className={`
                               w-6 h-6 rounded-full flex items-center justify-center
                               ${selectedArchetypes.includes(option.id)
-                                ? 'bg-[#FF8600] text-white'
-                                : 'bg-white/20 border border-white/30'}
+                                ? 'bg-[#bfae9f] text-white'
+                                : 'bg-gray-100 border border-gray-200'}
                             `}>
                               {selectedArchetypes.includes(option.id) && (
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -228,23 +214,21 @@ const ArchetypeStep: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowTooltip(showTooltip === option.id ? null : option.id)}
-                        className="absolute bottom-4 right-4 text-white/50 hover:text-white/80 transition-colors"
+                        className="absolute bottom-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
                         aria-label="Meer informatie"
                       >
                         <Info size={16} />
                       </button>
                       
                       {showTooltip === option.id && (
-                        <div className="absolute bottom-12 right-4 bg-[#0D1B2A] border border-white/20 rounded-lg p-3 shadow-lg z-10 w-64">
-                          <p className="text-white/90 text-sm">
-                            {option.id === 'smart_casual' && 'Smart Casual combineert comfort met elegantie. Denk aan een nette jeans met een overhemd of een casual blazer met sneakers.'}
-                            {option.id === 'streetstyle' && 'Streetstyle is geïnspireerd door urban cultuur met opvallende sneakers, oversized items en statement pieces.'}
-                            {option.id === 'minimal' && 'Minimal draait om eenvoud en tijdloosheid. Strakke lijnen, neutrale kleuren en hoogwaardige basics vormen de basis.'}
-                            {option.id === 'business' && 'Business stijl is formeel en professioneel. Pakken, blazers, nette broeken en jurken in klassieke kleuren domineren.'}
-                            {option.id === 'boho' && 'Boho is vrij en artistiek met natuurlijke materialen, losse silhouetten, prints en handgemaakte details.'}
-                            {option.id === 'techwear' && 'Techwear combineert functionaliteit met futuristische esthetiek. Technische materialen, zakken en aanpasbare details staan centraal.'}
-                            {option.id === 'y2k' && 'Y2K is een nostalgische stijl uit de vroege 2000s met felle kleuren, glitter, laagjes en opvallende accessoires.'}
-                            {option.id === 'vintage' && 'Vintage put inspiratie uit verschillende tijdperken met authentieke of retro-geïnspireerde items die tijdloos zijn.'}
+                        <div className="absolute bottom-12 right-4 bg-white border border-gray-200 rounded-lg p-3 shadow-lg z-10 w-64">
+                          <p className="text-gray-700 text-sm">
+                            {option.id === 'modern_minimalist' && 'Modern Minimalist combineert strakke lijnen met neutrale kleuren. Denk aan tijdloze stukken die veelzijdig te combineren zijn en een clean uitstraling hebben.'}
+                            {option.id === 'casual_chic' && 'Casual Chic balanceert comfort met elegantie. Denk aan premium basics met subtiele details die moeiteloos stijlvol zijn voor dagelijks gebruik.'}
+                            {option.id === 'business_casual' && 'Business Casual is professioneel maar comfortabel. Denk aan nette broeken of rokken gecombineerd met casual tops, perfect voor kantoor of zakelijke afspraken.'}
+                            {option.id === 'streetstyle' && 'Streetstyle is geïnspireerd door urban cultuur. Denk aan opvallende sneakers, oversized items en statement pieces die je persoonlijkheid laten zien.'}
+                            {option.id === 'classic_elegant' && 'Klassiek Elegant draait om tijdloze stukken met verfijnde details. Denk aan hoogwaardige materialen en silhouetten die nooit uit de mode raken.'}
+                            {option.id === 'urban_sporty' && 'Urban Sporty combineert sportieve elementen met stadse stijl. Denk aan functionele items met een moderne twist, perfect voor een actieve levensstijl.'}
                           </p>
                         </div>
                       )}
@@ -253,8 +237,8 @@ const ArchetypeStep: React.FC = () => {
                 </div>
                 
                 {error && (
-                  <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-                    <p className="text-red-400 text-sm">{error}</p>
+                  <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg">
+                    <p className="text-red-600 text-sm">{error}</p>
                   </div>
                 )}
 
@@ -266,7 +250,7 @@ const ArchetypeStep: React.FC = () => {
                     onClick={goToPreviousStep}
                     icon={<ArrowLeft size={18} />}
                     iconPosition="left"
-                    className="flex-1 text-white border border-white/30 hover:bg-white/10"
+                    className="flex-1 text-gray-700 border border-gray-200 hover:bg-gray-50"
                   >
                     Terug
                   </Button>
@@ -275,7 +259,7 @@ const ArchetypeStep: React.FC = () => {
                     variant="primary"
                     icon={<ArrowRight size={18} />}
                     iconPosition="right"
-                    className="flex-1"
+                    className="flex-1 bg-[#bfae9f] hover:bg-[#a89a8c]"
                     disabled={selectedArchetypes.length === 0}
                   >
                     Volgende
@@ -284,9 +268,9 @@ const ArchetypeStep: React.FC = () => {
               </form>
 
               {/* Privacy indicator */}
-              <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-[#FF8600]" />
-                <span className="text-sm text-white/80">Je gegevens zijn veilig en versleuteld</span>
+              <div className="px-6 py-4 bg-gray-50 flex items-center justify-center space-x-2">
+                <ShieldCheck size={18} className="text-[#bfae9f]" />
+                <span className="text-sm text-gray-600">Je gegevens zijn veilig en versleuteld</span>
               </div>
             </div>
           </motion.div>
