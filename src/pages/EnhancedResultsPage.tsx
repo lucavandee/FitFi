@@ -510,4 +510,408 @@ const EnhancedResultsPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[500px]">
                 {[1, 2, 3].map((_, i) => (
                   <div key={`skeleton-outfit-${i}`} className="glass-card overflow-hidden">
-                    <SkeletonPlaceholder height="h-64" rounded="rounded-tYour project has been cleaned, you should be able to conti
+                    <SkeletonPlaceholder height="h-64" rounded="rounded-t-xl rounded-b-none" />
+                    <div className="p-6 space-y-4">
+                      <SkeletonPlaceholder height="h-6" width="w-3/4" />
+                      <SkeletonPlaceholder height="h-4" width="w-full" />
+                      <SkeletonPlaceholder height="h-4" width="w-5/6" />
+                      <SkeletonPlaceholder height="h-10" width="w-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Products skeleton */}
+            <div>
+              <SkeletonPlaceholder height="h-6" width="w-1/3" className="mb-6" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                  <div key={`skeleton-product-${i}`} className="glass-card overflow-hidden">
+                    <SkeletonPlaceholder height="h-48" rounded="rounded-t-xl rounded-b-none" />
+                    <div className="p-4 space-y-3">
+                      <SkeletonPlaceholder height="h-5" width="w-3/4" />
+                      <SkeletonPlaceholder height="h-4" width="w-full" />
+                      <div className="flex justify-between items-center pt-2">
+                        <SkeletonPlaceholder height="h-5" width="w-1/4" />
+                        <SkeletonPlaceholder height="h-8" width="w-1/4" rounded="rounded-lg" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
+        <div className="container-slim">
+          <div className="max-w-md mx-auto px-4 text-center">
+            <div className="glass-card p-8">
+              <div className="w-16 h-16 mx-auto mb-6 text-red-500 flex items-center justify-center">
+                <AlertTriangle size={32} />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Oeps! Er is iets misgegaan
+              </h2>
+              <p className="text-white/80 mb-6">
+                {error}
+              </p>
+              <Button 
+                variant="primary"
+                onClick={() => loadRecommendations()}
+                icon={<RefreshCw size={18} />}
+                iconPosition="left"
+              >
+                Probeer opnieuw
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
+      <div className="container-slim">
+        <div className="max-w-5xl mx-auto px-4">
+          {/* Header with user greeting */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl font-bold text-white mb-3">
+              Jouw persoonlijke stijlaanbevelingen
+            </h1>
+            <p className="text-xl text-white/80">
+              Hallo {enhancedUser.name || 'daar'}! Deze outfits zijn speciaal voor jou samengesteld.
+            </p>
+          </motion.div>
+          
+          {/* Season info card */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-8"
+          >
+            <div className="glass-card p-6 shadow-lg">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div className="flex items-center mb-4 md:mb-0">
+                  <div className="w-12 h-12 rounded-full bg-[#89CFF0]/20 flex items-center justify-center mr-4">
+                    <Calendar size={24} className="text-[#89CFF0]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">
+                      {getDutchSeasonName(currentSeason as any)}seizoen
+                    </h3>
+                    <p className="text-white/70">
+                      Outfits perfect voor het huidige seizoen
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-white/10 px-4 py-2 rounded-full shadow-md">
+                  <span className="text-sm font-medium text-white flex items-center">
+                    <Star size={16} className="mr-2 text-[#FF8600]" />
+                    {onboardingData?.archetypes?.[0] === 'casual_chic' ? 'Casual Chic' : 
+                     onboardingData?.archetypes?.[0] === 'klassiek' ? 'Klassiek' : 
+                     onboardingData?.archetypes?.[0] === 'streetstyle' ? 'Streetstyle' : 
+                     onboardingData?.archetypes?.[0] === 'urban' ? 'Urban' : 
+                     onboardingData?.archetypes?.[0] === 'retro' ? 'Retro' : 'Jouw Stijl'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+          
+          {/* Data source info */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-8"
+          >
+            {dataSource === 'supabase' && (
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 shadow-md">
+                <div className="flex items-start">
+                  <CheckCircle size={20} className="text-green-400 mr-3 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-white mb-1">Supabase data geladen</h3>
+                    <p className="text-white/70 text-sm">
+                      We gebruiken Supabase als databron voor je aanbevelingen.
+                      Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {dataSource === 'bolt' && (
+              <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 shadow-md">
+                <div className="flex items-start">
+                  <Info size={20} className="text-purple-400 mr-3 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-white mb-1">Bolt API data geladen</h3>
+                    <p className="text-white/70 text-sm">
+                      We gebruiken de Bolt API als databron voor je aanbevelingen.
+                      Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {dataSource === 'zalando' && (
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 shadow-md">
+                <div className="flex items-start">
+                  <Info size={20} className="text-blue-400 mr-3 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-white mb-1">Zalando producten geladen</h3>
+                    <p className="text-white/70 text-sm">
+                      We gebruiken momenteel Zalando producten voor je aanbevelingen. 
+                      Deze producten zijn geselecteerd op basis van jouw stijlvoorkeuren.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {dataSource === 'local' && (
+              <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4 shadow-md">
+                <div className="flex items-start">
+                  <AlertTriangle size={20} className="text-orange-400 mr-3 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-white mb-1">Lokale fallback actief</h3>
+                    <p className="text-white/70 text-sm">
+                      We gebruiken momenteel lokale data voor je aanbevelingen. 
+                      Verbinding met externe productbronnen is niet beschikbaar.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+          
+          {/* Outfits section */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-12"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6">Complete outfits voor jou</h2>
+            
+            {outfitsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[500px]">
+                {[1, 2, 3].map((_, i) => (
+                  <div key={`skeleton-outfit-${i}`} className="glass-card overflow-hidden">
+                    <SkeletonPlaceholder height="h-64" rounded="rounded-t-xl rounded-b-none" />
+                    <div className="p-6 space-y-4">
+                      <SkeletonPlaceholder height="h-6" width="w-3/4" />
+                      <SkeletonPlaceholder height="h-4" width="w-full" />
+                      <SkeletonPlaceholder height="h-4" width="w-5/6" />
+                      <SkeletonPlaceholder height="h-10" width="w-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : outfits.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {outfits.map((outfit, index) => (
+                  <motion.div
+                    key={outfit.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <OutfitCard 
+                      outfit={outfit}
+                      onNewLook={() => handleRegenerateOutfit(index)}
+                      isGenerating={isRegenerating}
+                      user={enhancedUser}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
+              </div>
+            )}
+          </motion.div>
+          
+          {/* Individual products section */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mb-16"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6">Individuele items voor jou</h2>
+            
+            {productsLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                  <div key={`skeleton-product-${i}`} className="glass-card overflow-hidden">
+                    <SkeletonPlaceholder height="h-48" rounded="rounded-t-xl rounded-b-none" />
+                    <div className="p-4 space-y-3">
+                      <SkeletonPlaceholder height="h-5" width="w-3/4" />
+                      <SkeletonPlaceholder height="h-4" width="w-full" />
+                      <div className="flex justify-between items-center pt-2">
+                        <SkeletonPlaceholder height="h-5" width="w-1/4" />
+                        <SkeletonPlaceholder height="h-8" width="w-1/4" rounded="rounded-lg" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : matchedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {matchedProducts.map((product, index) => {
+                  const normalizedProduct = normalizeProduct(product);
+                  return (
+                    <motion.div
+                      key={normalizedProduct.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.1 + (index * 0.05) }}
+                      className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
+                      onClick={() => handleProductClick(product)}
+                    >
+                      <div className="relative h-48">
+                        <img 
+                          src={normalizedProduct.imageUrl} 
+                          alt={normalizedProduct.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = '/placeholder.png';
+                          }}
+                        />
+                        <div className="absolute top-2 right-2 bg-white/80 text-[#0D1B2A] px-2 py-1 rounded-full text-xs font-medium">
+                          {getProductSeasonText(normalizedProduct)}
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-bold text-white mb-1 line-clamp-1">{normalizedProduct.name}</h3>
+                        <p className="text-white/70 text-sm mb-3 line-clamp-2">
+                          {normalizedProduct.brand || 'FitFi Collection'} • {normalizedProduct.type || normalizedProduct.category || 'Item'}
+                        </p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-lg font-bold text-white">
+                            €{typeof normalizedProduct.price === 'number' ? normalizedProduct.price.toFixed(2) : '0.00'}
+                          </span>
+                          <Button 
+                            variant="primary" 
+                            size="sm"
+                            icon={<ShoppingBag size={16} />}
+                            iconPosition="left"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleProductClick(product);
+                            }}
+                          >
+                            Bekijk
+                          </Button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-white/70">
+                  Geen individuele items gevonden. Probeer andere stijlvoorkeuren.
+                </p>
+              </div>
+            )}
+          </motion.div>
+          
+          {/* Feedback section */}
+          {!feedbackGiven && !loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="mb-16 text-center"
+            >
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  Wat vind je van deze aanbevelingen?
+                </h3>
+                <p className="text-white/70 mb-6">
+                  Je feedback helpt ons om betere aanbevelingen te doen in de toekomst.
+                </p>
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleFeedback(5)}
+                    icon={<Heart size={18} />}
+                    iconPosition="left"
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Geweldig!
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleFeedback(3)}
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Oké
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleFeedback(1)}
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Niet mijn stijl
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Sticky CTA footer */}
+          <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
+            <div className="container-slim">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="flex items-center">
+                  <MessageSquare size={20} className="text-[#89CFF0] mr-2" />
+                  <span className="text-white font-medium">Niet tevreden met de resultaten?</span>
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/feedback')}
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Geef feedback
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate('/onboarding')}
+                    icon={<ArrowRight size={18} />}
+                    iconPosition="right"
+                  >
+                    Nieuwe stijlscan
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EnhancedResultsPage;
