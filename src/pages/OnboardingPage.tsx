@@ -167,8 +167,6 @@ const OnboardingPage: React.FC = () => {
                 className={`text-sm text-white/60 hover:text-[#FF8600] transition-colors ${
                   isButtonClicked ? 'opacity-50 pointer-events-none' : ''
                 }`}
-                  isButtonClicked ? 'opacity-50 pointer-events-none' : ''
-                }`}
               >
                 Sla over en bekijk direct aanbevelingen
               </button>
