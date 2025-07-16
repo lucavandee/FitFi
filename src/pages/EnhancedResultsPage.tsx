@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { Card, CardContent } from "../components/ui/card";
-import { Loader } from "../components/Loader";
+import { Loader } from "../components/Loader"; 
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import Button from "../components/ui/Button";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
@@ -20,7 +20,7 @@ import ResultsLoader from "../components/ui/ResultsLoader";
 import { useGamification } from "../context/GamificationContext";
 import { useOnboarding } from "../context/OnboardingContext";
 import { getSafeUser, getSafeGender } from "../utils/userUtils";
-import { defaultUser } from "../constants/defaultUser";
+import { defaultUser } from "../constants/defaultUser"; 
 
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
@@ -40,6 +40,10 @@ const EnhancedResultsPage: React.FC = () => {
   const [outfitCompleteness, setOutfitCompleteness] = useState<Record<string, number>>({});
   const [dataSource, setDataSource] = useState<'supabase' | 'bolt' | 'zalando' | 'local'>(getDataSource());
   const [showAllBoltProducts, setShowAllBoltProducts] = useState(false);
+  
+  // Add loading states for UI elements
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [outfitsLoading, setOutfitsLoading] = useState(true);
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -91,6 +95,8 @@ const EnhancedResultsPage: React.FC = () => {
   // Load recommendations using the DataRouter
   const loadRecommendations = useCallback(async () => {
     setLoading(true);
+    setProductsLoading(true);
+    setOutfitsLoading(true);
     setError(null);
     
     try {
@@ -122,6 +128,7 @@ const EnhancedResultsPage: React.FC = () => {
       
       // Set outfits
       setOutfits(generatedOutfits);
+      setOutfitsLoading(false);
       
       // Track shown outfit IDs
       const outfitIds = generatedOutfits.map(outfit => outfit.id);
@@ -139,6 +146,7 @@ const EnhancedResultsPage: React.FC = () => {
       // Get recommended individual products
       const recommendedProducts = await getRecommendedProducts(enhancedUser, 9, season as any);
       setMatchedProducts(recommendedProducts);
+      setProductsLoading(false);
       
       // Get the data source being used
       setDataSource(getDataSource());
@@ -163,6 +171,8 @@ const EnhancedResultsPage: React.FC = () => {
     } catch (err) {
       console.error('Error generating recommendations:', err);
       setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
+      setProductsLoading(false);
+      setOutfitsLoading(false);
       setDataSource(getDataSource());
     } finally {
       setLoading(false);
@@ -304,7 +314,8 @@ const EnhancedResultsPage: React.FC = () => {
     return seasonMap[dutchSeason] || 'autumn';
   };
 
-  if (loading) return <ResultsLoader />;
+  // Only show full page loader during initial load
+  if (loading && productsLoading && outfitsLoading) return <ResultsLoader />;
 
   if (error) {
     return (
@@ -450,26 +461,60 @@ const EnhancedResultsPage: React.FC = () => {
       
       {/* Outfits section */}
       {outfits.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-8 min-h-[200px]">
           <h2 className="text-xl font-bold mb-4">Complete outfits voor jou</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {outfits.map((outfit, index) => (
-              <OutfitCard 
-                key={outfit.id}
-                outfit={outfit}
-                onNewLook={() => handleRegenerateOutfit(index)}
-                isGenerating={isRegenerating}
-                user={enhancedUser}
-              />
-            ))}
-          </div>
+          {outfitsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((_, index) => (
+                <div key={`skeleton-outfit-${index}`} className="glass-card animate-pulse h-[500px]">
+                  <div className="h-64 bg-white/5"></div>
+                  <div className="p-6 space-y-4">
+                    <div className="h-6 bg-white/5 rounded w-3/4"></div>
+                    <div className="h-4 bg-white/5 rounded w-full"></div>
+                    <div className="h-4 bg-white/5 rounded w-5/6"></div>
+                    <div className="h-10 bg-white/5 rounded w-full mt-4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {outfits.map((outfit, index) => (
+                <OutfitCard 
+                  key={outfit.id}
+                  outfit={outfit}
+                  onNewLook={() => handleRegenerateOutfit(index)}
+                  isGenerating={isRegenerating}
+                  user={enhancedUser}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
       
       {/* Individual products */}
       <h2 className="text-xl font-bold mb-4">Individuele items voor jou</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {matchedProducts.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
+        {productsLoading ? (
+          // Skeleton loading state for products
+          Array(9).fill(0).map((_, index) => (
+            <Card 
+              key={`skeleton-product-${index}`} 
+              className="overflow-hidden animate-pulse"
+            >
+              <div className="h-60 bg-white/5"></div>
+              <CardContent className="p-4 space-y-3">
+                <div className="h-5 bg-white/5 rounded w-3/4"></div>
+                <div className="h-4 bg-white/5 rounded w-full"></div>
+                <div className="flex justify-between items-center pt-2">
+                  <div className="h-5 bg-white/5 rounded w-1/4"></div>
+                  <div className="h-8 bg-white/5 rounded w-1/4"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : matchedProducts.length > 0 ? (
           matchedProducts.map((product, index) => (
             <Card 
               key={`${product.id}-${index}`} 
