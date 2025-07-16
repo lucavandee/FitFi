@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useOnboarding } from '../context/OnboardingContext';
 
 const OnboardingPage: React.FC = () => {
@@ -120,31 +120,33 @@ const OnboardingPage: React.FC = () => {
                   </div>
 
                   <AnimatePresence>
-                <motion.div
-                  initial={{ opacity: 1 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                    onClick={handleStart}
-                    icon={isButtonClicked ? undefined : <ArrowRight size={20} />}
-                    iconPosition="right"
-                    disabled={isButtonClicked}
-                    className={isButtonClicked ? "opacity-80" : ""}
-                  >
-                    {isButtonClicked ? (
-                      <span className="flex items-center justify-center">
-                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                        Even geduld...
-                      </span>
-                    ) : (
-                      "Start de stijlquiz"
-                    )}
-                  </Button>
-                </motion.div>
+                    <motion.div
+                      initial={{ opacity: 1 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.1 }}
+                    >
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        fullWidth
+                        onClick={handleStart}
+                        icon={isButtonClicked ? undefined : <ArrowRight size={20} />}
+                        iconPosition="right"
+                        disabled={isButtonClicked}
+                        className={isButtonClicked ? "opacity-80" : ""}
+                      >
+                        {isButtonClicked ? (
+                          <span className="flex items-center justify-center">
+                            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                            Even geduld...
+                          </span>
+                        ) : (
+                          "Start de stijlquiz"
+                        )}
+                      </Button>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
 
               {/* Privacy indicator */}
