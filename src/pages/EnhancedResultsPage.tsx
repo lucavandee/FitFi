@@ -484,11 +484,11 @@ const EnhancedResultsPage: React.FC = () => {
                 />
                 {product.season && product.season.length > 0 && (
                   <div className="absolute top-2 right-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
+                    {/* ✅ Fix: prevent crash if product.season is not an array */}
                     {(() => {
                       const seasons = Array.isArray(product.season) ? product.season : [product.season];
                       return seasons.map(s => getDutchSeasonName(s as any)).join(', ');
                     })()}
-                    seasons.map(s => getDutchSeasonName(s as any)).join(', ')}
                   </div>
                 )}
                 <div className="absolute bottom-2 left-2 bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white px-2 py-1 rounded-full text-xs font-medium">
