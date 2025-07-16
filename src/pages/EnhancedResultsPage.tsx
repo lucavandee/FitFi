@@ -32,7 +32,28 @@ const ResultsLoader: React.FC<{ message?: string }> = ({
   <div className="flex flex-col items-center justify-center py-12">
     <div className="w-16 h-16 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mb-6"></div>
     <p className="text-white/80 text-center max-w-md">{message}</p>
-  </div>
+
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-black text-green-400 text-xs p-4 mt-16 rounded-md whitespace-pre-wrap overflow-auto max-h-96">
+            <strong>DEBUG OUTPUT</strong>
+            <br />
+            <strong>DataSource:</strong> {dataSource}
+            <br />
+            <strong># Outfits:</strong> {outfits.length}
+            <br />
+            <strong># Matched Products:</strong> {matchedProducts.length}
+            <br />
+            <strong>First Outfit:</strong> <br />
+            {outfits.length > 0 ? <pre>{JSON.stringify(outfits[0], null, 2).slice(0, 1000)}</pre> : '—'}
+            <br />
+            <strong>First Product:</strong> <br />
+            {matchedProducts.length > 0 ? <pre>{JSON.stringify(matchedProducts[0], null, 2).slice(0, 1000)}</pre> : '—'}
+            <br />
+            <strong>EnhancedUser:</strong> <br />
+            <pre>{JSON.stringify(enhancedUser, null, 2).slice(0, 1000)}</pre>
+          </div>
+        )}
+          </div>
 );
 
 const EnhancedResultsPage: React.FC = () => {
@@ -718,25 +739,5 @@ const EnhancedResultsPage: React.FC = () => {
     </div>
   );
 };
-
-
-{process.env.NODE_ENV === 'development' && (
-  <div className="bg-black text-green-400 text-xs p-4 mt-8 rounded-md whitespace-pre-wrap">
-    <strong>DEBUG OUTPUT</strong>
-    <br />
-    <strong>DataSource:</strong> {dataSource}
-    <br />
-    <strong># Outfits:</strong> {outfits.length}
-    <br />
-    <strong># Matched Products:</strong> {matchedProducts.length}
-    <br />
-    <strong>First Outfit:</strong> {outfits.length > 0 ? JSON.stringify(outfits[0], null, 2).slice(0, 500) : '—'}
-    <br />
-    <strong>First Product:</strong> {matchedProducts.length > 0 ? JSON.stringify(matchedProducts[0], null, 2).slice(0, 500) : '—'}
-    <br />
-    <strong>EnhancedUser:</strong> {JSON.stringify(enhancedUser, null, 2).slice(0, 500)}
-  </div>
-)}
-
 
 export default EnhancedResultsPage;
