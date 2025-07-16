@@ -21,6 +21,11 @@ export function normalizeProduct(product: any) {
     colors: Array.isArray(product.colors) ? product.colors : (product.colors ? [product.colors] : []),
     sizes: Array.isArray(product.sizes) ? product.sizes : (product.sizes ? [product.sizes] : []),
     styleTags: Array.isArray(product.styleTags) ? product.styleTags : (product.styleTags ? [product.styleTags] : []),
+    // Handle image fields that might be inconsistent
+    images: Array.isArray(product.images) ? product.images : (product.images ? [product.images] : []),
+    categories: Array.isArray(product.categories) ? product.categories : (product.categories ? [product.categories] : []),
+    // Normalize image fields
+    imageUrl: product.imageUrl || product.image || product.img || product.imageURL || '',
   };
 }
 
