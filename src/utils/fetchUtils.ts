@@ -34,8 +34,8 @@ export async function safeFetch<T>(url: string, options?: RequestInit): Promise<
     }
     
     return await response.json() as T;
-  } catch (error) {
-    console.error(`Fetch error for ${url}:`, error);
+  } catch (error: any) {
+    console.error(`Fetch error for ${url}:`, error.message);
     throw error;
   }
 }
