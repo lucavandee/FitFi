@@ -1,4 +1,5 @@
 // src/services/boltService.ts
+import { safeFetch, fetchWithRetry } from '../utils/fetchUtils';
 
 /**
  * Maps API endpoints to JSON filenames
@@ -26,26 +27,7 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
   console.log("[🧠 boltService] Fetching from local file:", url);
 
   try {
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      console.error("[🧠 boltService] Fetch error:", {
-        endpoint,
-        url,
-        status: response.status,
-        statusText: response.statusText,
-      });
-      
-      return null;
-    }
-
-    const contentType = response.headers.get("content-type");
-    if (!contentType?.includes("application/json")) {
-      console.warn(`[🧠 boltService] Invalid content-type for ${endpoint}: ${contentType}`);
-      return null;
-    }
-
-    return await response.json() as T;
+    return await safeFetch<T>(url);
     
   } catch (error: any) {
     console.error("[🧠 boltService] fetchFromBolt exception:", error.message);

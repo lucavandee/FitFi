@@ -1,5 +1,5 @@
-# ✅ Logs
-logs/
+# Logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,86 +7,41 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# ✅ Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
+node_modules
+dist
+dist-ssr
+*.local
 
-# ✅ Coverage
-coverage/
-*.lcov
-.nyc_output/
-
-# ✅ Dependencies
-node_modules/
-jspm_packages/
-web_modules/
-.rpt2_cache/
-.rts2_cache_*/
-.pnp.*
-.yarn/
-.yarnrc.yml
-.yarnrc
-.yarn-integrity
-
-# ✅ Vite + TS Build artifacts
-dist/
-*.tsbuildinfo
-
-# ✅ Temporary caches & build tools
-.cache/
-.parcel-cache/
-.temp/
-.docusaurus/
-.serverless/
-.fusebox/
-.dynamodb/
-.next/
-.nuxt/
-out/
-.vite/
-
-# ✅ REPL history & local state
-.node_repl_history
-*.tgz
-*.swp
-*.swo
-
-# ✅ IDE config
-.vscode/
-.idea/
-*.iml
-
-# ✅ System files
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# ✅ dotenv environment variables
+# Environment variables
 .env
-.env.*
-!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# ✅ Netlify
-.netlify/
-.netlify/*
+# Bolt specific files
+.bolt/
+.bolt-cache/
+fetch.worker.js
 
-# ✅ Local static/public (optioneel)
-public/
+# Supabase
+.supabase/
 
-# ✅ Bolt & scraping
-/data/bolt/
-scraper-output/
-scraper-cache/
-scraper-logs/
+# Build artifacts
+build/
+coverage/
 
-# ✅ Optional project files
-*.bak
-*.orig
-*.rej
-*.log
+# Temporary files
+.tmp/
+temp/
