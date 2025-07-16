@@ -31,7 +31,7 @@ const OnboardingPage: React.FC = () => {
     // Mark welcome step as completed
     completeStep('welcome');
     
-    // Go to gender-name step
+    // Go to next step
     goToNextStep();
   };
 
