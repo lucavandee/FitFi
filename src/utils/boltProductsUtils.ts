@@ -2,6 +2,7 @@ import { BoltProduct } from '../types/BoltProduct';
 import { isValidImageUrl } from './imageUtils';
 import dutchProducts from '../data/dutchProducts';
 import { safeFetchWithFallback } from './fetchUtils';
+import { safeFetchWithFallback } from './fetchUtils';
 
 /**
  * Utility functions for working with BoltProducts
@@ -13,42 +14,27 @@ import { safeFetchWithFallback } from './fetchUtils';
  */
 export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
   try {
-    // Try to load from public/data/bolt/products.json first
-    try {
-      const products = await safeFetchWithFallback<BoltProduct[]>('/data/bolt/products.json', []);
-      
-      if (!Array.isArray(products)) {
-        throw new Error('Invalid BoltProducts data: not an array');
-      }
-      
-      console.log(`Loaded ${products.length} BoltProducts from public JSON file`);
-      return products;
-    } catch (publicError) {
-      console.warn(`Could not load BoltProducts from public path: ${publicError.message}`);
-      
-      // Try to load from src/data/boltProducts.json as fallback
-      try {
-        const products = await safeFetchWithFallback<BoltProduct[]>('/src/data/boltProducts.json', []);
-        
-        if (!Array.isArray(products)) {
-          throw new Error('Invalid BoltProducts data: not an array');
-        }
-        
-        console.log(`Loaded ${products.length} BoltProducts from src JSON file`);
-        return products;
-      } catch (srcError) {
-        console.warn(`Could not load BoltProducts from src path: ${srcError.message}`);
-        console.log('Falling back to generating mock BoltProducts');
-        
-        // If both files don't exist or are invalid, generate mock products
-        return generateMockBoltProducts();
-      }
+    // Try to load from public/data/bolt/products.json
+    const products = await safeFetchWithFallback<BoltProduct[]>('/data/bolt/products.json', []);
+    
+    if (!Array.isArray(products)) {
+      console.warn('Invalid BoltProducts data: not an array');
+      return generateMockBoltProducts();
     }
+    
+    if (products.length === 0) {
+      console.log('No BoltProducts found in JSON file, generating mock products');
+      return generateMockBoltProducts();
+    }
+    
+    console.log(`Loaded ${products.length} BoltProducts from JSON file`);
+    return products;
   } catch (error) {
     console.error('Error loading BoltProducts:', error);
     
-    // Return empty array as last resort
-    return [];
+    // Generate mock products as fallback
+    console.log('Falling back to generating mock BoltProducts');
+    return generateMockBoltProducts();
   }
 }
 
@@ -57,6 +43,8 @@ export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
  * @returns Array of mock BoltProducts
  */
 export function generateMockBoltProducts(): BoltProduct[] {
+  console.log(`Generating ${dutchProducts.length} mock BoltProducts from dutchProducts`);
+  
   // Convert dutchProducts to BoltProducts
   return dutchProducts.map((product, index) => {
     // Determine product type
@@ -74,7 +62,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
     const gender = index % 2 === 0 ? 'male' : 'female';
     
     // Determine color
-    const colors = ['beige', 'black', 'blue', 'white', 'gray'];
+    const colors = ['beige', 'black', 'blue', 'white', 'gray', 'navy', 'green', 'red'];
     const color = colors[index % colors.length];
     
     // Determine dominant color hex
@@ -89,14 +77,19 @@ export function generateMockBoltProducts(): BoltProduct[] {
     const dominantColorHex = colorHexMap[color] || '#CCCCCC';
     
     // Determine style tags
-    const allStyleTags = ['casual', 'formal', 'sporty', 'minimal', 'street', 'elegant', 'cozy', 'vintage'];
-    const styleTags = product.styleTags || allStyleTags.slice(0, 3);
+    const styleTags = product.styleTags || ['casual', 'minimal', 'versatile'];
     
     // Determine season
-    const season = product.season?.[0] === 'winter' ? 'winter' : 
-                  product.season?.[0] === 'summer' ? 'summer' : 
-                  product.season?.[0] === 'spring' ? 'spring' : 
-                  product.season?.[0] === 'autumn' ? 'fall' : 'all_season';
+    const seasonMap: Record<string, string> = {
+      'winter': 'winter',
+      'summer': 'summer',
+      'spring': 'spring',
+      'autumn': 'fall'
+    };
+    
+    const season = product.season && product.season.length > 0 
+      ? (seasonMap[product.season[0]] || 'all_season')
+      : 'all_season';
     
     // Determine archetype match
     const archetypeMatch: Record<string, number> = {};
@@ -123,13 +116,14 @@ export function generateMockBoltProducts(): BoltProduct[] {
     
     // If no matches, add default
     if (Object.keys(archetypeMatch).length === 0) {
-      archetypeMatch['casual_chic'] = 0.6;
+      archetypeMatch['casual_chic'] = 0.7;
+      archetypeMatch['urban'] = 0.3;
     }
     
     // Ensure image URL is valid
     const imageUrl = isValidImageUrl(product.imageUrl) ? 
       product.imageUrl : 
-      'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2';
+      getFallbackImageForType(type as any);
     
     // Create BoltProduct
     return {
@@ -146,10 +140,34 @@ export function generateMockBoltProducts(): BoltProduct[] {
       material: 'Mixed materials',
       price: product.price || 49.99,
       imageUrl: imageUrl,
-      affiliateUrl: product.url || `https://example.com/product/${product.id}`,
+      affiliateUrl: product.url || `https://fitfi.app/product/${product.id}?ref=bolt`,
       source: 'zalando'
     };
   });
+}
+
+/**
+ * Get fallback image URL for a product type
+ * @param type - Product type
+ * @returns Fallback image URL
+ */
+function getFallbackImageForType(type: string): string {
+  const fallbackImages: Record<string, string> = {
+    'top': 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'shirt': 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'blouse': 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'trui': 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'broek': 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'jeans': 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'rok': 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'schoenen': 'https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'sneaker': 'https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'jas': 'https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'tas': 'https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+    'accessoire': 'https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2'
+  };
+  
+  return fallbackImages[type] || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2';
 }
 
 /**
