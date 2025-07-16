@@ -29,12 +29,6 @@ export const fetchFromBolt = async <T>(endpoint: string): Promise<T | null> => {
   try {
     return await safeFetch<T>(url);
     
-  } catch (error: any) {
-    console.error("[🧠 boltService] fetchFromBolt exception:", error.message);
-    
-    // Return null for missing files instead of throwing
-    return null;
-  }
 };
 
 /**
