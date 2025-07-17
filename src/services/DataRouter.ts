@@ -265,7 +265,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
         console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
         const response = await boltService.fetchProducts();
         
-          (user.stylePreferences?.casual || 0) > (user.stylePreferences?.formal || 0) ? 'casual_chic' : 'klassiek',
+        if (response && response.length > 0) {
           console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
           
           // Store in memory cache
@@ -420,19 +420,16 @@ export async function getOutfits(
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
 
-    // Log outfits for debugging
-console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
-if (boltOutfits.length > 0) {
-  console.log(`[🧠 DataRouter] First outfit:`, {
-    id: boltOutfits[0].id,
-    title: boltOutfits[0].title,
-    products: boltOutfits[0].products?.length || 0,
-    matchPercentage: boltOutfits[0].matchPercentage
-  });
-}
-
-return boltOutfits;
-
+        // Log outfits for debugging
+        console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
+        if (boltOutfits.length > 0) {
+          console.log(`[🧠 DataRouter] First outfit:`, {
+            id: boltOutfits[0].id,
+            title: boltOutfits[0].title,
+            products: boltOutfits[0].products?.length || 0,
+            matchPercentage: boltOutfits[0].matchPercentage
+          });
+        }
 
         // Cache the result
         saveToCache(cacheKey, boltOutfits, 'bolt');
@@ -471,7 +468,7 @@ return boltOutfits;
           // Generate outfits from BoltProducts
           const outfits = outfitGenerator.generateOutfitsFromBoltProducts(
             boltProducts.slice(0, 20), // Limit to 20 products for performance
-            user.stylePreferences.casual > user.stylePreferences.formal ? 'casual_chic' : 'klassiek',
+            (user.stylePreferences?.casual || 0) > (user.stylePreferences?.formal || 0) ? 'casual_chic' : 'klassiek',
             user.gender === 'male' ? 'male' : 'female',
             3 // Generate at least 3 outfits
           );
@@ -629,9 +626,9 @@ export async function getRecommendedProducts(
   season?: Season
 ): Promise<Product[]> {
   if (useMockData) {
-  console.log("⚠️ Using mock products via USE_MOCK_DATA");
-  return generateMockProducts(count);
-}
+    console.log("⚠️ Using mock products via USE_MOCK_DATA");
+    return generateMockProducts(count);
+  }
   // Reset diagnostics
   resetDiagnostics('getRecommendedProducts');
   
@@ -1464,6 +1461,11 @@ export async function getBoltProducts(): Promise<BoltProduct[]> {
 // Feature flags
 const FEATURES = {
   caching: true // Default to true since API_CONFIG might not be available
+};
+
+// API configuration
+const API_CONFIG = {
+  cacheTTL: 300000 // 5 minutes in milliseconds
 };
 
 export default {
