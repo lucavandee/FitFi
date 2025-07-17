@@ -879,7 +879,7 @@ export const getDailyChallenges = async (userId: string): Promise<DailyChallenge
  * @returns Array of products with valid images
  */
 export const fetchProductsFromSupabase = async (): Promise<any[]> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – skipping product fetch from Supabase');
     return [];
   }

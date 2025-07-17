@@ -1,3 +1,4 @@
+
 import { env } from '@/utils/env'; // of relatief pad: ../utils/env
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
@@ -254,6 +255,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
   // If we already have BoltProducts in memory, return them
  if (boltProductsCache && boltProductsCache.length > 0) {
   return boltProductsCache;
+ }
 }
 try {
   // ✅ 1. Probeer BoltProducts op te halen via de Bolt API
@@ -298,7 +300,6 @@ try {
   console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts due to fatal error`);
   boltProductsCache = mockProducts;
   return mockProducts;
-}
 }
 
 /**
