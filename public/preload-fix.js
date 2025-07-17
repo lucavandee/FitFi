@@ -17,7 +17,6 @@
     // Create a preload link for fetch.worker.js
     const preloadLink = document.createElement('link');
     preloadLink.rel = 'preload';
-    preloadLink.href = '/fetch.worker.js';
     preloadLink.as = 'script';
     preloadLink.crossOrigin = 'anonymous';
     
