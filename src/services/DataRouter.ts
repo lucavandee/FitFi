@@ -348,7 +348,7 @@ export async function getOutfits(
   const startTime = Date.now();
   
   // Try Supabase first if enabled
-  if (USE_SUPABASE) {
+  if (env.USE_SUPABASE) {
     try {
       // Fetch products from Supabase
       const supabaseProducts = await fetchProductsFromSupabase();
@@ -764,7 +764,7 @@ export async function getUserData(userId: string): Promise<UserProfile | null> {
   const startTime = Date.now();
   
   // Try Supabase first if enabled
-  if (USE_SUPABASE) {
+  if (env.USE_SUPABASE) {
     try {
       // Fetch user from Supabase
       const user = await getUserById(userId);
@@ -893,7 +893,7 @@ export async function getGamificationData(userId: string): Promise<any | null> {
   const startTime = Date.now();
   
   // Try Supabase first if enabled
-  if (USE_SUPABASE) {
+  if (env.USE_SUPABASE) {
     try {
       // Fetch gamification data from Supabase
       const gamificationData = await getUserGamification(userId);
@@ -1012,7 +1012,7 @@ export async function updateGamificationData(userId: string, updates: any): Prom
   const startTime = Date.now();
   
   // Try Supabase first if enabled
-  if (USE_SUPABASE) {
+  if (env.USE_SUPABASE) {
     try {
       // Update gamification data in Supabase
       const updatedData = await updateUserGamification(userId, updates);
@@ -1141,7 +1141,7 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
   const startTime = Date.now();
   
   // Try Supabase first if enabled
-  if (USE_SUPABASE) {
+  if (env.USE_SUPABASE) {
     try {
       // Complete challenge in Supabase
       const success = await completeSupabaseChallenge(userId, challengeId);
@@ -1271,7 +1271,7 @@ export async function getDailyChallengesData(userId: string): Promise<any[]> {
   const startTime = Date.now();
   
   // Try Supabase first if enabled
-  if (USE_SUPABASE) {
+  if (env.USE_SUPABASE) {
     try {
       // Fetch challenges from Supabase
       const challenges = await getDailyChallenges(userId);
