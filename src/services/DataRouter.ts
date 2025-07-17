@@ -305,7 +305,6 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     boltProductsCache = mockProducts;
     return mockProducts;
   }
-}
 } catch (error) {
   // ❌ Fatale fout in gehele laadproces
   console.error('[🧠 DataRouter] Unexpected error loading BoltProducts:', error);
