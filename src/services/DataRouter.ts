@@ -14,6 +14,9 @@ import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON, generateMockBoltProducts, filterProductsByGender } from '../utils/boltProductsUtils';
 import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
 
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+
+
 // Data source type
 export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
 
