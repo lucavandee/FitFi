@@ -67,9 +67,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Use fallback from localStorage if available
         const savedUser = localStorage.getItem('fitfi-user');
-        if (savedUser) {
+        const parsedUser = savedUser ? JSON.parse(savedUser) : null;
+        if (parsedUser) {
           try {
-            setUser(JSON.parse(savedUser));
+            setUser(parsedUser);
           } catch (parseError) {
             console.error('Error parsing saved user:', parseError);
             

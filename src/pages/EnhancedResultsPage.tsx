@@ -158,7 +158,7 @@ const EnhancedResultsPage: React.FC = () => {
           outfits_count: generatedOutfits.length,
           products_count: recommendedProducts.length,
           data_source: getDataSource(),
-          archetypes: onboardingData?.archetypes?.join(',') || 'none',
+          archetypes: Array.isArray(onboardingData?.archetypes) ? onboardingData.archetypes.join(',') : 'none',
           season: season,
           occasions: onboardingData?.occasions?.join(',') || 'none'
         });
