@@ -43,7 +43,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(USE_SUPABASE);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(env.USE_SUPABASE);
 
   useEffect(() => {
     const initializeUser = async () => {

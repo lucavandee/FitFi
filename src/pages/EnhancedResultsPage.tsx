@@ -721,7 +721,7 @@ if (process.env.NODE_ENV === 'development' || USE_MOCK_DATA) {
   </div>
 )}
 
-{(process.env.NODE_ENV === 'development' || UseMockData) && (
+{(process.env.NODE_ENV === 'development' || env.USE_MOCK_DATA) && (
   <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
     <strong>🔍 DEBUG DATA</strong>
     <pre>{JSON.stringify({ enhancedUser, outfits, matchedProducts }, null, 2)}</pre>
