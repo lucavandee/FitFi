@@ -1,4 +1,5 @@
 import { USE_SUPABASE, USE_BOLT, USE_ZALANDO, API_CONFIG, DEBUG_MODE } from '../config/app-config';
+import { env } from '@/utils/env'; // of relatief pad: ../utils/env
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations } from '../engine/recommendationEngine';
@@ -14,7 +15,7 @@ import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON, generateMockBoltProducts, filterProductsByGender } from '../utils/boltProductsUtils';
 import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
 
-const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+const useMockData = env.USE_MOCK_DATA;
 
 
 // Data source type
