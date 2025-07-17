@@ -7,7 +7,7 @@ import { generateMockUser, generateMockGamification, generateMockOutfits, genera
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from './supabaseService';
 import boltService from './boltService';
-import { TEST_USER_ID } from '../lib/supabase';
+import { TEST_USER_ID, USE_SUPABASE } from '../lib/supabase';
 import { enrichZalandoProducts } from './productEnricher';
 import { BoltProduct } from '../types/BoltProduct';
 import outfitGenerator from './outfitGenerator';
@@ -1463,7 +1463,7 @@ export async function getBoltProducts(): Promise<BoltProduct[]> {
 
 // Feature flags
 const FEATURES = {
-  caching: env.API_CONFIG?.caching !== false
+  caching: true // Default to true since API_CONFIG might not be available
 };
 
 export default {
