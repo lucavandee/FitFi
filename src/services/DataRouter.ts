@@ -321,6 +321,9 @@ export async function getOutfits(
   user: UserProfile,
   options?: any
 ): Promise<Outfit[]> {
+  if (USE_MOCK_DATA) {
+  return generateMockOutfits(options?.count || 3);
+}
   // Reset diagnostics
   resetDiagnostics('getOutfits');
   
