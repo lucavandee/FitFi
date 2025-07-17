@@ -34,7 +34,7 @@ export const DEBUG_MODE = true;
  * Toggle for using mock data (via .env → VITE_USE_MOCK_DATA)
  * When enabled, mock outfits and products are always used
  */
-export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+export const USE_MOCK_DATA = true; // geforceerd aanzetten voor StackBlitz
 
 /**
  * Default user ID for testing
