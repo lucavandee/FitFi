@@ -416,16 +416,19 @@ export async function getOutfits(
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
 
-        // Log outfits for debugging
-        console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
-        if (boltOutfits.length > 0) {
-          console.log(`[🧠 DataRouter] First outfit:`, {
-            id: boltOutfits[0].id,
-            title: boltOutfits[0].title,
-            products: boltOutfits[0].products?.length || 0,
-            matchPercentage: boltOutfits[0].matchPercentage
-          });
-        }
+    // Log outfits for debugging
+console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
+if (boltOutfits.length > 0) {
+  console.log(`[🧠 DataRouter] First outfit:`, {
+    id: boltOutfits[0].id,
+    title: boltOutfits[0].title,
+    products: boltOutfits[0].products?.length || 0,
+    matchPercentage: boltOutfits[0].matchPercentage
+  });
+}
+
+return boltOutfits;
+
 
         // Cache the result
         saveToCache(cacheKey, boltOutfits, 'bolt');
