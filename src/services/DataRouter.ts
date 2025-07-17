@@ -318,16 +318,14 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
  * @returns Array of outfits
  */
 export async function getOutfits(
-  if (USE_MOCK_DATA) {
-  console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
-  return generateMockOutfits(options?.count || 3);
-}
   user: UserProfile,
   options?: any
 ): Promise<Outfit[]> {
+  // ✅ Zet deze blok direct als eerste binnen de functie:
   if (USE_MOCK_DATA) {
-  return generateMockOutfits(options?.count || 3);
-}
+    console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
+    return generateMockOutfits(options?.count || 3);
+  }
   // Reset diagnostics
   resetDiagnostics('getOutfits');
   
