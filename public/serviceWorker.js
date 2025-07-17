@@ -12,13 +12,13 @@ const urlsToCache = [
 // Install event - cache assets
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
-});
+if (event.request.url.startsWith('http')) {
+  caches.open(CACHE_NAME)
+    .then(cache => {
+      cache.put(event.request, responseToCache);
+    });
+}
+
 
 // Fetch event - serve from cache, fall back to network
 self.addEventListener('fetch', event => {
