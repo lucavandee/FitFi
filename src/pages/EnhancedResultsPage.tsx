@@ -76,6 +76,7 @@ const EnhancedResultsPage: React.FC = () => {
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<'supabase' | 'bolt' | 'zalando' | 'local'>(getDataSource());
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
+  const useMockData = env.USE_MOCK_DATA;
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
