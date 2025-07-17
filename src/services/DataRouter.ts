@@ -253,13 +253,12 @@ function saveToCache<T>(key: string, data: T, source: DataSource): void {
  */
 async function loadBoltProducts(): Promise<BoltProduct[]> {
   // If we already have BoltProducts in memory, return them
-  if (boltProductsCache.length > 0) {
-    console.log(`[🧠 DataRouter] Using ${boltProductsCache.length} cached BoltProducts from memory`);
-    return boltProductsCache;
-  }
-  
+ if (boltProductsCache && boltProductsCache.length > 0) {
+  return boltProductsCache;
+}
+
 try {
-  // Try to load BoltProducts from API
+  // ✅ Probeer BoltProducts op te halen via API
   if (env.USE_BOLT) {
     try {
       console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
@@ -268,7 +267,7 @@ try {
       if (response && response.length > 0) {
         console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
 
-        // Store in memory cache
+        // ✅ Zet in geheugen-cache
         boltProductsCache = response;
 
         return response;
@@ -280,6 +279,10 @@ try {
 } catch (err) {
   console.error('[🧠 DataRouter] Outer try failed unexpectedly:', err);
 }
+
+// ✅ Fallback: retourneer lege array of local data
+console.warn("[🧠 DataRouter] Falling back to local data or returning empty list.");
+return [];
     
     // If API failed or is disabled, try to load from JSON file
     console.log(`[🧠 DataRouter] Attempting to load BoltProducts from JSON file`);
