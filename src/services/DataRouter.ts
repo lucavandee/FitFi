@@ -621,6 +621,10 @@ export async function getRecommendedProducts(
   count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
+  if (USE_MOCK_DATA) {
+  console.log("⚠️ Using mock products via USE_MOCK_DATA");
+  return generateMockProducts(count);
+}
   // Reset diagnostics
   resetDiagnostics('getRecommendedProducts');
   
