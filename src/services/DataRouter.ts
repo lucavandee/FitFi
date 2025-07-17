@@ -1,4 +1,4 @@
-import { USE_SUPABASE, USE_BOLT, USE_ZALANDO, API_CONFIG, DEBUG_MODE } from '../config/app-config';
+
 import { env } from '@/utils/env'; // of relatief pad: ../utils/env
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
