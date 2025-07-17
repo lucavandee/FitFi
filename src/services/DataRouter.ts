@@ -256,9 +256,8 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
  if (boltProductsCache && boltProductsCache.length > 0) {
   return boltProductsCache;
 }
-
 try {
-  // ✅ Probeer BoltProducts op te halen via API
+  // ✅ 1. Probeer BoltProducts op te halen via de Bolt API
   if (env.USE_BOLT) {
     try {
       console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
@@ -266,59 +265,40 @@ try {
 
       if (response && response.length > 0) {
         console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
-
-        // ✅ Zet in geheugen-cache
         boltProductsCache = response;
-
         return response;
       }
     } catch (apiError) {
       console.error('[🧠 DataRouter] Error loading BoltProducts from API:', apiError);
     }
   }
-} catch (err) {
-  console.error('[🧠 DataRouter] Outer try failed unexpectedly:', err);
-}
 
-// ✅ Fallback: retourneer lege array of local data
-console.warn("[🧠 DataRouter] Falling back to local data or returning empty list.");
-return [];
-    
-    // If API failed or is disabled, try to load from JSON file
-    console.log(`[🧠 DataRouter] Attempting to load BoltProducts from JSON file`);
-    const products = await getBoltProductsFromJSON();
-    
-    if (products && products.length > 0) {
-      // Store in memory cache
-      boltProductsCache = products;
-      
-      console.log(`[🧠 DataRouter] Loaded ${products.length} BoltProducts from JSON file`);
-      
-      return products;
-    }
-    
-    console.warn('[🧠 DataRouter] No BoltProducts found, returning empty array');
-    
-    // Generate mock products as last resort
-    const mockProducts = generateMockBoltProducts();
-    console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts as fallback`);
-    
-    // Store in memory cache
-    boltProductsCache = mockProducts;
-    
-    return mockProducts;
-  } catch (error) {
-    console.error('[🧠 DataRouter] Error loading BoltProducts:', error);
-    
-    // Generate mock products as last resort
-    const mockProducts = generateMockBoltProducts();
-    console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts as fallback`);
-    
-    // Store in memory cache
-    boltProductsCache = mockProducts;
-    
-    return mockProducts;
+  // ✅ 2. Probeer JSON-bestand als fallback (bijv. local scrape dump)
+  console.log(`[🧠 DataRouter] Attempting to load BoltProducts from JSON file`);
+  const products = await getBoltProductsFromJSON();
+
+  if (products && products.length > 0) {
+    console.log(`[🧠 DataRouter] Loaded ${products.length} BoltProducts from JSON file`);
+    boltProductsCache = products;
+    return products;
   }
+
+  console.warn('[🧠 DataRouter] No BoltProducts found in JSON file');
+
+  // ✅ 3. Gebruik mockdata als laatste redmiddel
+  const mockProducts = generateMockBoltProducts();
+  console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts as fallback`);
+  boltProductsCache = mockProducts;
+  return mockProducts;
+
+} catch (error) {
+  // ❌ Fatale fout in gehele laadproces
+  console.error('[🧠 DataRouter] Unexpected error loading BoltProducts:', error);
+
+  const mockProducts = generateMockBoltProducts();
+  console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts due to fatal error`);
+  boltProductsCache = mockProducts;
+  return mockProducts;
 }
 
 /**
