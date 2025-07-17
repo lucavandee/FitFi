@@ -96,7 +96,7 @@ checkEnvironmentVariables();
  */
 export function clearCache(): void {
   cache.clear();
-  if (DEBUG_MODE) {
+  if (env.DEBUG_MODE) {
     console.log('[🧠 DataRouter] Cache cleared');
   }
 }
@@ -200,7 +200,7 @@ function getFromCache<T>(key: string): { data: T; source: DataSource; age: numbe
     
     // Check if cache is still valid
     if (age < API_CONFIG.cacheTTL) {
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.log(`[🧠 DataRouter] Cache hit for ${key} (${Math.round(age / 1000)}s old)`);
       }
       
@@ -215,7 +215,7 @@ function getFromCache<T>(key: string): { data: T; source: DataSource; age: numbe
         age
       };
     } else {
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.log(`[🧠 DataRouter] Cache expired for ${key} (${Math.round(age / 1000)}s old)`);
       }
       
@@ -242,7 +242,7 @@ function saveToCache<T>(key: string, data: T, source: DataSource): void {
     source
   });
   
-  if (DEBUG_MODE) {
+  if (env.DEBUG_MODE) {
     console.log(`[🧠 DataRouter] Cached data for ${key} from ${source}`);
   }
 }
@@ -260,7 +260,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
   
   try {
     // Try to load BoltProducts from API
-    if (USE_BOLT) {
+    if (env.USE_BOLT) {
       try {
         console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
         const response = await boltService.fetchProducts();
@@ -326,7 +326,7 @@ export async function getOutfits(
   options?: any
 ): Promise<Outfit[]> {
   // ✅ Zet deze blok direct als eerste binnen de functie:
-  if (USE_MOCK_DATA) {
+  if (useMockData) {
     console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
     return generateMockOutfits(options?.count || 3);
   }
@@ -397,14 +397,14 @@ export async function getOutfits(
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Supabase error:', error);
       }
     }
   }
   
   // Try Bolt API if enabled
-  if (USE_BOLT) {
+  if (env.USE_BOLT) {
     const boltStartTime = Date.now();
     
     try {
@@ -449,14 +449,14 @@ return boltOutfits;
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Bolt API error:', error);
       }
     }
   }
   
   // Try Zalando if Supabase and Bolt failed
-  if (USE_ZALANDO) {
+  if (env.USE_ZALANDO) {
     const zalandoStartTime = Date.now();
     
     try {
@@ -545,7 +545,7 @@ return boltOutfits;
       // Add failed attempt to diagnostics
       addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Zalando error:', error);
       }
     }
@@ -607,7 +607,7 @@ return boltOutfits;
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Local data error:', error);
     }
     
@@ -628,7 +628,7 @@ export async function getRecommendedProducts(
   count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
-  if (USE_MOCK_DATA) {
+  if (useMockData) {
   console.log("⚠️ Using mock products via USE_MOCK_DATA");
   return generateMockProducts(count);
 }
@@ -792,14 +792,14 @@ export async function getUserData(userId: string): Promise<UserProfile | null> {
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Supabase error:', error);
       }
     }
   }
   
   // Try Bolt API if enabled
-  if (USE_BOLT) {
+  if (env.USE_BOLT) {
     const boltStartTime = Date.now();
     
     try {
@@ -829,7 +829,7 @@ export async function getUserData(userId: string): Promise<UserProfile | null> {
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Bolt API error:', error);
       }
     }
@@ -860,7 +860,7 @@ export async function getUserData(userId: string): Promise<UserProfile | null> {
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Local data error:', error);
     }
     
@@ -921,14 +921,14 @@ export async function getGamificationData(userId: string): Promise<any | null> {
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Supabase error:', error);
       }
     }
   }
   
   // Try Bolt API if enabled
-  if (USE_BOLT) {
+  if (env.USE_BOLT) {
     const boltStartTime = Date.now();
     
     try {
@@ -958,7 +958,7 @@ export async function getGamificationData(userId: string): Promise<any | null> {
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Bolt API error:', error);
       }
     }
@@ -989,7 +989,7 @@ export async function getGamificationData(userId: string): Promise<any | null> {
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Local data error:', error);
     }
     
@@ -1041,14 +1041,14 @@ export async function updateGamificationData(userId: string, updates: any): Prom
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Supabase error:', error);
       }
     }
   }
   
   // Try Bolt API if enabled
-  if (USE_BOLT) {
+  if (env.USE_BOLT) {
     const boltStartTime = Date.now();
     
     try {
@@ -1079,7 +1079,7 @@ export async function updateGamificationData(userId: string, updates: any): Prom
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Bolt API error:', error);
       }
     }
@@ -1118,7 +1118,7 @@ export async function updateGamificationData(userId: string, updates: any): Prom
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Local data error:', error);
     }
     
@@ -1170,14 +1170,14 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Supabase error:', error);
       }
     }
   }
   
   // Try Bolt API if enabled
-  if (USE_BOLT) {
+  if (env.USE_BOLT) {
     const boltStartTime = Date.now();
     
     try {
@@ -1208,7 +1208,7 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Bolt API error:', error);
       }
     }
@@ -1238,7 +1238,7 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Local data error:', error);
     }
     
@@ -1299,14 +1299,14 @@ export async function getDailyChallengesData(userId: string): Promise<any[]> {
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Supabase error:', error);
       }
     }
   }
   
   // Try Bolt API if enabled
-  if (USE_BOLT) {
+  if (env.USE_BOLT) {
     const boltStartTime = Date.now();
     
     try {
@@ -1336,7 +1336,7 @@ export async function getDailyChallengesData(userId: string): Promise<any[]> {
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (DEBUG_MODE) {
+      if (env.DEBUG_MODE) {
         console.error('[🧠 DataRouter] Bolt API error:', error);
       }
     }
@@ -1403,7 +1403,7 @@ export async function getDailyChallengesData(userId: string): Promise<any[]> {
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Local data error:', error);
     }
     
@@ -1444,7 +1444,7 @@ export async function convertZalandoToBoltProducts(products: any[]): Promise<any
     
     return boltProducts;
   } catch (error) {
-    if (DEBUG_MODE) {
+    if (env.DEBUG_MODE) {
       console.error('[🧠 DataRouter] Error converting Zalando products:', error);
     }
     
@@ -1463,7 +1463,7 @@ export async function getBoltProducts(): Promise<BoltProduct[]> {
 
 // Feature flags
 const FEATURES = {
-  caching: true
+  caching: env.API_CONFIG?.caching !== false
 };
 
 export default {
