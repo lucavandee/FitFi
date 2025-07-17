@@ -110,9 +110,9 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       });
 
       setAvailableChallenges(
-        (gamificationConfig.challenges || []).filter(
+        Array.isArray(gamificationConfig.challenges) ? gamificationConfig.challenges.filter(
           (ch) => !data.completedChallenges.includes(ch.id)
-        )
+        ) : []
       );
     } catch (err) {
       console.error("[⚠️ Gamification] Fout bij laden van data:", err);
