@@ -59,9 +59,5 @@ export const FEATURES = {
   // Enable photo upload feature
   photoUpload: true,
   // Enable premium features
-  premium: true,
-  // Enable data caching
-  caching: true,
-  // Enable outfit explanations
-  outfitExplanations: true
+  premium: true
 };
