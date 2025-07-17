@@ -31,6 +31,12 @@ export const USE_ZALANDO = true;
 export const DEBUG_MODE = true;
 
 /**
+ * Toggle for using mock data (via .env → VITE_USE_MOCK_DATA)
+ * When enabled, mock outfits and products are always used
+ */
+export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
+/**
  * Default user ID for testing
  * Used when Supabase is disabled or for development purposes
  */
