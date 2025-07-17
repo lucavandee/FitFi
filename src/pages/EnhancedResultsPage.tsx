@@ -714,7 +714,19 @@ if (process.env.NODE_ENV === 'development' || USE_MOCK_DATA) {
               </div>
             </motion.div>
           )}
-          
+          {USE_MOCK_DATA && (
+  <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
+    <strong>⚠️ Mock Mode Actief:</strong> Deze outfits en producten zijn gegenereerd op basis van testdata. Resultaten zijn niet representatief voor echte data.
+  </div>
+)}
+
+{(process.env.NODE_ENV === 'development' || USE_MOCK_DATA) && (
+  <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
+    <strong>🔍 DEBUG DATA</strong>
+    <pre>{JSON.stringify({ enhancedUser, outfits, matchedProducts }, null, 2)}</pre>
+  </div>
+)}
+
           {/* Sticky CTA footer */}
           <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
             <div className="container-slim">
