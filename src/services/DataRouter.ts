@@ -1,4 +1,3 @@
-
 import { env } from '@/utils/env'; // of relatief pad: ../utils/env
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
@@ -299,6 +298,7 @@ try {
   console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts due to fatal error`);
   boltProductsCache = mockProducts;
   return mockProducts;
+}
 }
 
 /**
