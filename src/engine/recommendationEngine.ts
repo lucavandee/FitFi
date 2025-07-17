@@ -56,7 +56,7 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
     let allProducts: Product[] = [];
     
     // Try to get Supabase products if enabled
-    if (USE_SUPABASE) {
+    if (env.USE_SUPABASE) {
       try {
         const supabaseProducts = await fetchProductsFromSupabase();
         if (supabaseProducts && supabaseProducts.length > 0) {
