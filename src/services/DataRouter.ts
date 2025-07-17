@@ -315,7 +315,6 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
   boltProductsCache = mockProducts;
   return mockProducts;
 }
-
 /**
  * Get outfits for a user
  * @param user - User profile
