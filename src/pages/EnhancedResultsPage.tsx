@@ -323,7 +323,7 @@ if (process.env.NODE_ENV === 'development' || USE_MOCK_DATA) {
   });
 }
   // Loading state with skeleton placeholders
-  if (loading && productsLoading && outfitsLoading) {
+  if (loading & productsLoading & outfitsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
         <div className="container-slim">
