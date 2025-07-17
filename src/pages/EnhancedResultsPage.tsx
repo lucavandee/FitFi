@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { env } from '@/utils/env'; // pad aanpassen indien nodig
-import { USE_MOCK_DATA } from "../config/app-config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useGamification } from "../context/GamificationContext";
