@@ -36,15 +36,9 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
       sourcemap: true,
       rollupOptions: {
-        // Ensure proper handling of worker files and prevent MIME type issues
         output: {
-          // Don't try to load non-existent workers
           manualChunks: undefined,
         },
-        external: [
-          // Exclude fetch.worker.js if it's causing MIME type issues
-          /fetch\.worker\.js$/
-        ]
       }
     },
   };
