@@ -66,8 +66,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsSupabaseConnected(false);
 
         // Use fallback from localStorage if available
-        const savedUser = localStorage.getItem('fitfi-user');
-        const parsedUser = savedUser ? JSON.parse(savedUser) : null;
+        const stored = localStorage.getItem('fitfi-user');
+        const parsedUser = stored ? JSON.parse(stored) : null;
         if (parsedUser) {
           try {
             setUser(parsedUser);

@@ -458,11 +458,11 @@ if (process.env.NODE_ENV === 'development' || USE_MOCK_DATA) {
                 <div className="bg-white/10 px-4 py-2 rounded-full shadow-md">
                   <span className="text-sm font-medium text-white flex items-center">
                     <Star size={16} className="mr-2 text-[#FF8600]" />
-                    {onboardingData?.archetypes?.[0] === 'casual_chic' ? 'Casual Chic' : 
-                     onboardingData?.archetypes?.[0] === 'klassiek' ? 'Klassiek' : 
-                     onboardingData?.archetypes?.[0] === 'streetstyle' ? 'Streetstyle' : 
-                     onboardingData?.archetypes?.[0] === 'urban' ? 'Urban' : 
-                     onboardingData?.archetypes?.[0] === 'retro' ? 'Retro' : 'Jouw Stijl'}
+                    {Array.isArray(onboardingData?.archetypes) && onboardingData.archetypes[0] === 'casual_chic' ? 'Casual Chic' : 
+                     Array.isArray(onboardingData?.archetypes) && onboardingData.archetypes[0] === 'klassiek' ? 'Klassiek' : 
+                     Array.isArray(onboardingData?.archetypes) && onboardingData.archetypes[0] === 'streetstyle' ? 'Streetstyle' : 
+                     Array.isArray(onboardingData?.archetypes) && onboardingData.archetypes[0] === 'urban' ? 'Urban' : 
+                     Array.isArray(onboardingData?.archetypes) && onboardingData.archetypes[0] === 'retro' ? 'Retro' : 'Jouw Stijl'}
                   </span>
                 </div>
               </div>

@@ -265,7 +265,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
         console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
         const response = await boltService.fetchProducts();
         
-        if (response && response.length > 0) {
+          (user.stylePreferences?.casual || 0) > (user.stylePreferences?.formal || 0) ? 'casual_chic' : 'klassiek',
           console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
           
           // Store in memory cache
