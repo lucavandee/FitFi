@@ -6,7 +6,7 @@ export const env = {
   USE_BOLT: import.meta.env.VITE_USE_BOLT === 'true',
   USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true',
   USE_LOCAL_FALLBACK: import.meta.env.VITE_USE_LOCAL_FALLBACK === 'true',
-  USE_ZALANDO: import.meta.env.VITE_USE_ZALANDO === 'true', // optioneel, maar alvast voorbereid
+  USE_ZALANDO: import.meta.env.VITE_USE_ZALANDO === 'true' || true, // default to true if not set
 
   // ✅ Bolt API
   BOLT_API_URL: import.meta.env.VITE_BOLT_API_URL,

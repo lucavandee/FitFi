@@ -350,7 +350,7 @@ export function getRecommendedProducts(
     let allProducts: Product[] = [];
     
     // Try to get Supabase products if enabled
-    if (USE_SUPABASE) {
+    if (env.USE_SUPABASE) {
       try {
         const supabaseProducts = await fetchProductsFromSupabase();
         if (supabaseProducts && supabaseProducts.length > 0) {
