@@ -1,6 +1,4 @@
 import { USE_SUPABASE, USE_BOLT, USE_ZALANDO, API_CONFIG, DEBUG_MODE } from '../config/app-config';
-import { USE_MOCK_DATA } from '../config/app-config';
-import { generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations } from '../engine/recommendationEngine';
