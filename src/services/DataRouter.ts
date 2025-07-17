@@ -255,6 +255,10 @@ function saveToCache<T>(key: string, data: T, source: DataSource): void {
  * Load BoltProducts from API, JSON or mock
  * @returns Array of BoltProducts
  */
+/**
+ * Load BoltProducts from API, JSON or mock
+ * @returns Array of BoltProducts
+ */
 async function loadBoltProducts(): Promise<BoltProduct[]> {
   try {
     // ✅ 1. Gebruik cache indien beschikbaar
@@ -288,6 +292,24 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
       return products;
     }
 
+    console.warn('[🧠 DataRouter] No BoltProducts found in JSON file');
+
+    // ✅ 4. Gebruik mockdata als laatste redmiddel
+    const mockProducts = generateMockBoltProducts();
+    console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts as fallback`);
+    boltProductsCache = mockProducts;
+    return mockProducts;
+
+  } catch (error) {
+    // ❌ Fatale fout in gehele laadproces
+    console.error('[🧠 DataRouter] Unexpected error loading BoltProducts:', error);
+
+    const mockProducts = generateMockBoltProducts();
+    console.log(`[🧠 DataRouter] Generated ${mockProducts.length} mock BoltProducts due to fatal error`);
+    boltProductsCache = mockProducts;
+    return mockProducts;
+  }
+}
     console.warn('[🧠 DataRouter] No BoltProducts found in JSON file');
 
     // ✅ 4. Gebruik mockdata als laatste redmiddel
