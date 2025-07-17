@@ -258,25 +258,28 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
     return boltProductsCache;
   }
   
-  try {
-    // Try to load BoltProducts from API
-    if (env.USE_BOLT) {
-      try {
-        console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
-        const response = await boltService.fetchProducts();
-        
-        if (response && response.length > 0) {
-          console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
-          
-          // Store in memory cache
-          boltProductsCache = response;
-          
-          return response;
-        }
-      } catch (apiError) {
-        console.error('[🧠 DataRouter] Error loading BoltProducts from API:', apiError);
+try {
+  // Try to load BoltProducts from API
+  if (env.USE_BOLT) {
+    try {
+      console.log(`[🧠 DataRouter] Attempting to load BoltProducts from boltService`);
+      const response = await boltService.fetchProducts();
+
+      if (response && response.length > 0) {
+        console.log(`[🧠 DataRouter] Loaded ${response.length} BoltProducts from API`);
+
+        // Store in memory cache
+        boltProductsCache = response;
+
+        return response;
       }
+    } catch (apiError) {
+      console.error('[🧠 DataRouter] Error loading BoltProducts from API:', apiError);
     }
+  }
+} catch (err) {
+  console.error('[🧠 DataRouter] Outer try failed unexpectedly:', err);
+}
     
     // If API failed or is disabled, try to load from JSON file
     console.log(`[🧠 DataRouter] Attempting to load BoltProducts from JSON file`);
