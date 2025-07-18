@@ -15,9 +15,6 @@ import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON, generateMockBoltProducts, filterProductsByGender } from '../utils/boltProductsUtils';
 import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
 
-const useMockData = env.USE_MOCK_DATA;
-
-
 // Data source type
 export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
 
@@ -312,8 +309,7 @@ export async function getOutfits(
   user: UserProfile,
   options?: any
 ): Promise<Outfit[]> {
-  // ✅ Zet deze blok direct als eerste binnen de functie:
-  if (useMockData) {
+  if (env.USE_MOCK_DATA) {
     console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
     return generateMockOutfits(options?.count || 3);
   }
@@ -612,7 +608,7 @@ export async function getRecommendedProducts(
   count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
-  if (useMockData) {
+  if (env.USE_MOCK_DATA) {
     console.log("⚠️ Using mock products via USE_MOCK_DATA");
     return generateMockProducts(count);
   }
