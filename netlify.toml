@@ -8,19 +8,19 @@
   node_bundler = "esbuild"
 
 [[redirects]]
-  # ✅ Netlify functions routing (optioneel)
-  from   = "/.netlify/functions/*"
-  to     = "/.netlify/functions/:splat"
-  status = 200
-
-[[redirects]]
   # ✅ SPA fallback zodat je geen witte schermen krijgt op bijv. /results of /onboarding/gender-name
   from   = "/*"
   to     = "/index.html"
   status = 200
 
+[[redirects]]
+  # ✅ Netlify functions routing
+  from   = "/.netlify/functions/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+
 [[headers]]
-  # ✅ Correcte MIME types for JS files
+  # ✅ Correct MIME types for JS and CSS files
   for = "/*.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
@@ -31,10 +31,22 @@
     Content-Type = "application/javascript; charset=utf-8"
 
 [[headers]]
-  for = "/*.ts"
+  for = "/*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+
+[[headers]]
+  # ✅ Assets folder MIME types
+  for = "/assets/*.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
 
+[[headers]]
+  for = "/assets/*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
 [[headers]]
   # ✅ Veiligheidsheaders voor bescherming tegen XSS, clickjacking, etc.
   for = "/*"
