@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useUser } from "./UserContext";
 import gamificationConfig from "../config/gamification.json";
+import { env } from "../utils/env";
 import {
   getGamificationData,
   updateGamificationData,
