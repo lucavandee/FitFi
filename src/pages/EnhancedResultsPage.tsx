@@ -55,7 +55,6 @@ const EnhancedResultsPage: React.FC = () => {
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<'supabase' | 'bolt' | 'zalando' | 'local'>(getDataSource());
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
-  const useMockData = env.USE_MOCK_DATA;
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -694,7 +693,7 @@ if (env.DEBUG_MODE || env.USE_MOCK_DATA) {
               </div>
             </motion.div>
           )}
-          {useMockData && (
+          {env.USE_MOCK_DATA && (
   <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
     <strong>⚠️ Mock Mode Actief:</strong> Deze outfits en producten zijn gegenereerd op basis van testdata. Resultaten zijn niet representatief voor echte data.
   </div>

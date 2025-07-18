@@ -14,7 +14,6 @@ import { generateMockUser, generateMockGamification, generateMockOutfits } from 
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // ms
 const REQUEST_TIMEOUT = 10000; // 10 seconds
-const USE_MOCK_DATA_FALLBACK = true;
 
 // Types for gamification
 export interface UserGamification {
@@ -184,9 +183,8 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
   } catch (error) {
     console.error('Error creating user:', error);
     toast.error('Failed to create user account. Please try again.');
-    
-    if (USE_MOCK_DATA_FALLBACK) {
-      // Return mock user as fallback
+    if (env.USE_MOCK_DATA) {
+    if (env.USE_MOCK_DATA) {
       return {
         id: TEST_USER_ID,
         name: userData.name,
@@ -342,7 +340,7 @@ export const getUserById = async (userId: string): Promise<UserProfile | null> =
   } catch (error) {
     console.error('Error fetching user:', error);
     
-    if (USE_MOCK_DATA_FALLBACK) {
+    if (env.USE_MOCK_DATA) {
       // Return mock user as fallback
       return generateMockUser(userId);
     }
@@ -474,7 +472,7 @@ export const updateUser = async (userId: string, updates: Partial<UserProfile>):
     console.error('Error updating user:', error);
     toast.error('Failed to update user profile. Please try again.');
     
-    if (USE_MOCK_DATA_FALLBACK) {
+    if (env.USE_MOCK_DATA) {
       // Return mock updated user
       const mockUser = generateMockUser(userId);
       return {
@@ -649,7 +647,7 @@ export const getUserGamification = async (userId: string): Promise<UserGamificat
   } catch (error) {
     console.error('Error fetching user gamification:', error);
     
-    if (USE_MOCK_DATA_FALLBACK) {
+    if (env.USE_MOCK_DATA) {
       // Return mock gamification data as fallback
       return generateMockGamification(userId);
     }
@@ -711,7 +709,7 @@ export const updateUserGamification = async (userId: string, updates: Partial<Om
     console.error('Error updating user gamification:', error);
     toast.error('Failed to update gamification data. Please try again.');
     
-    if (USE_MOCK_DATA_FALLBACK) {
+    if (env.USE_MOCK_DATA) {
       // Return mock updated gamification data
       const mockData = generateMockGamification(userId);
       return {
@@ -843,7 +841,7 @@ export const getDailyChallenges = async (userId: string): Promise<DailyChallenge
   } catch (error) {
     console.error('Error fetching daily challenges:', error);
     
-    if (USE_MOCK_DATA_FALLBACK) {
+    if (env.USE_MOCK_DATA) {
       // Return mock challenges as fallback
       return [
         {
