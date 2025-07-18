@@ -23,6 +23,9 @@ export const env = {
   // ✅ Debug & configuratie
   DEBUG_MODE: import.meta.env.VITE_DEBUG_MODE === 'true',
   API_CONFIG: import.meta.env.VITE_API_CONFIG || '',
+  
+  // ✅ Mock data toggle
+  USE_MOCK_DATA: import.meta.env.VITE_USE_MOCK_DATA === 'true',
 
   // ✅ Google Analytics (optioneel)
   GTAG_ID: import.meta.env.VITE_GTAG_ID || '',
