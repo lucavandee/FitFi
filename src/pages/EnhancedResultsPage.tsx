@@ -56,6 +56,9 @@ const EnhancedResultsPage: React.FC = () => {
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<'supabase' | 'bolt' | 'zalando' | 'local'>(getDataSource());
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [fetchStatus, setFetchStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'fallback'>('idle');
+  const [debugInfo, setDebugInfo] = useState<any>({});
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -108,13 +111,33 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Load recommendations using the DataRouter
   const loadRecommendations = useCallback(async () => {
+    // Prevent concurrent fetching
+    if (isFetching) {
+      console.log('[🔒 EnhancedResultsPage] Already fetching, skipping duplicate request');
+      return;
+    }
+    
     console.log('[🔍 EnhancedResultsPage] Starting loadRecommendations');
     console.log('[🔍 EnhancedResultsPage] enhancedUser at start:', enhancedUser);
     
+    setIsFetching(true);
+    setFetchStatus('loading');
     setLoading(true);
     setProductsLoading(true);
     setOutfitsLoading(true);
     setError(null);
+    
+    // Update debug info
+    setDebugInfo({
+      enhancedUser: {
+        id: enhancedUser.id,
+        name: enhancedUser.name,
+        gender: enhancedUser.gender,
+        stylePreferences: enhancedUser.stylePreferences
+      },
+      onboardingData,
+      timestamp: new Date().toISOString()
+    });
     
     try {
       // Get current season
@@ -137,13 +160,15 @@ const EnhancedResultsPage: React.FC = () => {
       // Check if outfits were generated, use fallback if empty
       if (generatedOutfits.length === 0) {
         console.warn('[⚠️ EnhancedResultsPage] No outfits generated, using fallback mock outfits');
-        setError('Geen outfits gevonden. We tonen tijdelijk een voorbeeld.');
+        setError('Geen outfits gevonden. We tonen voorbeelddata.');
+        setFetchStatus('fallback');
         const fallbackOutfits = generateMockOutfits(3);
         console.log('[🔍 EnhancedResultsPage] Using fallback outfits:', fallbackOutfits);
         setOutfits(fallbackOutfits);
       } else {
         console.log('[🔍 EnhancedResultsPage] Setting generated outfits:', generatedOutfits);
         setOutfits(generatedOutfits);
+        setFetchStatus('success');
       }
       setOutfitsLoading(false);
       
@@ -159,6 +184,7 @@ const EnhancedResultsPage: React.FC = () => {
       // Check if products were found, use fallback if empty
       if (recommendedProducts.length === 0) {
         console.warn('[⚠️ EnhancedResultsPage] No products found, using fallback mock products');
+        setFetchStatus('fallback');
         const fallbackProducts = generateMockProducts(undefined, 9);
         console.log('[🔍 EnhancedResultsPage] Using fallback products:', fallbackProducts);
         setMatchedProducts(fallbackProducts);
@@ -192,7 +218,8 @@ const EnhancedResultsPage: React.FC = () => {
       
     } catch (err) {
       console.error('Error generating recommendations:', err);
-      setError('Er is een fout opgetreden bij het genereren van aanbevelingen. We tonen tijdelijk voorbeelddata.');
+      setError('Er is een fout opgetreden. We tonen voorbeelddata.');
+      setFetchStatus('error');
       
       // Use fallback data when there's an error
       console.warn('[⚠️ EnhancedResultsPage] Using fallback data due to error');
@@ -208,9 +235,10 @@ const EnhancedResultsPage: React.FC = () => {
       setDataSource(getDataSource());
     } finally {
       console.log('[🔍 EnhancedResultsPage] loadRecommendations completed');
+      setIsFetching(false);
       setLoading(false);
     }
-  }, [enhancedUser, onboardingData, viewRecommendation, outfits.length, matchedProducts.length]);
+  }, [enhancedUser, onboardingData, viewRecommendation, isFetching]);
 
   // Generate recommendations on component mount
   useEffect(() => {
@@ -350,41 +378,70 @@ const EnhancedResultsPage: React.FC = () => {
     return seasonMap[dutchSeason] || 'autumn';
   };
   
-          {/* Debug: Always show current state for debugging */}
-          {(env.DEBUG_MODE || env.USE_MOCK_DATA) && (
-            <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
-              <strong>🔍 DEBUG DATA</strong>
-              <pre>{JSON.stringify({ 
-                enhancedUser: {
-                  id: enhancedUser.id,
-                  name: enhancedUser.name,
-                  gender: enhancedUser.gender,
-                  stylePreferences: enhancedUser.stylePreferences
-                }, 
-                onboardingData,
-                outfitsCount: outfits.length,
-                productsCount: matchedProducts.length,
-                dataSource,
-                loading,
-                productsLoading,
-                outfitsLoading,
-                error
-              }, null, 2)}</pre>
-            </div>
-          )}
-          
-          {/* Always show mock mode status */}
-          <div className="mt-4 bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs rounded-lg p-3">
-            <div className="flex items-center justify-between">
-              <span>🔧 Debug Info:</span>
-              <div className="space-x-4">
-                <span>Mock Mode: {env.USE_MOCK_DATA ? '✅ Actief' : '❌ Inactief'}</span>
-                <span>Data Source: {dataSource}</span>
-                <span>Outfits: {outfits.length}</span>
-                <span>Products: {matchedProducts.length}</span>
-              </div>
-            </div>
-          </div>
+  // Empty state component for when no results are found
+  const EmptyResultsState: React.FC = () => (
+    <div className="text-center py-12">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
+        <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle className="text-orange-500" size={32} />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+          Geen aanbevelingen gevonden
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          We konden geen outfits of producten vinden die bij jouw profiel passen. Dit kan een tijdelijk probleem zijn.
+        </p>
+        <div className="space-y-3">
+          <Button
+            variant="primary"
+            onClick={() => loadRecommendations()}
+            icon={<RefreshCw size={16} />}
+            iconPosition="left"
+            disabled={isFetching}
+          >
+            {isFetching ? 'Laden...' : 'Probeer opnieuw'}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/onboarding')}
+            className="w-full"
+          >
+            Nieuwe stijlscan
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Central debug overlay component
+  const DebugOverlay: React.FC = () => (
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm">
+      <div className="bg-black/90 text-green-400 text-xs p-4 rounded-lg shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <strong>🔧 Debug Panel</strong>
+          <span className={`px-2 py-1 rounded text-xs ${
+            fetchStatus === 'success' ? 'bg-green-500/20 text-green-400' :
+            fetchStatus === 'error' ? 'bg-red-500/20 text-red-400' :
+            fetchStatus === 'fallback' ? 'bg-yellow-500/20 text-yellow-400' :
+            fetchStatus === 'loading' ? 'bg-blue-500/20 text-blue-400' :
+            'bg-gray-500/20 text-gray-400'
+          }`}>
+            {fetchStatus}
+          </span>
+        </div>
+        <div className="space-y-1 text-xs">
+          <div>👤 User: {enhancedUser.id.slice(0, 8)}...</div>
+          <div>📊 Outfits: {outfits.length}</div>
+          <div>🛍️ Products: {matchedProducts.length}</div>
+          <div>🔗 Source: {dataSource}</div>
+          <div>🧪 Mock: {env.USE_MOCK_DATA ? '✅' : '❌'}</div>
+          <div>🔄 Fetching: {isFetching ? '✅' : '❌'}</div>
+          {error && <div className="text-red-400">❌ {error}</div>}
+        </div>
+      </div>
+    </div>
+  );
+
   // Loading state with skeleton placeholders
   if (loading && productsLoading && outfitsLoading) {
     return (
@@ -461,17 +518,28 @@ const EnhancedResultsPage: React.FC = () => {
               <p className="text-white/80 mb-6">
                 {error}
               </p>
-              <Button 
-                variant="primary"
-                onClick={() => loadRecommendations()}
-                icon={<RefreshCw size={18} />}
-                iconPosition="left"
-              >
-                Probeer opnieuw
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  variant="primary"
+                  onClick={() => loadRecommendations()}
+                  icon={<RefreshCw size={18} />}
+                  iconPosition="left"
+                  disabled={isFetching}
+                >
+                  {isFetching ? 'Laden...' : 'Probeer opnieuw'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/onboarding')}
+                  className="w-full text-white border border-white/30 hover:bg-white/10"
+                >
+                  Nieuwe stijlscan
+                </Button>
+              </div>
             </div>
           </div>
         </div>
+        <DebugOverlay />
       </div>
     );
   }
@@ -480,40 +548,34 @@ const EnhancedResultsPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
       <div className="container-slim">
         <div className="max-w-5xl mx-auto px-4">
-          {/* Debug: Show if no content is available */}
-          {!loading && outfits.length === 0 && matchedProducts.length === 0 && (
-            <div className="text-center text-sm mt-12 bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-8">
-              <AlertTriangle size={20} className="text-red-400 mx-auto mb-2" />
-              <p className="text-red-400">⚠️ Geen aanbevelingen gevonden. Probeer opnieuw of gebruik mock mode.</p>
-              <Button 
-                variant="primary"
-                onClick={() => loadRecommendations()}
-                className="mt-4"
-                icon={<RefreshCw size={16} />}
-                iconPosition="left"
-              >
-                Probeer opnieuw
-              </Button>
-            </div>
+          {/* Show empty state if no content is available */}
+          {!loading && !productsLoading && !outfitsLoading && outfits.length === 0 && matchedProducts.length === 0 && (
+            <EmptyResultsState />
           )}
           
-          {/* Header with user greeting */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
-          >
-            <h1 className="text-3xl font-bold text-white mb-3">
-              Jouw persoonlijke stijlaanbevelingen
-            </h1>
-            <p className="text-xl text-white/80">
-              Hallo {enhancedUser.name || 'daar'}! Deze outfits zijn speciaal voor jou samengesteld.
-            </p>
-          </motion.div>
+          {/* Only show content if we have data or are loading */}
+          {(loading || productsLoading || outfitsLoading || outfits.length > 0 || matchedProducts.length > 0) && (
+            <>
+              {/* Header with user greeting */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mb-8"
+              >
+                <h1 className="text-3xl font-bold text-white mb-3">
+                  Jouw persoonlijke stijlaanbevelingen
+                </h1>
+                <p className="text-xl text-white/80">
+                  Hallo {enhancedUser.name || 'daar'}! Deze outfits zijn speciaal voor jou samengesteld.
+                </p>
+              </motion.div>
+            </>
+          )}
           
           {/* Season info card */}
-          <motion.div
+          {(outfits.length > 0 || matchedProducts.length > 0 || loading) && (
+            <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -546,10 +608,12 @@ const EnhancedResultsPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+            </motion.div>
+          )}
           
           {/* Data source info */}
-          <motion.div
+          {(outfits.length > 0 || matchedProducts.length > 0 || loading) && (
+            <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -614,10 +678,12 @@ const EnhancedResultsPage: React.FC = () => {
                 </div>
               </div>
             )}
-          </motion.div>
+            </motion.div>
+          )}
           
           {/* Outfits section */}
-          <motion.div
+          {(outfits.length > 0 || outfitsLoading) && (
+            <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -662,10 +728,12 @@ const EnhancedResultsPage: React.FC = () => {
                 <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
               </div>
             )}
-          </motion.div>
+            </motion.div>
+          )}
           
           {/* Individual products section */}
-          <motion.div
+          {(matchedProducts.length > 0 || productsLoading) && (
+            <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -749,7 +817,8 @@ const EnhancedResultsPage: React.FC = () => {
                 </p>
               </div>
             )}
-          </motion.div>
+            </motion.div>
+          )}
           
           {/* Feedback section */}
           {!feedbackGiven && !loading && (
@@ -803,38 +872,6 @@ const EnhancedResultsPage: React.FC = () => {
             </div>
           )}
           
-          {/* Debug: Always show mock mode status */}
-          <div className="mt-4 bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs rounded-lg p-3">
-            <div className="flex items-center justify-between">
-              <span>🔧 Debug Info:</span>
-              <div className="space-x-4">
-                <span>Mock Mode: {env.USE_MOCK_DATA ? '✅ Actief' : '❌ Inactief'}</span>
-                <span>Data Source: {dataSource}</span>
-                <span>Outfits: {outfits.length}</span>
-                <span>Products: {matchedProducts.length}</span>
-              </div>
-            </div>
-          </div>
-
-          {(env.DEBUG_MODE || env.USE_MOCK_DATA) && (
-            <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
-              <strong>🔍 DEBUG DATA</strong>
-              <pre>{JSON.stringify({ 
-                enhancedUser: {
-                  id: enhancedUser.id,
-                  name: enhancedUser.name,
-                  gender: enhancedUser.gender,
-                  stylePreferences: enhancedUser.stylePreferences
-                }, 
-                outfitsCount: outfits.length,
-                productsCount: matchedProducts.length,
-                dataSource,
-                loading,
-                error
-              }, null, 2)}</pre>
-            </div>
-          )}
-
           {/* Sticky CTA footer */}
           <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
             <div className="container-slim">
@@ -864,6 +901,9 @@ const EnhancedResultsPage: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        {/* Central Debug Overlay */}
+        {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
       </div>
     </div>
   );

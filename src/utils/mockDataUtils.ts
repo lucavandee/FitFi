@@ -54,6 +54,8 @@ export const generateMockGamification = (userId: string) => {
  * @returns Array of mock outfits
  */
 export const generateMockOutfits = (count: number = 3) => {
+  console.log(`[🧪 MockDataUtils] Generating ${count} mock outfits`);
+  
   const baseOutfit = {
     id: 'outfit_001',
     title: 'Casual Urban',
@@ -90,12 +92,15 @@ export const generateMockOutfits = (count: number = 3) => {
   };
   
   // Generate variations
-  return Array.from({ length: count }, (_, i) => ({
+  const outfits = Array.from({ length: count }, (_, i) => ({
     ...baseOutfit,
     id: `outfit_00${i + 1}`,
-    match_percentage: Math.floor(Math.random() * 15) + 85, // 85-99%
+    matchPercentage: Math.floor(Math.random() * 15) + 85, // 85-99%
     title: i === 0 ? 'Casual Urban' : i === 1 ? 'Modern Minimalist' : 'Streetwear Chic'
   }));
+  
+  console.log(`[🧪 MockDataUtils] Generated ${outfits.length} mock outfits:`, outfits.map(o => o.title));
+  return outfits;
 };
 
 /**
