@@ -36,7 +36,7 @@ export const DEBUG_MODE = env.DEBUG_MODE;
  * Toggle for using mock data (via .env → VITE_USE_MOCK_DATA)
  * When enabled, mock outfits and products are always used
  */
-export const USE_MOCK_DATA = env.USE_MOCK_DATA;
+export const env.USE_MOCK_DATA = env.USE_MOCK_DATA;
 
 /**
  * Default user ID for testing
