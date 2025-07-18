@@ -6,7 +6,7 @@ import dutchProducts from '../data/dutchProducts';
 import { getCurrentSeason, isProductInSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { isValidImageUrl } from '../utils/imageUtils';
-import { USE_SUPABASE } from '../config/app-config';
+import { env } from '../utils/env';
 import { fetchProductsFromSupabase } from '../services/supabaseService';
 
 /**
@@ -32,7 +32,7 @@ interface RecommendationOptions {
  * @returns Array of recommended outfits
  */
 export function generateRecommendations(user: UserProfile, options?: RecommendationOptions): Outfit[] {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('Supabase uitgeschakeld – fallback actief');
   }
   
