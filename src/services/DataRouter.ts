@@ -1,5 +1,5 @@
 
-import { env } from '@/utils/env'; // of relatief pad: ../utils/env
+import { env } from '../utils/env';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations } from '../engine/recommendationEngine';
