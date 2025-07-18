@@ -58,6 +58,12 @@ interface OutfitCardProps {
 const OutfitCard: React.FC<OutfitCardProps> = ({
   outfit, onNewLook, isGenerating, user
 }) => {
+  // Early return if outfit is invalid
+  if (!outfit || !outfit.id) {
+    console.warn('[⚠️ OutfitCard] Invalid outfit provided:', outfit);
+    return null;
+  }
+  
   const [showItems, setShowItems] = useState(false);
   const [feedback, setFeedback] = useState<'liked' | 'disliked' | null>(null);
   const [showExplanationTooltip, setShowExplanationTooltip] = useState(false);
@@ -69,9 +75,9 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   const [explanation, setExplanation] = useState<string>(outfit.explanation || '');
   
   useEffect(() => {
+    try {
     // If explanation is not provided, generate one
     if (!outfit.explanation && outfit.archetype) {
-      try {
         const generatedExplanation = generateOutfitExplanation(
           outfit,
           outfit.archetype,
@@ -94,16 +100,26 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             outfit_archetype: outfit.archetype
           });
         }
-      } catch (error) {
-        console.error('Error generating explanation:', error);
-        setExplanation('Past bij jouw stijlvoorkeuren');
-      }
     } else {
       setExplanation(outfit.explanation || 'Past bij jouw stijlvoorkeuren');
     }
+    } catch (error) {
+      console.error('[❌ OutfitCard] Error generating explanation:', error);
+      setExplanation('Past bij jouw stijlvoorkeuren');
+    }
   }, [outfit, safeUser]);
   
-  const handleProductClick = (url: string) => window.open(url, '_blank', 'noopener,noreferrer');
+  const handleProductClick = (url: string) => {
+    try {
+      if (!url || url === '#') {
+        console.warn('[⚠️ OutfitCard] Invalid product URL:', url);
+        return;
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      console.error('[❌ OutfitCard] Error opening product URL:', error);
+    }
+  };
   
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -176,7 +192,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             {outfit.matchPercentage}% Match
           </div>
           
-          {/* Quick actions */}
+              alt="Stylish woman with FitFi recommendations" 
           <div className="absolute bottom-4 right-4 flex space-x-2">
             <button 
               className="p-2 rounded-full bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white transition-colors"
@@ -186,7 +202,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             </button>
             <button 
               className="p-2 rounded-full bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white transition-colors"
-              aria-label="Deel outfit"
+              alt="Stylish man with FitFi recommendations" 
             >
               <Share2 size={16} />
             </button>
@@ -323,18 +339,25 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                 <div 
                   key={index}
                   className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer group"
-                  onClick={() => handleProductClick(item.url)}
+                  aria-label="Show female style"
                 >
                   <ImageWithFallback 
-                    src={item.imageUrl} 
+                {items.map((item, index) => {
+                  try {
+                    if (!item || !item.id) {
+                      console.warn(`[⚠️ OutfitCard] Invalid item at index ${index}:`, item);
+                      return null;
+                    }
+                    
+                    return (
                     alt={item.name}
-                    className="w-12 h-12 object-cover rounded-md group-hover:scale-105 transition-transform"
+                    key={item.id || `item-${index}`}
                     componentName={`OutfitCard_Item_${index}`}
-                    fallbackSrc="/placeholder.png"
+                    onClick={() => handleProductClick(item.url || '#')}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <div>
+                      src={item.imageUrl || '/placeholder.png'} 
+                      alt={item.name || 'Product image'}
                         <p className="text-sm font-medium text-white truncate">
                           {item.name}
                         </p>
@@ -343,21 +366,26 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-white">
+                            €{typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
                           €{item.price.toFixed(2)}
                         </p>
-                        <div className="text-xs text-white/60">
+                            {item.retailer || 'Unknown Store'}
                           {item.retailer}
                         </div>
                       </div>
                     </div>
                   </div>
                   <ExternalLink size={14} className="text-white/40 group-hover:text-[#FF8600] transition-colors" />
-                </div>
+                    );
+                  } catch (error) {
+                    console.error(`[❌ OutfitCard] Error rendering item ${index}:`, error);
+                    return null;
+                  }
+                })}
               ))}
             </div>
           )}
-        </div>
+                  aria-label="Show male style"
       </div>
     </div>
   );

@@ -45,11 +45,16 @@ export function getProductSeasonText(product: any, formatter?: (season: string) 
     return 'Alle seizoenen';
   }
   
+  try {
   if (formatter) {
     return normalizedProduct.season.map(formatter).join(', ');
   }
   
   return normalizedProduct.season.join(', ');
+  } catch (error) {
+    console.error('[❌ ProductUtils] Error formatting season text:', error);
+    return 'Alle seizoenen';
+  }
 }
 
 export default {
