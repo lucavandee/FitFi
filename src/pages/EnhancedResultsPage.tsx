@@ -13,6 +13,7 @@ import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
 import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
+import { generateMockOutfits, generateMockProducts } from "../utils/mockDataUtils";
 import { 
   Calendar, 
   Star, 
@@ -102,6 +103,9 @@ const EnhancedResultsPage: React.FC = () => {
       const season = onboardingData?.season ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
       setCurrentSeason(season);
       
+      // Debug: Log enhanced user data
+      console.log('[🔍 EnhancedUser]', enhancedUser);
+      
       // Get outfits using the DataRouter with onboarding preferences
       const options = {
         count: 3,
@@ -112,17 +116,38 @@ const EnhancedResultsPage: React.FC = () => {
       
       const generatedOutfits = await getOutfits(enhancedUser, options);
       
-      // Set outfits
-      setOutfits(generatedOutfits);
+      // Debug: Log getOutfits result
+      console.log('[🧠 getOutfits result]', generatedOutfits);
+      
+      // Check if outfits were generated, use fallback if empty
+      if (generatedOutfits.length === 0) {
+        console.warn('[⚠️ EnhancedResultsPage] No outfits generated, using fallback mock outfits');
+        setError('Geen outfits gevonden. We tonen tijdelijk een voorbeeld.');
+        const fallbackOutfits = generateMockOutfits(3);
+        setOutfits(fallbackOutfits);
+      } else {
+        setOutfits(generatedOutfits);
+      }
       setOutfitsLoading(false);
       
       // Track shown outfit IDs
-      const outfitIds = generatedOutfits.map(outfit => outfit.id);
+      const outfitIds = (generatedOutfits.length > 0 ? generatedOutfits : generateMockOutfits(3)).map(outfit => outfit.id);
       setShownOutfitIds(outfitIds);
       
       // Get recommended individual products
       const recommendedProducts = await getRecommendedProducts(enhancedUser, 9, season as any);
-      setMatchedProducts(recommendedProducts);
+      
+      // Debug: Log getRecommendedProducts result
+      console.log('[🧠 getRecommendedProducts result]', recommendedProducts);
+      
+      // Check if products were found, use fallback if empty
+      if (recommendedProducts.length === 0) {
+        console.warn('[⚠️ EnhancedResultsPage] No products found, using fallback mock products');
+        const fallbackProducts = generateMockProducts(undefined, 9);
+        setMatchedProducts(fallbackProducts);
+      } else {
+        setMatchedProducts(recommendedProducts);
+      }
       setProductsLoading(false);
       
       // Get the data source being used
@@ -133,8 +158,8 @@ const EnhancedResultsPage: React.FC = () => {
         window.gtag('event', 'view_recommendations', {
           event_category: 'engagement',
           event_label: 'results_page',
-          outfits_count: generatedOutfits.length,
-          products_count: recommendedProducts.length,
+          outfits_count: outfits.length,
+          products_count: matchedProducts.length,
           data_source: getDataSource(),
           archetypes: Array.isArray(onboardingData?.archetypes) ? onboardingData.archetypes.join(',') : 'none',
           season: season,
@@ -147,14 +172,20 @@ const EnhancedResultsPage: React.FC = () => {
       
     } catch (err) {
       console.error('Error generating recommendations:', err);
-      setError('Er is een fout opgetreden bij het genereren van aanbevelingen.');
+      setError('Er is een fout opgetreden bij het genereren van aanbevelingen. We tonen tijdelijk voorbeelddata.');
+      
+      // Use fallback data when there's an error
+      console.warn('[⚠️ EnhancedResultsPage] Using fallback data due to error');
+      setOutfits(generateMockOutfits(3));
+      setMatchedProducts(generateMockProducts(undefined, 9));
+      
       setProductsLoading(false);
       setOutfitsLoading(false);
       setDataSource(getDataSource());
     } finally {
       setLoading(false);
     }
-  }, [enhancedUser, onboardingData, viewRecommendation]);
+  }, [enhancedUser, onboardingData, viewRecommendation, outfits.length, matchedProducts.length]);
 
   // Generate recommendations on component mount
   useEffect(() => {
@@ -396,6 +427,23 @@ if (env.DEBUG_MODE || env.USE_MOCK_DATA) {
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
       <div className="container-slim">
         <div className="max-w-5xl mx-auto px-4">
+          {/* Debug: Show if no content is available */}
+          {!loading && outfits.length === 0 && matchedProducts.length === 0 && (
+            <div className="text-center text-sm mt-12 bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-8">
+              <AlertTriangle size={20} className="text-red-400 mx-auto mb-2" />
+              <p className="text-red-400">⚠️ Geen aanbevelingen gevonden. Probeer opnieuw of gebruik mock mode.</p>
+              <Button 
+                variant="primary"
+                onClick={() => loadRecommendations()}
+                className="mt-4"
+                icon={<RefreshCw size={16} />}
+                iconPosition="left"
+              >
+                Probeer opnieuw
+              </Button>
+            </div>
+          )}
+          
           {/* Header with user greeting */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -695,14 +743,42 @@ if (env.DEBUG_MODE || env.USE_MOCK_DATA) {
           )}
           {env.USE_MOCK_DATA && (
             <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
-              <strong>⚠️ Mock Mode Actief:</strong> Deze outfits en producten zijn gegenereerd op basis van testdata. Resultaten zijn niet representatief voor echte data.
+              <div className="flex items-center">
+                <AlertTriangle size={16} className="mr-2" />
+                <strong>⚠️ Mock Mode Actief:</strong> Deze outfits en producten zijn gegenereerd op basis van testdata. Resultaten zijn niet representatief voor echte data.
+              </div>
             </div>
           )}
+          
+          {/* Debug: Always show mock mode status */}
+          <div className="mt-4 bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <span>🔧 Debug Info:</span>
+              <div className="space-x-4">
+                <span>Mock Mode: {env.USE_MOCK_DATA ? '✅ Actief' : '❌ Inactief'}</span>
+                <span>Data Source: {dataSource}</span>
+                <span>Outfits: {outfits.length}</span>
+                <span>Products: {matchedProducts.length}</span>
+              </div>
+            </div>
+          </div>
 
           {(env.DEBUG_MODE || env.USE_MOCK_DATA) && (
             <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
               <strong>🔍 DEBUG DATA</strong>
-              <pre>{JSON.stringify({ enhancedUser, outfits, matchedProducts }, null, 2)}</pre>
+              <pre>{JSON.stringify({ 
+                enhancedUser: {
+                  id: enhancedUser.id,
+                  name: enhancedUser.name,
+                  gender: enhancedUser.gender,
+                  stylePreferences: enhancedUser.stylePreferences
+                }, 
+                outfitsCount: outfits.length,
+                productsCount: matchedProducts.length,
+                dataSource,
+                loading,
+                error
+              }, null, 2)}</pre>
             </div>
           )}
 
