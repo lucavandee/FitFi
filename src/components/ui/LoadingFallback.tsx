@@ -1,31 +1,10 @@
 import React from 'react';
+import { env } from '../../utils/env';
 
 interface LoadingFallbackProps {
   message?: string;
   size?: 'sm' | 'md' | 'lg';
   fullScreen?: boolean;
-  className?: string;
-}
-
-interface LoadingFallbackProps {
-  message?: string;
-  size?: 'sm' | 'md' | 'lg';
-  fullScreen?: boolean;
-  className?: string;
-}
-
-interface LoadingFallbackProps {
-  message?: string;
-  size?: 'sm' | 'md' | 'lg';
-  fullScreen?: boolean;
-  className?: string;
-}
-
-interface LoadingFallbackProps {
-  message?: string;
-  size?: 'sm' | 'md' | 'lg';
-  fullScreen?: boolean;
-  className?: string;
   className?: string;
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, RefreshCw, Database, Clock } from 'lucide-react';
 import { getFetchDiagnostics, getFetchDiagnosticsSummary, clearCache, getDataSource } from '../services/DataRouter';
+import { env } from '../utils/env';
 
 interface DevDataPanelProps {
   onRefresh?: () => Promise<void>;
@@ -17,7 +18,7 @@ const DevDataPanel: React.FC<DevDataPanelProps> = ({ onRefresh, className = '' }
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Only render in development mode
-  if (process.env.NODE_ENV !== 'development') {
+  if (!env.DEBUG_MODE) {
     return null;
   }
   

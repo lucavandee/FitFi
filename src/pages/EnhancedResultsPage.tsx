@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { env } from '@/utils/env'; // pad aanpassen indien nodig
+import { env } from '../utils/env';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useGamification } from "../context/GamificationContext";
@@ -33,28 +33,7 @@ const ResultsLoader: React.FC<{ message?: string }> = ({
   <div className="flex flex-col items-center justify-center py-12">
     <div className="w-16 h-16 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mb-6"></div>
     <p className="text-white/80 text-center max-w-md">{message}</p>
-
-        {process.env.NODE_ENV === 'development' && (
-          <div className="bg-black text-green-400 text-xs p-4 mt-16 rounded-md whitespace-pre-wrap overflow-auto max-h-96">
-            <strong>DEBUG OUTPUT</strong>
-            <br />
-            <strong>DataSource:</strong> {dataSource}
-            <br />
-            <strong># Outfits:</strong> {outfits.length}
-            <br />
-            <strong># Matched Products:</strong> {matchedProducts.length}
-            <br />
-            <strong>First Outfit:</strong> <br />
-            {outfits.length > 0 ? <pre>{JSON.stringify(outfits[0], null, 2).slice(0, 1000)}</pre> : '—'}
-            <br />
-            <strong>First Product:</strong> <br />
-            {matchedProducts.length > 0 ? <pre>{JSON.stringify(matchedProducts[0], null, 2).slice(0, 1000)}</pre> : '—'}
-            <br />
-            <strong>EnhancedUser:</strong> <br />
-            <pre>{JSON.stringify(enhancedUser, null, 2).slice(0, 1000)}</pre>
-          </div>
-        )}
-          </div>
+  </div>
 );
 
 const EnhancedResultsPage: React.FC = () => {
@@ -315,7 +294,7 @@ const EnhancedResultsPage: React.FC = () => {
     return seasonMap[dutchSeason] || 'autumn';
   };
   
-if (process.env.NODE_ENV === 'development' || env.USE_MOCK_DATA) {
+if (env.DEBUG_MODE || env.USE_MOCK_DATA) {
   console.log("💡 DEBUG EnhancedResultsPage:", {
     enhancedUser,
     dataSource,
@@ -721,7 +700,7 @@ if (process.env.NODE_ENV === 'development' || env.USE_MOCK_DATA) {
   </div>
 )}
 
-{(process.env.NODE_ENV === 'development' || env.USE_MOCK_DATA) && (
+{(env.DEBUG_MODE || env.USE_MOCK_DATA) && (
   <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
     <strong>🔍 DEBUG DATA</strong>
     <pre>{JSON.stringify({ enhancedUser, outfits, matchedProducts }, null, 2)}</pre>

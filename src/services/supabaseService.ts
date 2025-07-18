@@ -1,7 +1,7 @@
 import supabase, { isValidUUID, TEST_USER_ID } from '../lib/supabase';
 import { StylePreference, UserProfile } from '../context/UserContext';
 import toast from 'react-hot-toast';
-import { USE_SUPABASE } from '../config/app-config';
+import { env } from '../utils/env';
 import { generateMockUser, generateMockGamification, generateMockOutfits } from '../utils/mockDataUtils';
 
 /**
@@ -52,7 +52,7 @@ async function executeWithRetry<T>(
   fallback: T | null = null,
   retries: number = MAX_RETRIES
 ): Promise<T | null> {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – skipping database operation');
     return fallback;
   }
@@ -93,7 +93,7 @@ async function executeWithRetry<T>(
  * @returns The created user profile or null if failed
  */
 export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePreferences' | 'savedRecommendations'>): Promise<UserProfile | null> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock user creation');
     // Return mock user as fallback
     return {
@@ -214,7 +214,7 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
  * @returns The user profile or null if not found
  */
 export const getUserById = async (userId: string): Promise<UserProfile | null> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock user data');
     return generateMockUser(userId);
   }
@@ -358,7 +358,7 @@ export const getUserById = async (userId: string): Promise<UserProfile | null> =
  * @returns The updated user profile or null if failed
  */
 export const updateUser = async (userId: string, updates: Partial<UserProfile>): Promise<UserProfile | null> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock user update');
     // Return mock updated user
     const mockUser = generateMockUser(userId);
@@ -498,7 +498,7 @@ export const updateUser = async (userId: string, updates: Partial<UserProfile>):
  * @returns Success status
  */
 export const saveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock outfit save');
     return true;
   }
@@ -542,7 +542,7 @@ export const saveOutfit = async (userId: string, outfitId: string): Promise<bool
  * @returns Success status
  */
 export const unsaveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock outfit unsave');
     return true;
   }
@@ -584,7 +584,7 @@ export const unsaveOutfit = async (userId: string, outfitId: string): Promise<bo
  * @returns The user gamification data or null if not found
  */
 export const getUserGamification = async (userId: string): Promise<UserGamification | null> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock gamification data');
     return generateMockGamification(userId);
   }
@@ -665,7 +665,7 @@ export const getUserGamification = async (userId: string): Promise<UserGamificat
  * @returns The updated gamification data or null if failed
  */
 export const updateUserGamification = async (userId: string, updates: Partial<Omit<UserGamification, 'id' | 'user_id' | 'created_at' | 'updated_at'>>): Promise<UserGamification | null> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock gamification update');
     const mockData = generateMockGamification(userId);
     return {
@@ -732,7 +732,7 @@ export const updateUserGamification = async (userId: string, updates: Partial<Om
  * @returns Success status
  */
 export const completeChallenge = async (userId: string, challengeId: string): Promise<boolean> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock challenge completion');
     return true;
   }
@@ -789,7 +789,7 @@ export const completeChallenge = async (userId: string, challengeId: string): Pr
  * @returns Array of daily challenges
  */
 export const getDailyChallenges = async (userId: string): Promise<DailyChallenge[]> => {
-  if (!USE_SUPABASE) {
+  if (!env.USE_SUPABASE) {
     console.log('[Fallback] Supabase disabled – using mock daily challenges');
     return [
       {

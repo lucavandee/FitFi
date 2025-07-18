@@ -1,4 +1,5 @@
 // src/lib/envValidator.ts
+import { env } from '../utils/env';
 
 type RequiredEnvKey =
   | "VITE_SUPABASE_URL"
@@ -15,7 +16,7 @@ const requiredKeys: RequiredEnvKey[] = [
 
 export function validateEnv(): void {
   const missing = requiredKeys.filter(
-    (key) => !import.meta.env[key] || import.meta.env[key] === ""
+    (key) => !env[key.replace('VITE_', '')] || env[key.replace('VITE_', '')] === ""
   );
 
   if (missing.length > 0) {
