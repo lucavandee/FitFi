@@ -184,6 +184,7 @@ export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePrefer
     console.error('Error creating user:', error);
     toast.error('Failed to create user account. Please try again.');
     if (env.USE_MOCK_DATA) {
+    }
     if (env.USE_MOCK_DATA) {
       return {
         id: TEST_USER_ID,
