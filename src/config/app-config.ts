@@ -1,3 +1,5 @@
+import { env } from '../utils/env';
+
 // Application configuration settings
 // This file centralizes important app-wide settings
 
@@ -10,31 +12,31 @@ export const BOLT_API_URL = "/data/bolt";
  * Toggle for Supabase integration
  * When set to false, the app will use local fallback data instead of making Supabase API calls
  */
-export const USE_SUPABASE = false;
+export const USE_SUPABASE = env.USE_SUPABASE;
 
 /**
  * Toggle for Bolt API integration
  * When set to true, the app will try to use Bolt API as a fallback when Supabase is unavailable
  */
-export const USE_BOLT = true;
+export const USE_BOLT = env.USE_BOLT;
 
 /**
  * Toggle for Zalando integration
  * When set to true, the app will try to use Zalando products when Supabase is unavailable
  */
-export const USE_ZALANDO = true;
+export const USE_ZALANDO = env.USE_ZALANDO;
 
 /**
  * Debug mode toggle
  * When enabled, additional console logs will be shown
  */
-export const DEBUG_MODE = true;
+export const DEBUG_MODE = env.DEBUG_MODE;
 
 /**
  * Toggle for using mock data (via .env → VITE_USE_MOCK_DATA)
  * When enabled, mock outfits and products are always used
  */
-export const USE_MOCK_DATA = true; // geforceerd aanzetten voor StackBlitz
+export const USE_MOCK_DATA = env.USE_MOCK_DATA;
 
 /**
  * Default user ID for testing
