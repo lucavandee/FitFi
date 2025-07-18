@@ -92,46 +92,6 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [currentStep, setCurrentStep] = useState<string>('welcome');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
-  // Ensure we always have valid onboarding data
-  useEffect(() => {
-    // Auto-populate missing onboarding data with sensible defaults
-    if (!data.gender || !data.archetypes || data.archetypes.length === 0) {
-      console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data');
-      
-      const fallbackData: Partial<OnboardingData> = {};
-      
-      if (!data.gender) {
-        fallbackData.gender = 'vrouw'; // Default to female
-      }
-      
-      if (!data.archetypes || data.archetypes.length === 0) {
-        fallbackData.archetypes = ['casual_chic']; // Default archetype
-      }
-      
-      if (!data.season) {
-        fallbackData.season = 'herfst'; // Default season
-      }
-      
-      if (!data.occasions || data.occasions.length === 0) {
-        fallbackData.occasions = ['Casual']; // Default occasion
-      }
-      
-      if (!data.name) {
-        fallbackData.name = 'Stijlzoeker'; // Default name
-      }
-      
-      // Only update if we actually have fallback data to add
-      if (Object.keys(fallbackData).length > 0) {
-        updateData(fallbackData);
-      }
-    }
-  }, [data, updateData]);
-  
-  // Save data to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem('fitfi-onboarding', JSON.stringify(data));
-  }, [data]);
-  
   // Update data
   const updateData = (newData: Partial<OnboardingData>) => {
     setData(prevData => ({
@@ -299,6 +259,46 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsSubmitting(false);
     }
   };
+  
+  // Ensure we always have valid onboarding data
+  useEffect(() => {
+    // Auto-populate missing onboarding data with sensible defaults
+    if (!data.gender || !data.archetypes || data.archetypes.length === 0) {
+      console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data');
+      
+      const fallbackData: Partial<OnboardingData> = {};
+      
+      if (!data.gender) {
+        fallbackData.gender = 'vrouw'; // Default to female
+      }
+      
+      if (!data.archetypes || data.archetypes.length === 0) {
+        fallbackData.archetypes = ['casual_chic']; // Default archetype
+      }
+      
+      if (!data.season) {
+        fallbackData.season = 'herfst'; // Default season
+      }
+      
+      if (!data.occasions || data.occasions.length === 0) {
+        fallbackData.occasions = ['Casual']; // Default occasion
+      }
+      
+      if (!data.name) {
+        fallbackData.name = 'Stijlzoeker'; // Default name
+      }
+      
+      // Only update if we actually have fallback data to add
+      if (Object.keys(fallbackData).length > 0) {
+        updateData(fallbackData);
+      }
+    }
+  }, [data, updateData]);
+  
+  // Save data to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('fitfi-onboarding', JSON.stringify(data));
+  }, [data]);
   
   // Context value
   const value: OnboardingContextType = {
