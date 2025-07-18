@@ -145,6 +145,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Set the current step and navigate to it
   const setStep = (step: string) => {
+    console.log('[🔍 OnboardingContext] Setting step:', step);
     setCurrentStep(step);
     
     // Navigate to the appropriate route
@@ -159,6 +160,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         navigate('/onboarding/archetype');
         break;
       case 'results':
+        console.log('[🔍 OnboardingContext] Navigating to results with data:', data);
         navigate('/onboarding/results');
         break;
       default:
@@ -211,6 +213,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Submit the onboarding data
   const submitOnboarding = async () => {
+    console.log('[🔍 OnboardingContext] Submitting onboarding data:', data);
     setIsSubmitting(true);
     
     try {
@@ -247,6 +250,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Award gamification points for completing the quiz
       await completeQuiz();
       
+      console.log('[🔍 OnboardingContext] Navigating to results page');
       // Navigate to results page
       navigate('/results', { state: { onboardingData: data } });
       

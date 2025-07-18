@@ -309,9 +309,13 @@ export async function getOutfits(
   user: UserProfile,
   options?: any
 ): Promise<Outfit[]> {
+  console.log('[🔍 DataRouter] getOutfits called with user:', user.id, 'options:', options);
+  
   if (env.USE_MOCK_DATA) {
     console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
-    return generateMockOutfits(options?.count || 3);
+    const mockOutfits = generateMockOutfits(options?.count || 3);
+    console.log('[🔍 DataRouter] Returning mock outfits:', mockOutfits);
+    return mockOutfits;
   }
   // Reset diagnostics
   resetDiagnostics('getOutfits');
@@ -608,9 +612,13 @@ export async function getRecommendedProducts(
   count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
+  console.log('[🔍 DataRouter] getRecommendedProducts called with user:', user.id, 'count:', count, 'season:', season);
+  
   if (env.USE_MOCK_DATA) {
     console.log("⚠️ Using mock products via USE_MOCK_DATA");
-    return generateMockProducts(count);
+    const mockProducts = generateMockProducts(undefined, count);
+    console.log('[🔍 DataRouter] Returning mock products:', mockProducts);
+    return mockProducts;
   }
   // Reset diagnostics
   resetDiagnostics('getRecommendedProducts');

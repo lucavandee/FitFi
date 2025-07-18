@@ -62,22 +62,34 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Combine context, localStorage as source for user info
   const user = useMemo(() => {
+    console.log('[🔍 EnhancedResultsPage] Building user from context and localStorage');
+    console.log('[🔍 EnhancedResultsPage] contextUser:', contextUser);
+    
     const localStorageUser = localStorage.getItem("fitfi-user") 
       ? JSON.parse(localStorage.getItem("fitfi-user") || "null") 
       : null;
     
+    console.log('[🔍 EnhancedResultsPage] localStorageUser:', localStorageUser);
+    
     // Use context user, then localStorage user, then fallback
-    return getSafeUser(contextUser || localStorageUser);
+    const finalUser = getSafeUser(contextUser || localStorageUser);
+    console.log('[🔍 EnhancedResultsPage] finalUser:', finalUser);
+    
+    return finalUser;
   }, [contextUser]);
   
   // Apply onboarding data to user if available
   const enhancedUser = useMemo(() => {
+    console.log('[🔍 EnhancedResultsPage] Building enhancedUser');
+    console.log('[🔍 EnhancedResultsPage] onboardingData:', onboardingData);
+    
     if (!onboardingData || Object.keys(onboardingData).length === 0) {
+      console.log('[🔍 EnhancedResultsPage] No onboarding data, using base user');
       return user;
     }
     
     // Create enhanced user with onboarding data
-    return {
+    const enhanced = {
       ...user,
       gender: onboardingData.gender === 'man' ? 'male' : 'female',
       name: onboardingData.name || user.name,
@@ -89,10 +101,16 @@ const EnhancedResultsPage: React.FC = () => {
         minimalist: onboardingData.archetypes?.includes('urban') ? 5 : 3,
       }
     };
+    
+    console.log('[🔍 EnhancedResultsPage] enhancedUser built:', enhanced);
+    return enhanced;
   }, [user, onboardingData]);
 
   // Load recommendations using the DataRouter
   const loadRecommendations = useCallback(async () => {
+    console.log('[🔍 EnhancedResultsPage] Starting loadRecommendations');
+    console.log('[🔍 EnhancedResultsPage] enhancedUser at start:', enhancedUser);
+    
     setLoading(true);
     setProductsLoading(true);
     setOutfitsLoading(true);
@@ -101,10 +119,8 @@ const EnhancedResultsPage: React.FC = () => {
     try {
       // Get current season
       const season = onboardingData?.season ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
+      console.log('[🔍 EnhancedResultsPage] Using season:', season);
       setCurrentSeason(season);
-      
-      // Debug: Log enhanced user data
-      console.log('[🔍 EnhancedUser]', enhancedUser);
       
       // Get outfits using the DataRouter with onboarding preferences
       const options = {
@@ -114,9 +130,8 @@ const EnhancedResultsPage: React.FC = () => {
         variationLevel: 'high' as const
       };
       
+      console.log('[🔍 EnhancedResultsPage] Calling getOutfits with options:', options);
       const generatedOutfits = await getOutfits(enhancedUser, options);
-      
-      // Debug: Log getOutfits result
       console.log('[🧠 getOutfits result]', generatedOutfits);
       
       // Check if outfits were generated, use fallback if empty
@@ -124,8 +139,10 @@ const EnhancedResultsPage: React.FC = () => {
         console.warn('[⚠️ EnhancedResultsPage] No outfits generated, using fallback mock outfits');
         setError('Geen outfits gevonden. We tonen tijdelijk een voorbeeld.');
         const fallbackOutfits = generateMockOutfits(3);
+        console.log('[🔍 EnhancedResultsPage] Using fallback outfits:', fallbackOutfits);
         setOutfits(fallbackOutfits);
       } else {
+        console.log('[🔍 EnhancedResultsPage] Setting generated outfits:', generatedOutfits);
         setOutfits(generatedOutfits);
       }
       setOutfitsLoading(false);
@@ -134,24 +151,27 @@ const EnhancedResultsPage: React.FC = () => {
       const outfitIds = (generatedOutfits.length > 0 ? generatedOutfits : generateMockOutfits(3)).map(outfit => outfit.id);
       setShownOutfitIds(outfitIds);
       
+      console.log('[🔍 EnhancedResultsPage] Calling getRecommendedProducts');
       // Get recommended individual products
       const recommendedProducts = await getRecommendedProducts(enhancedUser, 9, season as any);
-      
-      // Debug: Log getRecommendedProducts result
       console.log('[🧠 getRecommendedProducts result]', recommendedProducts);
       
       // Check if products were found, use fallback if empty
       if (recommendedProducts.length === 0) {
         console.warn('[⚠️ EnhancedResultsPage] No products found, using fallback mock products');
         const fallbackProducts = generateMockProducts(undefined, 9);
+        console.log('[🔍 EnhancedResultsPage] Using fallback products:', fallbackProducts);
         setMatchedProducts(fallbackProducts);
       } else {
+        console.log('[🔍 EnhancedResultsPage] Setting recommended products:', recommendedProducts);
         setMatchedProducts(recommendedProducts);
       }
       setProductsLoading(false);
       
       // Get the data source being used
       setDataSource(getDataSource());
+      
+      console.log('[🔍 EnhancedResultsPage] Final state - outfits:', outfits.length, 'products:', matchedProducts.length);
       
       // Track page view with outfit data
       if (typeof window.gtag === 'function') {
@@ -176,19 +196,25 @@ const EnhancedResultsPage: React.FC = () => {
       
       // Use fallback data when there's an error
       console.warn('[⚠️ EnhancedResultsPage] Using fallback data due to error');
-      setOutfits(generateMockOutfits(3));
-      setMatchedProducts(generateMockProducts(undefined, 9));
+      const fallbackOutfits = generateMockOutfits(3);
+      const fallbackProducts = generateMockProducts(undefined, 9);
+      console.log('[🔍 EnhancedResultsPage] Error fallback - outfits:', fallbackOutfits, 'products:', fallbackProducts);
+      
+      setOutfits(fallbackOutfits);
+      setMatchedProducts(fallbackProducts);
       
       setProductsLoading(false);
       setOutfitsLoading(false);
       setDataSource(getDataSource());
     } finally {
+      console.log('[🔍 EnhancedResultsPage] loadRecommendations completed');
       setLoading(false);
     }
   }, [enhancedUser, onboardingData, viewRecommendation, outfits.length, matchedProducts.length]);
 
   // Generate recommendations on component mount
   useEffect(() => {
+    console.log('[🔍 EnhancedResultsPage] useEffect triggered, calling loadRecommendations');
     loadRecommendations();
   }, [loadRecommendations]);
 
@@ -324,14 +350,41 @@ const EnhancedResultsPage: React.FC = () => {
     return seasonMap[dutchSeason] || 'autumn';
   };
   
-if (env.DEBUG_MODE || env.USE_MOCK_DATA) {
-  console.log("💡 DEBUG EnhancedResultsPage:", {
-    enhancedUser,
-    dataSource,
-    outfits,
-    matchedProducts
-  });
-}
+          {/* Debug: Always show current state for debugging */}
+          {(env.DEBUG_MODE || env.USE_MOCK_DATA) && (
+            <div className="mt-4 bg-black text-green-400 text-xs p-4 rounded-md max-h-96 overflow-y-auto">
+              <strong>🔍 DEBUG DATA</strong>
+              <pre>{JSON.stringify({ 
+                enhancedUser: {
+                  id: enhancedUser.id,
+                  name: enhancedUser.name,
+                  gender: enhancedUser.gender,
+                  stylePreferences: enhancedUser.stylePreferences
+                }, 
+                onboardingData,
+                outfitsCount: outfits.length,
+                productsCount: matchedProducts.length,
+                dataSource,
+                loading,
+                productsLoading,
+                outfitsLoading,
+                error
+              }, null, 2)}</pre>
+            </div>
+          )}
+          
+          {/* Always show mock mode status */}
+          <div className="mt-4 bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <span>🔧 Debug Info:</span>
+              <div className="space-x-4">
+                <span>Mock Mode: {env.USE_MOCK_DATA ? '✅ Actief' : '❌ Inactief'}</span>
+                <span>Data Source: {dataSource}</span>
+                <span>Outfits: {outfits.length}</span>
+                <span>Products: {matchedProducts.length}</span>
+              </div>
+            </div>
+          </div>
   // Loading state with skeleton placeholders
   if (loading && productsLoading && outfitsLoading) {
     return (

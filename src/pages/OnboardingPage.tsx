@@ -53,6 +53,9 @@ const OnboardingPage: React.FC = () => {
     // Show button feedback
     setIsButtonClicked(true);
     
+    // Debug: Log the skip action
+    console.log('[🔍 OnboardingPage] Skip button clicked, navigating to results');
+    
     // Use setTimeout with 0ms to defer execution to next tick
     // This ensures UI updates before navigation
     setTimeout(() => {
@@ -173,6 +176,19 @@ const OnboardingPage: React.FC = () => {
                 onClick={() => {
                   // Prevent navigation if main button was clicked
                   if (isButtonClicked) return;
+                  
+                  // Debug: Log the skip action
+                  console.log('[🔍 OnboardingPage] Skip link clicked, navigating to results');
+                  
+                  // Set a basic user profile for the skip flow
+                  updateData({
+                    gender: 'vrouw',
+                    name: 'Stijlzoeker',
+                    archetypes: ['casual_chic'],
+                    season: 'herfst',
+                    occasions: ['Casual']
+                  });
+                  
                   navigate('/results');
                 }}
                 className={`text-sm text-white/60 hover:text-[#FF8600] transition-colors ${
