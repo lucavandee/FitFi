@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import OutfitCard from "../components/ui/OutfitCard";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 import Button from "../components/ui/Button";
+import ErrorBoundary from "../components/ErrorBoundary";
 import { getSafeUser } from "../utils/userUtils";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
 import { Product, UserProfile, Outfit } from "../engine";
@@ -86,7 +87,8 @@ const EnhancedResultsPage: React.FC = () => {
     console.log('[🔍 EnhancedResultsPage] Building enhancedUser');
     console.log('[🔍 EnhancedResultsPage] onboardingData:', onboardingData);
     
-    if (!onboardingData || Object.keys(onboardingData).length === 0) {
+    // Safety check for onboardingData
+    if (!onboardingData || typeof onboardingData !== 'object' || Object.keys(onboardingData).length === 0) {
       console.log('[🔍 EnhancedResultsPage] No onboarding data, using base user');
       return user;
     }
@@ -94,26 +96,37 @@ const EnhancedResultsPage: React.FC = () => {
     // Create enhanced user with onboarding data
     const enhanced = {
       ...user,
-      gender: onboardingData.gender === 'man' ? 'male' : 'female',
+      gender: onboardingData.gender === 'man' ? 'male' as const : 'female' as const,
       name: onboardingData.name || user.name,
       stylePreferences: {
-        casual: onboardingData.archetypes?.includes('casual_chic') ? 5 : 3,
-        formal: onboardingData.archetypes?.includes('klassiek') ? 5 : 3,
-        sporty: onboardingData.archetypes?.includes('streetstyle') ? 5 : 3,
-        vintage: onboardingData.archetypes?.includes('retro') ? 5 : 3,
-        minimalist: onboardingData.archetypes?.includes('urban') ? 5 : 3,
+        casual: Array.isArray(onboardingData.archetypes) && onboardingData.archetypes.includes('casual_chic') ? 5 : 3,
+        formal: Array.isArray(onboardingData.archetypes) && onboardingData.archetypes.includes('klassiek') ? 5 : 3,
+        sporty: Array.isArray(onboardingData.archetypes) && onboardingData.archetypes.includes('streetstyle') ? 5 : 3,
+        vintage: Array.isArray(onboardingData.archetypes) && onboardingData.archetypes.includes('retro') ? 5 : 3,
+        minimalist: Array.isArray(onboardingData.archetypes) && onboardingData.archetypes.includes('urban') ? 5 : 3,
       }
     };
     
     console.log('[🔍 EnhancedResultsPage] enhancedUser built:', enhanced);
     return enhanced;
-  }, [user, onboardingData]);
+  }, [user, JSON.stringify(onboardingData)]);
 
   // Load recommendations using the DataRouter
   const loadRecommendations = useCallback(async () => {
     // Prevent concurrent fetching
     if (isFetching) {
       console.log('[🔒 EnhancedResultsPage] Already fetching, skipping duplicate request');
+      return;
+    }
+    
+    // Safety check for enhancedUser
+    if (!enhancedUser || !enhancedUser.id) {
+      console.error('[❌ EnhancedResultsPage] Invalid enhancedUser, cannot load recommendations');
+      setError('Gebruikersgegevens ontbreken. Probeer opnieuw.');
+      setLoading(false);
+      setProductsLoading(false);
+      setOutfitsLoading(false);
+      setIsFetching(false);
       return;
     }
     
@@ -130,10 +143,10 @@ const EnhancedResultsPage: React.FC = () => {
     // Update debug info
     setDebugInfo({
       enhancedUser: {
-        id: enhancedUser.id,
-        name: enhancedUser.name,
-        gender: enhancedUser.gender,
-        stylePreferences: enhancedUser.stylePreferences
+        id: enhancedUser?.id || 'unknown',
+        name: enhancedUser?.name || 'unknown',
+        gender: enhancedUser?.gender || 'unknown',
+        stylePreferences: enhancedUser?.stylePreferences || {}
       },
       onboardingData,
       timestamp: new Date().toISOString()
@@ -141,7 +154,7 @@ const EnhancedResultsPage: React.FC = () => {
     
     try {
       // Get current season
-      const season = onboardingData?.season ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
+      const season = (onboardingData && onboardingData.season) ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
       console.log('[🔍 EnhancedResultsPage] Using season:', season);
       setCurrentSeason(season);
       
@@ -149,16 +162,24 @@ const EnhancedResultsPage: React.FC = () => {
       const options = {
         count: 3,
         preferredSeasons: [season as any],
-        preferredOccasions: onboardingData?.occasions || undefined,
+        preferredOccasions: (onboardingData && Array.isArray(onboardingData.occasions)) ? onboardingData.occasions : undefined,
         variationLevel: 'high' as const
       };
       
       console.log('[🔍 EnhancedResultsPage] Calling getOutfits with options:', options);
-      const generatedOutfits = await getOutfits(enhancedUser, options);
+      
+      let generatedOutfits: Outfit[] = [];
+      try {
+        generatedOutfits = await getOutfits(enhancedUser, options);
+      } catch (outfitError) {
+        console.error('[❌ EnhancedResultsPage] Error getting outfits:', outfitError);
+        generatedOutfits = [];
+      }
+      
       console.log('[🧠 getOutfits result]', generatedOutfits);
       
       // Check if outfits were generated, use fallback if empty
-      if (generatedOutfits.length === 0) {
+      if (!Array.isArray(generatedOutfits) || generatedOutfits.length === 0) {
         console.warn('[⚠️ EnhancedResultsPage] No outfits generated, using fallback mock outfits');
         setError('Geen outfits gevonden. We tonen voorbeelddata.');
         setFetchStatus('fallback');
@@ -173,16 +194,24 @@ const EnhancedResultsPage: React.FC = () => {
       setOutfitsLoading(false);
       
       // Track shown outfit IDs
-      const outfitIds = (generatedOutfits.length > 0 ? generatedOutfits : generateMockOutfits(3)).map(outfit => outfit.id);
+      const outfitsToTrack = (Array.isArray(generatedOutfits) && generatedOutfits.length > 0) ? generatedOutfits : generateMockOutfits(3);
+      const outfitIds = outfitsToTrack.map(outfit => outfit?.id).filter(Boolean);
       setShownOutfitIds(outfitIds);
       
       console.log('[🔍 EnhancedResultsPage] Calling getRecommendedProducts');
       // Get recommended individual products
-      const recommendedProducts = await getRecommendedProducts(enhancedUser, 9, season as any);
+      let recommendedProducts: Product[] = [];
+      try {
+        recommendedProducts = await getRecommendedProducts(enhancedUser, 9, season as any);
+      } catch (productError) {
+        console.error('[❌ EnhancedResultsPage] Error getting products:', productError);
+        recommendedProducts = [];
+      }
+      
       console.log('[🧠 getRecommendedProducts result]', recommendedProducts);
       
       // Check if products were found, use fallback if empty
-      if (recommendedProducts.length === 0) {
+      if (!Array.isArray(recommendedProducts) || recommendedProducts.length === 0) {
         console.warn('[⚠️ EnhancedResultsPage] No products found, using fallback mock products');
         setFetchStatus('fallback');
         const fallbackProducts = generateMockProducts(undefined, 9);
@@ -197,24 +226,28 @@ const EnhancedResultsPage: React.FC = () => {
       // Get the data source being used
       setDataSource(getDataSource());
       
-      console.log('[🔍 EnhancedResultsPage] Final state - outfits:', outfits.length, 'products:', matchedProducts.length);
+      console.log('[🔍 EnhancedResultsPage] Final state - outfits:', (Array.isArray(generatedOutfits) ? generatedOutfits.length : 0), 'products:', (Array.isArray(recommendedProducts) ? recommendedProducts.length : 0));
       
       // Track page view with outfit data
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'view_recommendations', {
           event_category: 'engagement',
           event_label: 'results_page',
-          outfits_count: outfits.length,
-          products_count: matchedProducts.length,
+          outfits_count: Array.isArray(generatedOutfits) ? generatedOutfits.length : 0,
+          products_count: Array.isArray(recommendedProducts) ? recommendedProducts.length : 0,
           data_source: getDataSource(),
-          archetypes: Array.isArray(onboardingData?.archetypes) ? onboardingData.archetypes.join(',') : 'none',
+          archetypes: (onboardingData && Array.isArray(onboardingData.archetypes)) ? onboardingData.archetypes.join(',') : 'none',
           season: season,
-          occasions: onboardingData?.occasions?.join(',') || 'none'
+          occasions: (onboardingData && Array.isArray(onboardingData.occasions)) ? onboardingData.occasions.join(',') : 'none'
         });
       }
       
       // Record recommendation view for gamification
-      viewRecommendation();
+      try {
+        viewRecommendation();
+      } catch (gamificationError) {
+        console.warn('[⚠️ EnhancedResultsPage] Gamification error:', gamificationError);
+      }
       
     } catch (err) {
       console.error('Error generating recommendations:', err);
@@ -238,7 +271,7 @@ const EnhancedResultsPage: React.FC = () => {
       setIsFetching(false);
       setLoading(false);
     }
-  }, [enhancedUser, onboardingData, viewRecommendation, isFetching]);
+  }, [JSON.stringify(enhancedUser), JSON.stringify(onboardingData), viewRecommendation, isFetching]);
 
   // Generate recommendations on component mount
   useEffect(() => {
@@ -248,16 +281,22 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Handle product click
   const handleProductClick = (product: Product) => {
+    // Safety check for product
+    if (!product || !product.id) {
+      console.warn('[⚠️ EnhancedResultsPage] Invalid product clicked:', product);
+      return;
+    }
+    
     // Track click in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'product_click', {
         event_category: 'ecommerce',
         event_label: product.id,
         item_id: product.id,
-        item_name: product.name,
-        item_brand: product.brand,
+        item_name: product.name || 'Unknown',
+        item_brand: product.brand || 'Unknown',
         item_category: product.type || product.category,
-        price: product.price,
+        price: product.price || 0,
         currency: 'EUR'
       });
     }
@@ -268,15 +307,21 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Handle outfit click
   const handleOutfitClick = (outfit: Outfit) => {
+    // Safety check for outfit
+    if (!outfit || !outfit.id) {
+      console.warn('[⚠️ EnhancedResultsPage] Invalid outfit clicked:', outfit);
+      return;
+    }
+    
     // Track click in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'outfit_click', {
         event_category: 'ecommerce',
         event_label: outfit.id,
         outfit_id: outfit.id,
-        outfit_name: outfit.title,
-        outfit_archetype: outfit.archetype,
-        outfit_occasion: outfit.occasion
+        outfit_name: outfit.title || 'Unknown',
+        outfit_archetype: outfit.archetype || 'Unknown',
+        outfit_occasion: outfit.occasion || 'Unknown'
       });
     }
   };
@@ -285,6 +330,12 @@ const EnhancedResultsPage: React.FC = () => {
   const handleRegenerateOutfit = async (outfitIndex: number) => {
     if (regenerationCount >= MAX_REGENERATIONS) {
       alert(`Je hebt het maximale aantal regeneraties (${MAX_REGENERATIONS}) voor deze sessie bereikt.`);
+      return;
+    }
+    
+    // Safety check for outfit index
+    if (!Array.isArray(outfits) || outfitIndex < 0 || outfitIndex >= outfits.length) {
+      console.error('[❌ EnhancedResultsPage] Invalid outfit index:', outfitIndex);
       return;
     }
     
@@ -545,6 +596,7 @@ const EnhancedResultsPage: React.FC = () => {
   }
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
       <div className="container-slim">
         <div className="max-w-5xl mx-auto px-4">
@@ -567,7 +619,7 @@ const EnhancedResultsPage: React.FC = () => {
                   Jouw persoonlijke stijlaanbevelingen
                 </h1>
                 <p className="text-xl text-white/80">
-                  Hallo {enhancedUser.name || 'daar'}! Deze outfits zijn speciaal voor jou samengesteld.
+                  Hallo {enhancedUser?.name || 'daar'}! Deze outfits zijn speciaal voor jou samengesteld.
                 </p>
               </motion.div>
             </>
@@ -784,7 +836,7 @@ const EnhancedResultsPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="p-4">
-                        <h3 className="font-bold text-white mb-1 line-clamp-1">{normalizedProduct.name}</h3>
+                        <h3 className="font-bold text-white mb-1 line-clamp-1">{normalizedProduct.name || 'Unnamed Product'}</h3>
                         <p className="text-white/70 text-sm mb-3 line-clamp-2">
                           {normalizedProduct.brand || 'FitFi Collection'} • {normalizedProduct.type || normalizedProduct.category || 'Item'}
                         </p>
@@ -808,6 +860,10 @@ const EnhancedResultsPage: React.FC = () => {
                       </div>
                     </motion.div>
                   );
+                  } catch (error) {
+                    console.error(`[❌ EnhancedResultsPage] Error rendering product ${index}:`, error);
+                    return null;
+                  }
                 })}
               </div>
             ) : (
@@ -906,6 +962,7 @@ const EnhancedResultsPage: React.FC = () => {
         {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
       </div>
     </div>
+    </ErrorBoundary>
   );
 };
 
