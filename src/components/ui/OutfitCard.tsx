@@ -192,7 +192,6 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             {outfit.matchPercentage}% Match
           </div>
           
-              alt="Stylish woman with FitFi recommendations" 
           <div className="absolute bottom-4 right-4 flex space-x-2">
             <button 
               className="p-2 rounded-full bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white transition-colors"
@@ -202,7 +201,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             </button>
             <button 
               className="p-2 rounded-full bg-[#0D1B2A]/90 text-white/80 hover:bg-[#0D1B2A] hover:text-white transition-colors"
-              alt="Stylish man with FitFi recommendations" 
+              aria-label="Delen"
             >
               <Share2 size={16} />
             </button>
@@ -335,29 +334,26 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
 
           {showItems && (
             <div className="mt-4 space-y-3 animate-fade-in">
-              {items.map((item, index) => (
-                <div 
-                  key={index}
-                  className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer group"
-                  aria-label="Show female style"
-                >
-                  <ImageWithFallback 
-                {items.map((item, index) => {
-                  try {
-                    if (!item || !item.id) {
-                      console.warn(`[⚠️ OutfitCard] Invalid item at index ${index}:`, item);
-                      return null;
-                    }
-                    
-                    return (
-                    alt={item.name}
-                    key={item.id || `item-${index}`}
-                    componentName={`OutfitCard_Item_${index}`}
-                    onClick={() => handleProductClick(item.url || '#')}
-                  />
-                  <div className="flex-1 min-w-0">
-                      src={item.imageUrl || '/placeholder.png'} 
-                      alt={item.name || 'Product image'}
+              {items.map((item, index) => {
+                try {
+                  if (!item || !item.id) {
+                    console.warn(`[⚠️ OutfitCard] Invalid item at index ${index}:`, item);
+                    return null;
+                  }
+                  
+                  return (
+                    <div 
+                      key={item.id || `item-${index}`}
+                      className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer group"
+                      onClick={() => handleProductClick(item.url || '#')}
+                    >
+                      <ImageWithFallback 
+                        src={item.imageUrl || '/placeholder.png'} 
+                        alt={item.name || 'Product image'}
+                        className="w-12 h-12 object-cover rounded-md"
+                        componentName={`OutfitCard_Item_${index}`}
+                      />
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-white truncate">
                           {item.name}
                         </p>
@@ -366,26 +362,24 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                         </p>
                       </div>
                       <div className="text-right">
-                            €{typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
-                          €{item.price.toFixed(2)}
+                        <p className="text-sm font-medium text-white">
+                          €{typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
                         </p>
-                            {item.retailer || 'Unknown Store'}
-                          {item.retailer}
-                        </div>
+                        <p className="text-xs text-white/60">
+                          {item.retailer || 'Unknown Store'}
+                        </p>
                       </div>
+                      <ExternalLink size={14} className="text-white/40 group-hover:text-[#FF8600] transition-colors" />
                     </div>
-                  </div>
-                  <ExternalLink size={14} className="text-white/40 group-hover:text-[#FF8600] transition-colors" />
-                    );
-                  } catch (error) {
-                    console.error(`[❌ OutfitCard] Error rendering item ${index}:`, error);
-                    return null;
-                  }
-                })}
-              ))}
+                  );
+                } catch (error) {
+                  console.error(`[❌ OutfitCard] Error rendering item ${index}:`, error);
+                  return null;
+                }
+              })}
             </div>
           )}
-                  aria-label="Show male style"
+        </div>
       </div>
     </div>
   );
