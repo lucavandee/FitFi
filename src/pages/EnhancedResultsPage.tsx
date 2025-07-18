@@ -813,54 +813,63 @@ const EnhancedResultsPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {matchedProducts.map((product, index) => {
                   try {
-                  const normalizedProduct = normalizeProduct(product);
-                  return (
-                    <motion.div
-                      key={normalizedProduct.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.1 + (index * 0.05) }}
-                      className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
-                      onClick={() => handleProductClick(product)}
-                    >
-                      <div className="relative h-48">
-                        <img 
-                          src={normalizedProduct.imageUrl} 
-                          alt={normalizedProduct.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = '/placeholder.png';
-                          }}
-                        />
-                        <div className="absolute top-2 right-2 bg-white/80 text-[#0D1B2A] px-2 py-1 rounded-full text-xs font-medium">
-                          {getProductSeasonText(normalizedProduct)}
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-bold text-white mb-1 line-clamp-1">{normalizedProduct.name || 'Unnamed Product'}</h3>
-                        <p className="text-white/70 text-sm mb-3 line-clamp-2">
-                          {normalizedProduct.brand || 'FitFi Collection'} • {normalizedProduct.type || normalizedProduct.category || 'Item'}
-                        </p>
-                        <div className="flex justify-between items-center">
-                          <span className="text-lg font-bold text-white">
-                            €{typeof normalizedProduct.price === 'number' ? normalizedProduct.price.toFixed(2) : '0.00'}
-                          </span>
-                          <Button 
-                            variant="primary" 
-                            size="sm"
-                            icon={<ShoppingBag size={16} />}
-                            iconPosition="left"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleProductClick(product);
+                    // Safety check for product
+                    if (!product || !product.id) {
+                      console.warn(`[⚠️ EnhancedResultsPage] Invalid product at index ${index}:`, product);
+                      return null;
+                    }
+                    
+                    const normalizedProduct = normalizeProduct(product);
+                    return (
+                      <motion.div
+                        key={normalizedProduct.id || `product-${index}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 + (index * 0.05) }}
+                        className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
+                        onClick={() => handleProductClick(product)}
+                      >
+                        <div className="relative h-48">
+                          <img 
+                            src={normalizedProduct.imageUrl || '/placeholder.png'} 
+                            alt={normalizedProduct.name || 'Product image'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              console.warn(`[⚠️ EnhancedResultsPage] Image failed to load: ${normalizedProduct.imageUrl}`);
+                              e.currentTarget.src = '/placeholder.png';
                             }}
-                          >
-                            Bekijk
-                          </Button>
+                          />
+                          <div className="absolute top-2 right-2 bg-white/80 text-[#0D1B2A] px-2 py-1 rounded-full text-xs font-medium">
+                            {getProductSeasonText(normalizedProduct)}
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  );
+                        <div className="p-4">
+                          <h3 className="font-bold text-white mb-1 line-clamp-1">
+                            {normalizedProduct.name || 'Unnamed Product'}
+                          </h3>
+                          <p className="text-white/70 text-sm mb-3 line-clamp-2">
+                            {normalizedProduct.brand || 'FitFi Collection'} • {normalizedProduct.type || normalizedProduct.category || 'Item'}
+                          </p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-lg font-bold text-white">
+                              €{typeof normalizedProduct.price === 'number' ? normalizedProduct.price.toFixed(2) : '0.00'}
+                            </span>
+                            <Button 
+                              variant="primary" 
+                              size="sm"
+                              icon={<ShoppingBag size={16} />}
+                              iconPosition="left"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleProductClick(product);
+                              }}
+                            >
+                              Bekijk
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
                   } catch (error) {
                     console.error(`[❌ EnhancedResultsPage] Error rendering product ${index}:`, error);
                     return null;
