@@ -317,6 +317,14 @@ export async function getOutfits(
     console.log('[🔍 DataRouter] Returning mock outfits:', mockOutfits);
     return mockOutfits;
   }
+  
+  // Validate user input
+  if (!user || !user.id) {
+    console.error('[❌ DataRouter] Invalid user provided to getOutfits:', user);
+    console.log('[🔧 DataRouter] Using fallback mock outfits due to invalid user');
+    return generateMockOutfits(options?.count || 3);
+  }
+  
   // Reset diagnostics
   resetDiagnostics('getOutfits');
   
