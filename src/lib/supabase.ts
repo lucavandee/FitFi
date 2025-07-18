@@ -1,12 +1,13 @@
 // src/lib/supabase.ts
 import { validateEnv } from "./envValidator";
 import { createClient } from '@supabase/supabase-js';
+import { env } from '../utils/env';
 
 validateEnv(); // Voert directe check uit bij startup
 
 // 🔐 Supabase configuratie
-const supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey: string = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl: string = env.SUPABASE_URL;
+const supabaseAnonKey: string = env.SUPABASE_ANON_KEY;
 
 // ✅ Validatie op omgeving
 if (!supabaseUrl || !supabaseAnonKey) {
@@ -32,6 +33,9 @@ export function isValidUUID(uuid: string): boolean {
 
 // 🧪 Testgebruiker voor dev/testomgeving
 export const TEST_USER_ID = 'f8993892-a1c1-4d7d-89e9-5886e3f5a3e8';
+
+// Export USE_SUPABASE from env
+export const USE_SUPABASE = env.USE_SUPABASE;
 
 // 🧠 Export de Supabase client
 export default supabase;

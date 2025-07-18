@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import Button from './Button';
+import { env } from '../../utils/env';
 
 interface ErrorFallbackProps {
   error: Error;
@@ -58,7 +59,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
           )}
         </div>
         
-        {showDetails && process.env.NODE_ENV === 'development' && (
+        {showDetails && env.DEBUG_MODE && (
           <div className="mt-6 p-4 bg-red-900/20 rounded-lg text-left overflow-auto">
             <p className="text-sm font-mono text-red-300 mb-2">
               {error.name}: {error.message}
