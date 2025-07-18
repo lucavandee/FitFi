@@ -8,7 +8,7 @@ import * as Sentry from '@sentry/react';
  * This avoids the replayIntegration warning
  */
 export function initializeSentry() {
-  if (!import.meta.env.VITE_SENTRY_DSN) {
+  if (!import.meta.env.VITE_SENTRY_DSN || import.meta.env.VITE_SENTRY_DSN === '') {
     console.warn('Sentry DSN not found in environment variables. Sentry will not be initialized.');
     return;
   }
