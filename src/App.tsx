@@ -91,6 +91,17 @@ function App() {
                         </Suspense>
                       } />
                       
+                      {/* Catch-all route for 404 */}
+                      <Route path="*" element={
+                        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                          <div className="text-center">
+                            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">404</h1>
+                            <p className="text-gray-600 dark:text-gray-400 mb-6">Pagina niet gevonden</p>
+                            <Link to="/" className="text-orange-500 hover:text-orange-600">Terug naar home</Link>
+                          </div>
+                        </div>
+                      } />
+                      
                       {/* Legacy Routes */}
                       <Route path="/gender" element={<GenderSelectPage />} />
                       <Route path="/quiz/:step" element={<QuizPage />} />
