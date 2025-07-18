@@ -315,7 +315,7 @@ const EnhancedResultsPage: React.FC = () => {
     return seasonMap[dutchSeason] || 'autumn';
   };
   
-if (process.env.NODE_ENV === 'development' || USE_MOCK_DATA) {
+if (process.env.NODE_ENV === 'development' || env.USE_MOCK_DATA) {
   console.log("💡 DEBUG EnhancedResultsPage:", {
     enhancedUser,
     dataSource,
