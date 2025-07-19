@@ -44,6 +44,12 @@ const EnhancedResultsPage: React.FC = () => {
   const { user: contextUser } = useUser();
   const { viewRecommendation } = useGamification();
   const { data: onboardingData } = useOnboarding();
+  useEffect(() => {
+  if (!onboardingData || Object.keys(onboardingData).length === 0) {
+    console.warn('[🚨 Redirect] Geen geldige onboarding data → terug naar onboarding');
+    navigate('/onboarding');
+  }
+}, [onboardingData, navigate]);
   
   const [matchedProducts, setMatchedProducts] = useState<Product[]>([]);
   const [outfits, setOutfits] = useState<Outfit[]>([]);
