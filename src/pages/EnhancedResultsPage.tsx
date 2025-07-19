@@ -45,7 +45,7 @@ const EnhancedResultsPage: React.FC = () => {
   const { viewRecommendation } = useGamification();
   const { data: onboardingData } = useOnboarding();
   
-  useEffect(() => {
+useEffect(() => {
   if (!onboardingData || Object.keys(onboardingData).length === 0) {
     console.warn('[🚨 Redirect] Geen geldige onboarding data → terug naar onboarding');
     navigate('/onboarding');
