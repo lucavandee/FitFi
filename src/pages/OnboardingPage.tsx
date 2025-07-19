@@ -44,16 +44,19 @@ const OnboardingPage: React.FC = () => {
 
     console.log('[🔍 OnboardingPage] Skip clicked → fallback onboarding data en navigeren naar /results');
 
-    updateData({
-      gender: 'vrouw',
-      name: 'Stijlzoeker',
-      archetypes: ['casual_chic'],
-      season: 'herfst',
-      occasions: ['Casual']
-    });
+const fallbackUser = {
+  id: 'skip-mode',
+  name: 'Stijlzoeker',
+  gender: 'female',
+  archetypes: ['casual_chic'],
+  season: 'herfst',
+  occasions: ['Casual']
+};
 
-    submitOnboarding(); // cruciaal om onboardingData beschikbaar te maken
-    navigate('/results');
+updateData(fallbackUser);
+localStorage.setItem('fitfi-user', JSON.stringify(fallbackUser));
+navigate('/results');
+
   };
 
   return (
