@@ -766,27 +766,29 @@ useEffect(() => {
               </div>
             ) : outfits.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {outfits.map((outfit, index) => (
-                  <motion.div
-                    key={outfit.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <OutfitCard 
-                      outfit={outfit}
-                      onNewLook={() => handleRegenerateOutfit(index)}
-                      isGenerating={isRegenerating}
-                      user={enhancedUser}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
-              </div>
-            )}
+       {Array.isArray(outfits) && outfits.length > 0 ? (
+  outfits.map((outfit, index) => {
+    try {
+      return (
+        <motion.div key={outfit.id}>
+          <OutfitCard
+            outfit={outfit}
+            onNewLook={() => handleRegenerateOutfit(index)}
+            isGenerating={isRegenerating}
+            user={enhancedUser}
+          />
+        </motion.div>
+      );
+    } catch (error) {
+      console.error(`[❌ EnhancedResultsPage] Error rendering outfit ${index}:`, error);
+      return null;
+    }
+  })
+) : (
+  <div className="text-center py-12">
+    <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
+  </div>
+)}
             </motion.div>
           )}
           
