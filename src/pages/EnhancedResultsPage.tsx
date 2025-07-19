@@ -960,7 +960,10 @@ useEffect(() => {
               </div>
             </div>
           )}
-               {/* Sticky CTA footer */}
+return (
+  <ErrorBoundary>
+    <>
+      {/* Sticky CTA footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
         <div className="container-slim">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -991,6 +994,6 @@ useEffect(() => {
 
       {/* ✅ Central Debug Overlay */}
       {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
-    </div>
+    </>
   </ErrorBoundary>
 );
