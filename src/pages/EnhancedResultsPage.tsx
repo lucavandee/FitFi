@@ -960,27 +960,24 @@ useEffect(() => {
                     className="text-white border border-white/30 hover:bg-white/10"
                   >
                     Geef feedback
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() => navigate('/onboarding')}
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                  >
-                    Nieuwe stijlscan
-                  </Button>
-                </div>
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/onboarding')}
+                  icon={<ArrowRight size={18} />}
+                  iconPosition="right"
+                >
+                  Nieuwe stijlscan
+                </Button>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Central Debug Overlay */}
-        {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
       </div>
-    </div>
-    </ErrorBoundary>
-  );
-};
 
+      {/* ✅ Central Debug Overlay */}
+      {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
+    </div>
+  </ErrorBoundary>
+);
 export default EnhancedResultsPage;
