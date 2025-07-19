@@ -1,32 +1,48 @@
+// React & React Router
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { env } from '../utils/env';
 import { useLocation, useNavigate } from "react-router-dom";
+
+// Contexts
 import { useUser } from "../context/UserContext";
 import { useGamification } from "../context/GamificationContext";
 import { useOnboarding } from "../context/OnboardingContext";
-import { motion } from "framer-motion";
+
+// Componenten
 import OutfitCard from "../components/ui/OutfitCard";
 import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
 import Button from "../components/ui/Button";
 import ErrorBoundary from "../components/ErrorBoundary";
+import DebugOverlay from "../components/DebugOverlay";
+
+// Utilities
+import { env } from "../utils/env";
 import { getSafeUser } from "../utils/userUtils";
 import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import { generateMockOutfits, generateMockProducts } from "../utils/mockDataUtils";
+
+// Engine
 import { Product, UserProfile, Outfit } from "../engine";
 import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
+
+// Services
 import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
-import { generateMockOutfits, generateMockProducts } from "../utils/mockDataUtils";
-import { 
-  Calendar, 
-  Star, 
-  ShoppingBag, 
-  Heart, 
-  RefreshCw, 
-  CheckCircle, 
-  Info, 
+
+// Icons
+import {
+  Calendar,
+  Star,
+  ShoppingBag,
+  Heart,
+  RefreshCw,
+  CheckCircle,
+  Info,
   AlertTriangle,
   MessageSquare,
   ArrowRight
 } from "lucide-react";
+
+// Motion
+import { motion } from "framer-motion";
 
 // Component for showing loading state when no results are found
 const ResultsLoader: React.FC<{ message?: string }> = ({ 
