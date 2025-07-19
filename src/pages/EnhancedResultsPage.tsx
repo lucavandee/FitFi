@@ -766,11 +766,11 @@ useEffect(() => {
               </div>
             ) : outfits.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-       {Array.isArray(outfits) && outfits.length > 0 ? (
+{Array.isArray(outfits) && outfits.length > 0 ? (
   outfits.map((outfit, index) => {
     try {
       return (
-        <motion.div key={outfit.id}>
+        <motion.div key={outfit.id || `fallback-${index}`}>
           <OutfitCard
             outfit={outfit}
             onNewLook={() => handleRegenerateOutfit(index)}
@@ -789,6 +789,7 @@ useEffect(() => {
     <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
   </div>
 )}
+
           {/* Individual products section */}
           {(matchedProducts.length > 0 || productsLoading) && (
             <motion.div
