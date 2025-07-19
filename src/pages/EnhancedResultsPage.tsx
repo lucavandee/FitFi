@@ -944,32 +944,30 @@ useEffect(() => {
               </div>
             </div>
           )}
-          
-          {/* Sticky CTA footer */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
-            <div className="container-slim">
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="flex items-center">
-                  <MessageSquare size={20} className="text-[#89CFF0] mr-2" />
-                  <span className="text-white font-medium">Niet tevreden met de resultaten?</span>
-                </div>
-                <div className="flex space-x-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate('/feedback')}
-                    className="text-white border border-white/30 hover:bg-white/10"
-                  >
-                    Geef feedback
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate('/onboarding')}
-                  icon={<ArrowRight size={18} />}
-                  iconPosition="right"
-                >
-                  Nieuwe stijlscan
-                </Button>
-              </div>
+               {/* Sticky CTA footer */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
+        <div className="container-slim">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center">
+              <MessageSquare size={20} className="text-[#89CFF0] mr-2" />
+              <span className="text-white font-medium">Niet tevreden met de resultaten?</span>
+            </div>
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/feedback')}
+                className="text-white border border-white/30 hover:bg-white/10"
+              >
+                Geef feedback
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => navigate('/onboarding')}
+                icon={<ArrowRight size={18} />}
+                iconPosition="right"
+              >
+                Nieuwe stijlscan
+              </Button>
             </div>
           </div>
         </div>
@@ -980,4 +978,3 @@ useEffect(() => {
     </div>
   </ErrorBoundary>
 );
-export default EnhancedResultsPage;
