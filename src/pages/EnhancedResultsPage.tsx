@@ -789,7 +789,6 @@ useEffect(() => {
     <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
   </div>
 )}
-          
           {/* Individual products section */}
           {(matchedProducts.length > 0 || productsLoading) && (
             <motion.div
