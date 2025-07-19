@@ -962,7 +962,9 @@ useEffect(() => {
           )}
 return (
   <ErrorBoundary>
-    <>
+    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
+      {/* 👉 Hier komt al je bestaande layout: cards, sections, etc. */}
+
       {/* Sticky CTA footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
         <div className="container-slim">
@@ -994,6 +996,6 @@ return (
 
       {/* ✅ Central Debug Overlay */}
       {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
-    </>
+    </div>
   </ErrorBoundary>
 );
