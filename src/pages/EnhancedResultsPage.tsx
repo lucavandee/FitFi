@@ -1,4 +1,4 @@
-  const EnhancedResultsPage = () => {
+const EnhancedResultsPage = () => {
     // React & React Router
     import React, { useEffect, useMemo, useState, useCallback } from "react";
     import { useLocation, useNavigate } from "react-router-dom";
@@ -55,7 +55,6 @@
       </div>
     );
 
-    const EnhancedResultsPage: React.FC = () => {
       const location = useLocation();
       const navigate = useNavigate();
       const { user: contextUser } = useUser();
