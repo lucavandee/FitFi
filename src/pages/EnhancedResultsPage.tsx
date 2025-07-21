@@ -999,3 +999,4 @@ return (
     </div> {/* ✅ sluit de hele pagina-div */}
   </ErrorBoundary> {/* ✅ sluit ErrorBoundary */}
 );
+export default EnhancedResultsPage;
