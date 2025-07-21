@@ -981,7 +981,7 @@ return (
               >
                 Geef feedback
               </Button>
-              <Button
+              <Button></Button>
                 variant="primary"
                 onClick={() => navigate('/onboarding')}
                 icon={<ArrowRight size={18} />}
