@@ -980,15 +980,14 @@ return (
                 className="text-white border border-white/30 hover:bg-white/10"
               >
                 Geef feedback
-              </Button>
-              <Button></Button>
-                variant="primary"
-                onClick={() => navigate('/onboarding')}
-                icon={<ArrowRight size={18} />}
-                iconPosition="right"
-              >
-                Nieuwe stijlscan
-              </Button>
+<Button
+  variant="primary"
+  onClick={() => navigate('/onboarding')}
+  icon={<ArrowRight size={18} />}
+  iconPosition="right"
+>
+  Nieuwe stijlscan
+</Button>
             </div>
           </div>
         </div>
