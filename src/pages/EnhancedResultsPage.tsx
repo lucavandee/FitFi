@@ -1,4 +1,4 @@
-    import React, { useEffect, useMemo, useState, useCallback } from "react";
+   import React, { useEffect, useMemo, useState, useCallback } from "react";
     import { useLocation, useNavigate } from "react-router-dom";
     import { useUser } from "../context/UserContext";
     import { useGamification } from "../context/GamificationContext";
@@ -15,8 +15,8 @@
     import { Product, UserProfile, Outfit } from "../engine";
     import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
     import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
-    import {
     import { motion } from "framer-motion";
+
 
 
 const EnhancedResultsPage = () => {
