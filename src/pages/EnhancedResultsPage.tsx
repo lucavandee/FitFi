@@ -988,15 +988,14 @@ return (
                 iconPosition="right"
               >
                 Nieuwe stijlscan
-              </Button> {/* ✅ correcte sluiting */}
-            </div> {/* ✅ sluit Button-wrapper div */}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ✅ Central Debug Overlay */}
       {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
-    </div> {/* ✅ sluit de hele pagina-div */}
-  </ErrorBoundary> {/* ✅ sluit ErrorBoundary */}
+    </div>
+  </ErrorBoundary>
 );
-export default EnhancedResultsPage;
