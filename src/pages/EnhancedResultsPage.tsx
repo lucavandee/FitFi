@@ -1,21 +1,53 @@
-  import React, { useEffect, useMemo, useState, useCallback } from "react";
-    import { useLocation, useNavigate } from "react-router-dom";
-    import { useUser } from "../context/UserContext";
-    import { useGamification } from "../context/GamificationContext";
-    import { useOnboarding } from "../context/OnboardingContext";
-    import OutfitCard from "../components/ui/OutfitCard";
-    import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
-    import Button from "../components/ui/Button";
-    import ErrorBoundary from "../components/ErrorBoundary";
-    import DebugOverlay from "../components/DebugOverlay";
-    import { env } from "../utils/env";
-    import { getSafeUser } from "../utils/userUtils";
-    import { normalizeProduct, getProductSeasonText } from "../utils/product";
-    import { generateMockOutfits, generateMockProducts } from "../utils/mockDataUtils";
-    import { Product, UserProfile, Outfit } from "../engine";
-    import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
-    import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
-    import { motion } from "framer-motion";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+// Contexts
+import { useUser } from "../context/UserContext";
+import { useGamification } from "../context/GamificationContext";
+import { useOnboarding } from "../context/OnboardingContext";
+
+// Componenten
+import OutfitCard from "../components/ui/OutfitCard";
+import SkeletonPlaceholder from "../components/ui/SkeletonPlaceholder";
+import Button from "../components/ui/Button";
+import ErrorBoundary from "../components/ErrorBoundary";
+import DebugOverlay from "../components/DebugOverlay";
+
+// Utilities
+import { env } from "../utils/env";
+import { getSafeUser } from "../utils/userUtils";
+import { normalizeProduct, getProductSeasonText } from "../utils/product";
+import { generateMockOutfits, generateMockProducts } from "../utils/mockDataUtils";
+
+// Engine
+import { Product, UserProfile, Outfit } from "../engine";
+import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
+
+// Services
+import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
+
+// Icons
+import {
+  Calendar,
+  Star,
+  ShoppingBag,
+  Heart,
+  RefreshCw,
+  CheckCircle,
+  Info,
+  AlertTriangle,
+  MessageSquare,
+  ArrowRight
+} from "lucide-react";
+
+// Motion
+import { motion } from "framer-motion";
+
+
+
+
+
+
 
 
 
@@ -34,7 +66,6 @@ const EnhancedResultsPage = () => {
 
       // Icons
         Calendar,
-import {
         Star,
         ShoppingBag,
         Heart,
@@ -45,7 +76,7 @@ import {
         MessageSquare,
         ArrowRight
       } from "lucide-react";
-} from "lucide-react";
+
       // Motion
 
       // Component for showing loading state when no results are found
