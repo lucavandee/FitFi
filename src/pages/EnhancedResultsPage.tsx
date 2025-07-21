@@ -1,4 +1,3 @@
-import React from 'react';
 
 const EnhancedResultsPage = () => {
   // React & React Router
@@ -1002,5 +1001,6 @@ const EnhancedResultsPage = () => {
       </div>
     </ErrorBoundary>
   );
+};
 
 export default EnhancedResultsPage;
