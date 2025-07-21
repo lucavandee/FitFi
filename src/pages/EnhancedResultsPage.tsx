@@ -1,4 +1,4 @@
-    import React, { useEffect, useMemo, useState, useCallback } from "react";
+  import React, { useEffect, useMemo, useState, useCallback } from "react";
     import { useLocation, useNavigate } from "react-router-dom";
     import { useUser } from "../context/UserContext";
     import { useGamification } from "../context/GamificationContext";
@@ -34,6 +34,7 @@ const EnhancedResultsPage = () => {
 
       // Icons
         Calendar,
+import {
         Star,
         ShoppingBag,
         Heart,
@@ -44,7 +45,7 @@ const EnhancedResultsPage = () => {
         MessageSquare,
         ArrowRight
       } from "lucide-react";
-
+} from "lucide-react";
       // Motion
 
       // Component for showing loading state when no results are found
