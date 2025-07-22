@@ -9,7 +9,16 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // FitFi Brand Colors
+        // FitFi Brand Design Tokens
+        midnight: '#0D1B2A',       // brand background
+        turquoise: '#89CFF0',      // primary accent & CTA
+        'turquoise-dark': '#6BB6D6', // hover state for turquoise
+        lightGrey: '#F6F6F6',      // card backgrounds
+        cardWhite: '#FFFFFF',      // card header or modals
+        textPrimary: '#0D1B2A',    // headings
+        textSecondary: '#333333',  // body text
+        
+        // Extended palette for dark mode and variations
         midnight: {
           50: '#f0f4f8',
           100: '#d9e2ec',
@@ -28,16 +37,16 @@ export default {
           100: '#ccfbf1',
           200: '#99f6e4',
           300: '#5eead4',
-          400: '#2dd4bf',
+          400: '#89CFF0', // Primary turquoise
           500: '#14b8a6',
-          600: '#0d9488',
+          600: '#6BB6D6', // turquoise-dark
           700: '#0f766e',
           800: '#115e59',
           900: '#134e4a',
           950: '#042f2e',
         },
         lightGrey: {
-          50: '#f8fafc',
+          50: '#F6F6F6', // Primary lightGrey
           100: '#f1f5f9',
           200: '#e2e8f0',
           300: '#cbd5e1',
@@ -48,22 +57,20 @@ export default {
           800: '#1e293b',
           900: '#0f172a',
         },
-        // Text colors
-        textPrimary: {
-          light: '#1e293b', // Dark text for light mode
-          dark: '#f8fafc',  // Light text for dark mode
-        },
-        textSecondary: {
-          light: '#64748b', // Muted text for light mode
-          dark: '#94a3b8',  // Muted text for dark mode
-        },
-        // Legacy support (will be gradually replaced)
-        primary: '#14b8a6', // turquoise-500
-        secondary: '#0D1B2A', // midnight-950
-        accent: '#2dd4bf', // turquoise-400
       },
       spacing: {
+        6: '1.5rem',
+        8: '2rem',
+        10: '2.5rem',
         '128': '32rem',
+      },
+      fontSize: {
+        h1: ['2.5rem', { lineHeight: '1.2' }],
+        h2: ['1.75rem', { lineHeight: '1.3' }],
+        base: ['1rem', { lineHeight: '1.6' }],
+      },
+      borderRadius: {
+        DEFAULT: '0.5rem',
       },
       borderWidth: {
         '0.5': '0.5px',

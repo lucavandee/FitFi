@@ -34,29 +34,29 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-midnight-950/95 backdrop-blur-md' : 'bg-midnight-950/80 backdrop-blur-sm'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-midnight/95 backdrop-blur-md' : 'bg-midnight/80 backdrop-blur-sm'}`}>
         <div className="container-slim">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0" onClick={closeMenu}>
-                <Logo className="h-8 w-auto text-white" />
+                <Logo className="h-8 w-auto text-cardWhite" />
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-10">
               {['/', '/onboarding', '/over-ons'].map((path, idx) => {
                 const labels = ['Home', 'Stijlscan', 'Over ons'];
                 return (
                   <Link
                     key={path}
                     to={path}
-                    className={`text-sm font-medium transition-colors hover:text-turquoise-400 relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
+                    className={`text-sm font-medium transition-colors hover:text-turquoise relative ${location.pathname === path ? 'text-cardWhite' : 'text-cardWhite/80'}`}
                   >
                     {labels[idx]}
                     {location.pathname === path && (
-                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-turquoise-400 rounded-full" />
+                      <span className="absolute -bottom-1 left-0 w-full h-1.5 bg-turquoise rounded" />
                     )}
                   </Link>
                 );
@@ -64,10 +64,10 @@ const Navbar: React.FC = () => {
             </nav>
 
             {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-6">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-[#1B263B] transition-colors text-white"
+                className="p-2 rounded hover:bg-midnight-800 transition-colors text-cardWhite"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -75,17 +75,17 @@ const Navbar: React.FC = () => {
 
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-turquoise-400 transition-colors">
+                  <Link to="/dashboard" className="flex items-center space-x-2 text-cardWhite hover:text-turquoise transition-colors">
                     <User size={20} />
                     <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
                   </Link>
-                  <Button variant="ghost" size="sm" onClick={logout} className="text-white border border-white/30 hover:bg-white/10">
+                  <Button variant="ghost" size="sm" onClick={logout} className="text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10">
                     Uitloggen
                   </Button>
                 </div>
               ) : (
-                <div className="space-x-3">
-                  <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-white border border-white/30 hover:bg-white/10">
+                <div className="space-x-4">
+                  <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10">
                     Inloggen
                   </Button>
                   <Button as={Link} to="/onboarding?signup=true" variant="primary" size="sm">
@@ -96,17 +96,17 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile Buttons */}
-            <div className="flex lg:hidden items-center space-x-2">
+            <div className="flex lg:hidden items-center space-x-3">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-[#1B263B] transition-colors text-white"
+                className="p-2 rounded hover:bg-midnight-800 transition-colors text-cardWhite"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               <button
                 onClick={toggleMenu}
-                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-[#1B263B] transition-colors"
+                className="inline-flex items-center justify-center p-2 rounded text-cardWhite hover:bg-midnight-800 transition-colors"
                 aria-label="Toggle mobile menu"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -134,14 +134,14 @@ const Navbar: React.FC = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed top-16 right-0 bottom-0 z-50 w-72 max-w-[85vw] bg-[#0D1B2A] shadow-xl lg:hidden"
+            className="fixed top-16 right-0 bottom-0 z-50 w-72 max-w-[85vw] bg-midnight shadow-xl lg:hidden"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.3 }}
           >
             <nav className="flex flex-col h-full">
-              <div className="flex-1 px-4 py-6 space-y-1">
+              <div className="flex-1 px-6 py-8 space-y-2">
                 {['/', '/onboarding', '/over-ons'].map((path, idx) => {
                   const labels = ['Home', 'Stijlscan', 'Over ons'];
                   return (
@@ -149,8 +149,8 @@ const Navbar: React.FC = () => {
                       key={path}
                       to={path}
                       onClick={closeMenu}
-                      className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                        location.pathname === path ? 'bg-[#1B263B] text-white' : 'text-white/80 hover:bg-[#1B263B] hover:text-white'
+                      className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
+                        location.pathname === path ? 'bg-midnight-800 text-cardWhite' : 'text-cardWhite/80 hover:bg-midnight-800 hover:text-cardWhite'
                       }`}
                     >
                       {labels[idx]}
@@ -161,8 +161,8 @@ const Navbar: React.FC = () => {
                   <Link
                     to="/dashboard"
                     onClick={closeMenu}
-                    className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                      location.pathname.startsWith('/dashboard') ? 'bg-[#1B263B] text-white' : 'text-white/80 hover:bg-[#1B263B] hover:text-white'
+                    className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
+                      location.pathname.startsWith('/dashboard') ? 'bg-midnight-800 text-cardWhite' : 'text-cardWhite/80 hover:bg-midnight-800 hover:text-cardWhite'
                     }`}
                   >
                     Dashboard
@@ -170,14 +170,14 @@ const Navbar: React.FC = () => {
                 )}
               </div>
 
-              <div className="border-t border-white/10 p-4">
+              <div className="border-t border-cardWhite/10 p-6">
                 {user ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3 px-4 py-2 bg-[#1B263B]/50 rounded-lg">
-                      <User size={24} className="text-white/70" />
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-3 px-6 py-3 bg-midnight-800/50 rounded">
+                      <User size={24} className="text-cardWhite/70" />
                       <div className="flex-1">
-                        <div className="font-medium text-white">{user.name || 'Gebruiker'}</div>
-                        <div className="text-sm text-white/70">{user.email || 'gebruiker@fitfi.app'}</div>
+                        <div className="font-medium text-cardWhite">{user.name || 'Gebruiker'}</div>
+                        <div className="text-sm text-cardWhite/70">{user.email || 'gebruiker@fitfi.app'}</div>
                       </div>
                     </div>
                     <Button
@@ -187,14 +187,14 @@ const Navbar: React.FC = () => {
                         logout();
                         closeMenu();
                       }}
-                      className="text-white border border-white/30 hover:bg-white/10"
+                      className="text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10"
                     >
                       Uitloggen
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <Button as={Link} to="/onboarding" variant="ghost" fullWidth onClick={closeMenu} className="text-white border border-white/30 hover:bg-white/10">
+                  <div className="space-y-4">
+                    <Button as={Link} to="/onboarding" variant="ghost" fullWidth onClick={closeMenu} className="text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10">
                       Inloggen
                     </Button>
                     <Button as={Link} to="/onboarding?signup=true" variant="primary" fullWidth onClick={closeMenu}>

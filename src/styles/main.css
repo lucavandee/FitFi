@@ -10,7 +10,7 @@
   }
   
   body {
-    @apply font-sans text-gray-900 bg-white;
+    @apply font-sans text-textSecondary bg-cardWhite;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -30,39 +30,39 @@
   }
   
   .btn-primary {
-    @apply btn bg-turquoise-500 text-white hover:bg-turquoise-600 focus:ring-turquoise-500;
+    @apply btn bg-turquoise text-cardWhite hover:bg-turquoise-dark focus:ring-turquoise;
   }
   
   .btn-secondary {
-    @apply btn bg-white text-turquoise-500 hover:bg-lightGrey-100 focus:ring-turquoise-500;
+    @apply btn bg-cardWhite text-turquoise hover:bg-lightGrey focus:ring-turquoise;
   }
   
   .btn-ghost {
-    @apply btn bg-transparent text-textPrimary-dark hover:bg-white/10 focus:ring-white;
+    @apply btn bg-transparent text-textSecondary hover:bg-lightGrey focus:ring-turquoise;
   }
   
   .card {
-    @apply bg-white dark:bg-midnight-800 rounded-2xl border border-lightGrey-200 dark:border-midnight-700 overflow-hidden transition-all shadow-sm;
+    @apply bg-cardWhite rounded border border-lightGrey overflow-hidden transition-all shadow-sm;
   }
   
   .input {
-    @apply w-full px-4 py-3 rounded-xl border border-lightGrey-300 dark:border-midnight-600 bg-white dark:bg-midnight-700 text-textPrimary-light dark:text-textPrimary-dark placeholder-textSecondary-light dark:placeholder-textSecondary-dark focus:outline-none focus:ring-2 focus:ring-turquoise-500 focus:border-transparent transition-all;
+    @apply w-full px-4 py-3 rounded border border-lightGrey bg-cardWhite text-textPrimary placeholder-textSecondary focus:outline-none focus:ring-2 focus:ring-turquoise focus:border-transparent transition-all;
   }
   
   .label {
-    @apply block text-sm font-medium text-textPrimary-light dark:text-textPrimary-dark mb-1;
+    @apply block text-sm font-medium text-textPrimary mb-1;
   }
 
   .content-section {
-    @apply bg-white dark:bg-midnight-800 rounded-2xl shadow-sm border border-lightGrey-200 dark:border-midnight-700 overflow-hidden transition-colors;
+    @apply bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-lightGrey-50 to-white dark:from-midnight-900 dark:to-midnight-800;
+    @apply bg-gradient-to-br from-lightGrey to-cardWhite;
   }
 
   .glass-card {
-    @apply bg-white/90 dark:bg-midnight-800/90 backdrop-blur-sm border border-lightGrey-200 dark:border-midnight-700 rounded-2xl shadow-sm;
+    @apply bg-cardWhite backdrop-blur-sm border border-lightGrey rounded shadow-sm;
   }
 }
 
