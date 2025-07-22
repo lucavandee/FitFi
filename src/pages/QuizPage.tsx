@@ -30,6 +30,7 @@ const QuizPage: React.FC = () => {
   const { user, updateProfile } = useUser();
   
   const currentQuestionIndex = parseInt(step || '1') - 1;
+  const [isQuizComplete, setIsQuizComplete] = useState(false);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -159,10 +160,10 @@ const QuizPage: React.FC = () => {
   };
 
   const nextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex === questions.length - 1) {
+      setIsQuizComplete(true);
+    } else if (currentQuestionIndex < questions.length - 1) {
       navigate(`/quiz/${currentQuestionIndex + 2}`);
-    } else {
-      handleSubmit();
     }
   };
 
@@ -205,6 +206,14 @@ const QuizPage: React.FC = () => {
     navigate('/results', { state: { answers } });
   };
 
+  // Redirect to results when quiz is complete
+  useEffect(() => {
+    if (isQuizComplete) {
+      setTimeout(() => {
+        handleSubmit();
+      }, 500); // Optional delay for UX feedback
+    }
+  }, [isQuizComplete]);
   if (!currentQuestion) {
     navigate('/quiz/1');
     return null;
@@ -520,7 +529,9 @@ const QuizPage: React.FC = () => {
                 iconPosition="right"
                 className="min-w-[100px]"
               >
-                {currentQuestionIndex === questions.length - 1 ? 'Voltooien' : 'Volgende'}
+                {currentQuestionIndex === questions.length - 1 ? (
+                  isQuizComplete ? 'Laden...' : 'Voltooien'
+                ) : 'Volgende'}
               </Button>
             </div>
           </motion.div>
@@ -600,7 +611,9 @@ const QuizPage: React.FC = () => {
             iconPosition="right"
             className="flex-1"
           >
-            {currentQuestionIndex === questions.length - 1 ? 'Voltooien' : 'Volgende'}
+            {currentQuestionIndex === questions.length - 1 ? (
+              isQuizComplete ? 'Laden...' : 'Voltooien'
+            ) : 'Volgende'}
           </Button>
         </div>
       </div>
