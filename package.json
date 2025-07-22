@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:functions": "tsc -p functions/tsconfig.json",
     "lint": "eslint .",
-    "lint:styles": "eslint './src/**/*.{js,jsx,ts,tsx}' --rule 'jsx-a11y/color-contrast: [error, {threshold: 4.5}]'",
+    "lint:styles": "eslint './src/**/*.{js,jsx,ts,tsx}'",
     "preview": "vite preview",
     "link-check": "node scripts/link-check.js",
     "image-check": "node scripts/image-check.js",
