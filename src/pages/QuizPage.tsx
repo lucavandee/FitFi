@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
+import LoadingFallback from '../components/ui/LoadingFallback';
 
 interface QuestionOption {
   id: string;
@@ -160,9 +161,13 @@ const QuizPage: React.FC = () => {
   };
 
   const nextQuestion = () => {
+    console.log('[QuizPage] nextQuestion called, currentQuestionIndex:', currentQuestionIndex, 'total questions:', questions.length);
+    
     if (currentQuestionIndex === questions.length - 1) {
+      console.log('[QuizPage] Last question reached, setting isQuizComplete to true');
       setIsQuizComplete(true);
-    } else if (currentQuestionIndex < questions.length - 1) {
+    } else {
+      console.log('[QuizPage] Navigating to next question:', currentQuestionIndex + 2);
       navigate(`/quiz/${currentQuestionIndex + 2}`);
     }
   };
@@ -186,6 +191,8 @@ const QuizPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    console.log('[QuizPage] handleSubmit called with answers:', answers);
+    
     if (user) {
       await updateProfile({
         stylePreferences: {
@@ -203,17 +210,19 @@ const QuizPage: React.FC = () => {
       window.trackQuizComplete(120, questions.length, 'registered_user');
     }
     
+    console.log('[QuizPage] Navigating to results with answers');
     navigate('/results', { state: { answers } });
   };
 
-  // Redirect to results when quiz is complete
+  // Handle quiz completion with proper redirect
   useEffect(() => {
     if (isQuizComplete) {
+      console.log('[QuizPage] Quiz completed, redirecting to results in 300ms');
       setTimeout(() => {
         handleSubmit();
-      }, 500); // Optional delay for UX feedback
+      }, 300);
     }
-  }, [isQuizComplete]);
+  }, [isQuizComplete, navigate]);
   if (!currentQuestion) {
     navigate('/quiz/1');
     return null;
@@ -617,6 +626,13 @@ const QuizPage: React.FC = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Loading overlay when quiz is completing */}
+      {isQuizComplete && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+          <LoadingFallback message="Je stijlprofiel wordt gemaakt..." size="lg" />
+        </div>
+      )}
     </div>
   );
 };
