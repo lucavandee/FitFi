@@ -288,6 +288,14 @@ const QuizPage: React.FC = () => {
       saveQuizProgress(questions.length, questions.length, finalAnswers);
       console.debug('[QuizPage] Saved to progress persistence');
       
+      // Mark completion in context to prevent auto-population
+      completeOnboarding({
+        gender: data.gender || 'vrouw',
+        archetypes: [finalArchetype],
+        season: finalSeason,
+        occasions: Array.isArray(finalOccasion) ? finalOccasion : [finalOccasion]
+      });
+      
       if (user) {
         await updateProfile({
           stylePreferences: {
@@ -313,7 +321,26 @@ const QuizPage: React.FC = () => {
       console.debug('[QuizPage] Triggering navigation after state update delay');
       setTimeout(() => {
         console.debug('[QuizPage] Navigating to results with enhanced UX');
-        navigationService.navigateToResults(finalAnswers, {
+        
+        // Force immediate navigation to prevent onboarding hang
+        try {
+          navigationService.navigateToResults(finalAnswers, {
+            delay: 0, // No delay for immediate navigation
+            loadingMessage: 'Je stijlprofiel wordt gemaakt...',
+            onStart: () => console.debug('[QuizPage] Navigation started'),
+            onComplete: () => console.debug('[QuizPage] Navigation completed'),
+            onError: (error) => {
+              console.error('[QuizPage] Navigation error:', error);
+              // Immediate fallback navigation
+              navigate('/results', { state: { answers: finalAnswers } });
+            }
+          });
+        } catch (navError) {
+          console.error('[QuizPage] NavigationService failed:', navError);
+          // Direct navigation as immediate fallback
+          navigate('/results', { state: { answers: finalAnswers } });
+        }
+      }, 50);
           loadingMessage: 'Je stijlprofiel wordt gemaakt...',
           onStart: () => console.debug('[QuizPage] Navigation started'),
           onComplete: () => console.debug('[QuizPage] Navigation completed'),
@@ -327,7 +354,13 @@ const QuizPage: React.FC = () => {
       
     } catch (error) {
       console.error('[QuizPage] Error in handleSubmit:', error);
-      // Emergency fallback
+      // Emergency fallback with complete data
+      const finalAnswers = {
+        ...answers,
+        season: answers.season || 'herfst',
+        occasion: answers.occasion || ['Casual'],
+        style: answers.style || 'casual_chic'
+      };
       navigate('/results', { state: { answers: finalAnswers } });
     }
   };

@@ -9,9 +9,37 @@ import { useNavigationService } from '../services/NavigationService';
 const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep, submitOnboarding } = useOnboarding();
+  const { data: onboardingData } = useOnboarding();
   const navigationService = useNavigationService();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const hasTrackedRef = useRef(false);
+
+  // Navigation guard - if user has completed quiz data, navigate to results
+  useEffect(() => {
+    const hasCompleteData = onboardingData.season && onboardingData.occasions && onboardingData.archetypes;
+    
+    if (hasCompleteData && hasSubmitted) {
+      console.log('[OnboardingPage] Complete data detected after submission, navigating to results');
+      
+      // Immediate navigation to prevent hang
+      setTimeout(() => {
+        try {
+          navigationService.navigateToResults(onboardingData, {
+            delay: 0,
+            loadingMessage: 'Aanbevelingen worden geladen...',
+            onError: (error) => {
+              console.error('[OnboardingPage] Navigation error:', error);
+              navigate('/results', { state: { onboardingData } });
+            }
+          });
+        } catch (error) {
+          console.error('[OnboardingPage] NavigationService failed:', error);
+          navigate('/results', { state: { onboardingData } });
+        }
+      }, 100);
+    }
+  }, [onboardingData, hasSubmitted, navigationService, navigate]);
 
   useEffect(() => {
     if (hasTrackedRef.current) return;
@@ -32,6 +60,7 @@ const OnboardingPage: React.FC = () => {
   const handleStart = () => {
     if (isButtonClicked) return;
     setIsButtonClicked(true);
+    setHasSubmitted(false); // Reset submission state for new flow
 
     setTimeout(() => {
       completeStep('welcome');
@@ -43,6 +72,7 @@ const OnboardingPage: React.FC = () => {
   const handleSkip = () => {
     if (isButtonClicked) return;
     setIsButtonClicked(true);
+    setHasSubmitted(true); // Mark as submitted for skip flow
 
     console.log('[🔍 OnboardingPage] Skip clicked → setting fallback onboarding data');
 
@@ -66,6 +96,7 @@ const OnboardingPage: React.FC = () => {
       setTimeout(() => {
         try {
           navigationService.navigateToEnhancedResults(fallbackUser, {
+            delay: 0, // Immediate navigation
             loadingMessage: 'Voorbeeldaanbevelingen laden...',
             onError: (error) => {
               console.error('[OnboardingPage] Skip navigation error:', error);
