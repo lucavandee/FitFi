@@ -135,16 +135,16 @@ const ArchetypeStep: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-lightGrey">
-      <div className="container-slim py-16">
+    <div className="min-h-screen bg-light-grey">
+      <div className="container mx-auto px-6 py-16">
         <div className="max-w-4xl mx-auto">
           {/* Progress indicator */}
           <div className="mb-10">
-            <div className="flex justify-between text-sm text-textSecondary mb-2">
+            <div className="flex justify-between text-sm text-text-secondary mb-2">
               <span>Stap 2 van 3</span>
               <span>66%</span>
             </div>
-            <div className="h-1.5 bg-lightGrey-200 rounded overflow-hidden">
+            <div className="h-1.5 bg-light-grey/50 rounded overflow-hidden">
               <div
                 className="h-full bg-turquoise rounded transition-all duration-300"
                 style={{ width: '66%' }}
@@ -161,12 +161,12 @@ const ArchetypeStep: React.FC = () => {
               <h1 className="text-h1 font-bold text-textPrimary mb-3 font-display">
                 Wat past het beste bij jouw stijl?
               </h1>
-              <p className="text-textSecondary">
+              <p className="text-text-secondary">
                 Kies maximaal twee stijlen die jou het meest aanspreken
               </p>
             </div>
 
-            <div className="bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden">
+            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden">
               <form onSubmit={handleSubmit} className="p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                   {archetypeOptions.map((option) => (
@@ -178,7 +178,7 @@ const ArchetypeStep: React.FC = () => {
                           w-full p-6 rounded border text-left transition-all
                           ${selectedArchetypes.includes(option.id)
                             ? 'border-turquoise bg-turquoise/10'
-                            : 'border-lightGrey hover:border-turquoise hover:bg-turquoise/5'}
+                            : 'border-light-grey hover:border-turquoise hover:bg-turquoise/5'}
                         `}
                       >
                         <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
@@ -191,15 +191,15 @@ const ArchetypeStep: React.FC = () => {
                             />
                           </div>
                           <div className="flex-1 text-center md:text-left">
-                            <h3 className="font-medium text-textPrimary text-lg mb-2">{option.name}</h3>
-                            <p className="text-textSecondary text-sm">{option.description}</p>
+                            <h3 className="font-medium text-text-primary text-lg mb-2">{option.name}</h3>
+                            <p className="text-text-secondary text-sm">{option.description}</p>
                           </div>
                           <div className="absolute top-6 right-6">
                             <div className={`
                               w-6 h-6 rounded-full flex items-center justify-center
                               ${selectedArchetypes.includes(option.id)
-                                ? 'bg-turquoise text-cardWhite'
-                                : 'bg-lightGrey border border-lightGrey-300'}
+                                ? 'bg-turquoise text-white'
+                                : 'bg-light-grey border border-light-grey'}
                             `}>
                               {selectedArchetypes.includes(option.id) && (
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -214,15 +214,15 @@ const ArchetypeStep: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowTooltip(showTooltip === option.id ? null : option.id)}
-                        className="absolute bottom-6 right-6 text-textSecondary/60 hover:text-textSecondary transition-colors"
+                        className="absolute bottom-6 right-6 text-text-secondary/60 hover:text-text-secondary transition-colors"
                         aria-label="Meer informatie"
                       >
                         <Info size={16} />
                       </button>
                       
                       {showTooltip === option.id && (
-                        <div className="absolute bottom-16 right-6 bg-cardWhite border border-lightGrey rounded p-4 shadow-lg z-10 w-64">
-                          <p className="text-textSecondary text-sm">
+                        <div className="absolute bottom-16 right-6 bg-white border border-light-grey rounded p-4 shadow-lg z-10 w-64">
+                          <p className="text-text-secondary text-sm">
                             {option.id === 'modern_minimalist' && 'Modern Minimalist combineert strakke lijnen met neutrale kleuren. Denk aan tijdloze stukken die veelzijdig te combineren zijn en een clean uitstraling hebben.'}
                             {option.id === 'casual_chic' && 'Casual Chic balanceert comfort met elegantie. Denk aan premium basics met subtiele details die moeiteloos stijlvol zijn voor dagelijks gebruik.'}
                             {option.id === 'business_casual' && 'Business Casual is professioneel maar comfortabel. Denk aan nette broeken of rokken gecombineerd met casual tops, perfect voor kantoor of zakelijke afspraken.'}
@@ -250,7 +250,7 @@ const ArchetypeStep: React.FC = () => {
                     onClick={goToPreviousStep}
                     icon={<ArrowLeft size={18} />}
                     iconPosition="left"
-                    className="flex-1 text-textSecondary border border-lightGrey hover:bg-lightGrey"
+                    className="flex-1 text-text-secondary border border-light-grey hover:bg-light-grey"
                   >
                     Terug
                   </Button>
@@ -259,7 +259,7 @@ const ArchetypeStep: React.FC = () => {
                     variant="primary"
                     icon={<ArrowRight size={18} />}
                     iconPosition="right"
-                    className="flex-1 bg-turquoise hover:bg-turquoise-dark py-3 px-6 rounded shadow-sm"
+                    className="flex-1"
                     disabled={selectedArchetypes.length === 0}
                   >
                     Volgende
@@ -268,9 +268,9 @@ const ArchetypeStep: React.FC = () => {
               </form>
 
               {/* Privacy indicator */}
-              <div className="px-8 py-6 bg-lightGrey flex items-center justify-center space-x-2">
+              <div className="px-8 py-6 bg-light-grey flex items-center justify-center space-x-2">
                 <ShieldCheck size={18} className="text-turquoise" />
-                <span className="text-sm text-textSecondary">Je gegevens zijn veilig en versleuteld</span>
+                <span className="text-sm text-text-secondary">Je gegevens zijn veilig en versleuteld</span>
               </div>
             </div>
           </motion.div>

@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-midnight/95 backdrop-blur-md' : 'bg-midnight/80 backdrop-blur-sm'}`}>
-        <div className="container-slim">
+        <div className="container mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
 
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-orange-400 transition-colors">
+                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-turquoise transition-colors">
                     <User size={20} />
                     <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
                   </Link>
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
                   <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-white border border-white/30 hover:bg-white/10">
                     Inloggen
                   </Button>
-                  <Button as={Link} to="/onboarding?signup=true" variant="primary" size="sm">
+                  <Button as={Link} to="/onboarding?signup=true" variant="primary" size="sm" className="bg-turquoise hover:bg-turquoise-dark">
                     Stijlscan starten
                   </Button>
                 </div>
@@ -173,7 +173,7 @@ const Navbar: React.FC = () => {
               <div className="border-t border-white/10 p-6">
                 {user ? (
                   <div className="space-y-6">
-                    <div className="flex items-center space-x-3 px-6 py-3 bg-gray-800/50 rounded">
+                    <div className="flex items-center space-x-3 px-6 py-3 bg-midnight/50 rounded">
                       <User size={24} className="text-white/70" />
                       <div className="flex-1">
                         <div className="font-medium text-white">{user.name || 'Gebruiker'}</div>
@@ -197,7 +197,7 @@ const Navbar: React.FC = () => {
                     <Button as={Link} to="/onboarding" variant="ghost" fullWidth onClick={closeMenu} className="text-white border border-white/30 hover:bg-white/10">
                       Inloggen
                     </Button>
-                    <Button as={Link} to="/onboarding?signup=true" variant="primary" fullWidth onClick={closeMenu}>
+                    <Button as={Link} to="/onboarding?signup=true" variant="primary" fullWidth onClick={closeMenu} className="bg-turquoise hover:bg-turquoise-dark">
                       Stijlscan starten
                     </Button>
                   </div>
