@@ -16,40 +16,29 @@
     --tw-ring-color: rgb(137 207 240 / var(--tw-ring-opacity));
   }
   
-  /* Custom text utilities */
-  .text-text-secondary {
-    --tw-text-opacity: 1;
-    color: rgb(51 51 51 / var(--tw-text-opacity));
-  }
-  .text-text-primary {
-    --tw-text-opacity: 1;
-    color: rgb(13 27 42 / var(--tw-text-opacity));
+  /* Custom @apply component utilities */
+  .input {
+    @apply w-full p-4 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none ring-2 ring-turquoise transition-all;
   }
   
-  /* Custom background utilities */
-  .bg-card-white {
-    --tw-bg-opacity: 1;
-    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  }
-  .bg-light-grey {
-    --tw-bg-opacity: 1;
-    background-color: rgb(246 246 246 / var(--tw-bg-opacity));
+  .card {
+    @apply bg-white text-text-secondary p-6 rounded border border-light-grey shadow-sm;
   }
   
-  /* Custom border utilities */
-  .border-light-grey {
-    --tw-border-opacity: 1;
-    border-color: rgb(246 246 246 / var(--tw-border-opacity));
-  }
-  .border-card-white {
-    --tw-border-opacity: 1;
-    border-color: rgb(255 255 255 / var(--tw-border-opacity));
+  .btn {
+    @apply inline-flex items-center justify-center rounded font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
   
-  /* Custom placeholder utilities */
-  .placeholder-text-secondary::placeholder {
-    --tw-placeholder-opacity: 1;
-    color: rgb(51 51 51 / var(--tw-placeholder-opacity));
+  .btn-primary {
+    @apply btn bg-turquoise text-white hover:bg-turquoise-dark ring-turquoise;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white text-turquoise hover:bg-light-grey ring-turquoise;
+  }
+  
+  .btn-ghost {
+    @apply btn bg-transparent text-text-secondary hover:bg-light-grey ring-turquoise;
   }
 }
 
