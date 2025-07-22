@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-light-grey to-card-white">
+    <div className="min-h-screen bg-gradient-to-b from-light-grey to-white">
       {/* Progress Recovery Banner */}
       {showRecoveryBanner && (
         <ProgressRecoveryBanner
