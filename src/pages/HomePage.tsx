@@ -125,7 +125,7 @@ const HomePage: React.FC = () => {
               <div className="bg-gradient-to-r from-orange-50 to-blue-50 rounded-2xl p-6 mb-8 border-l-4 border-orange-500">
                 <p className="text-lg font-medium flex items-start">
                   <span className="text-2xl mr-3">💡</span>
-                  "Sinds ik FitFi gebruik, bespaar ik zóveel tijd. En ik voel me elke dag zelfverzekerder." — Lisa, 28
+                  "Sinds ik FitFi gebruik, bespaar ik zóveel tijd. En ik voel me elke dag zelfverzekerder.\" — Lisa, 28
                 </p>
               </div>
               
