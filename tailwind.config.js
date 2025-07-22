@@ -11,6 +11,8 @@ export default {
       colors: {
         // FitFi Unified Color Palette - Normalized
         midnight: '#0D1B2A',
+        turquoise: '#89CFF0',
+        'turquoise-dark': '#6FB8D1',
         'light-grey': '#F6F6F6',
         'text-primary': '#0D1B2A',
         'text-secondary': '#333333',
@@ -38,8 +40,9 @@ export default {
           100: '#ccfbf1',
           200: '#99f6e4',
           300: '#5eead4',
-          500: '#89CFF0', // Primary turquoise
-          600: '#6FB8D1', // turquoise-dark
+          400: '#26d0ce',
+          500: '#14b8a6',
+          600: '#0d9488',
           700: '#0f766e',
           800: '#115e59',
           900: '#134e4a',
@@ -98,6 +101,9 @@ export default {
     },
     corePlugins: {
       ringColor: true,
+      backgroundColor: true,
+      textColor: true,
+      borderColor: true,
     },
   },
   plugins: [],
