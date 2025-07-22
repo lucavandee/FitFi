@@ -5,7 +5,8 @@ import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
-import LoadingFallback from '../components/ui/LoadingFallback';
+import ProfileProcessingIndicator from '../components/ui/ProfileProcessingIndicator';
+import { useNavigationService } from '../services/NavigationService';
 
 interface QuestionOption {
   id: string;
@@ -29,6 +30,7 @@ const QuizPage: React.FC = () => {
   const { step } = useParams<{ step: string }>();
   const navigate = useNavigate();
   const { user, updateProfile } = useUser();
+  const navigationService = useNavigationService();
   
   const currentQuestionIndex = parseInt(step || '1') - 1;
   const [isQuizComplete, setIsQuizComplete] = useState(false);
@@ -193,25 +195,40 @@ const QuizPage: React.FC = () => {
   const handleSubmit = async () => {
     console.log('[QuizPage] handleSubmit called with answers:', answers);
     
-    if (user) {
-      await updateProfile({
-        stylePreferences: {
-          casual: 4,
-          formal: 3,
-          sporty: 2,
-          vintage: 5,
-          minimalist: 4
+    try {
+      if (user) {
+        await updateProfile({
+          stylePreferences: {
+            casual: 4,
+            formal: 3,
+            sporty: 2,
+            vintage: 5,
+            minimalist: 4
+          }
+        });
+      }
+      
+      // Track quiz completion
+      if (typeof window.trackQuizComplete === 'function') {
+        window.trackQuizComplete(120, questions.length, 'registered_user');
+      }
+      
+      console.log('[QuizPage] Navigating to results with enhanced UX');
+      await navigationService.navigateToResults(answers, {
+        loadingMessage: 'Je stijlprofiel wordt gemaakt...',
+        onStart: () => console.log('[QuizPage] Navigation started'),
+        onComplete: () => console.log('[QuizPage] Navigation completed'),
+        onError: (error) => {
+          console.error('[QuizPage] Navigation error:', error);
+          // Fallback navigation
+          navigate('/results', { state: { answers } });
         }
       });
+    } catch (error) {
+      console.error('[QuizPage] Error in handleSubmit:', error);
+      // Emergency fallback
+      navigate('/results', { state: { answers } });
     }
-    
-    // Track quiz completion
-    if (typeof window.trackQuizComplete === 'function') {
-      window.trackQuizComplete(120, questions.length, 'registered_user');
-    }
-    
-    console.log('[QuizPage] Navigating to results with answers');
-    navigate('/results', { state: { answers } });
   };
 
   // Handle quiz completion with proper redirect
@@ -629,8 +646,13 @@ const QuizPage: React.FC = () => {
       
       {/* Loading overlay when quiz is completing */}
       {isQuizComplete && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-          <LoadingFallback message="Je stijlprofiel wordt gemaakt..." size="lg" />
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <ProfileProcessingIndicator 
+            isVisible={isQuizComplete}
+            onComplete={() => {
+              console.log('[QuizPage] Profile processing completed');
+            }}
+          />
         </div>
       )}
     </div>

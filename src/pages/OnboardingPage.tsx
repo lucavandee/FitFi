@@ -4,10 +4,12 @@ import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { motion } from 'framer-motion'; 
 import { useOnboarding } from '../context/OnboardingContext';
+import { useNavigationService } from '../services/NavigationService';
 
 const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { updateData, completeStep, goToNextStep, submitOnboarding } = useOnboarding();
+  const navigationService = useNavigationService();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const hasTrackedRef = useRef(false);
 
@@ -59,9 +61,14 @@ const OnboardingPage: React.FC = () => {
       localStorage.setItem('fitfi-user', JSON.stringify(fallbackUser));
       
       console.log('[🔍 OnboardingPage] Navigating to results with fallback data');
-      setTimeout(() => {
-        navigate('/results', { state: { onboardingData: fallbackUser } });
-      }, 300);
+      navigationService.navigateToEnhancedResults(fallbackUser, {
+        loadingMessage: 'Voorbeeldaanbevelingen laden...',
+        onError: (error) => {
+          console.error('[OnboardingPage] Skip navigation error:', error);
+          // Emergency fallback
+          navigate('/results', { state: { onboardingData: fallbackUser } });
+        }
+      });
       
     } catch (error) {
       console.error('[🔍 OnboardingPage] Error in skip flow:', error);

@@ -9,6 +9,8 @@ import { GamificationProvider } from './context/GamificationContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/ui/LoadingFallback';
+import NavigationProgress from './components/ui/NavigationProgress';
+import { navigationService } from './services/NavigationService';
 
 // Import regular components
 import HomePage from './pages/HomePage';
@@ -33,6 +35,17 @@ import LegalPage from './pages/LegalPage';
 // Lazy load the dashboard page to improve initial load time
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 
+// Initialize navigation service
+const NavigationServiceInitializer: React.FC = () => {
+  const navigate = useNavigate();
+  
+  React.useEffect(() => {
+    navigationService.initialize(navigate);
+  }, [navigate]);
+  
+  return null;
+};
+
 // Lazy load onboarding steps
 const LazyGenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
 const LazyArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
@@ -48,6 +61,8 @@ function App() {
         <GamificationProvider>
           <Router>
             <OnboardingProvider>
+              <NavigationServiceInitializer />
+              <NavigationProgress />
               <div className="min-h-screen flex flex-col">
                 <ErrorBoundary>
                   <Navbar />
