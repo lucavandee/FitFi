@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -35,16 +35,6 @@ import LegalPage from './pages/LegalPage';
 // Lazy load the dashboard page to improve initial load time
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 
-// Initialize navigation service
-const NavigationServiceInitializer: React.FC = () => {
-  const navigate = useNavigate();
-  
-  React.useEffect(() => {
-    navigationService.initialize(navigate);
-  }, [navigate]);
-  
-  return null;
-};
 
 // Lazy load onboarding steps
 const LazyGenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
@@ -61,6 +51,7 @@ function App() {
         <GamificationProvider>
           <Router>
             <OnboardingProvider>
+              <NavigationServiceInitializer />
               <NavigationServiceInitializer />
               <NavigationProgress />
               <div className="min-h-screen flex flex-col">
