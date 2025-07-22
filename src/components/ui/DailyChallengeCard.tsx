@@ -31,8 +31,8 @@ const DailyChallengeCard: React.FC = () => {
   };
 
   return (
-    <motion.div 
-      className="dashboard-card"
+    <motion.div
+      className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
@@ -63,7 +63,7 @@ const DailyChallengeCard: React.FC = () => {
         
         {/* Progress bar */}
         <div className="mt-6">
-          <div className="flex justify-between text-text-secondary mb-2">
+          <div className="flex justify-between text-base text-text-secondary mb-2">
             <span>Dagelijkse Voortgang</span>
             <span>{Math.round((completedCount / totalChallenges) * 100)}%</span>
           </div>
@@ -88,10 +88,10 @@ const DailyChallengeCard: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <div className="text-3xl">{challenge.icon}</div>
                   <div>
-                    <h4 className="font-semibold text-text-primary">
+                    <h4 className="text-xl font-semibold text-text-primary mb-4">
                       {challenge.label}
                     </h4>
-                    <p className="text-text-secondary">
+                    <p className="text-base text-text-secondary mb-4">
                       +{Math.round(challenge.points * multiplier)} punten
                       {multiplier > 1 && (
                         <span className="text-turquoise font-bold ml-1">
@@ -126,16 +126,16 @@ const DailyChallengeCard: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <CheckCircle className="mx-auto text-turquoise mb-6" size={48} />
-            <h4 className="text-lg font-semibold text-text-primary mb-4">
+            <CheckCircle className="mx-auto text-text-primary mb-6" size={48} />
+            <h4 className="text-2xl font-semibold text-text-primary mb-4">
               Alle Uitdagingen Voltooid! 🎉
             </h4>
-            <p className="text-text-secondary mb-6">
+            <p className="text-base text-text-secondary mb-4">
               Goed gedaan! Kom morgen terug voor nieuwe uitdagingen.
             </p>
             <div className="bg-turquoise/10 border border-turquoise rounded p-8">
               <p className="font-medium text-text-primary">Dagelijkse Bonus Verdiend!</p>
-              <p className="text-text-secondary">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
+              <p className="text-base text-text-secondary mb-4">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
             </div>
           </div>
         )}
