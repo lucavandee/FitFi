@@ -31,12 +31,7 @@ const DailyChallengeCard: React.FC = () => {
   };
 
   return (
-    <motion.div
-      className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.1 }}
-    >
+    <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
       <div className="p-8 border-b border-light-grey">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -44,7 +39,7 @@ const DailyChallengeCard: React.FC = () => {
               <Clock className="text-turquoise" size={20} />
             </div>
             <div>
-              <h3 className="text-h2 text-text-secondary mb-4">
+              <h3 className="text-h2 text-text-primary mb-4">
                 Dagelijkse Uitdagingen
               </h3>
               <p className="text-text-secondary">
@@ -88,10 +83,10 @@ const DailyChallengeCard: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <div className="text-3xl">{challenge.icon}</div>
                   <div>
-                    <h4 className="text-xl font-semibold text-text-primary mb-4">
+                    <h4 className="text-xl font-semibold text-text-primary mb-2">
                       {challenge.label}
                     </h4>
-                    <p className="text-base text-text-secondary mb-4">
+                    <p className="text-base text-text-secondary">
                       +{Math.round(challenge.points * multiplier)} punten
                       {multiplier > 1 && (
                         <span className="text-turquoise font-bold ml-1">
@@ -127,7 +122,7 @@ const DailyChallengeCard: React.FC = () => {
         ) : (
           <div className="text-center py-8">
             <CheckCircle className="mx-auto text-text-primary mb-6" size={48} />
-            <h4 className="text-2xl font-semibold text-text-primary mb-4">
+            <h4 className="text-h2 text-text-primary mb-4">
               Alle Uitdagingen Voltooid! 🎉
             </h4>
             <p className="text-base text-text-secondary mb-4">
@@ -135,7 +130,7 @@ const DailyChallengeCard: React.FC = () => {
             </p>
             <div className="bg-turquoise/10 border border-turquoise rounded p-8">
               <p className="font-medium text-text-primary">Dagelijkse Bonus Verdiend!</p>
-              <p className="text-base text-text-secondary mb-4">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
+              <p className="text-base text-text-secondary">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
             </div>
           </div>
         )}
