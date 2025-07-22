@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
 import { useGamification } from './GamificationContext';
 import { getCurrentSeason } from '../engine/helpers';
+import { useNavigationService } from '../services/NavigationService';
 import toast from 'react-hot-toast';
 
 // Define the types for our onboarding data
@@ -69,6 +70,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const navigate = useNavigate();
   const { updateProfile } = useUser();
   const { completeQuiz } = useGamification();
+  const navigationService = useNavigationService();
   
   // Initialize state
   const [data, setData] = useState<OnboardingData>(() => {
@@ -264,11 +266,16 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     if (isOnboardingComplete) {
       console.log('[🔍 OnboardingContext] Onboarding complete, redirecting to results in 300ms');
-      setTimeout(() => {
-        navigate('/results', { state: { onboardingData: data } });
-      }, 300);
+      navigationService.navigateToEnhancedResults(data, {
+        loadingMessage: 'Je aanbevelingen worden geladen...',
+        onError: (error) => {
+          console.error('[OnboardingContext] Navigation error:', error);
+          // Emergency fallback
+          navigate('/results', { state: { onboardingData: data } });
+        }
+      });
     }
-  }, [isOnboardingComplete, navigate, data]);
+  }, [isOnboardingComplete, navigate, data, navigationService]);
   
   // Check if onboarding is complete based on required fields
   useEffect(() => {
