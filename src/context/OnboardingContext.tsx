@@ -218,15 +218,23 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Calculate quiz duration
       const quizDuration = Math.floor((Date.now() - (data.startTime || Date.now())) / 1000);
       
+      // Ensure we have complete data with defaults
+      const completeData = {
+        ...data,
+        season: data.season || 'herfst',
+        occasions: data.occasions || ['Casual'],
+        archetypes: data.archetypes || ['casual_chic']
+      };
+      
       // Track quiz completion in analytics
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'quiz_complete', {
           event_category: 'questionnaire',
           event_label: 'complete',
           quiz_duration: quizDuration,
-          archetypes: data.archetypes?.join(','),
-          season: data.season,
-          occasions: data.occasions?.join(','),
+          archetypes: completeData.archetypes.join(','),
+          season: completeData.season,
+          occasions: completeData.occasions.join(','),
           gender: data.gender
         });
       }
@@ -237,16 +245,19 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         name: data.name,
         // Convert archetypes to style preferences
         stylePreferences: {
-          casual: data.archetypes?.includes('casual_chic') ? 5 : 3,
-          formal: data.archetypes?.includes('klassiek') ? 5 : 3,
-          sporty: data.archetypes?.includes('streetstyle') ? 5 : 3,
-          vintage: data.archetypes?.includes('retro') ? 5 : 3,
-          minimalist: data.archetypes?.includes('urban') ? 5 : 3
+          casual: completeData.archetypes.includes('casual_chic') ? 5 : 3,
+          formal: completeData.archetypes.includes('klassiek') ? 5 : 3,
+          sporty: completeData.archetypes.includes('streetstyle') ? 5 : 3,
+          vintage: completeData.archetypes.includes('retro') ? 5 : 3,
+          minimalist: completeData.archetypes.includes('urban') ? 5 : 3
         }
       });
       
       // Award gamification points for completing the quiz
       await completeQuiz();
+      
+      // Update context with complete data
+      setData(completeData);
       
       console.log('[🔍 OnboardingContext] Onboarding completed, setting completion flag');
       setIsOnboardingComplete(true);

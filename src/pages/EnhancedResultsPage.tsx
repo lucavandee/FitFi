@@ -128,9 +128,16 @@ const EnhancedResultsPage: React.FC = () => {
   const quizAnswers = location.state?.answers || location.state?.onboardingData || {};
   const safeUser = getSafeUser(user);
 
+  // Enhanced user data with season and occasion
+  const enhancedUser = {
+    ...safeUser,
+    season: quizAnswers.season || 'herfst',
+    occasion: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion[0] : (quizAnswers.occasion || 'Casual'),
+    occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || 'Casual']
+  };
   // Get season and occasion context
   const getSeason = () => {
-    const season = quizAnswers.season || 'herfst';
+    const season = enhancedUser.season;
     const seasonMap: Record<string, string> = {
       'lente': 'Lenteselectie',
       'zomer': 'Zomerselectie', 
@@ -141,8 +148,7 @@ const EnhancedResultsPage: React.FC = () => {
   };
 
   const getOccasion = () => {
-    const occasions = quizAnswers.occasions || ['Casual'];
-    return Array.isArray(occasions) ? occasions[0] : occasions;
+    return enhancedUser.occasion;
   };
 
   // Analytics tracking
@@ -299,11 +305,28 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Initialize on mount
   useEffect(() => {
-    if (!hasInitialized && !isFetching) {
+    const { season, occasion } = enhancedUser;
+    if (season && occasion && !hasInitialized && !isFetching) {
+      console.log('[EnhancedResultsPage] Initializing with season:', season, 'occasion:', occasion);
       loadRecommendations();
       viewRecommendation();
     }
-  }, [hasInitialized, isFetching, loadRecommendations, viewRecommendation]);
+  }, [hasInitialized, isFetching, enhancedUser.season, enhancedUser.occasion, loadRecommendations, viewRecommendation]);
+
+  // Fallback redirect if missing data after timeout
+  useEffect(() => {
+    if (!hasInitialized && !isFetching) {
+      const { season, occasion } = enhancedUser;
+      if (!season || !occasion) {
+        console.warn('[EnhancedResultsPage] Missing season or occasion data, redirecting to quiz');
+        const timer = setTimeout(() => {
+          navigate('/onboarding');
+        }, 2000); // Give 2 seconds for data to load
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [hasInitialized, isFetching, enhancedUser, navigate]);
 
   // Carousel navigation
   const nextOutfit = () => {
