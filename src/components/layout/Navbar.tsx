@@ -53,10 +53,11 @@ const Navbar: React.FC = () => {
                     key={path}
                     to={path}
                     className={`text-sm font-medium transition-colors hover:text-turquoise relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
+                    className={`text-sm font-medium transition-colors hover:text-orange-400 relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
                   >
                     {labels[idx]}
                     {location.pathname === path && (
-                      <span className="absolute -bottom-1 left-0 w-full h-1.5 bg-turquoise rounded" />
+                      <span className="absolute -bottom-1 left-0 w-full h-1.5 bg-orange-500 rounded" />
                     )}
                   </Link>
                 );
@@ -76,6 +77,7 @@ const Navbar: React.FC = () => {
               {user ? (
                 <div className="flex items-center space-x-4">
                   <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-turquoise transition-colors">
+                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-orange-400 transition-colors">
                     <User size={20} />
                     <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
                   </Link>
@@ -150,7 +152,7 @@ const Navbar: React.FC = () => {
                       to={path}
                       onClick={closeMenu}
                       className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
-                        location.pathname === path ? 'bg-midnight-800 text-white' : 'text-white/80 hover:bg-midnight-800 hover:text-white'
+                        location.pathname === path ? 'bg-gray-800 text-white' : 'text-white/80 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       {labels[idx]}
@@ -162,7 +164,7 @@ const Navbar: React.FC = () => {
                     to="/dashboard"
                     onClick={closeMenu}
                     className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
-                      location.pathname.startsWith('/dashboard') ? 'bg-midnight-800 text-white' : 'text-white/80 hover:bg-midnight-800 hover:text-white'
+                      location.pathname.startsWith('/dashboard') ? 'bg-gray-800 text-white' : 'text-white/80 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
                     Dashboard
@@ -174,6 +176,7 @@ const Navbar: React.FC = () => {
                 {user ? (
                   <div className="space-y-6">
                     <div className="flex items-center space-x-3 px-6 py-3 bg-midnight-800/50 rounded">
+                    <div className="flex items-center space-x-3 px-6 py-3 bg-gray-800/50 rounded">
                       <User size={24} className="text-white/70" />
                       <div className="flex-1">
                         <div className="font-medium text-white">{user.name || 'Gebruiker'}</div>
