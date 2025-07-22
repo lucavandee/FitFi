@@ -606,16 +606,16 @@ const QuizPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-midnight to-midnight-800">
+    <div className="min-h-screen bg-gradient-to-b from-midnight to-midnight">
       <div className="container-slim py-16">
         <div className="max-w-2xl mx-auto">
           {/* Progress bar */}
           <div className="mb-10">
-            <div className="flex justify-between text-sm text-cardWhite/70 mb-2">
+            <div className="flex justify-between text-sm text-white/70 mb-2">
               <span>Vraag {currentQuestionIndex + 1} van {questions.length}</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-1.5 bg-cardWhite/20 rounded overflow-hidden">
+            <div className="h-1.5 bg-white/20 rounded overflow-hidden">
               <div
                 className="h-full bg-turquoise rounded transition-all duration-300"
                 style={{ width: `${progress}%` }}
@@ -625,31 +625,31 @@ const QuizPage: React.FC = () => {
 
           {/* Question card */}
           <motion.div 
-            className="glass-card overflow-hidden"
+            className="bg-white/90 backdrop-blur-sm border border-light-grey rounded shadow-lg overflow-hidden"
             key={currentQuestionIndex}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="p-6">
+            <div className="p-8">
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="inline-flex items-center px-4 py-2 rounded text-xs font-medium bg-cardWhite/20 text-cardWhite">
+                  <span className="inline-flex items-center px-4 py-2 rounded text-xs font-medium bg-white/20 text-white">
                     {currentQuestion.category.charAt(0).toUpperCase() + currentQuestion.category.slice(1)}
                   </span>
-                  <span className="text-sm text-cardWhite/70">
+                  <span className="text-sm text-white/70">
                     {currentQuestionIndex + 1}/{questions.length}
                   </span>
                 </div>
                 
                 <div className="flex items-center mb-3">
-                  <h2 className="text-h2 sm:text-2xl font-bold text-cardWhite">
+                  <h2 className="text-h2 sm:text-2xl font-bold text-white">
                     {currentQuestion.question}
                   </h2>
                   <button
                     onClick={() => setShowTooltip(!showTooltip)}
-                    className="ml-2 p-1 text-cardWhite/50 hover:text-cardWhite/80 transition-colors"
+                    className="ml-2 p-1 text-white/50 hover:text-white/80 transition-colors"
                     aria-label="Waarom deze vraag?"
                   >
                     <Info size={20} />
@@ -657,7 +657,7 @@ const QuizPage: React.FC = () => {
                 </div>
                 
                 {currentQuestion.description && (
-                  <p className="text-cardWhite/80 mb-10">
+                  <p className="text-white/80 mb-10">
                     {currentQuestion.description}
                   </p>
                 )}
@@ -667,14 +667,14 @@ const QuizPage: React.FC = () => {
             </div>
             
             {/* Navigation buttons */}
-            <div className="px-8 py-6 bg-cardWhite/5 flex justify-between items-center">
+            <div className="px-8 py-6 bg-white/5 flex justify-between items-center">
               <Button
                 variant="ghost"
                 onClick={prevQuestion}
                 disabled={currentQuestionIndex === 0}
                 icon={<ArrowLeft size={16} />}
                 iconPosition="left"
-                className="min-w-[100px] text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10"
+                className="min-w-[100px] text-white border border-white/30 hover:bg-white/10"
               >
                 Terug
               </Button>
@@ -688,8 +688,8 @@ const QuizPage: React.FC = () => {
                       ${index === currentQuestionIndex 
                         ? 'bg-turquoise' 
                         : index < currentQuestionIndex 
-                          ? 'bg-cardWhite' 
-                          : 'bg-cardWhite/30'}
+                          ? 'bg-white' 
+                          : 'bg-white/30'}
                     `}
                   />
                 ))}
@@ -701,7 +701,7 @@ const QuizPage: React.FC = () => {
                 disabled={isNextDisabled()}
                 icon={<ArrowRight size={16} />}
                 iconPosition="right"
-                className="min-w-[100px] bg-turquoise hover:bg-turquoise-dark py-3 px-6 rounded shadow-sm"
+                className="min-w-[100px] quiz-button"
               >
                 {currentQuestionIndex === questions.length - 1 ? (
                   isQuizComplete ? 'Laden...' : 'Voltooien'
@@ -711,7 +711,7 @@ const QuizPage: React.FC = () => {
           </motion.div>
 
           {/* Progress summary */}
-          <div className="mt-8 text-center text-sm text-cardWhite/70">
+          <div className="mt-8 text-center text-sm text-white/70">
             <p>
               Je bent {Math.round(progress)}% klaar met je stijlanalyse
             </p>

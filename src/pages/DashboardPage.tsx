@@ -414,14 +414,14 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-midnight to-midnight-800 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-midnight to-midnight py-12">
       <div className="container-slim">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-h1 font-bold text-cardWhite mb-3">
+          <h1 className="text-h1 font-bold text-white mb-3">
             Welkom, {user.name.split(' ')[0]}
           </h1>
-          <p className="text-cardWhite/80">
+          <p className="text-white/80">
             Je hebt {points} punten • {level} niveau • {streak} dagen streak
           </p>
         </div>
@@ -435,8 +435,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-2 rounded-full mr-2 transition-colors ${
               activeTab === 'overview'
-                ? 'bg-midnight text-cardWhite'
-                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Overzicht
@@ -445,8 +445,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('profile')}
             className={`px-4 py-2 rounded-full mr-2 transition-colors ${
               activeTab === 'profile'
-                ? 'bg-midnight text-cardWhite'
-                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Profiel
@@ -455,8 +455,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('saved')}
             className={`px-4 py-2 rounded-full mr-2 transition-colors ${
               activeTab === 'saved'
-                ? 'bg-midnight text-cardWhite'
-                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Opgeslagen
@@ -465,8 +465,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('settings')}
             className={`px-4 py-2 rounded-full transition-colors ${
               activeTab === 'settings'
-                ? 'bg-midnight text-cardWhite'
-                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Instellingen

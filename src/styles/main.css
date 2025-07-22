@@ -14,19 +14,35 @@
   }
   
   .btn-primary {
-    @apply bg-turquoise text-white py-3 px-6 rounded hover:bg-turquoise-dark focus:ring-2 focus:ring-turquoise transition-all;
+    @apply bg-turquoise text-white py-3 px-6 rounded hover:bg-turquoise-dark focus:ring-2 ring-turquoise transition-all;
   }
   
   .btn-secondary {
-    @apply bg-info-blue text-white py-3 px-6 rounded hover:bg-info-blue/90 focus:ring-2 focus:ring-info-blue transition-all;
+    @apply bg-info-blue text-white py-3 px-6 rounded hover:bg-info-blue/90 focus:ring-2 ring-info-blue transition-all;
   }
   
   .btn-ghost {
-    @apply bg-transparent text-text-secondary py-3 px-6 rounded border border-light-grey hover:bg-light-grey focus:ring-2 focus:ring-turquoise transition-all;
+    @apply bg-transparent text-text-secondary py-3 px-6 rounded border border-light-grey hover:bg-light-grey focus:ring-2 ring-turquoise transition-all;
   }
   
   .btn-danger {
-    @apply bg-error-red text-white py-3 px-6 rounded hover:bg-error-red/90 focus:ring-2 focus:ring-error-red transition-all;
+    @apply bg-error-red text-white py-3 px-6 rounded hover:bg-error-red/90 focus:ring-2 ring-error-red transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-turquoise text-white py-3 px-6 rounded hover:bg-turquoise-dark focus:ring-2 ring-turquoise transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-white text-text-secondary p-8 rounded border border-light-grey shadow-sm;
+  }
+  
+  .tab-inactive {
+    @apply bg-light-grey text-text-secondary py-3 px-6 rounded transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-midnight text-white py-3 px-6 rounded border-b-2 border-turquoise transition-all;
   }
   
   .text-heading {
@@ -46,7 +62,7 @@
   }
   
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-turquoise focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 ring-turquoise focus:ring-offset-2;
   }
   
   .error-state {
