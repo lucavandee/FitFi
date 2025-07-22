@@ -15,6 +15,41 @@ initializeSentry();
 // Initialize Google Analytics
 initializeAnalytics();
 
+// Register service worker with error handling
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/serviceWorker.js')
+      .then((registration) => {
+        console.log('SW registered: ', registration);
+      })
+      .catch((registrationError) => {
+        console.error('SW registration failed: ', registrationError);
+      });
+  });
+}
+
+// Global error handler for chunk loading failures
+window.addEventListener('error', (event) => {
+  if (event.message && event.message.includes('Loading chunk')) {
+    console.error('Chunk loading failed:', event);
+    // Optionally reload the page or show a user-friendly message
+    if (confirm('Er is een probleem opgetreden bij het laden van de applicatie. Wilt u de pagina vernieuwen?')) {
+      window.location.reload();
+    }
+  }
+});
+
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  
+  // Check if it's a chunk loading error
+  if (event.reason && event.reason.message && event.reason.message.includes('Loading chunk')) {
+    event.preventDefault();
+    console.error('Chunk loading promise rejection handled');
+  }
+});
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

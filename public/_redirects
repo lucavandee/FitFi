@@ -1,3 +1,9 @@
+# Prevent serving HTML for JS/CSS assets
+/assets/*  /assets/:splat  200
+/*.js      /:splat.js      200
+/*.css     /:splat.css     200
+/*.map     /:splat.map     200
+
 # SPA fallback for client-side routing
 /*    /index.html   200
 
