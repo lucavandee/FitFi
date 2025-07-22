@@ -9,16 +9,16 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // FitFi Unified Color Palette - Normalized
-        midnight: '#0D1B2A',
-        turquoise: '#89CFF0',
-        'turquoise-dark': '#6FB8D1',
-        'light-grey': '#F6F6F6',
-        'text-primary': '#0D1B2A',
-        'text-secondary': '#333333',
-        'error-red': '#E03E3E',
-        'success-green': '#22C55E',
-        'info-blue': '#3B82F6',
+        // FitFi Brand Color Palette
+        midnight: '#0D1B2A',         // brand dark
+        turquoise: '#89CFF0',        // primary accent
+        'turquoise-dark': '#6FB8D1', // accent hover
+        'light-grey': '#F6F6F6',     // card bg
+        'text-primary': '#0D1B2A',   // headings
+        'text-secondary': '#333333', // body text
+        'error-red': '#E03E3E',      // error messages
+        'success-green': '#22C55E',  // success state
+        'info-blue': '#3B82F6',      // informational
         
         // Extended midnight palette for dark mode
         midnight: {
@@ -41,8 +41,8 @@ export default {
           200: '#99f6e4',
           300: '#5eead4',
           400: '#26d0ce',
-          500: '#14b8a6',
-          600: '#0d9488',
+          500: '#89CFF0', // Primary turquoise
+          600: '#6FB8D1', // turquoise-dark
           700: '#0f766e',
           800: '#115e59',
           900: '#134e4a',
@@ -50,7 +50,7 @@ export default {
         },
         // Extended light-grey palette
         'light-grey': {
-          50: '#F6F6F6', // Primary lightGrey
+          50: '#F6F6F6', // Primary light-grey
           100: '#f1f5f9',
           200: '#e2e8f0',
           300: '#cbd5e1',
@@ -99,12 +99,13 @@ export default {
         },
       },
     },
-    corePlugins: {
-      ringColor: true,
-      backgroundColor: true,
-      textColor: true,
-      borderColor: true,
-    },
+  },
+  corePlugins: {
+    backgroundColor: true,
+    textColor: true,
+    borderColor: true,
+    ringColor: true,
+    gradientColorStops: true,  // for from-*, via-*, to-* utilities
   },
   plugins: [],
 };
