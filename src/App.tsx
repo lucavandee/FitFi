@@ -86,7 +86,6 @@ function App() {
           <Router>
             <OnboardingProvider>
               <NavigationServiceInitializer />
-              <NavigationServiceInitializer />
               <NavigationProgress />
               <div className="min-h-screen flex flex-col">
                 <ErrorBoundary>
