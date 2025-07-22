@@ -177,8 +177,8 @@ const ArchetypeStep: React.FC = () => {
                         className={`
                           w-full p-4 rounded-xl border text-left transition-all
                           ${selectedArchetypes.includes(option.id)
-                            ? 'border-[#bfae9f] bg-[#bfae9f]/5'
-                            : 'border-gray-200 hover:border-[#bfae9f]/50 hover:bg-[#bfae9f]/5'}
+                            ? 'border-turquoise-500 bg-turquoise-50 dark:bg-turquoise-900/20'
+                            : 'border-lightGrey-300 dark:border-midnight-600 hover:border-turquoise-400 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/10'}
                         `}
                       >
                         <div className="flex flex-col md:flex-row items-center md:items-start space-y-3 md:space-y-0 md:space-x-4">
@@ -198,8 +198,8 @@ const ArchetypeStep: React.FC = () => {
                             <div className={`
                               w-6 h-6 rounded-full flex items-center justify-center
                               ${selectedArchetypes.includes(option.id)
-                                ? 'bg-[#bfae9f] text-white'
-                                : 'bg-gray-100 border border-gray-200'}
+                                ? 'bg-turquoise-500 text-white'
+                                : 'bg-lightGrey-100 dark:bg-midnight-700 border border-lightGrey-300 dark:border-midnight-600'}
                             `}>
                               {selectedArchetypes.includes(option.id) && (
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
