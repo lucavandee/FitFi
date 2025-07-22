@@ -11,19 +11,14 @@ const AchievementCard: React.FC = () => {
   const lockedBadges = allBadges.filter(badge => !earnedBadgeIds.includes(badge.id));
 
   return (
-    <motion.div
-      className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="p-8 border-b border-light-grey">
         <div className="flex items-center space-x-3">
           <div className="p-3 rounded-full bg-turquoise/20">
             <Award className="text-turquoise" size={20} />
           </div>
           <div>
-            <h3 className="text-2xl font-semibold text-text-primary mb-4">
+            <h3 className="text-h2 text-text-primary mb-4">
               Mijn Prestaties
             </h3>
             <p className="text-base text-text-secondary mb-4">
@@ -56,7 +51,7 @@ const AchievementCard: React.FC = () => {
                 <span className="text-turquoise mr-2">✅</span>
                 Verdiende Badges ({earnedBadges.length})
               </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
+              <div className="grid gap-8 grid-cols-2 sm:grid-cols-3">
                 {earnedBadges.map((badge) => (
                   <motion.div 
                     key={badge.id}
@@ -82,7 +77,7 @@ const AchievementCard: React.FC = () => {
                   <Lock className="text-text-secondary mr-2" size={16} />
                   Binnenkort Beschikbaar ({lockedBadges.length})
                 </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                <div className="grid gap-6 grid-cols-2 sm:grid-cols-3">
                   {lockedBadges.slice(0, 6).map((badge) => (
                     <div 
                       key={badge.id}
@@ -104,13 +99,13 @@ const AchievementCard: React.FC = () => {
         ) : (
           <div className="text-center py-8">
             <Award className="mx-auto text-text-primary mb-6" size={48} />
-            <h4 className="text-2xl font-semibold text-text-primary mb-4">
+            <h4 className="text-h2 text-text-primary mb-4">
               Begin Je Reis! 🚀
             </h4>
             <p className="text-base text-text-secondary mb-4">
               Voltooi acties om je eerste badge te verdienen.
             </p>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid gap-6 grid-cols-2">
               {allBadges.slice(0, 4).map((badge) => (
                 <div 
                   key={badge.id}

@@ -137,13 +137,13 @@ const OnboardingPage: React.FC = () => {
             transition={{ duration: 0.3 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-white mb-4">
+              <h1 className="text-h1 font-bold text-white mb-6">
                 Ontdek je perfecte stijl
               </h1>
-              <p className="text-xl text-white/90 mb-2">
+              <p className="text-xl text-white/80 mb-2">
                 Met hulp van AI. Slimmer shoppen, beter kleden.
               </p>
-              <p className="text-white/70">
+              <p className="text-base text-white/70">
                 Beantwoord enkele vragen en ontvang gepersonaliseerde outfits die perfect bij jou passen.
               </p>
             </div>
@@ -189,7 +189,7 @@ const OnboardingPage: React.FC = () => {
                         {item.icon}
                       </div>
                       <div>
-                        <h3 className="font-medium text-white">{item.title}</h3>
+                        <h3 className="text-base font-medium text-white mb-1">{item.title}</h3>
                         <p className="text-sm text-white/70">{item.subtitle}</p>
                       </div>
                     </div>
@@ -225,14 +225,14 @@ const OnboardingPage: React.FC = () => {
 
               <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
                 <ShieldCheck size={18} className="text-[#FF8600]" />
-                <span className="text-sm text-white/80">Je gegevens zijn veilig en versleuteld</span>
+                <span className="text-sm text-text-secondary">Je gegevens zijn veilig en versleuteld</span>
               </div>
             </div>
 
             <div className="mt-6 text-center">
               <button 
                 onClick={handleSkip}
-                className={`text-sm text-white/60 hover:text-[#FF8600] transition-colors ${
+                className={`text-sm text-text-secondary hover:text-[#FF8600] transition-colors ${
                   isButtonClicked ? 'opacity-50 pointer-events-none' : ''
                 }`}
               >
