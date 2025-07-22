@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { Calendar, Star, ShoppingBag, Heart, RefreshCw, CheckCircle, Info, AlertTriangle, MessageSquare, ArrowRight } from "lucide-react";
+
 // Contexts
 import { useUser } from "../context/UserContext";
 import { useGamification } from "../context/GamificationContext";
@@ -26,7 +28,6 @@ import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
 // Services
 import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
 
-// Icons
 import { Calendar, Star, ShoppingBag, Heart, RefreshCw, CheckCircle, Info, AlertTriangle, MessageSquare, ArrowRight } from "lucide-react";
 
 // Motion
