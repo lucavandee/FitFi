@@ -622,8 +622,8 @@ const QuizPage: React.FC = () => {
           </div>
 
           {/* Question card */}
-          <motion.div 
-            className="stijlscan-container"
+          <motion.div
+            className="quiz-container"
             key={currentQuestionIndex}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -635,13 +635,13 @@ const QuizPage: React.FC = () => {
                 <span className="inline-flex items-center px-4 py-2 rounded text-xs font-medium bg-turquoise/20 text-turquoise">
                   {currentQuestion.category.charAt(0).toUpperCase() + currentQuestion.category.slice(1)}
                 </span>
-                <span className="text-sm text-text-secondary">
+                <span className="text-base text-text-secondary">
                   {currentQuestionIndex + 1}/{questions.length}
                 </span>
               </div>
               
               <div className="flex items-center mb-3">
-                <h2 className="text-h2 sm:text-2xl font-bold text-text-primary">
+                <h2 className="text-3xl font-bold text-text-primary mb-6">
                   {currentQuestion.question}
                 </h2>
                 <button
@@ -654,7 +654,7 @@ const QuizPage: React.FC = () => {
               </div>
               
               {currentQuestion.description && (
-                <p className="text-text-secondary mb-8">
+                <p className="text-base text-text-secondary mb-4">
                   {currentQuestion.description}
                 </p>
               )}
@@ -707,12 +707,12 @@ const QuizPage: React.FC = () => {
           </motion.div>
 
           {/* Progress summary */}
-          <div className="mt-8 text-center text-sm text-text-secondary">
-            <p>
+          <div className="mt-8 text-center">
+            <p className="text-base text-text-secondary mb-4">
               Je bent {Math.round(progress)}% klaar met je stijlanalyse
             </p>
             {currentQuestionIndex > 0 && (
-              <p className="mt-1">
+              <p className="text-base text-text-secondary mb-4">
                 Nog {questions.length - currentQuestionIndex - 1} vragen te gaan
               </p>
             )}
@@ -728,12 +728,12 @@ const QuizPage: React.FC = () => {
             className="glass-card p-4 max-w-sm mx-4 animate-fade-in"
           >
             <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold text-white">
+              <h3 className="text-xl font-semibold text-text-primary mb-4">
                 Waarom deze vraag?
               </h3>
               <button
                 onClick={() => setShowTooltip(false)}
-                className="text-white/50 hover:text-white/80 transition-colors"
+                className="text-text-secondary hover:text-text-primary transition-colors"
                 aria-label="Sluit uitleg"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -742,7 +742,7 @@ const QuizPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div className="text-white/80 text-sm leading-relaxed">
+            <div className="text-base text-text-secondary mb-4 leading-relaxed">
               {currentQuestion.id === 'occasion' && (
                 "Door te weten voor welke gelegenheden je je kleedt, kunnen we outfits aanbevelen die perfect passen bij jouw dagelijkse activiteiten en sociale situaties."
               )}
