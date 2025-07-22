@@ -70,10 +70,49 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-gray-900 leading-tight mb-6">
-                Jouw AI-stylist, persoonlijk en slim
+                Train je eigen stijlcoach — ontdek outfits die echt bij je passen
               </h1>
-              <p className="text-xl text-gray-700 max-w-2xl mx-auto lg:mx-0 mb-10">
-                Ontdek jouw unieke stijl met slimme aanbevelingen op maat, afgestemd op wie jij bent.
+              <div className="text-xl text-gray-700 max-w-2xl mx-auto lg:mx-0 mb-10 space-y-4">
+                <p>
+                  FitFi is ontstaan uit één simpele frustratie: waarom is het zo moeilijk om dat ene perfecte kledingstuk te vinden?
+                </p>
+                <p>
+                  Teveel webshops. Teveel opties. Teveel twijfel.<br />
+                  Uren scrollen later, en nog steeds niks dat goed voelt.
+                </p>
+                <p className="font-medium">
+                  Dat kon slimmer. Daarom heb ik FitFi gebouwd.
+                </p>
+              </div>
+              
+              <div className="text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 mb-8 space-y-3">
+                <p>
+                  FitFi is jouw persoonlijke stijlcoach — eentje die jij zelf traint.<br />
+                  Elke keer dat je een outfit liket (of juist niet), leert FitFi van jouw smaak.<br />
+                  Zo krijg je steeds betere outfits te zien, afgestemd op jouw stijl, jouw vorm en jouw leven.
+                </p>
+                <p>
+                  Geen eindeloos zoeken meer. Geen keuzestress.<br />
+                  Gewoon outfits die wél kloppen — en die je direct kunt shoppen, bewaren of finetunen.
+                </p>
+                <p>
+                  Je hoeft geen modekenner te zijn.<br />
+                  FitFi leert van jou, en maakt stijl simpel.
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-r from-orange-50 to-blue-50 rounded-2xl p-6 mb-8 border-l-4 border-orange-500">
+                <p className="text-lg text-gray-700 font-medium flex items-start">
+                  <span className="text-2xl mr-3">💡</span>
+                  Al honderden mensen trainen dagelijks hun eigen stijlcoach. En het werkt.
+                </p>
+              </div>
+              
+              <div className="bg-orange-500 text-white rounded-2xl p-6 mb-8">
+                <p className="text-lg font-medium flex items-start">
+                  <span className="text-2xl mr-3">👉</span>
+                  Start de stijlquiz en zie in 1 minuut wat echt bij je past.
+                </p>
               </p>
               
               {/* Lead Capture Form */}
