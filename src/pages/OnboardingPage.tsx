@@ -61,21 +61,39 @@ const OnboardingPage: React.FC = () => {
       localStorage.setItem('fitfi-user', JSON.stringify(fallbackUser));
       
       console.log('[🔍 OnboardingPage] Navigating to results with fallback data');
-      navigationService.navigateToEnhancedResults(fallbackUser, {
-        loadingMessage: 'Voorbeeldaanbevelingen laden...',
-        onError: (error) => {
-          console.error('[OnboardingPage] Skip navigation error:', error);
-          // Emergency fallback
+      
+      // Use setTimeout to ensure state is updated before navigation
+      setTimeout(() => {
+        try {
+          navigationService.navigateToEnhancedResults(fallbackUser, {
+            loadingMessage: 'Voorbeeldaanbevelingen laden...',
+            onError: (error) => {
+              console.error('[OnboardingPage] Skip navigation error:', error);
+              // Emergency fallback
+              navigate('/results', { state: { onboardingData: fallbackUser } });
+            }
+          });
+        } catch (navError) {
+          console.error('[OnboardingPage] Navigation service error:', navError);
+          // Direct navigation as last resort
           navigate('/results', { state: { onboardingData: fallbackUser } });
         }
-      });
+      }, 100);
       
     } catch (error) {
       console.error('[🔍 OnboardingPage] Error in skip flow:', error);
-      // Fallback to direct navigation
-      navigate('/results');
+      // Reset button state and show error
+      setIsButtonClicked(false);
+      
+      // Try direct navigation as fallback
+      try {
+        navigate('/results');
+      } catch (directNavError) {
+        console.error('[OnboardingPage] Direct navigation also failed:', directNavError);
+        // Force page reload as last resort
+        window.location.href = '/results';
+      }
     }
-
   };
 
   return (
