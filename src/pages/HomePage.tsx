@@ -4,6 +4,8 @@ import { ArrowRight, ShieldCheck, Check, Play, Zap, Target, Heart } from 'lucide
 import Button from '../components/ui/Button';
 import { motion } from 'framer-motion';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
+import ProgressRecoveryBanner from '../components/ui/ProgressRecoveryBanner';
+import { hasSavedProgress } from '../utils/progressPersistence';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +15,15 @@ const HomePage: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeGender, setActiveGender] = useState<'male' | 'female'>('female');
+  const [showRecoveryBanner, setShowRecoveryBanner] = useState(false);
+  
+  // Check for saved progress
+  useEffect(() => {
+    const progressInfo = hasSavedProgress();
+    if (progressInfo.hasQuizProgress || progressInfo.hasOnboardingProgress) {
+      setShowRecoveryBanner(true);
+    }
+  }, []);
   
   // Switch gender every 5 seconds
   useEffect(() => {
@@ -57,6 +68,20 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Progress Recovery Banner */}
+      {showRecoveryBanner && (
+        <ProgressRecoveryBanner
+          onRecover={(type, progress) => {
+            if (type === 'quiz') {
+              navigate(`/quiz/${progress.currentStep}`);
+            } else if (type === 'onboarding') {
+              navigate(`/onboarding/${progress.currentStep}`);
+            }
+          }}
+          onDismiss={() => setShowRecoveryBanner(false)}
+        />
+      )}
+      
       {/* Hero Section */}
       <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">

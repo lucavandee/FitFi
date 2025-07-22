@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 import ProfileProcessingIndicator from '../components/ui/ProfileProcessingIndicator';
 import { useNavigationService } from '../services/NavigationService';
+import { saveQuizProgress, loadQuizProgress, clearQuizProgress } from '../utils/progressPersistence';
+import { generateSmartDefaults } from '../utils/smartDefaults';
 
 interface QuestionOption {
   id: string;
@@ -38,6 +40,62 @@ const QuizPage: React.FC = () => {
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [smartDefaults, setSmartDefaults] = useState<any>(null);
+  const [showProgressRecovery, setShowProgressRecovery] = useState(false);
+  
+  // Initialize smart defaults
+  useEffect(() => {
+    const defaults = generateSmartDefaults();
+    setSmartDefaults(defaults);
+    
+    if (env.DEBUG_MODE) {
+      console.log('[🧠 QuizPage] Smart defaults generated:', defaults);
+    }
+  }, []);
+  
+  // Load saved progress on mount
+  useEffect(() => {
+    const savedProgress = loadQuizProgress();
+    if (savedProgress && savedProgress.currentStep > 0) {
+      console.log('[📱 QuizPage] Found saved progress:', savedProgress);
+      
+      // Show recovery option
+      setShowProgressRecovery(true);
+      
+      // Auto-restore if recent (less than 5 minutes)
+      const ageMinutes = (Date.now() - savedProgress.timestamp) / 60000;
+      if (ageMinutes < 5) {
+        setAnswers(savedProgress.answers);
+        
+        // Navigate to saved step if different
+        if (savedProgress.currentStep !== currentQuestionIndex + 1) {
+          navigate(`/quiz/${savedProgress.currentStep}`);
+        }
+        
+        toast.success(`Vorige sessie hersteld (${Math.round(ageMinutes)} min geleden)`, {
+          duration: 5000,
+          icon: '📱'
+        });
+        
+        // Track progress recovery
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'progress_recovered', {
+            event_category: 'persistence',
+            event_label: 'quiz',
+            step: savedProgress.currentStep,
+            age_minutes: Math.round(ageMinutes)
+          });
+        }
+      }
+    }
+  }, []);
+  
+  // Auto-save progress when answers change
+  useEffect(() => {
+    if (Object.keys(answers).length > 0) {
+      saveQuizProgress(currentQuestionIndex + 1, questions.length, answers);
+    }
+  }, [answers, currentQuestionIndex, questions.length]);
 
   // Updated questions with Dutch archetypes
   const questions: Question[] = [
@@ -60,7 +118,9 @@ const QuizPage: React.FC = () => {
       id: 'style',
       type: 'single',
       question: 'Welke Nederlandse stijl spreekt je het meest aan?',
-      description: 'Kies degene die het beste jouw gewenste esthetiek weergeeft',
+      description: smartDefaults?.confidence > 0.8 
+        ? `Gebaseerd op de tijd en datum raden we ${smartDefaults.archetype} aan, maar kies wat jij het mooist vindt`
+        : 'Kies degene die het beste jouw gewenste esthetiek weergeeft',
       options: [
         { 
           id: 'klassiek', 
@@ -199,8 +259,8 @@ const QuizPage: React.FC = () => {
       // Ensure we have season and occasion data
       const finalAnswers = {
         ...answers,
-        season: answers.season || 'herfst', // Default to autumn
-        occasion: answers.occasion || ['Casual'] // Default to casual
+        season: answers.season || smartDefaults?.season || 'herfst',
+        occasion: answers.occasion || smartDefaults?.occasions || ['Casual']
       };
       
       if (user) {
@@ -217,8 +277,12 @@ const QuizPage: React.FC = () => {
       
       // Track quiz completion
       if (typeof window.trackQuizComplete === 'function') {
-        window.trackQuizComplete(120, questions.length, 'registered_user');
+        const quizDuration = Date.now() - (Date.now() - 120000); // Approximate duration
+        window.trackQuizComplete(quizDuration, questions.length, 'registered_user');
       }
+      
+      // Clear saved progress since quiz is complete
+      clearQuizProgress();
       
       console.log('[QuizPage] Navigating to results with enhanced UX');
       await navigationService.navigateToResults(finalAnswers, {
@@ -247,6 +311,42 @@ const QuizPage: React.FC = () => {
       }, 300);
     }
   }, [isQuizComplete, navigate]);
+  
+  // Handle progress recovery
+  const handleRecoverProgress = () => {
+    const savedProgress = loadQuizProgress();
+    if (savedProgress) {
+      setAnswers(savedProgress.answers);
+      navigate(`/quiz/${savedProgress.currentStep}`);
+      setShowProgressRecovery(false);
+      
+      toast.success('Vorige sessie hersteld!');
+    }
+  };
+  
+  const handleStartFresh = () => {
+    clearQuizProgress();
+    setShowProgressRecovery(false);
+    
+    toast.success('Nieuwe quiz gestart!');
+  };
+  
+  // Setup auto-save on page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (Object.keys(answers).length > 0) {
+        saveQuizProgress(currentQuestionIndex + 1, questions.length, answers);
+        console.log('[📱 QuizPage] Auto-saved progress on page unload');
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [answers, currentQuestionIndex, questions.length]);
+
   if (!currentQuestion) {
     navigate('/quiz/1');
     return null;
@@ -650,6 +750,36 @@ const QuizPage: React.FC = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Progress Recovery Modal */}
+      {showProgressRecovery && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              📱 Vorige sessie gevonden
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              We hebben je vorige quiz-voortgang gevonden. Wil je doorgaan waar je gebleven was of opnieuw beginnen?
+            </p>
+            <div className="flex space-x-3">
+              <Button
+                variant="primary"
+                onClick={handleRecoverProgress}
+                className="flex-1"
+              >
+                Hervat sessie
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleStartFresh}
+                className="flex-1"
+              >
+                Begin opnieuw
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Loading overlay when quiz is completing */}
       {isQuizComplete && (
