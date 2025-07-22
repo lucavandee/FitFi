@@ -37,19 +37,11 @@ import {
   Info,
   AlertTriangle,
   MessageSquare,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 
 // Motion
 import { motion } from "framer-motion";
-
-
-
-
-
-
-
-
 
 const EnhancedResultsPage = () => {
       // React & React Router
