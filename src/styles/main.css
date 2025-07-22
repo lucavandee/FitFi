@@ -73,7 +73,7 @@
   }
   
   body {
-    @apply font-sans text-text-secondary bg-card-white;
+    @apply font-sans text-text-secondary bg-white;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -89,60 +89,18 @@
   }
 }
 
-@layer utilities {
-  .btn {
-    @apply inline-flex items-center justify-center rounded font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-  }
-  
-  .btn-primary {
-    @apply btn bg-turquoise text-card-white hover:bg-turquoise-dark ring-turquoise;
-  }
-  
-  .btn-secondary {
-    @apply btn bg-white text-turquoise hover:bg-light-grey ring-turquoise;
-  }
-  
-  .btn-ghost {
-    @apply btn bg-transparent text-text-secondary hover:bg-light-grey ring-turquoise;
-  }
-  
-  .card {
-    @apply bg-white rounded border border-light-grey overflow-hidden transition-all shadow-sm;
-  }
-  
-  .input {
-    @apply w-full px-4 py-3 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary outline-none ring-2 ring-turquoise border-transparent transition-all;
-  }
-    @apply font-sans text-text-secondary bg-white;
-  .label {
-    @apply block text-sm font-medium text-text-primary mb-1;
-  }
-
-  .content-section {
-    @apply bg-white rounded shadow-sm border border-light-grey overflow-hidden;
-  }
-
-  .gradient-bg {
-    @apply bg-gradient-to-br from-light-grey to-white;
-  }
-
-  .glass-card {
-    @apply bg-white backdrop-blur-sm border border-light-grey rounded shadow-sm;
-  }
-}
-
 /* Micro-interactions */
 .hover-lift {
   @apply transition-transform duration-200;
 }
 
 .hover-lift:hover {
-    @apply btn bg-turquoise text-white hover:bg-turquoise-dark ring-turquoise;
+  @apply transform -translate-y-1;
 }
 
 /* Skeleton loading */
-    @apply btn bg-white text-turquoise hover:bg-light-grey ring-turquoise;
-  @apply bg-slate-800 dark:bg-slate-800 animate-pulse rounded;
+.skeleton {
+  @apply bg-light-grey animate-pulse rounded;
 }
 
 /* Progress bar */
@@ -151,7 +109,7 @@
 }
 
 .progress-bar-fill {
-  @apply h-full bg-orange-500 transition-all duration-300 ease-out;
+  @apply h-full bg-turquoise transition-all duration-300 ease-out;
 }
 
 /* Custom scrollbar */
@@ -161,20 +119,20 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-slate-800 dark:bg-slate-800;
+  @apply bg-light-grey;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/30 dark:bg-white/30 rounded-full;
+  @apply bg-text-secondary/30 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-white/50 dark:bg-white/50;
+  @apply bg-text-secondary/50;
 }
 
 /* Focus styles for accessibility */
 .focus-visible:focus {
-  @apply outline-none ring-2 ring-orange-500 ring-offset-2;
+  @apply outline-none ring-2 ring-turquoise ring-offset-2;
 }
 
 /* Mobile swipe area */
@@ -269,5 +227,5 @@
 
 /* Gradient text */
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-sky-500;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-turquoise to-info-blue;
 }
