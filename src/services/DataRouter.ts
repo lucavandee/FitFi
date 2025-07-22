@@ -312,16 +312,22 @@ export async function getOutfits(
   console.log('[🔍 DataRouter] getOutfits called with user:', user.id, 'options:', options);
   
   if (env.USE_MOCK_DATA) {
-    console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
+    if (env.DEBUG_MODE) {
+      console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
+    }
     const mockOutfits = generateMockOutfits(options?.count || 3);
-    console.log('[🔍 DataRouter] Returning mock outfits:', mockOutfits);
+    if (env.DEBUG_MODE) {
+      console.log('[🔍 DataRouter] Returning mock outfits:', mockOutfits);
+    }
     return mockOutfits;
   }
   
   // Validate user input
   if (!user || !user.id) {
     console.error('[❌ DataRouter] Invalid user provided to getOutfits:', user);
-    console.log('[🔧 DataRouter] Using fallback mock outfits due to invalid user');
+    if (env.DEBUG_MODE) {
+      console.log('[🔧 DataRouter] Using fallback mock outfits due to invalid user');
+    }
     return generateMockOutfits(options?.count || 3);
   }
   
@@ -392,9 +398,7 @@ export async function getOutfits(
       // Add failed attempt to diagnostics
       addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
       
-      if (env.DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Supabase error:', error);
-      }
+      console.error('[🧠 DataRouter] Supabase error:', error);
     }
   }
   
@@ -416,8 +420,10 @@ export async function getOutfits(
         setFinalSource('bolt');
 
         // Log outfits for debugging
-        console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
-        if (boltOutfits.length > 0) {
+        if (env.DEBUG_MODE) {
+          console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
+        }
+        if (env.DEBUG_MODE && boltOutfits.length > 0) {
           console.log(`[🧠 DataRouter] First outfit:`, {
             id: boltOutfits[0].id,
             title: boltOutfits[0].title,
@@ -441,9 +447,7 @@ export async function getOutfits(
       // Add failed attempt to diagnostics
       addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
       
-      if (env.DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Bolt API error:', error);
-      }
+      console.error('[🧠 DataRouter] Bolt API error:', error);
     }
   }
   
@@ -457,7 +461,9 @@ export async function getOutfits(
       const boltProducts = await loadBoltProducts();
       
       if (boltProducts && boltProducts.length > 0) {
-        console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts to generate outfits`);
+        if (env.DEBUG_MODE) {
+          console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts to generate outfits`);
+        }
         
         try {
           // Generate outfits from BoltProducts
@@ -477,7 +483,9 @@ export async function getOutfits(
             setFinalSource('zalando');
             
             // Log outfits for debugging
-            console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from Zalando`);
+            if (env.DEBUG_MODE) {
+              console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from Zalando`);
+            }
             
             // Cache the result
             saveToCache(cacheKey, outfits, 'zalando');
@@ -518,7 +526,9 @@ export async function getOutfits(
         setFinalSource('zalando');
 
         // Log outfits for debugging
-        console.log(`[🧠 DataRouter] getOutfits() returning ${enrichedOutfits.length} enriched outfits from Zalando`);
+        if (env.DEBUG_MODE) {
+          console.log(`[🧠 DataRouter] getOutfits() returning ${enrichedOutfits.length} enriched outfits from Zalando`);
+        }
 
         // Cache the result
         saveToCache(cacheKey, enrichedOutfits, 'zalando');
@@ -537,9 +547,7 @@ export async function getOutfits(
       // Add failed attempt to diagnostics
       addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
       
-      if (env.DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Zalando error:', error);
-      }
+      console.error('[🧠 DataRouter] Zalando error:', error);
     }
   }
   
@@ -557,15 +565,21 @@ export async function getOutfits(
     
     if (boltOutfits && Array.isArray(boltOutfits) && boltOutfits.length > 0) {
       outfits = boltOutfits;
-      console.log(`[🧠 DataRouter] Got ${boltOutfits.length} outfits from boltService`);
+      if (env.DEBUG_MODE) {
+        console.log(`[🧠 DataRouter] Got ${boltOutfits.length} outfits from boltService`);
+      }
     } else {
       // If that fails, generate outfits from local data
-      console.log('[🧠 DataRouter] Generating mock outfits from fallback data');
+      if (env.DEBUG_MODE) {
+        console.log('[🧠 DataRouter] Generating mock outfits from fallback data');
+      }
       outfits = generateMockOutfits(3);
       
       // If still no outfits, use mock outfits
       if (!outfits || outfits.length === 0) {
-        console.log('[🧠 DataRouter] No outfits generated, using hardcoded mock outfits');
+        if (env.DEBUG_MODE) {
+          console.log('[🧠 DataRouter] No outfits generated, using hardcoded mock outfits');
+        }
         outfits = generateMockOutfits(3);
       }
     }
@@ -578,8 +592,10 @@ export async function getOutfits(
     setFinalSource('local');
     
     // Log outfits for debugging
-    console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from local data`);
-    if (outfits.length > 0) {
+    if (env.DEBUG_MODE) {
+      console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from local data`);
+    }
+    if (env.DEBUG_MODE && outfits.length > 0) {
       console.log(`[🧠 DataRouter] First outfit:`, {
         id: outfits[0].id,
         title: outfits[0].title,
@@ -599,9 +615,7 @@ export async function getOutfits(
     // Add failed attempt to diagnostics
     addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
     
-    if (env.DEBUG_MODE) {
-      console.error('[🧠 DataRouter] Local data error:', error);
-    }
+    console.error('[🧠 DataRouter] Local data error:', error);
     
     // Return empty array as last resort
     return [];
@@ -623,9 +637,13 @@ export async function getRecommendedProducts(
   console.log('[🔍 DataRouter] getRecommendedProducts called with user:', user.id, 'count:', count, 'season:', season);
   
   if (env.USE_MOCK_DATA) {
-    console.log("⚠️ Using mock products via USE_MOCK_DATA");
+    if (env.DEBUG_MODE) {
+      console.log("⚠️ Using mock products via USE_MOCK_DATA");
+    }
     const mockProducts = generateMockProducts(undefined, count);
-    console.log('[🔍 DataRouter] Returning mock products:', mockProducts);
+    if (env.DEBUG_MODE) {
+      console.log('[🔍 DataRouter] Returning mock products:', mockProducts);
+    }
     return mockProducts;
   }
   // Reset diagnostics
