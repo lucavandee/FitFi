@@ -955,6 +955,7 @@ const EnhancedResultsPage = () => {
                     </div>
                   </motion.div>
                 )}
+             // ...vanaf regel 969...
                 {env.USE_MOCK_DATA && (
                   <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
                     <div className="flex items-center">
@@ -963,11 +964,9 @@ const EnhancedResultsPage = () => {
                     </div>
                   </div>
                 )}
-      return (
-        <ErrorBoundary>
-          <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
-            {/* 👉 Hier komt al je bestaande layout: cards, sections, etc. */}
-
+              </div> {/* Dit sluit de 'max-w-5xl' div */}
+            </div> {/* Dit sluit de 'container-slim' div */}
+    
             {/* Sticky CTA footer */}
             <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
               <div className="container-slim">
@@ -996,12 +995,12 @@ const EnhancedResultsPage = () => {
                 </div>
               </div>
             </div>
-
+    
             {/* ✅ Central Debug Overlay */}
             {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
           </div>
         </ErrorBoundary>
       );
     };
-
+    
     export default EnhancedResultsPage;
