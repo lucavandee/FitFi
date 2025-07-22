@@ -5,7 +5,32 @@
 @tailwind utilities;
 
 @layer utilities {
-  /* Ring utilities for focus states */
+  /* Custom Tailwind utilities for missing classes */
+  .text-text-primary {
+    --tw-text-opacity: 1;
+    color: rgb(13 27 42 / var(--tw-text-opacity));
+  }
+  
+  .text-text-secondary {
+    --tw-text-opacity: 1;
+    color: rgb(51 51 51 / var(--tw-text-opacity));
+  }
+  
+  .border-light-grey {
+    --tw-border-opacity: 1;
+    border-color: rgb(246 246 246 / var(--tw-border-opacity));
+  }
+  
+  .bg-light-grey {
+    --tw-bg-opacity: 1;
+    background-color: rgb(246 246 246 / var(--tw-bg-opacity));
+  }
+  
+  .placeholder-text-secondary::placeholder {
+    --tw-placeholder-opacity: 1;
+    color: rgb(51 51 51 / var(--tw-placeholder-opacity));
+  }
+  
   .ring-turquoise {
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(137 207 240 / var(--tw-ring-opacity));
@@ -16,9 +41,9 @@
     --tw-ring-color: rgb(137 207 240 / var(--tw-ring-opacity));
   }
   
-  /* Custom @apply component utilities */
+  /* Custom component utilities with @apply */
   .input {
-    @apply w-full p-4 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none ring-2 ring-turquoise transition-all;
+    @apply w-full px-4 py-3 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none ring-2 ring-turquoise transition-all;
   }
   
   .card {
@@ -74,7 +99,7 @@
   }
   
   .btn-secondary {
-    @apply btn bg-card-white text-turquoise hover:bg-light-grey ring-turquoise;
+    @apply btn bg-white text-turquoise hover:bg-light-grey ring-turquoise;
   }
   
   .btn-ghost {
@@ -82,27 +107,27 @@
   }
   
   .card {
-    @apply bg-card-white rounded border border-light-grey overflow-hidden transition-all shadow-sm;
+    @apply bg-white rounded border border-light-grey overflow-hidden transition-all shadow-sm;
   }
   
   .input {
-    @apply w-full px-4 py-3 rounded border border-light-grey bg-card-white text-text-primary placeholder-text-secondary outline-none ring-2 ring-turquoise border-transparent transition-all;
+    @apply w-full px-4 py-3 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary outline-none ring-2 ring-turquoise border-transparent transition-all;
   }
-  
+    @apply font-sans text-text-secondary bg-white;
   .label {
     @apply block text-sm font-medium text-text-primary mb-1;
   }
 
   .content-section {
-    @apply bg-card-white rounded shadow-sm border border-light-grey overflow-hidden;
+    @apply bg-white rounded shadow-sm border border-light-grey overflow-hidden;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-light-grey to-card-white;
+    @apply bg-gradient-to-br from-light-grey to-white;
   }
 
   .glass-card {
-    @apply bg-card-white backdrop-blur-sm border border-light-grey rounded shadow-sm;
+    @apply bg-white backdrop-blur-sm border border-light-grey rounded shadow-sm;
   }
 }
 
@@ -112,11 +137,11 @@
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
+    @apply btn bg-turquoise text-white hover:bg-turquoise-dark ring-turquoise;
 }
 
 /* Skeleton loading */
-.skeleton {
+    @apply btn bg-white text-turquoise hover:bg-light-grey ring-turquoise;
   @apply bg-slate-800 dark:bg-slate-800 animate-pulse rounded;
 }
 
