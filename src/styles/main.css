@@ -56,6 +56,32 @@
     --tw-ring-color: rgb(137 207 240 / var(--tw-ring-opacity));
   }
   
+  /* Gradient utilities */
+  .from-turquoise {
+    --tw-gradient-from: #89CFF0 var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(137 207 240 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .via-turquoise {
+    --tw-gradient-to: rgb(137 207 240 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), #89CFF0 var(--tw-gradient-via-position), var(--tw-gradient-to);
+  }
+  
+  .to-turquoise {
+    --tw-gradient-to: #89CFF0 var(--tw-gradient-to-position);
+  }
+  
+  .from-turquoise-dark {
+    --tw-gradient-from: #6FB8D1 var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(111 184 209 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .to-turquoise-dark {
+    --tw-gradient-to: #6FB8D1 var(--tw-gradient-to-position);
+  }
+  
   /* Custom component utilities with @apply */
   .input {
     @apply w-full px-4 py-3 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none ring-2 ring-turquoise transition-all;
