@@ -37,9 +37,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const variantStyles = {
-      primary: 'bg-[#FF8600] hover:bg-orange-600 text-white border-[#FF8600] hover:border-orange-600 focus:ring-[#FF8600]',
-      secondary: 'bg-[#0ea5e9] hover:bg-blue-600 text-white border-[#0ea5e9] hover:border-blue-600 focus:ring-[#0ea5e9]',
-      ghost: 'bg-transparent hover:bg-white/10 text-white border-transparent focus:ring-white',
+      primary: 'bg-turquoise-500 hover:bg-turquoise-600 text-white border-turquoise-500 hover:border-turquoise-600 focus:ring-turquoise-500',
+      secondary: 'bg-midnight-800 hover:bg-midnight-900 text-white border-midnight-800 hover:border-midnight-900 focus:ring-midnight-800',
+      ghost: 'bg-transparent hover:bg-white/10 dark:hover:bg-midnight-700/50 text-textPrimary-light dark:text-textPrimary-dark border-transparent focus:ring-turquoise-500',
       danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 focus:ring-red-500',
     };
 

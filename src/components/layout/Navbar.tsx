@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0D1B2A]/95 backdrop-blur-md' : 'bg-[#0D1B2A]/80 backdrop-blur-sm'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-midnight-950/95 backdrop-blur-md' : 'bg-midnight-950/80 backdrop-blur-sm'}`}>
         <div className="container-slim">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -52,11 +52,11 @@ const Navbar: React.FC = () => {
                   <Link
                     key={path}
                     to={path}
-                    className={`text-sm font-medium transition-colors hover:text-[#FF8600] relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
+                    className={`text-sm font-medium transition-colors hover:text-turquoise-400 relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
                   >
                     {labels[idx]}
                     {location.pathname === path && (
-                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-[#FF8600] rounded-full" />
+                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-turquoise-400 rounded-full" />
                     )}
                   </Link>
                 );
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
 
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-[#FF8600] transition-colors">
+                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-turquoise-400 transition-colors">
                     <User size={20} />
                     <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
                   </Link>

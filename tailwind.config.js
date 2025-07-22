@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -8,63 +9,58 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        beige: {
-          50: '#FAF8F6',
-          100: '#F5F0EA',
-          200: '#EBE2D5',
-          300: '#DFD2C2',
-          400: '#CFBFAA',
-          500: '#bfae9f',
-          600: '#a89a8c',
-          700: '#8c7f73',
-          800: '#6e645a',
-          900: '#4d4640',
+        // FitFi Brand Colors
+        midnight: {
+          50: '#f0f4f8',
+          100: '#d9e2ec',
+          200: '#bcccdc',
+          300: '#9fb3c8',
+          400: '#829ab1',
+          500: '#627d98',
+          600: '#486581',
+          700: '#334e68',
+          800: '#243b53',
+          900: '#102a43',
+          950: '#0D1B2A', // Primary midnight
         },
-        primary: {
-          50: '#e6f7ff',
-          100: '#b3e0ff',
-          200: '#80caff',
-          300: '#4db3ff',
-          400: '#1a9dff',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+        turquoise: {
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          200: '#99f6e4',
+          300: '#5eead4',
+          400: '#2dd4bf',
+          500: '#14b8a6',
+          600: '#0d9488',
+          700: '#0f766e',
+          800: '#115e59',
+          900: '#134e4a',
+          950: '#042f2e',
         },
-        orange: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#FF8600',
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+        lightGrey: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
         },
-        neutral: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
+        // Text colors
+        textPrimary: {
+          light: '#1e293b', // Dark text for light mode
+          dark: '#f8fafc',  // Light text for dark mode
         },
-        fitfi: {
-          blue: {
-            dark: '#0D1B2A',
-            medium: '#1B263B',
-            light: '#0ea5e9',
-          },
-          orange: '#FF8600',
-          beige: '#bfae9f',
+        textSecondary: {
+          light: '#64748b', // Muted text for light mode
+          dark: '#94a3b8',  // Muted text for dark mode
         },
+        // Legacy support (will be gradually replaced)
+        primary: '#14b8a6', // turquoise-500
+        secondary: '#0D1B2A', // midnight-950
+        accent: '#2dd4bf', // turquoise-400
       },
       spacing: {
         '128': '32rem',

@@ -144,14 +144,14 @@ const HomePage: React.FC = () => {
                       disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
                       icon={isSubmitting ? undefined : <ArrowRight size={20} />}
                       iconPosition="right"
-                      className="mt-2 bg-[#bfae9f] hover:bg-[#a89a8c]"
+                      className="mt-2 bg-turquoise-500 hover:bg-turquoise-600"
                     >
                       {isSubmitting ? 'Even geduld...' : 'Start de stijlquiz'}
                     </Button>
                   </div>
                   
                   <div className="mt-4 flex items-center justify-center text-xs text-gray-600">
-                    <ShieldCheck size={14} className="mr-1 text-[#bfae9f]" />
+                    <ShieldCheck size={14} className="mr-1 text-turquoise-500" />
                     Je gegevens zijn veilig en versleuteld
                   </div>
                 </form>

@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-[#0D1B2A] text-white py-12 border-t border-white/5">
+    <footer className="bg-midnight-950 text-white py-12 border-t border-white/5">
       <div className="container-slim">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
@@ -23,17 +23,17 @@ const Footer: React.FC = () => {
               </h3>
               <ul className="space-y-3 text-sm">
                 <li>
-                  <Link to="/over-ons" className="text-white/80 hover:text-[#FF8600] transition-colors">
+                  <Link to="/over-ons" className="text-white/80 hover:text-turquoise-400 transition-colors">
                     Over ons
                   </Link>
                 </li>
                 <li>
-                  <Link to="/juridisch" className="text-white/80 hover:text-[#FF8600] transition-colors">
+                  <Link to="/juridisch" className="text-white/80 hover:text-turquoise-400 transition-colors">
                     Privacy
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="text-white/80 hover:text-[#FF8600] transition-colors">
+                  <Link to="/contact" className="text-white/80 hover:text-turquoise-400 transition-colors">
                     Contact
                   </Link>
                 </li>
