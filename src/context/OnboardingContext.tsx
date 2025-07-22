@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
 import { useGamification } from './GamificationContext';
+import { useNavigationService } from '../services/NavigationService';
 import { getCurrentSeason } from '../engine/helpers';
 import toast from 'react-hot-toast';
 import { saveOnboardingProgress, loadOnboardingProgress, clearOnboardingProgress } from '../utils/progressPersistence';
