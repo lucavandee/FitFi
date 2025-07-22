@@ -5,6 +5,8 @@ import { useGamification } from './GamificationContext';
 import { getCurrentSeason } from '../engine/helpers';
 import { useNavigationService } from '../services/NavigationService';
 import toast from 'react-hot-toast';
+import { saveOnboardingProgress, loadOnboardingProgress, clearOnboardingProgress } from '../utils/progressPersistence';
+import { generateSmartDefaults } from '../utils/smartDefaults';
 
 // Define the types for our onboarding data
 export interface OnboardingData {
@@ -94,6 +96,45 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [currentStep, setCurrentStep] = useState<string>('welcome');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(false);
+  const [smartDefaults, setSmartDefaults] = useState<any>(null);
+  
+  // Initialize smart defaults
+  useEffect(() => {
+    const defaults = generateSmartDefaults();
+    setSmartDefaults(defaults);
+    
+    if (env.DEBUG_MODE) {
+      console.log('[🧠 OnboardingContext] Smart defaults generated:', defaults);
+    }
+  }, []);
+  
+  // Load saved progress on mount
+  useEffect(() => {
+    const savedProgress = loadOnboardingProgress();
+    if (savedProgress) {
+      console.log('[📱 OnboardingContext] Loading saved progress:', savedProgress);
+      
+      setData(savedProgress.data);
+      setCurrentStep(savedProgress.currentStep);
+      
+      // Show recovery option to user
+      const ageMinutes = Math.round((Date.now() - savedProgress.timestamp) / 60000);
+      toast.success(`Vorige sessie hersteld (${ageMinutes} min geleden)`, {
+        duration: 5000,
+        icon: '📱'
+      });
+      
+      // Track progress recovery
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'progress_recovered', {
+          event_category: 'persistence',
+          event_label: 'onboarding',
+          step: savedProgress.currentStep,
+          age_minutes: ageMinutes
+        });
+      }
+    }
+  }, []);
   
   // Update data
   const updateData = (newData: Partial<OnboardingData>) => {
@@ -101,6 +142,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       ...prevData,
       ...newData
     }));
+    
+    // Auto-save progress
+    const updatedData = { ...data, ...newData };
+    saveOnboardingProgress(currentStep, updatedData.completedSteps || [], updatedData);
     
     // Track step data in analytics
     if (typeof window.gtag === 'function') {
@@ -126,6 +171,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       };
     });
     
+    // Auto-save progress
+    saveOnboardingProgress(step, data.completedSteps || [], data);
+    
     // Track step completion in analytics
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'quiz_step_complete', {
@@ -145,6 +193,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const setStep = (step: string) => {
     console.log('[🔍 OnboardingContext] Setting step:', step);
     setCurrentStep(step);
+    
+    // Auto-save progress
+    saveOnboardingProgress(step, data.completedSteps || [], data);
     
     // Navigate to the appropriate route
     switch (step) {
@@ -193,6 +244,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Reset the onboarding process
   const resetOnboarding = () => {
+    // Clear saved progress
+    clearOnboardingProgress();
+    
     setData({
       startTime: Date.now(),
       completedSteps: []
@@ -221,9 +275,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Ensure we have complete data with defaults
       const completeData = {
         ...data,
-        season: data.season || 'herfst',
-        occasions: data.occasions || ['Casual'],
-        archetypes: data.archetypes || ['casual_chic']
+        season: data.season || smartDefaults?.season || 'herfst',
+        occasions: data.occasions || smartDefaults?.occasions || ['Casual'],
+        archetypes: data.archetypes || [smartDefaults?.archetype] || ['casual_chic'],
+        name: data.name || 'Stijlzoeker'
       };
       
       // Track quiz completion in analytics
@@ -235,7 +290,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           archetypes: completeData.archetypes.join(','),
           season: completeData.season,
           occasions: completeData.occasions.join(','),
-          gender: data.gender
+          gender: data.gender,
+          used_smart_defaults: !!smartDefaults,
+          smart_defaults_confidence: smartDefaults?.confidence || 0
         });
       }
       
@@ -258,6 +315,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       
       // Update context with complete data
       setData(completeData);
+      
+      // Clear saved progress since we're completing
+      clearOnboardingProgress();
       
       console.log('[🔍 OnboardingContext] Onboarding completed, setting completion flag');
       setIsOnboardingComplete(true);
@@ -310,15 +370,15 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
       
       if (!data.archetypes || data.archetypes.length === 0) {
-        fallbackData.archetypes = ['casual_chic']; // Default archetype
+        fallbackData.archetypes = [smartDefaults?.archetype || 'casual_chic']; // Smart default archetype
       }
       
       if (!data.season) {
-        fallbackData.season = 'herfst'; // Default season
+        fallbackData.season = smartDefaults?.season || 'herfst'; // Smart default season
       }
       
       if (!data.occasions || data.occasions.length === 0) {
-        fallbackData.occasions = ['Casual']; // Default occasion
+        fallbackData.occasions = smartDefaults?.occasions || ['Casual']; // Smart default occasions
       }
       
       if (!data.name) {
@@ -330,12 +390,33 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         updateData(fallbackData);
       }
     }
-  }, [data, updateData]);
+  }, [data, updateData, smartDefaults]);
   
   // Save data to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('fitfi-onboarding', JSON.stringify(data));
+    
+    // Also save to progress persistence
+    if (currentStep && data) {
+      saveOnboardingProgress(currentStep, data.completedSteps || [], data);
+    }
   }, [data]);
+  
+  // Setup auto-save on page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (data && currentStep) {
+        saveOnboardingProgress(currentStep, data.completedSteps || [], data);
+        console.log('[📱 OnboardingContext] Auto-saved progress on page unload');
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [data, currentStep]);
   
   // Context value
   const value: OnboardingContextType = {

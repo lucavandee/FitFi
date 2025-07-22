@@ -33,6 +33,8 @@ import { getOutfits, getRecommendedProducts } from '../services/DataRouter';
 import { getSafeUser } from '../utils/userUtils';
 import { env } from '../utils/env';
 import toast from 'react-hot-toast';
+import { generateSmartDefaults } from '../utils/smartDefaults';
+import { quickRetry, smartRetry, progressiveRetry, analyzeMissingData } from '../utils/quickRetry';
 import DevDataPanel from '../components/DevDataPanel';
 import OutfitCard from '../components/ui/OutfitCard';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -118,6 +120,9 @@ const EnhancedResultsPage: React.FC = () => {
     { id: 'personalize', label: 'Personaliseren', completed: false }
   ]);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isQuickRetrying, setIsQuickRetrying] = useState(false);
+  const [partialDataShown, setPartialDataShown] = useState(false);
+  const [smartDefaults, setSmartDefaults] = useState<any>(null);
 
   // Refs
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -127,13 +132,23 @@ const EnhancedResultsPage: React.FC = () => {
   // Get data from location state
   const quizAnswers = location.state?.answers || location.state?.onboardingData || {};
   const safeUser = getSafeUser(user);
+  
+  // Initialize smart defaults
+  useEffect(() => {
+    const defaults = generateSmartDefaults();
+    setSmartDefaults(defaults);
+    
+    if (env.DEBUG_MODE) {
+      console.log('[🧠 SmartDefaults] Generated:', defaults);
+    }
+  }, []);
 
   // Enhanced user data with season and occasion
   const enhancedUser = {
     ...safeUser,
-    season: quizAnswers.season || 'herfst',
-    occasion: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion[0] : (quizAnswers.occasion || 'Casual'),
-    occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || 'Casual']
+    season: quizAnswers.season || smartDefaults?.season || 'herfst',
+    occasion: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion[0] : (quizAnswers.occasion || smartDefaults?.occasions?.[0] || 'Casual'),
+    occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || smartDefaults?.occasions?.[0] || 'Casual']
   };
   // Get season and occasion context
   const getSeason = () => {
@@ -144,7 +159,14 @@ const EnhancedResultsPage: React.FC = () => {
       'herfst': 'Herfstselectie',
       'winter': 'Winterselectie'
     };
-    return seasonMap[season] || 'Seizoenselectie';
+    const seasonName = seasonMap[season] || 'Seizoenselectie';
+    
+    // Add smart context if available
+    if (smartDefaults?.confidence && smartDefaults.confidence > 0.8) {
+      return `${seasonName} (automatisch gedetecteerd)`;
+    }
+    
+    return seasonName;
   };
 
   const getOccasion = () => {
@@ -228,14 +250,47 @@ const EnhancedResultsPage: React.FC = () => {
 
       // Step 2: Generate outfits
       completeLoadingStep('generate');
-      const outfitsData = await getOutfits(safeUser, { count: 3 });
+      
+      // Use progressive retry for better UX
+      const progressiveResult = await progressiveRetry(
+        safeUser,
+        // Show partial data immediately
+        (partialOutfits, partialProducts) => {
+          if (partialOutfits.length > 0) {
+            setOutfits(partialOutfits);
+            setPartialDataShown(true);
+            
+            if (env.DEBUG_MODE) {
+              console.log('[EnhancedResultsPage] Showing partial outfits:', partialOutfits.length);
+            }
+          }
+          
+          if (partialProducts.length > 0) {
+            setProducts(partialProducts);
+            
+            if (env.DEBUG_MODE) {
+              console.log('[EnhancedResultsPage] Showing partial products:', partialProducts.length);
+            }
+          }
+        },
+        // Complete data loaded
+        (finalOutfits, finalProducts) => {
+          setOutfits(finalOutfits);
+          setProducts(finalProducts);
+          setPartialDataShown(false);
+          
+          if (env.DEBUG_MODE) {
+            console.log('[EnhancedResultsPage] Final data loaded:', finalOutfits.length, finalProducts.length);
+          }
+        }
+      );
       
       if (env.DEBUG_MODE) {
-        console.log('[EnhancedResultsPage] Loaded outfits:', outfitsData?.length || 0);
+        console.log('[EnhancedResultsPage] Progressive retry result:', progressiveResult);
       }
 
-      if (outfitsData && outfitsData.length > 0) {
-        setOutfits(outfitsData);
+      if (progressiveResult.outfits && progressiveResult.outfits.length > 0) {
+        setOutfits(progressiveResult.outfits);
       } else {
         throw new Error('Geen outfits gevonden');
       }
@@ -244,14 +299,9 @@ const EnhancedResultsPage: React.FC = () => {
 
       // Step 3: Load products
       completeLoadingStep('products');
-      const productsData = await getRecommendedProducts(safeUser, 6);
       
-      if (env.DEBUG_MODE) {
-        console.log('[EnhancedResultsPage] Loaded products:', productsData?.length || 0);
-      }
-
-      if (productsData && productsData.length > 0) {
-        setProducts(productsData);
+      if (progressiveResult.products && progressiveResult.products.length > 0) {
+        setProducts(progressiveResult.products);
       }
 
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -264,8 +314,10 @@ const EnhancedResultsPage: React.FC = () => {
         window.gtag('event', 'recommendations_loaded', {
           event_category: 'engagement',
           event_label: 'success',
-          outfits_count: outfitsData?.length || 0,
-          products_count: productsData?.length || 0
+          outfits_count: progressiveResult.outfits?.length || 0,
+          products_count: progressiveResult.products?.length || 0,
+          used_smart_defaults: !!smartDefaults,
+          smart_defaults_confidence: smartDefaults?.confidence || 0
         });
       }
 
@@ -363,7 +415,62 @@ const EnhancedResultsPage: React.FC = () => {
     retryCount.current = 0;
     setLoadingSteps(prev => prev.map(step => ({ ...step, completed: false })));
     setLoadingProgress(0);
+    setPartialDataShown(false);
     loadRecommendations();
+  };
+  
+  // Quick retry for missing data only
+  const handleQuickRetry = async () => {
+    if (isQuickRetrying) return;
+    
+    setIsQuickRetrying(true);
+    setError(null);
+    
+    try {
+      const missing = analyzeMissingData(outfits, products, psychographicProfile);
+      
+      if (env.DEBUG_MODE) {
+        console.log('[EnhancedResultsPage] Quick retry for missing data:', missing);
+      }
+      
+      const result = await smartRetry(safeUser, {
+        outfits,
+        products,
+        profile: psychographicProfile
+      });
+      
+      if (result.success) {
+        if (result.outfits) setOutfits(result.outfits);
+        if (result.products) setProducts(result.products);
+        
+        toast.success('Ontbrekende data succesvol geladen!');
+        
+        // Track successful quick retry
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'quick_retry_success', {
+            event_category: 'error_recovery',
+            event_label: 'missing_data_recovered',
+            duration_ms: result.duration,
+            attempts: result.attempts
+          });
+        }
+      } else {
+        throw new Error(result.errors.join(', ') || 'Quick retry failed');
+      }
+    } catch (error) {
+      console.error('[EnhancedResultsPage] Quick retry failed:', error);
+      toast.error('Quick retry mislukt. Probeer volledige herlaad.');
+      
+      // Track failed quick retry
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'quick_retry_failed', {
+          event_category: 'error_recovery',
+          event_label: 'quick_retry_error'
+        });
+      }
+    } finally {
+      setIsQuickRetrying(false);
+    }
   };
 
   // Sticky footer actions
@@ -472,6 +579,16 @@ const EnhancedResultsPage: React.FC = () => {
                 </Button>
                 <Button
                   variant="outline"
+                  onClick={handleQuickRetry}
+                  icon={<Zap size={16} />}
+                  iconPosition="left"
+                  fullWidth
+                  disabled={isQuickRetrying}
+                >
+                  {isQuickRetrying ? 'Quick retry...' : 'Quick retry (alleen ontbrekende data)'}
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => navigate('/onboarding')}
                   fullWidth
                 >
@@ -548,9 +665,21 @@ const EnhancedResultsPage: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Jouw top 3 outfits
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                {getSeason()} • {getOccasion()}
-              </p>
+              <div className="space-y-1">
+                <p className="text-gray-600 dark:text-gray-400">
+                  {getSeason()} • {getOccasion()}
+                </p>
+                {smartDefaults && smartDefaults.confidence > 0.7 && (
+                  <p className="text-sm text-blue-600 dark:text-blue-400">
+                    💡 {smartDefaults.reasoning}
+                  </p>
+                )}
+                {partialDataShown && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400">
+                    ⚡ Meer outfits worden geladen...
+                  </p>
+                )}
+              </div>
             </div>
 
             {outfits.length > 0 ? (
@@ -622,14 +751,27 @@ const EnhancedResultsPage: React.FC = () => {
                   <p className="text-gray-600 dark:text-gray-400 mb-6">
                     We konden geen outfits vinden die bij jouw stijlprofiel passen.
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={handleRetry}
-                    icon={<RefreshCw size={16} />}
-                    iconPosition="left"
-                  >
-                    Probeer opnieuw
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      variant="primary"
+                      onClick={handleQuickRetry}
+                      icon={<Zap size={16} />}
+                      iconPosition="left"
+                      fullWidth
+                      disabled={isQuickRetrying}
+                    >
+                      {isQuickRetrying ? 'Quick retry...' : 'Quick retry'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleRetry}
+                      icon={<RefreshCw size={16} />}
+                      iconPosition="left"
+                      fullWidth
+                    >
+                      Volledige herlaad
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -648,6 +790,11 @@ const EnhancedResultsPage: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-400">
                 Individuele items die perfect bij jouw stijl passen
               </p>
+              {partialDataShown && products.length > 0 && (
+                <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+                  ⚡ Meer producten worden geladen...
+                </p>
+              )}
             </div>
 
             {products.length > 0 ? (
@@ -690,6 +837,16 @@ const EnhancedResultsPage: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   Geen producten beschikbaar
                 </p>
+                <Button
+                  variant="outline"
+                  onClick={handleQuickRetry}
+                  icon={<Zap size={16} />}
+                  iconPosition="left"
+                  className="mt-4"
+                  disabled={isQuickRetrying}
+                >
+                  {isQuickRetrying ? 'Laden...' : 'Probeer producten te laden'}
+                </Button>
               </div>
             )}
           </div>
