@@ -31,14 +31,14 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   
   const content = (
     <div className="flex flex-col items-center justify-center" aria-hidden="true">
-      <div className={`${spinnerSizes[size]} border-4 border-[#FF8600] border-t-transparent rounded-full animate-spin mb-4`} aria-hidden="true"></div>
-      <p className={`${textSizes[size]} text-white/80 font-medium`}>{message}</p>
+      <div className={`${spinnerSizes[size]} border-4 border-turquoise-500 border-t-transparent rounded-full animate-spin mb-4`} aria-hidden="true"></div>
+      <p className={`${textSizes[size]} text-textSecondary-light dark:text-textSecondary-dark font-medium`}>{message}</p>
     </div>
   );
   
   if (fullScreen) {
     return (
-      <div className={`fixed inset-0 bg-[#0D1B2A]/90 backdrop-blur-sm flex items-center justify-center z-50 ${className}`}>
+      <div className={`fixed inset-0 bg-midnight-950/90 backdrop-blur-sm flex items-center justify-center z-50 ${className}`}>
         {content}
       </div>
     );
