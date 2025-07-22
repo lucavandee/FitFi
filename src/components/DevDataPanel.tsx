@@ -107,7 +107,7 @@ const DevDataPanel: React.FC<DevDataPanelProps> = ({ onRefresh, className = '' }
           {/* Actions */}
           <div className="flex justify-between mb-3">
             <button 
-              className="px-2 py-1 bg-blue-900 hover:bg-blue-800 text-blue-300 rounded flex items-center transition-colors"
+              className="flex items-center px-2 py-1 bg-blue-900 hover:bg-blue-800 text-blue-300 rounded transition-colors"
               onClick={handleRefresh}
               disabled={isRefreshing}
             >
