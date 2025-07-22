@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
 import { useGamification } from './GamificationContext';
 import { getCurrentSeason } from '../engine/helpers';
-import { useNavigationService } from '../services/NavigationService';
 import toast from 'react-hot-toast';
 import { saveOnboardingProgress, loadOnboardingProgress, clearOnboardingProgress } from '../utils/progressPersistence';
 import { generateSmartDefaults } from '../utils/smartDefaults';
