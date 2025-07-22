@@ -27,18 +27,7 @@ import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
 import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
 
 // Icons
-import {
-  Calendar,
-  Star,
-  ShoppingBag,
-  Heart,
-  RefreshCw,
-  CheckCircle,
-  Info,
-  AlertTriangle,
-  MessageSquare,
-  ArrowRight,
-} from "lucide-react";
+import { Calendar, Star, ShoppingBag, Heart, RefreshCw, CheckCircle, Info, AlertTriangle, MessageSquare, ArrowRight } from "lucide-react";
 
 // Motion
 import { motion } from "framer-motion";
