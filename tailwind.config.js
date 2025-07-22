@@ -9,17 +9,16 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // FitFi Unified Color Palette
-        midnight:        '#0D1B2A',
-        turquoise:       '#89CFF0',
-        'turquoise-dark':'#6FB8D1',
-        'light-grey':    '#F6F6F6',
-        white:           '#FFFFFF',
-        'text-primary':  '#0D1B2A',
-        'text-secondary':'#333333',
-        'error-red':     '#E03E3E',
+        // FitFi Unified Color Palette - Normalized
+        midnight: '#0D1B2A',
+        turquoise: '#89CFF0',
+        'turquoise-dark': '#6FB8D1',
+        'light-grey': '#F6F6F6',
+        'text-primary': '#0D1B2A',
+        'text-secondary': '#333333',
+        'error-red': '#E03E3E',
         'success-green': '#22C55E',
-        'info-blue':     '#3B82F6',
+        'info-blue': '#3B82F6',
         
         // Extended midnight palette for dark mode
         midnight: {
