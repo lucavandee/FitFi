@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0" onClick={closeMenu}>
-                <Logo className="h-8 w-auto text-cardwhite" />
+                <Logo className="h-8 w-auto text-card-white" />
               </Link>
             </div>
 
@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
                   <Link
                     key={path}
                     to={path}
-                    className={`text-sm font-medium transition-colors hover:text-turquoise relative ${location.pathname === path ? 'text-cardwhite' : 'text-cardwhite/80'}`}
+                    className={`text-sm font-medium transition-colors hover:text-turquoise relative ${location.pathname === path ? 'text-card-white' : 'text-card-white/80'}`}
                   >
                     {labels[idx]}
                     {location.pathname === path && (
@@ -67,7 +67,7 @@ const Navbar: React.FC = () => {
             <div className="hidden lg:flex items-center space-x-6">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded hover:bg-midnight-800 transition-colors text-cardwhite"
+                className="p-2 rounded hover:bg-midnight-800 transition-colors text-card-white"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -75,17 +75,17 @@ const Navbar: React.FC = () => {
 
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <Link to="/dashboard" className="flex items-center space-x-2 text-cardwhite hover:text-turquoise transition-colors">
+                  <Link to="/dashboard" className="flex items-center space-x-2 text-card-white hover:text-turquoise transition-colors">
                     <User size={20} />
                     <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
                   </Link>
-                  <Button variant="ghost" size="sm" onClick={logout} className="text-cardwhite border border-cardwhite/30 hover:bg-cardwhite/10">
+                  <Button variant="ghost" size="sm" onClick={logout} className="text-card-white border border-card-white/30 hover:bg-card-white/10">
                     Uitloggen
                   </Button>
                 </div>
               ) : (
                 <div className="space-x-4">
-                  <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-cardwhite border border-cardwhite/30 hover:bg-cardwhite/10">
+                  <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-card-white border border-card-white/30 hover:bg-card-white/10">
                     Inloggen
                   </Button>
                   <Button as={Link} to="/onboarding?signup=true" variant="primary" size="sm">
@@ -99,14 +99,14 @@ const Navbar: React.FC = () => {
             <div className="flex lg:hidden items-center space-x-3">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded hover:bg-midnight-800 transition-colors text-cardwhite"
+                className="p-2 rounded hover:bg-midnight-800 transition-colors text-card-white"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               <button
                 onClick={toggleMenu}
-                className="inline-flex items-center justify-center p-2 rounded text-cardwhite hover:bg-midnight-800 transition-colors"
+                className="inline-flex items-center justify-center p-2 rounded text-card-white hover:bg-midnight-800 transition-colors"
                 aria-label="Toggle mobile menu"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -150,7 +150,7 @@ const Navbar: React.FC = () => {
                       to={path}
                       onClick={closeMenu}
                       className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
-                        location.pathname === path ? 'bg-midnight-800 text-cardWhite' : 'text-cardWhite/80 hover:bg-midnight-800 hover:text-cardWhite'
+                        location.pathname === path ? 'bg-midnight-800 text-card-white' : 'text-card-white/80 hover:bg-midnight-800 hover:text-card-white'
                       }`}
                     >
                       {labels[idx]}
@@ -162,7 +162,7 @@ const Navbar: React.FC = () => {
                     to="/dashboard"
                     onClick={closeMenu}
                     className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
-                      location.pathname.startsWith('/dashboard') ? 'bg-midnight-800 text-cardWhite' : 'text-cardWhite/80 hover:bg-midnight-800 hover:text-cardWhite'
+                      location.pathname.startsWith('/dashboard') ? 'bg-midnight-800 text-card-white' : 'text-card-white/80 hover:bg-midnight-800 hover:text-card-white'
                     }`}
                   >
                     Dashboard
@@ -174,10 +174,10 @@ const Navbar: React.FC = () => {
                 {user ? (
                   <div className="space-y-6">
                     <div className="flex items-center space-x-3 px-6 py-3 bg-midnight-800/50 rounded">
-                      <User size={24} className="text-cardWhite/70" />
+                      <User size={24} className="text-card-white/70" />
                       <div className="flex-1">
-                        <div className="font-medium text-cardWhite">{user.name || 'Gebruiker'}</div>
-                        <div className="text-sm text-cardWhite/70">{user.email || 'gebruiker@fitfi.app'}</div>
+                        <div className="font-medium text-card-white">{user.name || 'Gebruiker'}</div>
+                        <div className="text-sm text-card-white/70">{user.email || 'gebruiker@fitfi.app'}</div>
                       </div>
                     </div>
                     <Button
@@ -187,14 +187,14 @@ const Navbar: React.FC = () => {
                         logout();
                         closeMenu();
                       }}
-                      className="text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10"
+                      className="text-card-white border border-card-white/30 hover:bg-card-white/10"
                     >
                       Uitloggen
                     </Button>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <Button as={Link} to="/onboarding" variant="ghost" fullWidth onClick={closeMenu} className="text-cardWhite border border-cardWhite/30 hover:bg-cardWhite/10">
+                    <Button as={Link} to="/onboarding" variant="ghost" fullWidth onClick={closeMenu} className="text-card-white border border-card-white/30 hover:bg-card-white/10">
                       Inloggen
                     </Button>
                     <Button as={Link} to="/onboarding?signup=true" variant="primary" fullWidth onClick={closeMenu}>
