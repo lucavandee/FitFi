@@ -156,27 +156,3 @@ self.addEventListener('unhandledrejection', event => {
 self.addEventListener('error', event => {
   console.error('[ServiceWorker] Error:', event.error);
 });
-        }
-
-        return networkResponse;
-      });
-    })
-  );
-});
-
-// ✅ ACTIVATE EVENT – Verwijder oude caches
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames =>
-      Promise.all(
-        cacheNames.map(cacheName => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            console.log(`[ServiceWorker] Verwijder oude cache: ${cacheName}`);
-            return caches.delete(cacheName);
-          }
-        })
-      )
-    )
-  );
-});
