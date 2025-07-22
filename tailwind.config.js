@@ -1,4 +1,5 @@
-/** @type {import('tailwindcss').Config} */
+import { defineConfig } from 'vite';
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
@@ -9,103 +10,29 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // FitFi Brand Color Palette
-        midnight: '#0D1B2A',         // brand dark
-        turquoise: '#89CFF0',        // primary accent
-        'turquoise-dark': '#6FB8D1', // accent hover
-        'light-grey': '#F6F6F6',     // card bg
-        'text-primary': '#0D1B2A',   // headings
-        'text-secondary': '#333333', // body text
-        'error-red': '#E03E3E',      // error messages
-        'success-green': '#22C55E',  // success state
-        'info-blue': '#3B82F6',      // informational
-        
-        // Extended midnight palette for dark mode
-        midnight: {
-          50: '#f0f4f8',
-          100: '#d9e2ec',
-          200: '#bcccdc',
-          300: '#9fb3c8',
-          400: '#829ab1',
-          500: '#627d98',
-          600: '#486581',
-          700: '#334e68',
-          800: '#243b53',
-          900: '#102a43',
-          950: '#0D1B2A', // Primary midnight
-        },
-        // Extended turquoise palette
-        turquoise: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#26d0ce',
-          500: '#89CFF0', // Primary turquoise
-          600: '#6FB8D1', // turquoise-dark
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-          950: '#042f2e',
-        },
-        // Extended light-grey palette
-        'light-grey': {
-          50: '#F6F6F6', // Primary light-grey
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
+        // Orange accent color
+        orange: {
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#f97316',
+          600: '#ea580c',
+          700: '#c2410c',
+          800: '#9a3412',
+          900: '#7c2d12',
+          950: '#431407',
         },
       },
       spacing: {
-        6: '1.5rem',
-        8: '2rem',
-        10: '2.5rem',
         '128': '32rem',
       },
       fontSize: {
-        h1: ['2.5rem', { lineHeight: '1.2' }],
-        h2: ['1.75rem', { lineHeight: '1.3' }],
-        base: ['1rem', { lineHeight: '1.6' }],
-      },
-      borderRadius: {
-        DEFAULT: '0.5rem',
-      },
-      borderWidth: {
-        '0.5': '0.5px',
-      },
-      animation: {
-        'fade-in': 'fadeIn 0.5s ease-out forwards',
-        'slide-up': 'slideUp 0.5s ease-out forwards',
-        'slide-in-right': 'slideInRight 0.3s ease-out forwards',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(10px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        slideInRight: {
-          '0%': { transform: 'translateX(100%)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
-        },
+        'h1': ['2.5rem', { lineHeight: '1.2' }],
+        'h2': ['1.75rem', { lineHeight: '1.3' }],
       },
     },
-  },
-  corePlugins: {
-    backgroundColor: true,
-    textColor: true,
-    borderColor: true,
-    ringColor: true,
-    gradientColorStops: true,  // for from-*, via-*, to-* utilities
   },
   plugins: [],
 };
