@@ -32,39 +32,39 @@
   }
   
   .btn-primary {
-    @apply btn bg-turquoise text-card-white hover:bg-turquoise-dark focus:ring-turquoise;
+    @apply btn bg-turquoise text-cardWhite hover:bg-turquoise-dark ring-turquoise;
   }
   
   .btn-secondary {
-    @apply btn bg-card-white text-turquoise hover:bg-light-grey focus:ring-turquoise;
+    @apply btn bg-cardWhite text-turquoise hover:bg-lightGrey ring-turquoise;
   }
   
   .btn-ghost {
-    @apply btn bg-transparent text-text-secondary hover:bg-light-grey focus:ring-turquoise;
+    @apply btn bg-transparent text-textSecondary hover:bg-lightGrey ring-turquoise;
   }
   
   .card {
-    @apply bg-card-white rounded border border-light-grey overflow-hidden transition-all shadow-sm;
+    @apply bg-cardWhite rounded border border-lightGrey overflow-hidden transition-all shadow-sm;
   }
   
   .input {
-    @apply w-full px-4 py-3 rounded border border-light-grey bg-card-white text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-turquoise focus:border-transparent transition-all;
+    @apply w-full px-4 py-3 rounded border border-lightGrey bg-cardWhite text-textPrimary placeholder-textSecondary outline-none ring-2 ring-turquoise border-transparent transition-all;
   }
   
   .label {
-    @apply block text-sm font-medium text-text-primary mb-1;
+    @apply block text-sm font-medium text-textPrimary mb-1;
   }
 
   .content-section {
-    @apply bg-card-white rounded shadow-sm border border-light-grey overflow-hidden;
+    @apply bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-light-grey to-card-white;
+    @apply bg-gradient-to-br from-lightGrey to-cardWhite;
   }
 
   .glass-card {
-    @apply bg-card-white backdrop-blur-sm border border-light-grey rounded shadow-sm;
+    @apply bg-cardWhite backdrop-blur-sm border border-lightGrey rounded shadow-sm;
   }
 }
 
