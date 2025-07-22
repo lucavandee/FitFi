@@ -1,6 +1,16 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+
+// Lazy load components
+const LazyGenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
+const LazyArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
+const LazySeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
+const LazyOccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
+const LazyPreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
+const LazyResultsStep = React.lazy(() => import('./pages/onboarding/ResultsStep'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import { UserProvider } from './context/UserContext';
