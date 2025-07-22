@@ -52,7 +52,6 @@ const Navbar: React.FC = () => {
                   <Link
                     key={path}
                     to={path}
-                    className={`text-sm font-medium transition-colors hover:text-turquoise relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
                     className={`text-sm font-medium transition-colors hover:text-orange-400 relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
                   >
                     {labels[idx]}
@@ -76,7 +75,6 @@ const Navbar: React.FC = () => {
 
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-turquoise transition-colors">
                   <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-orange-400 transition-colors">
                     <User size={20} />
                     <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
@@ -175,7 +173,6 @@ const Navbar: React.FC = () => {
               <div className="border-t border-white/10 p-6">
                 {user ? (
                   <div className="space-y-6">
-                    <div className="flex items-center space-x-3 px-6 py-3 bg-midnight-800/50 rounded">
                     <div className="flex items-center space-x-3 px-6 py-3 bg-gray-800/50 rounded">
                       <User size={24} className="text-white/70" />
                       <div className="flex-1">
