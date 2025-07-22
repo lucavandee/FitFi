@@ -113,7 +113,7 @@ const HomePage: React.FC = () => {
                   <span className="text-2xl mr-3">👉</span>
                   Start de stijlquiz en zie in 1 minuut wat echt bij je past.
                 </p>
-              </p>
+              </div>
               
               {/* Lead Capture Form */}
               <div className="max-w-md mx-auto lg:mx-0">
