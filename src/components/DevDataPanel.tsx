@@ -77,7 +77,7 @@ const DevDataPanel: React.FC<DevDataPanelProps> = ({ onRefresh, className = '' }
     try {
       const date = new Date(timestamp);
       return date.toLocaleTimeString();
-    } catch (e) {
+    } catch {
       return timestamp;
     }
   };
