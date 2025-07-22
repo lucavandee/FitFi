@@ -32,29 +32,29 @@ const DailyChallengeCard: React.FC = () => {
 
   return (
     <motion.div 
-      className="dashboard-card rounded-xl shadow-md overflow-hidden transition-colors"
+      className="dashboard-card"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
     >
-      <div className="p-6 border-b border-light-grey">
+      <div className="p-8 border-b border-light-grey">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-full bg-turquoise/20">
+            <div className="p-3 rounded-full bg-turquoise/20">
               <Clock className="text-turquoise" size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-text-primary">
+              <h3 className="text-h2 text-text-secondary mb-4">
                 Dagelijkse Uitdagingen
               </h3>
-              <p className="text-sm text-text-secondary">
+              <p className="text-text-secondary">
                 {completedCount}/{totalChallenges} voltooid vandaag
               </p>
             </div>
           </div>
           
           {isSeasonalEventActive() && (
-            <div className="bg-turquoise/20 text-turquoise px-3 py-1 rounded-full text-xs font-bold flex items-center">
+            <div className="bg-turquoise/20 text-turquoise px-4 py-2 rounded-full text-sm font-bold flex items-center">
               <Gift size={12} className="mr-1" />
               {multiplier}x Punten!
             </div>
@@ -62,14 +62,14 @@ const DailyChallengeCard: React.FC = () => {
         </div>
         
         {/* Progress bar */}
-        <div className="mt-4">
-          <div className="flex justify-between text-sm text-text-secondary mb-1">
+        <div className="mt-6">
+          <div className="flex justify-between text-text-secondary mb-2">
             <span>Dagelijkse Voortgang</span>
             <span>{Math.round((completedCount / totalChallenges) * 100)}%</span>
           </div>
-          <div className="w-full bg-light-grey rounded-full h-1.5">
+          <div className="progress-bar-track">
             <div 
-              className="bg-turquoise-500 h-1.5 rounded-full transition-all duration-300"
+              className="progress-bar-fill"
               style={{ width: `${(completedCount / totalChallenges) * 100}%` }}
             ></div>
           </div>
@@ -78,23 +78,23 @@ const DailyChallengeCard: React.FC = () => {
       
       <div className="p-8">
         {availableChallenges.length > 0 ? (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {availableChallenges.slice(0, 3).map((challenge) => (
               <motion.div 
                 key={challenge.id}
-                className="flex items-center justify-between p-6 bg-light-grey rounded hover:bg-light-grey/80 transition-colors"
+                className="flex items-center justify-between p-8 bg-white rounded hover:bg-light-grey transition-colors"
                 whileHover={{ y: -2 }}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="text-2xl">{challenge.icon}</div>
+                  <div className="text-3xl">{challenge.icon}</div>
                   <div>
-                    <h4 className="font-medium text-text-primary">
+                    <h4 className="font-semibold text-text-primary">
                       {challenge.label}
                     </h4>
-                    <p className="text-sm text-text-secondary">
+                    <p className="text-text-secondary">
                       +{Math.round(challenge.points * multiplier)} punten
                       {multiplier > 1 && (
-                        <span className="text-turquoise-500 font-bold ml-1">
+                        <span className="text-turquoise font-bold ml-1">
                           ({multiplier}x bonus!)
                         </span>
                       )}
@@ -117,7 +117,7 @@ const DailyChallengeCard: React.FC = () => {
                 <Button 
                   variant="ghost"
                   size="sm"
-                  className="text-text-secondary border border-light-grey hover:bg-light-grey"
+                  className="text-text-primary border border-light-grey hover:bg-light-grey"
                 >
                   Bekijk Alle Uitdagingen ({availableChallenges.length})
                 </Button>
@@ -126,16 +126,16 @@ const DailyChallengeCard: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <CheckCircle className="mx-auto text-turquoise-500 mb-3" size={48} />
-            <h4 className="text-lg font-semibold text-text-primary mb-2">
+            <CheckCircle className="mx-auto text-turquoise mb-6" size={48} />
+            <h4 className="text-lg font-semibold text-text-primary mb-4">
               Alle Uitdagingen Voltooid! 🎉
             </h4>
-            <p className="text-text-secondary mb-4">
+            <p className="text-text-secondary mb-6">
               Goed gedaan! Kom morgen terug voor nieuwe uitdagingen.
             </p>
-            <div className="bg-turquoise/10 border border-turquoise rounded p-6">
+            <div className="bg-turquoise/10 border border-turquoise rounded p-8">
               <p className="font-medium text-text-primary">Dagelijkse Bonus Verdiend!</p>
-              <p className="text-sm text-text-secondary">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
+              <p className="text-text-secondary">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
             </div>
           </div>
         )}

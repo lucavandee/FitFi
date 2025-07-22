@@ -421,9 +421,8 @@ const QuizPage: React.FC = () => {
                 <label
                   htmlFor={option.id}
                   className={`
-                    flex flex-col cursor-pointer rounded-xl p-4 border 
-                    peer-checked:border-[#FF8600] peer-checked:bg-white/10
-                    hover:bg-white/5 transition-colors
+                    stijlscan-option
+                    peer-checked:border-turquoise peer-checked:bg-turquoise/10
                     ${option.image ? 'items-center' : ''}
                   `}
                 >
@@ -438,12 +437,12 @@ const QuizPage: React.FC = () => {
                     </div>
                   )}
                   <div className="flex items-center justify-between w-full">
-                    <span className="text-white font-medium">{option.text}</span>
+                    <span className="text-text-primary font-medium">{option.text}</span>
                     <div className={`
                       w-5 h-5 rounded-full flex items-center justify-center
                       ${answers[question.id] === option.id 
-                        ? 'bg-[#FF8600] text-white' 
-                        : 'bg-white/20 border border-white/30'}
+                        ? 'bg-turquoise text-white' 
+                        : 'bg-light-grey border border-light-grey'}
                     `}>
                       {answers[question.id] === option.id && <Check size={14} />}
                     </div>
@@ -481,19 +480,18 @@ const QuizPage: React.FC = () => {
                   <label
                     htmlFor={option.id}
                     className={`
-                      flex items-center justify-between cursor-pointer rounded-xl p-4 border 
+                      stijlscan-option flex items-center justify-between cursor-pointer
                       ${isSelected 
-                        ? 'border-[#FF8600] bg-white/10' 
-                        : 'border-white/30 hover:bg-white/5'}
-                      transition-colors
+                        ? 'border-turquoise bg-turquoise/10' 
+                        : ''}
                     `}
                   >
-                    <span className="text-white font-medium">{option.text}</span>
+                    <span className="text-text-primary font-medium">{option.text}</span>
                     <div className={`
                       w-5 h-5 rounded flex items-center justify-center
                       ${isSelected 
-                        ? 'bg-[#FF8600] text-white' 
-                        : 'bg-white/20 border border-white/30'}
+                        ? 'bg-turquoise text-white' 
+                        : 'bg-light-grey border border-light-grey'}
                     `}>
                       {isSelected && <Check size={14} />}
                     </div>
@@ -523,16 +521,16 @@ const QuizPage: React.FC = () => {
                 step={question.step}
                 value={value}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-white/30 rounded-full appearance-none cursor-pointer"
+                className="w-full h-2 bg-light-grey rounded-full appearance-none cursor-pointer"
               />
-              <div className="flex justify-between mt-2 text-xs text-white/70">
+              <div className="flex justify-between mt-2 text-xs text-text-secondary">
                 <span>Minder belangrijk</span>
                 <span>Zeer belangrijk</span>
               </div>
             </div>
             <div className="text-center">
-              <span className="text-3xl font-bold text-[#FF8600]">{value}</span>
-              <span className="text-white/70 ml-1">/ {question.max}</span>
+              <span className="text-3xl font-bold text-turquoise">{value}</span>
+              <span className="text-text-secondary ml-1">/ {question.max}</span>
             </div>
           </motion.div>
         );
@@ -545,7 +543,7 @@ const QuizPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="border-2 border-dashed border-white/30 rounded-xl p-6 text-center">
+            <div className="border-2 border-dashed border-light-grey rounded p-6 text-center">
               {photoPreview ? (
                 <div className="relative">
                   <ImageWithFallback 
@@ -560,18 +558,18 @@ const QuizPage: React.FC = () => {
                       setPhotoPreview(null);
                       setAnswers({ ...answers, [question.id]: undefined });
                     }}
-                    className="mt-3 text-red-300 hover:text-red-200 transition-colors"
+                    className="mt-3 text-error-red hover:text-error-red/80 transition-colors"
                   >
                     Foto verwijderen
                   </button>
                 </div>
               ) : (
                 <div>
-                  <Upload className="mx-auto h-12 w-12 text-white/50" />
+                  <Upload className="mx-auto h-12 w-12 text-text-secondary" />
                   <div className="mt-2">
                     <label
                       htmlFor="file-upload"
-                      className="cursor-pointer rounded-md font-medium text-[#FF8600] hover:text-orange-400 transition-colors"
+                      className="cursor-pointer rounded-md font-medium text-turquoise hover:text-turquoise-dark transition-colors"
                     >
                       Klik om een foto te uploaden
                       <input
@@ -583,7 +581,7 @@ const QuizPage: React.FC = () => {
                         onChange={handlePhotoUpload}
                       />
                     </label>
-                    <p className="text-xs text-white/50 mt-1">
+                    <p className="text-xs text-text-secondary mt-1">
                       PNG, JPG, GIF tot 10MB
                     </p>
                   </div>
@@ -591,8 +589,8 @@ const QuizPage: React.FC = () => {
               )}
             </div>
             
-            <div className="flex items-start p-4 bg-white/10 rounded-xl border border-white/20 text-white/90 text-sm">
-              <ShieldCheck size={16} className="mr-2 mt-0.5 flex-shrink-0 text-[#FF8600]" />
+            <div className="flex items-start p-6 bg-turquoise/10 rounded border border-turquoise/20 text-text-primary text-sm">
+              <ShieldCheck size={16} className="mr-2 mt-0.5 flex-shrink-0 text-turquoise" />
               <p>
                 Je foto wordt veilig versleuteld en alleen gebruikt voor analyse. Het wordt direct verwijderd na verwerking en nooit gedeeld met derden.
               </p>
@@ -625,83 +623,81 @@ const QuizPage: React.FC = () => {
 
           {/* Question card */}
           <motion.div 
-            className="bg-white/90 backdrop-blur-sm border border-light-grey rounded shadow-lg overflow-hidden"
+            className="stijlscan-container"
             key={currentQuestionIndex}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="p-8">
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="inline-flex items-center px-4 py-2 rounded text-xs font-medium bg-white/20 text-white">
-                    {currentQuestion.category.charAt(0).toUpperCase() + currentQuestion.category.slice(1)}
-                  </span>
-                  <span className="text-sm text-white/70">
-                    {currentQuestionIndex + 1}/{questions.length}
-                  </span>
-                </div>
-                
-                <div className="flex items-center mb-3">
-                  <h2 className="text-h2 sm:text-2xl font-bold text-white">
-                    {currentQuestion.question}
-                  </h2>
-                  <button
-                    onClick={() => setShowTooltip(!showTooltip)}
-                    className="ml-2 p-1 text-white/50 hover:text-white/80 transition-colors"
-                    aria-label="Waarom deze vraag?"
-                  >
-                    <Info size={20} />
-                  </button>
-                </div>
-                
-                {currentQuestion.description && (
-                  <p className="text-white/80 mb-10">
-                    {currentQuestion.description}
-                  </p>
-                )}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center px-4 py-2 rounded text-xs font-medium bg-turquoise/20 text-turquoise">
+                  {currentQuestion.category.charAt(0).toUpperCase() + currentQuestion.category.slice(1)}
+                </span>
+                <span className="text-sm text-text-secondary">
+                  {currentQuestionIndex + 1}/{questions.length}
+                </span>
               </div>
               
-              {renderQuestion()}
+              <div className="flex items-center mb-3">
+                <h2 className="text-h2 sm:text-2xl font-bold text-text-primary">
+                  {currentQuestion.question}
+                </h2>
+                <button
+                  onClick={() => setShowTooltip(!showTooltip)}
+                  className="ml-2 p-1 text-text-secondary hover:text-text-primary transition-colors"
+                  aria-label="Waarom deze vraag?"
+                >
+                  <Info size={20} />
+                </button>
+              </div>
+              
+              {currentQuestion.description && (
+                <p className="text-text-secondary mb-8">
+                  {currentQuestion.description}
+                </p>
+              )}
             </div>
             
+            {renderQuestion()}
+            
             {/* Navigation buttons */}
-            <div className="px-8 py-6 bg-white/5 flex justify-between items-center">
+            <div className="mt-8 flex justify-between items-center">
               <Button
                 variant="ghost"
                 onClick={prevQuestion}
                 disabled={currentQuestionIndex === 0}
                 icon={<ArrowLeft size={16} />}
                 iconPosition="left"
-                className="min-w-[100px] text-white border border-white/30 hover:bg-white/10"
+                className="min-w-[100px] text-text-primary border border-light-grey hover:bg-light-grey"
               >
                 Terug
               </Button>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 {questions.map((_, index) => (
                   <div
                     key={index}
                     className={`
-                      w-2 h-1.5 rounded transition-colors duration-300
+                      w-2 h-2 rounded-full transition-colors duration-300
                       ${index === currentQuestionIndex 
                         ? 'bg-turquoise' 
                         : index < currentQuestionIndex 
-                          ? 'bg-white' 
-                          : 'bg-white/30'}
+                          ? 'bg-text-primary' 
+                          : 'bg-light-grey'}
                     `}
                   />
                 ))}
               </div>
               
               <Button
-                variant="primary"
+                className="quiz-button"
                 onClick={nextQuestion}
                 disabled={isNextDisabled()}
                 icon={<ArrowRight size={16} />}
                 iconPosition="right"
-                className="min-w-[100px] quiz-button"
+                className="min-w-[100px]"
               >
                 {currentQuestionIndex === questions.length - 1 ? (
                   isQuizComplete ? 'Laden...' : 'Voltooien'
@@ -711,7 +707,7 @@ const QuizPage: React.FC = () => {
           </motion.div>
 
           {/* Progress summary */}
-          <div className="mt-8 text-center text-sm text-white/70">
+          <div className="mt-8 text-center text-sm text-text-secondary">
             <p>
               Je bent {Math.round(progress)}% klaar met je stijlanalyse
             </p>
