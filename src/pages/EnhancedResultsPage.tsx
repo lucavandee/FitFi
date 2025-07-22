@@ -45,19 +45,6 @@ const EnhancedResultsPage = () => {
 
       // Services
 
-      // Icons
-        Calendar,
-        Star,
-        ShoppingBag,
-        Heart,
-        RefreshCw,
-        CheckCircle,
-        Info,
-        AlertTriangle,
-        MessageSquare,
-        ArrowRight
-      } from "lucide-react";
-
       // Motion
 
       // Component for showing loading state when no results are found
