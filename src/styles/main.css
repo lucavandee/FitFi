@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 @layer utilities {
+  .card {
+    @apply bg-white text-text-primary p-8 rounded-lg border border-light-grey shadow-md transition-shadow hover:shadow-lg hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
+  }
+  
   .quiz-container {
     @apply bg-white text-text-primary max-w-md mx-auto p-8 rounded-lg shadow-lg;
   }
@@ -22,7 +26,7 @@
   }
   
   .btn-primary {
-    @apply bg-turquoise text-white font-semibold py-3 px-6 rounded shadow-md hover:bg-turquoise-dark focus:ring-2 ring-turquoise transition-all;
+    @apply bg-turquoise text-white font-semibold py-3 px-6 rounded shadow-md hover:bg-turquoise-dark focus:outline-none focus:ring-2 ring-turquoise transition-all;
   }
   
   .btn-secondary {
@@ -42,7 +46,7 @@
   }
   
   .dashboard-card {
-    @apply bg-light-grey text-text-primary p-8 rounded border border-light-grey shadow-sm transition-shadow hover:shadow-md hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
+    @apply bg-white text-text-primary p-8 rounded-lg border border-light-grey shadow-md transition-shadow hover:shadow-lg hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
   }
   
   .tab-inactive {
@@ -54,11 +58,11 @@
   }
   
   .text-heading {
-    @apply text-text-primary font-bold leading-tight;
+    @apply text-text-primary font-bold leading-tight mb-4;
   }
   
   .text-body {
-    @apply text-text-secondary leading-relaxed;
+    @apply text-text-secondary leading-relaxed mb-4;
   }
   
   .container-fitfi {
