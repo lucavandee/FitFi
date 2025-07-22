@@ -50,7 +50,7 @@ class ErrorBoundary extends Component<Props, State> {
       timestamp: new Date().toISOString()
     });
     
-    // Track error in analytics
+    // Track error in analytics (production only)
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'error', {
         event_category: 'error',
@@ -63,6 +63,21 @@ class ErrorBoundary extends Component<Props, State> {
         component_stack: errorInfo.componentStack,
         page_url: window.location.href,
         user_id: TEST_USER_ID
+      });
+    }
+    
+    // Initialize Sentry if available and capture error
+    if (typeof window.Sentry !== 'undefined') {
+      window.Sentry.captureException(error, {
+        contexts: {
+          react: {
+            componentStack: errorInfo.componentStack
+          }
+        },
+        tags: {
+          component: 'ErrorBoundary',
+          userId: TEST_USER_ID
+        }
       });
     }
   }

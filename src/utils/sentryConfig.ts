@@ -11,7 +11,9 @@ export function initializeSentry() {
   const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
   
   if (!sentryDsn || sentryDsn === '' || sentryDsn === 'your_sentry_dsn_here') {
-    console.warn('Sentry DSN not found in environment variables. Sentry will not be initialized.');
+    if (import.meta.env.DEV) {
+      console.warn('Sentry DSN not found in environment variables. Sentry will not be initialized.');
+    }
     return;
   }
 
@@ -36,7 +38,9 @@ export function initializeSentry() {
       release: import.meta.env.VITE_APP_VERSION || '1.0.0',
     });
     
-    console.log('Sentry initialized successfully');
+    if (import.meta.env.DEV) {
+      console.log('Sentry initialized successfully');
+    }
   } catch (error) {
     console.error('Failed to initialize Sentry:', error);
   }

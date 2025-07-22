@@ -53,7 +53,9 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   // Use fallback immediately if URL is invalid
   useEffect(() => {
     if (!isValidImageUrl(imgSrc)) {
-      console.warn(`[${componentName ?? 'ImageWithFallback'}] Invalid image URL, using fallback: ${imgSrc}`);
+      if (import.meta.env.DEV) {
+        console.warn(`[${componentName ?? 'ImageWithFallback'}] Invalid image URL, using fallback: ${imgSrc}`);
+      }
       setImgSrc(fallbackSrc);
       setHasError(true);
       setIsLoading(false);
@@ -70,7 +72,9 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     // Only update if we haven't already fallen back
     if (imgSrc !== fallbackSrc) {
       // Log the error for tracking purposes
-      console.warn(`[${componentName ?? 'ImageWithFallback'}] Image failed to load: ${imgSrc}`);
+      if (import.meta.env.DEV) {
+        console.warn(`[${componentName ?? 'ImageWithFallback'}] Image failed to load: ${imgSrc}`);
+      }
       
       // Try to retry loading the image
       if (retryCount.current < MAX_RETRIES) {
@@ -82,7 +86,9 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
           ? `${src}&cb=${Date.now()}` 
           : `${src}${cacheBuster}`;
         
-        console.log(`[${componentName ?? 'ImageWithFallback'}] Retrying image load (${retryCount.current}/${MAX_RETRIES}): ${srcWithCacheBuster}`);
+        if (import.meta.env.DEV) {
+          console.log(`[${componentName ?? 'ImageWithFallback'}] Retrying image load (${retryCount.current}/${MAX_RETRIES}): ${srcWithCacheBuster}`);
+        }
         setImgSrc(srcWithCacheBuster);
         return;
       }
