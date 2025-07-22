@@ -295,17 +295,6 @@ const QuizPage: React.FC = () => {
         season: finalSeason,
         occasions: Array.isArray(finalOccasion) ? finalOccasion : [finalOccasion]
       });
-            loadingMessage: 'Je stijlprofiel wordt gemaakt...',
-            onStart: () => console.debug('[QuizPage] Navigation started'),
-            onComplete: () => console.debug('[QuizPage] Navigation completed'),
-            onError: (error) => {
-              console.error('[QuizPage] Navigation error:', error);
-              // Immediate fallback navigation
-              navigate('/results', { state: { answers: finalAnswers } });
-            }
-          });
-        });
-      }
       
       // Track quiz completion
       if (typeof window.trackQuizComplete === 'function') {
@@ -339,7 +328,6 @@ const QuizPage: React.FC = () => {
           // Direct navigation as immediate fallback
           navigate('/results', { state: { answers: finalAnswers } });
         }
-      }, 50);
       }, 50);
       
     } catch (error) {
