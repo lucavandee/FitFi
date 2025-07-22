@@ -120,38 +120,38 @@ const DashboardPage: React.FC = () => {
     return (
       <div className="space-y-8">
         {/* User Info */}
-        <div className="card">
+        <div className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center mb-6">
             <div className="bg-turquoise/20 p-3 rounded-full mr-4">
               <User className="text-turquoise" size={24} />
             </div>
-            <h2 className="text-h2 text-text-secondary mb-4">
+            <h2 className="text-2xl font-semibold text-text-primary mb-4">
               Persoonlijke Informatie
             </h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded">
-              <p className="text-text-secondary text-sm mb-1">Naam</p>
+            <div className="card-section">
+              <p className="text-base text-text-secondary mb-1">Naam</p>
               <p className="text-text-primary font-medium">{user.name}</p>
             </div>
-            <div className="bg-white p-6 rounded">
-              <p className="text-text-secondary text-sm mb-1">E-mail</p>
+            <div className="card-section">
+              <p className="text-base text-text-secondary mb-1">E-mail</p>
               <p className="text-text-primary font-medium">{user.email}</p>
             </div>
-            <div className="bg-white p-6 rounded">
-              <p className="text-text-secondary text-sm mb-1">Gender</p>
+            <div className="card-section">
+              <p className="text-base text-text-secondary mb-1">Gender</p>
               <p className="text-text-primary font-medium">{user.gender || 'Niet opgegeven'}</p>
             </div>
-            <div className="bg-white p-6 rounded">
-              <p className="text-text-secondary text-sm mb-1">Abonnement</p>
+            <div className="card-section">
+              <p className="text-base text-text-secondary mb-1">Abonnement</p>
               <p className="text-text-primary font-medium">{user.isPremium ? 'Premium' : 'Basis'}</p>
             </div>
           </div>
           
           {/* Data source indicator */}
-          <div className="mt-6 bg-white p-6 rounded">
-            <p className="text-text-secondary text-sm mb-1">Databron</p>
+          <div className="mt-6 card-section">
+            <p className="text-base text-text-secondary mb-1">Databron</p>
             <p className="text-text-primary font-medium flex items-center">
               {dataSource === 'supabase' ? (
                 <>📦 Supabase</>
@@ -165,12 +165,12 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Style Preferences */}
-        <div className="card">
+        <div className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center mb-6">
             <div className="bg-turquoise/20 p-3 rounded-full mr-4">
               <Sparkles className="text-turquoise" size={24} />
             </div>
-            <h2 className="text-h2 text-text-secondary mb-4">
+            <h2 className="text-2xl font-semibold text-text-primary mb-4">
               Stijlvoorkeuren
             </h2>
           </div>
@@ -178,8 +178,8 @@ const DashboardPage: React.FC = () => {
           <div className="space-y-8">
             {/* Style Type */}
             {profileAttributes.style && (
-              <div className="bg-white p-6 rounded">
-                <p className="text-text-secondary text-sm mb-1">Stijltype</p>
+              <div className="card-section">
+                <p className="text-base text-text-secondary mb-1">Stijltype</p>
                 <p className="text-text-primary font-medium">{profileAttributes.style}</p>
               </div>
             )}
@@ -187,11 +187,11 @@ const DashboardPage: React.FC = () => {
             {/* Style Preferences */}
             {Object.keys(preferences).length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-6">Stijlvoorkeuren</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-4">Stijlvoorkeuren</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {Object.entries(preferences).map(([key, value]) => (
-                    <div key={key} className="bg-white p-6 rounded">
-                      <p className="text-text-secondary text-sm mb-1">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
+                    <div key={key} className="card-section">
+                      <p className="text-base text-text-secondary mb-1">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
                       <div className="flex items-center">
                         <div className="progress-bar-track mr-2">
                           <div 
@@ -210,11 +210,11 @@ const DashboardPage: React.FC = () => {
             {/* Sizes */}
             {Object.keys(sizes).length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-6">Maten</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-4">Maten</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   {Object.entries(sizes).map(([key, value]) => (
-                    <div key={key} className="bg-white p-6 rounded">
-                      <p className="text-text-secondary text-sm mb-1">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
+                    <div key={key} className="card-section">
+                      <p className="text-base text-text-secondary mb-1">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
                       <p className="text-text-primary font-medium">{value}</p>
                     </div>
                   ))}
@@ -225,10 +225,10 @@ const DashboardPage: React.FC = () => {
             {/* Favorite Colors */}
             {favoriteColors.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-6">Favoriete Kleuren</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-4">Favoriete Kleuren</h3>
                 <div className="flex flex-wrap gap-2">
                   {favoriteColors.map((color, index) => (
-                    <span key={index} className="bg-white px-3 py-1 rounded-full text-text-primary">
+                    <span key={index} className="bg-light-grey px-3 py-1 rounded-full text-text-primary font-medium">
                       {color}
                     </span>
                   ))}
@@ -239,10 +239,10 @@ const DashboardPage: React.FC = () => {
             {/* Favorite Retailers */}
             {favoriteRetailers.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-6">Favoriete Winkels</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-4">Favoriete Winkels</h3>
                 <div className="flex flex-wrap gap-2">
                   {favoriteRetailers.map((retailer, index) => (
-                    <span key={index} className="bg-white px-3 py-1 rounded-full text-text-primary">
+                    <span key={index} className="bg-light-grey px-3 py-1 rounded-full text-text-primary font-medium">
                       {retailer}
                     </span>
                   ))}
@@ -261,12 +261,12 @@ const DashboardPage: React.FC = () => {
     
     return (
       <div className="space-y-8">
-        <div className="card">
+        <div className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center mb-6">
             <div className="bg-turquoise/20 p-3 rounded-full mr-4">
               <Heart className="text-turquoise" size={24} />
             </div>
-            <h2 className="text-h2 text-text-secondary mb-4">
+            <h2 className="text-2xl font-semibold text-text-primary mb-4">
               Opgeslagen Outfits
             </h2>
           </div>
@@ -274,7 +274,7 @@ const DashboardPage: React.FC = () => {
           {savedOutfits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {savedOutfits.map((id, index) => (
-                <div key={id} className="bg-white p-6 rounded flex items-center">
+                <div key={id} className="card-section flex items-center">
                   <div className="w-16 h-16 bg-light-grey rounded-lg mr-6 flex items-center justify-center">
                     <Heart className="text-turquoise" size={20} />
                   </div>
@@ -297,9 +297,9 @@ const DashboardPage: React.FC = () => {
           ) : (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-light-grey rounded-full flex items-center justify-center mx-auto mb-6">
-                <Heart className="text-text-secondary" size={24} />
+                <Heart className="text-text-primary" size={24} />
               </div>
-              <p className="text-text-secondary mb-6">
+              <p className="text-base text-text-secondary mb-4">
                 Je hebt nog geen outfits opgeslagen. Bekijk aanbevelingen en sla je favorieten op.
               </p>
               <Button 
@@ -319,19 +319,19 @@ const DashboardPage: React.FC = () => {
   const SettingsSection = () => {
     return (
       <div className="space-y-8">
-        <div className="card">
+        <div className="bg-white border border-light-grey rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center mb-6">
             <div className="bg-turquoise/20 p-3 rounded-full mr-4">
               <Settings className="text-turquoise" size={24} />
             </div>
-            <h2 className="text-h2 text-text-secondary mb-4">
+            <h2 className="text-2xl font-semibold text-text-primary mb-4">
               Instellingen
             </h2>
           </div>
           
           <div className="space-y-8">
-            <div className="bg-white p-6 rounded">
-              <h3 className="text-lg font-semibold text-text-primary mb-6">Account</h3>
+            <div className="card-section">
+              <h3 className="text-xl font-semibold text-text-primary mb-4">Account</h3>
               <div className="space-y-3">
                 <Button variant="outline" size="sm" fullWidth className="text-text-primary border border-light-grey hover:bg-light-grey">
                   Wachtwoord wijzigen
@@ -345,8 +345,8 @@ const DashboardPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded">
-              <h3 className="text-lg font-semibold text-text-primary mb-6">Privacy</h3>
+            <div className="card-section">
+              <h3 className="text-xl font-semibold text-text-primary mb-4">Privacy</h3>
               <div className="space-y-3">
                 <Button variant="outline" size="sm" fullWidth className="text-text-primary border border-light-grey hover:bg-light-grey">
                   Privacyinstellingen
@@ -360,13 +360,13 @@ const DashboardPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded">
-              <h3 className="text-lg font-semibold text-text-primary mb-6">Abonnement</h3>
+            <div className="card-section">
+              <h3 className="text-xl font-semibold text-text-primary mb-4">Abonnement</h3>
               {user.isPremium ? (
                 <div className="space-y-3">
                   <div className="bg-turquoise/20 p-3 rounded-lg mb-3">
                     <p className="text-text-primary font-medium">Premium Abonnement Actief</p>
-                    <p className="text-text-secondary text-sm">Je hebt toegang tot alle premium functies</p>
+                    <p className="text-base text-text-secondary mb-4">Je hebt toegang tot alle premium functies</p>
                   </div>
                   <Button variant="outline" size="sm" fullWidth className="text-text-primary border border-light-grey hover:bg-light-grey">
                     Abonnement beheren
@@ -376,7 +376,7 @@ const DashboardPage: React.FC = () => {
                 <div className="space-y-3">
                   <div className="bg-light-grey p-3 rounded-lg mb-3">
                     <p className="text-text-primary font-medium">Basis Abonnement</p>
-                    <p className="text-text-secondary text-sm">Upgrade naar Premium voor meer functies</p>
+                    <p className="text-base text-text-secondary mb-4">Upgrade naar Premium voor meer functies</p>
                   </div>
                   <Button variant="primary" size="sm" fullWidth>
                     Upgrade naar Premium
@@ -386,12 +386,12 @@ const DashboardPage: React.FC = () => {
             </div>
             
             {/* Data source settings */}
-            <div className="bg-white p-6 rounded">
-              <h3 className="text-lg font-semibold text-text-primary mb-6">Databron</h3>
+            <div className="card-section">
+              <h3 className="text-xl font-semibold text-text-primary mb-4">Databron</h3>
               <div className="space-y-3">
                 <div className="bg-light-grey p-3 rounded-lg">
                   <p className="text-text-primary font-medium">Huidige databron</p>
-                  <p className="text-text-secondary text-sm flex items-center mt-1">
+                  <p className="text-base text-text-secondary flex items-center mt-1">
                     {dataSource === 'supabase' ? (
                       <>📦 Supabase</>
                     ) : dataSource === 'zalando' ? (
@@ -401,7 +401,7 @@ const DashboardPage: React.FC = () => {
                     )}
                   </p>
                 </div>
-                <p className="text-text-secondary text-xs">
+                <p className="text-base text-text-secondary mb-4">
                   De databron wordt automatisch bepaald op basis van beschikbaarheid.
                   Supabase heeft de hoogste prioriteit, gevolgd door Zalando en lokale data.
                 </p>
@@ -418,10 +418,10 @@ const DashboardPage: React.FC = () => {
       <div className="container-slim">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-h1 text-text-primary mb-8">
+          <h1 className="text-3xl font-bold text-text-primary mb-6">
             Welkom, {user.name.split(' ')[0]}
           </h1>
-          <p className="text-text-secondary">
+          <p className="text-base text-text-secondary mb-4">
             Je hebt {points} punten • {level} niveau • {streak} dagen streak
           </p>
         </div>

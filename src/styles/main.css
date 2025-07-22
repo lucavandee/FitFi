@@ -5,6 +5,14 @@
 @tailwind utilities;
 
 @layer utilities {
+  .quiz-container {
+    @apply bg-white text-text-primary max-w-md mx-auto p-8 rounded-lg shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-light-grey p-4 rounded mb-4 text-text-primary;
+  }
+  
   .input {
     @apply w-full p-6 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
   }
@@ -14,7 +22,7 @@
   }
   
   .btn-primary {
-    @apply bg-turquoise text-white py-3 px-6 rounded shadow-sm hover:bg-turquoise-dark focus:outline-none focus:ring-2 ring-turquoise transition-all;
+    @apply bg-turquoise text-white font-semibold py-3 px-6 rounded shadow-md hover:bg-turquoise-dark focus:ring-2 ring-turquoise transition-all;
   }
   
   .btn-secondary {
