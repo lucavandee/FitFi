@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Calendar, Star, ShoppingBag, Heart, RefreshCw, CheckCircle, Info, AlertTriangle, MessageSquare, ArrowRight, Loader } from "lucide-react";
+import { Calendar, Star, ShoppingBag, Heart, RefreshCw, CheckCircle, Info, AlertTriangle, MessageSquare, ArrowRight, Loader, ArrowLeft, Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Contexts
 import { useUser } from "../context/UserContext";
@@ -30,6 +30,165 @@ import { getOutfits, getRecommendedProducts, getDataSource } from "../services/D
 
 // Motion
 import { motion } from "framer-motion";
+
+// Mobile Carousel Component
+const MobileOutfitCarousel: React.FC<{ outfits: Outfit[]; onOutfitClick: (outfit: Outfit) => void; user: any }> = ({ 
+  outfits, 
+  onOutfitClick, 
+  user 
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentIndex < outfits.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+    if (isRightSwipe && currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const goToPrevious = () => {
+    setCurrentIndex(Math.max(0, currentIndex - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex(Math.min(outfits.length - 1, currentIndex + 1));
+  };
+
+  return (
+    <div className="relative">
+      <div 
+        className="overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div 
+          className="flex transition-transform duration-300 ease-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {outfits.map((outfit, index) => (
+            <div key={outfit.id} className="w-full flex-shrink-0 px-2">
+              <OutfitCard
+                outfit={outfit}
+                onNewLook={() => {}}
+                isGenerating={false}
+                user={user}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Navigation buttons */}
+      {outfits.length > 1 && (
+        <>
+          <button
+            onClick={goToPrevious}
+            disabled={currentIndex === 0}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full disabled:opacity-50"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={goToNext}
+            disabled={currentIndex === outfits.length - 1}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full disabled:opacity-50"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </>
+      )}
+      
+      {/* Dots indicator */}
+      {outfits.length > 1 && (
+        <div className="flex justify-center mt-4 space-x-2">
+          {outfits.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === currentIndex ? 'bg-[#FF8600]' : 'bg-white/30'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Progress Bar Component
+const ProgressBar: React.FC<{ progress: number; message: string }> = ({ progress, message }) => (
+  <div className="mb-6">
+    <div className="flex justify-between items-center mb-2">
+      <span className="text-sm text-white/80">{message}</span>
+      <span className="text-sm text-white/60">{Math.round(progress)}%</span>
+    </div>
+    <div className="w-full bg-white/10 rounded-full h-1">
+      <motion.div
+        className="bg-gradient-to-r from-[#FF8600] to-[#0ea5e9] h-1 rounded-full"
+        initial={{ width: 0 }}
+        animate={{ width: `${progress}%` }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      />
+    </div>
+  </div>
+);
+
+// Sticky Footer Component
+const StickyFooter: React.FC<{ 
+  onSaveFavorites: () => void;
+  onRetakeQuiz: () => void;
+  onShopTop3: () => void;
+}> = ({ onSaveFavorites, onRetakeQuiz, onShopTop3 }) => (
+  <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/95 backdrop-blur-md border-t border-white/10 py-3 z-50">
+    <div className="container-slim">
+      <div className="flex justify-between items-center gap-3">
+        <button
+          onClick={onSaveFavorites}
+          className="flex items-center space-x-2 px-4 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors"
+        >
+          <Bookmark size={16} />
+          <span className="hidden sm:inline">Sla favorieten op</span>
+        </button>
+        
+        <button
+          onClick={onRetakeQuiz}
+          className="flex items-center space-x-2 px-4 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors"
+        >
+          <RefreshCw size={16} />
+          <span className="hidden sm:inline">Quiz opnieuw</span>
+        </button>
+        
+        <button
+          onClick={onShopTop3}
+          className="flex items-center space-x-2 px-4 py-2 bg-[#FF8600] text-white rounded-full hover:bg-orange-600 transition-colors"
+        >
+          <ShoppingBag size={16} />
+          <span>Shop top 3</span>
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 const EnhancedResultsPage = () => {
   // Component for showing loading state when no results are found
@@ -72,6 +231,11 @@ const EnhancedResultsPage = () => {
   const [fetchStatus, setFetchStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'fallback'>('idle');
   const [debugInfo, setDebugInfo] = useState<any>({});
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
+  
+  // New states for enhanced UX
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState("Stijlprofiel analyseren...");
+  const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
   
   // Maximum number of regenerations per session
   const MAX_REGENERATIONS = 5;
@@ -127,13 +291,17 @@ const EnhancedResultsPage = () => {
   const loadRecommendations = useCallback(async () => {
     // Prevent concurrent fetching
     if (isFetching) {
-      console.log('[🔒 EnhancedResultsPage] Already fetching, skipping duplicate request');
+      if (env.DEBUG_MODE) {
+        console.log('[🔒 EnhancedResultsPage] Already fetching, skipping duplicate request');
+      }
       return;
     }
     
     // Safety check for enhancedUser
     if (!enhancedUser || !enhancedUser.id) {
-      console.error('[❌ EnhancedResultsPage] Invalid enhancedUser, cannot load recommendations');
+      if (env.DEBUG_MODE) {
+        console.error('[❌ EnhancedResultsPage] Invalid enhancedUser, cannot load recommendations');
+      }
       setError('Gebruikersgegevens ontbreken. Probeer opnieuw.');
       setLoading(false);
       setProductsLoading(false);
@@ -142,8 +310,10 @@ const EnhancedResultsPage = () => {
       return;
     }
     
-    console.log('[🔍 EnhancedResultsPage] Starting loadRecommendations');
-    console.log('[🔍 EnhancedResultsPage] enhancedUser at start:', enhancedUser);
+    if (env.DEBUG_MODE) {
+      console.log('[🔍 EnhancedResultsPage] Starting loadRecommendations');
+      console.log('[🔍 EnhancedResultsPage] enhancedUser at start:', enhancedUser);
+    }
     
     setIsFetching(true);
     setFetchStatus('loading');
@@ -151,6 +321,8 @@ const EnhancedResultsPage = () => {
     setProductsLoading(true);
     setOutfitsLoading(true);
     setError(null);
+    setLoadingProgress(0);
+    setLoadingMessage("Stijlprofiel analyseren...");
     
     // Update debug info
     setDebugInfo({
@@ -167,8 +339,14 @@ const EnhancedResultsPage = () => {
     try {
       // Get current season
       const season = (onboardingData && onboardingData.season) ? mapSeasonToEnglish(onboardingData.season) : getCurrentSeason();
-      console.log('[🔍 EnhancedResultsPage] Using season:', season);
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] Using season:', season);
+      }
       setCurrentSeason(season);
+      
+      // Update progress
+      setLoadingProgress(25);
+      setLoadingMessage("Outfits samenstellen...");
       
       // Get outfits using the DataRouter with onboarding preferences
       const options = {
@@ -178,7 +356,9 @@ const EnhancedResultsPage = () => {
         variationLevel: 'high' as const
       };
       
-      console.log('[🔍 EnhancedResultsPage] Calling getOutfits with options:', options);
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] Calling getOutfits with options:', options);
+      }
       
       let generatedOutfits: Outfit[] = [];
       try {
@@ -188,18 +368,32 @@ const EnhancedResultsPage = () => {
         generatedOutfits = [];
       }
       
-      console.log('[🧠 getOutfits result]', generatedOutfits);
+      if (env.DEBUG_MODE) {
+        console.log('[🧠 getOutfits result]', generatedOutfits);
+      }
+      
+      // Update progress
+      setLoadingProgress(60);
+      setLoadingMessage("Producten selecteren...");
       
       // Check if outfits were generated, use fallback if empty
       if (!Array.isArray(generatedOutfits) || generatedOutfits.length === 0) {
-        console.warn('[⚠️ EnhancedResultsPage] No outfits generated, using fallback mock outfits');
-        setError('Geen outfits gevonden. We tonen voorbeelddata.');
+        if (env.DEBUG_MODE) {
+          console.warn('[⚠️ EnhancedResultsPage] No outfits generated, using fallback mock outfits');
+        }
+        if (!env.USE_MOCK_DATA) {
+          setError('Geen outfits gevonden. We tonen voorbeelddata.');
+        }
         setFetchStatus('fallback');
         const fallbackOutfits = generateMockOutfits(3);
-        console.log('[🔍 EnhancedResultsPage] Using fallback outfits:', fallbackOutfits);
+        if (env.DEBUG_MODE) {
+          console.log('[🔍 EnhancedResultsPage] Using fallback outfits:', fallbackOutfits);
+        }
         setOutfits(fallbackOutfits);
       } else {
-        console.log('[🔍 EnhancedResultsPage] Setting generated outfits:', generatedOutfits);
+        if (env.DEBUG_MODE) {
+          console.log('[🔍 EnhancedResultsPage] Setting generated outfits:', generatedOutfits);
+        }
         setOutfits(generatedOutfits);
         setFetchStatus('success');
       }
@@ -210,7 +404,14 @@ const EnhancedResultsPage = () => {
       const outfitIds = outfitsToTrack.map(outfit => outfit?.id).filter(Boolean);
       setShownOutfitIds(outfitIds);
       
-      console.log('[🔍 EnhancedResultsPage] Calling getRecommendedProducts');
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] Calling getRecommendedProducts');
+      }
+      
+      // Update progress
+      setLoadingProgress(80);
+      setLoadingMessage("Aanbevelingen personaliseren...");
+      
       // Get recommended individual products
       let recommendedProducts: Product[] = [];
       try {
@@ -220,25 +421,39 @@ const EnhancedResultsPage = () => {
         recommendedProducts = [];
       }
       
-      console.log('[🧠 getRecommendedProducts result]', recommendedProducts);
+      if (env.DEBUG_MODE) {
+        console.log('[🧠 getRecommendedProducts result]', recommendedProducts);
+      }
       
       // Check if products were found, use fallback if empty
       if (!Array.isArray(recommendedProducts) || recommendedProducts.length === 0) {
-        console.warn('[⚠️ EnhancedResultsPage] No products found, using fallback mock products');
+        if (env.DEBUG_MODE) {
+          console.warn('[⚠️ EnhancedResultsPage] No products found, using fallback mock products');
+        }
         setFetchStatus('fallback');
         const fallbackProducts = generateMockProducts(undefined, 9);
-        console.log('[🔍 EnhancedResultsPage] Using fallback products:', fallbackProducts);
+        if (env.DEBUG_MODE) {
+          console.log('[🔍 EnhancedResultsPage] Using fallback products:', fallbackProducts);
+        }
         setMatchedProducts(fallbackProducts);
       } else {
-        console.log('[🔍 EnhancedResultsPage] Setting recommended products:', recommendedProducts);
+        if (env.DEBUG_MODE) {
+          console.log('[🔍 EnhancedResultsPage] Setting recommended products:', recommendedProducts);
+        }
         setMatchedProducts(recommendedProducts);
       }
       setProductsLoading(false);
       
+      // Complete progress
+      setLoadingProgress(100);
+      setLoadingMessage("Voltooid!");
+      
       // Get the data source being used
       setDataSource(getDataSource());
       
-      console.log('[🔍 EnhancedResultsPage] Final state - outfits:', (Array.isArray(generatedOutfits) ? generatedOutfits.length : 0), 'products:', (Array.isArray(recommendedProducts) ? recommendedProducts.length : 0));
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] Final state - outfits:', (Array.isArray(generatedOutfits) ? generatedOutfits.length : 0), 'products:', (Array.isArray(recommendedProducts) ? recommendedProducts.length : 0));
+      }
       
       // Track page view with outfit data
       if (typeof window.gtag === 'function') {
@@ -258,19 +473,25 @@ const EnhancedResultsPage = () => {
       try {
         viewRecommendation();
       } catch (gamificationError) {
-        console.warn('[⚠️ EnhancedResultsPage] Gamification error:', gamificationError);
+        if (env.DEBUG_MODE) {
+          console.warn('[⚠️ EnhancedResultsPage] Gamification error:', gamificationError);
+        }
       }
       
     } catch (err) {
       console.error('Error generating recommendations:', err);
-      setError('Er is een fout opgetreden. We tonen voorbeelddata.');
+      setError('Er ging iets mis bij het laden van je aanbevelingen. Probeer opnieuw.');
       setFetchStatus('error');
       
       // Use fallback data when there's an error
-      console.warn('[⚠️ EnhancedResultsPage] Using fallback data due to error');
+      if (env.DEBUG_MODE) {
+        console.warn('[⚠️ EnhancedResultsPage] Using fallback data due to error');
+      }
       const fallbackOutfits = generateMockOutfits(3);
       const fallbackProducts = generateMockProducts(undefined, 9);
-      console.log('[🔍 EnhancedResultsPage] Error fallback - outfits:', fallbackOutfits, 'products:', fallbackProducts);
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] Error fallback - outfits:', fallbackOutfits, 'products:', fallbackProducts);
+      }
       
       setOutfits(fallbackOutfits);
       setMatchedProducts(fallbackProducts);
@@ -279,7 +500,9 @@ const EnhancedResultsPage = () => {
       setOutfitsLoading(false);
       setDataSource(getDataSource());
     } finally {
-      console.log('[🔍 EnhancedResultsPage] loadRecommendations completed');
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] loadRecommendations completed');
+      }
       setIsFetching(false);
       setLoading(false);
     }
@@ -288,17 +511,66 @@ const EnhancedResultsPage = () => {
   // Generate recommendations on component mount - only once
   useEffect(() => {
     if (!hasInitialized && enhancedUser?.id && !isFetching) {
-      console.log('[🔍 EnhancedResultsPage] Initial load triggered');
+      if (env.DEBUG_MODE) {
+        console.log('[🔍 EnhancedResultsPage] Initial load triggered');
+      }
       setHasInitialized(true);
       loadRecommendations();
     }
   }, [hasInitialized, enhancedUser?.id, isFetching, loadRecommendations]);
 
+  // Sticky footer handlers
+  const handleSaveFavorites = () => {
+    const outfitIds = outfits.map(outfit => outfit.id);
+    setSavedOutfits(prev => [...new Set([...prev, ...outfitIds])]);
+    
+    // Track save action
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'save_favorites', {
+        event_category: 'engagement',
+        event_label: 'results_page',
+        value: outfitIds.length
+      });
+    }
+    
+    alert(`${outfitIds.length} outfits opgeslagen!`);
+  };
+
+  const handleRetakeQuiz = () => {
+    // Track retake action
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'retake_quiz', {
+        event_category: 'engagement',
+        event_label: 'results_page'
+      });
+    }
+    
+    navigate('/onboarding');
+  };
+
+  const handleShopTop3 = () => {
+    // Track shop action
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'shop_top3', {
+        event_category: 'ecommerce',
+        event_label: 'results_page',
+        value: outfits.length
+      });
+    }
+    
+    // Open first outfit's first product or show shopping modal
+    if (outfits.length > 0 && outfits[0].products && outfits[0].products.length > 0) {
+      window.open(outfits[0].products[0].url || '#', '_blank', 'noopener,noreferrer');
+    }
+  };
+
   // Handle product click
   const handleProductClick = (product: Product) => {
     // Safety check for product
     if (!product || !product.id) {
-      console.warn('[⚠️ EnhancedResultsPage] Invalid product clicked:', product);
+      if (env.DEBUG_MODE) {
+        console.warn('[⚠️ EnhancedResultsPage] Invalid product clicked:', product);
+      }
       return;
     }
     
@@ -324,7 +596,9 @@ const EnhancedResultsPage = () => {
   const handleOutfitClick = (outfit: Outfit) => {
     // Safety check for outfit
     if (!outfit || !outfit.id) {
-      console.warn('[⚠️ EnhancedResultsPage] Invalid outfit clicked:', outfit);
+      if (env.DEBUG_MODE) {
+        console.warn('[⚠️ EnhancedResultsPage] Invalid outfit clicked:', outfit);
+      }
       return;
     }
     
@@ -444,6 +718,34 @@ const EnhancedResultsPage = () => {
     return seasonMap[dutchSeason] || 'autumn';
   };
   
+  // Get season display name
+  const getSeasonDisplayName = (season: string): string => {
+    const seasonNames: Record<string, string> = {
+      'spring': 'Lenteselectie',
+      'summer': 'Zomerselectie',
+      'autumn': 'Herfstselectie',
+      'winter': 'Winterselectie'
+    };
+    
+    return seasonNames[season] || 'Seizoensselectie';
+  };
+  
+  // Get occasion display name
+  const getOccasionDisplayName = (occasions: string[]): string => {
+    if (!occasions || occasions.length === 0) return '';
+    
+    const occasionNames: Record<string, string> = {
+      'werk': 'Business casual',
+      'casual': 'Casual',
+      'date': 'Date night',
+      'feest': 'Feest',
+      'sport': 'Sportief',
+      'vakantie': 'Vakantie'
+    };
+    
+    return occasions.map(occ => occasionNames[occ] || occ).join(', ');
+  };
+  
   // Empty state component for when no results are found
   const EmptyResultsState: React.FC = () => (
     <div className="text-center py-12">
@@ -464,12 +766,13 @@ const EnhancedResultsPage = () => {
               setHasInitialized(false);
               loadRecommendations();
             }}
+            setError(null);
             icon={<RefreshCw size={16} />}
             iconPosition="left"
             disabled={isFetching}
           >
             {isFetching ? 'Laden...' : 'Probeer opnieuw'}
-          </Button>
+          {isFetching ? 'Laden...' : 'Probeer opnieuw'}
           <Button
             variant="outline"
             onClick={() => navigate('/onboarding')}
@@ -518,6 +821,9 @@ const EnhancedResultsPage = () => {
       <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B] py-12">
         <div className="container-slim">
           <div className="max-w-5xl mx-auto px-4">
+            {/* Progress bar */}
+            <ProgressBar progress={loadingProgress} message={loadingMessage} />
+            
             {/* Enhanced loading indicator */}
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
               <div className="relative">
@@ -527,7 +833,7 @@ const EnhancedResultsPage = () => {
                 </div>
               </div>
               <h2 className="text-2xl font-bold text-white mb-3">
-                Je aanbevelingen worden geladen...
+                {loadingMessage}
               </h2>
               <p className="text-white/70 text-center max-w-md mb-6">
                 Onze AI analyseert je voorkeuren en stelt de perfecte outfits voor je samen.
@@ -536,16 +842,20 @@ const EnhancedResultsPage = () => {
               {/* Progress steps */}
               <div className="space-y-2 text-sm text-white/60">
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-[#FF8600] rounded-full mr-2 animate-pulse"></div>
-                  <span>Stijlprofiel analyseren...</span>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${loadingProgress >= 25 ? 'bg-[#FF8600]' : 'bg-white/30'} ${loadingProgress < 25 ? 'animate-pulse' : ''}`}></div>
+                  <span>Stijlprofiel analyseren</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-white/30 rounded-full mr-2"></div>
-                  <span>Outfits samenstellen...</span>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${loadingProgress >= 60 ? 'bg-[#FF8600]' : 'bg-white/30'} ${loadingProgress >= 25 && loadingProgress < 60 ? 'animate-pulse' : ''}`}></div>
+                  <span>Outfits samenstellen</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-white/30 rounded-full mr-2"></div>
-                  <span>Producten selecteren...</span>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${loadingProgress >= 80 ? 'bg-[#FF8600]' : 'bg-white/30'} ${loadingProgress >= 60 && loadingProgress < 80 ? 'animate-pulse' : ''}`}></div>
+                  <span>Producten selecteren</span>
+                </div>
+                <div className="flex items-center">
+                  <div className={`w-2 h-2 rounded-full mr-2 ${loadingProgress >= 100 ? 'bg-[#FF8600]' : 'bg-white/30'} ${loadingProgress >= 80 && loadingProgress < 100 ? 'animate-pulse' : ''}`}></div>
+                  <span>Aanbevelingen personaliseren</span>
                 </div>
               </div>
             </div>
@@ -598,7 +908,7 @@ const EnhancedResultsPage = () => {
                 <AlertTriangle size={32} />
               </div>
               <h2 className="text-2xl font-bold text-white mb-4">
-                Oeps! Er is iets misgegaan
+                Er ging iets mis
               </h2>
               <p className="text-white/80 mb-6">
                 {error}
@@ -627,7 +937,7 @@ const EnhancedResultsPage = () => {
               </div>
             </div>
           </div>
-          <DebugOverlay />
+          {env.DEBUG_MODE && <DebugOverlay />}
         </div>
       </div>
     );
@@ -698,7 +1008,7 @@ const EnhancedResultsPage = () => {
                     </div>
                   </div>
                 </div>
-                <DebugOverlay />
+                {env.DEBUG_MODE && <DebugOverlay />}
               </motion.div>
             )}
       
@@ -778,9 +1088,9 @@ const EnhancedResultsPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="mb-12"
+                className="mb-12 bg-gray-50/5 rounded-2xl p-6"
               >
-                <h2 className="text-2xl font-bold text-white mb-6">Complete outfits voor jou</h2>
+                <h2 className="text-2xl font-bold text-white mb-6">Jouw top 3 outfits</h2>
       
                 {outfitsLoading ? (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -797,25 +1107,39 @@ const EnhancedResultsPage = () => {
                     ))}
                   </div>
                 ) : outfits.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[400px]">
-                    {outfits.map((outfit, index) => {
-                      try {
-                        return (
-                          <motion.div key={outfit.id || `fallback-${index}`}>
-                            <OutfitCard
-                              outfit={outfit}
-                              onNewLook={() => handleRegenerateOutfit(index)}
-                              isGenerating={isRegenerating}
-                              user={enhancedUser}
-                            />
-                          </motion.div>
-                        );
-                      } catch (error) {
-                        console.error(`[❌ EnhancedResultsPage] Error rendering outfit ${index}:`, error);
-                        return null;
-                      }
-                    })}
-                  </div>
+                  <>
+                    {/* Desktop grid */}
+                    <div className="hidden md:grid md:grid-cols-3 gap-6 min-h-[400px]">
+                      {outfits.map((outfit, index) => {
+                        try {
+                          return (
+                            <motion.div key={outfit.id || `fallback-${index}`}>
+                              <OutfitCard
+                                outfit={outfit}
+                                onNewLook={() => handleRegenerateOutfit(index)}
+                                isGenerating={isRegenerating}
+                                user={enhancedUser}
+                              />
+                            </motion.div>
+                          );
+                        } catch (error) {
+                          if (env.DEBUG_MODE) {
+                            console.error(`[❌ EnhancedResultsPage] Error rendering outfit ${index}:`, error);
+                          }
+                          return null;
+                        }
+                      })}
+                    </div>
+                    
+                    {/* Mobile carousel */}
+                    <div className="md:hidden">
+                      <MobileOutfitCarousel 
+                        outfits={outfits}
+                        onOutfitClick={handleOutfitClick}
+                        user={enhancedUser}
+                      />
+                    </div>
+                  </>
                 ) : (
                   <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
                 )}
@@ -828,9 +1152,9 @@ const EnhancedResultsPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="mb-16"
+                className="mb-16 bg-white/5 rounded-2xl p-6"
               >
-                <h2 className="text-2xl font-bold text-white mb-6">Individuele items voor jou</h2>
+                <h2 className="text-2xl font-bold text-white mb-6">Aanbevolen producten</h2>
       
                 {productsLoading ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -853,7 +1177,9 @@ const EnhancedResultsPage = () => {
                     {matchedProducts.map((product, index) => {
                       try {
                         if (!product || !product.id) {
-                          console.warn(`[⚠️ EnhancedResultsPage] Invalid product at index ${index}:`, product);
+                          if (env.DEBUG_MODE) {
+                            console.warn(`[⚠️ EnhancedResultsPage] Invalid product at index ${index}:`, product);
+                          }
                           return null;
                         }
                   
@@ -861,15 +1187,51 @@ const EnhancedResultsPage = () => {
                         return (
                           <motion.div
                             key={normalizedProduct.id || `product-${index}`}
-                            // ... motion props
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
                             className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
                             onClick={() => handleProductClick(product)}
                           >
-                            {/* ... product card content ... */}
+                            <div className="relative h-48">
+                              <img 
+                                src={normalizedProduct.imageUrl || '/placeholder.png'} 
+                                alt={normalizedProduct.name}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute top-2 right-2 bg-white/80 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+                                {normalizedProduct.category || normalizedProduct.type}
+                              </div>
+                            </div>
+                            
+                            <div className="p-4">
+                              <h3 className="font-bold text-white mb-1 truncate">{normalizedProduct.name}</h3>
+                              <p className="text-sm text-white/70 mb-3">{normalizedProduct.brand || 'Onbekend merk'}</p>
+                              
+                              <div className="flex justify-between items-center">
+                                <span className="text-lg font-bold text-white">
+                                  €{typeof normalizedProduct.price === 'number' ? normalizedProduct.price.toFixed(2) : '0.00'}
+                                </span>
+                                <Button 
+                                  variant="primary" 
+                                  size="sm"
+                                  icon={<ShoppingBag size={14} />}
+                                  iconPosition="left"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleProductClick(product);
+                                  }}
+                                >
+                                  Bekijk
+                                </Button>
+                              </div>
+                            </div>
                           </motion.div>
                         );
                       } catch (error) {
-                        console.error(`[❌ EnhancedResultsPage] Error rendering product ${index}:`, error);
+                        if (env.DEBUG_MODE) {
+                          console.error(`[❌ EnhancedResultsPage] Error rendering product ${index}:`, error);
+                        }
                         return null;
                       }
                     })}
@@ -905,7 +1267,7 @@ const EnhancedResultsPage = () => {
             )}
         
             {/* Mock data warning */}
-            {env.USE_MOCK_DATA && (outfits.length > 0 || matchedProducts.length > 0) && (
+            {env.USE_MOCK_DATA && env.DEBUG_MODE && (outfits.length > 0 || matchedProducts.length > 0) && (
               <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
                 <div className="flex items-center">
                   <AlertTriangle size={16} className="mr-2" />
@@ -916,39 +1278,17 @@ const EnhancedResultsPage = () => {
           </div> {/* Dit sluit de 'max-w-5xl\' div */}
         </div> {/* Dit sluit de 'container-slim\' div */}
     
-        {/* Sticky CTA footer */}
+        {/* Sticky Footer */}
         {(outfits.length > 0 || matchedProducts.length > 0) && (
-          <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
-            <div className="container-slim">
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="flex items-center">
-                  <MessageSquare size={20} className="text-[#89CFF0] mr-2" />
-                  <span className="text-white font-medium">Niet tevreden met de resultaten?</span>
-                </div>
-                <div className="flex space-x-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate('/feedback')}
-                    className="text-white border border-white/30 hover:bg-white/10"
-                  >
-                    Geef feedback
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() => navigate('/onboarding')}
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                  >
-                    Nieuwe stijlscan
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <StickyFooter
+            onSaveFavorites={handleSaveFavorites}
+            onRetakeQuiz={handleRetakeQuiz}
+            onShopTop3={handleShopTop3}
+          />
         )}
     
         {/* ✅ Central Debug Overlay */}
-        {(env.DEBUG_MODE || env.USE_MOCK_DATA) && <DebugOverlay />}
+        {env.DEBUG_MODE && <DebugOverlay />}
       </div>
     </ErrorBoundary>
   );

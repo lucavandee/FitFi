@@ -88,7 +88,9 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         setExplanation(generatedExplanation);
         
         // Log the generated explanation
-        console.log(`Generated explanation for outfit ${outfit.id}:`, generatedExplanation);
+        if (import.meta.env.DEV) {
+          console.log(`Generated explanation for outfit ${outfit.id}:`, generatedExplanation);
+        }
         
         // Track explanation generation in analytics
         if (typeof window.gtag === 'function') {
