@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/ui/LoadingFallback';
@@ -145,10 +145,10 @@ function App() {
                       
                       {/* Catch-all route for 404 */}
                       <Route path="*" element={
-                        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                        <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
                           <div className="text-center">
-                            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">404</h1>
-                            <p className="text-gray-600 dark:text-gray-400 mb-6">Pagina niet gevonden</p>
+                            <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">404</h1>
+                            <p className="mb-6 text-gray-600 dark:text-gray-400">Pagina niet gevonden</p>
                             <Link to="/" className="text-orange-500 hover:text-orange-600">Terug naar home</Link>
                           </div>
                         </div>
@@ -164,7 +164,7 @@ function App() {
                       
                       <Route path="/dashboard/*" element={
                         <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Dashboard laden..." fullScreen />}>
+                          <Suspense fallback={<LoadingFallback fullScreen message="Dashboard laden..." />}>
                             <DashboardPage />
                           </Suspense>
                         </ErrorBoundary>
