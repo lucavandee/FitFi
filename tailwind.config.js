@@ -9,16 +9,19 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // FitFi Brand Design Tokens
-        midnight: '#0D1B2A',       // brand background
-        turquoise: '#89CFF0',      // primary accent & CTA
-        'turquoise-dark': '#6BB6D6', // hover state for turquoise
-        lightGrey: '#F6F6F6',      // card backgrounds → .bg-light-grey
-        cardWhite: '#FFFFFF',      // card headers/modals → .bg-card-white
-        textPrimary: '#0D1B2A',    // headings → .text-text-primary
-        textSecondary: '#333333',  // body text → .text-text-secondary
+        // FitFi Unified Color Palette
+        midnight:        '#0D1B2A',
+        turquoise:       '#89CFF0',
+        'turquoise-dark':'#6FB8D1',
+        'light-grey':    '#F6F6F6',
+        white:           '#FFFFFF',
+        'text-primary':  '#0D1B2A',
+        'text-secondary':'#333333',
+        'error-red':     '#E03E3E',
+        'success-green': '#22C55E',
+        'info-blue':     '#3B82F6',
         
-        // Extended palette for dark mode and variations
+        // Extended midnight palette for dark mode
         midnight: {
           50: '#f0f4f8',
           100: '#d9e2ec',
@@ -32,6 +35,7 @@ export default {
           900: '#102a43',
           950: '#0D1B2A', // Primary midnight
         },
+        // Extended turquoise palette
         turquoise: {
           50: '#f0fdfa',
           100: '#ccfbf1',
@@ -45,7 +49,8 @@ export default {
           900: '#134e4a',
           950: '#042f2e',
         },
-        lightGrey: {
+        // Extended light-grey palette
+        'light-grey': {
           50: '#F6F6F6', // Primary lightGrey
           100: '#f1f5f9',
           200: '#e2e8f0',
