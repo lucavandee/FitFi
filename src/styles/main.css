@@ -5,6 +5,17 @@
 @tailwind utilities;
 
 @layer utilities {
+  /* Ring utilities for focus states */
+  .ring-turquoise {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(137 207 240 / var(--tw-ring-opacity));
+  }
+  
+  .focus\:ring-turquoise:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(137 207 240 / var(--tw-ring-opacity));
+  }
+  
   /* Custom text utilities */
   .text-text-secondary {
     --tw-text-opacity: 1;
