@@ -196,6 +196,13 @@ const QuizPage: React.FC = () => {
     console.log('[QuizPage] handleSubmit called with answers:', answers);
     
     try {
+      // Ensure we have season and occasion data
+      const finalAnswers = {
+        ...answers,
+        season: answers.season || 'herfst', // Default to autumn
+        occasion: answers.occasion || ['Casual'] // Default to casual
+      };
+      
       if (user) {
         await updateProfile({
           stylePreferences: {
@@ -214,20 +221,20 @@ const QuizPage: React.FC = () => {
       }
       
       console.log('[QuizPage] Navigating to results with enhanced UX');
-      await navigationService.navigateToResults(answers, {
+      await navigationService.navigateToResults(finalAnswers, {
         loadingMessage: 'Je stijlprofiel wordt gemaakt...',
         onStart: () => console.log('[QuizPage] Navigation started'),
         onComplete: () => console.log('[QuizPage] Navigation completed'),
         onError: (error) => {
           console.error('[QuizPage] Navigation error:', error);
           // Fallback navigation
-          navigate('/results', { state: { answers } });
+          navigate('/results', { state: { answers: finalAnswers } });
         }
       });
     } catch (error) {
       console.error('[QuizPage] Error in handleSubmit:', error);
       // Emergency fallback
-      navigate('/results', { state: { answers } });
+      navigate('/results', { state: { answers: finalAnswers } });
     }
   };
 

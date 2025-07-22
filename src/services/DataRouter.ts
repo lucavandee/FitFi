@@ -331,11 +331,19 @@ export async function getOutfits(
     return generateMockOutfits(options?.count || 3);
   }
   
+  // Ensure options have defaults
+  const safeOptions = {
+    ...options,
+    preferredSeasons: options?.preferredSeasons || ['autumn'],
+    preferredOccasions: options?.preferredOccasions || ['Casual'],
+    count: options?.count || 3
+  };
+  
   // Reset diagnostics
   resetDiagnostics('getOutfits');
   
   // Generate cache key
-  const cacheKey = `outfits-${user.id}-${JSON.stringify(options || {})}`;
+  const cacheKey = `outfits-${user.id}-${JSON.stringify(safeOptions)}`;
   
   // Check cache first if caching is enabled
   if (FEATURES.caching) {
@@ -375,7 +383,7 @@ export async function getOutfits(
         
         // Generate outfits
         const outfits = await generateRecommendations(user, {
-          ...options,
+          ...safeOptions,
           useZalandoProducts: false
         });
         
@@ -427,7 +435,7 @@ export async function getOutfits(
           console.log(`[🧠 DataRouter] First outfit:`, {
             id: boltOutfits[0].id,
             title: boltOutfits[0].title,
-            products: boltOutfits[0].products?.length || 0,
+            ...safeOptions,
             matchPercentage: boltOutfits[0].matchPercentage
           });
         }
