@@ -28,8 +28,6 @@ import { getCurrentSeason, getDutchSeasonName } from "../engine/helpers";
 // Services
 import { getOutfits, getRecommendedProducts, getDataSource } from "../services/DataRouter";
 
-import { Calendar, Star, ShoppingBag, Heart, RefreshCw, CheckCircle, Info, AlertTriangle, MessageSquare, ArrowRight } from "lucide-react";
-
 // Motion
 import { motion } from "framer-motion";
 
