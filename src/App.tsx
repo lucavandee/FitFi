@@ -10,7 +10,7 @@ import { OnboardingProvider } from './context/OnboardingContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/ui/LoadingFallback';
 import NavigationProgress from './components/ui/NavigationProgress';
-import { navigationService } from './services/NavigationService';
+import NavigationServiceInitializer from './components/NavigationServiceInitializer';
 
 // Import regular components
 import HomePage from './pages/HomePage';
@@ -33,17 +33,6 @@ import FeedbackPage from './pages/FeedbackPage';
 import LegalPage from './pages/LegalPage';
 
 // Lazy load the dashboard page to improve initial load time
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
-
-
-// Lazy load onboarding steps
-const LazyGenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
-const LazyArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
-const LazyResultsStep = React.lazy(() => import('./pages/onboarding/ResultsStep'));
-const LazySeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
-const LazyOccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
-const LazyPreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
-
 function App() {
   return (
     <ThemeProvider>
