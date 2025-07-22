@@ -32,6 +32,7 @@ const QuizPage: React.FC = () => {
   const { step } = useParams<{ step: string }>();
   const navigate = useNavigate();
   const { user, updateProfile } = useUser();
+  const { data, updateData } = useOnboarding();
   const navigationService = useNavigationService();
   
   const currentQuestionIndex = parseInt(step || '1') - 1;
@@ -256,12 +257,36 @@ const QuizPage: React.FC = () => {
     console.log('[QuizPage] handleSubmit called with answers:', answers);
     
     try {
-      // Ensure we have season and occasion data
+      // 1.a Validate final answers with explicit defaults
+      const finalSeason = answers.season || smartDefaults?.season || 'herfst';
+      const finalOccasion = answers.occasion || smartDefaults?.occasions || ['Casual'];
+      const finalArchetype = answers.style || smartDefaults?.archetype || 'casual_chic';
+      
+      console.debug('[QuizPage] Final validated answers:', {
+        season: finalSeason,
+        occasion: finalOccasion,
+        archetype: finalArchetype
+      });
+      
       const finalAnswers = {
         ...answers,
-        season: answers.season || smartDefaults?.season || 'herfst',
-        occasion: answers.occasion || smartDefaults?.occasions || ['Casual']
+        season: finalSeason,
+        occasion: finalOccasion,
+        style: finalArchetype
       };
+      
+      // 1.b Persist to context and progressPersistence
+      console.debug('[QuizPage] Persisting final data to context');
+      updateData({
+        gender: data.gender || 'vrouw',
+        archetypes: [finalArchetype],
+        season: finalSeason,
+        occasions: Array.isArray(finalOccasion) ? finalOccasion : [finalOccasion]
+      });
+      
+      // Save to progress persistence
+      saveQuizProgress(questions.length, questions.length, finalAnswers);
+      console.debug('[QuizPage] Saved to progress persistence');
       
       if (user) {
         await updateProfile({
@@ -284,17 +309,22 @@ const QuizPage: React.FC = () => {
       // Clear saved progress since quiz is complete
       clearQuizProgress();
       
-      console.log('[QuizPage] Navigating to results with enhanced UX');
-      await navigationService.navigateToResults(finalAnswers, {
-        loadingMessage: 'Je stijlprofiel wordt gemaakt...',
-        onStart: () => console.log('[QuizPage] Navigation started'),
-        onComplete: () => console.log('[QuizPage] Navigation completed'),
-        onError: (error) => {
-          console.error('[QuizPage] Navigation error:', error);
-          // Fallback navigation
-          navigate('/results', { state: { answers: finalAnswers } });
-        }
-      });
+      // Use setTimeout to allow async state updates before redirect
+      console.debug('[QuizPage] Triggering navigation after state update delay');
+      setTimeout(() => {
+        console.debug('[QuizPage] Navigating to results with enhanced UX');
+        navigationService.navigateToResults(finalAnswers, {
+          loadingMessage: 'Je stijlprofiel wordt gemaakt...',
+          onStart: () => console.debug('[QuizPage] Navigation started'),
+          onComplete: () => console.debug('[QuizPage] Navigation completed'),
+          onError: (error) => {
+            console.error('[QuizPage] Navigation error:', error);
+            // Fallback navigation
+            navigate('/results', { state: { answers: finalAnswers } });
+          }
+        });
+      }, 50);
+      
     } catch (error) {
       console.error('[QuizPage] Error in handleSubmit:', error);
       // Emergency fallback
