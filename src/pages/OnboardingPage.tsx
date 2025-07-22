@@ -42,20 +42,32 @@ const OnboardingPage: React.FC = () => {
     if (isButtonClicked) return;
     setIsButtonClicked(true);
 
-    console.log('[🔍 OnboardingPage] Skip clicked → fallback onboarding data en navigeren naar /results');
+    console.log('[🔍 OnboardingPage] Skip clicked → setting fallback onboarding data');
 
-const fallbackUser = {
-  id: 'skip-mode',
-  name: 'Stijlzoeker',
-  gender: 'female',
-  archetypes: ['casual_chic'],
-  season: 'herfst',
-  occasions: ['Casual']
-};
+    try {
+      const fallbackUser = {
+        id: 'skip-mode',
+        name: 'Stijlzoeker',
+        gender: 'vrouw',
+        archetypes: ['casual_chic'],
+        season: 'herfst',
+        occasions: ['Casual']
+      };
 
-updateData(fallbackUser);
-localStorage.setItem('fitfi-user', JSON.stringify(fallbackUser));
-navigate('/results');
+      console.log('[🔍 OnboardingPage] Setting fallback data:', fallbackUser);
+      updateData(fallbackUser);
+      localStorage.setItem('fitfi-user', JSON.stringify(fallbackUser));
+      
+      console.log('[🔍 OnboardingPage] Navigating to results with fallback data');
+      setTimeout(() => {
+        navigate('/results', { state: { onboardingData: fallbackUser } });
+      }, 300);
+      
+    } catch (error) {
+      console.error('[🔍 OnboardingPage] Error in skip flow:', error);
+      // Fallback to direct navigation
+      navigate('/results');
+    }
 
   };
 

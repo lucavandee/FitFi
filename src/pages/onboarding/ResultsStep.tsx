@@ -134,7 +134,16 @@ const ResultsStep: React.FC = () => {
   
   // Handle submit
   const handleSubmit = async () => {
-    await submitOnboarding();
+    console.log('[ResultsStep] Submit clicked, calling submitOnboarding');
+    try {
+      await submitOnboarding();
+    } catch (error) {
+      console.error('[ResultsStep] Error submitting onboarding:', error);
+      // Fallback navigation
+      setTimeout(() => {
+        window.location.href = '/results';
+      }, 500);
+    }
   };
   
   if (isLoading) {
