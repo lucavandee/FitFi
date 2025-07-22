@@ -357,21 +357,29 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Initialize on mount
   useEffect(() => {
-    const { season, occasion } = enhancedUser;
-    if (season && occasion && !hasInitialized && !isFetching) {
-      console.log('[EnhancedResultsPage] Initializing with season:', season, 'occasion:', occasion);
+    console.debug('[EnhancedResultsPage] Initialization check:', {
+      season: enhancedUser.season,
+      occasion: enhancedUser.occasion,
+      hasInitialized,
+      isFetching
+    });
+    
+    if (enhancedUser.season && enhancedUser.occasion && !hasInitialized && !isFetching) {
+      console.debug('[EnhancedResultsPage] Starting initialization');
+      setHasInitialized(true);
       loadRecommendations();
       viewRecommendation();
     }
-  }, [hasInitialized, isFetching, enhancedUser.season, enhancedUser.occasion, loadRecommendations, viewRecommendation]);
-
+  }, [enhancedUser.season, enhancedUser.occasion, hasInitialized, isFetching, loadRecommendations, viewRecommendation]);
+  
   // Fallback redirect if missing data after timeout
   useEffect(() => {
     if (!hasInitialized && !isFetching) {
       const { season, occasion } = enhancedUser;
       if (!season || !occasion) {
-        console.warn('[EnhancedResultsPage] Missing season or occasion data, redirecting to quiz');
+        console.warn('[EnhancedResultsPage] Missing season or occasion data, will redirect to quiz');
         const timer = setTimeout(() => {
+          console.debug('[EnhancedResultsPage] Redirecting to onboarding due to missing data');
           navigate('/onboarding');
         }, 2000); // Give 2 seconds for data to load
         

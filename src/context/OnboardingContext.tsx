@@ -45,6 +45,7 @@ interface OnboardingContextType {
   currentStep: string;
   setStep: (step: string) => void;
   updateData: (newData: Partial<OnboardingData>) => void;
+  completeOnboarding: (completionData: Partial<OnboardingData>) => void;
   completeStep: (step: string) => void;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
@@ -139,6 +140,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Update data
   const updateData = (newData: Partial<OnboardingData>) => {
+    console.debug('[OnboardingContext] updateData called with:', newData);
     setData(prevData => ({
       ...prevData,
       ...newData
@@ -157,6 +159,23 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         data: JSON.stringify(newData)
       });
     }
+  };
+  
+  // Complete onboarding with explicit data merge
+  const completeOnboarding = (completionData: Partial<OnboardingData>) => {
+    console.debug('[OnboardingContext] completeOnboarding called with:', completionData);
+    setData(prev => {
+      const mergedData = {
+        ...prev,
+        ...completionData,
+        // Ensure required fields are present
+        season: completionData.season || prev.season || smartDefaults?.season || 'herfst',
+        occasions: completionData.occasions || prev.occasions || smartDefaults?.occasions || ['Casual'],
+        archetypes: completionData.archetypes || prev.archetypes || [smartDefaults?.archetype] || ['casual_chic']
+      };
+      console.debug('[OnboardingContext] Merged completion data:', mergedData);
+      return mergedData;
+    });
   };
   
   // Mark a step as completed
@@ -282,6 +301,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         name: data.name || 'Stijlzoeker'
       };
       
+      console.debug('[OnboardingContext] Complete submission data:', completeData);
+      
       // Track quiz completion in analytics
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'quiz_complete', {
@@ -360,8 +381,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Ensure we always have valid onboarding data
   useEffect(() => {
-    // Auto-populate missing onboarding data with sensible defaults
-    if (!data.gender || !data.archetypes || data.archetypes.length === 0) {
+    // Only auto-populate if we're not in the middle of completion and data is truly empty
+    const hasMinimalData = data.gender || (data.archetypes && data.archetypes.length > 0) || data.season;
+    
+    if (!hasMinimalData && !isSubmitting && currentStep !== 'results') {
       console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data');
       
       const fallbackData: Partial<OnboardingData> = {};
@@ -391,7 +414,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         updateData(fallbackData);
       }
     }
-  }, [data, updateData, smartDefaults]);
+  }, [data, updateData, smartDefaults, isSubmitting, currentStep]);
   
   // Save data to localStorage when it changes
   useEffect(() => {
@@ -425,6 +448,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     currentStep,
     setStep,
     updateData,
+    completeOnboarding,
     completeStep,
     goToNextStep,
     goToPreviousStep,
