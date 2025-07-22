@@ -147,8 +147,8 @@ const GenderNameStep: React.FC = () => {
                         className={`
                           p-4 rounded-xl border transition-all
                           ${formData.gender === 'man'
-                            ? 'border-[#bfae9f] bg-[#bfae9f]/5'
-                            : 'border-gray-200 hover:border-[#bfae9f]/50 hover:bg-[#bfae9f]/5'}
+                            ? 'border-turquoise-500 bg-turquoise-50 dark:bg-turquoise-900/20'
+                            : 'border-lightGrey-300 dark:border-midnight-600 hover:border-turquoise-400 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/10'}
                         `}
                       >
                         <div className="text-center">
@@ -163,8 +163,8 @@ const GenderNameStep: React.FC = () => {
                         className={`
                           p-4 rounded-xl border transition-all
                           ${formData.gender === 'vrouw'
-                            ? 'border-[#bfae9f] bg-[#bfae9f]/5'
-                            : 'border-gray-200 hover:border-[#bfae9f]/50 hover:bg-[#bfae9f]/5'}
+                            ? 'border-turquoise-500 bg-turquoise-50 dark:bg-turquoise-900/20'
+                            : 'border-lightGrey-300 dark:border-midnight-600 hover:border-turquoise-400 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/10'}
                         `}
                       >
                         <div className="text-center">
@@ -193,7 +193,7 @@ const GenderNameStep: React.FC = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-transparent"
+                        className="w-full pl-10 pr-3 py-3 bg-white dark:bg-midnight-700 border border-lightGrey-300 dark:border-midnight-600 rounded-xl text-textPrimary-light dark:text-textPrimary-dark placeholder-textSecondary-light dark:placeholder-textSecondary-dark focus:outline-none focus:ring-2 focus:ring-turquoise-500 focus:border-transparent"
                         placeholder="Je voornaam"
                       />
                     </div>
