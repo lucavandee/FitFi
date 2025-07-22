@@ -98,6 +98,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [currentStep, setCurrentStep] = useState<string>('welcome');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(false);
+  const [hasJustSubmitted, setHasJustSubmitted] = useState<boolean>(false);
   const [smartDefaults, setSmartDefaults] = useState<any>(null);
   
   // Initialize smart defaults
@@ -164,6 +165,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Complete onboarding with explicit data merge
   const completeOnboarding = (completionData: Partial<OnboardingData>) => {
     console.debug('[OnboardingContext] completeOnboarding called with:', completionData);
+    setHasJustSubmitted(true); // Mark as just submitted to prevent auto-population
+    
     setData(prev => {
       const mergedData = {
         ...prev,
@@ -287,6 +290,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const submitOnboarding = async () => {
     console.log('[🔍 OnboardingContext] Submitting onboarding data:', data);
     setIsSubmitting(true);
+    setHasJustSubmitted(true);
     
     try {
       // Calculate quiz duration
@@ -381,10 +385,18 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Ensure we always have valid onboarding data
   useEffect(() => {
+    // Get current path to prevent auto-population during navigation
+    const currentPath = window.location.pathname;
+    
     // Only auto-populate if we're not in the middle of completion and data is truly empty
     const hasMinimalData = data.gender || (data.archetypes && data.archetypes.length > 0) || data.season;
     
-    if (!hasMinimalData && !isSubmitting && currentStep !== 'results') {
+    // Skip auto-population if:
+    // 1. We just submitted (hasJustSubmitted)
+    // 2. We're currently submitting (isSubmitting) 
+    // 3. We're on results step
+    // 4. We're not on onboarding page (prevents interference during navigation)
+    if (!hasMinimalData && !isSubmitting && !hasJustSubmitted && currentStep !== 'results' && currentPath === '/onboarding') {
       console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data');
       
       const fallbackData: Partial<OnboardingData> = {};
@@ -414,7 +426,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         updateData(fallbackData);
       }
     }
-  }, [data, updateData, smartDefaults, isSubmitting, currentStep]);
+  }, [data, updateData, smartDefaults, isSubmitting, hasJustSubmitted, currentStep]);
   
   // Save data to localStorage when it changes
   useEffect(() => {
