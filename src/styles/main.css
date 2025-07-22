@@ -24,45 +24,47 @@
   .container-slim {
     @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
+}
+
+@layer utilities {
   .btn {
-    @apply inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
   
   .btn-primary {
-    @apply btn bg-turquoise text-cardWhite hover:bg-turquoise-dark focus:ring-turquoise;
+    @apply btn bg-turquoise text-cardwhite hover:bg-turquoise-dark focus:ring-turquoise;
   }
   
   .btn-secondary {
-    @apply btn bg-cardWhite text-turquoise hover:bg-lightGrey focus:ring-turquoise;
+    @apply btn bg-cardwhite text-turquoise hover:bg-lightgrey focus:ring-turquoise;
   }
   
   .btn-ghost {
-    @apply btn bg-transparent text-textSecondary hover:bg-lightGrey focus:ring-turquoise;
+    @apply btn bg-transparent text-textsecondary hover:bg-lightgrey focus:ring-turquoise;
   }
   
   .card {
-    @apply bg-cardWhite rounded border border-lightGrey-50 overflow-hidden transition-all shadow-sm;
+    @apply bg-cardwhite rounded border border-lightgrey overflow-hidden transition-all shadow-sm;
   }
   
   .input {
-    @apply w-full px-4 py-3 rounded border border-lightGrey bg-cardWhite text-textPrimary placeholder-textSecondary focus:outline-none focus:ring-2 focus:ring-turquoise focus:border-transparent transition-all;
+    @apply w-full px-4 py-3 rounded border border-lightgrey bg-cardwhite text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-turquoise focus:border-transparent transition-all;
   }
   
   .label {
-    @apply block text-sm font-medium text-textPrimary mb-1;
+    @apply block text-sm font-medium text-textprimary mb-1;
   }
 
   .content-section {
-    @apply bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden;
+    @apply bg-cardwhite rounded shadow-sm border border-lightgrey overflow-hidden;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-lightGrey to-cardWhite;
+    @apply bg-gradient-to-br from-lightgrey to-cardwhite;
   }
 
   .glass-card {
-    @apply bg-cardWhite backdrop-blur-sm border border-lightGrey rounded shadow-sm;
+    @apply bg-cardwhite backdrop-blur-sm border border-lightgrey rounded shadow-sm;
   }
 }
 
