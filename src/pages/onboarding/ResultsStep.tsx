@@ -3,10 +3,12 @@ import { ArrowLeft, ShieldCheck, Heart, ShoppingBag, Star } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { motion } from 'framer-motion';
+import { useNavigationService } from '../../services/NavigationService';
 import ImageWithFallback from '../../components/ui/ImageWithFallback';
 
 const ResultsStep: React.FC = () => {
   const { data, submitOnboarding, isSubmitting, goToPreviousStep } = useOnboarding();
+  const navigationService = useNavigationService();
   const [isLoading, setIsLoading] = useState(true);
   
   // Track when the component is mounted
@@ -139,10 +141,15 @@ const ResultsStep: React.FC = () => {
       await submitOnboarding();
     } catch (error) {
       console.error('[ResultsStep] Error submitting onboarding:', error);
-      // Fallback navigation
-      setTimeout(() => {
-        window.location.href = '/results';
-      }, 500);
+      // Use navigation service for fallback
+      await navigationService.navigateToEnhancedResults(data, {
+        loadingMessage: 'Proberen opnieuw...',
+        fallbackRoute: '/onboarding',
+        onError: () => {
+          // Last resort
+          window.location.href = '/results';
+        }
+      });
     }
   };
   
