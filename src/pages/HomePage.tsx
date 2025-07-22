@@ -119,6 +119,7 @@ const HomePage: React.FC = () => {
                         placeholder="Voer je naam in"
                       />
                     </div>
+                    </div>
                     
                     <div>
                       <label htmlFor="hero-email" className="block text-sm font-medium text-textPrimary mb-1">
@@ -134,6 +135,7 @@ const HomePage: React.FC = () => {
                         className="w-full px-6 py-4 rounded border border-lightGrey focus:ring-2 focus:ring-turquoise focus:border-turquoise"
                         placeholder="je@email.com"
                       />
+                    </div>
                     </div>
                     
                     <Button
