@@ -5,6 +5,7 @@ import { configureRouterFutureFlags } from './utils/routerUtils';
 import { initializeSentry } from './utils/sentryConfig';
 import { initializeAnalytics } from './utils/analytics';
 import './styles/main.css';
+import { setupAutoSave } from './utils/progressPersistence';
 
 // Configure React Router future flags to suppress warnings
 configureRouterFutureFlags();
@@ -14,6 +15,9 @@ initializeSentry();
 
 // Initialize Google Analytics
 initializeAnalytics();
+
+// Setup auto-save for progress persistence
+setupAutoSave();
 
 // Register service worker with error handling
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
