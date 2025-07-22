@@ -698,7 +698,8 @@ const EnhancedResultsPage = () => {
                     </div>
                   </div>
                 </div>
-              <DebugOverlay />
+                <DebugOverlay />
+              </motion.div>
             )}
       
             {/* Data source info */}
@@ -771,178 +772,179 @@ const EnhancedResultsPage = () => {
               </motion.div>
             )}
 
-      {/* Outfits section */}
-        {(outfits.length > 0 || outfitsLoading) && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mb-12"
-          >
-            <h2 className="text-2xl font-bold text-white mb-6">Complete outfits voor jou</h2>
+            {/* Outfits section */}
+            {(outfits.length > 0 || outfitsLoading) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mb-12"
+              >
+                <h2 className="text-2xl font-bold text-white mb-6">Complete outfits voor jou</h2>
       
-            {outfitsLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3].map((_, i) => (
-                  <div key={`skeleton-outfit-${i}`} className="glass-card overflow-hidden">
-                    <SkeletonPlaceholder height="h-64" rounded="rounded-t-xl rounded-b-none" />
-                    <div className="p-6 space-y-4">
-                      <SkeletonPlaceholder height="h-6" width="w-3/4" />
-                      <SkeletonPlaceholder height="h-4" width="w-full" />
-                      <SkeletonPlaceholder height="h-4" width="w-5/6" />
-                      <SkeletonPlaceholder height="h-10" width="w-full" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : outfits.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[400px]">
-                {outfits.map((outfit, index) => {
-                  try {
-                    return (
-                      <motion.div key={outfit.id || `fallback-${index}`}>
-                        <OutfitCard
-                          outfit={outfit}
-                          onNewLook={() => handleRegenerateOutfit(index)}
-                          isGenerating={isRegenerating}
-                          user={enhancedUser}
-                        />
-                      </motion.div>
-                    );
-                  } catch (error) {
-                    console.error(`[❌ EnhancedResultsPage] Error rendering outfit ${index}:`, error);
-                    return null;
-                  }
-                })}
-              </div>
-            ) : (
-              <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
-            )}
-          </motion.div>
-        )}
-
-        {/* Individual products section */}
-        {(matchedProducts.length > 0 || productsLoading) && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mb-16"
-          >
-            <h2 className="text-2xl font-bold text-white mb-6">Individuele items voor jou</h2>
-      
-            {productsLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((_, i) => (
-                  <div key={`skeleton-product-${i}`} className="glass-card overflow-hidden">
-                    <SkeletonPlaceholder height="h-48" rounded="rounded-t-xl rounded-b-none" />
-                    <div className="p-4 space-y-3">
-                      <SkeletonPlaceholder height="h-5" width="w-3/4" />
-                      <SkeletonPlaceholder height="h-4" width="w-full" />
-                      <div className="flex justify-between items-center pt-2">
-                        <SkeletonPlaceholder height="h-5" width="w-1/4" />
-                        <SkeletonPlaceholder height="h-8" width="w-1/4" rounded="rounded-lg" />
+                {outfitsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[1, 2, 3].map((_, i) => (
+                      <div key={`skeleton-outfit-${i}`} className="glass-card overflow-hidden">
+                        <SkeletonPlaceholder height="h-64" rounded="rounded-t-xl rounded-b-none" />
+                        <div className="p-6 space-y-4">
+                          <SkeletonPlaceholder height="h-6" width="w-3/4" />
+                          <SkeletonPlaceholder height="h-4" width="w-full" />
+                          <SkeletonPlaceholder height="h-4" width="w-5/6" />
+                          <SkeletonPlaceholder height="h-10" width="w-full" />
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : matchedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {matchedProducts.map((product, index) => {
-                  try {
-                    if (!product || !product.id) {
-                      console.warn(`[⚠️ EnhancedResultsPage] Invalid product at index ${index}:`, product);
-                      return null;
-                    }
-              
-                    const normalizedProduct = normalizeProduct(product);
-                    return (
-                      <motion.div
-                        key={normalizedProduct.id || `product-${index}`}
-                        // ... motion props
-                        className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
-                        onClick={() => handleProductClick(product)}
-                      >
-                        {/* ... product card content ... */}
-                      </motion.div>
-                    );
-                  } catch (error) {
-                    console.error(`[❌ EnhancedResultsPage] Error rendering product ${index}:`, error);
-                    return null;
-                  }
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-white/70">
-                  Geen individuele items gevonden. Probeer andere stijlvoorkeuren.
-                </p>
-              </div>
+                ) : outfits.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[400px]">
+                    {outfits.map((outfit, index) => {
+                      try {
+                        return (
+                          <motion.div key={outfit.id || `fallback-${index}`}>
+                            <OutfitCard
+                              outfit={outfit}
+                              onNewLook={() => handleRegenerateOutfit(index)}
+                              isGenerating={isRegenerating}
+                              user={enhancedUser}
+                            />
+                          </motion.div>
+                        );
+                      } catch (error) {
+                        console.error(`[❌ EnhancedResultsPage] Error rendering outfit ${index}:`, error);
+                        return null;
+                      }
+                    })}
+                  </div>
+                ) : (
+                  <ResultsLoader message="We genereren je persoonlijke outfits. Dit kan even duren..." />
+                )}
+              </motion.div>
             )}
-          </motion.div>
-        )}
+
+            {/* Individual products section */}
+            {(matchedProducts.length > 0 || productsLoading) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="mb-16"
+              >
+                <h2 className="text-2xl font-bold text-white mb-6">Individuele items voor jou</h2>
+      
+                {productsLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                      <div key={`skeleton-product-${i}`} className="glass-card overflow-hidden">
+                        <SkeletonPlaceholder height="h-48" rounded="rounded-t-xl rounded-b-none" />
+                        <div className="p-4 space-y-3">
+                          <SkeletonPlaceholder height="h-5" width="w-3/4" />
+                          <SkeletonPlaceholder height="h-4" width="w-full" />
+                          <div className="flex justify-between items-center pt-2">
+                            <SkeletonPlaceholder height="h-5" width="w-1/4" />
+                            <SkeletonPlaceholder height="h-8" width="w-1/4" rounded="rounded-lg" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : matchedProducts.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {matchedProducts.map((product, index) => {
+                      try {
+                        if (!product || !product.id) {
+                          console.warn(`[⚠️ EnhancedResultsPage] Invalid product at index ${index}:`, product);
+                          return null;
+                        }
+                  
+                        const normalizedProduct = normalizeProduct(product);
+                        return (
+                          <motion.div
+                            key={normalizedProduct.id || `product-${index}`}
+                            // ... motion props
+                            className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
+                            onClick={() => handleProductClick(product)}
+                          >
+                            {/* ... product card content ... */}
+                          </motion.div>
+                        );
+                      } catch (error) {
+                        console.error(`[❌ EnhancedResultsPage] Error rendering product ${index}:`, error);
+                        return null;
+                      }
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-white/70">
+                      Geen individuele items gevonden. Probeer andere stijlvoorkeuren.
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
 
             {/* Feedback section */}
-        {!feedbackGiven && !loading && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mb-16 text-center"
-          >
-            <div className="glass-card p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Wat vind je van deze aanbevelingen?</h3>
-              <p className="text-white/70 mb-6">Je feedback helpt ons om betere aanbevelingen te doen in de toekomst.</p>
-              <div className="flex justify-center space-x-4">
-                <Button variant="outline" onClick={() => handleFeedback(5)} icon={<Heart size={18} />} iconPosition="left" className="text-white border border-white/30 hover:bg-white/10">Geweldig!</Button>
-                <Button variant="outline" onClick={() => handleFeedback(3)} className="text-white border border-white/30 hover:bg-white/10">Oké</Button>
-                <Button variant="outline" onClick={() => handleFeedback(1)} className="text-white border border-white/30 hover:bg-white/10">Niet mijn stijl</Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            {!feedbackGiven && !loading && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="mb-16 text-center"
+              >
+                <div className="glass-card p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Wat vind je van deze aanbevelingen?</h3>
+                  <p className="text-white/70 mb-6">Je feedback helpt ons om betere aanbevelingen te doen in de toekomst.</p>
+                  <div className="flex justify-center space-x-4">
+                    <Button variant="outline" onClick={() => handleFeedback(5)} icon={<Heart size={18} />} iconPosition="left" className="text-white border border-white/30 hover:bg-white/10">Geweldig!</Button>
+                    <Button variant="outline" onClick={() => handleFeedback(3)} className="text-white border border-white/30 hover:bg-white/10">Oké</Button>
+                    <Button variant="outline" onClick={() => handleFeedback(1)} className="text-white border border-white/30 hover:bg-white/10">Niet mijn stijl</Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
         
             {/* Mock data warning */}
             {env.USE_MOCK_DATA && (outfits.length > 0 || matchedProducts.length > 0) && (
-          <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
-            <div className="flex items-center">
-              <AlertTriangle size={16} className="mr-2" />
-              <strong>⚠️ Mock Mode Actief:</strong> Deze outfits en producten zijn gegenereerd op basis van testdata. Resultaten zijn niet representatief voor echte data.
-            </div>
-          </div>
-        )}              </div> {/* Dit sluit de 'max-w-5xl' div */}
-        </div> {/* Dit sluit de 'container-slim' div */}
+              <div className="mt-12 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm rounded-lg p-4">
+                <div className="flex items-center">
+                  <AlertTriangle size={16} className="mr-2" />
+                  <strong>⚠️ Mock Mode Actief:</strong> Deze outfits en producten zijn gegenereerd op basis van testdata. Resultaten zijn niet representatief voor echte data.
+                </div>
+              </div>
+            )}
+          </div> {/* Dit sluit de 'max-w-5xl\' div */}
+        </div> {/* Dit sluit de 'container-slim\' div */}
     
         {/* Sticky CTA footer */}
         {(outfits.length > 0 || matchedProducts.length > 0) && (
-            <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
-              <div className="container-slim">
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                  <div className="flex items-center">
-                    <MessageSquare size={20} className="text-[#89CFF0] mr-2" />
-                    <span className="text-white font-medium">Niet tevreden met de resultaten?</span>
-                  </div>
-                  <div className="flex space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate('/feedback')}
-                      className="text-white border border-white/30 hover:bg-white/10"
-                    >
-                      Geef feedback
-                    </Button>
-                    <Button
-                      variant="primary"
-                      onClick={() => navigate('/onboarding')}
-                      icon={<ArrowRight size={18} />}
-                      iconPosition="right"
-                    >
-                      Nieuwe stijlscan
-                    </Button>
-                  </div>
+          <div className="fixed bottom-0 left-0 right-0 bg-[#0D1B2A]/90 backdrop-blur-md border-t border-white/10 py-4 z-50">
+            <div className="container-slim">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="flex items-center">
+                  <MessageSquare size={20} className="text-[#89CFF0] mr-2" />
+                  <span className="text-white font-medium">Niet tevreden met de resultaten?</span>
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/feedback')}
+                    className="text-white border border-white/30 hover:bg-white/10"
+                  >
+                    Geef feedback
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate('/onboarding')}
+                    icon={<ArrowRight size={18} />}
+                    iconPosition="right"
+                  >
+                    Nieuwe stijlscan
+                  </Button>
                 </div>
               </div>
             </div>
+          </div>
         )}
     
         {/* ✅ Central Debug Overlay */}
