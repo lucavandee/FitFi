@@ -7,6 +7,7 @@ import { useNavigationService } from '../services/NavigationService';
 import toast from 'react-hot-toast';
 import { saveOnboardingProgress, loadOnboardingProgress, clearOnboardingProgress } from '../utils/progressPersistence';
 import { generateSmartDefaults } from '../utils/smartDefaults';
+import { env } from '../utils/env';
 
 // Define the types for our onboarding data
 export interface OnboardingData {
