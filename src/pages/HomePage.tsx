@@ -115,7 +115,7 @@ const HomePage: React.FC = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-6 py-4 rounded border border-light-grey focus:ring-2 focus:ring-turquoise focus:border-turquoise"
+                        className="w-full px-6 py-4 rounded border border-light-grey focus:ring-2 ring-turquoise focus:border-turquoise"
                         placeholder="Voer je naam in"
                       />
                     </div>
@@ -131,7 +131,7 @@ const HomePage: React.FC = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-6 py-4 rounded border border-light-grey focus:ring-2 focus:ring-turquoise focus:border-turquoise"
+                        className="w-full px-6 py-4 rounded border border-light-grey focus:ring-2 ring-turquoise focus:border-turquoise"
                         placeholder="je@email.com"
                       />
                     </div>
