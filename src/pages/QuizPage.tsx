@@ -341,16 +341,6 @@ const QuizPage: React.FC = () => {
           navigate('/results', { state: { answers: finalAnswers } });
         }
       }, 50);
-          loadingMessage: 'Je stijlprofiel wordt gemaakt...',
-          onStart: () => console.debug('[QuizPage] Navigation started'),
-          onComplete: () => console.debug('[QuizPage] Navigation completed'),
-          onError: (error) => {
-            console.error('[QuizPage] Navigation error:', error);
-            // Fallback navigation
-            navigate('/results', { state: { answers: finalAnswers } });
-          }
-        });
-      }, 50);
       
     } catch (error) {
       console.error('[QuizPage] Error in handleSubmit:', error);
