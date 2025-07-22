@@ -10,8 +10,17 @@ const ANALYTICS_ENABLED = import.meta.env.VITE_ENABLE_ANALYTICS === 'true';
  * Initialize Google Analytics
  */
 export const initializeAnalytics = (): void => {
-  if (!GA_TRACKING_ID || !ANALYTICS_ENABLED) {
-    console.warn('[Analytics] Google Analytics not configured or disabled');
+  if (!GA_TRACKING_ID) {
+    if (import.meta.env.DEV) {
+      console.warn('[Analytics] Google Analytics not configured');
+    }
+    return;
+  }
+  
+  if (!ANALYTICS_ENABLED) {
+    if (import.meta.env.DEV) {
+      console.warn('[Analytics] Google Analytics disabled');
+    }
     return;
   }
 
@@ -36,7 +45,9 @@ export const initializeAnalytics = (): void => {
     }
   });
 
-  console.log('[Analytics] Google Analytics initialized with ID:', GA_TRACKING_ID);
+  if (import.meta.env.DEV) {
+    console.log('[Analytics] Google Analytics initialized with ID:', GA_TRACKING_ID);
+  }
 };
 
 /**
