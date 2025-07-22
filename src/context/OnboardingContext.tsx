@@ -91,6 +91,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   const [currentStep, setCurrentStep] = useState<string>('welcome');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(false);
   
   // Update data
   const updateData = (newData: Partial<OnboardingData>) => {
@@ -245,9 +246,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Award gamification points for completing the quiz
       await completeQuiz();
       
-      console.log('[🔍 OnboardingContext] Navigating to results page');
-      // Navigate to results page
-      navigate('/results', { state: { onboardingData: data } });
+      console.log('[🔍 OnboardingContext] Onboarding completed, setting completion flag');
+      setIsOnboardingComplete(true);
       
       // Show success toast
       toast.success('Stijlprofiel aangemaakt!');
@@ -259,6 +259,25 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsSubmitting(false);
     }
   };
+  
+  // Handle onboarding completion with redirect
+  useEffect(() => {
+    if (isOnboardingComplete) {
+      console.log('[🔍 OnboardingContext] Onboarding complete, redirecting to results in 300ms');
+      setTimeout(() => {
+        navigate('/results', { state: { onboardingData: data } });
+      }, 300);
+    }
+  }, [isOnboardingComplete, navigate, data]);
+  
+  // Check if onboarding is complete based on required fields
+  useEffect(() => {
+    const hasRequiredFields = data.gender && data.archetypes && data.archetypes.length > 0;
+    if (hasRequiredFields && currentStep === 'results' && !isOnboardingComplete) {
+      console.log('[🔍 OnboardingContext] All required fields present, marking as complete');
+      setIsOnboardingComplete(true);
+    }
+  }, [data, currentStep, isOnboardingComplete]);
   
   // Ensure we always have valid onboarding data
   useEffect(() => {
