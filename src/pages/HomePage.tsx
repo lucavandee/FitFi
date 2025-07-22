@@ -148,7 +148,7 @@ const HomePage: React.FC = () => {
                     >
                       {isSubmitting ? 'Even geduld...' : 'Start de stijlquiz'}
                     </Button>
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-turquoise/20 z-10"></div>
+                  </div>
                   
                   <div className="mt-6 flex items-center justify-center text-xs text-textSecondary">
                     <ShieldCheck size={14} className="mr-1 text-turquoise" />
