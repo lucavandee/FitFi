@@ -70,62 +70,49 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-gray-900 leading-tight mb-6">
-                Train je eigen stijlcoach
+                Train je eigen stijlcoach — ontdek outfits die echt bij je passen.
               </h1>
-              <p className="text-xl text-gray-700 max-w-2xl mx-auto lg:mx-0 mb-10">
-                Swipe, leer en ontdek outfits die écht bij je passen — zonder eindeloos scrollen.
-              </p>
               
-              {/* Waarom FitFi Section */}
+              {/* Origin Story */}
               <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Waarom FitFi?</h2>
-                <ul className="space-y-3 text-gray-700">
-                  <li className="flex items-start">
-                    <span className="text-orange-500 mr-3 mt-1">•</span>
-                    Teveel webshops. Teveel opties. Teveel twijfel.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-orange-500 mr-3 mt-1">•</span>
-                    Je bent op zoek naar dat ene kledingstuk — maar vindt het niet.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-orange-500 mr-3 mt-1">•</span>
-                    Je hebt geen tijd (of zin) om eindeloos te scrollen.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-orange-500 mr-3 mt-1">•</span>
-                    Je wilt gewoon goed gekleed zijn, zonder gedoe.
-                  </li>
-                </ul>
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  FitFi is ontstaan uit één simpele frustratie: waarom is het zo moeilijk om dat ene perfecte kledingstuk te vinden?
+                </p>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  Teveel webshops. Teveel opties. Teveel twijfel.<br />
+                  Uren scrollen later, en nog steeds niks dat goed voelt.
+                </p>
               </div>
               
-              {/* Hoe werkt het Section */}
+              {/* Solution Story */}
               <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Hoe werkt het?</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <div className="text-4xl mb-3">🧠</div>
-                    <h3 className="font-bold text-gray-900 mb-2">Swipe & train</h3>
-                    <p className="text-gray-600 text-sm">Like of skip outfits. FitFi leert van jouw keuzes.</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-4xl mb-3">🎯</div>
-                    <h3 className="font-bold text-gray-900 mb-2">Persoonlijke aanbevelingen</h3>
-                    <p className="text-gray-600 text-sm">Outfits afgestemd op jouw stijl, jouw vorm, jouw leven.</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-4xl mb-3">🛍️</div>
-                    <h3 className="font-bold text-gray-900 mb-2">Shop of sla op</h3>
-                    <p className="text-gray-600 text-sm">Direct te shoppen of bewaren — alles op jouw tempo.</p>
-                  </div>
-                </div>
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  <strong>Dat kon slimmer. Daarom heb ik FitFi gebouwd.</strong>
+                </p>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  FitFi is jouw persoonlijke stijlcoach — eentje die jij zelf traint.<br />
+                  Elke keer dat je een outfit liket (of juist niet), leert FitFi van jouw smaak.<br />
+                  Zo krijg je steeds betere outfits te zien, afgestemd op jouw stijl, jouw vorm en jouw leven.
+                </p>
               </div>
               
-              {/* Quote Section */}
+              {/* Benefits Story */}
+              <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  <strong>Geen eindeloos zoeken meer. Geen keuzestress.</strong><br />
+                  Gewoon outfits die wél kloppen — en die je direct kunt shoppen, bewaren of finetunen.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  Je hoeft geen modekenner te zijn.<br />
+                  FitFi leert van jou, en maakt stijl simpel.
+                </p>
+              </div>
+              
+              {/* Social Proof */}
               <div className="bg-gradient-to-r from-orange-50 to-blue-50 rounded-2xl p-6 mb-8 border-l-4 border-orange-500">
                 <p className="text-lg font-medium flex items-start">
                   <span className="text-2xl mr-3">💡</span>
-                  "Sinds ik FitFi gebruik, bespaar ik zóveel tijd. En ik voel me elke dag zelfverzekerder.\" — Lisa, 28
+                  Al honderden mensen trainen dagelijks hun eigen stijlcoach. En het werkt.
                 </p>
               </div>
               
@@ -133,7 +120,7 @@ const HomePage: React.FC = () => {
               <div className="bg-orange-500 text-white rounded-2xl p-6 mb-8">
                 <p className="text-lg font-medium flex items-start">
                   <span className="text-2xl mr-3">👉</span>
-                  Start de stijlquiz en ontdek in 1 minuut wat bij je past.
+                  Start de stijlquiz en zie in 1 minuut wat echt bij je past.
                 </p>
               </div>
               
