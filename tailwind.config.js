@@ -95,6 +95,9 @@ export default {
         },
       },
     },
+    corePlugins: {
+      ringColor: true,
+    },
   },
   plugins: [],
 };
