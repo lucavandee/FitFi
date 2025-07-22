@@ -30,39 +30,39 @@
   }
   
   .btn-primary {
-    @apply btn bg-[#bfae9f] text-white hover:bg-[#a89a8c] focus:ring-[#bfae9f];
+    @apply btn bg-turquoise-500 text-white hover:bg-turquoise-600 focus:ring-turquoise-500;
   }
   
   .btn-secondary {
-    @apply btn bg-white text-[#bfae9f] hover:bg-gray-100 focus:ring-[#bfae9f];
+    @apply btn bg-white text-turquoise-500 hover:bg-lightGrey-100 focus:ring-turquoise-500;
   }
   
   .btn-ghost {
-    @apply btn bg-transparent text-white hover:bg-white/10 focus:ring-white;
+    @apply btn bg-transparent text-textPrimary-dark hover:bg-white/10 focus:ring-white;
   }
   
   .card {
-    @apply bg-white rounded-2xl border border-gray-100 overflow-hidden transition-all shadow-sm;
+    @apply bg-white dark:bg-midnight-800 rounded-2xl border border-lightGrey-200 dark:border-midnight-700 overflow-hidden transition-all shadow-sm;
   }
   
   .input {
-    @apply w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-transparent transition-all;
+    @apply w-full px-4 py-3 rounded-xl border border-lightGrey-300 dark:border-midnight-600 bg-white dark:bg-midnight-700 text-textPrimary-light dark:text-textPrimary-dark placeholder-textSecondary-light dark:placeholder-textSecondary-dark focus:outline-none focus:ring-2 focus:ring-turquoise-500 focus:border-transparent transition-all;
   }
   
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-sm font-medium text-textPrimary-light dark:text-textPrimary-dark mb-1;
   }
 
   .content-section {
-    @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-colors;
+    @apply bg-white dark:bg-midnight-800 rounded-2xl shadow-sm border border-lightGrey-200 dark:border-midnight-700 overflow-hidden transition-colors;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-[#FAF8F6] to-white;
+    @apply bg-gradient-to-br from-lightGrey-50 to-white dark:from-midnight-900 dark:to-midnight-800;
   }
 
   .glass-card {
-    @apply bg-white backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm;
+    @apply bg-white/90 dark:bg-midnight-800/90 backdrop-blur-sm border border-lightGrey-200 dark:border-midnight-700 rounded-2xl shadow-sm;
   }
 }
 
