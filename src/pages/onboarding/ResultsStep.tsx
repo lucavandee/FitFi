@@ -155,13 +155,13 @@ const ResultsStep: React.FC = () => {
   
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-lightGrey flex items-center justify-center">
+      <div className="min-h-screen bg-light-grey flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-turquoise border-t-transparent rounded animate-spin mx-auto mb-6"></div>
-          <h2 className="text-h2 font-bold text-textPrimary mb-3 font-display">
+          <h2 className="text-h2 font-bold text-text-primary mb-3 font-display">
             Je stijlprofiel wordt gemaakt...
           </h2>
-          <p className="text-textSecondary">
+          <p className="text-text-secondary">
             Onze AI analyseert je voorkeuren
           </p>
         </div>
@@ -170,16 +170,16 @@ const ResultsStep: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-lightGrey">
-      <div className="container-slim py-16">
+    <div className="min-h-screen bg-light-grey">
+      <div className="container mx-auto px-6 py-16">
         <div className="max-w-4xl mx-auto">
           {/* Progress indicator */}
           <div className="mb-10">
-            <div className="flex justify-between text-sm text-textSecondary mb-2">
+            <div className="flex justify-between text-sm text-text-secondary mb-2">
               <span>Stap 3 van 3</span>
               <span>100%</span>
             </div>
-            <div className="h-1.5 bg-lightGrey-200 rounded overflow-hidden">
+            <div className="h-1.5 bg-light-grey/50 rounded overflow-hidden">
               <div
                 className="h-full bg-turquoise rounded transition-all duration-300"
                 style={{ width: '100%' }}
@@ -196,13 +196,13 @@ const ResultsStep: React.FC = () => {
               <h1 className="text-h1 font-bold text-textPrimary mb-3 font-display">
                 Jouw persoonlijke stijlprofiel
               </h1>
-              <p className="text-textSecondary">
+              <p className="text-text-secondary">
                 Op basis van je voorkeuren hebben we een uniek stijlprofiel voor je gemaakt
               </p>
             </div>
 
             {/* Style Profile */}
-            <div className="bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden mb-10">
+            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden mb-10">
               <div className="p-8">
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 mb-8 md:mb-0 flex justify-center">
@@ -252,7 +252,7 @@ const ResultsStep: React.FC = () => {
                   </div>
                   
                   <div className="md:w-1/2">
-                    <h3 className="font-bold text-textPrimary text-xl mb-6">
+                    <h3 className="font-bold text-text-primary text-xl mb-6">
                       Jouw stijlmix
                     </h3>
                     
@@ -260,10 +260,10 @@ const ResultsStep: React.FC = () => {
                       {data.archetypes?.map((archetype, index) => (
                         <div key={archetype}>
                           <div className="flex justify-between text-sm mb-2">
-                            <span className="font-medium text-textPrimary">{getArchetypeName(archetype)}</span>
-                            <span className="text-textSecondary">{getArchetypePercentage(archetype, index)}%</span>
+                            <span className="font-medium text-text-primary">{getArchetypeName(archetype)}</span>
+                            <span className="text-text-secondary">{getArchetypePercentage(archetype, index)}%</span>
                           </div>
-                          <div className="w-full bg-lightGrey-200 rounded h-1.5">
+                          <div className="w-full bg-light-grey/50 rounded h-1.5">
                             <div 
                               className="h-1.5 rounded" 
                               style={{ 
@@ -287,15 +287,15 @@ const ResultsStep: React.FC = () => {
             </div>
 
             {/* Outfit Recommendations */}
-            <div className="bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden mb-10">
+            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden mb-10">
               <div className="p-8">
-                <h3 className="font-bold text-textPrimary text-xl mb-8">
+                <h3 className="font-bold text-text-primary text-xl mb-8">
                   Outfits voor jou
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {outfits.map((outfit) => (
-                    <div key={outfit.id} className="bg-lightGrey rounded overflow-hidden shadow-sm border border-lightGrey">
+                    <div key={outfit.id} className="bg-light-grey rounded overflow-hidden shadow-sm border border-light-grey">
                       <div className="relative">
                         <ImageWithFallback 
                           src={outfit.imageUrl} 
@@ -303,21 +303,21 @@ const ResultsStep: React.FC = () => {
                           className="w-full h-64 object-cover"
                           componentName="ResultsStep"
                         />
-                        <div className="absolute top-4 left-4 bg-cardWhite/90 text-turquoise px-4 py-2 rounded text-sm font-bold flex items-center">
+                        <div className="absolute top-4 left-4 bg-white/90 text-turquoise px-4 py-2 rounded text-sm font-bold flex items-center">
                           <Star size={14} className="mr-1" />
                           {outfit.matchPercentage}% Match
                         </div>
                       </div>
                       
                       <div className="p-4">
-                        <h4 className="font-bold text-textPrimary mb-2">{outfit.title}</h4>
-                        <p className="text-textSecondary text-sm mb-4">
+                        <h4 className="font-bold text-text-primary mb-2">{outfit.title}</h4>
+                        <p className="text-text-secondary text-sm mb-4">
                           {outfit.description}
                         </p>
                         
                         <div className="flex space-x-2 mb-6">
                           {outfit.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className="px-3 py-1 bg-lightGrey-100 text-textSecondary rounded text-xs">
+                            <span key={index} className="px-3 py-1 bg-light-grey text-text-secondary rounded text-xs">
                               {tag}
                             </span>
                           ))}
@@ -329,7 +329,7 @@ const ResultsStep: React.FC = () => {
                             size="sm"
                             icon={<ShoppingBag size={16} />}
                             iconPosition="left"
-                            className="flex-1 bg-turquoise hover:bg-turquoise-dark py-3 px-6 rounded shadow-sm"
+                            className="flex-1"
                           >
                             Bekijk outfit
                           </Button>
@@ -338,7 +338,7 @@ const ResultsStep: React.FC = () => {
                             size="sm"
                             icon={<Heart size={16} />}
                             iconPosition="left"
-                            className="w-10 h-10 p-0 flex items-center justify-center border border-lightGrey hover:bg-lightGrey"
+                            className="w-10 h-10 p-0 flex items-center justify-center border border-light-grey hover:bg-light-grey"
                             aria-label="Opslaan"
                           />
                         </div>
@@ -350,15 +350,15 @@ const ResultsStep: React.FC = () => {
             </div>
 
             {/* Individual Items */}
-            <div className="bg-cardWhite rounded shadow-sm border border-lightGrey overflow-hidden mb-10">
+            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden mb-10">
               <div className="p-8">
-                <h3 className="font-bold text-textPrimary text-xl mb-8">
+                <h3 className="font-bold text-text-primary text-xl mb-8">
                   Individuele items voor jou
                 </h3>
                 
                 <div className="grid grid-cols-3 gap-6">
                   {items.map((item) => (
-                    <div key={item.id} className="bg-lightGrey rounded overflow-hidden border border-lightGrey">
+                    <div key={item.id} className="bg-light-grey rounded overflow-hidden border border-light-grey">
                       <div className="aspect-square">
                         <ImageWithFallback 
                           src={item.imageUrl} 
@@ -368,9 +368,9 @@ const ResultsStep: React.FC = () => {
                         />
                       </div>
                       <div className="p-3">
-                        <h4 className="font-medium text-textPrimary text-sm truncate">{item.name}</h4>
+                        <h4 className="font-medium text-text-primary text-sm truncate">{item.name}</h4>
                         <div className="flex justify-between items-center mt-1">
-                          <p className="text-sm text-textSecondary">€{item.price.toFixed(2)}</p>
+                          <p className="text-sm text-text-secondary">€{item.price.toFixed(2)}</p>
                           <button className="text-turquoise hover:text-turquoise-dark">
                             <ShoppingBag size={16} />
                           </button>
@@ -390,7 +390,7 @@ const ResultsStep: React.FC = () => {
                 onClick={goToPreviousStep}
                 icon={<ArrowLeft size={18} />}
                 iconPosition="left"
-                className="flex-1 text-textSecondary border border-lightGrey hover:bg-lightGrey"
+                className="flex-1 text-text-secondary border border-light-grey hover:bg-light-grey"
               >
                 Terug
               </Button>
@@ -399,16 +399,16 @@ const ResultsStep: React.FC = () => {
                 variant="primary"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 bg-turquoise hover:bg-turquoise-dark py-3 px-6 rounded shadow-sm"
+                className="flex-1"
               >
                 {isSubmitting ? 'Even geduld...' : 'Ontdek al je aanbevelingen'}
               </Button>
             </div>
 
             {/* Privacy indicator */}
-            <div className="mt-8 bg-lightGrey rounded p-6 flex items-center justify-center space-x-2">
+            <div className="mt-8 bg-light-grey rounded p-6 flex items-center justify-center space-x-2">
               <ShieldCheck size={18} className="text-turquoise" />
-              <span className="text-sm text-textSecondary">Je gegevens zijn veilig en versleuteld</span>
+              <span className="text-sm text-text-secondary">Je gegevens zijn veilig en versleuteld</span>
             </div>
           </motion.div>
         </div>
