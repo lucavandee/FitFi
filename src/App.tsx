@@ -1,15 +1,52 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import ErrorBoundary from './components/ErrorBoundary';
+import LoadingFallback from './components/ui/LoadingFallback';
 
 // Lazy load components
-const LazyGenderNameStep = React.lazy(() => import('./pages/onboarding/GenderNameStep'));
-const LazyArchetypeStep = React.lazy(() => import('./pages/onboarding/ArchetypeStep'));
-const LazySeasonStep = React.lazy(() => import('./pages/onboarding/SeasonStep'));
-const LazyOccasionStep = React.lazy(() => import('./pages/onboarding/OccasionStep'));
-const LazyPreferencesStep = React.lazy(() => import('./pages/onboarding/PreferencesStep'));
-const LazyResultsStep = React.lazy(() => import('./pages/onboarding/ResultsStep'));
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const LazyGenderNameStep = React.lazy(() => 
+  import('./pages/onboarding/GenderNameStep').catch(err => {
+    console.error('Failed to load GenderNameStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
+const LazyArchetypeStep = React.lazy(() => 
+  import('./pages/onboarding/ArchetypeStep').catch(err => {
+    console.error('Failed to load ArchetypeStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
+const LazySeasonStep = React.lazy(() => 
+  import('./pages/onboarding/SeasonStep').catch(err => {
+    console.error('Failed to load SeasonStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
+const LazyOccasionStep = React.lazy(() => 
+  import('./pages/onboarding/OccasionStep').catch(err => {
+    console.error('Failed to load OccasionStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
+const LazyPreferencesStep = React.lazy(() => 
+  import('./pages/onboarding/PreferencesStep').catch(err => {
+    console.error('Failed to load PreferencesStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
+const LazyResultsStep = React.lazy(() => 
+  import('./pages/onboarding/ResultsStep').catch(err => {
+    console.error('Failed to load ResultsStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
+const DashboardPage = React.lazy(() => 
+  import('./pages/DashboardPage').catch(err => {
+    console.error('Failed to load DashboardPage:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -17,8 +54,6 @@ import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
 import { OnboardingProvider } from './context/OnboardingContext';
-import ErrorBoundary from './components/ErrorBoundary';
-import LoadingFallback from './components/ui/LoadingFallback';
 import NavigationProgress from './components/ui/NavigationProgress';
 import NavigationServiceInitializer from './components/NavigationServiceInitializer';
 
@@ -66,34 +101,46 @@ function App() {
                       {/* Onboarding Flow */}
                       <Route path="/onboarding" element={<OnboardingPage />} />
                       <Route path="/onboarding/gender-name" element={
-                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <LazyGenderNameStep />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                            <LazyGenderNameStep />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       <Route path="/onboarding/archetype" element={
-                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <LazyArchetypeStep />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                            <LazyArchetypeStep />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       <Route path="/onboarding/season" element={
-                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <LazySeasonStep />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                            <LazySeasonStep />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       <Route path="/onboarding/occasion" element={
-                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <LazyOccasionStep />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                            <LazyOccasionStep />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       <Route path="/onboarding/preferences" element={
-                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <LazyPreferencesStep />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                            <LazyPreferencesStep />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       <Route path="/onboarding/results" element={
-                        <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                          <LazyResultsStep />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                            <LazyResultsStep />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       
                       {/* Catch-all route for 404 */}
@@ -116,9 +163,11 @@ function App() {
                       <Route path="/results/legacy" element={<ResultsPage />} />
                       
                       <Route path="/dashboard/*" element={
-                        <Suspense fallback={<LoadingFallback message="Dashboard laden..." fullScreen />}>
-                          <DashboardPage />
-                        </Suspense>
+                        <ErrorBoundary>
+                          <Suspense fallback={<LoadingFallback message="Dashboard laden..." fullScreen />}>
+                            <DashboardPage />
+                          </Suspense>
+                        </ErrorBoundary>
                       } />
                       <Route path="/over-ons" element={<AboutPage />} />
                       <Route path="/product" element={<ProductPage />} />
