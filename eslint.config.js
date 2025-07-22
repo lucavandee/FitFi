@@ -5,8 +5,6 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import tailwindcss from 'eslint-plugin-tailwindcss';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
-import tailwindcss from 'eslint-plugin-tailwindcss';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -22,20 +20,14 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
       'tailwindcss': tailwindcss,
       'jsx-a11y': jsxA11y,
-      'tailwindcss': tailwindcss,
-      'jsx-a11y': jsxA11y,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      ...jsxA11y.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
-      'tailwindcss/classnames-order': 'warn',
-      'tailwindcss/no-custom-classname': 'warn',
-      'jsx-a11y/focus-visible': 'error',
       'tailwindcss/classnames-order': 'warn',
       'tailwindcss/no-custom-classname': 'warn',
       'jsx-a11y/focus-visible': 'error',
