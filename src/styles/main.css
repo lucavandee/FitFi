@@ -42,7 +42,7 @@
   }
   
   .card {
-    @apply bg-cardWhite rounded border border-lightGrey overflow-hidden transition-all shadow-sm;
+    @apply bg-cardWhite rounded border border-lightGrey-50 overflow-hidden transition-all shadow-sm;
   }
   
   .input {
