@@ -406,9 +406,9 @@ const ResultsStep: React.FC = () => {
             </div>
 
             {/* Privacy indicator */}
-            <div className="mt-6 bg-gray-50 rounded-xl p-4 flex items-center justify-center space-x-2">
-              <ShieldCheck size={18} className="text-[#bfae9f]" />
-              <span className="text-sm text-gray-600">Je gegevens zijn veilig en versleuteld</span>
+            <div className="mt-6 bg-lightGrey-50 dark:bg-midnight-800 rounded-xl p-4 flex items-center justify-center space-x-2">
+              <ShieldCheck size={18} className="text-turquoise-500" />
+              <span className="text-sm text-textSecondary-light dark:text-textSecondary-dark">Je gegevens zijn veilig en versleuteld</span>
             </div>
           </motion.div>
         </div>
