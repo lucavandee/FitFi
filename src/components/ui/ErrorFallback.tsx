@@ -26,14 +26,14 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 }) => {
   return (
     <div className="min-h-[50vh] flex items-center justify-center p-6">
-      <div className="glass-card p-8 max-w-md w-full text-center">
+      <div className="bg-white dark:bg-midnight-800 rounded-xl shadow-md p-8 max-w-md w-full text-center">
         <div className="w-16 h-16 mx-auto mb-6 text-red-500">
           <AlertTriangle size={32} />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-3">
+        <h2 className="text-2xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-3">
           {title}
         </h2>
-        <p className="text-white/80 mb-6">
+        <p className="text-textSecondary-light dark:text-textSecondary-dark mb-6">
           {message}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -52,7 +52,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
               onClick={() => window.location.href = '/'}
               icon={<Home size={16} />}
               iconPosition="left"
-              className="text-white border border-white/30 hover:bg-white/10"
+              className="text-textPrimary-light dark:text-textPrimary-dark border border-lightGrey-300 dark:border-midnight-600 hover:bg-lightGrey-100 dark:hover:bg-midnight-700"
             >
               Terug naar home
             </Button>
@@ -60,12 +60,12 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
         </div>
         
         {showDetails && env.DEBUG_MODE && (
-          <div className="mt-6 p-4 bg-red-900/20 rounded-lg text-left overflow-auto">
-            <p className="text-sm font-mono text-red-300 mb-2">
+          <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-left overflow-auto">
+            <p className="text-sm font-mono text-red-600 dark:text-red-300 mb-2">
               {error.name}: {error.message}
             </p>
             {error.stack && (
-              <details className="text-xs font-mono text-red-400">
+              <details className="text-xs font-mono text-red-500 dark:text-red-400">
                 <summary className="cursor-pointer">Stack trace</summary>
                 <pre className="mt-2 whitespace-pre-wrap">
                   {error.stack}

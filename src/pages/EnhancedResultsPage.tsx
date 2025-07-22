@@ -613,15 +613,15 @@ const EnhancedResultsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Hero Section */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors">
+      <div className="bg-white dark:bg-midnight-800 border-b border-lightGrey-200 dark:border-midnight-600 transition-colors">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="mb-4 md:mb-0">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                <h1 className="text-3xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
                   Hallo {safeUser.name?.split(' ')[0] || 'Stijlzoeker'}! 👋
                 </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-400">
+                <p className="text-lg text-textSecondary-light dark:text-textSecondary-dark">
                   Dit is jouw persoonlijke stijlcoach in actie – swipe meer om 'm slimmer te maken.
                 </p>
               </div>
@@ -641,20 +641,20 @@ const EnhancedResultsPage: React.FC = () => {
 
       {/* Profile Introduction */}
       {psychographicProfile && (
-        <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 transition-colors">
+        <div className="bg-gradient-to-r from-turquoise-50 to-lightGrey-50 dark:from-midnight-800 dark:to-midnight-700 transition-colors">
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-4xl mx-auto">
-              <div className="bg-white/80 dark:bg-gray-800/80 rounded-xl p-6 backdrop-blur-sm">
+              <div className="bg-white/80 dark:bg-midnight-800/80 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-start space-x-4">
                   <div className="text-4xl">{psychographicProfile.icon}</div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+                    <h2 className="text-2xl font-semibold text-textPrimary-light dark:text-textPrimary-dark mb-3">
                       Jij bent {psychographicProfile.title}
                     </h2>
-                    <h3 className="text-lg text-gray-700 dark:text-gray-300 mb-4">
+                    <h3 className="text-lg text-textSecondary-light dark:text-textSecondary-dark mb-4">
                       {psychographicProfile.description}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-textSecondary-light dark:text-textSecondary-dark">
                       {psychographicProfile.motivationalMessage}
                     </p>
                   </div>
@@ -666,24 +666,24 @@ const EnhancedResultsPage: React.FC = () => {
       )}
 
       {/* Outfits Section */}
-      <div className="bg-gray-50 dark:bg-gray-900 transition-colors">
+      <div className="bg-lightGrey-50 dark:bg-midnight-900 transition-colors">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-2xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
                 Jouw top 3 outfits
               </h2>
               <div className="space-y-1">
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-textSecondary-light dark:text-textSecondary-dark">
                   {getSeason()} • {getOccasion()}
                 </p>
                 {smartDefaults && smartDefaults.confidence > 0.7 && (
-                  <p className="text-sm text-blue-600 dark:text-blue-400">
+                  <p className="text-sm text-turquoise-600 dark:text-turquoise-400">
                     💡 {smartDefaults.reasoning}
                   </p>
                 )}
                 {partialDataShown && (
-                  <p className="text-sm text-orange-600 dark:text-orange-400">
+                  <p className="text-sm text-turquoise-500">
                     ⚡ Meer outfits worden geladen...
                   </p>
                 )}
@@ -751,12 +751,12 @@ const EnhancedResultsPage: React.FC = () => {
               </>
             ) : (
               <div className="text-center py-12">
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
-                  <AlertCircle className="w-16 h-16 text-orange-500 mx-auto mb-6" />
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                <div className="bg-white dark:bg-midnight-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
+                  <AlertCircle className="w-16 h-16 text-turquoise-500 mx-auto mb-6" />
+                  <h3 className="text-xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-3">
                     Geen outfits gevonden
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  <p className="text-textSecondary-light dark:text-textSecondary-dark mb-6">
                     We konden geen outfits vinden die bij jouw stijlprofiel passen.
                   </p>
                   <div className="space-y-3">
@@ -788,18 +788,18 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
 
       {/* Products Section */}
-      <div className="bg-white dark:bg-gray-800 transition-colors">
+      <div className="bg-white dark:bg-midnight-800 transition-colors">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-2xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
                 Aanbevolen producten
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-textSecondary-light dark:text-textSecondary-dark">
                 Individuele items die perfect bij jouw stijl passen
               </p>
               {partialDataShown && products.length > 0 && (
-                <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+                <p className="text-sm text-turquoise-500 mt-1">
                   ⚡ Meer producten worden geladen...
                 </p>
               )}
@@ -810,7 +810,7 @@ const EnhancedResultsPage: React.FC = () => {
                 {products.map((product) => (
                   <div 
                     key={product.id}
-                    className="bg-gray-50 dark:bg-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
+                    className="bg-lightGrey-50 dark:bg-midnight-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
                     onClick={() => window.open(product.url, '_blank', 'noopener,noreferrer')}
                   >
                     <div className="aspect-square">
@@ -822,17 +822,17 @@ const EnhancedResultsPage: React.FC = () => {
                       />
                     </div>
                     <div className="p-3">
-                      <h3 className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                      <h3 className="font-medium text-textPrimary-light dark:text-textPrimary-dark text-sm truncate">
                         {product.name}
                       </h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark mb-2">
                         {product.brand}
                       </p>
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-gray-900 dark:text-white text-sm">
+                        <span className="font-bold text-textPrimary-light dark:text-textPrimary-dark text-sm">
                           €{product.price.toFixed(2)}
                         </span>
-                        <button className="text-orange-500 hover:text-orange-600">
+                        <button className="text-turquoise-500 hover:text-turquoise-600">
                           <ShoppingBag size={16} />
                         </button>
                       </div>
@@ -842,7 +842,7 @@ const EnhancedResultsPage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-textSecondary-light dark:text-textSecondary-dark">
                   Geen producten beschikbaar
                 </p>
                 <Button
@@ -862,7 +862,7 @@ const EnhancedResultsPage: React.FC = () => {
       </div>
 
       {/* Sticky Footer CTAs */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 z-50 transition-colors">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-midnight-800 border-t border-lightGrey-200 dark:border-midnight-600 p-4 z-50 transition-colors">
         <div className="container mx-auto">
           <div className="flex flex-col sm:flex-row gap-3 max-w-4xl mx-auto">
             <Button
