@@ -4,6 +4,64 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .input {
+    @apply w-full p-6 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
+  }
+  
+  .card {
+    @apply bg-white text-text-secondary p-8 rounded border border-light-grey shadow-sm;
+  }
+  
+  .btn-primary {
+    @apply bg-turquoise text-white py-3 px-6 rounded hover:bg-turquoise-dark focus:ring-2 focus:ring-turquoise transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-info-blue text-white py-3 px-6 rounded hover:bg-info-blue/90 focus:ring-2 focus:ring-info-blue transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-text-secondary py-3 px-6 rounded border border-light-grey hover:bg-light-grey focus:ring-2 focus:ring-turquoise transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-error-red text-white py-3 px-6 rounded hover:bg-error-red/90 focus:ring-2 focus:ring-error-red transition-all;
+  }
+  
+  .text-heading {
+    @apply text-text-primary font-bold leading-tight;
+  }
+  
+  .text-body {
+    @apply text-text-secondary leading-relaxed;
+  }
+  
+  .container-fitfi {
+    @apply max-w-7xl mx-auto px-6 sm:px-8 lg:px-10;
+  }
+  
+  .glass-card {
+    @apply bg-white/90 backdrop-blur-sm border border-light-grey rounded shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-turquoise focus:ring-offset-2;
+  }
+  
+  .error-state {
+    @apply bg-error-red/10 border border-error-red/20 text-error-red p-4 rounded;
+  }
+  
+  .success-state {
+    @apply bg-success-green/10 border border-success-green/20 text-success-green p-4 rounded;
+  }
+  
+  .info-state {
+    @apply bg-info-blue/10 border border-info-blue/20 text-info-blue p-4 rounded;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
