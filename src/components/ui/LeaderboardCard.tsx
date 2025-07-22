@@ -100,21 +100,21 @@ const LeaderboardCard: React.FC = () => {
 
   return (
     <motion.div 
-      className="glass-card overflow-hidden"
+      className="bg-white dark:bg-midnight-800 rounded-xl shadow-md overflow-hidden transition-colors"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.2 }}
     >
-      <div className="p-6 border-b border-white/10">
+      <div className="p-6 border-b border-lightGrey-200 dark:border-midnight-600">
         <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-full bg-[#FF8600]/20">
-            <TrendingUp className="text-[#FF8600]" size={20} />
+          <div className="p-2 rounded-full bg-turquoise-100 dark:bg-turquoise-900/20">
+            <TrendingUp className="text-turquoise-600 dark:text-turquoise-400" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-textPrimary-light dark:text-textPrimary-dark">
               Ranglijst
             </h3>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-textSecondary-light dark:text-textSecondary-dark">
               Top stijlliefhebbers deze week
             </p>
           </div>
@@ -129,8 +129,8 @@ const LeaderboardCard: React.FC = () => {
               className={`
                 flex items-center space-x-4 p-3 rounded-lg transition-all
                 ${entry.isCurrentUser 
-                  ? 'bg-[#FF8600]/10 border border-[#FF8600]/20' 
-                  : 'bg-white/5 hover:bg-white/10'}
+                  ? 'bg-turquoise-50 dark:bg-turquoise-900/10 border border-turquoise-200 dark:border-turquoise-800' 
+                  : 'bg-lightGrey-50 dark:bg-midnight-700 hover:bg-lightGrey-100 dark:hover:bg-midnight-600'}
               `}
               whileHover={{ scale: 1.02 }}
             >
@@ -149,7 +149,7 @@ const LeaderboardCard: React.FC = () => {
                     componentName="LeaderboardCard_Avatar"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF8600]/30 to-[#0ea5e9]/30 flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-turquoise-300 to-turquoise-500 flex items-center justify-center text-textPrimary-dark font-bold">
                     {entry.name.charAt(0)}
                   </div>
                 )}
@@ -165,12 +165,12 @@ const LeaderboardCard: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <p className={`font-medium truncate ${
                     entry.isCurrentUser 
-                      ? 'text-[#FF8600]' 
-                      : 'text-white'
+                      ? 'text-turquoise-600 dark:text-turquoise-400' 
+                      : 'text-textPrimary-light dark:text-textPrimary-dark'
                   }`}>
                     {entry.name}
                     {entry.isCurrentUser && (
-                      <span className="ml-1 text-xs bg-[#FF8600]/20 text-[#FF8600] px-1 rounded">
+                      <span className="ml-1 text-xs bg-turquoise-100 dark:bg-turquoise-900/20 text-turquoise-600 dark:text-turquoise-400 px-1 rounded">
                         JIJ
                       </span>
                     )}
@@ -183,10 +183,10 @@ const LeaderboardCard: React.FC = () => {
               
               {/* Points */}
               <div className="text-right">
-                <p className="font-bold text-white">
+                <p className="font-bold text-textPrimary-light dark:text-textPrimary-dark">
                   {entry.points.toLocaleString()}
                 </p>
-                <p className="text-xs text-white/60">
+                <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark">
                   punten
                 </p>
               </div>
@@ -195,11 +195,11 @@ const LeaderboardCard: React.FC = () => {
         </div>
         
         {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-white/10 text-center">
-          <p className="text-xs text-white/60 mb-2">
+        <div className="mt-6 pt-4 border-t border-lightGrey-200 dark:border-midnight-600 text-center">
+          <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark mb-2">
             🏆 Wedijver met andere stijlliefhebbers
           </p>
-          <button className="text-sm text-[#0ea5e9] hover:text-blue-400 font-medium transition-colors">
+          <button className="text-sm text-turquoise-500 hover:text-turquoise-600 font-medium transition-colors">
             Bekijk Volledige Ranglijst
           </button>
         </div>
