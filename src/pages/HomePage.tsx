@@ -144,14 +144,14 @@ const HomePage: React.FC = () => {
                       disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
                       icon={isSubmitting ? undefined : <ArrowRight size={20} />}
                       iconPosition="right"
-                      className="mt-3 bg-turquoise hover:bg-turquoise-dark py-4 px-8 rounded shadow-sm"
+                      className="mt-3"
                     >
                       {isSubmitting ? 'Even geduld...' : 'Start de stijlquiz'}
                     </Button>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-center text-xs text-text-secondary">
-                    <ShieldCheck size={14} className="mr-1 text-turquoise" />
+                    <ShieldCheck size={14} className="mr-1 text-orange-500" />
                     Je gegevens zijn veilig en versleuteld
                   </div>
                 </form>
@@ -193,8 +193,8 @@ const HomePage: React.FC = () => {
                     onClick={() => setActiveGender('female')}
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                       activeGender === 'female' 
-                        ? 'bg-turquoise text-white' 
-                        : 'bg-white/80 text-text-secondary hover:bg-white'
+                        ? 'bg-orange-500 text-white' 
+                        : 'bg-white/80 text-gray-600 hover:bg-white'
                     }`}
                     aria-label="Toon vrouwelijke stijl"
                   >
@@ -204,8 +204,8 @@ const HomePage: React.FC = () => {
                     onClick={() => setActiveGender('male')}
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                       activeGender === 'male' 
-                        ? 'bg-turquoise text-white' 
-                        : 'bg-white/80 text-text-secondary hover:bg-white'
+                        ? 'bg-orange-500 text-white' 
+                        : 'bg-white/80 text-gray-600 hover:bg-white'
                     }`}
                     aria-label="Toon mannelijke stijl"
                   >
@@ -234,7 +234,7 @@ const HomePage: React.FC = () => {
             
             <div className="space-y-8 text-left max-w-2xl mx-auto">
               <div className="flex items-start">
-                <div className="w-6 h-6 rounded bg-turquoise flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
                   <span className="text-white text-sm">•</span>
                 </div>
                 <p className="text-lg text-text-secondary">
@@ -243,7 +243,7 @@ const HomePage: React.FC = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="w-6 h-6 rounded bg-turquoise flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
                   <span className="text-white text-sm">•</span>
                 </div>
                 <p className="text-lg text-text-secondary">
@@ -252,7 +252,7 @@ const HomePage: React.FC = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="w-6 h-6 rounded bg-turquoise flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
                   <span className="text-white text-sm">•</span>
                 </div>
                 <p className="text-lg text-text-secondary">
@@ -382,8 +382,8 @@ const HomePage: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left max-w-3xl mx-auto">
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded bg-success-green/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-success-green" size={16} />
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
                 </div>
                 <p className="text-lg text-text-secondary">
                   Outfits die écht bij je passen
@@ -391,8 +391,8 @@ const HomePage: React.FC = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded bg-success-green/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-success-green" size={16} />
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
                 </div>
                 <p className="text-lg text-text-secondary">
                   Minder keuzestress, meer overzicht
@@ -400,8 +400,8 @@ const HomePage: React.FC = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded bg-success-green/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-success-green" size={16} />
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
                 </div>
                 <p className="text-lg text-text-secondary">
                   Slim shoppen zonder tijdverlies
@@ -409,8 +409,8 @@ const HomePage: React.FC = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded bg-success-green/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-success-green" size={16} />
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
                 </div>
                 <p className="text-lg text-text-secondary">
                   Meer zelfvertrouwen in wat je draagt
@@ -474,7 +474,6 @@ const HomePage: React.FC = () => {
               size="lg"
               icon={<ArrowRight size={20} />}
               iconPosition="right"
-              className="bg-turquoise hover:bg-turquoise-dark text-white py-4 px-8 rounded shadow-sm"
             >
               Start de stijlquiz
             </Button>
@@ -491,7 +490,6 @@ const HomePage: React.FC = () => {
           onClick={() => navigate('/onboarding')}
           variant="primary"
           fullWidth
-          className="bg-turquoise hover:bg-turquoise-dark text-white py-4 px-8 rounded shadow-sm"
         >
           Start de stijlquiz
         </Button>
