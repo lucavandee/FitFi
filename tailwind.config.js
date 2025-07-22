@@ -13,13 +13,10 @@ export default {
         midnight: '#0D1B2A',       // brand background
         turquoise: '#89CFF0',      // primary accent & CTA
         'turquoise-dark': '#6BB6D6', // hover state for turquoise
-        lightGrey: {
-          DEFAULT: '#F6F6F6',      // card backgrounds
-          50: '#F6F6F6',
-        },
-        cardWhite: '#FFFFFF',      // card header or modals
-        textPrimary: '#0D1B2A',    // headings
-        textSecondary: '#333333',  // body text
+        lightgrey: '#F6F6F6',      // card backgrounds (kebab-case for utilities)
+        cardwhite: '#FFFFFF',      // card header or modals (kebab-case for utilities)
+        textprimary: '#0D1B2A',    // headings (kebab-case for utilities)
+        textsecondary: '#333333',  // body text (kebab-case for utilities)
         
         // Extended palette for dark mode and variations
         midnight: {
