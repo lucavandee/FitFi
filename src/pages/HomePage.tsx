@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Check } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Check, Play, Zap, Target, Heart } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { motion } from 'framer-motion';
-import Walkthrough from '../components/walkthrough/Walkthrough';
-import StyleArchetypeSlider from '../components/home/StyleArchetypeSlider';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 
 const HomePage: React.FC = () => {
@@ -58,9 +56,9 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6]">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center">
             <motion.div 
@@ -70,63 +68,16 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-gray-900 leading-tight mb-6">
-                Train je eigen stijlcoach — ontdek outfits die echt bij je passen.
+                Train je eigen stijlcoach
               </h1>
               
-              {/* Origin Story */}
-              <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  FitFi is ontstaan uit één simpele frustratie: waarom is het zo moeilijk om dat ene perfecte kledingstuk te vinden?
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Teveel webshops. Teveel opties. Teveel twijfel.<br />
-                  Uren scrollen later, en nog steeds niks dat goed voelt.
-                </p>
-              </div>
-              
-              {/* Solution Story */}
-              <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  <strong>Dat kon slimmer. Daarom heb ik FitFi gebouwd.</strong>
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  FitFi is jouw persoonlijke stijlcoach — eentje die jij zelf traint.<br />
-                  Elke keer dat je een outfit liket (of juist niet), leert FitFi van jouw smaak.<br />
-                  Zo krijg je steeds betere outfits te zien, afgestemd op jouw stijl, jouw vorm en jouw leven.
-                </p>
-              </div>
-              
-              {/* Benefits Story */}
-              <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  <strong>Geen eindeloos zoeken meer. Geen keuzestress.</strong><br />
-                  Gewoon outfits die wél kloppen — en die je direct kunt shoppen, bewaren of finetunen.
-                </p>
-                <p className="text-gray-700 leading-relaxed">
-                  Je hoeft geen modekenner te zijn.<br />
-                  FitFi leert van jou, en maakt stijl simpel.
-                </p>
-              </div>
-              
-              {/* Social Proof */}
-              <div className="bg-gradient-to-r from-orange-50 to-blue-50 rounded-2xl p-6 mb-8 border-l-4 border-orange-500">
-                <p className="text-lg font-medium flex items-start">
-                  <span className="text-2xl mr-3">💡</span>
-                  Al honderden mensen trainen dagelijks hun eigen stijlcoach. En het werkt.
-                </p>
-              </div>
-              
-              {/* CTA Section */}
-              <div className="bg-orange-500 text-white rounded-2xl p-6 mb-8">
-                <p className="text-lg font-medium flex items-start">
-                  <span className="text-2xl mr-3">👉</span>
-                  Start de stijlquiz en zie in 1 minuut wat echt bij je past.
-                </p>
-              </div>
+              <p className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-8">
+                Swipe. Leer. Ontdek outfits die écht bij je passen — zonder keuzestress.
+              </p>
               
               {/* Lead Capture Form */}
-              <div className="max-w-md mx-auto lg:mx-0">
-                <form onSubmit={handleFormSubmit} className="bg-white p-6 rounded-2xl shadow-lg">
+              <div className="max-w-md mx-auto lg:mx-0 mb-8">
+                <form onSubmit={handleFormSubmit} className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                   <div className="space-y-4">
                     <div>
                       <label htmlFor="hero-name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -195,7 +146,7 @@ const HomePage: React.FC = () => {
                 <div className={`absolute inset-0 transition-opacity duration-1000 ${activeGender === 'female' ? 'opacity-100' : 'opacity-0'}`}>
                   <ImageWithFallback 
                     src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
-                    alt="Stijlvolle vrouw met FitFi aanbevelingen" 
+                    alt="Vrouw met stijlvolle outfit als visuele metafoor voor stijlcoach" 
                     className="h-full w-full object-cover"
                     fallbackSrc="/images/fallback-user.png"
                   />
@@ -205,7 +156,7 @@ const HomePage: React.FC = () => {
                 <div className={`absolute inset-0 transition-opacity duration-1000 ${activeGender === 'male' ? 'opacity-100' : 'opacity-0'}`}>
                   <ImageWithFallback 
                     src="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
-                    alt="Stijlvolle man met FitFi aanbevelingen" 
+                    alt="Man met stijlvolle outfit als visuele metafoor voor stijlcoach" 
                     className="h-full w-full object-cover"
                     fallbackSrc="/images/fallback-user.png"
                   />
@@ -242,20 +193,69 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Waarom FitFi Section */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
-              Hoe FitFi jou helpt
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-12">
+              Waarom FitFi?
             </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Ontdek hoe onze AI-technologie jouw stijl transformeert
-            </p>
-          </div>
+            
+            <div className="space-y-6 text-left max-w-2xl mx-auto">
+              <div className="flex items-start">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <span className="text-white text-sm">•</span>
+                </div>
+                <p className="text-lg text-gray-700">
+                  Het kost uren om iets te vinden dat echt bij je past
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <span className="text-white text-sm">•</span>
+                </div>
+                <p className="text-lg text-gray-700">
+                  Je wordt overspoeld met webshops, trends en twijfel
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <span className="text-white text-sm">•</span>
+                </div>
+                <p className="text-lg text-gray-700">
+                  Je wilt gewoon goed gekleed zijn — zonder eindeloos scrollen
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Hoe werkt het Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+              Hoe werkt het?
+            </h2>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Feature 1 */}
+            {/* Step 1 */}
             <motion.div 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -263,52 +263,16 @@ const HomePage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <div className="relative mb-6">
-                <div className="w-24 h-24 mx-auto rounded-full bg-[#bfae9f]/10 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-[#bfae9f]/20 flex items-center justify-center">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 8V16" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M8 12H16" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <div className="text-6xl mb-6">🧠</div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Ontdek jouw stijlprofiel
+                Swipe & train
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Onze AI analyseert jouw voorkeuren en creëert een uniek stijlprofiel dat perfect bij jou past.
+                Liken of skippen? FitFi leert van jouw keuzes.
               </p>
-              
-              <div className="mt-6 bg-white p-4 rounded-xl shadow-lg">
-                <div className="flex justify-center mb-2">
-                  <div className="w-32 h-32 relative">
-                    <svg viewBox="0 0 36 36" className="w-full h-full">
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="#E6E6E6"
-                        strokeWidth="3"
-                      />
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="#bfae9f"
-                        strokeWidth="3"
-                        strokeDasharray="80, 100"
-                      />
-                      <text x="18" y="20.5" textAnchor="middle" fontSize="8" fill="#666">80%</text>
-                    </svg>
-                  </div>
-                </div>
-                <div className="text-center">
-                  <span className="text-sm font-medium text-gray-900">Modern Minimalist</span>
-                </div>
-              </div>
             </motion.div>
 
-            {/* Feature 2 */}
+            {/* Step 2 */}
             <motion.div 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -316,56 +280,16 @@ const HomePage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="relative mb-6">
-                <div className="w-24 h-24 mx-auto rounded-full bg-[#bfae9f]/10 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-[#bfae9f]/20 flex items-center justify-center">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M21 9V3H15" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M3 15V21H9" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M21 3L14 10" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M10 14L3 21" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <div className="text-6xl mb-6">🎯</div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Outfits op maat
+                Jouw stijlcoach
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Krijg complete outfits die perfect bij jouw stijl, lichaamsbouw en voorkeuren passen.
+                Hoe meer je swipet, hoe persoonlijker de outfits worden.
               </p>
-              
-              <div className="mt-6 bg-white p-4 rounded-xl shadow-lg">
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <ImageWithFallback 
-                      src="https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2" 
-                      alt="Bovenstuk" 
-                      className="w-full h-full object-cover"
-                      fallbackSrc="/placeholder.png"
-                    />
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <ImageWithFallback 
-                      src="https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2" 
-                      alt="Broek" 
-                      className="w-full h-full object-cover"
-                      fallbackSrc="/placeholder.png"
-                    />
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <ImageWithFallback 
-                      src="https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2" 
-                      alt="Schoenen" 
-                      className="w-full h-full object-cover"
-                      fallbackSrc="/placeholder.png"
-                    />
-                  </div>
-                </div>
-              </div>
             </motion.div>
 
-            {/* Feature 3 */}
+            {/* Step 3 */}
             <motion.div 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -373,314 +297,166 @@ const HomePage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="relative mb-6">
-                <div className="w-24 h-24 mx-auto rounded-full bg-[#bfae9f]/10 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-[#bfae9f]/20 flex items-center justify-center">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M20.84 4.60999C20.3292 4.09946 19.7228 3.69352 19.0554 3.41708C18.388 3.14064 17.6725 2.99918 16.95 2.99918C16.2275 2.99918 15.512 3.14064 14.8446 3.41708C14.1772 3.69352 13.5708 4.09946 13.06 4.60999L12 5.66999L10.94 4.60999C9.9083 3.5783 8.50903 2.9987 7.05 2.9987C5.59096 2.9987 4.19169 3.5783 3.16 4.60999C2.1283 5.64169 1.54871 7.04096 1.54871 8.49999C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.3505 11.8792 21.7565 11.2728 22.0329 10.6054C22.3094 9.93801 22.4508 9.22249 22.4508 8.49999C22.4508 7.7775 22.3094 7.06198 22.0329 6.39461C21.7565 5.72723 21.3505 5.12081 20.84 4.60999Z" stroke="#bfae9f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <div className="text-6xl mb-6">🛍️</div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Slimme kledingkeuzes
+                Shop of bewaar
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Krijg gepersonaliseerde productaanbevelingen die perfect bij jouw stijl en budget passen.
+                Ontvang outfits die je direct kunt shoppen, finetunen of opslaan.
               </p>
-              
-              <div className="mt-6 bg-white p-4 rounded-xl shadow-lg">
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 mr-3">
-                      <ImageWithFallback 
-                        src="https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                        alt="Bovenstuk" 
-                        className="w-full h-full object-cover"
-                        fallbackSrc="/placeholder.png"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Oversized Shirt</p>
-                      <p className="text-xs text-gray-500">€49,95</p>
-                    </div>
-                    <div className="bg-[#bfae9f] text-white text-xs px-2 py-1 rounded-full">
-                      92% match
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 mr-3">
-                      <ImageWithFallback 
-                        src="https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                        alt="Broek" 
-                        className="w-full h-full object-cover"
-                        fallbackSrc="/placeholder.png"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Slim Fit Jeans</p>
-                      <p className="text-xs text-gray-500">€89,95</p>
-                    </div>
-                    <div className="bg-[#bfae9f] text-white text-xs px-2 py-1 rounded-full">
-                      87% match
-                    </div>
-                  </div>
-                </div>
-              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 bg-[#FAF8F6] overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <Walkthrough />
-
-          {/* Style Archetype Slider */}
-          <StyleArchetypeSlider />
-
-          {/* CTA Button */}
-          <div className="text-center mt-16">
-            <Button 
-              onClick={() => navigate('/onboarding')}
-              variant="primary"
-              size="lg"
-              icon={<ArrowRight size={20} />}
-              iconPosition="right"
-              className="bg-[#bfae9f] hover:bg-[#a89a8c]"
-            >
-              Start je stijlreis
-            </Button>
-          </div>
+      {/* Demo Video Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-6">
+              Zo werkt het in 15 seconden
+            </h2>
+            
+            <div className="relative max-w-4xl mx-auto">
+              <div className="aspect-video bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                {/* Placeholder for video */}
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <Play className="text-[#bfae9f] ml-1" size={32} />
+                    </div>
+                    <p className="text-gray-600 font-medium">Demo video komt binnenkort</p>
+                    <p className="text-sm text-gray-500 mt-2">Je traint je stijlcoach bij elke swipe</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Wat levert het op Section */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
-              Wat onze gebruikers zeggen
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-12">
+              Wat levert het op?
             </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Duizenden mensen hebben hun stijl al getransformeerd met FitFi
-            </p>
-          </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-3xl mx-auto">
+              <div className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
+                </div>
+                <p className="text-lg text-gray-700">
+                  Outfits die écht bij je passen
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
+                </div>
+                <p className="text-lg text-gray-700">
+                  Minder keuzestress, meer overzicht
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
+                </div>
+                <p className="text-lg text-gray-700">
+                  Slim shoppen zonder tijdverlies
+                </p>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                  <Check className="text-green-600" size={16} />
+                </div>
+                <p className="text-lg text-gray-700">
+                  Meer zelfvertrouwen in wat je draagt
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Testimonial 1 */}
-            <motion.div 
-              className="bg-[#FAF8F6] p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <p className="text-gray-700 mb-6 italic">
-                "FitFi heeft mijn garderobe en zelfvertrouwen compleet getransformeerd. Ik krijg nu regelmatig complimenten over mijn outfits!"
-              </p>
-              <div className="flex items-center">
+      {/* Testimonial Section */}
+      <section className="py-20 bg-gradient-to-r from-orange-50 to-blue-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+              <div className="text-6xl mb-6">💬</div>
+              <blockquote className="text-xl md:text-2xl text-gray-700 italic leading-relaxed mb-6">
+                "FitFi voelt als shoppen met iemand die me écht begrijpt. Ik hoef alleen nog maar te kiezen wat ik wil dragen."
+              </blockquote>
+              <div className="flex items-center justify-center">
                 <ImageWithFallback 
                   src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                  alt="Emma van der Berg"
-                  className="w-10 h-10 rounded-full object-cover mr-3"
+                  alt="Sarah"
+                  className="w-12 h-12 rounded-full object-cover mr-4"
                   fallbackSrc="/images/fallback-user.png"
                 />
-                <div>
-                  <h4 className="font-medium text-gray-900">
-                    Emma van der Berg
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Marketing Professional
-                  </p>
+                <div className="text-left">
+                  <p className="font-semibold text-gray-900">Sarah</p>
+                  <p className="text-gray-600">31 jaar</p>
                 </div>
               </div>
-            </motion.div>
-
-            {/* Testimonial 2 */}
-            <motion.div 
-              className="bg-[#FAF8F6] p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <p className="text-gray-700 mb-6 italic">
-                "Als man vond ik het altijd lastig om mijn eigen stijl te vinden. FitFi heeft me geholpen te begrijpen welke kleuren en pasvorm bij mijn lichaamsbouw passen."
-              </p>
-              <div className="flex items-center">
-                <ImageWithFallback 
-                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                  alt="Thomas Jansen"
-                  className="w-10 h-10 rounded-full object-cover mr-3"
-                  fallbackSrc="/images/fallback-user.png"
-                />
-                <div>
-                  <h4 className="font-medium text-gray-900">
-                    Thomas Jansen
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Software Engineer
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Testimonial 3 */}
-            <motion.div 
-              className="bg-[#FAF8F6] p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <p className="text-gray-700 mb-6 italic">
-                "Ik kocht altijd kleding die ik uiteindelijk nauwelijks droeg. FitFi heeft me geholpen bewustere keuzes te maken en een capsule garderobe op te bouwen."
-              </p>
-              <div className="flex items-center">
-                <ImageWithFallback 
-                  src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                  alt="Sophie Bakker"
-                  className="w-10 h-10 rounded-full object-cover mr-3"
-                  fallbackSrc="/images/fallback-user.png"
-                />
-                <div>
-                  <h4 className="font-medium text-gray-900">
-                    Sophie Bakker
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Ondernemer
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-[#bfae9f]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
+      {/* Final CTA Section */}
+      <section className="py-20 bg-gray-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Klaar om je stijl te ontdekken?
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Ontdek wat bij jou past
             </h2>
-            <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8">
-              Begin vandaag nog met FitFi en ontdek hoe eenvoudig het is om er altijd op je best uit te zien.
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              In minder dan 1 minuut weet je je stijladvies. Slimmer shoppen begint hier.
             </p>
             <Button 
               onClick={() => navigate('/onboarding')}
-              variant="secondary"
+              variant="primary"
               size="lg"
               icon={<ArrowRight size={20} />}
               iconPosition="right"
-              className="bg-white text-[#bfae9f] hover:bg-gray-100"
+              className="bg-[#bfae9f] hover:bg-[#a89a8c] text-lg px-8 py-4"
             >
-              Start je stijlreis
+              Start de stijlquiz
             </Button>
-            <p className="text-sm text-white/80 mt-4">
+            <p className="text-sm text-gray-400 mt-4">
               Geen verplichtingen • Gratis te gebruiken
             </p>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 bg-[#FAF8F6]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
-              Waarom FitFi?
-            </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Ontdek de voordelen van een persoonlijke AI-stylist
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Benefit 1 */}
-            <motion.div 
-              className="bg-white p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="w-12 h-12 rounded-full bg-[#bfae9f]/10 flex items-center justify-center mb-4">
-                <Check className="text-[#bfae9f]" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Tijdbesparend
-              </h3>
-              <p className="text-gray-700">
-                Geen eindeloos zoeken meer naar de juiste kleding. FitFi doet het werk voor je.
-              </p>
-            </motion.div>
-
-            {/* Benefit 2 */}
-            <motion.div 
-              className="bg-white p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <div className="w-12 h-12 rounded-full bg-[#bfae9f]/10 flex items-center justify-center mb-4">
-                <Check className="text-[#bfae9f]" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Persoonlijk advies
-              </h3>
-              <p className="text-gray-700">
-                Aanbevelingen die rekening houden met jouw unieke stijl, lichaamsbouw en voorkeuren.
-              </p>
-            </motion.div>
-
-            {/* Benefit 3 */}
-            <motion.div 
-              className="bg-white p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <div className="w-12 h-12 rounded-full bg-[#bfae9f]/10 flex items-center justify-center mb-4">
-                <Check className="text-[#bfae9f]" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Altijd beschikbaar
-              </h3>
-              <p className="text-gray-700">
-                Je persoonlijke stylist is 24/7 beschikbaar, waar en wanneer je maar wilt.
-              </p>
-            </motion.div>
-
-            {/* Benefit 4 */}
-            <motion.div 
-              className="bg-white p-6 rounded-2xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div className="w-12 h-12 rounded-full bg-[#bfae9f]/10 flex items-center justify-center mb-4">
-                <Check className="text-[#bfae9f]" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Lerende AI
-              </h3>
-              <p className="text-gray-700">
-                Hoe meer je FitFi gebruikt, hoe beter de aanbevelingen worden. Onze AI leert van jouw feedback.
-              </p>
-            </motion.div>
-          </div>
         </div>
       </section>
 
@@ -692,7 +468,7 @@ const HomePage: React.FC = () => {
           fullWidth
           className="bg-[#bfae9f] hover:bg-[#a89a8c]"
         >
-          Start je stijlreis
+          Start de stijlquiz
         </Button>
       </div>
     </div>
