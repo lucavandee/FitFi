@@ -10,11 +10,11 @@
   }
   
   .card {
-    @apply bg-white text-text-secondary p-8 rounded border border-light-grey shadow-sm;
+    @apply bg-light-grey text-text-primary p-8 rounded border border-light-grey shadow-sm transition-shadow hover:shadow-md hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
   }
   
   .btn-primary {
-    @apply bg-turquoise text-white py-3 px-6 rounded hover:bg-turquoise-dark focus:ring-2 ring-turquoise transition-all;
+    @apply bg-turquoise text-white py-3 px-6 rounded shadow-sm hover:bg-turquoise-dark focus:outline-none focus:ring-2 ring-turquoise transition-all;
   }
   
   .btn-secondary {
@@ -30,11 +30,11 @@
   }
   
   .quiz-button {
-    @apply bg-turquoise text-white py-3 px-6 rounded hover:bg-turquoise-dark focus:ring-2 ring-turquoise transition-all;
+    @apply bg-turquoise text-white py-3 px-6 rounded shadow-sm hover:bg-turquoise-dark focus:outline-none focus:ring-2 ring-turquoise transition-all;
   }
   
   .dashboard-card {
-    @apply bg-white text-text-secondary p-8 rounded border border-light-grey shadow-sm;
+    @apply bg-light-grey text-text-primary p-8 rounded border border-light-grey shadow-sm transition-shadow hover:shadow-md hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
   }
   
   .tab-inactive {
@@ -75,6 +75,26 @@
   
   .info-state {
     @apply bg-info-blue/10 border border-info-blue/20 text-info-blue p-4 rounded;
+  }
+  
+  .stijlscan-container {
+    @apply bg-light-grey text-text-primary p-8 rounded mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-text-secondary border border-light-grey p-6 rounded mb-6 hover:bg-light-grey focus:outline-none focus:ring-2 ring-turquoise transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-light-grey rounded-full h-1.5;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-turquoise h-1.5 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-light-grey animate-pulse rounded;
   }
 }
 
