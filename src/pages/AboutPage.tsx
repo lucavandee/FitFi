@@ -91,54 +91,82 @@ const AboutPage: React.FC = () => {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-            Over FitFi
+            Train je eigen stijlcoach — ontdek outfits die echt bij je passen.
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Stel je voor: binnen enkele klikken zie je outfits die naadloos passen bij jouw stijl én lichaam. 
-            Geen eindeloos zoeken of twijfelen meer – FitFi brengt je direct naar je perfecte look.
-          </p>
         </div>
 
-        {/* Tech Meets Style Section */}
+        {/* Origin Story */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
           <div className="p-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              💡 Tech meets stijl — voor mensen die weten wat ze willen
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
-              Bij FitFi draait alles om stijl, identiteit en eenvoud. We combineren de kracht van AI met een scherp gevoel voor design — zodat jij in één klik ziet welke outfits echt bij je passen.
+            <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              FitFi is ontstaan uit één simpele frustratie: waarom is het zo moeilijk om dat ene perfecte kledingstuk te vinden?
             </p>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-              Geen gedoe, geen one-size-fits-all. Maar een persoonlijke stijlervaring die moeiteloos werkt.
+            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
+              Teveel webshops. Teveel opties. Teveel twijfel.<br />
+              Uren scrollen later, en nog steeds niks dat goed voelt.
             </p>
           </div>
         </div>
 
-        {/* Why FitFi Section */}
+        {/* Solution Story */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+          <div className="p-8">
+            <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              <strong>Dat kon slimmer. Daarom heb ik FitFi gebouwd.</strong>
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              FitFi is jouw persoonlijke stijlcoach — eentje die jij zelf traint.<br />
+              Elke keer dat je een outfit liket (of juist niet), leert FitFi van jouw smaak.<br />
+              Zo krijg je steeds betere outfits te zien, afgestemd op jouw stijl, jouw vorm en jouw leven.
+            </p>
+          </div>
+        </div>
+
+        {/* Benefits Story */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+          <div className="p-8">
+            <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              <strong>Geen eindeloos zoeken meer. Geen keuzestress.</strong><br />
+              Gewoon outfits die wél kloppen — en die je direct kunt shoppen, bewaren of finetunen.
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+              Je hoeft geen modekenner te zijn.<br />
+              FitFi leert van jou, en maakt stijl simpel.
+            </p>
+          </div>
+        </div>
+
+        {/* Social Proof */}
+        <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
           <div className="p-8">
             <div className="flex items-center mb-6">
               <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-full mr-4">
-                <Target className="text-orange-500" size={24} />
+                <Users className="text-orange-500" size={24} />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                🚀 Waarom FitFi is ontstaan
+                💡 Al honderden mensen trainen dagelijks hun eigen stijlcoach. En het werkt.
               </h2>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
-              Stijladvies online is óf oppervlakkig, óf overweldigend. Je krijgt duizenden opties of saaie basics die niet bij je passen.
-            </p>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-              Wij wilden het anders:
-            </p>
-            <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mb-6">
-              <li>Slimmer dan standaard stylingapps</li>
-              <li>Eenvoudiger dan personal shoppers</li>
-              <li>Visueel en intuïtief zoals je dat van topmerken verwacht</li>
-            </ul>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-              FitFi is geboren uit die frustratie — en gebouwd met visie. Voor mensen die weten wat ze willen, maar wel even die AI-powered second opinion kunnen gebruiken.
-            </p>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 rounded-xl shadow-md overflow-hidden transition-colors mb-16">
+          <div className="p-8 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              👉 Start de stijlquiz en zie in 1 minuut wat echt bij je past.
+            </h2>
+            <Button
+              as="a"
+              href="/onboarding"
+              variant="secondary"
+              size="lg"
+              className="bg-white text-orange-600 hover:bg-gray-100"
+              icon={<ArrowRight size={20} />}
+              iconPosition="right"
+            >
+              Begin je stijlreis
+            </Button>
           </div>
         </div>
 
