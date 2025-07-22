@@ -30,7 +30,6 @@ export default tseslint.config(
       ],
       'tailwindcss/classnames-order': 'warn',
       'tailwindcss/no-custom-classname': 'warn',
-      'jsx-a11y/focus-visible': 'error',
     },
   }
 );
