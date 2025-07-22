@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="space-x-4">
+                <div className="flex space-x-4">
                   <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-white border border-white/30 hover:bg-white/10">
                     Inloggen
                   </Button>
