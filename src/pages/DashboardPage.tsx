@@ -414,14 +414,14 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-midnight-950 to-midnight-800 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-midnight to-midnight-800 py-12">
       <div className="container-slim">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-textPrimary-dark mb-2">
+        <div className="mb-10">
+          <h1 className="text-h1 font-bold text-cardWhite mb-3">
             Welkom, {user.name.split(' ')[0]}
           </h1>
-          <p className="text-textSecondary-dark">
+          <p className="text-cardWhite/80">
             Je hebt {points} punten • {level} niveau • {streak} dagen streak
           </p>
         </div>
@@ -430,13 +430,13 @@ const DashboardPage: React.FC = () => {
         <GamificationBanner />
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto mb-8 pb-2 scrollbar-hide">
+        <div className="flex overflow-x-auto mb-10 pb-2 scrollbar-hide space-x-2">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-2 rounded-full mr-2 transition-colors ${
               activeTab === 'overview'
-                ? 'bg-midnight-950 text-textPrimary-dark'
-                : 'bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark hover:bg-lightGrey-200 dark:hover:bg-midnight-600'
+                ? 'bg-midnight text-cardWhite'
+                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
             }`}
           >
             Overzicht
@@ -445,8 +445,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('profile')}
             className={`px-4 py-2 rounded-full mr-2 transition-colors ${
               activeTab === 'profile'
-                ? 'bg-midnight-950 text-textPrimary-dark'
-                : 'bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark hover:bg-lightGrey-200 dark:hover:bg-midnight-600'
+                ? 'bg-midnight text-cardWhite'
+                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
             }`}
           >
             Profiel
@@ -455,8 +455,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('saved')}
             className={`px-4 py-2 rounded-full mr-2 transition-colors ${
               activeTab === 'saved'
-                ? 'bg-midnight-950 text-textPrimary-dark'
-                : 'bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark hover:bg-lightGrey-200 dark:hover:bg-midnight-600'
+                ? 'bg-midnight text-cardWhite'
+                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
             }`}
           >
             Opgeslagen
@@ -465,8 +465,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('settings')}
             className={`px-4 py-2 rounded-full transition-colors ${
               activeTab === 'settings'
-                ? 'bg-midnight-950 text-textPrimary-dark'
-                : 'bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark hover:bg-lightGrey-200 dark:hover:bg-midnight-600'
+                ? 'bg-midnight text-cardWhite'
+                : 'bg-cardWhite text-textSecondary hover:bg-lightGrey'
             }`}
           >
             Instellingen
@@ -475,12 +475,12 @@ const DashboardPage: React.FC = () => {
 
         {/* Tab Content */}
         {activeTab === 'overview' && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <DailyChallengeCard />
               <AchievementCard />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <LeaderboardCard />
               <ReferralWidget />
             </div>
