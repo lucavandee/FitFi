@@ -6,59 +6,55 @@
 
 @layer utilities {
   .card {
-    @apply bg-white text-text-primary p-8 rounded-lg border border-light-grey shadow-md transition-shadow hover:shadow-lg hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
+    @apply p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900;
   }
   
   .quiz-container {
-    @apply bg-white text-text-primary max-w-2xl mx-auto p-8 rounded-lg shadow-lg border border-light-grey;
+    @apply bg-accent text-gray-900 max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
   }
   
   .card-section {
-    @apply bg-light-grey p-4 rounded mb-4 text-text-primary;
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-4 text-gray-900;
   }
   
   .input {
-    @apply w-full p-6 rounded border border-light-grey bg-white text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
-  }
-  
-  .card {
-    @apply bg-light-grey text-text-primary p-8 rounded border border-light-grey shadow-sm transition-shadow hover:shadow-md hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all;
   }
   
   .btn-primary {
-    @apply bg-turquoise text-white font-semibold py-3 px-6 rounded shadow-md hover:bg-turquoise-dark focus:outline-none focus:ring-2 ring-turquoise transition-all;
+    @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary py-3 px-6 rounded-full font-medium transition-all;
   }
   
   .btn-secondary {
-    @apply bg-info-blue text-white py-3 px-6 rounded hover:bg-info-blue/90 focus:ring-2 ring-info-blue transition-all;
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:ring-2 ring-secondary transition-all;
   }
   
   .btn-ghost {
-    @apply bg-transparent text-text-secondary py-3 px-6 rounded border border-light-grey hover:bg-light-grey focus:ring-2 ring-turquoise transition-all;
+    @apply bg-transparent text-gray-600 py-3 px-6 rounded-full border border-gray-300 hover:bg-gray-100 focus:ring-2 ring-primary transition-all;
   }
   
   .btn-danger {
-    @apply bg-error-red text-white py-3 px-6 rounded hover:bg-error-red/90 focus:ring-2 ring-error-red transition-all;
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:ring-2 ring-red-600 transition-all;
   }
   
   .quiz-button {
-    @apply bg-turquoise text-white py-3 px-6 rounded shadow-sm hover:bg-turquoise-dark focus:outline-none focus:ring-2 ring-turquoise transition-all;
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 ring-secondary transition-all;
   }
   
   .dashboard-card {
-    @apply bg-white text-text-primary p-8 rounded-lg border border-light-grey shadow-md transition-shadow hover:shadow-lg hover:ring-2 hover:ring-turquoise focus:outline-none focus:ring-2 ring-turquoise;
+    @apply p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900 transition-shadow hover:shadow-xl;
   }
   
   .tab-inactive {
-    @apply bg-light-grey text-text-secondary py-3 px-6 rounded transition-all;
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
   }
   
   .tab-active {
-    @apply bg-midnight text-white py-3 px-6 rounded border-b-2 border-turquoise transition-all;
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
   }
   
   .text-heading {
-    @apply text-text-primary font-bold leading-tight mb-4;
+    @apply text-2xl font-semibold text-gray-900 leading-tight mb-4;
   }
   
   .text-body {
