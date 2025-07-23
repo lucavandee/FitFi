@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary">
+    <div className="min-h-screen bg-primary space-y-12">
       {/* Progress Recovery Banner */}
       {showRecoveryBanner && (
         <ProgressRecoveryBanner
@@ -83,25 +83,25 @@ const HomePage: React.FC = () => {
       )}
       
       {/* Hero Section */}
-      <section className="section-wrapper relative overflow-hidden bg-gradient-to-br from-primary via-primary-light to-secondary/10">
-        <div className="container-fitfi">
+      <section className="section-wrapper relative overflow-hidden">
+        <div className="container-fitfi space-y-12">
           <div className="flex flex-col lg:flex-row items-center">
             <motion.div 
-              className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-12"
+              className="flex-1 text-center lg:text-left lg:pr-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white leading-tight mb-8">
+              <h1 className="text-5xl lg:text-6xl font-extrabold text-secondary leading-tight mb-8">
                 Train je eigen stijlcoach
               </h1>
               
-              <p className="text-xl md:text-2xl text-body leading-relaxed mb-10">
+              <p className="text-xl md:text-2xl text-body leading-relaxed mb-8">
                 Swipe. Leer. Ontdek outfits die écht bij je passen — zonder keuzestress.
               </p>
               
               {/* Lead Capture Form */}
-              <div className="max-w-md mx-auto lg:mx-0 mb-10">
+              <div className="max-w-md mx-auto lg:mx-0">
                 <form onSubmit={handleFormSubmit} className="card">
                   <div className="space-y-6">
                     <div>
@@ -115,7 +115,7 @@ const HomePage: React.FC = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="input focus-ring"
+                        className="w-full p-4 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                         placeholder="Voer je naam in"
                       />
                     </div>
@@ -131,7 +131,7 @@ const HomePage: React.FC = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="input focus-ring"
+                        className="w-full p-4 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                         placeholder="je@email.com"
                       />
                     </div>
@@ -144,13 +144,13 @@ const HomePage: React.FC = () => {
                       disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
                       icon={isSubmitting ? undefined : <ArrowRight size={20} />}
                       iconPosition="right"
-                      className="btn-primary mt-3"
+                      className="bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
                     >
                       {isSubmitting ? 'Even geduld...' : 'Start de stijlquiz'}
                     </Button>
                   </div>
                   
-                  <div className="mt-6 flex items-center justify-center text-xs text-body">
+                  <div className="flex items-center justify-center text-xs text-gray-600">
                     <ShieldCheck size={14} className="mr-1 text-orange-500" />
                     Je gegevens zijn veilig en versleuteld
                   </div>
@@ -219,43 +219,43 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Waarom FitFi Section */}
-      <section className="section-wrapper bg-accent">
-        <div className="container-fitfi max-w-4xl">
+      <section className="section-wrapper">
+        <div className="container-fitfi max-w-4xl space-y-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center"
+            className="card text-center"
           >
-            <h2 className="text-heading mb-12">
+            <h2 className="text-4xl font-semibold text-secondary mb-8">
               Waarom FitFi?
             </h2>
             
-            <div className="space-y-8 text-left max-w-2xl mx-auto">
+            <div className="space-y-6 text-left max-w-2xl mx-auto">
               <div className="flex items-start">
-                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <span className="text-white text-sm">•</span>
+                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <span className="text-primary text-sm">•</span>
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Het kost uren om iets te vinden dat echt bij je past
                 </p>
               </div>
               
               <div className="flex items-start">
-                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <span className="text-white text-sm">•</span>
+                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <span className="text-primary text-sm">•</span>
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Je wordt overspoeld met webshops, trends en twijfel
                 </p>
               </div>
               
               <div className="flex items-start">
-                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <span className="text-white text-sm">•</span>
+                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <span className="text-primary text-sm">•</span>
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Je wilt gewoon goed gekleed zijn — zonder eindeloos scrollen
                 </p>
               </div>
@@ -265,68 +265,68 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Hoe werkt het Section */}
-      <section className="section-wrapper bg-primary-light">
+      <section className="section-wrapper">
         <div className="container-fitfi">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="text-heading text-white mb-6">
+            <h2 className="text-4xl font-semibold text-secondary mb-6">
               Hoe werkt het?
             </h2>
           </motion.div>
 
-          <div className="grid-layout gap-16">
+          <div className="grid-layout">
             {/* Step 1 */}
             <motion.div 
-              className="text-center"
+              className="card text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <div className="text-6xl mb-8">🧠</div>
-              <h3 className="text-xl font-bold text-white mb-4">
+              <div className="text-6xl mb-6">🧠</div>
+              <h3 className="text-3xl font-semibold text-secondary mb-4">
                 Swipe & train
               </h3>
-              <p className="text-body leading-relaxed">
+              <p className="text-base leading-relaxed text-text-dark">
                 Liken of skippen? FitFi leert van jouw keuzes.
               </p>
             </motion.div>
 
             {/* Step 2 */}
             <motion.div 
-              className="text-center"
+              className="card text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="text-6xl mb-8">🎯</div>
-              <h3 className="text-xl font-bold text-text-primary mb-4">
+              <div className="text-6xl mb-6">🎯</div>
+              <h3 className="text-3xl font-semibold text-secondary mb-4">
                 Jouw stijlcoach
               </h3>
-              <p className="text-text-secondary leading-relaxed">
+              <p className="text-base leading-relaxed text-text-dark">
                 Hoe meer je swipet, hoe persoonlijker de outfits worden.
               </p>
             </motion.div>
 
             {/* Step 3 */}
             <motion.div 
-              className="text-center"
+              className="card text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="text-6xl mb-8">🛍️</div>
-              <h3 className="text-xl font-bold text-text-primary mb-4">
+              <div className="text-6xl mb-6">🛍️</div>
+              <h3 className="text-3xl font-semibold text-secondary mb-4">
                 Shop of bewaar
               </h3>
-              <p className="text-text-secondary leading-relaxed">
+              <p className="text-base leading-relaxed text-text-dark">
                 Ontvang outfits die je direct kunt shoppen, finetunen of opslaan.
               </p>
             </motion.div>
@@ -335,29 +335,29 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Demo Video Section */}
-      <section className="py-20 bg-gradient-to-br from-turquoise/10 to-turquoise/20">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-10 max-w-6xl">
+      <section className="section-wrapper">
+        <div className="container-fitfi max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center"
+            className="card text-center"
           >
-            <h2 className="text-h2 md:text-4xl font-display font-bold text-text-primary mb-8">
+            <h2 className="text-4xl font-semibold text-secondary mb-8">
               Zo werkt het in 15 seconden
             </h2>
             
             <div className="relative max-w-4xl mx-auto">
-              <div className="aspect-video bg-white rounded shadow-xl overflow-hidden border border-light-grey">
+              <div className="aspect-video bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
                 {/* Placeholder for video */}
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-light-grey to-light-grey/80">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent to-gray-100">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-white rounded flex items-center justify-center mx-auto mb-6 shadow-lg">
-                      <Play className="text-turquoise ml-1" size={32} />
+                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                      <Play className="text-secondary ml-1" size={32} />
                     </div>
-                    <p className="text-text-secondary font-medium">Demo video komt binnenkort</p>
-                    <p className="text-sm text-text-secondary/80 mt-2">Je traint je stijlcoach bij elke swipe</p>
+                    <p className="text-text-dark font-medium">Demo video komt binnenkort</p>
+                    <p className="text-sm text-gray-600 mt-2">Je traint je stijlcoach bij elke swipe</p>
                   </div>
                 </div>
               </div>
@@ -367,52 +367,52 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Wat levert het op Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-10 max-w-4xl">
+      <section className="section-wrapper">
+        <div className="container-fitfi max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center"
+            className="card text-center"
           >
-            <h2 className="text-h2 md:text-4xl font-display font-bold text-text-primary mb-12">
+            <h2 className="text-4xl font-semibold text-secondary mb-8">
               Wat levert het op?
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left max-w-3xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-green-600" size={16} />
+                <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-secondary" size={16} />
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Outfits die écht bij je passen
                 </p>
               </div>
               
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-green-600" size={16} />
+                <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-secondary" size={16} />
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Minder keuzestress, meer overzicht
                 </p>
               </div>
               
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-green-600" size={16} />
+                <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-secondary" size={16} />
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Slim shoppen zonder tijdverlies
                 </p>
               </div>
               
               <div className="flex items-start">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
-                  <Check className="text-green-600" size={16} />
+                <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-6 mt-1 flex-shrink-0">
+                  <Check className="text-secondary" size={16} />
                 </div>
-                <p className="text-lg text-text-secondary">
+                <p className="text-lg text-text-dark">
                   Meer zelfvertrouwen in wat je draagt
                 </p>
               </div>
@@ -422,18 +422,17 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Testimonial Section */}
-      <section className="py-20 bg-gradient-to-r from-turquoise/10 to-turquoise/20">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-10 max-w-4xl">
+      <section className="section-wrapper">
+        <div className="container-fitfi max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center"
+            className="card text-center"
           >
-            <div className="bg-white rounded shadow-lg p-10 md:p-16">
               <div className="text-6xl mb-6">💬</div>
-              <blockquote className="text-xl md:text-2xl text-text-secondary italic leading-relaxed mb-8">
+              <blockquote className="text-xl md:text-2xl text-text-dark italic leading-relaxed mb-8">
                 "FitFi voelt als shoppen met iemand die me écht begrijpt. Ik hoef alleen nog maar te kiezen wat ik wil dragen."
               </blockquote>
               <div className="flex items-center justify-center">
@@ -444,28 +443,27 @@ const HomePage: React.FC = () => {
                   fallbackSrc="/images/fallback-user.png"
                 />
                 <div className="text-left">
-                  <p className="font-semibold text-text-primary">Sarah</p>
-                  <p className="text-text-secondary">31 jaar</p>
+                  <p className="font-semibold text-text-dark">Sarah</p>
+                  <p className="text-gray-600">31 jaar</p>
                 </div>
               </div>
-            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 bg-midnight">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-10 max-w-4xl text-center">
+      <section className="section-wrapper">
+        <div className="container-fitfi max-w-4xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-h2 md:text-4xl font-bold text-white mb-8">
+            <h2 className="text-4xl font-semibold text-secondary mb-8">
               Ontdek wat bij jou past
             </h2>
-            <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-body mb-8 max-w-2xl mx-auto">
               In minder dan 1 minuut weet je je stijladvies. Slimmer shoppen begint hier.
             </p>
             <Button 
@@ -474,10 +472,11 @@ const HomePage: React.FC = () => {
               size="lg"
               icon={<ArrowRight size={20} />}
               iconPosition="right"
+              className="bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
             >
               Start de stijlquiz
             </Button>
-            <p className="text-sm text-white/60 mt-6">
+            <p className="text-sm text-body mt-6">
               Geen verplichtingen • Gratis te gebruiken
             </p>
           </motion.div>
@@ -485,11 +484,12 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Mobile Sticky CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-light-grey p-6 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-accent border-t border-gray-200 p-6 z-50">
         <Button
           onClick={() => navigate('/onboarding')}
           variant="primary"
           fullWidth
+          className="bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
         >
           Start de stijlquiz
         </Button>

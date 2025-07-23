@@ -4,21 +4,16 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
-      },
       colors: {
-        // Primary brand colors
-        primary: '#0D1B2A',
+        primary: '#0D1B2A',          // nachtblauw
         'primary-light': '#334155',
         'primary-dark': '#091421',
-        secondary: '#89CFF0',
-        accent: '#F6F6F6',
-        body: '#E2E8F0',
-        'text-dark': '#111827',
+        secondary: '#89CFF0',        // helder turquoise
+        accent: '#F6F6F6',           // lichte kaart-achtergrond
+        body: '#E2E8F0',             // lichte body op donker
+        'text-dark': '#111827',      // donkere tekst op wit
         
-        // Extended color palette
+        // Legacy support for existing components
         midnight: '#0D1B2A',
         turquoise: '#89CFF0',
         'turquoise-dark': '#6FB8D1',
@@ -26,9 +21,6 @@ export default {
         white: '#FFFFFF',
         'text-primary': '#0D1B2A',
         'text-secondary': '#333333',
-        'error-red': '#E03E3E',
-        'success-green': '#22C55E',
-        'info-blue': '#3B82F6',
         
         // Orange accent color (legacy support)
         orange: {
@@ -44,6 +36,10 @@ export default {
           900: '#7c2d12',
           950: '#431407',
         },
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       spacing: {
         6: '1.5rem',

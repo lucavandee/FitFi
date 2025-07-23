@@ -135,17 +135,17 @@ const ArchetypeStep: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-primary">
-      <div className="section-wrapper">
+      <div className="section-wrapper space-y-12">
         <div className="max-w-4xl mx-auto">
           {/* Progress indicator */}
-          <div className="mb-10">
+          <div>
             <div className="flex justify-between text-sm text-body mb-2">
               <span>Stap 2 van 3</span>
               <span>66%</span>
             </div>
-            <div className="progress-bar">
+            <div className="w-full bg-primary-light rounded-full h-2">
               <div
-                className="progress-bar-fill"
+                className="bg-secondary h-2 rounded-full transition-all"
                 style={{ width: '66%' }}
               ></div>
             </div>
@@ -156,32 +156,32 @@ const ArchetypeStep: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-semibold text-white mb-3">
+            <div className="text-center">
+              <h1 className="text-5xl lg:text-6xl font-extrabold text-secondary mb-6">
                 Wat past het beste bij jouw stijl?
               </h1>
-              <p className="text-body">
+              <p className="text-base leading-relaxed text-body">
                 Kies maximaal twee stijlen die jou het meest aanspreken
               </p>
             </div>
 
             <div className="card overflow-hidden">
-              <form onSubmit={handleSubmit} className="p-8">
-                <div className="grid-layout mb-8">
+              <form onSubmit={handleSubmit}>
+                <div className="grid-layout mb-6">
                   {archetypeOptions.map((option) => (
                     <div key={option.id} className="relative">
                       <button
                         type="button"
                         onClick={() => toggleArchetype(option.id)}
                         className={`
-                          w-full p-6 rounded-2xl border text-left transition-all focus-ring
+                          w-full p-4 rounded-2xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-secondary
                           ${selectedArchetypes.includes(option.id)
                             ? 'border-secondary bg-secondary/10'
                             : 'border-primary-light hover:border-secondary hover:bg-secondary/5'}
                         `}
                       >
-                        <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-                          <div className="w-full md:w-24 h-24 overflow-hidden rounded shadow-md">
+                        <div className="flex flex-col md:flex-row items-center md:items-start space-y-3 md:space-y-0 md:space-x-4">
+                          <div className="w-full md:w-20 h-20 overflow-hidden rounded-2xl shadow-md">
                             <ImageWithFallback
                               src={option.imageUrl}
                               alt={option.name}
@@ -190,15 +190,15 @@ const ArchetypeStep: React.FC = () => {
                             />
                           </div>
                           <div className="flex-1 text-center md:text-left">
-                            <h3 className="font-medium text-text-dark text-lg mb-2">{option.name}</h3>
-                            <p className="text-gray-600 text-sm">{option.description}</p>
+                            <h3 className="font-semibold text-text-dark text-lg mb-2">{option.name}</h3>
+                            <p className="text-gray-600 text-sm leading-relaxed">{option.description}</p>
                           </div>
-                          <div className="absolute top-6 right-6">
+                          <div className="absolute top-4 right-4">
                             <div className={`
                               w-6 h-6 rounded-full flex items-center justify-center
                               ${selectedArchetypes.includes(option.id)
                                 ? 'bg-secondary text-white'
-                                : 'bg-accent border border-primary-light'}
+                                : 'bg-white border border-gray-300'}
                             `}>
                               {selectedArchetypes.includes(option.id) && (
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -213,14 +213,14 @@ const ArchetypeStep: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowTooltip(showTooltip === option.id ? null : option.id)}
-                        className="absolute bottom-6 right-6 text-gray-500 hover:text-text-dark transition-colors focus-ring"
+                        className="absolute bottom-4 right-4 text-gray-500 hover:text-text-dark transition-colors focus:outline-none focus:ring-2 focus:ring-secondary rounded-full p-1"
                         aria-label="Meer informatie"
                       >
                         <Info size={16} />
                       </button>
                       
                       {showTooltip === option.id && (
-                        <div className="absolute bottom-16 right-6 bg-white border border-primary-light rounded p-4 shadow-lg z-10 w-64">
+                        <div className="absolute bottom-12 right-4 bg-white border border-gray-200 rounded-2xl p-4 shadow-lg z-10 w-64">
                           <p className="text-gray-600 text-sm">
                             {option.id === 'modern_minimalist' && 'Modern Minimalist combineert strakke lijnen met neutrale kleuren. Denk aan tijdloze stukken die veelzijdig te combineren zijn en een clean uitstraling hebben.'}
                             {option.id === 'casual_chic' && 'Casual Chic balanceert comfort met elegantie. Denk aan premium basics met subtiele details die moeiteloos stijlvol zijn voor dagelijks gebruik.'}
@@ -236,8 +236,8 @@ const ArchetypeStep: React.FC = () => {
                 </div>
                 
                 {error && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded">
-                    <p className="text-red-600 text-sm font-medium focus-ring">{error}</p>
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+                    <p className="text-red-700 text-sm font-medium">{error}</p>
                   </div>
                 )}
 
@@ -245,11 +245,11 @@ const ArchetypeStep: React.FC = () => {
                 <div className="flex space-x-4">
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="secondary"
                     onClick={() => navigate('/onboarding/gender-name')}
                     icon={<ArrowLeft size={18} />}
                     iconPosition="left"
-                    className="flex-1"
+                    className="flex-1 bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                   >
                     Terug
                   </Button>
@@ -258,7 +258,7 @@ const ArchetypeStep: React.FC = () => {
                     variant="primary"
                     icon={<ArrowRight size={18} />}
                     iconPosition="right"
-                    className="flex-1"
+                    className="flex-1 bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
                     disabled={selectedArchetypes.length === 0}
                   >
                     Volgende
@@ -267,9 +267,9 @@ const ArchetypeStep: React.FC = () => {
               </form>
 
               {/* Privacy indicator */}
-              <div className="px-8 py-6 bg-light-grey flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-turquoise" />
-                <span className="text-sm text-text-secondary">Je gegevens zijn veilig en versleuteld</span>
+              <div className="px-6 py-4 bg-gray-50 flex items-center justify-center space-x-2">
+                <ShieldCheck size={18} className="text-secondary" />
+                <span className="text-sm text-gray-600">Je gegevens zijn veilig en versleuteld</span>
               </div>
             </div>
           </motion.div>
