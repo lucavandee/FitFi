@@ -433,40 +433,40 @@ const DashboardPage: React.FC = () => {
         <div className="flex overflow-x-auto mb-10 pb-2 scrollbar-hide space-x-2">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 rounded-full mr-2 transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium mr-2 transition-colors ${
               activeTab === 'overview'
-                ? 'tab-active'
-                : 'tab-inactive'
+                ? 'bg-secondary text-primary'
+                : 'bg-gray-200 text-gray-600'
             }`}
           >
             Overzicht
           </button>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`px-4 py-2 rounded-full mr-2 transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium mr-2 transition-colors ${
               activeTab === 'profile'
-                ? 'tab-active'
-                : 'tab-inactive'
+                ? 'bg-secondary text-primary'
+                : 'bg-gray-200 text-gray-600'
             }`}
           >
             Profiel
           </button>
           <button
             onClick={() => setActiveTab('saved')}
-            className={`px-4 py-2 rounded-full mr-2 transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium mr-2 transition-colors ${
               activeTab === 'saved'
-                ? 'tab-active'
-                : 'tab-inactive'
+                ? 'bg-secondary text-primary'
+                : 'bg-gray-200 text-gray-600'
             }`}
           >
             Opgeslagen
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`px-4 py-2 rounded-full transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium transition-colors ${
               activeTab === 'settings'
-                ? 'tab-active'
-                : 'tab-inactive'
+                ? 'bg-secondary text-primary'
+                : 'bg-gray-200 text-gray-600'
             }`}
           >
             Instellingen
@@ -475,12 +475,10 @@ const DashboardPage: React.FC = () => {
 
         {/* Tab Content */}
         {activeTab === 'overview' && (
-          <div className="space-y-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <DailyChallengeCard />
               <AchievementCard />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-6">
               <LeaderboardCard />
               <ReferralWidget />
             </div>
