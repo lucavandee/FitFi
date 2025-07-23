@@ -178,7 +178,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   const occasions = outfit.occasions || [];
 
   return (
-    <div className="p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900 overflow-hidden transition-colors">
+    <div className="card overflow-hidden transition-colors">
       {/* Header with outfit image */}
       <div className="relative">
         <div className="aspect-[4/5] overflow-hidden bg-[#1B263B]">
@@ -189,20 +189,20 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             componentName="OutfitCard"
             fallbackSrc="/placeholder.png"
           />
-          <div className="absolute top-4 left-4 bg-primary/90 text-secondary px-3 py-1 rounded-full text-sm font-bold flex items-center">
+          <div className="absolute top-4 left-4 bg-primary/90 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center">
             <Star size={14} className="mr-1" />
             {outfit.matchPercentage}% Match
           </div>
           
           <div className="absolute bottom-4 right-4 flex space-x-2">
             <button 
-              className="p-2 rounded-full bg-midnight-950/90 text-textPrimary-dark/80 hover:bg-midnight-950 hover:text-textPrimary-dark transition-colors"
+              className="p-2 rounded-full bg-primary/90 text-white hover:bg-primary transition-colors focus-ring"
               aria-label="Opslaan in favorieten"
             >
               <Bookmark size={16} />
             </button>
             <button 
-              className="p-2 rounded-full bg-midnight-950/90 text-textPrimary-dark/80 hover:bg-midnight-950 hover:text-textPrimary-dark transition-colors"
+              className="p-2 rounded-full bg-primary/90 text-white hover:bg-primary transition-colors focus-ring"
               aria-label="Delen"
             >
               <Share2 size={16} />
@@ -210,7 +210,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           </div>
 
           {/* Occasions indicator */}
-          <div className="absolute bottom-4 left-4 bg-midnight-950/70 text-textPrimary-dark px-2 py-1 rounded-md text-xs">
+          <div className="absolute bottom-4 left-4 bg-primary/70 text-white px-2 py-1 rounded-md text-xs">
             {occasions.length > 0 ? occasions.slice(0, 2).join(', ') : 'Alle gelegenheden'}
           </div>
         </div>
@@ -220,23 +220,23 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
       <div className="p-6">
         {/* Title and description */}
         <div className="mb-4">
-          <h3 className="text-xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
+          <h3 className="text-xl font-bold text-text-dark mb-2">
             {outfit.title}
           </h3>
-          <p className="text-textSecondary-light dark:text-textSecondary-dark text-sm leading-relaxed">
+          <p className="text-gray-600 text-sm leading-relaxed">
             {outfit.description}
           </p>
         </div>
 
         {/* Explanation with info icon */}
-        <div className="mb-4 p-3 bg-lightGrey-50 dark:bg-midnight-700 rounded-lg border border-lightGrey-200 dark:border-midnight-600 relative">
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 relative">
           <div className="flex items-start">
-            <p className="text-textPrimary-light dark:text-textPrimary-dark text-sm italic flex-1 pr-6">
+            <p className="text-text-dark text-sm italic flex-1 pr-6">
               {explanation || 'Past bij jouw stijlvoorkeuren'}
             </p>
             <button 
               onClick={handleExplanationClick}
-              className="absolute top-3 right-3 text-textSecondary-light dark:text-textSecondary-dark hover:text-textPrimary-light dark:hover:text-textPrimary-dark transition-colors"
+              className="absolute top-3 right-3 text-gray-500 hover:text-text-dark transition-colors focus-ring"
               aria-label="Meer informatie"
             >
               <Info size={16} />
@@ -245,8 +245,8 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           
           {/* Explanation tooltip */}
           {showExplanationTooltip && (
-            <div className="mt-3 pt-3 border-t border-lightGrey-200 dark:border-midnight-600">
-              <p className="text-textSecondary-light dark:text-textSecondary-dark text-xs">
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <p className="text-gray-500 text-xs">
                 Deze uitleg is gegenereerd door onze AI op basis van jouw stijlvoorkeuren, 
                 de geselecteerde items, en de gelegenheid waarvoor deze outfit is samengesteld.
               </p>
@@ -259,13 +259,13 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           {tags.slice(0, 3).map((tag, index) => (
             <span 
               key={index}
-              className="px-2 py-1 bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark rounded-md text-xs"
+              className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs"
             >
               #{tag}
             </span>
           ))}
           {tags.length > 3 && (
-            <span className="px-2 py-1 bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark rounded-md text-xs">
+            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs">
               +{tags.length - 3} meer
             </span>
           )}
@@ -277,8 +277,8 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             onClick={handleLike}
             className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
               feedback === 'liked'
-                ? 'bg-turquoise-100 dark:bg-turquoise-900/20 text-turquoise-600 dark:text-turquoise-400'
-                : 'bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark hover:bg-lightGrey-200 dark:hover:bg-midnight-600 hover:text-textPrimary-light dark:hover:text-textPrimary-dark'
+                ? 'bg-secondary/20 text-secondary'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-text-dark'
             }`}
             aria-label="Like outfit"
           >
@@ -289,8 +289,8 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             onClick={handleDislike}
             className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
               feedback === 'disliked'
-                ? 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-                : 'bg-lightGrey-100 dark:bg-midnight-700 text-textSecondary-light dark:text-textSecondary-dark hover:bg-lightGrey-200 dark:hover:bg-midnight-600 hover:text-textPrimary-light dark:hover:text-textPrimary-dark'
+                ? 'bg-red-100 text-red-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-text-dark'
             }`}
             aria-label="Dislike outfit"
           >
@@ -302,10 +302,10 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         {/* Price and main CTA */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-2xl font-bold text-textPrimary-light dark:text-textPrimary-dark">
+            <span className="text-2xl font-bold text-text-dark">
               €{items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
             </span>
-            <span className="text-sm text-textSecondary-light dark:text-textSecondary-dark ml-2">
+            <span className="text-sm text-gray-600 ml-2">
               complete look
             </span>
           </div>
@@ -321,10 +321,10 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         </div>
 
         {/* Expandable items section */}
-        <div className="border-t border-lightGrey-200 dark:border-midnight-600 pt-4">
+        <div className="border-t border-gray-200 pt-4">
           <button
             onClick={() => setShowItems(!showItems)}
-            className="w-full flex items-center justify-between text-sm font-medium text-textSecondary-light dark:text-textSecondary-dark hover:text-turquoise-500 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-gray-600 hover:text-secondary transition-colors focus-ring"
           >
             <span>Bekijk alle items ({items.length})</span>
             {showItems ? (
@@ -346,7 +346,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                   return (
                     <div 
                       key={item.id || `item-${index}`}
-                      className="flex items-center space-x-3 p-3 bg-lightGrey-50 dark:bg-midnight-700 rounded-lg hover:bg-lightGrey-100 dark:hover:bg-midnight-600 transition-colors cursor-pointer group"
+                      className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group focus-ring"
                       onClick={() => handleProductClick(item.url || '#')}
                     >
                       <ImageWithFallback 
@@ -356,22 +356,22 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                         componentName={`OutfitCard_Item_${index}`}
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-textPrimary-light dark:text-textPrimary-dark truncate">
+                        <p className="text-sm font-medium text-text-dark truncate">
                           {item.name}
                         </p>
-                        <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark">
+                        <p className="text-xs text-gray-600">
                           {item.brand} • {item.category}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-textPrimary-light dark:text-textPrimary-dark">
+                        <p className="text-sm font-medium text-text-dark">
                           €{typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
                         </p>
-                        <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark">
+                        <p className="text-xs text-gray-600">
                           {item.retailer || 'Unknown Store'}
                         </p>
                       </div>
-                      <ExternalLink size={14} className="text-textSecondary-light dark:text-textSecondary-dark group-hover:text-turquoise-500 transition-colors" />
+                      <ExternalLink size={14} className="text-gray-600 group-hover:text-secondary transition-colors" />
                     </div>
                   );
                 } catch (error) {
