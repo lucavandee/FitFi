@@ -5,6 +5,12 @@ import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/ui/LoadingFallback';
 
 // Lazy load components
+const LazyWelcomeStep = React.lazy(() => 
+  import('./pages/onboarding/WelcomeStep').catch(err => {
+    console.error('Failed to load WelcomeStep:', err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
 const LazyGenderNameStep = React.lazy(() => 
   import('./pages/onboarding/GenderNameStep').catch(err => {
     console.error('Failed to load GenderNameStep:', err);
@@ -29,18 +35,6 @@ const LazyOccasionStep = React.lazy(() =>
     return { default: () => <div>Error loading component</div> };
   })
 );
-const LazyPreferencesStep = React.lazy(() => 
-  import('./pages/onboarding/PreferencesStep').catch(err => {
-    console.error('Failed to load PreferencesStep:', err);
-    return { default: () => <div>Error loading component</div> };
-  })
-);
-const LazyResultsStep = React.lazy(() => 
-  import('./pages/onboarding/ResultsStep').catch(err => {
-    console.error('Failed to load ResultsStep:', err);
-    return { default: () => <div>Error loading component</div> };
-  })
-);
 const DashboardPage = React.lazy(() => 
   import('./pages/DashboardPage').catch(err => {
     console.error('Failed to load DashboardPage:', err);
@@ -60,7 +54,6 @@ import OnboardingLayout from './components/layout/OnboardingLayout';
 
 // Import regular components
 import HomePage from './pages/HomePage';
-import OnboardingPage from './pages/OnboardingPage';
 import GenderSelectPage from './pages/GenderSelectPage';
 import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
@@ -85,7 +78,6 @@ function App() {
       <UserProvider>
         <GamificationProvider>
           <Router>
-            <OnboardingProvider>
               <NavigationServiceInitializer />
               <NavigationProgress />
               <div className="min-h-screen flex flex-col">
@@ -99,9 +91,14 @@ function App() {
                       <Route path="/" element={<HomePage />} />
                       
                       {/* Onboarding Flow */}
-                      {/* Route-Driven Onboarding Flow */}
                       <Route path="onboarding" element={<OnboardingLayout />}>
-                        <Route index element={<OnboardingPage />} />
+                        <Route index element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazyWelcomeStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
                         <Route path="gender-name" element={
                           <ErrorBoundary>
                             <Suspense fallback={<LoadingFallback message="Laden..." />}>
@@ -130,20 +127,7 @@ function App() {
                             </Suspense>
                           </ErrorBoundary>
                         } />
-                        <Route path="preferences" element={
-                          <ErrorBoundary>
-                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                              <LazyPreferencesStep />
-                            </Suspense>
-                          </ErrorBoundary>
-                        } />
-                        <Route path="results" element={
-                          <ErrorBoundary>
-                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                              <LazyResultsStep />
-                            </Suspense>
-                          </ErrorBoundary>
-                        } />
+                        <Route path="*" element={<Navigate to="/onboarding" replace />} />
                       </Route>
                       
                       {/* Catch-all route for 404 */}
@@ -206,7 +190,6 @@ function App() {
                   }}
                 />
               </div>
-            </OnboardingProvider>
           </Router>
         </GamificationProvider>
       </UserProvider>
