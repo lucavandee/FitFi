@@ -61,6 +61,7 @@ import EnhancedResultsPage from './pages/EnhancedResultsPage';
 import AboutPage from './pages/AboutPage';
 import ProductPage from './pages/ProductPage';
 import HowItWorksPage from './pages/HowItWorksPage';
+import LandingPage from './pages/LandingPage';
 import PricingPage from './pages/PricingPage';
 import SuccessStoriesPage from './pages/SuccessStoriesPage';
 import BlogPage from './pages/BlogPage';
@@ -148,6 +149,8 @@ function App() {
                       {/* Results Pages */}
                       <Route path="/results" element={<EnhancedResultsPage />} />
                       <Route path="/results/legacy" element={<ResultsPage />} />
+                      
+                      <Route path="/landing" element={<LandingPage />} />
                       
                       <Route path="/dashboard/*" element={
                         <ErrorBoundary>
