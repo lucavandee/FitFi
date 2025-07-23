@@ -5,13 +5,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#0D1B2A',          // nachtblauw
+        primary: '#0D1B2A',       // nachtblauw (dark mode background)
         'primary-light': '#334155',
         'primary-dark': '#091421',
-        secondary: '#89CFF0',        // helder turquoise
-        accent: '#F6F6F6',           // lichte kaart-achtergrond
-        body: '#E2E8F0',             // lichte body op donker
-        'text-dark': '#111827',      // donkere tekst op wit
+        secondary: '#89CFF0',     // helder turquoise (CTA + highlights)
+        accent: '#F6F6F6',        // kaart-achtergrond
+        body: '#E2E8F0',          // algemene tekst op dark bg
+        'text-dark': '#111827',   // tekst op licht bg
         
         // Legacy support for existing components
         midnight: '#0D1B2A',
@@ -39,7 +39,6 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       spacing: {
         6: '1.5rem',
