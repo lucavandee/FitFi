@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Share2, Trophy, Upload, Instagram } from 'lucide-react';
+import { Camera, Share2, Trophy, Upload, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '../ui/Button';
 import ImageWithFallback from '../ui/ImageWithFallback';
 
