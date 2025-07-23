@@ -1,303 +1,214 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Calendar, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Button from '../../components/ui/Button';
+import { useOnboarding } from '../../context/OnboardingContext';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+const SeasonStep: React.FC = () => {
+  const navigate = useNavigate();
+  const { data, updateAnswers } = useOnboarding();
+  const [selectedSeason, setSelectedSeason] = useState<'lente' | 'zomer' | 'herfst' | 'winter'>(data.season || 'herfst');
+  const [errors, setErrors] = useState<{ season?: string }>({});
 
-@layer utilities {
-  .card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
-  }
-  
-  .quiz-container {
-    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
-  }
-  
-  .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
-  }
-  
-  .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-ghost {
-    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
-  }
-  
-  .btn-custom {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .dashboard-card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
-  }
-  
-  .tab-inactive {
-    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
-  }
-  
-  .tab-active {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
-  }
-  
-  .text-heading {
-    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
-  }
-  
-  .text-body {
-    @apply text-base leading-relaxed mb-6;
-  }
-  
-  .container-fitfi {
-    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .glass-card {
-    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
-  }
-  
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
-  }
-  
-  /* Custom slider styling */
-  .slider {
-    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
-  }
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .error-state {
-    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
-  }
-  
-  .success-state {
-    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
-  }
-  
-  .info-state {
-    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
-  }
-  
-  .stijlscan-container {
-    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
-  }
-  
-  .stijlscan-option {
-    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .progress-bar-track {
-    @apply w-full bg-primary-light rounded-full h-2;
-  }
-  
-  .progress-bar-fill {
-    @apply bg-secondary h-2 rounded-full transition-all;
-  }
-  
-  .loading-skeleton {
-    @apply bg-gray-200 animate-pulse rounded-2xl;
-  }
-}
+  const totalSteps = 5;
+  const currentStep = 3;
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    @apply bg-primary text-body;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  
-  h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
-  }
-  
-  h2 {
-    @apply text-4xl font-semibold text-secondary;
-  }
-  
-  h3 {
-    @apply text-3xl font-semibold text-secondary;
-  }
-  
-  p, span, li {
-    @apply text-base leading-relaxed text-body;
-  }
-  
-  a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
-  }
-}
-
-@layer components {
-  .container-slim {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container-slim {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+  const seasons = [
+    {
+      id: 'lente',
+      name: 'Lente',
+      description: 'Frisse kleuren en lichte lagen',
+      icon: '🌱',
+      colors: ['Pastelkleuren', 'Lichtgroen', 'Zachtroze'],
+      image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2'
+    },
+    {
+      id: 'zomer',
+      name: 'Zomer',
+      description: 'Lichte stoffen en heldere tinten',
+      icon: '☀️',
+      colors: ['Wit', 'Hemelsblauw', 'Koraalrood'],
+      image: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2'
+    },
+    {
+      id: 'herfst',
+      name: 'Herfst',
+      description: 'Warme tinten en comfortabele lagen',
+      icon: '🍂',
+      colors: ['Bordeaux', 'Mosterdgeel', 'Donkergroen'],
+      image: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2'
+    },
+    {
+      id: 'winter',
+      name: 'Winter',
+      description: 'Diepe kleuren en warme materialen',
+      icon: '❄️',
+      colors: ['Marineblauw', 'Dieppaars', 'Smaragdgroen'],
+      image: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2'
     }
-  }
-  
-  @media (min-width: 1024px) {
-    .container-slim {
-      padding-left: 2rem;
-      padding-right: 2rem;
+  ];
+
+  const handleNext = () => {
+    // Validate selection
+    if (!selectedSeason) {
+      setErrors({ season: 'Selecteer een seizoen dat bij je past' });
+      return;
     }
-  }
-  
-  .section-wrapper {
-    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
-  }
-  
-  .grid-layout {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
-  }
-}
+    
+    // Clear errors
+    setErrors({});
+    
+    // Update context
+    updateAnswers({
+      season: selectedSeason
+    });
+    
+    // Track progress
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'onboarding_step_complete', {
+        event_category: 'onboarding',
+        event_label: 'season',
+        step: currentStep,
+        selected_season: selectedSeason
+      });
+    }
+    
+    // Navigate to next step
+    navigate('/onboarding/occasion');
+  };
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  const handleBack = () => {
+    navigate('/onboarding/archetype');
+  };
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-primary to-primary-dark">
+      <div className="container-slim py-16">
+        <div className="max-w-4xl mx-auto">
+          {/* Progress indicator */}
+          <div className="mb-10">
+            <div className="flex justify-between text-sm text-body mb-2">
+              <span>Stap {currentStep} van {totalSteps}</span>
+              <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
+            </div>
+            <div className="w-full bg-primary-light rounded-full h-2">
+              <div
+                className="bg-secondary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-center mb-8"
+          >
+            <Calendar className="w-12 h-12 text-secondary mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-secondary mb-2">
+              Welk seizoen past bij jou?
+            </h1>
+            <p className="text-body">
+              Kies het seizoen waarvan je de kleuren en stijl het mooist vindt
+            </p>
+          </motion.div>
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
+          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {seasons.map((season) => {
+                const isSelected = selectedSeason === season.id;
+                
+                return (
+                  <motion.button
+                    key={season.id}
+                    onClick={() => setSelectedSeason(season.id as any)}
+                    className={`relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                      isSelected
+                        ? 'border-secondary ring-2 ring-secondary/20'
+                        : 'border-gray-300 hover:border-secondary'
+                    }`}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ y: 0 }}
+                  >
+                    <div className="aspect-[4/3] relative">
+                      <img 
+                        src={season.image} 
+                        alt={season.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                      
+                      {/* Selection indicator */}
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
+                          <span className="text-primary text-lg font-bold">✓</span>
+                        </div>
+                      )}
+                      
+                      {/* Season icon */}
+                      <div className="absolute top-3 left-3 text-3xl">
+                        {season.icon}
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                        <h3 className="text-xl font-bold mb-1">{season.name}</h3>
+                        <p className="text-sm opacity-90 mb-3">{season.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {season.colors.map((color, index) => (
+                            <span key={index} className="text-xs bg-white/20 px-2 py-1 rounded-full">
+                              {color}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
-}
+            {errors.season && (
+              <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">{errors.season}</p>
+              </div>
+            )}
 
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out forwards;
-}
+            {/* Navigation Buttons */}
+            <div className="flex space-x-3">
+              <Button
+                variant="ghost"
+                onClick={handleBack}
+                icon={<ArrowLeft size={16} />}
+                iconPosition="left"
+                className="flex-1"
+              >
+                Terug
+              </Button>
+              
+              <Button
+                variant="primary"
+                onClick={handleNext}
+                icon={<ArrowRight size={16} />}
+                iconPosition="right"
+                className="flex-1"
+              >
+                Volgende
+              </Button>
+            </div>
 
-/* Micro-interactions */
-.hover-lift {
-  transition: transform 0.2s ease;
-}
+            {/* Privacy indicator */}
+            <div className="mt-6 pt-4 border-t border-gray-200 flex items-center justify-center space-x-2">
+              <ShieldCheck size={18} className="text-secondary" />
+              <span className="text-sm text-gray-600">Je voorkeuren worden veilig opgeslagen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Hide scrollbar for slider */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Focus styles for accessibility */
-.focus-visible:focus {
-  outline: 2px solid #89CFF0;
-  outline-offset: 2px;
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background-color: #334155;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #89CFF0;
-  transition: width 0.3s ease-out;
-}
-
-/* Snap scrolling */
-.snap-x {
-  scroll-snap-type: x mandatory;
-}
-
-.snap-center {
-  scroll-snap-align: center;
-}
-
-.snap-mandatory {
-  scroll-snap-stop: always;
-}
+export default SeasonStep;
