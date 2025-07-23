@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ShieldCheck, Info } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { motion } from 'framer-motion';
-
-import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../context/UserContext';
+import { useGamification } from '../../context/GamificationContext';
+import toast from 'react-hot-toast';
 
 const OccasionStep: React.FC = () => {
-  const { data, updateData, completeStep, goToNextStep, goToPreviousStep } = useOnboarding();
   const navigate = useNavigate();
+  const { data, updateAnswers } = useOnboarding();
+  const { updateProfile } = useUser();
+  const { completeQuiz } = useGamification();
   
   const [selectedOccasions, setSelectedOccasions] = useState<string[]>(
     data.occasions || []
@@ -16,6 +20,7 @@ const OccasionStep: React.FC = () => {
   
   const [error, setError] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Track when the component is mounted
   useEffect(() => {
@@ -94,7 +99,7 @@ const OccasionStep: React.FC = () => {
     }
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (selectedOccasions.length === 0) {
@@ -102,36 +107,67 @@ const OccasionStep: React.FC = () => {
       return;
     }
     
-    console.log('[FIX] OccasionStep: Final step completed, preparing data for results');
+    setIsSubmitting(true);
     
-    // Prepare complete onboarding data
-    const completeData = {
-      ...data,
-      occasions: selectedOccasions
-    };
-    
-    console.log('[FIX] Complete onboarding data:', completeData);
-    
-    // Update data without persistence to prevent loops
-    updateData({
-      occasions: selectedOccasions,
-      _skipSave: true
-    });
-    
-    // Mark step as completed
-    completeStep('occasion');
-    
-    // Direct navigation to results with complete data
-    console.log('[FIX] Navigating directly to results page');
-    navigate('/results', { 
-      state: { 
-        onboardingData: completeData,
-        answers: completeData // Provide both formats for compatibility
-      },
-      replace: true // Replace history to prevent back button issues
-    });
+    try {
+      // Update final answers
+      updateAnswers({
+        occasions: selectedOccasions
+      });
+      
+      // Prepare complete data for results
+      const completeData = {
+        ...data,
+        occasions: selectedOccasions
+      };
+      
+      console.log('[Route-Driven] Final onboarding data:', completeData);
+      
+      // Update user profile
+      await updateProfile({
+        gender: completeData.gender === 'man' ? 'male' : 'female',
+        name: completeData.name,
+        stylePreferences: {
+          casual: completeData.archetypes?.includes('casual_chic') ? 5 : 3,
+          formal: completeData.archetypes?.includes('klassiek') ? 5 : 3,
+          sporty: completeData.archetypes?.includes('streetstyle') ? 5 : 3,
+          vintage: completeData.archetypes?.includes('retro') ? 5 : 3,
+          minimalist: completeData.archetypes?.includes('urban') ? 5 : 3
+        }
+      });
+      
+      // Complete quiz gamification
+      await completeQuiz();
+      
+      // Clear localStorage
+      localStorage.removeItem('fitfi-onboarding-data');
+      
+      // Navigate to results with data
+      navigate('/results', {
+        state: {
+          onboardingData: completeData,
+          answers: completeData
+        },
+        replace: true
+      });
+      
+      toast.success('Stijlprofiel aangemaakt!');
+      
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      toast.error('Er ging iets mis. Probeer het opnieuw.');
+      
+      // Navigate anyway with current data
+      navigate('/results', {
+        state: {
+          onboardingData: { ...data, occasions: selectedOccasions }
+        }
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  
+    
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
       <div className="container-slim py-16">
@@ -218,7 +254,7 @@ const OccasionStep: React.FC = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={goToPreviousStep}
+                    onClick={() => navigate('/onboarding/season')}
                     icon={<ArrowLeft size={18} />}
                     iconPosition="left"
                     className="flex-1 text-white border border-white/30 hover:bg-white/10"
@@ -228,11 +264,12 @@ const OccasionStep: React.FC = () => {
                   <Button
                     type="submit"
                     variant="primary"
+                    disabled={isSubmitting}
                     icon={<ArrowRight size={18} />}
                     iconPosition="right"
                     className="flex-1"
                   >
-                    Resultaten bekijken
+                    {isSubmitting ? 'Even geduld...' : 'Resultaten bekijken'}
                   </Button>
                 </div>
               </form>
