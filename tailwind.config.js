@@ -9,23 +9,26 @@ export default {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // New primary brand colors
+        // Primary brand colors
         primary: '#0D1B2A',
+        'primary-light': '#334155',
         'primary-dark': '#091421',
         secondary: '#89CFF0',
         accent: '#F6F6F6',
+        body: '#E2E8F0',
+        'text-dark': '#111827',
         
-        // FitFi Brand Colors
-        midnight:         '#0D1B2A',  // hoofdkleur, achtergronden
-        turquoise:        '#89CFF0',  // primaire accent
-        'turquoise-dark': '#6FB8D1',  // hover/accent donkerder
-        'light-grey':     '#F6F6F6',  // kaart-achtergronden
-        white:            '#FFFFFF',  // secundaire cards
-        'text-primary':   '#0D1B2A',  // koppen
-        'text-secondary': '#333333',  // body tekst
-        'error-red':      '#E03E3E',  // foutmeldingen
-        'success-green':  '#22C55E',  // succesmeldingen
-        'info-blue':      '#3B82F6',  // informatie
+        // Extended color palette
+        midnight: '#0D1B2A',
+        turquoise: '#89CFF0',
+        'turquoise-dark': '#6FB8D1',
+        'light-grey': '#F6F6F6',
+        white: '#FFFFFF',
+        'text-primary': '#0D1B2A',
+        'text-secondary': '#333333',
+        'error-red': '#E03E3E',
+        'success-green': '#22C55E',
+        'info-blue': '#3B82F6',
         
         // Orange accent color (legacy support)
         orange: {
@@ -43,8 +46,8 @@ export default {
         },
       },
       spacing: {
-        6:  '1.5rem',
-        8:  '2rem',
+        6: '1.5rem',
+        8: '2rem',
         10: '2.5rem',
         '128': '32rem',
       },

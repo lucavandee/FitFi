@@ -100,18 +100,18 @@ const GenderNameStep: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-light-grey">
-      <div className="container mx-auto px-6 py-16">
+    <div className="min-h-screen bg-primary">
+      <div className="section-wrapper">
         <div className="max-w-md mx-auto">
           {/* Progress indicator */}
           <div className="mb-10">
-            <div className="flex justify-between text-sm text-text-secondary mb-2">
+            <div className="flex justify-between text-sm text-body mb-2">
               <span>Stap 1 van 3</span>
               <span>33%</span>
             </div>
-            <div className="h-1.5 bg-light-grey/50 rounded overflow-hidden">
+            <div className="progress-bar">
               <div
-                className="h-full bg-turquoise rounded transition-all duration-300"
+                className="progress-bar-fill"
                 style={{ width: '33%' }}
               ></div>
             </div>
@@ -123,20 +123,20 @@ const GenderNameStep: React.FC = () => {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-semibold text-gray-900 mb-3">
+              <h1 className="text-3xl font-semibold text-white mb-3">
                 Wie ben je?
               </h1>
-              <p className="text-gray-600">
+              <p className="text-body">
                 We gebruiken deze informatie om je stijladvies te personaliseren
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl shadow-lg bg-accent space-y-4 overflow-hidden">
+            <div className="card overflow-hidden">
               <form onSubmit={handleSubmit} className="p-8">
                 <div className="space-y-8">
                   {/* Gender Selection */}
                   <div>
-                    <label className="block text-gray-900 font-medium mb-4">
+                    <label className="block text-text-dark font-medium mb-4">
                       Hoe identificeer je jezelf? <span className="text-red-400">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-6">
@@ -147,12 +147,12 @@ const GenderNameStep: React.FC = () => {
                           p-6 rounded-2xl border transition-all
                           ${formData.gender === 'man'
                             ? 'border-secondary bg-secondary/10'
-                            : 'border-gray-300 hover:border-secondary hover:bg-secondary/5'}
+                            : 'border-primary-light hover:border-secondary hover:bg-secondary/5'}
                         `}
                       >
                         <div className="text-center">
                           <div className="text-3xl mb-2">👨</div>
-                          <div className="font-medium text-gray-900">Man</div>
+                          <div className="font-medium text-text-dark">Man</div>
                         </div>
                       </button>
                       

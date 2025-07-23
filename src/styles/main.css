@@ -6,31 +6,31 @@
 
 @layer utilities {
   .card {
-    @apply p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900;
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-4;
   }
   
   .quiz-container {
-    @apply bg-accent text-gray-900 max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
   }
   
   .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-4 text-gray-900;
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-4 text-text-dark;
   }
   
   .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all;
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all;
   }
   
   .btn-primary {
-    @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary py-3 px-6 rounded-full font-medium transition-all;
+    @apply bg-primary text-white hover:bg-primary-light focus:ring-primary py-4 px-8 rounded-full font-medium transition-all;
   }
   
   .btn-secondary {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:ring-2 ring-secondary transition-all;
+    @apply bg-white text-primary border border-primary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-white focus:ring-2 ring-primary transition-all;
   }
   
   .btn-ghost {
-    @apply bg-transparent text-gray-600 py-3 px-6 rounded-full border border-gray-300 hover:bg-gray-100 focus:ring-2 ring-primary transition-all;
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-white focus:ring-2 ring-primary transition-all;
   }
   
   .btn-danger {
@@ -42,7 +42,7 @@
   }
   
   .dashboard-card {
-    @apply p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900 transition-shadow hover:shadow-xl;
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-4 transition-shadow hover:shadow-xl;
   }
   
   .tab-inactive {
@@ -54,11 +54,11 @@
   }
   
   .text-heading {
-    @apply text-2xl font-semibold text-gray-900 leading-tight mb-4;
+    @apply text-3xl font-semibold text-body leading-tight mb-4;
   }
   
   .text-body {
-    @apply text-text-secondary leading-relaxed mb-4;
+    @apply text-base leading-relaxed text-body mb-4;
   }
   
   .container-fitfi {
@@ -70,7 +70,7 @@
   }
   
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 ring-turquoise focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 ring-secondary focus:ring-offset-2;
   }
   
   /* Custom slider styling */
@@ -112,19 +112,19 @@
   }
   
   .stijlscan-container {
-    @apply bg-light-grey text-text-primary p-8 rounded mb-6;
+    @apply bg-accent text-text-dark p-8 rounded mb-6;
   }
   
   .stijlscan-option {
-    @apply bg-white text-text-secondary border border-light-grey p-6 rounded mb-6 hover:bg-light-grey focus:outline-none focus:ring-2 ring-turquoise transition-all;
+    @apply bg-white text-text-secondary border border-light-grey p-6 rounded mb-6 hover:bg-light-grey focus:outline-none focus:ring-2 ring-secondary transition-all;
   }
   
   .progress-bar-track {
-    @apply w-full bg-light-grey rounded-full h-1.5;
+    @apply w-full bg-primary-light rounded-full h-2;
   }
   
   .progress-bar-fill {
-    @apply bg-turquoise h-1.5 rounded-full transition-all;
+    @apply bg-secondary h-2 rounded-full transition-all;
   }
   
   .loading-skeleton {
@@ -142,12 +142,29 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    @apply bg-primary text-body;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-weight: 600;
     line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-4xl font-semibold text-white;
+  }
+  
+  h2 {
+    @apply text-3xl font-semibold text-body;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
   }
 }
 
@@ -171,6 +188,14 @@
       padding-left: 2rem;
       padding-right: 2rem;
     }
+  }
+  
+  .section-wrapper {
+    @apply py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
   }
 }
 
@@ -242,21 +267,21 @@
 
 /* Focus styles for accessibility */
 .focus-visible:focus {
-  outline: 2px solid #f97316;
+  outline: 2px solid #89CFF0;
   outline-offset: 2px;
 }
 
 /* Progress bar */
 .progress-bar {
   height: 4px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #334155;
   border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background-color: #f97316;
+  background-color: #89CFF0;
   transition: width 0.3s ease-out;
 }
 
