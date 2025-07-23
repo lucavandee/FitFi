@@ -654,7 +654,7 @@ const HowItWorksPage: React.FC = () => {
                 
                 <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <p className="text-blue-700 text-sm">
-                    Voor meer informatie over hoe we met je gegevens omgaan, bekijk ons <a href="/juridisch" className="underline font-medium">privacybeleid</a> of neem <a href="/contact" className="underline font-medium">contact</a> met ons op.
+                    Voor meer informatie over hoe we met je gegevens omgaan, bekijk ons <a href="/juridisch" className="underline font-medium">privacybeleid</a> of neem <a href="/contact" className=\"underline font-medium">contact</a> met ons op.
                   </p>
                 </div>
               </div>
