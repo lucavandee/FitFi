@@ -44,6 +44,7 @@
   .dashboard-card {
     @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
               className="mt-6 bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
+  }
   
   .tab-inactive {
     @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
