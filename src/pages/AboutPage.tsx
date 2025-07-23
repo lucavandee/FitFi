@@ -1,24 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Users, Zap, Heart, Award, ShieldCheck, Sparkles, Clock, Target, CheckCircle, Play } from 'lucide-react';
+import { ArrowRight, Users, Zap, Heart, Award, ShieldCheck, Sparkles, Clock, Target, CheckCircle, Play, User } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const AboutPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF8F6]">
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         
         {/* Hero Section */}
-        <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50 rounded-3xl mb-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <ErrorBoundary>
+          <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] rounded-3xl mb-16 shadow-sm">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <div className="flex flex-col lg:flex-row items-center">
               <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-gray-900 leading-tight mb-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 leading-tight mb-6">
                   Train je eigen stijlcoach — ontdek outfits die écht bij je passen
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-8">
+                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed mb-8">
                   Swipe, leer en shop in 1 minuut — laat keuzestress achter je
                 </p>
                 
@@ -29,14 +31,14 @@ const AboutPage: React.FC = () => {
                   size="lg"
                   icon={<ArrowRight size={20} />}
                   iconPosition="right"
-                  className="bg-[#bfae9f] hover:bg-[#a89a8c] text-lg px-8 py-4"
+                  className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                 >
                   Start de stijlquiz
                 </Button>
               </div>
               
               <div className="flex-1 flex justify-center lg:justify-end relative">
-                <div className="relative h-[500px] w-[350px] rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative h-[500px] w-[350px] rounded-3xl overflow-hidden shadow-2xl">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#bfae9f]/20 z-10"></div>
                   
                   <ImageWithFallback 
@@ -57,13 +59,15 @@ const AboutPage: React.FC = () => {
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* Waarom FitFi Section */}
-        <section className="py-20 bg-white dark:bg-gray-800 rounded-2xl shadow-sm mb-16 transition-colors">
+        <ErrorBoundary>
+          <section className="py-20 bg-white rounded-3xl shadow-sm mb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white mb-8">
+              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-8">
                 Waarom FitFi?
               </h2>
               
@@ -72,7 +76,7 @@ const AboutPage: React.FC = () => {
                   <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                     <span className="text-white text-sm">•</span>
                   </div>
-                  <p className="text-lg text-gray-700 dark:text-gray-300">
+                  <p className="text-lg text-gray-700">
                     Teveel webshops, teveel opties, te veel twijfel
                   </p>
                 </div>
@@ -81,7 +85,7 @@ const AboutPage: React.FC = () => {
                   <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                     <span className="text-white text-sm">•</span>
                   </div>
-                  <p className="text-lg text-gray-700 dark:text-gray-300">
+                  <p className="text-lg text-gray-700">
                     Uren scrollen later, nog geen perfecte match
                   </p>
                 </div>
@@ -90,20 +94,22 @@ const AboutPage: React.FC = () => {
                   <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                     <span className="text-white text-sm">•</span>
                   </div>
-                  <p className="text-lg text-gray-700 dark:text-gray-300">
+                  <p className="text-lg text-gray-700">
                     Jij verdient een snelle en persoonlijke stylingervaring
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* Hoe het werkt Section */}
-        <section className="py-20 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-sm mb-16 transition-colors">
+        <ErrorBoundary>
+          <section className="py-20 bg-[#F5F3F0] rounded-3xl shadow-sm mb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">
                 Hoe het werkt
               </h2>
             </div>
@@ -112,10 +118,10 @@ const AboutPage: React.FC = () => {
               {/* Step 1 */}
               <div className="text-center">
                 <div className="text-6xl mb-6">🧠</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-xl font-medium text-gray-900 mb-3">
                   Swipe & train
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   Like of skip outfits. FitFi leert van jouw voorkeuren.
                 </p>
               </div>
@@ -123,10 +129,10 @@ const AboutPage: React.FC = () => {
               {/* Step 2 */}
               <div className="text-center">
                 <div className="text-6xl mb-6">🎯</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-xl font-medium text-gray-900 mb-3">
                   Jouw stijlcoach
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   Hoe meer je swipet, hoe persoonlijker de suggesties.
                 </p>
               </div>
@@ -134,22 +140,24 @@ const AboutPage: React.FC = () => {
               {/* Step 3 */}
               <div className="text-center">
                 <div className="text-6xl mb-6">🛍️</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-xl font-medium text-gray-900 mb-3">
                   Shop & bewaar
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   Ontvang outfits die je direct kunt kopen, finetunen of opslaan.
                 </p>
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* Live Features vs Roadmap Section */}
-        <section className="py-20 bg-white dark:bg-gray-800 rounded-2xl shadow-sm mb-16 transition-colors">
+        <ErrorBoundary>
+          <section className="py-20 bg-white rounded-3xl shadow-sm mb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white mb-8">
+              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-8">
                 Wat kun je nu al gebruiken?
               </h2>
               
@@ -159,7 +167,7 @@ const AboutPage: React.FC = () => {
                     <CheckCircle className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                    <p className="text-lg text-gray-700">
                       <span className="font-semibold">Swipe-based quiz met direct stijladvies</span> <span className="text-green-600 dark:text-green-400 font-medium">(live)</span>
                     </p>
                   </div>
@@ -170,7 +178,7 @@ const AboutPage: React.FC = () => {
                     <CheckCircle className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                    <p className="text-lg text-gray-700">
                       <span className="font-semibold">Persoonlijke outfit-aanbevelingen die groeien met jou</span> <span className="text-green-600 dark:text-green-400 font-medium">(live)</span>
                     </p>
                   </div>
@@ -181,7 +189,7 @@ const AboutPage: React.FC = () => {
                     <CheckCircle className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                    <p className="text-lg text-gray-700">
                       <span className="font-semibold">Snel shoppen via partner-webshops</span> <span className="text-green-600 dark:text-green-400 font-medium">(live)</span>
                     </p>
                   </div>
@@ -192,7 +200,7 @@ const AboutPage: React.FC = () => {
                     <Clock className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                    <p className="text-lg text-gray-700">
                       <span className="font-semibold">Geavanceerde filteropties</span> <span className="text-blue-600 dark:text-blue-400 font-medium">(coming soon)</span>
                     </p>
                   </div>
@@ -203,7 +211,7 @@ const AboutPage: React.FC = () => {
                     <Clock className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                    <p className="text-lg text-gray-700">
                       <span className="font-semibold">Interactieve quiz-preview op de Over ons pagina</span> <span className="text-blue-600 dark:text-blue-400 font-medium">(coming soon)</span>
                     </p>
                   </div>
@@ -211,34 +219,36 @@ const AboutPage: React.FC = () => {
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* Over de maker Section */}
-        <section className="py-20 bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-sm mb-16 transition-colors">
+        <ErrorBoundary>
+          <section className="py-20 bg-gradient-to-r from-[#bfae9f]/10 to-blue-50 rounded-3xl shadow-sm mb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white mb-8">
+              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-8">
                 Wie zit erachter?
               </h2>
               
-              <div className="bg-white/80 dark:bg-gray-800/80 p-8 rounded-2xl shadow-sm backdrop-blur-sm">
+              <div className="bg-white/90 p-8 rounded-3xl shadow-sm backdrop-blur-sm">
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/3 mb-6 md:mb-0 md:mr-8">
                     <ImageWithFallback 
                       src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2" 
                       alt="Luc van Dokkum - Oprichter FitFi" 
-                      className="w-48 h-48 rounded-full object-cover mx-auto shadow-lg"
+                      className="w-48 h-48 rounded-full object-cover mx-auto shadow-xl"
                       fallbackSrc="/images/fallback-user.png"
                     />
                   </div>
                   <div className="md:w-2/3 text-center md:text-left">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    <h3 className="text-2xl font-medium text-gray-900 mb-4">
                       Luc van Dokkum
                     </h3>
-                    <p className="text-orange-500 font-medium mb-4">
+                    <p className="text-[#bfae9f] font-medium mb-4">
                       Oprichter & Ontwikkelaar
                     </p>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <p className="text-lg text-gray-700 leading-relaxed">
                       De technologie en stylinglogica zijn volledig ontwikkeld door Luc van Dokkum — van eerste concept tot live lancering. Geen groot bureau, maar één gepassioneerde oprichter.
                     </p>
                   </div>
@@ -246,66 +256,71 @@ const AboutPage: React.FC = () => {
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* Social Proof Section */}
-        <section className="py-20 bg-white dark:bg-gray-800 rounded-2xl shadow-sm mb-16 transition-colors">
+        <ErrorBoundary>
+          <section className="py-20 bg-white rounded-3xl shadow-sm mb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <div className="text-center">
-              <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 md:p-12">
+              <div className="bg-gradient-to-r from-[#bfae9f]/10 to-blue-50 rounded-3xl p-8 md:p-12">
                 <div className="text-6xl mb-6">💬</div>
-                <blockquote className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 italic leading-relaxed mb-6">
+                <blockquote className="text-xl md:text-2xl text-gray-700 italic leading-relaxed mb-6">
                   "FitFi voelt als shoppen met een persoonlijke stylist die nooit stopt met leren. Elke dag slimmer, elke dag beter gekleed."
                 </blockquote>
                 <div className="flex items-center justify-center">
                   <ImageWithFallback 
                     src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
                     alt="Sarah"
-                    className="w-12 h-12 rounded-full object-cover mr-4"
+                    className="w-12 h-12 rounded-full object-cover mr-4 shadow-md"
                     fallbackSrc="/images/fallback-user.png"
                   />
                   <div className="text-left">
-                    <p className="font-semibold text-gray-900 dark:text-white">Sarah</p>
-                    <p className="text-gray-600 dark:text-gray-400">31 jaar</p>
+                    <p className="font-medium text-gray-900">Sarah</p>
+                    <p className="text-gray-600">31 jaar</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* CTA Afsluiting Section */}
-        <section className="py-20 bg-gray-900 dark:bg-gray-800 rounded-2xl shadow-sm transition-colors">
+        <ErrorBoundary>
+          <section className="py-20 bg-gradient-to-br from-[#bfae9f] to-purple-600 rounded-3xl shadow-sm">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-light text-white mb-6">
               Klaar om je stijl te upgraden?
             </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Begin nu met de quiz en zie direct outfits die bij jou passen.
             </p>
             <Button 
               as={Link}
               to="/onboarding" 
-              variant="primary"
+              variant="secondary"
               size="lg"
               icon={<ArrowRight size={20} />}
               iconPosition="right"
-              className="bg-[#bfae9f] hover:bg-[#a89a8c] text-lg px-8 py-4"
+              className="bg-white text-[#bfae9f] hover:bg-gray-50 text-lg px-8 py-4 font-medium shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 rounded-2xl"
             >
               Start de stijlquiz
             </Button>
-            <p className="text-sm text-gray-400 mt-4">
+            <p className="text-sm text-white/80 mt-4">
               Geen verplichtingen • Gratis te gebruiken
             </p>
           </div>
-        </section>
+          </section>
+        </ErrorBoundary>
 
         {/* Contact Section */}
         <div className="text-center mt-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-medium text-gray-900 mb-4">
             Neem contact op
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-gray-600 mb-6">
             Heb je vragen of feedback? We horen graag van je!
           </p>
           <Button
@@ -314,11 +329,12 @@ const AboutPage: React.FC = () => {
             variant="outline"
             icon={<ArrowRight size={20} />}
             iconPosition="right"
+            className="rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105"
           >
             Email ons
           </Button>
           
-          <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
+          <div className="mt-8 text-sm text-gray-500">
             <p>FitFi B.V. • Amsterdam, Nederland</p>
             <p>KVK: 12345678 • BTW: NL123456789B01</p>
           </div>
@@ -326,7 +342,7 @@ const AboutPage: React.FC = () => {
 
         {/* Back to Home */}
         <div className="text-center mt-12">
-          <Link to="/" className="text-orange-500 hover:text-orange-600 transition-colors">
+          <Link to="/" className="text-[#bfae9f] hover:text-[#a89a8c] transition-colors font-medium">
             Terug naar home
           </Link>
         </div>
