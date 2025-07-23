@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { 
   Heart, 
   Share2, 
@@ -26,12 +27,6 @@ import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../co
 import curatedProducts from '../config/curated-products.json';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 
-// Debug logging utility
-const debugLog = (message: string, data?: any) => {
-  if (import.meta.env.DEV) {
-    console.log(`[🔍 ResultsPage] ${message}`, data || '');
-  }
-};
 interface Outfit {
   id: string;
   title: string;
@@ -260,25 +255,299 @@ const ResultsPage: React.FC = () => {
   const { user, saveRecommendation } = useUser();
   const { viewRecommendation, saveOutfit } = useGamification();
   
-  // Debug log component initialization
-  debugLog('Component initialized');
-  debugLog('Location state received:', location.state);
-  debugLog('User data:', user);
-  
   const [psychographicProfile, setPsychographicProfile] = useState<PsychographicProfile | null>(null);
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [showCollapsiblePanel, setShowCollapsiblePanel] = useState(false);
   const [curatedItems, setCuratedItems] = useState<any[]>([]);
   const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const quizAnswers = location.state?.answers || {};
 
-  debugLog('Quiz answers extracted:', quizAnswers);
-
+  // Single effect for initialization - no dependencies to prevent loops
   useEffect(() => {
-    debugLog('Setting up psychographic profile...');
+    const initializeResults = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Analyze psychographic profile
+        const profile = analyzePsychographicProfile(quizAnswers);
+        setPsychographicProfile(profile);
+        
+        // Get curated products for this archetype
+        const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
+        if (curatedProfile && curatedProfile.items) {
+          setCuratedItems(curatedProfile.items.slice(0, 6));
+        }
+        
+        // Complete gamification action
+        viewRecommendation();
+        
+      } catch (err) {
+        console.error('[ResultsPage] Initialization error:', err);
+        setError('Er ging iets mis bij het laden van je resultaten');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    initializeResults();
+  }, []); // Empty deps - only run once on mount
+
+  // Memoized components to prevent unnecessary re-renders
+  const memoizedCuratedItems = useMemo(() => {
+    if (!curatedItems.length) return null;
+    
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {curatedItems.map(item => (
+          <div 
+            key={item.id} 
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+            onClick={() => handleProductClick(item)}
+          >
+            <div className="relative">
+              <img 
+                src={item.imageUrl} 
+                alt={item.name} 
+                className="w-full h-48 object-cover"
+              />
+              <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
+                {item.retailer}
+              </div>
+              {!item.inStock && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <span className="text-white font-semibold">Uitverkocht</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-4">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                {item.name}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                {item.brand} • {item.category}
+              </p>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-lg font-bold text-gray-900 dark:text-white">
+                  €{item.price.toFixed(2)}
+                </span>
+                <div className="flex items-center text-yellow-400">
+                  <Star size={14} className="fill-current" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">4.8</span>
+                </div>
+              </div>
+              
+              <div className="mb-3">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Beschikbare maten:</div>
+                <div className="flex flex-wrap gap-1">
+                  {item.sizes.slice(0, 4).map((size: string, index: number) => (
+                    <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
+                      {size}
+                    </span>
+                  ))}
+                  {item.sizes.length > 4 && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      +{item.sizes.length - 4}
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <Button
+                variant="primary"
+                size="sm"
+                fullWidth
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleProductClick(item);
+                }}
+                icon={<ShoppingBag size={14} />}
+                iconPosition="left"
+              >
+                Koop bij {item.retailer}
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }, [curatedItems]);
+
+  const analyzePsychographicProfile = (answers: Record<string, any>): PsychographicProfile => {
+    if (!answers || Object.keys(answers).length === 0) {
+      return {
+        type: 'casual_chic',
+        title: 'Casual Chic Explorer',
+        description: 'Je hebt een evenwichtige benadering van mode.',
+        characteristics: ['Veelzijdig', 'Open-minded', 'Praktisch'],
+        styleKeywords: ['versatile', 'timeless', 'adaptable'],
+        motivationalMessage: 'Jouw openheid voor verschillende stijlen maakt je uniek.',
+        icon: '🌟'
+      };
+    }
+
+    const archetypeId = mapAnswersToArchetype(answers);
+    const archetype = getArchetypeById(archetypeId);
+    const gender = answers.gender;
+
+    return {
+      type: archetypeId,
+      title: archetype.displayName,
+      description: archetype.description,
+      characteristics: archetype.keywords,
+      styleKeywords: archetype.keywords,
+      motivationalMessage: `${gender === 'male' ? 'Voor de moderne man' : 'Voor de zelfverzekerde vrouw'} hebben we outfits geselecteerd die jouw ${archetype.displayName.toLowerCase()} smaak weerspiegelen.`,
+      icon: archetype.icon
+    };
+  };
+
+  const handleProductClick = (item: any) => {
+    // Track product click
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'product_click', {
+        event_category: 'ecommerce',
+        event_label: `${item.retailer}_${item.id}`,
+        item_id: item.id,
+        item_name: item.name,
+        item_brand: item.brand,
+        item_category: item.category,
+        price: item.price,
+        currency: 'EUR'
+      });
+    }
+    
+    // Open product page
+    window.open(item.url, '_blank', 'noopener,noreferrer');
+  };
+
+  const recordFeedback = (rating: number) => {
+    setFeedbackGiven(true);
+    
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'feedback_rating', {
+        event_category: 'engagement',
+        event_label: 'recommendation_feedback',
+        value: rating
+      });
+    }
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="w-16 h-16 mx-auto mb-6 relative">
+              <div className="absolute inset-0 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Je resultaten worden geladen...
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Even geduld terwijl we je persoonlijke aanbevelingen samenstellen.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-md mx-auto text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Er ging iets mis
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                {error}
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => window.location.reload()}
+              >
+                Probeer opnieuw
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const userName = user?.name;
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Profile Introduction */}
+      {psychographicProfile && (
+        <ProfileIntroduction 
+          profile={psychographicProfile} 
+          userName={userName}
+        />
+      )}
+
+      {/* Curated Products Section */}
+      {curatedItems.length > 0 && (
+        <div className="py-8">
+          <div className="max-w-screen-md mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+              Curated voor jouw {psychographicProfile?.title} stijl
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
+              Handpicked items die perfect passen bij jouw persoonlijkheid
+            </p>
+            
+            {memoizedCuratedItems}
+          </div>
+        </div>
+      )}
+
+      {/* Daily Style Tip Section */}
+      <DailyStyleTipSection />
+
+      {/* Pro Upsell Banner */}
+      {user && !user.isPremium && (
+        <div className="py-8">
+          <div className="max-w-screen-md mx-auto px-4">
+            <div className="bg-blue-600 text-white p-6 rounded-xl text-center">
+              <h3 className="text-lg font-bold mb-2">Upgrade naar Premium</h3>
+              <p className="mb-4">Krijg toegang tot exclusieve items en onbeperkte aanbevelingen</p>
+              <Button variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
+                Start gratis proef
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Section */}
+      <div className="py-8">
+        <div className="max-w-screen-md mx-auto text-center px-4">
+          <p className="mt-8 text-center">Hoe vond je deze aanbevelingen?</p>
+          {!feedbackGiven ? (
+            <StarRating onRate={recordFeedback} />
+          ) : (
+            <div className="text-green-600 dark:text-green-400 font-medium">
+              ✅ Bedankt voor je feedback!
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ResultsPage;
     const profile = analyzePsychographicProfile(quizAnswers);
     setPsychographicProfile(profile);
     debugLog('Psychographic profile set:', profile);
