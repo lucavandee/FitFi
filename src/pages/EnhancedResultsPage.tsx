@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { 
   Heart, 
   Share2, 
@@ -39,12 +40,6 @@ import DevDataPanel from '../components/DevDataPanel';
 import OutfitCard from '../components/ui/OutfitCard';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Debug logging utility
-const debugLog = (message: string, data?: any) => {
-  if (env.DEBUG_MODE || import.meta.env.DEV) {
-    console.log(`[🔍 EnhancedResultsPage] ${message}`, data || '');
-  }
-};
 interface Outfit {
   id: string;
   title: string;
@@ -109,97 +104,69 @@ const EnhancedResultsPage: React.FC = () => {
   const { user, saveRecommendation } = useUser();
   const { viewRecommendation, saveOutfit } = useGamification();
   
-  // Debug log component initialization
-  debugLog('Component initialized with location state:', location.state);
-  debugLog('User data:', user);
-  
   // State management
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [psychographicProfile, setPsychographicProfile] = useState<PsychographicProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
-  const [hasInitialized, setHasInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
   const [currentOutfitIndex, setCurrentOutfitIndex] = useState(0);
-  const [loadingSteps, setLoadingSteps] = useState<LoadingStep[]>([
-    { id: 'analyze', label: 'Stijlprofiel analyseren', completed: false },
-    { id: 'generate', label: 'Outfits samenstellen', completed: false },
-    { id: 'products', label: 'Producten laden', completed: false },
-    { id: 'personalize', label: 'Personaliseren', completed: false }
-  ]);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [isQuickRetrying, setIsQuickRetrying] = useState(false);
-  const [partialDataShown, setPartialDataShown] = useState(false);
-  const [smartDefaults, setSmartDefaults] = useState<any>(null);
-
-  // Refs
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const retryCount = useRef(0);
-  const MAX_RETRIES = 3;
 
   // Get data from location state
   const quizAnswers = location.state?.answers || location.state?.onboardingData || {};
   const safeUser = getSafeUser(user);
   
-  debugLog('Quiz answers extracted:', quizAnswers);
-  debugLog('Safe user data:', safeUser);
-  
-  // Initialize smart defaults
-  useEffect(() => {
-    debugLog('Initializing smart defaults...');
-    const defaults = generateSmartDefaults();
-    setSmartDefaults(defaults);
-    
-    debugLog('Smart defaults generated:', defaults);
-  }, []);
-
   // Enhanced user data with season and occasion
   const enhancedUser = {
     ...safeUser,
-    season: quizAnswers.season || smartDefaults?.season || 'herfst',
-    occasion: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion[0] : (quizAnswers.occasion || smartDefaults?.occasions?.[0] || 'Casual'),
-    occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || smartDefaults?.occasions?.[0] || 'Casual']
+    season: quizAnswers.season || 'herfst',
+    occasion: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion[0] : (quizAnswers.occasion || 'Casual'),
+    occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || 'Casual']
   };
-  // Get season and occasion context
-  debugLog('Enhanced user data prepared:', enhancedUser);
   
-  const getSeason = () => {
-    const season = enhancedUser.season;
-    const seasonMap: Record<string, string> = {
-      'lente': 'Lenteselectie',
-      'zomer': 'Zomerselectie', 
-      'herfst': 'Herfstselectie',
-      'winter': 'Winterselectie'
-    };
-    const seasonName = seasonMap[season] || 'Seizoenselectie';
-    
-    // Add smart context if available
-    if (smartDefaults?.confidence && smartDefaults.confidence > 0.8) {
-      return `${seasonName} (automatisch gedetecteerd)`;
-    }
-    
-    return seasonName;
-  };
-
-  const getOccasion = () => {
-    return enhancedUser.occasion;
-  };
-
-  // Analytics tracking
+  // Single initialization effect - no dependencies to prevent loops
   useEffect(() => {
-    debugLog('Setting up analytics tracking...');
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'page_view', {
-        page_title: 'Results Page',
-        page_location: window.location.href
-      });
-    }
-  }, []);
+    const initializeResults = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Analytics tracking
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'page_view', {
+            page_title: 'Enhanced Results Page',
+            page_location: window.location.href
+          });
+        }
+        
+        // Analyze profile
+        const profile = analyzePsychographicProfile(quizAnswers);
+        setPsychographicProfile(profile);
+        
+        // Load outfits
+        const outfitData = await getOutfits(safeUser, { count: 3 });
+        setOutfits(outfitData || []);
+        
+        // Load products
+        const productData = await getRecommendedProducts(safeUser, 6);
+        setProducts(productData || []);
+        
+        // Complete gamification action
+        viewRecommendation();
+        
+      } catch (err) {
+        console.error('[EnhancedResultsPage] Initialization error:', err);
+        setError('Er ging iets mis bij het laden van je aanbevelingen');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    initializeResults();
+  }, []); // Empty deps - only run once on mount
 
-  // Profile analysis
-  const analyzePsychographicProfile = useCallback((answers: Record<string, any>): PsychographicProfile => {
+  const analyzePsychographicProfile = (answers: Record<string, any>): PsychographicProfile => {
     if (!answers || Object.keys(answers).length === 0) {
       return {
         type: 'casual_chic',
@@ -225,194 +192,7 @@ const EnhancedResultsPage: React.FC = () => {
       motivationalMessage: `${gender === 'male' ? 'Voor de moderne man' : 'Voor de zelfverzekerde vrouw'} hebben we outfits geselecteerd die jouw ${archetype.displayName.toLowerCase()} smaak weerspiegelen.`,
       icon: archetype.icon
     };
-  }, []);
-
-  // Loading step management
-  const completeLoadingStep = useCallback((stepId: string) => {
-    setLoadingSteps(prev => prev.map(step => 
-      step.id === stepId ? { ...step, completed: true } : step
-    ));
-    
-    const completedCount = loadingSteps.filter(s => s.completed || s.id === stepId).length;
-    setLoadingProgress((completedCount / loadingSteps.length) * 100);
-  }, [loadingSteps]);
-
-  // Load recommendations
-  const loadRecommendations = useCallback(async () => {
-    if (isFetching || hasInitialized) {
-      debugLog('Skipping loadRecommendations - already fetching or initialized');
-      return;
-    }
-
-    debugLog('Starting loadRecommendations, attempt:', retryCount.current);
-    setIsFetching(true);
-    setIsLoading(true);
-    setError(null);
-    retryCount.current += 1;
-
-
-    try {
-      debugLog('Step 1: Analyzing profile...');
-      // Step 1: Analyze profile
-      completeLoadingStep('analyze');
-      const profile = analyzePsychographicProfile(quizAnswers);
-      setPsychographicProfile(profile);
-      debugLog('Profile analysis completed:', profile);
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      debugLog('Step 2: Generating outfits with progressive retry...');
-      // Step 2: Generate outfits
-      completeLoadingStep('generate');
-      
-      debugLog('Starting progressive retry for outfits and products...');
-      // Use progressive retry for better UX
-      const progressiveResult = await progressiveRetry(
-        safeUser,
-        // Show partial data immediately
-        (partialOutfits, partialProducts) => {
-          debugLog('Received partial data - outfits:', partialOutfits.length, 'products:', partialProducts.length);
-          if (partialOutfits.length > 0) {
-            setOutfits(partialOutfits);
-            setPartialDataShown(true);
-            debugLog('Partial outfits displayed:', partialOutfits.length);
-          }
-          
-          if (partialProducts.length > 0) {
-            setProducts(partialProducts);
-            debugLog('Partial products displayed:', partialProducts.length);
-          }
-        },
-        // Complete data loaded
-        (finalOutfits, finalProducts) => {
-          debugLog('Received final data - outfits:', finalOutfits.length, 'products:', finalProducts.length);
-          setOutfits(finalOutfits);
-          setProducts(finalProducts);
-          setPartialDataShown(false);
-          debugLog('Final data loaded and displayed');
-        }
-      );
-      
-      debugLog('Progressive retry completed with result:', progressiveResult);
-
-      if (progressiveResult.outfits && progressiveResult.outfits.length > 0) {
-        debugLog('Setting outfits from progressive result:', progressiveResult.outfits.length);
-        setOutfits(progressiveResult.outfits);
-      } else {
-        debugLog('ERROR: No outfits found in progressive result');
-        throw new Error('Geen outfits gevonden');
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      debugLog('Step 3: Loading products...');
-      // Step 3: Load products
-      completeLoadingStep('products');
-      
-      if (progressiveResult.products && progressiveResult.products.length > 0) {
-        debugLog('Setting products from progressive result:', progressiveResult.products.length);
-        setProducts(progressiveResult.products);
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      debugLog('Step 4: Personalizing...');
-      // Step 4: Personalize
-      completeLoadingStep('personalize');
-      
-      debugLog('Tracking successful load in analytics...');
-      // Track successful load
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'recommendations_loaded', {
-          event_category: 'engagement',
-          event_label: 'success',
-          outfits_count: progressiveResult.outfits?.length || 0,
-          products_count: progressiveResult.products?.length || 0,
-          used_smart_defaults: !!smartDefaults,
-          smart_defaults_confidence: smartDefaults?.confidence || 0
-        });
-      }
-
-      // Mark as initialized
-      debugLog('Marking as initialized');
-      setHasInitialized(true);
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      debugLog('loadRecommendations completed successfully');
-
-    } catch (error) {
-      debugLog('ERROR in loadRecommendations:', error);
-      console.error('[ERROR] EnhancedResultsPage loadRecommendations failed:', error);
-      
-      if (retryCount.current < MAX_RETRIES) {
-        debugLog(`Retrying loadRecommendations (${retryCount.current}/${MAX_RETRIES})`);
-        
-        // Reset and retry
-        setHasInitialized(false);
-        setTimeout(() => loadRecommendations(), 1000);
-        return;
-      }
-      
-      debugLog('Max retries reached, setting error state');
-      setError(error instanceof Error ? error.message : 'Er ging iets mis bij het laden van je aanbevelingen');
-      
-      // Track error
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'recommendations_error', {
-          event_category: 'error',
-          event_label: error instanceof Error ? error.message : 'unknown_error'
-        });
-      }
-    } finally {
-      setIsLoading(false);
-      setIsFetching(false);
-      debugLog('loadRecommendations finally block executed');
-    }
-  }, [isFetching, hasInitialized, quizAnswers, safeUser, analyzePsychographicProfile, completeLoadingStep]);
-
-  // Initialize on mount
-  useEffect(() => {
-    // Only initialize once when component mounts with valid data
-    if (!hasInitialized && !isFetching) {
-      debugLog('EnhancedResultsPage mounting - checking for data');
-      
-      // Check if we have onboarding data from navigation state
-      const hasOnboardingData = location.state?.onboardingData || location.state?.answers;
-      
-      if (hasOnboardingData) {
-        debugLog('Found onboarding data, starting initialization');
-        setHasInitialized(true);
-        loadRecommendations();
-        viewRecommendation();
-      } else if (enhancedUser.season && enhancedUser.occasion) {
-        debugLog('Found enhanced user data, starting initialization');
-        setHasInitialized(true);
-        loadRecommendations();
-        viewRecommendation();
-      } else {
-        debugLog('No valid data found, redirecting to onboarding');
-        setTimeout(() => {
-          navigate('/onboarding');
-        }, 2000);
-      }
-    }
-  }, [hasInitialized, isFetching, location.state, enhancedUser, loadRecommendations, viewRecommendation, navigate]);
-  
-  // Fallback redirect if missing data after timeout
-  useEffect(() => {
-    if (!hasInitialized && !isFetching) {
-      const { season, occasion } = enhancedUser;
-      if (!season || !occasion) {
-        debugLog('WARNING: Missing season or occasion data, will redirect to quiz');
-        const timer = setTimeout(() => {
-          debugLog('Redirecting to onboarding due to missing data');
-          navigate('/onboarding');
-        }, 2000); // Give 2 seconds for data to load
-        
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [hasInitialized, isFetching, enhancedUser, navigate]);
+  };
 
   // Carousel navigation
   const nextOutfit = () => {
@@ -426,7 +206,6 @@ const EnhancedResultsPage: React.FC = () => {
   // Save outfit functionality
   const handleSaveOutfit = async (outfitId: string) => {
     try {
-      debugLog('Saving outfit:', outfitId);
       await saveRecommendation(outfitId);
       setSavedOutfits(prev => [...prev, outfitId]);
       toast.success('Outfit opgeslagen!');
@@ -438,78 +217,23 @@ const EnhancedResultsPage: React.FC = () => {
         });
       }
     } catch (error) {
-      debugLog('ERROR saving outfit:', error);
       console.error('Error saving outfit:', error);
       toast.error('Kon outfit niet opslaan');
     }
   };
 
-  // Retry functionality
-  const handleRetry = () => {
-    debugLog('Handling retry - resetting state');
-    setError(null);
-    setHasInitialized(false);
-    retryCount.current = 0;
-    setLoadingSteps(prev => prev.map(step => ({ ...step, completed: false })));
-    setLoadingProgress(0);
-    setPartialDataShown(false);
-    loadRecommendations();
-  };
-  
-  // Quick retry for missing data only
-  const handleQuickRetry = async () => {
-    if (isQuickRetrying) return;
+  // Memoized outfit cards to prevent unnecessary re-renders
+  const memoizedOutfitCards = useMemo(() => {
+    if (!outfits.length) return null;
     
-    debugLog('Starting quick retry for missing data');
-    setIsQuickRetrying(true);
-    setError(null);
-    
-    try {
-      const missing = analyzeMissingData(outfits, products, psychographicProfile);
-      
-      debugLog('Missing data analysis:', missing);
-      
-      const result = await smartRetry(safeUser, {
-        outfits,
-        products,
-        profile: psychographicProfile
-      });
-      
-      debugLog('Smart retry result:', result);
-      
-      if (result.success) {
-        debugLog('Quick retry successful, updating state');
-        toast.success('Ontbrekende data succesvol geladen!');
-        
-        // Track successful quick retry
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'quick_retry_success', {
-            event_category: 'error_recovery',
-            event_label: 'missing_data_recovered',
-            duration_ms: result.duration,
-            attempts: result.attempts
-          });
-        }
-      } else {
-        throw new Error(result.errors.join(', ') || 'Quick retry failed');
-      }
-    } catch (error) {
-      debugLog('ERROR in quick retry:', error);
-      console.error('[EnhancedResultsPage] Quick retry failed:', error);
-      toast.error('Quick retry mislukt. Probeer volledige herlaad.');
-      
-      // Track failed quick retry
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'quick_retry_failed', {
-          event_category: 'error_recovery',
-          event_label: 'quick_retry_error'
-        });
-      }
-    } finally {
-      setIsQuickRetrying(false);
-      debugLog('Quick retry finally block executed');
-    }
-  };
+    return outfits.map((outfit, index) => (
+      <OutfitCard
+        key={outfit.id}
+        outfit={outfit}
+        user={safeUser}
+      />
+    ));
+  }, [outfits, safeUser]);
 
   // Sticky footer actions
   const handleSaveFavorites = () => {
@@ -529,23 +253,10 @@ const EnhancedResultsPage: React.FC = () => {
   };
 
   // Loading state
-  if (isLoading && !error) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="container mx-auto px-4 py-16">
-          {/* Progress bar */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-orange-500 to-blue-500"
-                initial={{ width: '0%' }}
-                animate={{ width: `${loadingProgress}%` }}
-                transition={{ duration: 0.5 }}
-              />
-            </div>
-          </div>
-
-          {/* Loading content */}
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               className="w-16 h-16 mx-auto mb-6 relative"
@@ -558,33 +269,9 @@ const EnhancedResultsPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
               AI aan het werk
             </h1>
-            
-            <div className="space-y-4">
-              {loadingSteps.map((step, index) => (
-                <motion.div
-                  key={step.id}
-                  className={`flex items-center justify-center space-x-3 ${
-                    step.completed ? 'text-green-600' : 'text-gray-500'
-                  }`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: index * 0.2 }}
-                >
-                  {step.completed ? (
-                    <CheckCircle size={20} />
-                  ) : (
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    >
-                      <Clock size={20} />
-                    </motion.div>
-                  )}
-                  <span>{step.label}</span>
-                  {step.completed && <span className="text-green-600">✓</span>}
-                </motion.div>
-              ))}
-            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Je persoonlijke aanbevelingen worden samengesteld...
+            </p>
           </div>
         </div>
       </div>
@@ -592,7 +279,7 @@ const EnhancedResultsPage: React.FC = () => {
   }
 
   // Error state
-  if (error && !isLoading && !isFetching) {
+  if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="container mx-auto px-4 py-16">
@@ -608,22 +295,12 @@ const EnhancedResultsPage: React.FC = () => {
               <div className="space-y-3">
                 <Button
                   variant="primary"
-                  onClick={handleRetry}
+                  onClick={() => window.location.reload()}
                   icon={<RotateCw size={16} />}
                   iconPosition="left"
                   fullWidth
                 >
                   Probeer opnieuw
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleQuickRetry}
-                  icon={<Zap size={16} />}
-                  iconPosition="left"
-                  fullWidth
-                  disabled={isQuickRetrying}
-                >
-                  {isQuickRetrying ? 'Quick retry...' : 'Quick retry (alleen ontbrekende data)'}
                 </Button>
                 <Button
                   variant="outline"
@@ -705,18 +382,8 @@ const EnhancedResultsPage: React.FC = () => {
               </h2>
               <div className="space-y-1">
                 <p className="text-textSecondary-light dark:text-textSecondary-dark">
-                  {getSeason()} • {getOccasion()}
+                  {enhancedUser.season} • {enhancedUser.occasion}
                 </p>
-                {smartDefaults && smartDefaults.confidence > 0.7 && (
-                  <p className="text-sm text-turquoise-600 dark:text-turquoise-400">
-                    💡 {smartDefaults.reasoning}
-                  </p>
-                )}
-                {partialDataShown && (
-                  <p className="text-sm text-turquoise-500">
-                    ⚡ Meer outfits worden geladen...
-                  </p>
-                )}
               </div>
             </div>
 
@@ -724,20 +391,13 @@ const EnhancedResultsPage: React.FC = () => {
               <>
                 {/* Desktop Grid */}
                 <div className="hidden md:grid md:grid-cols-3 gap-8">
-                  {outfits.map((outfit, index) => (
-                    <OutfitCard
-                      key={outfit.id}
-                      outfit={outfit}
-                      user={safeUser}
-                    />
-                  ))}
+                  {memoizedOutfitCards}
                 </div>
 
                 {/* Mobile Carousel */}
                 <div className="md:hidden">
                   <div className="relative">
                     <div 
-                      ref={carouselRef}
                       className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
                       style={{ scrollBehavior: 'smooth' }}
                     >
@@ -792,22 +452,12 @@ const EnhancedResultsPage: React.FC = () => {
                   <div className="space-y-3">
                     <Button
                       variant="primary"
-                      onClick={handleQuickRetry}
-                      icon={<Zap size={16} />}
-                      iconPosition="left"
-                      fullWidth
-                      disabled={isQuickRetrying}
-                    >
-                      {isQuickRetrying ? 'Quick retry...' : 'Quick retry'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={handleRetry}
-                      icon={<RefreshCw size={16} />}
+                      onClick={() => window.location.reload()}
+                      icon={<RotateCw size={16} />}
                       iconPosition="left"
                       fullWidth
                     >
-                      Volledige herlaad
+                      Probeer opnieuw
                     </Button>
                   </div>
                 </div>
@@ -828,11 +478,6 @@ const EnhancedResultsPage: React.FC = () => {
               <p className="text-textSecondary-light dark:text-textSecondary-dark">
                 Individuele items die perfect bij jouw stijl passen
               </p>
-              {partialDataShown && products.length > 0 && (
-                <p className="text-sm text-turquoise-500 mt-1">
-                  ⚡ Meer producten worden geladen...
-                </p>
-              )}
             </div>
 
             {products.length > 0 ? (
@@ -875,16 +520,6 @@ const EnhancedResultsPage: React.FC = () => {
                 <p className="text-textSecondary-light dark:text-textSecondary-dark">
                   Geen producten beschikbaar
                 </p>
-                <Button
-                  variant="outline"
-                  onClick={handleQuickRetry}
-                  icon={<Zap size={16} />}
-                  iconPosition="left"
-                  className="mt-4"
-                  disabled={isQuickRetrying}
-                >
-                  {isQuickRetrying ? 'Laden...' : 'Probeer producten te laden'}
-                </Button>
               </div>
             )}
           </div>
@@ -930,11 +565,6 @@ const EnhancedResultsPage: React.FC = () => {
 
       {/* Bottom padding for sticky footer */}
       <div className="h-20" />
-
-      {/* Dev Data Panel */}
-      {env.DEBUG_MODE && (
-        <DevDataPanel onRefresh={handleRetry} />
-      )}
     </div>
   );
 };
