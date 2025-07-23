@@ -1,303 +1,203 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { 
+  User, 
+  Settings, 
+  Heart, 
+  TrendingUp, 
+  Award, 
+  Calendar,
+  ShoppingBag,
+  Camera,
+  Edit3,
+  Crown,
+  Gift
+} from 'lucide-react';
+import { useUser } from '../context/UserContext';
+import { useGamification } from '../context/GamificationContext';
+import Button from '../components/ui/Button';
+import LoadingFallback from '../components/ui/LoadingFallback';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// Lazy load dashboard components
+const ProfileOverview = React.lazy(() => import('../components/dashboard/ProfileOverview'));
+const SavedOutfits = React.lazy(() => import('../components/dashboard/SavedOutfits'));
+const StylePreferences = React.lazy(() => import('../components/dashboard/StylePreferences'));
+const AccountSettings = React.lazy(() => import('../components/dashboard/AccountSettings'));
+const GamificationDashboard = React.lazy(() => import('../components/dashboard/GamificationDashboard'));
 
-@layer utilities {
-  .card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
-  }
-  
-  .quiz-container {
-    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
-  }
-  
-  .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
-  }
-  
-  .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-ghost {
-    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
-  }
-  
-  .quiz-button {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .dashboard-card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
-  }
-  
-  .tab-inactive {
-    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
-  }
-  
-  .tab-active {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
-  }
-  
-  .text-heading {
-    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
-  }
-  
-  .text-body {
-    @apply text-base leading-relaxed mb-6;
-  }
-  
-  .container-fitfi {
-    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .glass-card {
-    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
-  }
-  
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
-  }
-  
-  /* Custom slider styling */
-  .slider {
-    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
-  }
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .error-state {
-    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
-  }
-  
-  .success-state {
-    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
-  }
-  
-  .info-state {
-    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
-  }
-  
-  .stijlscan-container {
-    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
-  }
-  
-  .stijlscan-option {
-    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .progress-bar-track {
-    @apply w-full bg-primary-light rounded-full h-2;
-  }
-  
-  .progress-bar-fill {
-    @apply bg-secondary h-2 rounded-full transition-all;
-  }
-  
-  .loading-skeleton {
-    @apply bg-gray-200 animate-pulse rounded-2xl;
-  }
-}
+const DashboardPage: React.FC = () => {
+  const { user, isLoading } = useUser();
+  const { points, level, badges } = useGamification();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('overview');
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    @apply bg-primary text-body;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  
-  h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
-  }
-  
-  h2 {
-    @apply text-4xl font-semibold text-secondary;
-  }
-  
-  h3 {
-    @apply text-3xl font-semibold text-secondary;
-  }
-  
-  p, span, li {
-    @apply text-base leading-relaxed text-body;
-  }
-  
-  a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
-  }
-}
-
-@layer components {
-  .container-slim {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container-slim {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+  // Update active tab based on current route
+  useEffect(() => {
+    const path = location.pathname.split('/').pop();
+    if (path && ['overview', 'outfits', 'preferences', 'settings', 'gamification'].includes(path)) {
+      setActiveTab(path);
     }
+  }, [location]);
+
+  if (isLoading) {
+    return <LoadingFallback fullScreen message="Dashboard laden..." />;
   }
-  
-  @media (min-width: 1024px) {
-    .container-slim {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-primary flex items-center justify-center">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center max-w-md">
+          <h2 className="text-2xl font-bold mb-4">Inloggen vereist</h2>
+          <p className="mb-6">Je moet ingelogd zijn om je dashboard te bekijken.</p>
+          <Button as={Link} to="/login" variant="primary">
+            Inloggen
+          </Button>
+        </div>
+      </div>
+    );
   }
-  
-  .section-wrapper {
-    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
-  }
-  
-  .grid-layout {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
-  }
-}
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  const tabs = [
+    { id: 'overview', label: 'Overzicht', icon: <User size={20} />, path: '/dashboard' },
+    { id: 'outfits', label: 'Opgeslagen Outfits', icon: <Heart size={20} />, path: '/dashboard/outfits' },
+    { id: 'preferences', label: 'Stijlvoorkeuren', icon: <TrendingUp size={20} />, path: '/dashboard/preferences' },
+    { id: 'gamification', label: 'Achievements', icon: <Award size={20} />, path: '/dashboard/gamification' },
+    { id: 'settings', label: 'Instellingen', icon: <Settings size={20} />, path: '/dashboard/settings' }
+  ];
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  return (
+    <div className="min-h-screen bg-primary">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
+        {/* Header */}
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-4 md:mb-0">
+              <h1 className="text-3xl font-bold text-secondary mb-2">
+                Welkom terug, {user.name}!
+              </h1>
+              <p className="text-gray-600">
+                Beheer je stijlprofiel en bekijk je aanbevelingen
+              </p>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              {user.isPremium && (
+                <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <Crown size={16} className="mr-1" />
+                  Premium
+                </div>
+              )}
+              
+              <div className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-medium">
+                Level {level} • {points} punten
+              </div>
+            </div>
+          </div>
+        </div>
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+        {/* Navigation Tabs */}
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
+          <div className="flex flex-wrap gap-2">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.id}
+                to={tab.path}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-secondary text-primary font-medium'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
+        {/* Content */}
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg">
+          <React.Suspense fallback={<LoadingFallback message="Inhoud laden..." />}>
+            <Routes>
+              <Route index element={<ProfileOverview />} />
+              <Route path="outfits" element={<SavedOutfits />} />
+              <Route path="preferences" element={<StylePreferences />} />
+              <Route path="gamification" element={<GamificationDashboard />} />
+              <Route path="settings" element={<AccountSettings />} />
+            </Routes>
+          </React.Suspense>
+        </div>
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
-}
+        {/* Quick Actions */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
+            <Camera className="w-12 h-12 text-secondary mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Upload nieuwe foto</h3>
+            <p className="text-gray-600 mb-4">Krijg nog nauwkeurigere aanbevelingen</p>
+            <Button variant="secondary" size="sm">
+              Upload foto
+            </Button>
+          </div>
 
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out forwards;
-}
+          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
+            <Edit3 className="w-12 h-12 text-secondary mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Update voorkeuren</h3>
+            <p className="text-gray-600 mb-4">Verfijn je stijlprofiel</p>
+            <Button 
+              as={Link} 
+              to="/dashboard/preferences" 
+              variant="secondary" 
+              size="sm"
+            >
+              Bewerk voorkeuren
+            </Button>
+          </div>
 
-/* Micro-interactions */
-.hover-lift {
-  transition: transform 0.2s ease;
-}
+          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
+            <ShoppingBag className="w-12 h-12 text-secondary mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Nieuwe aanbevelingen</h3>
+            <p className="text-gray-600 mb-4">Ontdek fresh outfits</p>
+            <Button 
+              as={Link} 
+              to="/results" 
+              variant="primary" 
+              size="sm"
+            >
+              Bekijk outfits
+            </Button>
+          </div>
+        </div>
 
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
+        {/* Premium Upgrade CTA */}
+        {!user.isPremium && (
+          <div className="mt-8 bg-gradient-to-r from-secondary/20 to-secondary/10 p-6 rounded-2xl shadow-lg">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="mb-4 md:mb-0">
+                <h3 className="text-xl font-bold text-secondary mb-2">
+                  Upgrade naar Premium
+                </h3>
+                <p className="text-body">
+                  Krijg onbeperkte aanbevelingen, geavanceerde analyses en exclusieve functies
+                </p>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-secondary">€9.99</p>
+                  <p className="text-sm text-body">per maand</p>
+                </div>
+                <Button variant="primary">
+                  <Gift size={16} className="mr-2" />
+                  Upgrade nu
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Hide scrollbar for slider */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Focus styles for accessibility */
-.focus-visible:focus {
-  outline: 2px solid #89CFF0;
-  outline-offset: 2px;
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background-color: #334155;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #89CFF0;
-  transition: width 0.3s ease-out;
-}
-
-/* Snap scrolling */
-.snap-x {
-  scroll-snap-type: x mandatory;
-}
-
-.snap-center {
-  scroll-snap-align: center;
-}
-
-.snap-mandatory {
-  scroll-snap-stop: always;
-}
+export default DashboardPage;

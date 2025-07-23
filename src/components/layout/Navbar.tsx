@@ -1,340 +1,214 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, User, LogOut, Settings, Moon, Sun } from 'lucide-react';
+import { useUser } from '../../context/UserContext';
+import { useTheme } from '../../context/ThemeContext';
+import Button from '../ui/Button';
+import Logo from '../ui/Logo';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+const Navbar: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout } = useUser();
+  const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
 
-@layer utilities {
-  .card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
-  }
-  
-  .quiz-container {
-    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
-  }
-  
-  .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
-  }
-  
-  .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-ghost {
-    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
-  }
-  
-  .quiz-button {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .dashboard-card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
-  }
-  
-  .tab-inactive {
-    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
-  }
-  
-  .tab-active {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
-  }
-  
-  .text-heading {
-    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
-  }
-  
-  .text-body {
-    @apply text-base leading-relaxed mb-6;
-  }
-  
-  .container-fitfi {
-    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .glass-card {
-    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
-  }
-  
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
-  }
-  
-  /* Custom slider styling */
-  .slider {
-    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
-  }
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .error-state {
-    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
-  }
-  
-  .success-state {
-    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
-  }
-  
-  .info-state {
-    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
-  }
-  
-  .stijlscan-container {
-    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
-  }
-  
-  .stijlscan-option {
-    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .progress-bar-track {
-    @apply w-full bg-primary-light rounded-full h-2;
-  }
-  
-  .progress-bar-fill {
-    @apply bg-secondary h-2 rounded-full transition-all;
-  }
-  
-  .loading-skeleton {
-    @apply bg-gray-200 animate-pulse rounded-2xl;
-  }
-  
-  /* Navigation styles */
-  .nav-link {
-    @apply text-sm font-medium transition-colors hover:text-secondary relative;
-  }
-  
-  .nav-link-active {
-    @apply text-secondary;
-  }
-  
-  .nav-link-inactive {
-    @apply text-body;
-  }
-  
-  .nav-indicator {
-    @apply absolute -bottom-1 left-0 w-full h-1.5 bg-secondary rounded;
-  }
-  
-  .theme-toggle {
-    @apply p-2 rounded hover:bg-primary-light transition-colors text-body;
-  }
-  
-  .user-link {
-    @apply flex items-center space-x-2 text-body hover:text-secondary transition-colors;
-  }
-  
-  .logout-btn {
-    @apply text-body border border-primary-light hover:bg-primary-light hover:text-secondary;
-  }
-  
-  .login-btn {
-    @apply text-body border border-primary-light hover:bg-primary-light hover:text-secondary;
-  }
-  
-  .signup-btn {
-    @apply bg-secondary text-primary hover:bg-secondary/90;
-  }
-}
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Over ons', href: '/over-ons' },
+    { name: 'Hoe het werkt', href: '/hoe-het-werkt' },
+    { name: 'Prijzen', href: '/prijzen' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Contact', href: '/contact' }
+  ];
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    @apply bg-primary text-body;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  
-  h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
-  }
-  
-  h2 {
-    @apply text-4xl font-semibold text-secondary;
-  }
-  
-  h3 {
-    @apply text-3xl font-semibold text-secondary;
-  }
-  
-  p, span, li {
-    @apply text-base leading-relaxed text-body;
-  }
-  
-  a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
-  }
-}
-
-@layer components {
-  .container-slim {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container-slim {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+  const isActivePage = (href: string) => {
+    if (href === '/') {
+      return location.pathname === '/';
     }
-  }
-  
-  @media (min-width: 1024px) {
-    .container-slim {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-  
-  .section-wrapper {
-    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
-  }
-  
-  .grid-layout {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
-  }
-}
+    return location.pathname.startsWith(href);
+  };
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  const handleLogout = async () => {
+    await logout();
+    setIsMenuOpen(false);
+  };
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  return (
+    <nav className="bg-primary border-b border-primary-light">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center">
+              <Logo />
+            </Link>
+          </div>
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
+                    isActivePage(item.href)
+                      ? 'text-secondary'
+                      : 'text-body hover:text-secondary'
+                  }`}
+                >
+                  {item.name}
+                  {isActivePage(item.href) && (
+                    <div className="absolute -bottom-1 left-0 w-full h-1.5 bg-secondary rounded" />
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded hover:bg-primary-light transition-colors text-body"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
-}
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/dashboard"
+                  className="flex items-center space-x-2 text-body hover:text-secondary transition-colors"
+                >
+                  <User size={16} />
+                  <span>{user.name}</span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  icon={<LogOut size={16} />}
+                  iconPosition="left"
+                  className="text-body border border-primary-light hover:bg-primary-light hover:text-secondary"
+                >
+                  Uitloggen
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Button
+                  as={Link}
+                  to="/login"
+                  variant="ghost"
+                  size="sm"
+                  className="text-body border border-primary-light hover:bg-primary-light hover:text-secondary"
+                >
+                  Inloggen
+                </Button>
+                <Button
+                  as={Link}
+                  to="/onboarding"
+                  variant="primary"
+                  size="sm"
+                  className="bg-secondary text-primary hover:bg-secondary/90"
+                >
+                  Start Quiz
+                </Button>
+              </div>
+            )}
+          </div>
 
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out forwards;
-}
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-body hover:text-secondary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary"
+              aria-expanded="false"
+            >
+              <span className="sr-only">Open main menu</span>
+              {isMenuOpen ? (
+                <X className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Menu className="block h-6 w-6" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
 
-/* Micro-interactions */
-.hover-lift {
-  transition: transform 0.2s ease;
-}
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-primary-light">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  isActivePage(item.href)
+                    ? 'text-secondary bg-primary'
+                    : 'text-body hover:text-secondary hover:bg-primary'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
+            
+            <div className="border-t border-primary pt-4 mt-4">
+              {user ? (
+                <div className="space-y-2">
+                  <Link
+                    to="/dashboard"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-body hover:text-secondary hover:bg-primary transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User size={16} />
+                    <span>{user.name}</span>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-body hover:text-secondary hover:bg-primary transition-colors w-full text-left"
+                  >
+                    <LogOut size={16} />
+                    <span>Uitloggen</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Link
+                    to="/login"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-body hover:text-secondary hover:bg-primary transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Inloggen
+                  </Link>
+                  <Link
+                    to="/onboarding"
+                    className="block px-3 py-2 rounded-md text-base font-medium bg-secondary text-primary hover:bg-secondary/90 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Start Quiz
+                  </Link>
+                </div>
+              )}
+              
+              <button
+                onClick={toggleTheme}
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-body hover:text-secondary hover:bg-primary transition-colors w-full text-left mt-2"
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
 
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Hide scrollbar for slider */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Focus styles for accessibility */
-.focus-visible:focus {
-  outline: 2px solid #89CFF0;
-  outline-offset: 2px;
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background-color: #334155;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #89CFF0;
-  transition: width 0.3s ease-out;
-}
-
-/* Snap scrolling */
-.snap-x {
-  scroll-snap-type: x mandatory;
-}
-
-.snap-center {
-  scroll-snap-align: center;
-}
-
-.snap-mandatory {
-  scroll-snap-stop: always;
-}
+export default Navbar;
