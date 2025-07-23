@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { 
   User, 
   Settings, 
@@ -7,19 +7,27 @@ import {
   TrendingUp, 
   Award, 
   Calendar,
-  ShoppingBag,
-  Camera,
-  Edit3,
-  Crown,
-  Gift
+  BarChart3
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { useGamification } from '../context/GamificationContext';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import ErrorBoundary from '../components/ErrorBoundary';
+
+// Import new dashboard components
+import WelcomeSection from '../components/dashboard/WelcomeSection';
+import AIStyleReport from '../components/dashboard/AIStyleReport';
+import OutfitOfTheDay from '../components/dashboard/OutfitOfTheDay';
+import WishlistSection from '../components/dashboard/WishlistSection';
+import StyleStatistics from '../components/dashboard/StyleStatistics';
+import CommunityChallenge from '../components/dashboard/CommunityChallenge';
+import FeedbackSection from '../components/dashboard/FeedbackSection';
+import DashboardFooter from '../components/dashboard/DashboardFooter';
 
 // Lazy load dashboard components
-const ProfileOverview = React.lazy(() => import('../components/dashboard/ProfileOverview'));
+const ProfileOverview = React.lazy(() => 
+  import('../components/dashboard/ProfileOverview').catch(() => ({ default: () => <div>Component niet beschikbaar</div> }))
+);
 const SavedOutfits = React.lazy(() => import('../components/dashboard/SavedOutfits'));
 const StylePreferences = React.lazy(() => import('../components/dashboard/StylePreferences'));
 const AccountSettings = React.lazy(() => import('../components/dashboard/AccountSettings'));
@@ -27,8 +35,7 @@ const GamificationDashboard = React.lazy(() => import('../components/dashboard/G
 
 const DashboardPage: React.FC = () => {
   const { user, isLoading } = useUser();
-  const { points, level, badges } = useGamification();
-  const location = useLocation();
+  const location = useLocation(); 
   const [activeTab, setActiveTab] = useState('overview');
 
   // Update active tab based on current route
@@ -40,7 +47,7 @@ const DashboardPage: React.FC = () => {
   }, [location]);
 
   if (isLoading) {
-    return <LoadingFallback fullScreen message="Dashboard laden..." />;
+    return <LoadingFallback fullScreen message="Nova dashboard laden..." />;
   }
 
   if (!user) {
@@ -48,7 +55,7 @@ const DashboardPage: React.FC = () => {
       <div className="min-h-screen bg-primary flex items-center justify-center">
         <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center max-w-md">
           <h2 className="text-2xl font-bold mb-4">Inloggen vereist</h2>
-          <p className="mb-6">Je moet ingelogd zijn om je dashboard te bekijken.</p>
+          <p className="mb-6">Je moet ingelogd zijn om Nova te gebruiken.</p>
           <Button as={Link} to="/login" variant="primary">
             Inloggen
           </Button>
@@ -59,142 +66,80 @@ const DashboardPage: React.FC = () => {
 
   const tabs = [
     { id: 'overview', label: 'Overzicht', icon: <User size={20} />, path: '/dashboard' },
-    { id: 'outfits', label: 'Opgeslagen Outfits', icon: <Heart size={20} />, path: '/dashboard/outfits' },
+    { id: 'outfits', label: 'Wishlist', icon: <Heart size={20} />, path: '/dashboard/outfits' },
     { id: 'preferences', label: 'Stijlvoorkeuren', icon: <TrendingUp size={20} />, path: '/dashboard/preferences' },
-    { id: 'gamification', label: 'Achievements', icon: <Award size={20} />, path: '/dashboard/gamification' },
+    { id: 'statistics', label: 'Statistieken', icon: <BarChart3 size={20} />, path: '/dashboard/statistics' },
     { id: 'settings', label: 'Instellingen', icon: <Settings size={20} />, path: '/dashboard/settings' }
   ];
 
   return (
-    <div className="min-h-screen bg-primary">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
-        {/* Header */}
-        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-4 md:mb-0">
-              <h1 className="text-3xl font-bold text-secondary mb-2">
-                Welkom terug, {user.name}!
-              </h1>
-              <p className="text-gray-600">
-                Beheer je stijlprofiel en bekijk je aanbevelingen
-              </p>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              {user.isPremium && (
-                <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
-                  <Crown size={16} className="mr-1" />
-                  Premium
+    <div className="min-h-screen bg-[#FAF8F6]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8 space-y-8">
+        
+        {/* Main Dashboard Content */}
+        <ErrorBoundary>
+          <React.Suspense fallback={<LoadingFallback message="Dashboard laden..." />}>
+            <Routes>
+              <Route index element={
+                <div className="space-y-8">
+                  {/* Welcome Section */}
+                  <WelcomeSection />
+                  
+                  {/* AI Style Report */}
+                  <AIStyleReport />
+                  
+                  {/* Outfit of the Day */}
+                  <OutfitOfTheDay />
+                  
+                  {/* Two Column Layout */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <WishlistSection />
+                    <StyleStatistics />
+                  </div>
+                  
+                  {/* Community Challenge */}
+                  <CommunityChallenge />
+                  
+                  {/* Feedback Section */}
+                  <FeedbackSection />
                 </div>
-              )}
-              
-              <div className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-medium">
-                Level {level} • {points} punten
-              </div>
-            </div>
-          </div>
-        </div>
+              } />
+              <Route path="outfits" element={<SavedOutfits />} />
+              <Route path="preferences" element={<StylePreferences />} />
+              <Route path="statistics" element={<StyleStatistics />} />
+              <Route path="settings" element={<AccountSettings />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </React.Suspense>
+        </ErrorBoundary>
 
         {/* Navigation Tabs */}
-        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
-          <div className="flex flex-wrap gap-2">
+        <div className="bg-white rounded-3xl p-6 shadow-sm sticky bottom-4 z-10">
+          <div className="flex justify-center">
+            <div className="flex bg-gray-50 rounded-2xl p-1">
             {tabs.map((tab) => (
               <Link
                 key={tab.id}
                 to={tab.path}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all ${
                   activeTab === tab.id
-                    ? 'bg-secondary text-primary font-medium'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-white text-[#bfae9f] font-medium shadow-sm'
+                    : 'text-gray-600 hover:text-[#bfae9f]'
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >
                 {tab.icon}
-                <span>{tab.label}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
               </Link>
             ))}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg">
-          <React.Suspense fallback={<LoadingFallback message="Inhoud laden..." />}>
-            <Routes>
-              <Route index element={<ProfileOverview />} />
-              <Route path="outfits" element={<SavedOutfits />} />
-              <Route path="preferences" element={<StylePreferences />} />
-              <Route path="gamification" element={<GamificationDashboard />} />
-              <Route path="settings" element={<AccountSettings />} />
-            </Routes>
-          </React.Suspense>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
-            <Camera className="w-12 h-12 text-secondary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Upload nieuwe foto</h3>
-            <p className="text-gray-600 mb-4">Krijg nog nauwkeurigere aanbevelingen</p>
-            <Button variant="secondary" size="sm">
-              Upload foto
-            </Button>
-          </div>
-
-          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
-            <Edit3 className="w-12 h-12 text-secondary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Update voorkeuren</h3>
-            <p className="text-gray-600 mb-4">Verfijn je stijlprofiel</p>
-            <Button 
-              as={Link} 
-              to="/dashboard/preferences" 
-              variant="secondary" 
-              size="sm"
-            >
-              Bewerk voorkeuren
-            </Button>
-          </div>
-
-          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
-            <ShoppingBag className="w-12 h-12 text-secondary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nieuwe aanbevelingen</h3>
-            <p className="text-gray-600 mb-4">Ontdek fresh outfits</p>
-            <Button 
-              as={Link} 
-              to="/results" 
-              variant="primary" 
-              size="sm"
-            >
-              Bekijk outfits
-            </Button>
-          </div>
-        </div>
-
-        {/* Premium Upgrade CTA */}
-        {!user.isPremium && (
-          <div className="mt-8 bg-gradient-to-r from-secondary/20 to-secondary/10 p-6 rounded-2xl shadow-lg">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-4 md:mb-0">
-                <h3 className="text-xl font-bold text-secondary mb-2">
-                  Upgrade naar Premium
-                </h3>
-                <p className="text-body">
-                  Krijg onbeperkte aanbevelingen, geavanceerde analyses en exclusieve functies
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-secondary">€9.99</p>
-                  <p className="text-sm text-body">per maand</p>
-                </div>
-                <Button variant="primary">
-                  <Gift size={16} className="mr-2" />
-                  Upgrade nu
-                </Button>
-              </div>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Footer */}
+        <ErrorBoundary>
+          <DashboardFooter />
+        </ErrorBoundary>
       </div>
     </div>
   );
