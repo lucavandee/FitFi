@@ -157,27 +157,27 @@ const ArchetypeStep: React.FC = () => {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-h1 font-bold text-textPrimary mb-3 font-display">
+              <h1 className="text-2xl font-semibold text-gray-900 mb-3">
                 Wat past het beste bij jouw stijl?
               </h1>
-              <p className="text-text-secondary">
+              <p className="text-gray-600">
                 Kies maximaal twee stijlen die jou het meest aanspreken
               </p>
             </div>
 
-            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden">
+            <div className="p-6 rounded-2xl shadow-lg bg-accent space-y-4 overflow-hidden">
               <form onSubmit={handleSubmit} className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                   {archetypeOptions.map((option) => (
                     <div key={option.id} className="relative">
                       <button
                         type="button"
                         onClick={() => toggleArchetype(option.id)}
                         className={`
-                          w-full p-6 rounded border text-left transition-all
+                          w-full p-6 rounded-2xl border text-left transition-all
                           ${selectedArchetypes.includes(option.id)
-                            ? 'border-turquoise bg-turquoise/10'
-                            : 'border-light-grey hover:border-turquoise hover:bg-turquoise/5'}
+                            ? 'border-secondary bg-secondary/10'
+                            : 'border-gray-300 hover:border-secondary hover:bg-secondary/5'}
                         `}
                       >
                         <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">

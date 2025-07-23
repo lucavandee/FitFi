@@ -123,20 +123,20 @@ const GenderNameStep: React.FC = () => {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <h1 className="text-h1 font-bold text-textPrimary mb-3 font-display">
+              <h1 className="text-2xl font-semibold text-gray-900 mb-3">
                 Wie ben je?
               </h1>
-              <p className="text-text-secondary">
+              <p className="text-gray-600">
                 We gebruiken deze informatie om je stijladvies te personaliseren
               </p>
             </div>
 
-            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden">
+            <div className="p-6 rounded-2xl shadow-lg bg-accent space-y-4 overflow-hidden">
               <form onSubmit={handleSubmit} className="p-8">
                 <div className="space-y-8">
                   {/* Gender Selection */}
                   <div>
-                    <label className="block text-text-primary font-medium mb-4">
+                    <label className="block text-gray-900 font-medium mb-4">
                       Hoe identificeer je jezelf? <span className="text-red-400">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-6">
@@ -144,15 +144,15 @@ const GenderNameStep: React.FC = () => {
                         type="button"
                         onClick={() => handleGenderSelect('man')}
                         className={`
-                          p-6 rounded border transition-all
+                          p-6 rounded-2xl border transition-all
                           ${formData.gender === 'man'
-                            ? 'border-turquoise bg-turquoise/10'
-                            : 'border-light-grey hover:border-turquoise hover:bg-turquoise/5'}
+                            ? 'border-secondary bg-secondary/10'
+                            : 'border-gray-300 hover:border-secondary hover:bg-secondary/5'}
                         `}
                       >
                         <div className="text-center">
                           <div className="text-3xl mb-2">👨</div>
-                          <div className="font-medium text-text-primary">Man</div>
+                          <div className="font-medium text-gray-900">Man</div>
                         </div>
                       </button>
                       
@@ -160,15 +160,15 @@ const GenderNameStep: React.FC = () => {
                         type="button"
                         onClick={() => handleGenderSelect('vrouw')}
                         className={`
-                          p-6 rounded border transition-all
+                          p-6 rounded-2xl border transition-all
                           ${formData.gender === 'vrouw'
-                            ? 'border-turquoise bg-turquoise/10'
-                            : 'border-light-grey hover:border-turquoise hover:bg-turquoise/5'}
+                            ? 'border-secondary bg-secondary/10'
+                            : 'border-gray-300 hover:border-secondary hover:bg-secondary/5'}
                         `}
                       >
                         <div className="text-center">
                           <div className="text-3xl mb-2">👩</div>
-                          <div className="font-medium text-text-primary">Vrouw</div>
+                          <div className="font-medium text-gray-900">Vrouw</div>
                         </div>
                       </button>
                     </div>

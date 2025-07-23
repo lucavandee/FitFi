@@ -102,10 +102,10 @@ const HomePage: React.FC = () => {
               
               {/* Lead Capture Form */}
               <div className="max-w-md mx-auto lg:mx-0 mb-10">
-                <form onSubmit={handleFormSubmit} className="bg-white p-8 rounded shadow-lg border border-light-grey">
+                <form onSubmit={handleFormSubmit} className="p-6 rounded-2xl shadow-lg bg-accent space-y-4">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="hero-name" className="block text-sm font-medium text-text-primary mb-1">
+                      <label htmlFor="hero-name" className="block text-sm font-medium text-gray-900 mb-1">
                         Je naam
                       </label>
                       <input
@@ -115,13 +115,13 @@ const HomePage: React.FC = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-6 py-4 rounded border border-light-grey focus:ring-2 ring-turquoise focus:border-turquoise"
+                        className="w-full px-6 py-4 rounded-2xl border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                         placeholder="Voer je naam in"
                       />
                     </div>
                     
                     <div>
-                      <label htmlFor="hero-email" className="block text-sm font-medium text-text-primary mb-1">
+                      <label htmlFor="hero-email" className="block text-sm font-medium text-gray-900 mb-1">
                         E-mailadres
                       </label>
                       <input
@@ -131,7 +131,7 @@ const HomePage: React.FC = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-6 py-4 rounded border border-light-grey focus:ring-2 ring-turquoise focus:border-turquoise"
+                        className="w-full px-6 py-4 rounded-2xl border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                         placeholder="je@email.com"
                       />
                     </div>

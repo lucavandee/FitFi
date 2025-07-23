@@ -178,7 +178,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   const occasions = outfit.occasions || [];
 
   return (
-    <div className="bg-white dark:bg-midnight-800 rounded-xl shadow-md overflow-hidden transition-colors">
+    <div className="p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900 overflow-hidden transition-colors">
       {/* Header with outfit image */}
       <div className="relative">
         <div className="aspect-[4/5] overflow-hidden bg-[#1B263B]">
@@ -189,7 +189,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             componentName="OutfitCard"
             fallbackSrc="/placeholder.png"
           />
-          <div className="absolute top-4 left-4 bg-midnight-950/90 text-turquoise-400 px-3 py-1 rounded-full text-sm font-bold flex items-center">
+          <div className="absolute top-4 left-4 bg-primary/90 text-secondary px-3 py-1 rounded-full text-sm font-bold flex items-center">
             <Star size={14} className="mr-1" />
             {outfit.matchPercentage}% Match
           </div>
