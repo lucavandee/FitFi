@@ -1,305 +1,171 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Sparkles, ArrowRight, RefreshCw } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Button from '../../components/ui/Button';
+import { useOnboarding } from '../../context/OnboardingContext';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+const ResultsStep: React.FC = () => {
+  const navigate = useNavigate();
+  const { data } = useOnboarding();
+  const [isProcessing, setIsProcessing] = useState(true);
 
-@layer utilities {
-  .card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
-  }
-  
-  .quiz-container {
-    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
-  }
-  
-  .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
-  }
-  
-  .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-ghost {
-            <div className="mt-8 bg-accent rounded-2xl shadow-lg p-6 flex items-center justify-center space-x-2">
-  }
-  
-  .btn-danger {
-            }
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
-  }
-  
-  .quiz-button {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .dashboard-card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
-  }
-  
-  .tab-inactive {
-    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
-  }
-  
-  .tab-active {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
-  }
-  
-  .text-heading {
-    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
-  }
-  
-  .text-body {
-    @apply text-base leading-relaxed mb-6;
-  }
-  
-  .container-fitfi {
-    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .glass-card {
-    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
-  }
-  
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
-  }
-  
-  /* Custom slider styling */
-  .slider {
-    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
-  }
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .error-state {
-    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
-  }
-  
-  .success-state {
-    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
-  }
-  
-  .info-state {
-    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
-  }
-  
-  .stijlscan-container {
-    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
-  }
-  
-  .stijlscan-option {
-    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .progress-bar-track {
-    @apply w-full bg-primary-light rounded-full h-2;
-  }
-  
-  .progress-bar-fill {
-    @apply bg-secondary h-2 rounded-full transition-all;
-  }
-  
-  .loading-skeleton {
-    @apply bg-gray-200 animate-pulse rounded-2xl;
-  }
-}
+  useEffect(() => {
+    // Simulate AI processing
+    const timer = setTimeout(() => {
+      setIsProcessing(false);
+    }, 3000);
 
-@layer base {
-  }
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    @apply bg-primary text-body;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  
-  h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
-  }
-  
-  h2 {
-    @apply text-4xl font-semibold text-secondary;
-  }
-  
-  h3 {
-    @apply text-3xl font-semibold text-secondary;
-  }
-  
-  p, span, li {
-    @apply text-base leading-relaxed text-body;
-  }
-  
-  a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
-  }
-}
+    return () => clearTimeout(timer);
+  }, []);
 
-@layer components {
-  .container-slim {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container-slim {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+  const handleViewResults = () => {
+    // Track completion
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'onboarding_complete', {
+        event_category: 'onboarding',
+        event_label: 'results_view',
+        gender: data.gender,
+        archetypes: data.archetypes?.join(','),
+        season: data.season,
+        occasions: data.occasions?.join(',')
+      });
     }
-  }
-  
-  @media (min-width: 1024px) {
-    .container-slim {
-      padding-left: 2rem;
-      padding-right: 2rem;
+    
+    // Navigate to results with onboarding data
+    navigate('/results', {
+      state: {
+        onboardingData: data
+      }
+    });
+  };
+
+  const handleRetakeQuiz = () => {
+    // Track retake
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'onboarding_retake', {
+        event_category: 'onboarding',
+        event_label: 'results_retake'
+      });
     }
+    
+    // Navigate back to start
+    navigate('/onboarding');
+  };
+
+  if (isProcessing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-primary to-primary-dark flex items-center justify-center">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center max-w-md">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            className="w-16 h-16 mx-auto mb-6"
+          >
+            <Sparkles className="w-full h-full text-secondary" />
+          </motion.div>
+          
+          <h2 className="text-2xl font-bold text-secondary mb-4">
+            AI aan het werk
+          </h2>
+          <p className="text-gray-600 mb-6">
+            We analyseren je voorkeuren en stellen je perfecte stijlprofiel samen...
+          </p>
+          
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <motion.div 
+              className="bg-secondary h-2 rounded-full"
+              initial={{ width: '0%' }}
+              animate={{ width: '100%' }}
+              transition={{ duration: 3, ease: 'easeInOut' }}
+            />
+          </div>
+        </div>
+      </div>
+    );
   }
-  
-  .section-wrapper {
-    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
-  }
-  
-  .grid-layout {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
-  }
-}
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-primary to-primary-dark">
+      <div className="container-slim py-16">
+        <div className="max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-8"
+          >
+            <div className="w-20 h-20 bg-secondary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="w-10 h-10 text-secondary" />
+            </div>
+            
+            <h1 className="text-3xl font-bold text-secondary mb-4">
+              Je stijlprofiel is klaar!
+            </h1>
+            <p className="text-body text-lg">
+              We hebben je perfecte stijl geanalyseerd en gepersonaliseerde outfits samengesteld
+            </p>
+          </motion.div>
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
+            <h3 className="text-xl font-semibold mb-4">Jouw stijlprofiel:</h3>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Gender:</span>
+                <span className="font-medium capitalize">{data.gender}</span>
+              </div>
+              
+              {data.name && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Naam:</span>
+                  <span className="font-medium">{data.name}</span>
+                </div>
+              )}
+              
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Stijlen:</span>
+                <span className="font-medium">{data.archetypes?.join(', ')}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Seizoen:</span>
+                <span className="font-medium capitalize">{data.season}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Gelegenheden:</span>
+                <span className="font-medium">{data.occasions?.join(', ')}</span>
+              </div>
+            </div>
+          </div>
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+          <div className="space-y-4">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={handleViewResults}
+              icon={<ArrowRight size={20} />}
+              iconPosition="right"
+              className="w-full"
+            >
+              Bekijk mijn outfits
+            </Button>
+            
+            <Button
+              variant="ghost"
+              onClick={handleRetakeQuiz}
+              icon={<RefreshCw size={16} />}
+              iconPosition="left"
+              className="w-full"
+            >
+              Quiz opnieuw doen
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
-}
-
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out forwards;
-}
-
-/* Micro-interactions */
-.hover-lift {
-  transition: transform 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Hide scrollbar for slider */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Focus styles for accessibility */
-.focus-visible:focus {
-  outline: 2px solid #89CFF0;
-  outline-offset: 2px;
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background-color: #334155;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #89CFF0;
-  transition: width 0.3s ease-out;
-}
-
-/* Snap scrolling */
-.snap-x {
-  scroll-snap-type: x mandatory;
-}
-
-.snap-center {
-  scroll-snap-align: center;
-}
-
-.snap-mandatory {
-  scroll-snap-stop: always;
-}
+export default ResultsStep;

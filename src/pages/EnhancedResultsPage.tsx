@@ -1,303 +1,331 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { 
+  ArrowLeft, 
+  RefreshCw, 
+  Heart, 
+  Share2, 
+  ShoppingBag, 
+  Star,
+  Sparkles,
+  User,
+  Calendar,
+  MapPin,
+  Palette
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import Button from '../components/ui/Button';
+import LoadingFallback from '../components/ui/LoadingFallback';
+import { useUser } from '../context/UserContext';
+import { getOutfits, getRecommendedProducts } from '../services/DataRouter';
+import { Outfit, Product } from '../engine';
+import { getSafeUser } from '../utils/userUtils';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+const EnhancedResultsPage: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const [outfits, setOutfits] = useState<Outfit[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-@layer utilities {
-  .card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
-  }
-  
-  .quiz-container {
-    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
-  }
-  
-  .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
-  }
-  
-  .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-ghost {
-    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
-  }
-  
-  .quiz-button {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .dashboard-card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
-  }
-  
-  .tab-inactive {
-    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
-  }
-  
-  .tab-active {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
-  }
-  
-  .text-heading {
-    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
-  }
-  
-  .text-body {
-    @apply text-base leading-relaxed mb-6;
-  }
-  
-  .container-fitfi {
-    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .glass-card {
-    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
-  }
-  
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
-  }
-  
-  /* Custom slider styling */
-  .slider {
-    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
-  }
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #89CFF0;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .error-state {
-    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
-  }
-  
-  .success-state {
-    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
-  }
-  
-  .info-state {
-    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
-  }
-  
-  .stijlscan-container {
-    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
-  }
-  
-  .stijlscan-option {
-    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .progress-bar-track {
-    @apply w-full bg-primary-light rounded-full h-2;
-  }
-  
-  .progress-bar-fill {
-    @apply bg-secondary h-2 rounded-full transition-all;
-  }
-  
-  .loading-skeleton {
-    @apply bg-gray-200 animate-pulse rounded-2xl;
-  }
-}
+  // Get onboarding data from navigation state
+  const onboardingData = location.state?.onboardingData;
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const safeUser = getSafeUser(user);
+        
+        // Load outfits and products
+        const [outfitsData, productsData] = await Promise.all([
+          getOutfits(safeUser, { count: 3 }),
+          getRecommendedProducts(safeUser, 6)
+        ]);
+
+        setOutfits(outfitsData || []);
+        setProducts(productsData || []);
+      } catch (err) {
+        console.error('Error loading recommendations:', err);
+        setError('Er ging iets mis bij het laden van je aanbevelingen. Probeer het opnieuw.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRecommendations();
+  }, [user]);
+
+  const handleRetakeQuiz = () => {
+    navigate('/onboarding');
+  };
+
+  const handleSaveOutfit = (outfitId: string) => {
+    // TODO: Implement save functionality
+    console.log('Saving outfit:', outfitId);
+  };
+
+  const handleShareOutfit = (outfitId: string) => {
+    // TODO: Implement share functionality
+    console.log('Sharing outfit:', outfitId);
+  };
+
+  if (isLoading) {
+    return <LoadingFallback fullScreen message="Je gepersonaliseerde aanbevelingen worden geladen..." />;
   }
-  
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    @apply bg-primary text-body;
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-primary flex items-center justify-center">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center max-w-md">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Oeps!</h2>
+          <p className="mb-6">{error}</p>
+          <Button variant="primary" onClick={() => window.location.reload()}>
+            Probeer opnieuw
+          </Button>
+        </div>
+      </div>
+    );
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  
-  h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
-  }
-  
-  h2 {
-    @apply text-4xl font-semibold text-secondary;
-  }
-  
-  h3 {
-    @apply text-3xl font-semibold text-secondary;
-  }
-  
-  p, span, li {
-    @apply text-base leading-relaxed text-body;
-  }
-  
-  a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
-  }
-}
 
-@layer components {
-  .container-slim {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container-slim {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .container-slim {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-  
-  .section-wrapper {
-    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
-  }
-  
-  .grid-layout {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
-  }
-}
+  return (
+    <div className="min-h-screen bg-primary">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
+        {/* Header */}
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-4 md:mb-0">
+              <h1 className="text-3xl font-bold text-secondary mb-2">
+                Jouw perfecte stijl
+              </h1>
+              <p className="text-gray-600">
+                Gepersonaliseerde outfits en aanbevelingen, speciaal voor jou samengesteld
+              </p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                onClick={handleRetakeQuiz}
+                icon={<RefreshCw size={16} />}
+                iconPosition="left"
+                size="sm"
+              >
+                Quiz opnieuw
+              </Button>
+              
+              <Button
+                as={Link}
+                to="/dashboard"
+                variant="secondary"
+                icon={<User size={16} />}
+                iconPosition="left"
+                size="sm"
+              >
+                Dashboard
+              </Button>
+            </div>
+          </div>
+        </div>
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+        {/* Profile Summary */}
+        {onboardingData && (
+          <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <Sparkles className="text-secondary mr-2" size={20} />
+              Jouw stijlprofiel
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="flex items-center space-x-2">
+                <User className="text-secondary" size={16} />
+                <span className="text-sm text-gray-600">Gender:</span>
+                <span className="font-medium capitalize">{onboardingData.gender}</span>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Palette className="text-secondary" size={16} />
+                <span className="text-sm text-gray-600">Stijl:</span>
+                <span className="font-medium">{onboardingData.archetypes?.join(', ')}</span>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Calendar className="text-secondary" size={16} />
+                <span className="text-sm text-gray-600">Seizoen:</span>
+                <span className="font-medium capitalize">{onboardingData.season}</span>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <MapPin className="text-secondary" size={16} />
+                <span className="text-sm text-gray-600">Gelegenheden:</span>
+                <span className="font-medium">{onboardingData.occasions?.join(', ')}</span>
+              </div>
+            </div>
+          </div>
+        )}
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+        {/* Outfits Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-secondary mb-6">
+            Complete outfits voor jou
+          </h2>
+          
+          {outfits.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {outfits.map((outfit, index) => (
+                <motion.div
+                  key={outfit.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden"
+                >
+                  <div className="relative aspect-[3/4]">
+                    <img 
+                      src={outfit.imageUrl || 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'} 
+                      alt={outfit.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 left-3 bg-secondary text-primary px-3 py-1 rounded-full text-sm font-bold">
+                      {outfit.matchPercentage}% Match
+                    </div>
+                    <div className="absolute top-3 right-3 flex space-x-2">
+                      <button
+                        onClick={() => handleSaveOutfit(outfit.id)}
+                        className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                      >
+                        <Heart size={16} className="text-gray-700" />
+                      </button>
+                      <button
+                        onClick={() => handleShareOutfit(outfit.id)}
+                        className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                      >
+                        <Share2 size={16} className="text-gray-700" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-2">{outfit.title}</h3>
+                    <p className="text-gray-600 mb-4">{outfit.description}</p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {outfit.tags?.slice(0, 3).map((tag, tagIndex) => (
+                        <span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="w-full"
+                      icon={<ShoppingBag size={16} />}
+                      iconPosition="left"
+                    >
+                      Shop deze look
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
+              <p className="text-gray-600 mb-4">
+                Geen outfits gevonden. Probeer je voorkeuren aan te passen.
+              </p>
+              <Button variant="secondary" onClick={handleRetakeQuiz}>
+                Quiz opnieuw doen
+              </Button>
+            </div>
+          )}
+        </div>
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+        {/* Individual Products Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-secondary mb-6">
+            Individuele items voor jou
+          </h2>
+          
+          {products.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {products.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden"
+                >
+                  <div className="relative aspect-square">
+                    <img 
+                      src={product.imageUrl || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=2'} 
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                    {product.matchScore && (
+                      <div className="absolute top-2 left-2 bg-secondary text-primary px-2 py-1 rounded-full text-xs font-bold">
+                        <Star size={12} className="inline mr-1" />
+                        {Math.round(product.matchScore * 20)}%
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="p-3">
+                    <h4 className="font-semibold text-sm mb-1 truncate">{product.name}</h4>
+                    <p className="text-xs text-gray-600 mb-2">{product.brand}</p>
+                    <p className="font-bold text-secondary">€{product.price?.toFixed(2)}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg text-center">
+              <p className="text-gray-600 mb-4">
+                Geen producten gevonden. Probeer je voorkeuren aan te passen.
+              </p>
+              <Button variant="secondary" onClick={handleRetakeQuiz}>
+                Quiz opnieuw doen
+              </Button>
+            </div>
+          )}
+        </div>
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
+        {/* CTA Section */}
+        <div className="bg-gradient-to-r from-secondary/20 to-secondary/10 p-6 rounded-2xl shadow-lg text-center">
+          <h2 className="text-2xl font-bold text-secondary mb-4">
+            Vind je het leuk?
+          </h2>
+          <p className="text-body mb-6 max-w-2xl mx-auto">
+            Maak een account aan om je aanbevelingen op te slaan en nog meer gepersonaliseerde outfits te ontvangen.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button 
+              as={Link}
+              to="/register" 
+              variant="primary"
+              size="lg"
+            >
+              Account aanmaken
+            </Button>
+            <Button 
+              as={Link}
+              to="/dashboard" 
+              variant="secondary"
+              size="lg"
+            >
+              Naar dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
-}
-
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out forwards;
-}
-
-/* Micro-interactions */
-.hover-lift {
-  transition: transform 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Hide scrollbar for slider */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Focus styles for accessibility */
-.focus-visible:focus {
-  outline: 2px solid #89CFF0;
-  outline-offset: 2px;
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background-color: #334155;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #89CFF0;
-  transition: width 0.3s ease-out;
-}
-
-/* Snap scrolling */
-.snap-x {
-  scroll-snap-type: x mandatory;
-}
-
-.snap-center {
-  scroll-snap-align: center;
-}
-
-.snap-mandatory {
-  scroll-snap-stop: always;
-}
+export default EnhancedResultsPage;
