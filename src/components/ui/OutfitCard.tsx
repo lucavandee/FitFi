@@ -369,6 +369,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                           €{typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
                         </p>
                         <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600">
                           {item.retailer || 'Unknown Store'}
                         </p>
                       </div>
