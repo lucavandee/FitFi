@@ -107,6 +107,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [hasJustSubmitted, setHasJustSubmitted] = useState<boolean>(false);
   const [smartDefaults, setSmartDefaults] = useState<any>(null);
   const didAutoPopulate = useRef(false);
+  const hasNavigatedToResults = useRef(false);
   
   // Initialize smart defaults
   useEffect(() => {
@@ -300,6 +301,37 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
   
+  // Handle onboarding completion with redirect
+  useEffect(() => {
+    if (isOnboardingComplete && !hasNavigatedToResults.current) {
+      hasNavigatedToResults.current = true;
+      console.log('[FIX] Onboarding marked complete, starting navigation to results');
+      debugLog('Onboarding complete, starting navigation to results');
+      navigationService.navigateToEnhancedResults(data, {
+        loadingMessage: 'Je aanbevelingen worden geladen...',
+        onError: (error) => {
+          console.log('[FIX] Navigation error occurred, using fallback:', error);
+          debugLog('Navigation error occurred:', error);
+          console.error('[ERROR] OnboardingContext navigation failed:', error);
+          // Emergency fallback
+          navigate('/results', { state: { onboardingData: data } });
+        }
+      });
+      console.log('[FIX] Navigation service called for results');
+      debugLog('Navigation service called');
+    }
+  }, [isOnboardingComplete, navigate, data, navigationService]);
+  
+  // Check if onboarding is complete based on required fields
+  useEffect(() => {
+    const hasRequiredFields = data.gender && data.archetypes && data.archetypes.length > 0 && data.season && data.occasions && data.occasions.length > 0;
+    if (hasRequiredFields && !isOnboardingComplete && !hasNavigatedToResults.current) {
+      console.log('[FIX] All required fields present, marking as complete');
+      debugLog('All required fields present, marking as complete');
+      setIsOnboardingComplete(true);
+    }
+  }, [data, currentStep, isOnboardingComplete]);
+  
   // Submit the onboarding data
   const submitOnboarding = async () => {
     debugLog('Starting submitOnboarding with data:', data);
@@ -321,8 +353,6 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       };
       
       debugLog('Complete submission data prepared:', completeData);
-      
-      debugLog('Starting profile update...');
       
       // Track quiz completion in analytics
       if (typeof window.gtag === 'function') {
@@ -379,41 +409,15 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       debugLog('ERROR in submitOnboarding:', error);
       console.error('[ERROR] OnboardingContext submitOnboarding failed:', error);
       toast.error('Er is iets misgegaan. Probeer het opnieuw.');
+      
+      // Force navigation to results even on error
+      console.log('[FIX] Forcing navigation to results due to error');
+      navigate('/results', { state: { onboardingData: data } });
     } finally {
       setIsSubmitting(false);
       debugLog('submitOnboarding finally block executed');
     }
   };
-  
-  // Handle onboarding completion with redirect
-  useEffect(() => {
-    if (isOnboardingComplete) {
-      console.log('[FIX] Onboarding marked complete, starting navigation to results');
-      debugLog('Onboarding complete, starting navigation to results');
-      navigationService.navigateToEnhancedResults(data, {
-        loadingMessage: 'Je aanbevelingen worden geladen...',
-        onError: (error) => {
-          console.log('[FIX] Navigation error occurred, using fallback:', error);
-          debugLog('Navigation error occurred:', error);
-          console.error('[ERROR] OnboardingContext navigation failed:', error);
-          // Emergency fallback
-          navigate('/results', { state: { onboardingData: data } });
-        }
-      });
-      console.log('[FIX] Navigation service called for results');
-      debugLog('Navigation service called');
-    }
-  }, [isOnboardingComplete, navigate, data, navigationService]);
-  
-  // Check if onboarding is complete based on required fields
-  useEffect(() => {
-    const hasRequiredFields = data.gender && data.archetypes && data.archetypes.length > 0;
-    if (hasRequiredFields && currentStep === 'results' && !isOnboardingComplete) {
-      console.log('[FIX] All required fields present, marking as complete');
-      debugLog('All required fields present, marking as complete');
-      setIsOnboardingComplete(true);
-    }
-  }, [data, currentStep, isOnboardingComplete]);
   
   // Auto-populate missing onboarding data - ONE TIME ONLY at mount
   useEffect(() => {

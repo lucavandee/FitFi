@@ -160,13 +160,11 @@ export function saveOnboardingProgress(
   data: Record<string, any>
 ): void {
   try {
-    // Prevent saving when on onboarding page after quiz completion
-    // This prevents auto-save from interfering with navigation
-    const currentPath = window.location.pathname;
-    const hasCompletedQuiz = data.season && data.occasions && data.archetypes;
+    // Only skip saving if we're explicitly told to skip
+    const shouldSkipSave = data._skipSave === true;
     
-    if (currentPath === '/onboarding' && hasCompletedQuiz) {
-      console.log('[📱 ProgressPersistence] Skipping save on onboarding page after quiz completion');
+    if (shouldSkipSave) {
+      console.log('[📱 ProgressPersistence] Explicitly skipping save due to _skipSave flag');
       return;
     }
     

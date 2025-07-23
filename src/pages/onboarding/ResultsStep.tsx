@@ -138,18 +138,21 @@ const ResultsStep: React.FC = () => {
   const handleSubmit = async () => {
     console.log('[ResultsStep] Submit clicked, calling submitOnboarding');
     try {
-      await submitOnboarding();
-    } catch (error) {
-      console.error('[ResultsStep] Error submitting onboarding:', error);
-      // Use navigation service for fallback
+      // Force navigation to enhanced results with current data
+      console.log('[FIX] ResultsStep: Forcing navigation to enhanced results');
       await navigationService.navigateToEnhancedResults(data, {
-        loadingMessage: 'Proberen opnieuw...',
+        loadingMessage: 'Aanbevelingen worden geladen...',
         fallbackRoute: '/onboarding',
-        onError: () => {
-          // Last resort
+        onError: (error) => {
+          console.error('[ResultsStep] Navigation error:', error);
+          // Last resort - direct navigation
           window.location.href = '/results';
         }
       });
+    } catch (error) {
+      console.error('[ResultsStep] Error submitting onboarding:', error);
+      // Force navigation even on error
+      window.location.href = '/results';
     }
   };
   
