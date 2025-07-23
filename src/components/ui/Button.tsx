@@ -37,16 +37,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const variantStyles = {
-      primary: 'bg-primary text-white hover:bg-primary-light focus:ring-primary border-primary hover:border-primary-light',
-      secondary: 'bg-white text-primary border border-primary hover:bg-primary-light hover:text-white focus:ring-primary',
-      ghost: 'bg-transparent hover:bg-primary-light hover:text-white text-body border-transparent focus:ring-primary',
+      primary: 'bg-secondary text-primary hover:bg-secondary/90 focus:ring-secondary/50 border-secondary shadow-lg',
+      secondary: 'bg-primary text-secondary border border-secondary hover:bg-primary-light hover:text-primary focus:ring-secondary',
+      ghost: 'bg-transparent hover:bg-primary-light hover:text-secondary text-body border-transparent focus:ring-secondary',
       danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 focus:ring-red-600',
     };
 
     const sizeStyles = {
-      sm: 'px-4 py-2 text-sm focus-ring',
-      md: 'py-3 px-6 focus-ring',
-      lg: 'py-4 px-8 text-base focus-ring',
+      sm: 'px-4 py-2 text-sm',
+      md: 'py-3 px-6',
+      lg: 'py-4 px-8 text-lg',
     };
 
     const baseStyle = `
@@ -54,7 +54,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       font-medium rounded-full 
       border 
       transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-offset-2
+      focus:outline-none focus:ring-4
       disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-inherit
     `;
 
