@@ -387,16 +387,19 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Handle onboarding completion with redirect
   useEffect(() => {
     if (isOnboardingComplete) {
+      console.log('[FIX] Onboarding marked complete, starting navigation to results');
       debugLog('Onboarding complete, starting navigation to results');
       navigationService.navigateToEnhancedResults(data, {
         loadingMessage: 'Je aanbevelingen worden geladen...',
         onError: (error) => {
+          console.log('[FIX] Navigation error occurred, using fallback:', error);
           debugLog('Navigation error occurred:', error);
           console.error('[ERROR] OnboardingContext navigation failed:', error);
           // Emergency fallback
           navigate('/results', { state: { onboardingData: data } });
         }
       });
+      console.log('[FIX] Navigation service called for results');
       debugLog('Navigation service called');
     }
   }, [isOnboardingComplete, navigate, data, navigationService]);
@@ -405,6 +408,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     const hasRequiredFields = data.gender && data.archetypes && data.archetypes.length > 0;
     if (hasRequiredFields && currentStep === 'results' && !isOnboardingComplete) {
+      console.log('[FIX] All required fields present, marking as complete');
       debugLog('All required fields present, marking as complete');
       setIsOnboardingComplete(true);
     }
@@ -418,7 +422,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // Only auto-populate if we're not in the middle of completion and data is truly empty
     const hasMinimalData = data.gender || (data.archetypes && data.archetypes.length > 0) || data.season;
     
-    // Check if we should skip persistence (but not navigation)
+    // Check if we should skip persistence (but NOT navigation)
     const shouldSkipPersistence = hasJustSubmitted || isSubmitting || currentStep === 'results' || currentPath !== '/onboarding';
     
     if (!hasMinimalData && !shouldSkipPersistence) {
@@ -457,8 +461,12 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         currentStep,
         currentPath
       });
-      // Let any pending navigation or state updates fall through
+      // LET OP: géén return meer hier, zodat dispatch & navigate altijd draaien
     }
+    
+    // ONGEACHTS skip-guard, voer altijd de volgende acties uit:
+    console.log('[FIX] Auto-populate effect completed, data state:', data);
+    console.log('[FIX] Current step after auto-populate:', currentStep);
   }, [data, updateData, smartDefaults, isSubmitting, hasJustSubmitted, currentStep]);
   
   // Save data to localStorage when it changes
