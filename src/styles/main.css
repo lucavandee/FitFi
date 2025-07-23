@@ -10,7 +10,7 @@
   }
   
   .quiz-container {
-    @apply bg-white text-text-primary max-w-md mx-auto p-8 rounded-lg shadow-lg;
+    @apply bg-white text-text-primary max-w-2xl mx-auto p-8 rounded-lg shadow-lg border border-light-grey;
   }
   
   .card-section {
@@ -75,6 +75,32 @@
   
   .focus-ring {
     @apply focus:outline-none focus:ring-2 ring-turquoise focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   .error-state {
