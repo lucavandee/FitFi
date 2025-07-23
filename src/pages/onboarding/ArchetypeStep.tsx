@@ -165,7 +165,7 @@ const ArchetypeStep: React.FC = () => {
               </p>
             </div>
 
-            <div className="card overflow-hidden">
+            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg overflow-hidden">
               <form onSubmit={handleSubmit}>
                 <div className="grid-layout mb-6">
                   {archetypeOptions.map((option) => (

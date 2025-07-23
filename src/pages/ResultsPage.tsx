@@ -435,7 +435,7 @@ const ResultsPage: React.FC = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-md mx-auto text-center">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Er ging iets mis
@@ -467,7 +467,7 @@ const ResultsPage: React.FC = () => {
           userName={userName}
         />
       )}
-
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
       {/* Curated Products Section */}
       {curatedItems.length > 0 && (
         <div className="py-8">

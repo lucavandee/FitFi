@@ -31,7 +31,7 @@ const DailyChallengeCard: React.FC = () => {
   };
 
   return (
-    <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
+    <motion.div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
       <div className="border-b border-gray-200 pb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">

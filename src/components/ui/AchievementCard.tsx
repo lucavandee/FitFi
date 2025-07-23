@@ -11,7 +11,7 @@ const AchievementCard: React.FC = () => {
   const lockedBadges = allBadges.filter(badge => !earnedBadgeIds.includes(badge.id));
 
   return (
-    <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+    <motion.div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="border-b border-gray-200 pb-6">
         <div className="flex items-center space-x-3">
           <div className="p-3 rounded-full bg-secondary/20">
