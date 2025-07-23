@@ -4,8 +4,8 @@
 /*.css     /:splat.css     200
 /*.map     /:splat.map     200
 
+# API routes to Netlify functions
+/api/*    /.netlify/functions/:splat  200
+
 # SPA fallback for client-side routing
 /*    /index.html   200
-
-# Netlify functions
-/.netlify/functions/*  /.netlify/functions/:splat  200

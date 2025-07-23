@@ -42,8 +42,8 @@
   force = true
 
 [[redirects]]
-  # ✅ Netlify functions routing
-  from   = "/.netlify/functions/*"
+  # ✅ API routes to Netlify functions
+  from   = "/api/*"
   to     = "/.netlify/functions/:splat"
   status = 200
 
