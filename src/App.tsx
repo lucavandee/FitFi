@@ -98,49 +98,52 @@ function App() {
                       <Route path="/" element={<HomePage />} />
                       
                       {/* Onboarding Flow */}
-                      <Route path="/onboarding" element={<OnboardingPage />} />
-                      <Route path="/onboarding/gender-name" element={
-                        <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                            <LazyGenderNameStep />
-                          </Suspense>
-                        </ErrorBoundary>
-                      } />
-                      <Route path="/onboarding/archetype" element={
-                        <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                            <LazyArchetypeStep />
-                          </Suspense>
-                        </ErrorBoundary>
-                      } />
-                      <Route path="/onboarding/season" element={
-                        <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                            <LazySeasonStep />
-                          </Suspense>
-                        </ErrorBoundary>
-                      } />
-                      <Route path="/onboarding/occasion" element={
-                        <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                            <LazyOccasionStep />
-                          </Suspense>
-                        </ErrorBoundary>
-                      } />
-                      <Route path="/onboarding/preferences" element={
-                        <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                            <LazyPreferencesStep />
-                          </Suspense>
-                        </ErrorBoundary>
-                      } />
-                      <Route path="/onboarding/results" element={
-                        <ErrorBoundary>
-                          <Suspense fallback={<LoadingFallback message="Laden..." />}>
-                            <LazyResultsStep />
-                          </Suspense>
-                        </ErrorBoundary>
-                      } />
+                      {/* Route-Driven Onboarding Flow */}
+                      <Route path="onboarding" element={<OnboardingLayout />}>
+                        <Route index element={<OnboardingPage />} />
+                        <Route path="gender-name" element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazyGenderNameStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
+                        <Route path="archetype" element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazyArchetypeStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
+                        <Route path="season" element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazySeasonStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
+                        <Route path="occasion" element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazyOccasionStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
+                        <Route path="preferences" element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazyPreferencesStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
+                        <Route path="results" element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<LoadingFallback message="Laden..." />}>
+                              <LazyResultsStep />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } />
+                      </Route>
                       
                       {/* Catch-all route for 404 */}
                       <Route path="*" element={

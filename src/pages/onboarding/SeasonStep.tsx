@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ShieldCheck, Info } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -6,7 +7,8 @@ import { motion } from 'framer-motion';
 import { getCurrentSeason } from '../../engine/helpers';
 
 const SeasonStep: React.FC = () => {
-  const { data, updateData, completeStep, goToNextStep, goToPreviousStep } = useOnboarding();
+  const navigate = useNavigate();
+  const { data, updateAnswers } = useOnboarding();
   
   const [selectedSeason, setSelectedSeason] = useState<string>(
     data.season || getCurrentSeason()
@@ -69,16 +71,13 @@ const SeasonStep: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Update onboarding data
-    updateData({
+    // Update answers
+    updateAnswers({
       season: selectedSeason as any
     });
     
-    // Mark step as completed
-    completeStep('season');
-    
-    // Go to next step
-    goToNextStep();
+    // Navigate to next step
+    navigate('/onboarding/occasion');
   };
   
   return (
@@ -161,7 +160,7 @@ const SeasonStep: React.FC = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={goToPreviousStep}
+                    onClick={() => navigate('/onboarding/archetype')}
                     icon={<ArrowLeft size={18} />}
                     iconPosition="left"
                     className="flex-1 text-white border border-white/30 hover:bg-white/10"

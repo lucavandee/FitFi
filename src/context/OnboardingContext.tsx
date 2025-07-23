@@ -1,38 +1,16 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useUser } from './UserContext';
-import { useGamification } from './GamificationContext';
-import { useNavigationService } from '../services/NavigationService';
-import { getCurrentSeason } from '../engine/helpers';
-import toast from 'react-hot-toast';
-import { saveOnboardingProgress, loadOnboardingProgress, clearOnboardingProgress } from '../utils/progressPersistence';
 import { generateSmartDefaults } from '../utils/smartDefaults';
-import { env } from '../utils/env';
 
-// Debug logging utility
-const debugLog = (message: string, data?: any) => {
-  if (env.DEBUG_MODE || import.meta.env.DEV) {
-    console.log(`[🔍 OnboardingContext] ${message}`, data || '');
-  }
-};
-// Define the types for our onboarding data
+/**
+ * Simplified OnboardingContext for route-driven flow
+ * No auto-populate, no navigation logic, just data management
+ */
 export interface OnboardingData {
-  // Step 1: Welcome - no data
-  
-  // Step 2: Gender & Name
   gender?: 'man' | 'vrouw';
   name?: string;
-  
-  // Step 3: Archetype
   archetypes?: string[];
-  
-  // Step 4: Season
   season?: 'lente' | 'zomer' | 'herfst' | 'winter';
-  
-  // Step 5: Occasion
   occasions?: string[];
-  
-  // Step 6: Preferences (optional)
   preferences?: {
     tops?: boolean;
     bottoms?: boolean;
@@ -40,7 +18,6 @@ export interface OnboardingData {
     shoes?: boolean;
     accessories?: boolean;
   };
-  
   // Metadata
   startTime?: number;
   completedSteps?: string[];
@@ -48,53 +25,95 @@ export interface OnboardingData {
 
 interface OnboardingContextType {
   data: OnboardingData;
-  currentStep: string;
-  setStep: (step: string) => void;
-  updateData: (newData: Partial<OnboardingData>) => void;
-  completeOnboarding: (completionData: Partial<OnboardingData>) => void;
-  completeStep: (step: string) => void;
-  goToNextStep: () => void;
-  goToPreviousStep: () => void;
-  resetOnboarding: () => void;
-  isStepCompleted: (step: string) => boolean;
-  submitOnboarding: () => Promise<void>;
-  isSubmitting: boolean;
+  updateAnswers: (newData: Partial<OnboardingData>) => void;
+  resetData: () => void;
+  isComplete: boolean;
 }
 
-// Create the context
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
-// Define the step order
-const STEP_ORDER = [
-  'welcome',
-  'gender_name',
-  'archetype',
-  'season',
-  'occasion',
-  'preferences',
-  'results'
-];
-
-// Provider component
 export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const navigate = useNavigate();
-  const { updateProfile } = useUser();
-  const { completeQuiz } = useGamification();
-  const navigationService = useNavigationService();
+  // Initialize with smart defaults
+  const smartDefaults = generateSmartDefaults();
   
-  // Initialize state
+  const initialState: OnboardingData = {
+    gender: undefined,
+    name: '',
+    archetypes: [],
+    season: smartDefaults.season,
+    occasions: smartDefaults.occasions,
+    preferences: {
+      tops: true,
+      bottoms: true,
+      outerwear: true,
+      shoes: true,
+      accessories: true
+    },
+    startTime: Date.now(),
+    completedSteps: []
+  };
+
   const [data, setData] = useState<OnboardingData>(() => {
-    // Try to load from localStorage
-    const savedData = localStorage.getItem('fitfi-onboarding');
-    if (savedData) {
+    // Try to load from localStorage for persistence
+    const saved = localStorage.getItem('fitfi-onboarding-data');
+    if (saved) {
       try {
-        return JSON.parse(savedData);
+        const parsed = JSON.parse(saved);
+        return { ...initialState, ...parsed };
       } catch (error) {
         console.error('Error parsing saved onboarding data:', error);
       }
     }
-    
-    // Default data
+    return initialState;
+  });
+
+  // Update answers function
+  const updateAnswers = (newData: Partial<OnboardingData>) => {
+    setData(prev => {
+      const updated = { ...prev, ...newData };
+      
+      // Save to localStorage
+      localStorage.setItem('fitfi-onboarding-data', JSON.stringify(updated));
+      
+      return updated;
+    });
+  };
+
+  // Reset data function
+  const resetData = () => {
+    setData(initialState);
+    localStorage.removeItem('fitfi-onboarding-data');
+  };
+
+  // Check if onboarding is complete
+  const isComplete = !!(
+    data.gender &&
+    data.archetypes && data.archetypes.length > 0 &&
+    data.season &&
+    data.occasions && data.occasions.length > 0
+  );
+
+  const value: OnboardingContextType = {
+    data,
+    updateAnswers,
+    resetData,
+    isComplete
+  };
+
+  return (
+    <OnboardingContext.Provider value={value}>
+      {children}
+    </OnboardingContext.Provider>
+  );
+};
+
+export const useOnboarding = (): OnboardingContextType => {
+  const context = useContext(OnboardingContext);
+  if (context === undefined) {
+    throw new Error('useOnboarding must be used within an OnboardingProvider');
+  }
+  return context;
+};
     return {
       startTime: Date.now(),
       completedSteps: []

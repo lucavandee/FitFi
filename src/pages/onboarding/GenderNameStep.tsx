@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, User, Mail, ShieldCheck } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { motion } from 'framer-motion';
 
 const GenderNameStep: React.FC = () => {
-  const { data, updateData, completeStep, goToNextStep, goToPreviousStep } = useOnboarding();
+  const navigate = useNavigate();
+  const { data, updateAnswers } = useOnboarding();
   
   const [formData, setFormData] = useState({
     gender: data.gender || '',
@@ -87,17 +89,14 @@ const GenderNameStep: React.FC = () => {
       return;
     }
     
-    // Update onboarding data
-    updateData({
+    // Update answers
+    updateAnswers({
       gender: formData.gender as 'man' | 'vrouw',
       name: formData.name
     });
     
-    // Mark step as completed
-    completeStep('gender-name');
-    
-    // Go to next step
-    goToNextStep();
+    // Navigate to next step
+    navigate('/onboarding/archetype');
   };
   
   return (
@@ -204,7 +203,7 @@ const GenderNameStep: React.FC = () => {
                     <Button
                       type="button"
                       variant="ghost"
-                      onClick={goToPreviousStep}
+                      onClick={() => navigate('/onboarding')}
                       icon={<ArrowLeft size={18} />}
                       iconPosition="left"
                       className="flex-1 text-text-secondary border border-light-grey hover:bg-light-grey"

@@ -63,8 +63,8 @@ const OnboardingPage: React.FC = () => {
     setHasSubmitted(false); // Reset submission state for new flow
 
     setTimeout(() => {
-      completeStep('welcome');
-      goToNextStep();
+      // Navigate to first step
+      navigate('/onboarding/gender-name');
       window.scrollTo(0, 0);
     }, 0);
   };
