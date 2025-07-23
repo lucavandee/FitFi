@@ -1,523 +1,303 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useMemo } from 'react';
-import { 
-  Heart, 
-  Share2, 
-  ShoppingBag, 
-  Sparkles, 
-  Bookmark,
-  BookmarkCheck,
-  Star,
-  Clock,
-  Zap,
-  Award,
-  TrendingUp,
-  ChevronDown,
-  ChevronUp,
-  ShieldCheck,
-  CheckCircle,
-  AlertCircle,
-  RotateCw
-} from 'lucide-react';
-import Button from '../components/ui/Button';
-import { useUser } from '../context/UserContext';
-import { useGamification } from '../context/GamificationContext';
-import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../config/profile-mapping.js';
-import curatedProducts from '../config/curated-products.json';
-import ImageWithFallback from '../components/ui/ImageWithFallback';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-interface Outfit {
-  id: string;
-  title: string;
-  description: string;
-  matchPercentage: number;
-  imageUrl: string;
-  items: {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    imageUrl: string;
-    url: string;
-    retailer: string;
-    category: string;
-  }[];
-  tags: string[];
-  occasions: string[];
-  explanation: string;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-interface PsychographicProfile {
-  type: string;
-  title: string;
-  description: string;
-  characteristics: string[];
-  styleKeywords: string[];
-  motivationalMessage: string;
-  icon: string;
-}
-
-interface DailyStyleTip {
-  id: string;
-  tip: string;
-  category: string;
-}
-
-const dailyStyleTips: DailyStyleTip[] = [
-  {
-    id: '1',
-    tip: 'Draag nooit meer dan 3 kleuren tegelijk voor een gebalanceerde look.',
-    category: 'Color Theory'
-  },
-  {
-    id: '2',
-    tip: 'Investeer in kwaliteitsschoenen - ze maken of breken je outfit.',
-    category: 'Investment Pieces'
-  },
-  {
-    id: '3',
-    tip: 'De regel van derden: verdeel je outfit in 60% basis, 30% accent, 10% statement.',
-    category: 'Proportions'
-  },
-  {
-    id: '4',
-    tip: 'Accessoires kunnen een simpele outfit instant upgraden naar chic.',
-    category: 'Styling'
-  },
-  {
-    id: '5',
-    tip: 'Zorg dat je kleding goed past - tailoring is de sleutel tot elegantie.',
-    category: 'Fit & Tailoring'
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
   }
-];
-
-const analyzePsychographicProfile = (answers: Record<string, any>): PsychographicProfile => {
-  if (!answers || Object.keys(answers).length === 0) {
-    return {
-      type: 'casual_chic',
-      title: 'Casual Chic Explorer',
-      description: 'Je hebt een evenwichtige benadering van mode.',
-      characteristics: ['Veelzijdig', 'Open-minded', 'Praktisch'],
-      styleKeywords: ['versatile', 'timeless', 'adaptable'],
-      motivationalMessage: 'Jouw openheid voor verschillende stijlen maakt je uniek.',
-      icon: '🌟'
-    };
-  }
-
-  const archetypeId = mapAnswersToArchetype(answers);
-  const archetype = getArchetypeById(archetypeId);
-  const gender = answers.gender;
-
-  return {
-    type: archetypeId,
-    title: archetype.displayName,
-    description: archetype.description,
-    characteristics: archetype.keywords,
-    styleKeywords: archetype.keywords,
-    motivationalMessage: `${gender === 'male' ? 'Voor de moderne man' : 'Voor de zelfverzekerde vrouw'} hebben we outfits geselecteerd die jouw ${archetype.displayName.toLowerCase()} smaak weerspiegelen.`,
-    icon: archetype.icon
-  };
-};
-
-const ProfileIntroduction: React.FC<{ profile: PsychographicProfile; userName?: string }> = ({ 
-  profile, 
-  userName 
-}) => {
-  return (
-    <div className="py-8">
-      <div className="max-w-screen-md mx-auto">
-        <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-8 animate-fade-in transition-colors">
-          <div className="flex items-start space-x-4">
-            <div className="text-4xl">{profile.icon}</div>
-            <div className="flex-1">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
-                {userName ? `${userName}, jij bent` : 'Jij bent'} {profile.title}
-              </h2>
-              
-              <h3 className="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                {profile.description}
-              </h3>
-              
-              <p className="text-gray-600 dark:text-gray-400">
-                {profile.motivationalMessage}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const DailyStyleTipSection: React.FC = () => {
-  const [currentTipIndex, setCurrentTipIndex] = useState(0);
-
-  useEffect(() => {
-    const today = new Date();
-    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    setCurrentTipIndex(dayOfYear % dailyStyleTips.length);
-  }, []);
-
-  const currentTip = dailyStyleTips[currentTipIndex];
-
-  return (
-    <div className="py-8">
-      <div className="max-w-screen-md mx-auto">
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800 transition-colors">
-          <div className="flex items-start space-x-4">
-            <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
-              <Sparkles className="text-purple-600 dark:text-purple-400" size={24} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                💡 Daily Style Tip
-              </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-2">
-                {currentTip.tip}
-              </p>
-              <span className="inline-block bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full text-xs font-medium">
-                {currentTip.category}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const StarRating: React.FC<{ onRate: (rating: number) => void }> = ({ onRate }) => {
-  const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
-
-  const handleRate = (value: number) => {
-    setRating(value);
-    onRate(value);
-  };
-
-  return (
-    <div className="flex justify-center space-x-1 mb-4">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          onClick={() => handleRate(star)}
-          onMouseEnter={() => setHover(star)}
-          onMouseLeave={() => setHover(0)}
-          className="transition-colors"
-        >
-          <Star
-            size={24}
-            className={`${
-              star <= (hover || rating)
-                ? 'text-yellow-400 fill-current'
-                : 'text-gray-300 dark:text-gray-600'
-            }`}
-          />
-        </button>
-      ))}
-    </div>
-  );
-};
-
-// Empty state component for when no products are found
-const EmptyState: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
-  return (
-    <div className="py-12 text-center">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
-        <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="text-orange-500" size={32} />
-        </div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-          Geen producten gevonden
-        </h3>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          We konden geen producten vinden die bij jouw stijlprofiel passen. Dit kan een tijdelijk probleem zijn.
-        </p>
-        {onRetry && (
-          <Button
-            variant="primary"
-            onClick={onRetry}
-            icon={<RotateCw size={16} />}
-            iconPosition="left"
-          >
-            Probeer opnieuw
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ResultsPage: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user, saveRecommendation } = useUser();
-  const { viewRecommendation, saveOutfit } = useGamification();
   
-  const [psychographicProfile, setPsychographicProfile] = useState<PsychographicProfile | null>(null);
-  const [feedbackGiven, setFeedbackGiven] = useState(false);
-  const [showCollapsiblePanel, setShowCollapsiblePanel] = useState(false);
-  const [curatedItems, setCuratedItems] = useState<any[]>([]);
-  const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const quizAnswers = location.state?.answers || {};
-
-  // Single effect for initialization - no dependencies to prevent loops
-  useEffect(() => {
-    const initializeResults = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Analyze psychographic profile
-        const profile = analyzePsychographicProfile(quizAnswers);
-        setPsychographicProfile(profile);
-        
-        // Get curated products for this archetype
-        const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
-        if (curatedProfile && curatedProfile.items) {
-          setCuratedItems(curatedProfile.items.slice(0, 6));
-        }
-        
-        // Complete gamification action
-        viewRecommendation();
-        
-      } catch (err) {
-        console.error('[ResultsPage] Initialization error:', err);
-        setError('Er ging iets mis bij het laden van je resultaten');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    initializeResults();
-  }, []); // Empty deps - only run once on mount
-
-  // Memoized components to prevent unnecessary re-renders
-  const memoizedCuratedItems = useMemo(() => {
-    if (!curatedItems.length) return null;
-    
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {curatedItems.map(item => (
-          <div 
-            key={item.id} 
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-            onClick={() => handleProductClick(item)}
-          >
-            <div className="relative">
-              <img 
-                src={item.imageUrl} 
-                alt={item.name} 
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
-                {item.retailer}
-              </div>
-              {!item.inStock && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <span className="text-white font-semibold">Uitverkocht</span>
-                </div>
-              )}
-            </div>
-            
-            <div className="p-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                {item.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                {item.brand} • {item.category}
-              </p>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  €{item.price.toFixed(2)}
-                </span>
-                <div className="flex items-center text-yellow-400">
-                  <Star size={14} className="fill-current" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">4.8</span>
-                </div>
-              </div>
-              
-              <div className="mb-3">
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Beschikbare maten:</div>
-                <div className="flex flex-wrap gap-1">
-                  {item.sizes.slice(0, 4).map((size: string, index: number) => (
-                    <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
-                      {size}
-                    </span>
-                  ))}
-                  {item.sizes.length > 4 && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      +{item.sizes.length - 4}
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              <Button
-                variant="primary"
-                size="sm"
-                fullWidth
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleProductClick(item);
-                }}
-                icon={<ShoppingBag size={14} />}
-                iconPosition="left"
-              >
-                Koop bij {item.retailer}
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }, [curatedItems]);
-
-  const handleProductClick = (item: any) => {
-    // Track product click
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'product_click', {
-        event_category: 'ecommerce',
-        event_label: `${item.retailer}_${item.id}`,
-        item_id: item.id,
-        item_name: item.name,
-        item_brand: item.brand,
-        item_category: item.category,
-        price: item.price,
-        currency: 'EUR'
-      });
-    }
-    
-    // Open product page
-    window.open(item.url, '_blank', 'noopener,noreferrer');
-  };
-
-  const recordFeedback = (rating: number) => {
-    setFeedbackGiven(true);
-    
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'feedback_rating', {
-        event_category: 'engagement',
-        event_label: 'recommendation_feedback',
-        value: rating
-      });
-    }
-  };
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="w-16 h-16 mx-auto mb-6 relative">
-              <div className="absolute inset-0 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Je resultaten worden geladen...
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Even geduld terwijl we je persoonlijke aanbevelingen samenstellen.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
   }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-md mx-auto text-center">
-            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg">
-              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Er ging iets mis
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {error}
-              </p>
-              <Button
-                variant="primary"
-                onClick={() => window.location.reload()}
-              >
-                Probeer opnieuw
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
   }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
 
-  const userName = user?.name;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-      {/* Profile Introduction */}
-      {psychographicProfile && (
-        <ProfileIntroduction 
-          profile={psychographicProfile} 
-          userName={userName}
-        />
-      )}
-        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
-      {/* Curated Products Section */}
-      {curatedItems.length > 0 && (
-        <div className="py-8">
-          <div className="max-w-screen-md mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-              Curated voor jouw {psychographicProfile?.title} stijl
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-center mb-8">
-              Handpicked items die perfect passen bij jouw persoonlijkheid
-            </p>
-            
-            {memoizedCuratedItems}
-          </div>
-        </div>
-      )}
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-      {/* Daily Style Tip Section */}
-      <DailyStyleTipSection />
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-      {/* Pro Upsell Banner */}
-      {user && !user.isPremium && (
-        <div className="py-8">
-          <div className="max-w-screen-md mx-auto px-4">
-            <div className="bg-blue-600 text-white p-6 rounded-xl text-center">
-              <h3 className="text-lg font-bold mb-2">Upgrade naar Premium</h3>
-              <p className="mb-4">Krijg toegang tot exclusieve items en onbeperkte aanbevelingen</p>
-              <Button variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
-                Start gratis proef
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-      {/* Feedback Section */}
-      <div className="py-8">
-        <div className="max-w-screen-md mx-auto text-center px-4">
-          <p className="mt-8 text-center">Hoe vond je deze aanbevelingen?</p>
-          {!feedbackGiven ? (
-            <StarRating onRate={recordFeedback} />
-          ) : (
-            <div className="text-green-600 dark:text-green-400 font-medium">
-              ✅ Bedankt voor je feedback!
-            </div>
-          )}
-        </div>
-      </div>
-        </div>
-    </div>
-  );
-};
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-export default ResultsPage;
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}

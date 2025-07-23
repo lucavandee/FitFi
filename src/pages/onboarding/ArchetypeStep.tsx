@@ -1,282 +1,303 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Info, ShieldCheck } from 'lucide-react';
-import Button from '../../components/ui/Button';
-import { useOnboarding } from '../../context/OnboardingContext';
-import { motion } from 'framer-motion';
-import ImageWithFallback from '../../components/ui/ImageWithFallback';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-interface ArchetypeOption {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
+  }
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
 }
 
-const ArchetypeStep: React.FC = () => {
-  const navigate = useNavigate();
-  const { data, updateAnswers } = useOnboarding();
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   
-  const [selectedArchetypes, setSelectedArchetypes] = useState<string[]>(
-    data.archetypes || []
-  );
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
   
-  const [error, setError] = useState<string | null>(null);
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
   
-  // Track when the component is mounted
-  useEffect(() => {
-    // Track step view in analytics
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'quiz_step_view', {
-        event_category: 'questionnaire',
-        event_label: 'archetype',
-        step_name: 'archetype'
-      });
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
+
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
-  }, []);
+  }
   
-  const archetypeOptions: ArchetypeOption[] = [
-    {
-      id: 'modern_minimalist',
-      name: 'Modern Minimalist',
-      description: 'Strakke lijnen, neutrale kleuren en tijdloze stukken',
-      imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'casual_chic',
-      name: 'Casual Chic',
-      description: 'Moeiteloze elegantie met een relaxte twist',
-      imageUrl: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'business_casual',
-      name: 'Business Casual',
-      description: 'Professioneel maar comfortabel voor kantoor',
-      imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'streetstyle',
-      name: 'Streetstyle',
-      description: 'Authentieke streetwear met attitude',
-      imageUrl: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'classic_elegant',
-      name: 'Klassiek Elegant',
-      description: 'Tijdloze elegantie en verfijnde details',
-      imageUrl: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 'urban_sporty',
-      name: 'Urban Sporty',
-      description: 'Sportieve elementen met een stadse twist',
-      imageUrl: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
     }
-  ];
+  }
   
-  // Map style IDs to archetypes
-  const styleToArchetype: Record<string, string> = {
-    'modern_minimalist': 'urban',
-    'casual_chic': 'casual_chic',
-    'business_casual': 'klassiek',
-    'streetstyle': 'streetstyle',
-    'classic_elegant': 'klassiek',
-    'urban_sporty': 'urban'
-  };
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
   
-  const toggleArchetype = (id: string) => {
-    setSelectedArchetypes(prev => {
-      // If already selected, remove it
-      if (prev.includes(id)) {
-        return prev.filter(a => a !== id);
-      }
-      
-      // If not selected and we already have 2, show error
-      if (prev.length >= 2) {
-        setError('Je kunt maximaal 2 stijlen selecteren');
-        return prev;
-      }
-      
-      // Otherwise, add it
-      setError(null);
-      return [...prev, id];
-    });
-    
-    // Track archetype selection
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'archetype_selection', {
-        event_category: 'questionnaire',
-        event_label: id,
-        archetype: id
-      });
-    }
-  };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (selectedArchetypes.length === 0) {
-      setError('Selecteer minimaal 1 stijl');
-      return;
-    }
-    
-    // Map selected styles to archetypes
-    const archetypes = selectedArchetypes.map(style => styleToArchetype[style]);
-    
-    // Update answers
-    updateAnswers({
-      archetypes
-    });
-    
-    // Navigate to next step
-    navigate('/onboarding/season');
-  };
-  
-  return (
-    <div className="min-h-screen bg-primary">
-      <div className="section-wrapper space-y-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Progress indicator */}
-          <div>
-            <div className="flex justify-between text-sm text-body mb-2">
-              <span>Stap 2 van 3</span>
-              <span>66%</span>
-            </div>
-            <div className="w-full bg-primary-light rounded-full h-2">
-              <div
-                className="bg-secondary h-2 rounded-full transition-all"
-                style={{ width: '66%' }}
-              ></div>
-            </div>
-          </div>
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="text-center">
-              <h1 className="text-5xl lg:text-6xl font-extrabold text-secondary mb-6">
-                Wat past het beste bij jouw stijl?
-              </h1>
-              <p className="text-base leading-relaxed text-body">
-                Kies maximaal twee stijlen die jou het meest aanspreken
-              </p>
-            </div>
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg overflow-hidden">
-              <form onSubmit={handleSubmit}>
-                <div className="grid-layout mb-6">
-                  {archetypeOptions.map((option) => (
-                    <div key={option.id} className="relative">
-                      <button
-                        type="button"
-                        onClick={() => toggleArchetype(option.id)}
-                        className={`
-                          w-full p-4 rounded-2xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-secondary
-                          ${selectedArchetypes.includes(option.id)
-                            ? 'border-secondary bg-secondary/10'
-                            : 'border-primary-light hover:border-secondary hover:bg-secondary/5'}
-                        `}
-                      >
-                        <div className="flex flex-col md:flex-row items-center md:items-start space-y-3 md:space-y-0 md:space-x-4">
-                          <div className="w-full md:w-20 h-20 overflow-hidden rounded-2xl shadow-md">
-                            <ImageWithFallback
-                              src={option.imageUrl}
-                              alt={option.name}
-                              className="w-full h-full object-cover"
-                              componentName="ArchetypeStep"
-                            />
-                          </div>
-                          <div className="flex-1 text-center md:text-left">
-                            <h3 className="font-semibold text-text-dark text-lg mb-2">{option.name}</h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">{option.description}</p>
-                          </div>
-                          <div className="absolute top-4 right-4">
-                            <div className={`
-                              w-6 h-6 rounded-full flex items-center justify-center
-                              ${selectedArchetypes.includes(option.id)
-                                ? 'bg-secondary text-white'
-                                : 'bg-white border border-gray-300'}
-                            `}>
-                              {selectedArchetypes.includes(option.id) && (
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </button>
-                      
-                      <button
-                        type="button"
-                        onClick={() => setShowTooltip(showTooltip === option.id ? null : option.id)}
-                        className="absolute bottom-4 right-4 text-gray-500 hover:text-text-dark transition-colors focus:outline-none focus:ring-2 focus:ring-secondary rounded-full p-1"
-                        aria-label="Meer informatie"
-                      >
-                        <Info size={16} />
-                      </button>
-                      
-                      {showTooltip === option.id && (
-                        <div className="absolute bottom-12 right-4 bg-white border border-gray-200 rounded-2xl p-4 shadow-lg z-10 w-64">
-                          <p className="text-gray-600 text-sm">
-                            {option.id === 'modern_minimalist' && 'Modern Minimalist combineert strakke lijnen met neutrale kleuren. Denk aan tijdloze stukken die veelzijdig te combineren zijn en een clean uitstraling hebben.'}
-                            {option.id === 'casual_chic' && 'Casual Chic balanceert comfort met elegantie. Denk aan premium basics met subtiele details die moeiteloos stijlvol zijn voor dagelijks gebruik.'}
-                            {option.id === 'business_casual' && 'Business Casual is professioneel maar comfortabel. Denk aan nette broeken of rokken gecombineerd met casual tops, perfect voor kantoor of zakelijke afspraken.'}
-                            {option.id === 'streetstyle' && 'Streetstyle is geïnspireerd door urban cultuur. Denk aan opvallende sneakers, oversized items en statement pieces die je persoonlijkheid laten zien.'}
-                            {option.id === 'classic_elegant' && 'Klassiek Elegant draait om tijdloze stukken met verfijnde details. Denk aan hoogwaardige materialen en silhouetten die nooit uit de mode raken.'}
-                            {option.id === 'urban_sporty' && 'Urban Sporty combineert sportieve elementen met stadse stijl. Denk aan functionele items met een moderne twist, perfect voor een actieve levensstijl.'}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                
-                {error && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
-                    <p className="text-red-700 text-sm font-medium">{error}</p>
-                  </div>
-                )}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-                {/* Navigation Buttons */}
-                <div className="flex space-x-4">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => navigate('/onboarding/gender-name')}
-                    icon={<ArrowLeft size={18} />}
-                    iconPosition="left"
-                    className="flex-1 bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
-                  >
-                    Terug
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                    className="flex-1 bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
-                    disabled={selectedArchetypes.length === 0}
-                  >
-                    Volgende
-                  </Button>
-                </div>
-              </form>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-              {/* Privacy indicator */}
-              <div className="px-6 py-4 bg-gray-50 flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-secondary" />
-                <span className="text-sm text-gray-600">Je gegevens zijn veilig en versleuteld</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-export default ArchetypeStep;
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}

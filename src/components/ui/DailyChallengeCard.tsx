@@ -1,143 +1,303 @@
-import React from 'react';
-import { Clock, CheckCircle, Gift } from 'lucide-react';
-import Button from './Button';
-import { useGamification } from '../../context/GamificationContext';
-import { motion } from 'framer-motion';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-const DailyChallengeCard: React.FC = () => {
-  const { 
-    availableChallenges, 
-    dailyChallengeStatus, 
-    completeChallenge,
-    getSeasonalMultiplier,
-    isSeasonalEventActive
-  } = useGamification();
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  const completedCount = Object.values(dailyChallengeStatus).filter(Boolean).length;
-  const totalChallenges = Object.keys(dailyChallengeStatus).length;
-  const multiplier = getSeasonalMultiplier();
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
+  }
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
 
-  const handleCompleteChallenge = async (challengeId: string) => {
-    await completeChallenge(challengeId);
-    
-    // Track challenge completion
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'challenge_complete', {
-        event_category: 'gamification',
-        event_label: challengeId,
-        value: 1
-      });
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
+
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
-  };
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-  return (
-    <motion.div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
-      <div className="border-b border-gray-200 pb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-3 rounded-full bg-secondary/20">
-              <Clock className="text-secondary" size={20} />
-            </div>
-            <div>
-              <h3 className="text-3xl font-semibold text-secondary">
-                Dagelijkse Uitdagingen
-              </h3>
-              <p className="text-base text-text-dark">
-                {completedCount}/{totalChallenges} voltooid vandaag
-              </p>
-            </div>
-          </div>
-          
-          {isSeasonalEventActive() && (
-            <div className="bg-secondary/20 text-secondary px-4 py-2 rounded-full text-sm font-bold flex items-center">
-              <Gift size={12} className="mr-1" />
-              {multiplier}x Punten!
-            </div>
-          )}
-        </div>
-        
-        {/* Progress bar */}
-        <div className="mt-4">
-          <div className="flex justify-between text-base text-gray-600 mb-2">
-            <span>Dagelijkse Voortgang</span>
-            <span>{Math.round((completedCount / totalChallenges) * 100)}%</span>
-          </div>
-          <div className="w-full bg-primary-light rounded-full h-2">
-            <div 
-              className="bg-secondary h-2 rounded-full transition-all"
-              style={{ width: `${(completedCount / totalChallenges) * 100}%` }}
-            ></div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="pt-6">
-        {availableChallenges.length > 0 ? (
-          <div className="space-y-6">
-            {availableChallenges.slice(0, 3).map((challenge) => (
-              <motion.div 
-                key={challenge.id}
-                className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-secondary"
-                whileHover={{ y: -2 }}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="text-2xl">{challenge.icon}</div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-text-dark mb-1">
-                      {challenge.label}
-                    </h4>
-                    <p className="text-base text-gray-600">
-                      +{Math.round(challenge.points * multiplier)} punten
-                      {multiplier > 1 && (
-                        <span className="text-secondary font-bold ml-1">
-                          ({multiplier}x bonus!)
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-                
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => handleCompleteChallenge(challenge.id)}
-                  className="bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
-                >
-                  Start
-                </Button>
-              </motion.div>
-            ))}
-            
-            {availableChallenges.length > 3 && (
-              <div className="text-center pt-4">
-                <Button 
-                  variant="secondary"
-                  size="sm"
-                  className="bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
-                >
-                  Bekijk Alle Uitdagingen ({availableChallenges.length})
-                </Button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-6">
-            <CheckCircle className="mx-auto text-secondary mb-6" size={48} />
-            <h4 className="text-3xl font-semibold text-secondary mb-4">
-              Alle Uitdagingen Voltooid! 🎉
-            </h4>
-            <p className="text-base text-text-dark mb-4">
-              Goed gedaan! Kom morgen terug voor nieuwe uitdagingen.
-            </p>
-            <div className="bg-secondary/10 border border-secondary rounded-2xl p-6">
-              <p className="font-medium text-text-dark">Dagelijkse Bonus Verdiend!</p>
-              <p className="text-base text-gray-600">+{Math.round(50 * multiplier)} voltooiingsbonus punten</p>
-            </div>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
-};
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-export default DailyChallengeCard;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}
