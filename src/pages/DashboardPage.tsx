@@ -414,14 +414,14 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-midnight to-midnight py-12">
+    <div className="min-h-screen bg-primary py-12">
       <div className="container-slim">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-h1 text-white font-bold mb-6">
+          <h1 className="text-4xl font-semibold text-white mb-6">
             Welkom, {user.name.split(' ')[0]}
           </h1>
-          <p className="text-base text-white/80 mb-4">
+          <p className="text-base text-body mb-4">
             Je hebt {points} punten • {level} niveau • {streak} dagen streak
           </p>
         </div>
@@ -433,30 +433,30 @@ const DashboardPage: React.FC = () => {
         <div className="flex overflow-x-auto mb-10 pb-2 scrollbar-hide space-x-2">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-3 px-6 rounded-full font-medium mr-2 transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium transition-colors ${
               activeTab === 'overview'
-                ? 'bg-secondary text-primary'
-                : 'bg-gray-200 text-gray-600'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Overzicht
           </button>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`py-3 px-6 rounded-full font-medium mr-2 transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium transition-colors ${
               activeTab === 'profile'
-                ? 'bg-secondary text-primary'
-                : 'bg-gray-200 text-gray-600'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Profiel
           </button>
           <button
             onClick={() => setActiveTab('saved')}
-            className={`py-3 px-6 rounded-full font-medium mr-2 transition-colors ${
+            className={`py-3 px-6 rounded-full font-medium transition-colors ${
               activeTab === 'saved'
-                ? 'bg-secondary text-primary'
-                : 'bg-gray-200 text-gray-600'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Opgeslagen
@@ -465,8 +465,8 @@ const DashboardPage: React.FC = () => {
             onClick={() => setActiveTab('settings')}
             className={`py-3 px-6 rounded-full font-medium transition-colors ${
               activeTab === 'settings'
-                ? 'bg-secondary text-primary'
-                : 'bg-gray-200 text-gray-600'
+                ? 'tab-active'
+                : 'tab-inactive'
             }`}
           >
             Instellingen
@@ -475,10 +475,10 @@ const DashboardPage: React.FC = () => {
 
         {/* Tab Content */}
         {activeTab === 'overview' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid-layout">
               <DailyChallengeCard />
               <AchievementCard />
-            <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="col-span-full grid-layout">
               <LeaderboardCard />
               <ReferralWidget />
             </div>
