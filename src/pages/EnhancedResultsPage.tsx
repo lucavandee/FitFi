@@ -39,6 +39,12 @@ import DevDataPanel from '../components/DevDataPanel';
 import OutfitCard from '../components/ui/OutfitCard';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Debug logging utility
+const debugLog = (message: string, data?: any) => {
+  if (env.DEBUG_MODE || import.meta.env.DEV) {
+    console.log(`[🔍 EnhancedResultsPage] ${message}`, data || '');
+  }
+};
 interface Outfit {
   id: string;
   title: string;
@@ -103,6 +109,10 @@ const EnhancedResultsPage: React.FC = () => {
   const { user, saveRecommendation } = useUser();
   const { viewRecommendation, saveOutfit } = useGamification();
   
+  // Debug log component initialization
+  debugLog('Component initialized with location state:', location.state);
+  debugLog('User data:', user);
+  
   // State management
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -133,14 +143,16 @@ const EnhancedResultsPage: React.FC = () => {
   const quizAnswers = location.state?.answers || location.state?.onboardingData || {};
   const safeUser = getSafeUser(user);
   
+  debugLog('Quiz answers extracted:', quizAnswers);
+  debugLog('Safe user data:', safeUser);
+  
   // Initialize smart defaults
   useEffect(() => {
+    debugLog('Initializing smart defaults...');
     const defaults = generateSmartDefaults();
     setSmartDefaults(defaults);
     
-    if (env.DEBUG_MODE) {
-      console.log('[🧠 SmartDefaults] Generated:', defaults);
-    }
+    debugLog('Smart defaults generated:', defaults);
   }, []);
 
   // Enhanced user data with season and occasion
@@ -151,6 +163,8 @@ const EnhancedResultsPage: React.FC = () => {
     occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || smartDefaults?.occasions?.[0] || 'Casual']
   };
   // Get season and occasion context
+  debugLog('Enhanced user data prepared:', enhancedUser);
+  
   const getSeason = () => {
     const season = enhancedUser.season;
     const seasonMap: Record<string, string> = {
@@ -175,6 +189,7 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Analytics tracking
   useEffect(() => {
+    debugLog('Setting up analytics tracking...');
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'page_view', {
         page_title: 'Results Page',
@@ -225,90 +240,87 @@ const EnhancedResultsPage: React.FC = () => {
   // Load recommendations
   const loadRecommendations = useCallback(async () => {
     if (isFetching || hasInitialized) {
-      if (env.DEBUG_MODE) {
-        console.log('[EnhancedResultsPage] Skipping loadRecommendations - already fetching or initialized');
-      }
+      debugLog('Skipping loadRecommendations - already fetching or initialized');
       return;
     }
 
+    debugLog('Starting loadRecommendations, attempt:', retryCount.current);
     setIsFetching(true);
     setIsLoading(true);
     setError(null);
     retryCount.current += 1;
 
-    if (env.DEBUG_MODE) {
-      console.log('[EnhancedResultsPage] Starting loadRecommendations, attempt:', retryCount.current);
-    }
 
     try {
+      debugLog('Step 1: Analyzing profile...');
       // Step 1: Analyze profile
       completeLoadingStep('analyze');
       const profile = analyzePsychographicProfile(quizAnswers);
       setPsychographicProfile(profile);
+      debugLog('Profile analysis completed:', profile);
       
       await new Promise(resolve => setTimeout(resolve, 500));
 
+      debugLog('Step 2: Generating outfits with progressive retry...');
       // Step 2: Generate outfits
       completeLoadingStep('generate');
       
+      debugLog('Starting progressive retry for outfits and products...');
       // Use progressive retry for better UX
       const progressiveResult = await progressiveRetry(
         safeUser,
         // Show partial data immediately
         (partialOutfits, partialProducts) => {
+          debugLog('Received partial data - outfits:', partialOutfits.length, 'products:', partialProducts.length);
           if (partialOutfits.length > 0) {
             setOutfits(partialOutfits);
             setPartialDataShown(true);
-            
-            if (env.DEBUG_MODE) {
-              console.log('[EnhancedResultsPage] Showing partial outfits:', partialOutfits.length);
-            }
+            debugLog('Partial outfits displayed:', partialOutfits.length);
           }
           
           if (partialProducts.length > 0) {
             setProducts(partialProducts);
-            
-            if (env.DEBUG_MODE) {
-              console.log('[EnhancedResultsPage] Showing partial products:', partialProducts.length);
-            }
+            debugLog('Partial products displayed:', partialProducts.length);
           }
         },
         // Complete data loaded
         (finalOutfits, finalProducts) => {
+          debugLog('Received final data - outfits:', finalOutfits.length, 'products:', finalProducts.length);
           setOutfits(finalOutfits);
           setProducts(finalProducts);
           setPartialDataShown(false);
-          
-          if (env.DEBUG_MODE) {
-            console.log('[EnhancedResultsPage] Final data loaded:', finalOutfits.length, finalProducts.length);
-          }
+          debugLog('Final data loaded and displayed');
         }
       );
       
-      if (env.DEBUG_MODE) {
-        console.log('[EnhancedResultsPage] Progressive retry result:', progressiveResult);
-      }
+      debugLog('Progressive retry completed with result:', progressiveResult);
 
       if (progressiveResult.outfits && progressiveResult.outfits.length > 0) {
+        debugLog('Setting outfits from progressive result:', progressiveResult.outfits.length);
         setOutfits(progressiveResult.outfits);
       } else {
+        debugLog('ERROR: No outfits found in progressive result');
         throw new Error('Geen outfits gevonden');
       }
 
       await new Promise(resolve => setTimeout(resolve, 300));
 
+      debugLog('Step 3: Loading products...');
       // Step 3: Load products
       completeLoadingStep('products');
       
       if (progressiveResult.products && progressiveResult.products.length > 0) {
+        debugLog('Setting products from progressive result:', progressiveResult.products.length);
         setProducts(progressiveResult.products);
       }
 
       await new Promise(resolve => setTimeout(resolve, 300));
 
+      debugLog('Step 4: Personalizing...');
       // Step 4: Personalize
       completeLoadingStep('personalize');
       
+      debugLog('Tracking successful load in analytics...');
       // Track successful load
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'recommendations_loaded', {
@@ -322,17 +334,18 @@ const EnhancedResultsPage: React.FC = () => {
       }
 
       // Mark as initialized
+      debugLog('Marking as initialized');
       setHasInitialized(true);
       
       await new Promise(resolve => setTimeout(resolve, 500));
+      debugLog('loadRecommendations completed successfully');
 
     } catch (error) {
-      console.error('[EnhancedResultsPage] Error loading recommendations:', error);
+      debugLog('ERROR in loadRecommendations:', error);
+      console.error('[ERROR] EnhancedResultsPage loadRecommendations failed:', error);
       
       if (retryCount.current < MAX_RETRIES) {
-        if (env.DEBUG_MODE) {
-          console.log(`[EnhancedResultsPage] Retrying... (${retryCount.current}/${MAX_RETRIES})`);
-        }
+        debugLog(`Retrying loadRecommendations (${retryCount.current}/${MAX_RETRIES})`);
         
         // Reset and retry
         setHasInitialized(false);
@@ -340,6 +353,7 @@ const EnhancedResultsPage: React.FC = () => {
         return;
       }
       
+      debugLog('Max retries reached, setting error state');
       setError(error instanceof Error ? error.message : 'Er ging iets mis bij het laden van je aanbevelingen');
       
       // Track error
@@ -352,12 +366,13 @@ const EnhancedResultsPage: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsFetching(false);
+      debugLog('loadRecommendations finally block executed');
     }
   }, [isFetching, hasInitialized, quizAnswers, safeUser, analyzePsychographicProfile, completeLoadingStep]);
 
   // Initialize on mount
   useEffect(() => {
-    console.debug('[EnhancedResultsPage] Initialization check:', {
+    debugLog('Initialization check:', {
       season: enhancedUser.season,
       occasion: enhancedUser.occasion,
       hasInitialized,
@@ -365,7 +380,7 @@ const EnhancedResultsPage: React.FC = () => {
     });
     
     if (enhancedUser.season && enhancedUser.occasion && !hasInitialized && !isFetching) {
-      console.debug('[EnhancedResultsPage] Starting initialization');
+      debugLog('Starting initialization - all conditions met');
       setHasInitialized(true);
       loadRecommendations();
       viewRecommendation();
@@ -377,9 +392,9 @@ const EnhancedResultsPage: React.FC = () => {
     if (!hasInitialized && !isFetching) {
       const { season, occasion } = enhancedUser;
       if (!season || !occasion) {
-        console.warn('[EnhancedResultsPage] Missing season or occasion data, will redirect to quiz');
+        debugLog('WARNING: Missing season or occasion data, will redirect to quiz');
         const timer = setTimeout(() => {
-          console.debug('[EnhancedResultsPage] Redirecting to onboarding due to missing data');
+          debugLog('Redirecting to onboarding due to missing data');
           navigate('/onboarding');
         }, 2000); // Give 2 seconds for data to load
         
@@ -400,6 +415,7 @@ const EnhancedResultsPage: React.FC = () => {
   // Save outfit functionality
   const handleSaveOutfit = async (outfitId: string) => {
     try {
+      debugLog('Saving outfit:', outfitId);
       await saveRecommendation(outfitId);
       setSavedOutfits(prev => [...prev, outfitId]);
       toast.success('Outfit opgeslagen!');
@@ -411,6 +427,7 @@ const EnhancedResultsPage: React.FC = () => {
         });
       }
     } catch (error) {
+      debugLog('ERROR saving outfit:', error);
       console.error('Error saving outfit:', error);
       toast.error('Kon outfit niet opslaan');
     }
@@ -418,6 +435,7 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Retry functionality
   const handleRetry = () => {
+    debugLog('Handling retry - resetting state');
     setError(null);
     setHasInitialized(false);
     retryCount.current = 0;
@@ -431,15 +449,14 @@ const EnhancedResultsPage: React.FC = () => {
   const handleQuickRetry = async () => {
     if (isQuickRetrying) return;
     
+    debugLog('Starting quick retry for missing data');
     setIsQuickRetrying(true);
     setError(null);
     
     try {
       const missing = analyzeMissingData(outfits, products, psychographicProfile);
       
-      if (env.DEBUG_MODE) {
-        console.log('[EnhancedResultsPage] Quick retry for missing data:', missing);
-      }
+      debugLog('Missing data analysis:', missing);
       
       const result = await smartRetry(safeUser, {
         outfits,
@@ -447,9 +464,7 @@ const EnhancedResultsPage: React.FC = () => {
         profile: psychographicProfile
       });
       
-      if (result.success) {
-        if (result.outfits) setOutfits(result.outfits);
-        if (result.products) setProducts(result.products);
+      debugLog('Smart retry result:', result);
         
         toast.success('Ontbrekende data succesvol geladen!');
         
@@ -466,10 +481,12 @@ const EnhancedResultsPage: React.FC = () => {
         throw new Error(result.errors.join(', ') || 'Quick retry failed');
       }
     } catch (error) {
+      debugLog('ERROR in quick retry:', error);
       console.error('[EnhancedResultsPage] Quick retry failed:', error);
       toast.error('Quick retry mislukt. Probeer volledige herlaad.');
       
       // Track failed quick retry
+        debugLog('Quick retry successful, updating state');
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'quick_retry_failed', {
           event_category: 'error_recovery',
@@ -478,6 +495,7 @@ const EnhancedResultsPage: React.FC = () => {
       }
     } finally {
       setIsQuickRetrying(false);
+      debugLog('Quick retry finally block executed');
     }
   };
 
