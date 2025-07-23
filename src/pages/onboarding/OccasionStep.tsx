@@ -101,14 +101,23 @@ const OccasionStep: React.FC = () => {
     
     // Update onboarding data
     updateData({
-      occasions: selectedOccasions
+      occasions: selectedOccasions,
+      _skipSave: true // Skip persistence to prevent loops
     });
     
     // Mark step as completed
     completeStep('occasion');
     
-    // Go to next step
-    goToNextStep();
+    // Force navigation to results
+    console.log('[FIX] OccasionStep: Forcing navigation to results');
+    navigate('/results', { 
+      state: { 
+        onboardingData: {
+          ...data,
+          occasions: selectedOccasions
+        }
+      } 
+    });
   };
   
   return (
