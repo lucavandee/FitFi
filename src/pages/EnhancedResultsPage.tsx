@@ -457,10 +457,6 @@ const EnhancedResultsPage: React.FC = () => {
       const missing = analyzeMissingData(outfits, products, psychographicProfile);
       
       debugLog('Missing data analysis:', missing);
-    } catch (error) {
-      console.error('[ERROR] EnhancedResultsPage missing data analysis failed:', error);
-      setError('Failed to analyze missing data');
-    }
       
       const result = await smartRetry(safeUser, {
         outfits,
