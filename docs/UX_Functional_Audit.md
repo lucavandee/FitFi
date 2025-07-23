@@ -27,3 +27,18 @@
 ### 2.5 Checkout
 - **Pagina**: `/checkout`
 - **Proces**: winkelwagen → betaalmethode → orderbevestiging
+
+## 3. Probleemlocaties & Pain Points
+| Flow        | Pijnpunt                            | Impact             | Urgentie   |
+|-------------|-------------------------------------|--------------------|------------|
+| Quiz        | Man kiest → vrouwenproducten        | Zeer verwarrend    | Must-have  |
+| Profiel     | Profielgegevens niet persistent     | Slechte UX         | Must-have  |
+| Outfits     | Foutieve afbeelding ↔ product-titel  | Onbetrouwbaar      | Must-have  |
+| Checkout    | Geen foutafhandeling bij betaaldata | Verlies omzet      | Must-have  |
+| UI Algemeen | Inconsistente styling, oude icons   | Lage merkbeleving  | Nice-to-have |
+
+## 4. Herziene User Stories
+1. Als man wil ik uitsluitend mannenkleding zien in de quiz-resultaten, zodat ik me serieus genomen voel.  
+2. Als gebruiker wil ik feedback krijgen als ik verplichte velden niet invul, zodat ik niet vastloop.  
+3. Als shopper wil ik zien dat afbeelding en titel altijd overeenkomen, zodat ik vertrouwen heb in de suggesties.  
+4. Als gebruiker wil dat mijn profielvoorkeuren persistent zijn na refresh, zodat ik niet opnieuw hoef in te vullen.
