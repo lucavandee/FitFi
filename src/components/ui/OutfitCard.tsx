@@ -383,6 +383,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             </div>
           )}
         </div>
+      </div>
     </div>
   );
 };
