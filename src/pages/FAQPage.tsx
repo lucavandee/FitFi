@@ -14,6 +14,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Button from '../components/ui/Button';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 interface FAQItem {
   question: string;
@@ -223,14 +224,15 @@ const FAQPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF8F6]">
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Hero Section */}
+        <ErrorBoundary>
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+          <h1 className="text-4xl font-light text-gray-900 mb-6">
             Veelgestelde vragen
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
             Vind snel antwoorden op de meest gestelde vragen over FitFi. Kun je het antwoord niet vinden? Neem dan contact met ons op.
           </p>
           
@@ -243,12 +245,12 @@ const FAQPage: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Zoek in veelgestelde vragen..."
-                  className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                  className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 placeholder-gray-500 transition-all"
                 />
                 <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
                 <button
                   type="submit"
-                  className="absolute right-3 top-2.5 bg-orange-500 text-white px-4 py-1 rounded-md hover:bg-orange-600 transition-colors"
+                  className="absolute right-3 top-2.5 bg-[#bfae9f] text-white px-4 py-1 rounded-xl hover:bg-[#a89a8c] transition-colors"
                 >
                   Zoeken
                 </button>
@@ -256,8 +258,10 @@ const FAQPage: React.FC = () => {
             </form>
           </div>
         </div>
+        </ErrorBoundary>
 
         {/* Categories */}
+        <ErrorBoundary>
         <div className="mb-12">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {categories.map(category => (
@@ -266,14 +270,14 @@ const FAQPage: React.FC = () => {
                 onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
                 className={`p-4 rounded-lg flex flex-col items-center justify-center text-center transition-colors ${
                   activeCategory === category.id 
-                    ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' 
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-[#bfae9f]/20 text-[#bfae9f]' 
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <div className={`p-2 rounded-full mb-2 ${
                   activeCategory === category.id 
-                    ? 'bg-orange-200 dark:bg-orange-800/50 text-orange-600 dark:text-orange-400' 
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                    ? 'bg-[#bfae9f]/30 text-[#bfae9f]' 
+                    : 'bg-gray-100 text-gray-500'
                 }`}>
                   {category.icon}
                 </div>
@@ -282,11 +286,13 @@ const FAQPage: React.FC = () => {
             ))}
           </div>
         </div>
+        </ErrorBoundary>
 
         {/* FAQ Accordion */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
+        <ErrorBoundary>
+        <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-16">
           <div className="p-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+            <h2 className="text-2xl font-medium text-gray-900 mb-8">
               {activeCategory 
                 ? `${categories.find(c => c.id === activeCategory)?.name} FAQ` 
                 : 'Alle veelgestelde vragen'}
@@ -297,25 +303,25 @@ const FAQPage: React.FC = () => {
                 {filteredFAQs.map((faq, index) => (
                   <div 
                     key={index} 
-                    className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-colors"
+                    className="border border-gray-200 rounded-2xl overflow-hidden"
                   >
                     <button
                       onClick={() => toggleFAQ(index)}
-                      className="w-full flex justify-between items-center p-4 text-left focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset"
+                      className="w-full flex justify-between items-center p-4 text-left focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:ring-inset"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-lg font-medium text-gray-900">
                         {faq.question}
                       </h3>
                       {openFAQs.includes(index) ? (
-                        <ChevronUp className="text-gray-500 dark:text-gray-400" size={20} />
+                        <ChevronUp className="text-gray-500" size={20} />
                       ) : (
-                        <ChevronDown className="text-gray-500 dark:text-gray-400" size={20} />
+                        <ChevronDown className="text-gray-500" size={20} />
                       )}
                     </button>
                     
                     {openFAQs.includes(index) && (
-                      <div className="p-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-600 dark:text-gray-300">
+                      <div className="p-4 bg-gray-50 border-t border-gray-200">
+                        <p className="text-gray-600 leading-relaxed">
                           {faq.answer}
                         </p>
                       </div>
@@ -325,17 +331,18 @@ const FAQPage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="text-gray-400" size={24} />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
                   Geen resultaten gevonden
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 mb-4 leading-relaxed">
                   We konden geen antwoorden vinden die overeenkomen met je zoekopdracht.
                 </p>
                 <Button 
                   variant="outline"
+                  className="rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105"
                   onClick={() => {
                     setSearchQuery('');
                     setActiveCategory(null);
@@ -347,49 +354,53 @@ const FAQPage: React.FC = () => {
             )}
           </div>
         </div>
+        </ErrorBoundary>
 
         {/* Popular Questions - NEW */}
+        <ErrorBoundary>
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
+          <h2 className="text-2xl font-medium text-gray-900 text-center mb-8">
             Populaire vragen
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md transition-all hover:shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            <div className="bg-white p-6 rounded-3xl shadow-sm transition-all hover:shadow-md hover:transform hover:scale-105">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">
                 Hoe werkt de stijlanalyse precies?
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-gray-600 mb-4 leading-relaxed">
                 Onze AI analyseert je antwoorden op de stijlvragenlijst en (optioneel) je foto om je lichaamsbouw, kleurenpalet en stijlvoorkeuren te bepalen. Op basis hiervan matchen we je met een van onze stijlarchetypen en selecteren we kledingitems die perfect bij jou passen.
               </p>
-              <Link to="/hoe-het-werkt" className="text-orange-500 hover:text-orange-600 font-medium flex items-center">
+              <Link to="/hoe-het-werkt" className="text-[#bfae9f] hover:text-[#a89a8c] font-medium flex items-center transition-colors">
                 Meer over onze technologie
                 <ArrowRight size={16} className="ml-1" />
               </Link>
             </div>
             
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md transition-all hover:shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            <div className="bg-white p-6 rounded-3xl shadow-sm transition-all hover:shadow-md hover:transform hover:scale-105">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">
                 Wat is het verschil tussen Basis en Premium?
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-gray-600 mb-4 leading-relaxed">
                 Met het Basis plan krijg je toegang tot de stijlvragenlijst, 1 foto-upload per maand en 3 outfit aanbevelingen. Premium gebruikers krijgen onbeperkte foto-uploads, onbeperkte aanbevelingen, gedetailleerd stijladvies, seizoensgebonden updates en prioriteit ondersteuning.
               </p>
-              <Link to="/prijzen" className="text-orange-500 hover:text-orange-600 font-medium flex items-center">
+              <Link to="/prijzen" className="text-[#bfae9f] hover:text-[#a89a8c] font-medium flex items-center transition-colors">
                 Bekijk alle abonnementen
                 <ArrowRight size={16} className="ml-1" />
               </Link>
             </div>
           </div>
         </div>
+        </ErrorBoundary>
 
         {/* Contact CTA */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 rounded-xl shadow-md overflow-hidden transition-colors">
+        <ErrorBoundary>
+        <div className="bg-gradient-to-r from-[#bfae9f] to-purple-600 rounded-3xl shadow-sm overflow-hidden">
           <div className="p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-medium text-white mb-4">
               Nog steeds vragen?
             </h2>
-            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+            <p className="text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed">
               Kon je het antwoord niet vinden? Ons supportteam staat klaar om je te helpen.
             </p>
             <Button 
@@ -397,7 +408,7 @@ const FAQPage: React.FC = () => {
               to="/contact" 
               variant="secondary"
               size="lg"
-              className="bg-white text-orange-600 hover:bg-gray-100"
+              className="bg-white text-[#bfae9f] hover:bg-gray-100 rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105"
               icon={<MessageCircle size={20} />}
               iconPosition="left"
             >
@@ -405,6 +416,7 @@ const FAQPage: React.FC = () => {
             </Button>
           </div>
         </div>
+        </ErrorBoundary>
       </div>
     </div>
   );
