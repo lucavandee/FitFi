@@ -56,6 +56,7 @@ import { GamificationProvider } from './context/GamificationContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import NavigationProgress from './components/ui/NavigationProgress';
 import NavigationServiceInitializer from './components/NavigationServiceInitializer';
+import OnboardingLayout from './components/layout/OnboardingLayout';
 
 // Import regular components
 import HomePage from './pages/HomePage';
