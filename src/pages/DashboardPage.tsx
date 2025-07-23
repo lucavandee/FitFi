@@ -120,7 +120,7 @@ const DashboardPage: React.FC = () => {
     return (
       <div className="space-y-12">
         {/* User Info */}
-        <div className="card">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
           <div className="flex items-center mb-6">
             <div className="bg-secondary/20 p-3 rounded-full mr-4">
               <User className="text-secondary" size={24} />
@@ -165,7 +165,7 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Style Preferences */}
-        <div className="card">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
           <div className="flex items-center mb-6">
             <div className="bg-secondary/20 p-3 rounded-full mr-4">
               <Sparkles className="text-secondary" size={24} />
@@ -261,7 +261,7 @@ const DashboardPage: React.FC = () => {
     
     return (
       <div className="space-y-12">
-        <div className="card">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
           <div className="flex items-center mb-6">
             <div className="bg-secondary/20 p-3 rounded-full mr-4">
               <Heart className="text-secondary" size={24} />
@@ -320,7 +320,7 @@ const DashboardPage: React.FC = () => {
   const SettingsSection = () => {
     return (
       <div className="space-y-12">
-        <div className="card">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
           <div className="flex items-center mb-6">
             <div className="bg-secondary/20 p-3 rounded-full mr-4">
               <Settings className="text-secondary" size={24} />
@@ -418,7 +418,7 @@ const DashboardPage: React.FC = () => {
     <div className="min-h-screen bg-primary">
       <div className="section-wrapper">
         {/* Header */}
-        <div className="card mb-12">
+        <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 mb-12">
           <h1 className="text-5xl lg:text-6xl font-extrabold text-secondary mb-6">
             Welkom, {user.name.split(' ')[0]}
           </h1>

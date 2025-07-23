@@ -131,7 +131,7 @@ const GenderNameStep: React.FC = () => {
               </p>
             </div>
 
-            <div className="card overflow-hidden">
+            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg overflow-hidden">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
                   {/* Gender Selection */}

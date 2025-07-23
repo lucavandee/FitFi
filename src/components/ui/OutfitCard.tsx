@@ -178,7 +178,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   const occasions = outfit.occasions || [];
 
   return (
-    <div className="card overflow-hidden">
+    <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 overflow-hidden">
       {/* Header with outfit image */}
       <div className="relative">
         <div className="aspect-[4/5] overflow-hidden bg-gray-100">
