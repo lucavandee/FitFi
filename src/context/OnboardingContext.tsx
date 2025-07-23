@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
 import { useGamification } from './GamificationContext';
@@ -106,6 +106,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(false);
   const [hasJustSubmitted, setHasJustSubmitted] = useState<boolean>(false);
   const [smartDefaults, setSmartDefaults] = useState<any>(null);
+  const didAutoPopulate = useRef(false);
   
   // Initialize smart defaults
   useEffect(() => {
@@ -414,19 +415,18 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, [data, currentStep, isOnboardingComplete]);
   
-  // Auto-populate missing onboarding data (but allow navigation to proceed)
+  // Auto-populate missing onboarding data - ONE TIME ONLY at mount
   useEffect(() => {
-    // Get current path to prevent auto-population during navigation
-    const currentPath = window.location.pathname;
+    if (didAutoPopulate.current) return;            // NA 1e run: skip
+    didAutoPopulate.current = true;                 // markeer gedaan
     
-    // Only auto-populate if we're not in the middle of completion and data is truly empty
+    console.log('[FIX] Initial auto-populate running once at mount');
+    
+    // Only auto-populate if data is truly empty
     const hasMinimalData = data.gender || (data.archetypes && data.archetypes.length > 0) || data.season;
     
-    // Check if we should skip persistence (but NOT navigation)
-    const shouldSkipPersistence = hasJustSubmitted || isSubmitting || currentStep === 'results' || currentPath !== '/onboarding';
-    
-    if (!hasMinimalData && !shouldSkipPersistence) {
-      console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data');
+    if (!hasMinimalData) {
+      console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data (one-time)');
       
       const fallbackData: Partial<OnboardingData> = {};
       
@@ -454,20 +454,24 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       if (Object.keys(fallbackData).length > 0) {
         updateData(fallbackData);
       }
-    } else if (shouldSkipPersistence) {
-      console.log('[FIX] Skipping persistence for current state:', {
-        hasJustSubmitted,
-        isSubmitting,
-        currentStep,
-        currentPath
-      });
-      // LET OP: géén return meer hier, zodat dispatch & navigate altijd draaien
     }
+    
+    // Calculate initial step based on current state
+    const calculateInitialStep = (): string => {
+      if (!data.gender) return 'welcome';
+      if (!data.archetypes || data.archetypes.length === 0) return 'gender_name';
+      if (!data.season) return 'archetype';
+      if (!data.occasions || data.occasions.length === 0) return 'season';
+      return 'occasion';
+    };
+    
+    const startStep = calculateInitialStep();
+    console.log('[FIX] Initial auto-populate to step:', startStep);
     
     // ONGEACHTS skip-guard, voer altijd de volgende acties uit:
     console.log('[FIX] Auto-populate effect completed, data state:', data);
     console.log('[FIX] Current step after auto-populate:', currentStep);
-  }, [data, updateData, smartDefaults, isSubmitting, hasJustSubmitted, currentStep]);
+  }, []); // LET OP: lege dependency-array voor éénmalige run
   
   // Save data to localStorage when it changes
   useEffect(() => {
