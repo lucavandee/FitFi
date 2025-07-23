@@ -58,7 +58,7 @@
   }
   
   .text-body {
-    @apply text-base leading-relaxed text-body mb-4;
+    @apply text-base leading-relaxed mb-4;
   }
   
   .container-fitfi {
