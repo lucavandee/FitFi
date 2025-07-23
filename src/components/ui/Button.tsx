@@ -1,41 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+import React from 'react';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+}
 
-@layer utilities {
-  .card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
-  }
+export const Button: React.FC<ButtonProps> = ({ 
+  variant = 'primary', 
+  size = 'md', 
+  children, 
+  className = '', 
+  ...props 
+}) => {
+  const baseClasses = 'font-medium rounded-full focus:outline-none transition-all';
   
-  .quiz-container {
-    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
-  }
+  const variantClasses = {
+    primary: 'bg-secondary text-primary shadow-lg hover:bg-secondary/90 focus:ring-4 focus:ring-secondary/50',
+    secondary: 'bg-primary text-secondary border border-secondary hover:bg-primary-light hover:text-primary focus:ring-2 focus:ring-secondary',
+    ghost: 'bg-transparent text-body border border-primary-light hover:bg-primary-light hover:text-secondary focus:ring-2 focus:ring-secondary',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-600'
+  };
   
-  .card-section {
-    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
-  }
+  const sizeClasses = {
+    sm: 'py-2 px-4 text-sm',
+    md: 'py-3 px-6 text-base',
+    lg: 'py-4 px-8 text-lg'
+  };
   
-  .input {
-    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
+  const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
   
-  .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-ghost {
-    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
-  }
-  
-  .quiz-button {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full
+  return (
+    <button className={combinedClasses} {...props}>
+      {children}
+    </button>
+  );
+};
+
+export default Button;
