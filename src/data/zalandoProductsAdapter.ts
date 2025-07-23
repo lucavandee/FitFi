@@ -3,9 +3,20 @@ import { isValidImageUrl } from "../utils/imageUtils";
 
 export async function fetchZalandoProducts(): Promise<Product[]> {
   try {
-    const response = await fetch("/data/zalandoProducts.json");
+    const url = `${import.meta.env.BASE_URL}data/zalandoProducts.json`;
+    console.log(`[ZalandoAdapter] Fetching from: ${url}`);
+    
+    const response = await fetch(url);
     if (!response.ok) throw new Error("Zalando productdata niet geladen");
-    const json = await response.json();
+    
+    let json = [];
+    try {
+      json = await response.json();
+    } catch (err) {
+      console.warn('[ZalandoAdapter] Could not parse zalandoProducts.json:', err);
+      return [];
+    }
+    
     return convertZalandoProducts(json);
   } catch (error) {
     console.error("[ZalandoAdapter] Fout bij laden producten:", error);

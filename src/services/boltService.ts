@@ -144,13 +144,25 @@ const mockData: Record<string, any> = {
  */
 export const fetchFromBolt = async <T>(endpoint: string, retries: number = 1): Promise<T | null> => {
   const filename = mapEndpointToFilename(endpoint);
-  const url = `/data/bolt/${filename}.json`;
+  const url = `${import.meta.env.BASE_URL}data/bolt/${filename}.json`;
   const fallback = mockData[filename] ?? null;
 
   console.log(`[🧠 boltService] Fetching from local file: ${url} (with ${retries} retries)`);
 
   try {
-    return await safeFetchWithFallback<T>(url, fallback as T, retries);
+    const res = await fetch(url);
+    let data = {};
+    try {
+      if (res.ok) {
+        data = await res.json();
+      } else {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+    } catch (err) {
+      console.warn(`[boltService] Could not load ${filename}.json, using fallback:`, err);
+      return fallback as T;
+    }
+    return data as T;
   } catch (error) {
     console.warn(`[🧠 boltService] Error fetching from ${url}, using fallback:`, error);
     return fallback as T;

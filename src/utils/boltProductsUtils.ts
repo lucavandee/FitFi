@@ -14,8 +14,22 @@ import { safeFetchWithFallback } from './fetchUtils';
  */
 export async function getBoltProductsFromJSON(): Promise<BoltProduct[]> {
   try {
-    // Try to load from public/data/bolt/products.json
-    const products = await safeFetchWithFallback<BoltProduct[]>('/data/bolt/products.json', []);
+    // Try to load from public/data/bolt/products.json with BASE_URL
+    const url = `${import.meta.env.BASE_URL}data/bolt/products.json`;
+    console.log(`[🧠 BoltProductsUtils] Fetching from: ${url}`);
+    
+    let products: BoltProduct[] = [];
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        products = await res.json();
+      } else {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+    } catch (err) {
+      console.warn('[BoltProductsUtils] Could not load products.json, using fallback:', err);
+      return generateMockBoltProducts();
+    }
     
     if (!Array.isArray(products)) {
       console.warn('Invalid BoltProducts data: not an array');
