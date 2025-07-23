@@ -25,99 +25,49 @@ test.describe('FitFi User Journey', () => {
       await page.waitForLoadState('networkidle');
     }
     
-    // Navigate to onboarding if not already there
-    if (!page.url().includes('/onboarding')) {
-      await page.goto('/onboarding');
-      await page.waitForLoadState('networkidle');
+    // Navigate to onboarding welcome step
+    await page.goto('/onboarding');
+    await page.waitForLoadState('networkidle');
+    
+    // Welcome step - click start
+    await expect(page.locator('h1')).toContainText('Ontdek je perfecte stijl');
+    await page.locator('button:has-text("Start de stijlquiz")').click();
+    await page.waitForLoadState('networkidle');
+    
+    // Gender Name step
+    await expect(page.url()).toContain('/onboarding/gender-name');
+    await page.locator('button:has-text("Vrouw")').click();
+    const nameInput2 = page.locator('input[name="name"]');
+    if (await nameInput2.isVisible()) {
+      await nameInput2.fill('Test User');
     }
+    await page.locator('button:has-text("Volgende")').click();
+    await page.waitForLoadState('networkidle');
     
-    // Fill onboarding form
-    const onboardingName = page.locator('input[name="name"]');
-    const onboardingEmail = page.locator('input[name="email"]');
+    // Archetype step
+    await expect(page.url()).toContain('/onboarding/archetype');
+    await page.locator('button').first().click(); // Select first archetype
+    await page.locator('button:has-text("Volgende")').click();
+    await page.waitForLoadState('networkidle');
     
-    if (await onboardingName.isVisible()) {
-      await onboardingName.fill('Test User');
-      await onboardingEmail.fill('test@fitfi.app');
-      await page.locator('button[type="submit"]').click();
-      await page.waitForLoadState('networkidle');
-    }
+    // Season step
+    await expect(page.url()).toContain('/onboarding/season');
+    await page.locator('button').first().click(); // Select first season
+    await page.locator('button:has-text("Volgende")').click();
+    await page.waitForLoadState('networkidle');
     
-    // Gender selection
-    if (page.url().includes('/gender') || await page.locator('text=Hoe identificeer je jezelf').isVisible()) {
-      await page.locator('button:has-text("Man"), button:has-text("Vrouw"), button:has-text("Gender Neutraal")').first().click();
-      await page.waitForLoadState('networkidle');
-    }
+    // Occasion step
+    await expect(page.url()).toContain('/onboarding/occasion');
+    await page.locator('button').first().click(); // Select first occasion
+    await page.locator('button:has-text("Resultaten bekijken")').click();
+    await page.waitForLoadState('networkidle');
     
-    // Quiz flow
-    let currentStep = 1;
-    const maxSteps = 5;
-    
-    while (currentStep <= maxSteps && (page.url().includes('/quiz/') || await page.locator('.question, [data-testid="question"]').isVisible())) {
-      console.log(`Processing quiz step ${currentStep}`);
-      
-      // Wait for question to load
-      await page.waitForTimeout(1000);
-      
-      // Try different answer strategies
-      const radioButtons = page.locator('input[type="radio"]');
-      const checkboxes = page.locator('input[type="checkbox"]');
-      const sliders = page.locator('input[type="range"]');
-      const answerButtons = page.locator('.answer-button, button[data-answer]');
-      
-      if (await radioButtons.count() > 0) {
-        // Single choice question
-        await radioButtons.first().click();
-      } else if (await checkboxes.count() > 0) {
-        // Multiple choice question
-        const checkboxCount = await checkboxes.count();
-        const selectCount = Math.min(2, checkboxCount);
-        for (let i = 0; i < selectCount; i++) {
-          await checkboxes.nth(i).click();
-        }
-      } else if (await sliders.count() > 0) {
-        // Slider question
-        await sliders.first().fill('7');
-      } else if (await answerButtons.count() > 0) {
-        // Button-based answers
-        await answerButtons.first().click();
-      } else {
-        // Try clicking any clickable option
-        const clickableOptions = page.locator('button, [role="button"], .clickable');
-        if (await clickableOptions.count() > 0) {
-          await clickableOptions.first().click();
-        }
-      }
-      
-      // Wait a bit for any animations
-      await page.waitForTimeout(500);
-      
-      // Try to proceed to next question
-      const nextButton = page.locator('button:has-text("Volgende"), button:has-text("Next"), button:has-text("Voltooien"), button:has-text("Complete")');
-      if (await nextButton.isVisible() && await nextButton.isEnabled()) {
-        await nextButton.click();
-        await page.waitForLoadState('networkidle');
-      } else {
-        // If no next button, we might be done or need to navigate manually
-        break;
-      }
-      
-      currentStep++;
-      
-      // Safety check - if URL changed to results, break
-      if (page.url().includes('/results')) {
-        break;
-      }
-    }
-    
-    // Navigate to results if not already there
-    if (!page.url().includes('/results')) {
-      await page.goto('/results');
-      await page.waitForLoadState('networkidle');
-    }
+    // Should now be on results page
+    await expect(page.url()).toContain('/results');
     
     // Verify results page elements
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('button:has-text("Shop Complete Look"), button:has-text("Shop"), .cta-button')).toBeVisible();
+    await expect(page.locator('button:has-text("Shop"), .cta-button')).toBeVisible();
     
     // Check for product grid or recommendations
     const productElements = page.locator('.grid, .product-card, [data-testid="product"]');

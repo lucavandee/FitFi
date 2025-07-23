@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { generateSmartDefaults } from '../utils/smartDefaults';
+import React, { createContext, useContext, useState } from 'react';
 
 /**
- * Simplified OnboardingContext for route-driven flow
+ * Clean OnboardingContext for route-driven flow
  * No auto-populate, no navigation logic, just data management
  */
 export interface OnboardingData {
@@ -20,7 +19,6 @@ export interface OnboardingData {
   };
   // Metadata
   startTime?: number;
-  completedSteps?: string[];
 }
 
 interface OnboardingContextType {
@@ -33,15 +31,13 @@ interface OnboardingContextType {
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize with smart defaults
-  const smartDefaults = generateSmartDefaults();
-  
+  // Clean initial state - no auto-population
   const initialState: OnboardingData = {
     gender: undefined,
     name: '',
     archetypes: [],
-    season: smartDefaults.season,
-    occasions: smartDefaults.occasions,
+    season: undefined,
+    occasions: [],
     preferences: {
       tops: true,
       bottoms: true,
@@ -49,40 +45,19 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       shoes: true,
       accessories: true
     },
-    startTime: Date.now(),
-    completedSteps: []
+    startTime: Date.now()
   };
 
-  const [data, setData] = useState<OnboardingData>(() => {
-    // Try to load from localStorage for persistence
-    const saved = localStorage.getItem('fitfi-onboarding-data');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return { ...initialState, ...parsed };
-      } catch (error) {
-        console.error('Error parsing saved onboarding data:', error);
-      }
-    }
-    return initialState;
-  });
+  const [data, setData] = useState<OnboardingData>(initialState);
 
-  // Update answers function
+  // Simple update function
   const updateAnswers = (newData: Partial<OnboardingData>) => {
-    setData(prev => {
-      const updated = { ...prev, ...newData };
-      
-      // Save to localStorage
-      localStorage.setItem('fitfi-onboarding-data', JSON.stringify(updated));
-      
-      return updated;
-    });
+    setData(prev => ({ ...prev, ...newData }));
   };
 
-  // Reset data function
+  // Reset function
   const resetData = () => {
     setData(initialState);
-    localStorage.removeItem('fitfi-onboarding-data');
   };
 
   // Check if onboarding is complete
