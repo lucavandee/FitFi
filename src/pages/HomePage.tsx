@@ -102,7 +102,7 @@ const HomePage: React.FC = () => {
               
               {/* Lead Capture Form */}
               <div className="max-w-md mx-auto lg:mx-0">
-                <form onSubmit={handleFormSubmit} className="card">
+                <form onSubmit={handleFormSubmit} className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6">
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="hero-name" className="block text-sm font-medium text-text-dark mb-1">
@@ -226,7 +226,7 @@ const HomePage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="card text-center"
+            className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
           >
             <h2 className="text-4xl font-semibold text-secondary mb-8">
               Waarom FitFi?
@@ -282,7 +282,7 @@ const HomePage: React.FC = () => {
           <div className="grid-layout">
             {/* Step 1 */}
             <motion.div 
-              className="card text-center"
+              className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -299,7 +299,7 @@ const HomePage: React.FC = () => {
 
             {/* Step 2 */}
             <motion.div 
-              className="card text-center"
+              className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -316,7 +316,7 @@ const HomePage: React.FC = () => {
 
             {/* Step 3 */}
             <motion.div 
-              className="card text-center"
+              className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -342,7 +342,7 @@ const HomePage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="card text-center"
+            className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
           >
             <h2 className="text-4xl font-semibold text-secondary mb-8">
               Zo werkt het in 15 seconden
@@ -374,7 +374,7 @@ const HomePage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="card text-center"
+            className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
           >
             <h2 className="text-4xl font-semibold text-secondary mb-8">
               Wat levert het op?
@@ -429,7 +429,7 @@ const HomePage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="card text-center"
+            className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 text-center"
           >
               <div className="text-6xl mb-6">💬</div>
               <blockquote className="text-xl md:text-2xl text-text-dark italic leading-relaxed mb-8">
