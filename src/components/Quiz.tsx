@@ -5,6 +5,13 @@ import { filterProductsByGender } from '../lib/matching';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+// Debug logging utility
+const debugLog = (message: string, data?: any) => {
+  if (import.meta.env.DEV) {
+    console.log(`[🔍 Quiz] ${message}`, data || '');
+  }
+};
+
 // Types for quiz state
 export interface QuizAnswers {
   selectedGender?: 'male' | 'female' | 'neutral';
@@ -180,17 +187,20 @@ const seasonOptions = [
  * @returns Filtered and matched products/outfits
  */
 export function matchQuizAnswers(answers: QuizAnswers) {
-  console.log('[Quiz] Matching answers:', answers);
+  debugLog('Starting matchQuizAnswers with input:', answers);
   
   // Here you would integrate with your matching logic
   // For now, we'll simulate the matching process
   
   try {
+    debugLog('Validating required fields...');
     // Validate required fields
     if (!answers.selectedGender) {
+      debugLog('ERROR: Gender is required for matching');
       throw new Error('Gender is required for matching');
     }
     
+    debugLog('Creating mock products for demonstration...');
     // Mock products for demonstration
     const mockProducts = [
       { id: '1', name: 'Product 1', styleTags: ['men'], gender: 'male' },
@@ -198,6 +208,7 @@ export function matchQuizAnswers(answers: QuizAnswers) {
       { id: '3', name: 'Product 3', styleTags: ['unisex'], gender: 'neutral' }
     ];
     
+    debugLog('Filtering products by gender...');
     // Use the gender filtering from matching.ts
     const filteredProducts = filterProductsByGender(
       mockProducts as any[], 
@@ -205,7 +216,8 @@ export function matchQuizAnswers(answers: QuizAnswers) {
       { logWarnings: true }
     );
     
-    console.log('[Quiz] Filtered products:', filteredProducts);
+    debugLog('Products filtered successfully:', filteredProducts);
+    debugLog('Returning success result');
     
     return {
       success: true,
@@ -214,7 +226,8 @@ export function matchQuizAnswers(answers: QuizAnswers) {
       answers
     };
   } catch (error) {
-    console.error('[Quiz] Matching error:', error);
+    debugLog('ERROR in matchQuizAnswers:', error);
+    console.error('[ERROR] Quiz matchQuizAnswers failed:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -281,13 +294,24 @@ export const Quiz: React.FC = () => {
 
   // Handle quiz submission
   const handleSubmit = async () => {
+    debugLog('Starting quiz submission...');
     dispatch({ type: 'SET_SUBMITTING', payload: true });
     
     try {
+      debugLog('Calling matchQuizAnswers with timeout protection...');
+      
       // Bundle all answers and call matching function
-      const result = matchQuizAnswers(answers);
+      const result = await Promise.race([
+        Promise.resolve(matchQuizAnswers(answers)),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('MATCH_TIMEOUT')), 10000)
+        )
+      ]);
+      
+      debugLog('matchQuizAnswers completed:', result);
       
       if (result.success) {
+        debugLog('Quiz matching successful, navigating to results...');
         // Navigate to results with the matched data
         navigate('/results', { 
           state: { 
@@ -296,14 +320,19 @@ export const Quiz: React.FC = () => {
             recommendations: result.recommendations
           }
         });
+        debugLog('Navigation to results completed');
       } else {
+        debugLog('Quiz matching failed:', result.error);
         dispatch({ type: 'SET_ERROR', payload: { field: 'submit', message: result.error || 'Er ging iets mis' } });
       }
     } catch (error) {
-      console.error('[Quiz] Submit error:', error);
+      debugLog('ERROR in handleSubmit:', error);
+      console.error('[ERROR] Quiz handleSubmit failed:', error);
+      
       dispatch({ type: 'SET_ERROR', payload: { field: 'submit', message: 'Er ging iets mis bij het verwerken van je antwoorden' } });
     } finally {
       dispatch({ type: 'SET_SUBMITTING', payload: false });
+      debugLog('Quiz submission finally block executed');
     }
   };
 
