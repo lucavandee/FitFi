@@ -4,8 +4,11 @@ import Button from '../../components/ui/Button';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { motion } from 'framer-motion';
 
+import { useNavigate } from 'react-router-dom';
+
 const OccasionStep: React.FC = () => {
   const { data, updateData, completeStep, goToNextStep, goToPreviousStep } = useOnboarding();
+  const navigate = useNavigate();
   
   const [selectedOccasions, setSelectedOccasions] = useState<string[]>(
     data.occasions || []
@@ -99,24 +102,33 @@ const OccasionStep: React.FC = () => {
       return;
     }
     
-    // Update onboarding data
+    console.log('[FIX] OccasionStep: Final step completed, preparing data for results');
+    
+    // Prepare complete onboarding data
+    const completeData = {
+      ...data,
+      occasions: selectedOccasions
+    };
+    
+    console.log('[FIX] Complete onboarding data:', completeData);
+    
+    // Update data without persistence to prevent loops
     updateData({
       occasions: selectedOccasions,
-      _skipSave: true // Skip persistence to prevent loops
+      _skipSave: true
     });
     
     // Mark step as completed
     completeStep('occasion');
     
-    // Force navigation to results
-    console.log('[FIX] OccasionStep: Forcing navigation to results');
+    // Direct navigation to results with complete data
+    console.log('[FIX] Navigating directly to results page');
     navigate('/results', { 
       state: { 
-        onboardingData: {
-          ...data,
-          occasions: selectedOccasions
-        }
-      } 
+        onboardingData: completeData,
+        answers: completeData // Provide both formats for compatibility
+      },
+      replace: true // Replace history to prevent back button issues
     });
   };
   

@@ -305,20 +305,18 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     if (isOnboardingComplete && !hasNavigatedToResults.current) {
       hasNavigatedToResults.current = true;
-      console.log('[FIX] Onboarding marked complete, starting navigation to results');
-      debugLog('Onboarding complete, starting navigation to results');
-      navigationService.navigateToEnhancedResults(data, {
-        loadingMessage: 'Je aanbevelingen worden geladen...',
-        onError: (error) => {
-          console.log('[FIX] Navigation error occurred, using fallback:', error);
-          debugLog('Navigation error occurred:', error);
-          console.error('[ERROR] OnboardingContext navigation failed:', error);
-          // Emergency fallback
-          navigate('/results', { state: { onboardingData: data } });
-        }
-      });
-      console.log('[FIX] Navigation service called for results');
-      debugLog('Navigation service called');
+      console.log('[FIX] Onboarding complete - direct navigation to results');
+      
+      // Direct navigation to results without NavigationService to avoid loops
+      setTimeout(() => {
+        navigate('/results', { 
+          state: { 
+            onboardingData: data,
+            answers: data // Also provide as answers for compatibility
+          },
+          replace: true // Replace current history entry to prevent back button issues
+        });
+      }, 100); // Small delay to ensure state is settled
     }
   }, [isOnboardingComplete, navigate, data, navigationService]);
   
@@ -326,7 +324,12 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     const hasRequiredFields = data.gender && data.archetypes && data.archetypes.length > 0 && data.season && data.occasions && data.occasions.length > 0;
     if (hasRequiredFields && !isOnboardingComplete && !hasNavigatedToResults.current) {
-      console.log('[FIX] All required fields present, marking as complete');
+      console.log('[FIX] All required fields present, marking as complete:', {
+        gender: data.gender,
+        archetypes: data.archetypes,
+        season: data.season,
+        occasions: data.occasions
+      });
       debugLog('All required fields present, marking as complete');
       setIsOnboardingComplete(true);
     }
