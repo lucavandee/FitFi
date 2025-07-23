@@ -42,3 +42,18 @@
 2. Als gebruiker wil ik feedback krijgen als ik verplichte velden niet invul, zodat ik niet vastloop.  
 3. Als shopper wil ik zien dat afbeelding en titel altijd overeenkomen, zodat ik vertrouwen heb in de suggesties.  
 4. Als gebruiker wil dat mijn profielvoorkeuren persistent zijn na refresh, zodat ik niet opnieuw hoef in te vullen.
+
+## 5. Backlog & Prioritering
+| #  | User Story                             | Impact                 | Complexiteit | Prioriteit              |
+|----|-----------------------------------------|------------------------|--------------|-------------------------|
+| 1  | Quiz gender → juiste productmap         | Hoog (conversie)       | Medium       | Sprint 1 (Must-have)    |
+| 2  | Foutafhandeling verplichte velden       | Medium (UX)            | Laag         | Sprint 1 (Must-have)    |
+| 3  | Sync outfit image ↔ titel               | Hoog (betrouwbaarheid) | Medium       | Sprint 2 (Must-have)    |
+| 4  | Profiel persistent state                | Medium                 | Medium       | Sprint 3 (Must-have)    |
+| 5  | Checkout error handling                 | Hoog (omzet)           | Medium       | Sprint 3 (Must-have)    |
+| 6  | UI/Visual refresh (icons, spacing, kleurgebruik) | Brand & omzetverbetering | Medium | Sprint 3 (Nice-to-have)|
+
+## 6. Volgende Stappen
+1. Screenshots toevoegen aan sectie 3 met echte mockups uit de flows.  
+2. Flow-validatie: doorloop sectie 2 en bevestig of alle stappen kloppen.  
+3. Kickoff Sprint 1: plan de taken voor quiz-gender fixes & UX-flows.
