@@ -1,249 +1,303 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
-import Button from '../components/ui/Button';
-import { motion } from 'framer-motion'; 
-import { useOnboarding } from '../context/OnboardingContext';
-import { useNavigationService } from '../services/NavigationService';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-const OnboardingPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { updateData, completeStep, goToNextStep, submitOnboarding } = useOnboarding();
-  const { data: onboardingData } = useOnboarding();
-  const navigationService = useNavigationService();
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-  const hasTrackedRef = useRef(false);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  // Navigation guard - if user has completed quiz data, navigate to results
-  useEffect(() => {
-    const hasCompleteData = onboardingData.season && onboardingData.occasions && onboardingData.archetypes;
-    
-    if (hasCompleteData && hasSubmitted) {
-      console.log('[OnboardingPage] Complete data detected after submission, navigating to results');
-      
-      // Immediate navigation to prevent hang
-      setTimeout(() => {
-        try {
-          navigationService.navigateToResults(onboardingData, {
-            delay: 0,
-            loadingMessage: 'Aanbevelingen worden geladen...',
-            onError: (error) => {
-              console.error('[OnboardingPage] Navigation error:', error);
-              navigate('/results', { state: { onboardingData } });
-            }
-          });
-        } catch (error) {
-          console.error('[OnboardingPage] NavigationService failed:', error);
-          navigate('/results', { state: { onboardingData } });
-        }
-      }, 100);
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
+  }
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
+
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
-  }, [onboardingData, hasSubmitted, navigationService, navigate]);
-
-  useEffect(() => {
-    if (hasTrackedRef.current) return;
-
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'quiz_start', {
-        event_category: 'questionnaire',
-        event_label: 'welcome',
-        referrer: document.referrer,
-        timestamp: new Date().toISOString()
-      });
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
     }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-    updateData({ startTime: Date.now() });
-    hasTrackedRef.current = true;
-  }, [updateData]);
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  const handleStart = () => {
-    if (isButtonClicked) return;
-    setIsButtonClicked(true);
-    setHasSubmitted(false); // Reset submission state for new flow
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-    setTimeout(() => {
-      // Navigate to first step
-      navigate('/onboarding/gender-name');
-      window.scrollTo(0, 0);
-    }, 0);
-  };
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-  const handleSkip = () => {
-    if (isButtonClicked) return;
-    setIsButtonClicked(true);
-    setHasSubmitted(true); // Mark as submitted for skip flow
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-    console.log('[🔍 OnboardingPage] Skip clicked → setting fallback onboarding data');
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
 
-    try {
-      const fallbackUser = {
-        id: 'skip-mode',
-        name: 'Stijlzoeker',
-        gender: 'vrouw',
-        archetypes: ['casual_chic'],
-        season: 'herfst',
-        occasions: ['Casual']
-      };
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
 
-      console.log('[🔍 OnboardingPage] Setting fallback data:', fallbackUser);
-      updateData(fallbackUser);
-      localStorage.setItem('fitfi-user', JSON.stringify(fallbackUser));
-      
-      console.log('[🔍 OnboardingPage] Navigating to results with fallback data');
-      
-      // Use setTimeout to ensure state is updated before navigation
-      setTimeout(() => {
-        try {
-          navigationService.navigateToEnhancedResults(fallbackUser, {
-            delay: 0, // Immediate navigation
-            loadingMessage: 'Voorbeeldaanbevelingen laden...',
-            onError: (error) => {
-              console.error('[OnboardingPage] Skip navigation error:', error);
-              // Emergency fallback
-              navigate('/results', { state: { onboardingData: fallbackUser } });
-            }
-          });
-        } catch (navError) {
-          console.error('[OnboardingPage] Navigation service error:', navError);
-          // Direct navigation as last resort
-          navigate('/results', { state: { onboardingData: fallbackUser } });
-        }
-      }, 100);
-      
-    } catch (error) {
-      console.error('[🔍 OnboardingPage] Error in skip flow:', error);
-      // Reset button state and show error
-      setIsButtonClicked(false);
-      
-      // Try direct navigation as fallback
-      try {
-        navigate('/results');
-      } catch (directNavError) {
-        console.error('[OnboardingPage] Direct navigation also failed:', directNavError);
-        // Force page reload as last resort
-        window.location.href = '/results';
-      }
-    }
-  };
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
-      <div className="container-slim py-16">
-        <div className="max-w-md mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="text-center mb-8">
-              <h1 className="text-h1 font-bold text-white mb-6">
-                Ontdek je perfecte stijl
-              </h1>
-              <p className="text-xl text-white/80 mb-2">
-                Met hulp van AI. Slimmer shoppen, beter kleden.
-              </p>
-              <p className="text-base text-white/70">
-                Beantwoord enkele vragen en ontvang gepersonaliseerde outfits die perfect bij jou passen.
-              </p>
-            </div>
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
 
-            <div className="glass-card overflow-hidden">
-              <div className="p-6">
-                <div className="space-y-6">
-                  {/* USP's */}
-                  {[
-                    {
-                      title: 'Persoonlijke stijlanalyse',
-                      subtitle: 'Ontdek welke stijlen het beste bij jou passen',
-                      icon: (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M20.24 12.24C21.3658 11.1142 21.9983 9.58722 21.9983 7.99504C21.9983 6.40285 21.3658 4.87588 20.24 3.75004C19.1142 2.62419 17.5872 1.9917 15.995 1.9917C14.4028 1.9917 12.8758 2.62419 11.75 3.75004L5 10.5V19H13.5L20.24 12.24Z" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M16 8L2 22" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M17.5 15H9" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )
-                    },
-                    {
-                      title: 'Gepersonaliseerde outfits',
-                      subtitle: 'Complete looks die perfect bij jouw stijl passen',
-                      icon: (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M20.84 4.60999C20.3292 4.09946 19.7228 3.69352 19.0554 3.41708C18.388 3.14064 17.6725 2.99918 16.95 2.99918C16.2275 2.99918 15.512 3.14064 14.8446 3.41708C14.1772 3.69352 13.5708 4.09946 13.06 4.60999L12 5.66999L10.94 4.60999C9.9083 3.5783 8.50903 2.9987 7.05 2.9987C5.59096 2.9987 4.19169 3.5783 3.16 4.60999C2.1283 5.64169 1.54871 7.04096 1.54871 8.49999C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.3505 11.8792 21.7565 11.2728 22.0329 10.6054C22.3094 9.93801 22.4508 9.22249 22.4508 8.49999C22.4508 7.7775 22.3094 7.06198 22.0329 6.39461C21.7565 5.72723 21.3505 5.12081 20.84 4.60999Z" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )
-                    },
-                    {
-                      title: 'Tijdbesparend',
-                      subtitle: 'Geen eindeloos zoeken meer naar de juiste kleding',
-                      icon: (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M12 6V12L16 14" stroke="#FF8600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )
-                    }
-                  ].map((item, i) => (
-                    <div className="flex items-start" key={i}>
-                      <div className="bg-[#FF8600]/20 p-2 rounded-full mr-3 mt-1">
-                        {item.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-base font-medium text-white mb-1">{item.title}</h3>
-                        <p className="text-sm text-white/70">{item.subtitle}</p>
-                      </div>
-                    </div>
-                  ))}
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-                  <motion.div
-                    initial={{ opacity: 1 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ duration: 0.1 }}
-                  >
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      fullWidth
-                      onClick={handleStart}
-                      icon={isButtonClicked ? undefined : <ArrowRight size={20} />}
-                      iconPosition="right"
-                      disabled={isButtonClicked}
-                      className={isButtonClicked ? "opacity-80" : ""}
-                    >
-                      {isButtonClicked ? (
-                        <span className="flex items-center justify-center">
-                          <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                          Even geduld...
-                        </span>
-                      ) : (
-                        "Start de stijlquiz"
-                      )}
-                    </Button>
-                  </motion.div>
-                </div>
-              </div>
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
 
-              <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-[#FF8600]" />
-                <span className="text-sm text-text-secondary">Je gegevens zijn veilig en versleuteld</span>
-              </div>
-            </div>
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
 
-            <div className="mt-6 text-center">
-              <button 
-                onClick={handleSkip}
-                className={`text-sm text-text-secondary hover:text-[#FF8600] transition-colors ${
-                  isButtonClicked ? 'opacity-50 pointer-events-none' : ''
-                }`}
-              >
-                Sla over en bekijk direct aanbevelingen
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
-export default OnboardingPage;
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}
