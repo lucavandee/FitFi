@@ -410,7 +410,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, [data, currentStep, isOnboardingComplete]);
   
-  // Ensure we always have valid onboarding data
+  // Auto-populate missing onboarding data (but allow navigation to proceed)
   useEffect(() => {
     // Get current path to prevent auto-population during navigation
     const currentPath = window.location.pathname;
@@ -418,12 +418,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // Only auto-populate if we're not in the middle of completion and data is truly empty
     const hasMinimalData = data.gender || (data.archetypes && data.archetypes.length > 0) || data.season;
     
-    // Skip auto-population if:
-    // 1. We just submitted (hasJustSubmitted)
-    // 2. We're currently submitting (isSubmitting) 
-    // 3. We're on results step
-    // 4. We're not on onboarding page (prevents interference during navigation)
-    if (!hasMinimalData && !isSubmitting && !hasJustSubmitted && currentStep !== 'results' && currentPath === '/onboarding') {
+    // Check if we should skip persistence (but not navigation)
+    const shouldSkipPersistence = hasJustSubmitted || isSubmitting || currentStep === 'results' || currentPath !== '/onboarding';
+    
+    if (!hasMinimalData && !shouldSkipPersistence) {
       console.log('[🔧 OnboardingContext] Auto-populating missing onboarding data');
       
       const fallbackData: Partial<OnboardingData> = {};
@@ -452,6 +450,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       if (Object.keys(fallbackData).length > 0) {
         updateData(fallbackData);
       }
+    } else if (shouldSkipPersistence) {
+      console.log('[FIX] Skipping persistence for current state:', {
+        hasJustSubmitted,
+        isSubmitting,
+        currentStep,
+        currentPath
+      });
+      // Let any pending navigation or state updates fall through
     }
   }, [data, updateData, smartDefaults, isSubmitting, hasJustSubmitted, currentStep]);
   
