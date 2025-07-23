@@ -37,16 +37,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const variantStyles = {
-      primary: 'bg-turquoise hover:bg-turquoise-dark text-white border-turquoise hover:border-turquoise-dark focus:ring-turquoise',
-      secondary: 'bg-info-blue hover:bg-info-blue/90 text-white border-info-blue hover:border-info-blue/90 focus:ring-info-blue',
-      ghost: 'bg-transparent hover:bg-light-grey text-text-secondary border-transparent focus:ring-turquoise',
-      danger: 'bg-error-red hover:bg-error-red/90 text-white border-error-red hover:border-error-red/90 focus:ring-error-red',
+      primary: 'bg-primary text-white hover:bg-primary-dark focus:ring-primary border-primary hover:border-primary-dark',
+      secondary: 'bg-secondary text-primary hover:bg-secondary/90 focus:ring-secondary border-secondary hover:border-secondary/90',
+      ghost: 'bg-transparent hover:bg-gray-100 text-gray-600 border-transparent focus:ring-primary',
+      danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 focus:ring-red-600',
     };
 
     const sizeStyles = {
       sm: 'px-4 py-2 text-sm',
-      md: 'px-6 py-3',
-      lg: 'px-8 py-4 text-base',
+      md: 'py-3 px-6',
+      lg: 'py-3 px-6 text-base',
     };
 
     const baseStyle = `

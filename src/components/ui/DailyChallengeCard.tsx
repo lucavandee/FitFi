@@ -31,18 +31,18 @@ const DailyChallengeCard: React.FC = () => {
   };
 
   return (
-    <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
+    <motion.div className="p-6 rounded-2xl shadow-lg bg-accent space-y-4 text-gray-900" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
       <div className="p-8 border-b border-light-grey">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-3 rounded-full bg-turquoise/20">
-              <Clock className="text-turquoise" size={20} />
+            <div className="p-3 rounded-full bg-secondary/20">
+              <Clock className="text-secondary" size={20} />
             </div>
             <div>
-              <h3 className="text-h2 text-text-primary mb-4">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
                 Dagelijkse Uitdagingen
               </h3>
-              <p className="text-text-secondary">
+              <p className="text-gray-600">
                 {completedCount}/{totalChallenges} voltooid vandaag
               </p>
             </div>
