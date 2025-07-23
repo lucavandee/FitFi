@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-primary text-gray-200 font-sans;
+  }
+  
+  a {
+    @apply text-secondary hover:underline;
+  }
+}

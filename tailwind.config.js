@@ -5,10 +5,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // New primary brand colors
+        primary: '#0D1B2A',
+        'primary-dark': '#091421',
+        secondary: '#89CFF0',
+        accent: '#F6F6F6',
+        
         // FitFi Brand Colors
         midnight:         '#0D1B2A',  // hoofdkleur, achtergronden
         turquoise:        '#89CFF0',  // primaire accent
