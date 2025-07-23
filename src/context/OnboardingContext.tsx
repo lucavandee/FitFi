@@ -9,6 +9,12 @@ import { saveOnboardingProgress, loadOnboardingProgress, clearOnboardingProgress
 import { generateSmartDefaults } from '../utils/smartDefaults';
 import { env } from '../utils/env';
 
+// Debug logging utility
+const debugLog = (message: string, data?: any) => {
+  if (env.DEBUG_MODE || import.meta.env.DEV) {
+    console.log(`[🔍 OnboardingContext] ${message}`, data || '');
+  }
+};
 // Define the types for our onboarding data
 export interface OnboardingData {
   // Step 1: Welcome - no data
@@ -214,30 +220,37 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Set the current step and navigate to it
   const setStep = (step: string) => {
-    console.log('[🔍 OnboardingContext] Setting step:', step);
+    const prevStep = currentStep;
+    debugLog(`Step transition: ${prevStep} → ${step}`);
     setCurrentStep(step);
     
     // Auto-save progress
     saveOnboardingProgress(step, data.completedSteps || [], data);
     
+    debugLog(`Navigating to route for step: ${step}`);
     // Navigate to the appropriate route
     switch (step) {
       case 'welcome':
+        debugLog('Navigating to /onboarding');
         navigate('/onboarding');
         break;
       case 'gender_name':
+        debugLog('Navigating to /onboarding/gender-name');
         navigate('/onboarding/gender-name');
         break;
       case 'archetype':
+        debugLog('Navigating to /onboarding/archetype');
         navigate('/onboarding/archetype');
         break;
       case 'results':
-        console.log('[🔍 OnboardingContext] Navigating to results with data:', data);
+        debugLog('Navigating to /onboarding/results with data:', data);
         navigate('/onboarding/results');
         break;
       default:
+        debugLog('Navigating to default /onboarding');
         navigate('/onboarding');
     }
+    debugLog(`Navigation completed for step: ${step}`);
     
     // Track step navigation in analytics
     if (typeof window.gtag === 'function') {
@@ -288,13 +301,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
   // Submit the onboarding data
   const submitOnboarding = async () => {
-    console.log('[🔍 OnboardingContext] Submitting onboarding data:', data);
+    debugLog('Starting submitOnboarding with data:', data);
     setIsSubmitting(true);
     setHasJustSubmitted(true);
     
     try {
       // Calculate quiz duration
       const quizDuration = Math.floor((Date.now() - (data.startTime || Date.now())) / 1000);
+      debugLog('Quiz duration calculated:', quizDuration);
       
       // Ensure we have complete data with defaults
       const completeData = {
@@ -305,7 +319,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         name: data.name || 'Stijlzoeker'
       };
       
-      console.debug('[OnboardingContext] Complete submission data:', completeData);
+      debugLog('Complete submission data prepared:', completeData);
+      
+      debugLog('Starting profile update...');
       
       // Track quiz completion in analytics
       if (typeof window.gtag === 'function') {
@@ -322,6 +338,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         });
       }
       
+      debugLog('Updating user profile...');
+      
       // Update user profile with onboarding data
       await updateProfile({
         gender: data.gender === 'man' ? 'male' : 'female',
@@ -336,41 +354,50 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }
       });
       
+      debugLog('Profile updated successfully');
+      
       // Award gamification points for completing the quiz
+      debugLog('Completing quiz gamification...');
       await completeQuiz();
+      debugLog('Quiz gamification completed');
       
       // Update context with complete data
       setData(completeData);
       
       // Clear saved progress since we're completing
       clearOnboardingProgress();
+      debugLog('Saved progress cleared');
       
-      console.log('[🔍 OnboardingContext] Onboarding completed, setting completion flag');
+      debugLog('Setting onboarding completion flag');
       setIsOnboardingComplete(true);
       
       // Show success toast
       toast.success('Stijlprofiel aangemaakt!');
       
     } catch (error) {
-      console.error('Error submitting onboarding data:', error);
+      debugLog('ERROR in submitOnboarding:', error);
+      console.error('[ERROR] OnboardingContext submitOnboarding failed:', error);
       toast.error('Er is iets misgegaan. Probeer het opnieuw.');
     } finally {
       setIsSubmitting(false);
+      debugLog('submitOnboarding finally block executed');
     }
   };
   
   // Handle onboarding completion with redirect
   useEffect(() => {
     if (isOnboardingComplete) {
-      console.log('[🔍 OnboardingContext] Onboarding complete, redirecting to results in 300ms');
+      debugLog('Onboarding complete, starting navigation to results');
       navigationService.navigateToEnhancedResults(data, {
         loadingMessage: 'Je aanbevelingen worden geladen...',
         onError: (error) => {
-          console.error('[OnboardingContext] Navigation error:', error);
+          debugLog('Navigation error occurred:', error);
+          console.error('[ERROR] OnboardingContext navigation failed:', error);
           // Emergency fallback
           navigate('/results', { state: { onboardingData: data } });
         }
       });
+      debugLog('Navigation service called');
     }
   }, [isOnboardingComplete, navigate, data, navigationService]);
   
@@ -378,7 +405,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     const hasRequiredFields = data.gender && data.archetypes && data.archetypes.length > 0;
     if (hasRequiredFields && currentStep === 'results' && !isOnboardingComplete) {
-      console.log('[🔍 OnboardingContext] All required fields present, marking as complete');
+      debugLog('All required fields present, marking as complete');
       setIsOnboardingComplete(true);
     }
   }, [data, currentStep, isOnboardingComplete]);

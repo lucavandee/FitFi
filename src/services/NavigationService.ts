@@ -6,6 +6,12 @@
 import { NavigateFunction } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+// Debug logging utility
+const debugLog = (message: string, data?: any) => {
+  if (typeof window !== 'undefined' && (import.meta.env.DEV || localStorage.getItem('fitfi-debug') === 'true')) {
+    console.log(`[🔍 NavigationService] ${message}`, data || '');
+  }
+};
 export interface NavigationOptions {
   delay?: number;
   showLoading?: boolean;
@@ -49,7 +55,7 @@ class NavigationService {
    */
   initialize(navigate: NavigateFunction) {
     this.navigate = navigate;
-    console.log('[🧭 NavigationService] Initialized with navigate function');
+    debugLog('Initialized with navigate function');
   }
 
   /**
@@ -128,7 +134,8 @@ class NavigationService {
    * Handle navigation error
    */
   private handleError(error: Error, options?: NavigationOptions) {
-    console.error('[❌ NavigationService] Navigation error:', error);
+    debugLog('ERROR in navigation:', error);
+    console.error('[ERROR] NavigationService navigation failed:', error);
 
     if (this.progressInterval) {
       clearInterval(this.progressInterval);
@@ -151,7 +158,7 @@ class NavigationService {
 
     // Try fallback route if provided
     if (options?.fallbackRoute && this.navigate) {
-      console.log(`[🧭 NavigationService] Trying fallback route: ${options.fallbackRoute}`);
+      debugLog(`Trying fallback route: ${options.fallbackRoute}`);
       setTimeout(() => {
         this.navigate!(options.fallbackRoute!);
       }, 1000);
@@ -181,7 +188,7 @@ class NavigationService {
     } = options;
 
     try {
-      console.log(`[🧭 NavigationService] Starting navigation to: ${route}`);
+      debugLog(`Starting navigation to: ${route}`);
 
       // Update state
       this.updateState({
@@ -213,8 +220,10 @@ class NavigationService {
 
       // Perform navigation
       if (state) {
+        debugLog(`Navigating with state:`, state);
         this.navigate(route, { state });
       } else {
+        debugLog(`Navigating without state`);
         this.navigate(route);
       }
 
@@ -228,7 +237,7 @@ class NavigationService {
         onComplete();
       }
 
-      console.log(`[✅ NavigationService] Successfully navigated to: ${route}`);
+      debugLog(`Successfully navigated to: ${route}`);
 
     } catch (error) {
       this.handleError(error as Error, options);
@@ -322,7 +331,7 @@ class NavigationService {
       return;
     }
 
-    console.log(`[🚨 NavigationService] Emergency navigation to: ${route}`);
+    debugLog(`Emergency navigation to: ${route}`);
     this.navigate(route);
   }
 

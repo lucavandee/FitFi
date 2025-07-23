@@ -26,6 +26,12 @@ import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../co
 import curatedProducts from '../config/curated-products.json';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 
+// Debug logging utility
+const debugLog = (message: string, data?: any) => {
+  if (import.meta.env.DEV) {
+    console.log(`[🔍 ResultsPage] ${message}`, data || '');
+  }
+};
 interface Outfit {
   id: string;
   title: string;
@@ -253,6 +259,12 @@ const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, saveRecommendation } = useUser();
   const { viewRecommendation, saveOutfit } = useGamification();
+  
+  // Debug log component initialization
+  debugLog('Component initialized');
+  debugLog('Location state received:', location.state);
+  debugLog('User data:', user);
+  
   const [psychographicProfile, setPsychographicProfile] = useState<PsychographicProfile | null>(null);
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [showCollapsiblePanel, setShowCollapsiblePanel] = useState(false);
@@ -263,20 +275,31 @@ const ResultsPage: React.FC = () => {
 
   const quizAnswers = location.state?.answers || {};
 
+  debugLog('Quiz answers extracted:', quizAnswers);
+
   useEffect(() => {
+    debugLog('Setting up psychographic profile...');
     const profile = analyzePsychographicProfile(quizAnswers);
     setPsychographicProfile(profile);
+    debugLog('Psychographic profile set:', profile);
     
+    debugLog('Getting curated products for archetype:', profile.type);
     // Get curated products for this archetype
     const curatedProfile = curatedProducts.profiles.find(p => p.id === profile.type);
     if (curatedProfile && curatedProfile.items) {
       setCuratedItems(curatedProfile.items.slice(0, 6)); // Show max 6 products
+      debugLog('Curated items set:', curatedProfile.items.length);
+    } else {
+      debugLog('No curated profile found for archetype:', profile.type);
     }
 
+    debugLog('Calling viewRecommendation...');
     viewRecommendation();
+    debugLog('viewRecommendation completed');
   }, [quizAnswers]);
 
   const handleProductClick = (item: any) => {
+    debugLog('Product clicked:', item);
     // Track product click
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'product_click', {
@@ -292,10 +315,12 @@ const ResultsPage: React.FC = () => {
     }
     
     // Open product page
+    debugLog('Opening product URL:', item.url);
     window.open(item.url, '_blank', 'noopener,noreferrer');
   };
 
   const recordFeedback = (rating: number) => {
+    debugLog('Recording feedback with rating:', rating);
     setFeedbackGiven(true);
     
     if (typeof window.gtag === 'function') {
@@ -305,6 +330,7 @@ const ResultsPage: React.FC = () => {
         value: rating
       });
     }
+    debugLog('Feedback recorded successfully');
   };
 
   const userName = user?.name;
