@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Info, ShieldCheck } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -13,7 +14,8 @@ interface ArchetypeOption {
 }
 
 const ArchetypeStep: React.FC = () => {
-  const { data, updateData, completeStep, goToNextStep, goToPreviousStep } = useOnboarding();
+  const navigate = useNavigate();
+  const { data, updateAnswers } = useOnboarding();
   
   const [selectedArchetypes, setSelectedArchetypes] = useState<string[]>(
     data.archetypes || []
@@ -122,16 +124,13 @@ const ArchetypeStep: React.FC = () => {
     // Map selected styles to archetypes
     const archetypes = selectedArchetypes.map(style => styleToArchetype[style]);
     
-    // Update onboarding data
-    updateData({
+    // Update answers
+    updateAnswers({
       archetypes
     });
     
-    // Mark step as completed
-    completeStep('archetype');
-    
-    // Go to next step
-    goToNextStep();
+    // Navigate to next step
+    navigate('/onboarding/season');
   };
   
   return (
@@ -247,7 +246,7 @@ const ArchetypeStep: React.FC = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={goToPreviousStep}
+                    onClick={() => navigate('/onboarding/gender-name')}
                     icon={<ArrowLeft size={18} />}
                     iconPosition="left"
                     className="flex-1 text-text-secondary border border-light-grey hover:bg-light-grey"
