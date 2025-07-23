@@ -164,6 +164,12 @@ const isValidImageUrl = (url: string): boolean => {
     return false;
   }
   
+  // Pre-validate URL format with regex to prevent memory access errors
+  const ABSOLUTE_URL_REGEX = /^https?:\/\/[^\s/$.?#].[^\s]*$/i;
+  if (!ABSOLUTE_URL_REGEX.test(url.trim())) {
+    return false;
+  }
+  
   // Check for known problematic domains
   if (PROBLEMATIC_DOMAINS.some(domain => url.includes(domain))) {
     return false;
