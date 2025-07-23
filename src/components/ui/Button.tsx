@@ -1,106 +1,41 @@
-import React, { forwardRef } from 'react';
-import { Link } from 'react-router-dom';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-export interface ButtonProps {
-  children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  fullWidth?: boolean;
-  disabled?: boolean;
-  className?: string;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
-  as?: React.ElementType;
-  to?: string;
-  type?: 'button' | 'submit' | 'reset';
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  [key: string]: any;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      children,
-      variant = 'primary',
-      size = 'md',
-      fullWidth = false,
-      disabled = false,
-      className = '',
-      icon,
-      iconPosition = 'left',
-      as,
-      to,
-      type = 'button',
-      onClick,
-      ...props
-    },
-    ref
-  ) => {
-    const variantStyles = {
-      primary: 'bg-secondary text-primary hover:bg-secondary/90 focus:ring-secondary/50 border-secondary shadow-lg',
-      secondary: 'bg-primary text-secondary border border-secondary hover:bg-primary-light hover:text-primary focus:ring-secondary',
-      ghost: 'bg-transparent hover:bg-primary-light hover:text-secondary text-body border-transparent focus:ring-secondary',
-      danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 focus:ring-red-600',
-    };
-
-    const sizeStyles = {
-      sm: 'px-4 py-2 text-sm',
-      md: 'py-3 px-6',
-      lg: 'py-4 px-8 text-lg',
-    };
-
-    const baseStyle = `
-      inline-flex items-center justify-center 
-      font-medium rounded-full 
-      border 
-      transition-all duration-200
-      focus:outline-none focus:ring-4
-      disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-inherit
-    `;
-
-    const widthStyle = fullWidth ? 'w-full' : '';
-
-    const buttonStyle = `
-      ${baseStyle} 
-      ${variantStyles[variant]} 
-      ${sizeStyles[size]} 
-      ${widthStyle} 
-      ${className}
-    `;
-
-    const content = (
-      <>
-        {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
-        {children}
-        {icon && iconPosition === 'right' && <span className="ml-2">{icon}</span>}
-      </>
-    );
-
-    const Component = as || 'button';
-
-    if (Component === Link) {
-      return (
-        <Link to={to || '#'} className={buttonStyle} {...props}>
-          {content}
-        </Link>
-      );
-    }
-
-    return (
-      <Component
-        type={type}
-        className={buttonStyle}
-        disabled={disabled}
-        ref={ref}
-        onClick={onClick}
-        {...props}
-      >
-        {content}
-      </Component>
-    );
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
   }
-);
-
-Button.displayName = 'Button';
-
-export default Button;
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full

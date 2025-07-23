@@ -1,216 +1,340 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon, User } from 'lucide-react';
-import { useUser } from '../../context/UserContext';
-import { useTheme } from '../../context/ThemeContext';
-import Logo from '../ui/Logo';
-import Button from '../ui/Button';
-import { motion, AnimatePresence } from 'framer-motion';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-const Navbar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const { user, logout } = useUser();
-  const { theme, toggleTheme } = useTheme();
-  const location = useLocation();
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const closeMenu = () => setIsMenuOpen(false);
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
+  }
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+  
+  /* Navigation styles */
+  .nav-link {
+    @apply text-sm font-medium transition-colors hover:text-secondary relative;
+  }
+  
+  .nav-link-active {
+    @apply text-secondary;
+  }
+  
+  .nav-link-inactive {
+    @apply text-body;
+  }
+  
+  .nav-indicator {
+    @apply absolute -bottom-1 left-0 w-full h-1.5 bg-secondary rounded;
+  }
+  
+  .theme-toggle {
+    @apply p-2 rounded hover:bg-primary-light transition-colors text-body;
+  }
+  
+  .user-link {
+    @apply flex items-center space-x-2 text-body hover:text-secondary transition-colors;
+  }
+  
+  .logout-btn {
+    @apply text-body border border-primary-light hover:bg-primary-light hover:text-secondary;
+  }
+  
+  .login-btn {
+    @apply text-body border border-primary-light hover:bg-primary-light hover:text-secondary;
+  }
+  
+  .signup-btn {
+    @apply bg-secondary text-primary hover:bg-secondary/90;
+  }
+}
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
 
-  useEffect(() => closeMenu(), [location.pathname]);
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-  useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  return (
-    <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-midnight/95 backdrop-blur-md' : 'bg-midnight/80 backdrop-blur-sm'}`}>
-        <div className="container mx-auto px-6">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0" onClick={closeMenu}>
-                <Logo className="h-8 w-auto text-white" />
-              </Link>
-            </div>
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-10">
-              {['/', '/onboarding', '/over-ons'].map((path, idx) => {
-                const labels = ['Home', 'Stijlscan', 'Over ons'];
-                return (
-                  <Link
-                    key={path}
-                    to={path}
-                    className={`text-sm font-medium transition-colors hover:text-orange-400 relative ${location.pathname === path ? 'text-white' : 'text-white/80'}`}
-                  >
-                    {labels[idx]}
-                    {location.pathname === path && (
-                      <span className="absolute -bottom-1 left-0 w-full h-1.5 bg-orange-500 rounded" />
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center space-x-6">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded hover:bg-midnight-800 transition-colors text-white"
-                aria-label="Toggle theme"
-              >
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-              {user ? (
-                <div className="flex items-center space-x-4">
-                  <Link to="/dashboard" className="flex items-center space-x-2 text-white hover:text-turquoise transition-colors">
-                    <User size={20} />
-                    <span className="font-medium">{user.name?.split(' ')[0] || 'Gebruiker'}</span>
-                  </Link>
-                  <Button variant="ghost" size="sm" onClick={logout} className="text-white border border-white/30 hover:bg-white/10">
-                    Uitloggen
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex space-x-4">
-                  <Button as={Link} to="/onboarding" variant="ghost" size="sm" className="text-white border border-white/30 hover:bg-white/10">
-                    Inloggen
-                  </Button>
-                  <Button as={Link} to="/onboarding?signup=true" variant="primary" size="sm" className="bg-turquoise hover:bg-turquoise-dark">
-                    Stijlscan starten
-                  </Button>
-                </div>
-              )}
-            </div>
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
 
-            {/* Mobile Buttons */}
-            <div className="flex lg:hidden items-center space-x-3">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded hover:bg-midnight-800 transition-colors text-white"
-                aria-label="Toggle theme"
-              >
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-              <button
-                onClick={toggleMenu}
-                className="inline-flex items-center justify-center p-2 rounded text-white hover:bg-midnight-800 transition-colors"
-                aria-label="Toggle mobile menu"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
 
-      {/* Mobile overlay */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={closeMenu}
-          />
-        )}
-      </AnimatePresence>
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            className="fixed top-16 right-0 bottom-0 z-50 w-72 max-w-[85vw] bg-midnight shadow-xl lg:hidden"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-          >
-            <nav className="flex flex-col h-full">
-              <div className="flex-1 px-6 py-8 space-y-2">
-                {['/', '/onboarding', '/over-ons'].map((path, idx) => {
-                  const labels = ['Home', 'Stijlscan', 'Over ons'];
-                  return (
-                    <Link
-                      key={path}
-                      to={path}
-                      onClick={closeMenu}
-                      className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
-                        location.pathname === path ? 'bg-gray-800 text-white' : 'text-white/80 hover:bg-gray-800 hover:text-white'
-                      }`}
-                    >
-                      {labels[idx]}
-                    </Link>
-                  );
-                })}
-                {user && (
-                  <Link
-                    to="/dashboard"
-                    onClick={closeMenu}
-                    className={`block px-6 py-4 rounded text-base font-medium transition-colors ${
-                      location.pathname.startsWith('/dashboard') ? 'bg-gray-800 text-white' : 'text-white/80 hover:bg-gray-800 hover:text-white'
-                    }`}
-                  >
-                    Dashboard
-                  </Link>
-                )}
-              </div>
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
 
-              <div className="border-t border-white/10 p-6">
-                {user ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 px-6 py-3 bg-midnight/50 rounded">
-                      <User size={24} className="text-white/70" />
-                      <div className="flex-1">
-                        <div className="font-medium text-white">{user.name || 'Gebruiker'}</div>
-                        <div className="text-sm text-white/70">{user.email || 'gebruiker@fitfi.app'}</div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      fullWidth
-                      onClick={() => {
-                        logout();
-                        closeMenu();
-                      }}
-                      className="text-white border border-white/30 hover:bg-white/10"
-                    >
-                      Uitloggen
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <Button as={Link} to="/onboarding" variant="ghost" fullWidth onClick={closeMenu} className="text-white border border-white/30 hover:bg-white/10">
-                      Inloggen
-                    </Button>
-                    <Button as={Link} to="/onboarding?signup=true" variant="primary" fullWidth onClick={closeMenu} className="bg-turquoise hover:bg-turquoise-dark">
-                      Stijlscan starten
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-      <div className="h-16" />
-    </>
-  );
-};
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
 
-export default Navbar;
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}
