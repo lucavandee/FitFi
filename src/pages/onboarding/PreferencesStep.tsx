@@ -1,231 +1,303 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, ShieldCheck, Info } from 'lucide-react';
-import Button from '../../components/ui/Button';
-import { useOnboarding } from '../../context/OnboardingContext';
-import { motion } from 'framer-motion';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-const PreferencesStep: React.FC = () => {
-  const { data, updateData, completeStep, goToNextStep, goToPreviousStep } = useOnboarding();
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
+  }
   
-  const [preferences, setPreferences] = useState<Record<string, boolean>>(
-    data.preferences || {
-      tops: true,
-      bottoms: true,
-      outerwear: true,
-      shoes: true,
-      accessories: true
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
+
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
-  );
+  }
   
-  const [showTooltip, setShowTooltip] = useState(false);
-  
-  // Track when the component is mounted
-  useEffect(() => {
-    // Track step view in analytics
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'quiz_step_view', {
-        event_category: 'questionnaire',
-        event_label: 'preferences',
-        step_name: 'preferences'
-      });
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
     }
-  }, []);
+  }
   
-  const preferenceOptions = [
-    {
-      id: 'tops',
-      name: 'Tops',
-      icon: '👕',
-      description: 'T-shirts, blouses, overhemden, truien'
-    },
-    {
-      id: 'bottoms',
-      name: 'Bottoms',
-      icon: '👖',
-      description: 'Broeken, jeans, rokken, shorts'
-    },
-    {
-      id: 'outerwear',
-      name: 'Jassen',
-      icon: '🧥',
-      description: 'Jassen, blazers, vesten'
-    },
-    {
-      id: 'shoes',
-      name: 'Schoenen',
-      icon: '👟',
-      description: 'Sneakers, laarzen, pumps, sandalen'
-    },
-    {
-      id: 'accessories',
-      name: 'Accessoires',
-      icon: '👜',
-      description: 'Tassen, sieraden, riemen, hoeden'
-    }
-  ];
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
   
-  const togglePreference = (id: string) => {
-    setPreferences(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-    
-    // Track preference toggle
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'preference_toggle', {
-        event_category: 'questionnaire',
-        event_label: id,
-        preference: id,
-        value: !preferences[id]
-      });
-    }
-  };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Update onboarding data
-    updateData({
-      preferences
-    });
-    
-    // Mark step as completed
-    completeStep('preferences');
-    
-    // Submit the onboarding data
-    goToNextStep();
-  };
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0D1B2A] to-[#1B263B]">
-      <div className="container-slim py-16">
-        <div className="max-w-md mx-auto">
-          {/* Progress indicator */}
-          <div className="mb-10">
-            <div className="flex justify-between text-sm text-white/70 mb-2">
-              <span>Extra stap</span>
-              <span>Optioneel</span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-bar-fill"
-                style={{ width: '100%' }}
-              ></div>
-            </div>
-          </div>
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Welke producttypes wil je zien?
-              </h1>
-              <p className="text-white/80">
-                Pas je voorkeuren aan of ga direct door naar je resultaten
-              </p>
-            </div>
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-            <div className="glass-card overflow-hidden">
-              <form onSubmit={handleSubmit} className="p-6">
-                <div className="space-y-4 mb-6">
-                  {preferenceOptions.map((option) => (
-                    <div key={option.id} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={option.id}
-                        checked={preferences[option.id] || false}
-                        onChange={() => togglePreference(option.id)}
-                        className="sr-only peer"
-                      />
-                      <label
-                        htmlFor={option.id}
-                        className="flex items-center justify-between w-full p-4 rounded-xl border cursor-pointer transition-all
-                          peer-checked:border-[#FF8600] peer-checked:bg-white/10
-                          border-white/30 hover:border-white/50 hover:bg-white/5"
-                      >
-                        <div className="flex items-center">
-                          <div className="text-2xl mr-3">{option.icon}</div>
-                          <div>
-                            <div className="font-medium text-white">{option.name}</div>
-                            <div className="text-sm text-white/70">{option.description}</div>
-                          </div>
-                        </div>
-                        <div className={`
-                          w-6 h-6 rounded-full flex items-center justify-center
-                          ${preferences[option.id]
-                            ? 'bg-[#FF8600] text-white'
-                            : 'bg-white/20 border border-white/30'}
-                        `}>
-                          {preferences[option.id] && (
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          )}
-                        </div>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="relative mb-6">
-                  <div className="flex items-center justify-center">
-                    <button
-                      type="button"
-                      onClick={() => setShowTooltip(!showTooltip)}
-                      className="flex items-center text-white/70 hover:text-white/90 transition-colors text-sm"
-                    >
-                      <Info size={16} className="mr-1" />
-                      Waarom vragen we dit?
-                    </button>
-                  </div>
-                  
-                  {showTooltip && (
-                    <div className="mt-3 p-3 bg-white/10 rounded-lg">
-                      <p className="text-white/80 text-sm">
-                        Door te weten welke producttypes je interessant vindt, kunnen we onze aanbevelingen filteren om alleen relevante items te tonen. Dit is een optionele stap - je kunt ook direct doorgaan naar je resultaten.
-                      </p>
-                    </div>
-                  )}
-                </div>
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-                {/* Navigation Buttons */}
-                <div className="flex space-x-3">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={goToPreviousStep}
-                    icon={<ArrowLeft size={18} />}
-                    iconPosition="left"
-                    className="flex-1 text-white border border-white/30 hover:bg-white/10"
-                  >
-                    Terug
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                    className="flex-1"
-                  >
-                    Resultaten bekijken
-                  </Button>
-                </div>
-              </form>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-              {/* Privacy indicator */}
-              <div className="px-6 py-4 bg-white/5 flex items-center justify-center space-x-2">
-                <ShieldCheck size={18} className="text-[#FF8600]" />
-                <span className="text-sm text-white/80">Je gegevens zijn veilig en versleuteld</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-export default PreferencesStep;
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}

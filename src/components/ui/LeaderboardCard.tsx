@@ -1,211 +1,303 @@
-import React from 'react';
-import { Trophy, Medal, Award, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
-import ImageWithFallback from './ImageWithFallback';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-interface LeaderboardEntry {
-  id: string;
-  name: string;
-  points: number;
-  level: string;
-  avatar?: string;
-  isCurrentUser?: boolean;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
+  }
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
 }
 
-const LeaderboardCard: React.FC = () => {
-  // Mock leaderboard data - in a real app, this would come from an API
-  const leaderboardData: LeaderboardEntry[] = [
-    {
-      id: '1',
-      name: "Emma van der Berg",
-      points: 8750,
-      level: 'master',
-      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
-    },
-    {
-      id: '2',
-      name: "Lars Janssen",
-      points: 7200,
-      level: 'master',
-      avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
-    },
-    {
-      id: '3',
-      name: "Sophie Bakker",
-      points: 6890,
-      level: 'master',
-      avatar: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
-    },
-    {
-      id: '4',
-      name: "Jij", // Current user
-      points: 1250,
-      level: 'pro',
-      isCurrentUser: true
-    },
-    {
-      id: '5',
-      name: "Mike de Vries",
-      points: 980,
-      level: 'beginner',
-      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
+
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
-  ];
-
-  const getRankIcon = (position: number) => {
-    switch (position) {
-      case 1:
-        return <Trophy className="text-yellow-500" size={20} />;
-      case 2:
-        return <Medal className="text-gray-400" size={20} />;
-      case 3:
-        return <Award className="text-amber-600" size={20} />;
-      default:
-        return <span className="text-white/50 font-bold">#{position}</span>;
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
     }
-  };
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'master':
-        return 'text-purple-400';
-      case 'pro':
-        return 'text-[#FF8600]';
-      default:
-        return 'text-green-400';
-    }
-  };
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  const getLevelIcon = (level: string) => {
-    switch (level) {
-      case 'master':
-        return '👑';
-      case 'pro':
-        return '⭐';
-      default:
-        return '🌱';
-    }
-  };
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-  const getLevelName = (level: string) => {
-    switch (level) {
-      case 'master':
-        return 'Meester';
-      case 'pro':
-        return 'Pro';
-      default:
-        return 'Beginner';
-    }
-  };
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-  return (
-    <motion.div 
-      className="bg-white dark:bg-midnight-800 rounded-xl shadow-md overflow-hidden transition-colors"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.2 }}
-    >
-      <div className="p-6 border-b border-lightGrey-200 dark:border-midnight-600">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-full bg-turquoise-100 dark:bg-turquoise-900/20">
-            <TrendingUp className="text-turquoise-600 dark:text-turquoise-400" size={20} />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-textPrimary-light dark:text-textPrimary-dark">
-              Ranglijst
-            </h3>
-            <p className="text-sm text-textSecondary-light dark:text-textSecondary-dark">
-              Top stijlliefhebbers deze week
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="p-6">
-        <div className="space-y-3">
-          {leaderboardData.map((entry, index) => (
-            <motion.div 
-              key={entry.id}
-              className={`
-                flex items-center space-x-4 p-3 rounded-lg transition-all
-                ${entry.isCurrentUser 
-                  ? 'bg-turquoise-50 dark:bg-turquoise-900/10 border border-turquoise-200 dark:border-turquoise-800' 
-                  : 'bg-lightGrey-50 dark:bg-midnight-700 hover:bg-lightGrey-100 dark:hover:bg-midnight-600'}
-              `}
-              whileHover={{ scale: 1.02 }}
-            >
-              {/* Rank */}
-              <div className="flex items-center justify-center w-8">
-                {getRankIcon(index + 1)}
-              </div>
-              
-              {/* Avatar */}
-              <div className="relative">
-                {entry.avatar ? (
-                  <ImageWithFallback 
-                    src={entry.avatar} 
-                    alt={entry.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                    componentName="LeaderboardCard_Avatar"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-turquoise-300 to-turquoise-500 flex items-center justify-center text-textPrimary-dark font-bold">
-                    {entry.name.charAt(0)}
-                  </div>
-                )}
-                
-                {/* Level badge */}
-                <div className="absolute -bottom-1 -right-1 text-sm">
-                  {getLevelIcon(entry.level)}
-                </div>
-              </div>
-              
-              {/* User info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <p className={`font-medium truncate ${
-                    entry.isCurrentUser 
-                      ? 'text-turquoise-600 dark:text-turquoise-400' 
-                      : 'text-textPrimary-light dark:text-textPrimary-dark'
-                  }`}>
-                    {entry.name}
-                    {entry.isCurrentUser && (
-                      <span className="ml-1 text-xs bg-turquoise-100 dark:bg-turquoise-900/20 text-turquoise-600 dark:text-turquoise-400 px-1 rounded">
-                        JIJ
-                      </span>
-                    )}
-                  </p>
-                </div>
-                <p className={`text-xs capitalize ${getLevelColor(entry.level)}`}>
-                  {getLevelName(entry.level)} niveau
-                </p>
-              </div>
-              
-              {/* Points */}
-              <div className="text-right">
-                <p className="font-bold text-textPrimary-light dark:text-textPrimary-dark">
-                  {entry.points.toLocaleString()}
-                </p>
-                <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark">
-                  punten
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        
-        {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-lightGrey-200 dark:border-midnight-600 text-center">
-          <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark mb-2">
-            🏆 Wedijver met andere stijlliefhebbers
-          </p>
-          <button className="text-sm text-turquoise-500 hover:text-turquoise-600 font-medium transition-colors">
-            Bekijk Volledige Ranglijst
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-export default LeaderboardCard;
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}
