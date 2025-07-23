@@ -465,7 +465,9 @@ const EnhancedResultsPage: React.FC = () => {
       });
       
       debugLog('Smart retry result:', result);
-        
+      
+      if (result.success) {
+        debugLog('Quick retry successful, updating state');
         toast.success('Ontbrekende data succesvol geladen!');
         
         // Track successful quick retry
@@ -486,7 +488,6 @@ const EnhancedResultsPage: React.FC = () => {
       toast.error('Quick retry mislukt. Probeer volledige herlaad.');
       
       // Track failed quick retry
-        debugLog('Quick retry successful, updating state');
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'quick_retry_failed', {
           event_category: 'error_recovery',
