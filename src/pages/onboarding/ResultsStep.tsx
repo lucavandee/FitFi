@@ -34,6 +34,7 @@
   }
   
   .btn-danger {
+            }
     @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
   }
   
@@ -133,6 +134,7 @@
 }
 
 @layer base {
+  }
   html {
     scroll-behavior: smooth;
   }
