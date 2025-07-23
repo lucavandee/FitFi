@@ -372,20 +372,31 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Initialize on mount
   useEffect(() => {
-    debugLog('Initialization check:', {
-      season: enhancedUser.season,
-      occasion: enhancedUser.occasion,
-      hasInitialized,
-      isFetching
-    });
-    
-    if (enhancedUser.season && enhancedUser.occasion && !hasInitialized && !isFetching) {
-      debugLog('Starting initialization - all conditions met');
-      setHasInitialized(true);
-      loadRecommendations();
-      viewRecommendation();
+    // Only initialize once when component mounts with valid data
+    if (!hasInitialized && !isFetching) {
+      debugLog('EnhancedResultsPage mounting - checking for data');
+      
+      // Check if we have onboarding data from navigation state
+      const hasOnboardingData = location.state?.onboardingData || location.state?.answers;
+      
+      if (hasOnboardingData) {
+        debugLog('Found onboarding data, starting initialization');
+        setHasInitialized(true);
+        loadRecommendations();
+        viewRecommendation();
+      } else if (enhancedUser.season && enhancedUser.occasion) {
+        debugLog('Found enhanced user data, starting initialization');
+        setHasInitialized(true);
+        loadRecommendations();
+        viewRecommendation();
+      } else {
+        debugLog('No valid data found, redirecting to onboarding');
+        setTimeout(() => {
+          navigate('/onboarding');
+        }, 2000);
+      }
     }
-  }, [enhancedUser.season, enhancedUser.occasion, hasInitialized, isFetching, loadRecommendations, viewRecommendation]);
+  }, [hasInitialized, isFetching, location.state, enhancedUser, loadRecommendations, viewRecommendation, navigate]);
   
   // Fallback redirect if missing data after timeout
   useEffect(() => {
