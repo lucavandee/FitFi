@@ -1,391 +1,303 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Heart, 
-  Share2, 
-  ShoppingBag, 
-  Star, 
-  ExternalLink, 
-  Bookmark,
-  BookmarkCheck,
-  ThumbsUp,
-  ThumbsDown,
-  ChevronDown,
-  ChevronUp,
-  Info
-} from 'lucide-react';
-import Button from './Button';
-import ImageWithFallback from './ImageWithFallback';
-import { generateOutfitExplanation } from '../../engine/explainOutfit';
-import { UserProfile } from '../../context/UserContext';
-import { getSafeUser } from '../../utils/userUtils';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-interface Outfit {
-  id: string;
-  title: string;
-  description: string;
-  matchPercentage: number;
-  imageUrl: string;
-  items: {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    imageUrl: string;
-    url: string;
-    retailer: string;
-    category: string;
-  }[];
-  tags: string[];
-  occasions: string[];
-  explanation: string;
-  archetype?: string;
-  secondaryArchetype?: string;
-  mixFactor?: number;
-  season?: string;
-  weather?: string;
-  structure?: string[];
-  categoryRatio?: Record<string, number>;
-  completeness?: number;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-interface OutfitCardProps {
-  outfit: Outfit;
-  onNewLook?: () => void;
-  isGenerating?: boolean;
-  user?: UserProfile;
-}
-
-const OutfitCard: React.FC<OutfitCardProps> = ({
-  outfit, onNewLook, isGenerating, user
-}) => {
-  // Early return if outfit is invalid
-  if (!outfit || !outfit.id) {
-    console.warn('[⚠️ OutfitCard] Invalid outfit provided:', outfit);
-    return null;
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
   }
   
-  const [showItems, setShowItems] = useState(false);
-  const [feedback, setFeedback] = useState<'liked' | 'disliked' | null>(null);
-  const [showExplanationTooltip, setShowExplanationTooltip] = useState(false);
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
   
-  // Get safe user
-  const safeUser = getSafeUser(user);
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
   
-  // Generate explanation if not provided
-  const [explanation, setExplanation] = useState<string>(outfit.explanation || '');
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
   
-  useEffect(() => {
-    try {
-    // If explanation is not provided, generate one
-    if (!outfit.explanation && outfit.archetype) {
-        const generatedExplanation = generateOutfitExplanation(
-          outfit,
-          outfit.archetype,
-          outfit.occasions && outfit.occasions.length > 0 ? outfit.occasions[0] : 'Casual',
-          safeUser.name?.split(' ')?.[0]
-        );
-        
-        setExplanation(generatedExplanation);
-        
-        // Log the generated explanation
-        if (import.meta.env.DEV) {
-          console.log(`Generated explanation for outfit ${outfit.id}:`, generatedExplanation);
-        }
-        
-        // Track explanation generation in analytics
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'explanation_generated', {
-            event_category: 'engagement',
-            event_label: outfit.id,
-            outfit_id: outfit.id,
-            outfit_title: outfit.title,
-            outfit_archetype: outfit.archetype
-          });
-        }
-    } else {
-      setExplanation(outfit.explanation || 'Past bij jouw stijlvoorkeuren');
-    }
-    } catch (error) {
-      console.error('[❌ OutfitCard] Error generating explanation:', error);
-      setExplanation('Past bij jouw stijlvoorkeuren');
-    }
-  }, [outfit, safeUser]);
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
   
-  const handleProductClick = (url: string) => {
-    try {
-      if (!url || url === '#') {
-        console.warn('[⚠️ OutfitCard] Invalid product URL:', url);
-        return;
-      }
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (error) {
-      console.error('[❌ OutfitCard] Error opening product URL:', error);
-    }
-  };
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
   
-  const handleLike = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (feedback !== 'liked') {
-      setFeedback('liked');
-      
-      // Track in analytics
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'outfit_like', {
-          event_category: 'engagement',
-          event_label: outfit.id,
-          outfit_id: outfit.id,
-          outfit_title: outfit.title
-        });
-      }
-    }
-  };
-
-  const handleDislike = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (feedback !== 'disliked') {
-      setFeedback('disliked');
-      
-      // Track in analytics
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'outfit_dislike', {
-          event_category: 'engagement',
-          event_label: outfit.id,
-          outfit_id: outfit.id,
-          outfit_title: outfit.title
-        });
-      }
-    }
-  };
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
   
-  const handleExplanationClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowExplanationTooltip(!showExplanationTooltip);
-    
-    // Track explanation click in analytics
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'explanation_click', {
-        event_category: 'engagement',
-        event_label: outfit.id,
-        outfit_id: outfit.id,
-        outfit_title: outfit.title
-      });
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
+
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
-  };
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-  // Ensure items array exists and has a length property
-  const items = outfit.items || [];
-  const tags = outfit.tags || [];
-  const occasions = outfit.occasions || [];
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  return (
-    <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 overflow-hidden">
-      {/* Header with outfit image */}
-      <div className="relative">
-        <div className="aspect-[4/5] overflow-hidden bg-gray-100">
-          <ImageWithFallback 
-            src={outfit.imageUrl} 
-            alt={outfit.title}
-            className="w-full h-full object-cover"
-            componentName="OutfitCard"
-            fallbackSrc="/placeholder.png"
-          />
-          <div className="absolute top-4 left-4 bg-secondary/90 text-primary px-3 py-1 rounded-full text-sm font-bold flex items-center">
-            <Star size={14} className="mr-1" />
-            {outfit.matchPercentage}% Match
-          </div>
-          
-          <div className="absolute bottom-4 right-4 flex space-x-2">
-            <button 
-              className="p-2 rounded-full bg-primary/90 text-secondary hover:bg-primary transition-colors focus:outline-none focus:ring-2 focus:ring-secondary"
-              aria-label="Opslaan in favorieten"
-            >
-              <Bookmark size={16} />
-            </button>
-            <button 
-              className="p-2 rounded-full bg-primary/90 text-secondary hover:bg-primary transition-colors focus:outline-none focus:ring-2 focus:ring-secondary"
-              aria-label="Delen"
-            >
-              <Share2 size={16} />
-            </button>
-          </div>
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-          {/* Occasions indicator */}
-          <div className="absolute bottom-4 left-4 bg-primary/70 text-secondary px-2 py-1 rounded-md text-xs">
-            {occasions.length > 0 ? occasions.slice(0, 2).join(', ') : 'Alle gelegenheden'}
-          </div>
-        </div>
-      </div>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-      {/* Content */}
-      <div className="space-y-6">
-        {/* Title and description */}
-        <div>
-          <h3 className="text-3xl font-semibold text-secondary mb-2">
-            {outfit.title}
-          </h3>
-          <p className="text-base leading-relaxed text-text-dark">
-            {outfit.description}
-          </p>
-        </div>
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-        {/* Explanation with info icon */}
-        <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 relative">
-          <div className="flex items-start">
-            <p className="text-text-dark text-base italic flex-1 pr-6">
-              {explanation || 'Past bij jouw stijlvoorkeuren'}
-            </p>
-            <button 
-              onClick={handleExplanationClick}
-              className="absolute top-4 right-4 text-gray-500 hover:text-text-dark transition-colors focus:outline-none focus:ring-2 focus:ring-secondary rounded-full p-1"
-              aria-label="Meer informatie"
-            >
-              <Info size={16} />
-            </button>
-          </div>
-          
-          {/* Explanation tooltip */}
-          {showExplanationTooltip && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-gray-500 text-xs">
-                Deze uitleg is gegenereerd door onze AI op basis van jouw stijlvoorkeuren, 
-                de geselecteerde items, en de gelegenheid waarvoor deze outfit is samengesteld.
-              </p>
-            </div>
-          )}
-        </div>
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {tags.slice(0, 3).map((tag, index) => (
-            <span 
-              key={index}
-              className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
-            >
-              #{tag}
-            </span>
-          ))}
-          {tags.length > 3 && (
-            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-              +{tags.length - 3} meer
-            </span>
-          )}
-        </div>
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
 
-        {/* Feedback buttons */}
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={handleLike}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-secondary ${
-              feedback === 'liked'
-                ? 'bg-secondary/20 text-secondary'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-text-dark'
-            }`}
-            aria-label="Like outfit"
-          >
-            <ThumbsUp size={16} />
-            <span>Like</span>
-          </button>
-          <button
-            onClick={handleDislike}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-secondary ${
-              feedback === 'disliked'
-                ? 'bg-red-100 text-red-600'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-text-dark'
-            }`}
-            aria-label="Dislike outfit"
-          >
-            <ThumbsDown size={16} />
-            <span>Dislike</span>
-          </button>
-        </div>
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
 
-        {/* Price and main CTA */}
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-3xl font-bold text-text-dark">
-              €{items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
-            </span>
-            <span className="text-base text-gray-600 ml-2">
-              complete look
-            </span>
-          </div>
-          
-          <Button
-            variant="primary"
-            size="md"
-            icon={<ShoppingBag size={16} />}
-            iconPosition="left"
-            className="bg-secondary text-primary py-3 px-6 rounded-full font-medium shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all"
-          >
-            Shop Look
-          </Button>
-        </div>
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
 
-        {/* Expandable items section */}
-        <div className="border-t border-gray-200 pt-4">
-          <button
-            onClick={() => setShowItems(!showItems)}
-            className="w-full flex items-center justify-between text-base font-medium text-gray-600 hover:text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-secondary rounded-2xl p-2"
-          >
-            <span>Bekijk alle items ({items.length})</span>
-            {showItems ? (
-              <ChevronUp size={16} />
-            ) : (
-              <ChevronDown size={16} />
-            )}
-          </button>
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-          {showItems && (
-            <div className="mt-4 space-y-4 animate-fade-in">
-              {items.map((item, index) => {
-                try {
-                  if (!item || !item.id) {
-                    console.warn(`[⚠️ OutfitCard] Invalid item at index ${index}:`, item);
-                    return null;
-                  }
-                  
-                  return (
-                    <div 
-                      key={item.id || `item-${index}`}
-                      className="flex items-center space-x-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer group focus:outline-none focus:ring-2 focus:ring-secondary"
-                      onClick={() => handleProductClick(item.url || '#')}
-                    >
-                      <ImageWithFallback 
-                        src={item.imageUrl || '/placeholder.png'} 
-                        alt={item.name || 'Product image'}
-                        className="w-16 h-16 object-cover rounded-2xl"
-                        componentName={`OutfitCard_Item_${index}`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-base font-medium text-text-dark truncate">
-                          {item.name}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {item.brand} • {item.category}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-base font-medium text-text-dark">
-                          €{typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {item.retailer || 'Unknown Store'}
-                        </p>
-                      </div>
-                      <ExternalLink size={16} className="text-gray-600 group-hover:text-secondary transition-colors" />
-                    </div>
-                  );
-                } catch (error) {
-                  console.error(`[❌ OutfitCard] Error rendering item ${index}:`, error);
-                  return null;
-                }
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
 
-export default OutfitCard;
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}

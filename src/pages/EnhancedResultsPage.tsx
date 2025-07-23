@@ -1,572 +1,303 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useMemo } from 'react';
-import { 
-  Heart, 
-  Share2, 
-  ShoppingBag, 
-  Sparkles, 
-  Bookmark,
-  BookmarkCheck,
-  Star,
-  Clock,
-  Zap,
-  Award,
-  TrendingUp,
-  ChevronDown,
-  ChevronUp,
-  ShieldCheck,
-  CheckCircle,
-  AlertCircle,
-  RotateCw,
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw
-} from 'lucide-react';
-import Button from '../components/ui/Button';
-import { useUser } from '../context/UserContext';
-import { useGamification } from '../context/GamificationContext';
-import { DUTCH_ARCHETYPES, mapAnswersToArchetype, getArchetypeById } from '../config/profile-mapping.js';
-import curatedProducts from '../config/curated-products.json';
-import ImageWithFallback from '../components/ui/ImageWithFallback';
-import { getOutfits, getRecommendedProducts } from '../services/DataRouter';
-import { getSafeUser } from '../utils/userUtils';
-import { env } from '../utils/env';
-import toast from 'react-hot-toast';
-import { generateSmartDefaults } from '../utils/smartDefaults';
-import { quickRetry, smartRetry, progressiveRetry, analyzeMissingData } from '../utils/quickRetry';
-import DevDataPanel from '../components/DevDataPanel';
-import OutfitCard from '../components/ui/OutfitCard';
-import { motion, AnimatePresence } from 'framer-motion';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-interface Outfit {
-  id: string;
-  title: string;
-  description: string;
-  matchPercentage: number;
-  imageUrl: string;
-  items: {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    imageUrl: string;
-    url: string;
-    retailer: string;
-    category: string;
-  }[];
-  tags: string[];
-  occasions: string[];
-  explanation: string;
-  archetype?: string;
-  secondaryArchetype?: string;
-  mixFactor?: number;
-  season?: string;
-  weather?: string;
-  structure?: string[];
-  categoryRatio?: Record<string, number>;
-  completeness?: number;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  imageUrl: string;
-  url: string;
-  retailer: string;
-  category: string;
-  rating?: number;
-  inStock?: boolean;
-}
-
-interface PsychographicProfile {
-  type: string;
-  title: string;
-  description: string;
-  characteristics: string[];
-  styleKeywords: string[];
-  motivationalMessage: string;
-  icon: string;
-}
-
-interface LoadingStep {
-  id: string;
-  label: string;
-  completed: boolean;
-}
-
-const EnhancedResultsPage: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user, saveRecommendation } = useUser();
-  const { viewRecommendation, saveOutfit } = useGamification();
-  
-  // State management
-  const [outfits, setOutfits] = useState<Outfit[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [psychographicProfile, setPsychographicProfile] = useState<PsychographicProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [savedOutfits, setSavedOutfits] = useState<string[]>([]);
-  const [currentOutfitIndex, setCurrentOutfitIndex] = useState(0);
-
-  // Get data from location state
-  const quizAnswers = location.state?.answers || location.state?.onboardingData || {};
-  const safeUser = getSafeUser(user);
-  
-  // Enhanced user data with season and occasion
-  const enhancedUser = {
-    ...safeUser,
-    season: quizAnswers.season || 'herfst',
-    occasion: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion[0] : (quizAnswers.occasion || 'Casual'),
-    occasions: Array.isArray(quizAnswers.occasion) ? quizAnswers.occasion : [quizAnswers.occasion || 'Casual']
-  };
-  
-  // Single initialization effect - no dependencies to prevent loops
-  useEffect(() => {
-    const initializeResults = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Analytics tracking
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'page_view', {
-            page_title: 'Enhanced Results Page',
-            page_location: window.location.href
-          });
-        }
-        
-        // Analyze profile
-        const profile = analyzePsychographicProfile(quizAnswers);
-        setPsychographicProfile(profile);
-        
-        // Load outfits
-        const outfitData = await getOutfits(safeUser, { count: 3 });
-        setOutfits(outfitData || []);
-        
-        // Load products
-        const productData = await getRecommendedProducts(safeUser, 6);
-        setProducts(productData || []);
-        
-        // Complete gamification action
-        viewRecommendation();
-        
-      } catch (err) {
-        console.error('[EnhancedResultsPage] Initialization error:', err);
-        setError('Er ging iets mis bij het laden van je aanbevelingen');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    initializeResults();
-  }, []); // Empty deps - only run once on mount
-
-  const analyzePsychographicProfile = (answers: Record<string, any>): PsychographicProfile => {
-    if (!answers || Object.keys(answers).length === 0) {
-      return {
-        type: 'casual_chic',
-        title: 'Casual Chic Explorer',
-        description: 'Je hebt een evenwichtige benadering van mode.',
-        characteristics: ['Veelzijdig', 'Open-minded', 'Praktisch'],
-        styleKeywords: ['versatile', 'timeless', 'adaptable'],
-        motivationalMessage: 'Jouw openheid voor verschillende stijlen maakt je uniek.',
-        icon: '🌟'
-      };
-    }
-
-    const archetypeId = mapAnswersToArchetype(answers);
-    const archetype = getArchetypeById(archetypeId);
-    const gender = answers.gender;
-
-    return {
-      type: archetypeId,
-      title: archetype.displayName,
-      description: archetype.description,
-      characteristics: archetype.keywords,
-      styleKeywords: archetype.keywords,
-      motivationalMessage: `${gender === 'male' ? 'Voor de moderne man' : 'Voor de zelfverzekerde vrouw'} hebben we outfits geselecteerd die jouw ${archetype.displayName.toLowerCase()} smaak weerspiegelen.`,
-      icon: archetype.icon
-    };
-  };
-
-  // Carousel navigation
-  const nextOutfit = () => {
-    setCurrentOutfitIndex(prev => (prev + 1) % outfits.length);
-  };
-
-  const prevOutfit = () => {
-    setCurrentOutfitIndex(prev => (prev - 1 + outfits.length) % outfits.length);
-  };
-
-  // Save outfit functionality
-  const handleSaveOutfit = async (outfitId: string) => {
-    try {
-      await saveRecommendation(outfitId);
-      setSavedOutfits(prev => [...prev, outfitId]);
-      toast.success('Outfit opgeslagen!');
-      
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'outfit_saved', {
-          event_category: 'engagement',
-          event_label: outfitId
-        });
-      }
-    } catch (error) {
-      console.error('Error saving outfit:', error);
-      toast.error('Kon outfit niet opslaan');
-    }
-  };
-
-  // Memoized outfit cards to prevent unnecessary re-renders
-  const memoizedOutfitCards = useMemo(() => {
-    if (!outfits.length) return null;
-    
-    return outfits.map((outfit, index) => (
-      <OutfitCard
-        key={outfit.id}
-        outfit={outfit}
-        user={safeUser}
-      />
-    ));
-  }, [outfits, safeUser]);
-
-  // Sticky footer actions
-  const handleSaveFavorites = () => {
-    if (outfits.length > 0) {
-      outfits.forEach(outfit => handleSaveOutfit(outfit.id));
-    }
-  };
-
-  const handleRetakeQuiz = () => {
-    navigate('/onboarding');
-  };
-
-  const handleShopTop3 = () => {
-    if (outfits.length > 0 && outfits[0].items.length > 0) {
-      window.open(outfits[0].items[0].url, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              className="w-16 h-16 mx-auto mb-6 relative"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            >
-              <div className="absolute inset-0 border-4 border-orange-500 border-t-transparent rounded-full" />
-            </motion.div>
-
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              AI aan het werk
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Je persoonlijke aanbevelingen worden samengesteld...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
   }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-md mx-auto text-center">
-            <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg">
-              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Er ging iets mis
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {error}
-              </p>
-              <div className="space-y-3">
-                <Button
-                  variant="primary"
-                  onClick={() => window.location.reload()}
-                  icon={<RotateCw size={16} />}
-                  iconPosition="left"
-                  fullWidth
-                >
-                  Probeer opnieuw
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/onboarding')}
-                  fullWidth
-                >
-                  Terug naar quiz
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
   }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-      {/* Hero Section */}
-      <div className="bg-white dark:bg-midnight-800 border-b border-lightGrey-200 dark:border-midnight-600 transition-colors">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-4 md:mb-0">
-                <h1 className="text-3xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
-                  Hallo {safeUser.name?.split(' ')[0] || 'Stijlzoeker'}! 👋
-                </h1>
-                <p className="text-lg text-textSecondary-light dark:text-textSecondary-dark">
-                  Dit is jouw persoonlijke stijlcoach in actie – swipe meer om 'm slimmer te maken.
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/onboarding')}
-                icon={<ArrowLeft size={16} />}
-                iconPosition="left"
-                className="self-start md:self-center"
-              >
-                Terug naar de quiz
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
 
-      {/* Profile Introduction */}
-      {psychographicProfile && (
-        <div className="bg-gradient-to-r from-turquoise-50 to-lightGrey-50 dark:from-midnight-800 dark:to-midnight-700 transition-colors">
-          <div className="container mx-auto px-4 py-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white/80 dark:bg-midnight-800/80 rounded-xl p-6 backdrop-blur-sm">
-                <div className="flex items-start space-x-4">
-                  <div className="text-4xl">{psychographicProfile.icon}</div>
-                  <div className="flex-1">
-                    <h2 className="text-2xl font-semibold text-textPrimary-light dark:text-textPrimary-dark mb-3">
-                      Jij bent {psychographicProfile.title}
-                    </h2>
-                    <h3 className="text-lg text-textSecondary-light dark:text-textSecondary-dark mb-4">
-                      {psychographicProfile.description}
-                    </h3>
-                    <p className="text-textSecondary-light dark:text-textSecondary-dark">
-                      {psychographicProfile.motivationalMessage}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-      {/* Outfits Section */}
-      <div className="bg-lightGrey-50 dark:bg-midnight-900 transition-colors">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
-                Jouw top 3 outfits
-              </h2>
-              <div className="space-y-1">
-                <p className="text-textSecondary-light dark:text-textSecondary-dark">
-                  {enhancedUser.season} • {enhancedUser.occasion}
-                </p>
-              </div>
-            </div>
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-            {outfits.length > 0 ? (
-              <>
-                {/* Desktop Grid */}
-                <div className="hidden md:grid md:grid-cols-3 gap-8">
-                  {memoizedOutfitCards}
-                </div>
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-                {/* Mobile Carousel */}
-                <div className="md:hidden">
-                  <div className="relative">
-                    <div 
-                      className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-                      style={{ scrollBehavior: 'smooth' }}
-                    >
-                      {outfits.map((outfit, index) => (
-                        <div key={outfit.id} className="flex-none w-full px-4 snap-center">
-                          <OutfitCard outfit={outfit} user={safeUser} />
-                        </div>
-                      ))}
-                    </div>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-                    {/* Navigation buttons */}
-                    <button
-                      onClick={prevOutfit}
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 rounded-full p-2 shadow-lg"
-                      disabled={currentOutfitIndex === 0}
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <button
-                      onClick={nextOutfit}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 rounded-full p-2 shadow-lg"
-                      disabled={currentOutfitIndex === outfits.length - 1}
-                    >
-                      <ChevronRight size={20} />
-                    </button>
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-                    {/* Dots indicator */}
-                    <div className="flex justify-center mt-4 space-x-2">
-                      {outfits.map((_, index) => (
-                        <button
-                          key={index}
-                          className={`w-2 h-2 rounded-full transition-colors ${
-                            index === currentOutfitIndex ? 'bg-orange-500' : 'bg-gray-300'
-                          }`}
-                          onClick={() => setCurrentOutfitIndex(index)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <div className="bg-white dark:bg-midnight-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
-                  <AlertCircle className="w-16 h-16 text-turquoise-500 mx-auto mb-6" />
-                  <h3 className="text-xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-3">
-                    Geen outfits gevonden
-                  </h3>
-                  <p className="text-textSecondary-light dark:text-textSecondary-dark mb-6">
-                    We konden geen outfits vinden die bij jouw stijlprofiel passen.
-                  </p>
-                  <div className="space-y-3">
-                    <Button
-                      variant="primary"
-                      onClick={() => window.location.reload()}
-                      icon={<RotateCw size={16} />}
-                      iconPosition="left"
-                      fullWidth
-                    >
-                      Probeer opnieuw
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
 
-      {/* Products Section */}
-      <div className="bg-white dark:bg-midnight-800 transition-colors">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-textPrimary-light dark:text-textPrimary-dark mb-2">
-                Aanbevolen producten
-              </h2>
-              <p className="text-textSecondary-light dark:text-textSecondary-dark">
-                Individuele items die perfect bij jouw stijl passen
-              </p>
-            </div>
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
 
-            {products.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {products.map((product) => (
-                  <div 
-                    key={product.id}
-                    className="bg-lightGrey-50 dark:bg-midnight-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() => window.open(product.url, '_blank', 'noopener,noreferrer')}
-                  >
-                    <div className="aspect-square">
-                      <ImageWithFallback
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                        componentName="EnhancedResultsPage_Product"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-medium text-textPrimary-light dark:text-textPrimary-dark text-sm truncate">
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-textSecondary-light dark:text-textSecondary-dark mb-2">
-                        {product.brand}
-                      </p>
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-textPrimary-light dark:text-textPrimary-dark text-sm">
-                          €{product.price.toFixed(2)}
-                        </span>
-                        <button className="text-turquoise-500 hover:text-turquoise-600">
-                          <ShoppingBag size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-textSecondary-light dark:text-textSecondary-dark">
-                  Geen producten beschikbaar
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
 
-      {/* Sticky Footer CTAs */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-midnight-800 border-t border-lightGrey-200 dark:border-midnight-600 p-4 z-50 transition-colors">
-        <div className="container mx-auto">
-          <div className="flex flex-col sm:flex-row gap-3 max-w-4xl mx-auto">
-            <Button
-              variant="outline"
-              onClick={handleSaveFavorites}
-              icon={<Heart size={16} />}
-              iconPosition="left"
-              className="flex-1"
-              disabled={outfits.length === 0}
-            >
-              Sla favoriete outfits op
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleRetakeQuiz}
-              icon={<RefreshCw size={16} />}
-              iconPosition="left"
-              className="flex-1"
-            >
-              Bekijk de quiz opnieuw
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleShopTop3}
-              icon={<ShoppingBag size={16} />}
-              iconPosition="left"
-              className="flex-1"
-              disabled={outfits.length === 0}
-            >
-              Shop jouw top 3
-            </Button>
-          </div>
-        </div>
-      </div>
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
 
-      {/* Bottom padding for sticky footer */}
-      <div className="h-20" />
-    </div>
-  );
-};
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-export default EnhancedResultsPage;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}

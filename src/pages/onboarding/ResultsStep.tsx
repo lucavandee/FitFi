@@ -1,423 +1,303 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ShieldCheck, Heart, ShoppingBag, Star } from 'lucide-react';
-import Button from '../../components/ui/Button';
-import { useOnboarding } from '../../context/OnboardingContext';
-import { motion } from 'framer-motion';
-import { useNavigationService } from '../../services/NavigationService';
-import ImageWithFallback from '../../components/ui/ImageWithFallback';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-const ResultsStep: React.FC = () => {
-  const { data, submitOnboarding, isSubmitting, goToPreviousStep } = useOnboarding();
-  const navigationService = useNavigationService();
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Track when the component is mounted
-  useEffect(() => {
-    // Track step view in analytics
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'quiz_step_view', {
-        event_category: 'questionnaire',
-        event_label: 'results',
-        step_name: 'results'
-      });
-    }
-    
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // Get primary archetype
-  const primaryArchetype = data.archetypes?.[0] || 'casual_chic';
-  
-  // Get archetype display name
-  const getArchetypeName = (archetype: string): string => {
-    const archetypeNames: Record<string, string> = {
-      'urban': 'Modern Minimalist',
-      'casual_chic': 'Casual Chic',
-      'klassiek': 'Klassiek Elegant',
-      'streetstyle': 'Streetstyle',
-      'retro': 'Retro'
-    };
-    
-    return archetypeNames[archetype] || 'Casual Chic';
-  };
-  
-  // Get archetype percentage
-  const getArchetypePercentage = (archetype: string, index: number): number => {
-    if (index === 0) return 80;
-    if (index === 1) return 20;
-    return 0;
-  };
-  
-  // Get archetype color
-  const getArchetypeColor = (archetype: string): string => {
-    const archetypeColors: Record<string, string> = {
-      'urban': '#bfae9f',
-      'casual_chic': '#0ea5e9',
-      'klassiek': '#8b5cf6',
-      'streetstyle': '#f97316',
-      'retro': '#ec4899'
-    };
-    
-    return archetypeColors[archetype] || '#bfae9f';
-  };
-  
-  // Get archetype description
-  const getArchetypeDescription = (archetype: string): string => {
-    const archetypeDescriptions: Record<string, string> = {
-      'urban': 'Je houdt van strakke lijnen, neutrale kleuren en tijdloze stukken die veelzijdig te combineren zijn.',
-      'casual_chic': 'Je combineert comfort met stijl, met een voorkeur voor moeiteloze elegantie en veelzijdige items.',
-      'klassiek': 'Je waardeert tijdloze elegantie, hoogwaardige materialen en verfijnde details in je kleding.',
-      'streetstyle': 'Je hebt een expressieve stijl met invloeden uit urban cultuur, gedurfde combinaties en statement pieces.',
-      'retro': 'Je houdt van vintage-geïnspireerde stukken met een moderne twist, unieke items en nostalgische elementen.'
-    };
-    
-    return archetypeDescriptions[archetype] || 'Je hebt een veelzijdige stijl die verschillende elementen combineert.';
-  };
-  
-  // Mock outfits based on archetype
-  const getOutfits = (archetype: string) => {
-    const outfits = [
-      {
-        id: 'outfit-1',
-        title: 'Casual Chic Look',
-        description: 'Een moeiteloze combinatie van comfort en stijl, perfect voor dagelijks gebruik.',
-        imageUrl: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2',
-        matchPercentage: 92,
-        tags: ['casual', 'comfortable', 'everyday', 'minimal']
-      },
-      {
-        id: 'outfit-2',
-        title: 'Business Casual',
-        description: 'Professioneel maar comfortabel, perfect voor kantoor of zakelijke afspraken.',
-        imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2',
-        matchPercentage: 88,
-        tags: ['business', 'professional', 'smart', 'elegant']
-      }
-    ];
-    
-    return outfits;
-  };
-  
-  // Mock individual items
-  const getItems = () => {
-    return [
-      {
-        id: 'item-1',
-        name: 'Oversized Cotton Shirt',
-        brand: 'COS',
-        price: 59.95,
-        imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2'
-      },
-      {
-        id: 'item-2',
-        name: 'High Waist Mom Jeans',
-        brand: 'Levi\'s',
-        price: 99.95,
-        imageUrl: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2'
-      },
-      {
-        id: 'item-3',
-        name: 'White Sneakers',
-        brand: 'Adidas',
-        price: 89.95,
-        imageUrl: 'https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2'
-      }
-    ];
-  };
-  
-  // Get outfits and items
-  const outfits = getOutfits(primaryArchetype);
-  const items = getItems();
-  
-  // Handle submit
-  const handleSubmit = async () => {
-    console.log('[ResultsStep] Submit clicked, calling submitOnboarding');
-    try {
-      // Force navigation to enhanced results with current data
-      console.log('[FIX] ResultsStep: Forcing navigation to enhanced results');
-      await navigationService.navigateToEnhancedResults(data, {
-        loadingMessage: 'Aanbevelingen worden geladen...',
-        fallbackRoute: '/onboarding',
-        onError: (error) => {
-          console.error('[ResultsStep] Navigation error:', error);
-          // Last resort - direct navigation
-          window.location.href = '/results';
-        }
-      });
-    } catch (error) {
-      console.error('[ResultsStep] Error submitting onboarding:', error);
-      // Force navigation even on error
-      window.location.href = '/results';
-    }
-  };
-  
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-light-grey flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-turquoise border-t-transparent rounded animate-spin mx-auto mb-6"></div>
-          <h2 className="text-h2 font-bold text-text-primary mb-3 font-display">
-            Je stijlprofiel wordt gemaakt...
-          </h2>
-          <p className="text-text-secondary">
-            Onze AI analyseert je voorkeuren
-          </p>
-        </div>
-      </div>
-    );
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6;
   }
   
-  return (
-    <div className="min-h-screen bg-light-grey">
-      <div className="container mx-auto px-6 py-16">
-        <div className="max-w-4xl mx-auto">
-          {/* Progress indicator */}
-          <div className="mb-10">
-            <div className="flex justify-between text-sm text-text-secondary mb-2">
-              <span>Stap 3 van 3</span>
-              <span>100%</span>
-            </div>
-            <div className="h-1.5 bg-light-grey/50 rounded overflow-hidden">
-              <div
-                className="h-full bg-turquoise rounded transition-all duration-300"
-                style={{ width: '100%' }}
-              ></div>
-            </div>
-          </div>
+  .quiz-container {
+    @apply bg-accent text-text-dark max-w-2xl mx-auto p-6 rounded-2xl shadow-lg;
+  }
+  
+  .card-section {
+    @apply bg-accent p-6 rounded-2xl shadow-lg space-y-6 text-text-dark;
+  }
+  
+  .input {
+    @apply w-full p-6 rounded-2xl border border-gray-300 bg-white text-text-dark placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .btn-ghost {
+            <div className="mt-8 bg-accent rounded-2xl shadow-lg p-6 flex items-center justify-center space-x-2">
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+  }
+  
+  .quiz-button {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .dashboard-card {
+    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+  }
+  
+  .tab-inactive {
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+  }
+  
+  .tab-active {
+    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+  }
+  
+  .text-heading {
+    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed mb-6;
+  }
+  
+  .container-fitfi {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-accent/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
+  
+  /* Custom slider styling */
+  .slider {
+    background: linear-gradient(to right, #89CFF0 0%, #89CFF0 var(--value, 50%), #F6F6F6 var(--value, 50%), #F6F6F6 100%);
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #89CFF0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .error-state {
+    @apply bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl;
+  }
+  
+  .success-state {
+    @apply bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl;
+  }
+  
+  .info-state {
+    @apply bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-2xl;
+  }
+  
+  .stijlscan-container {
+    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+  }
+  
+  .stijlscan-option {
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+  }
+  
+  .progress-bar-track {
+    @apply w-full bg-primary-light rounded-full h-2;
+  }
+  
+  .progress-bar-fill {
+    @apply bg-secondary h-2 rounded-full transition-all;
+  }
+  
+  .loading-skeleton {
+    @apply bg-gray-200 animate-pulse rounded-2xl;
+  }
+}
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="text-center mb-8">
-              <h1 className="text-h1 font-bold text-textPrimary mb-3 font-display">
-                Jouw persoonlijke stijlprofiel
-              </h1>
-              <p className="text-text-secondary">
-                Op basis van je voorkeuren hebben we een uniek stijlprofiel voor je gemaakt
-              </p>
-            </div>
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    @apply bg-primary text-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+  }
+  
+  h2 {
+    @apply text-4xl font-semibold text-secondary;
+  }
+  
+  h3 {
+    @apply text-3xl font-semibold text-secondary;
+  }
+  
+  p, span, li {
+    @apply text-base leading-relaxed text-body;
+  }
+  
+  a {
+    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+  }
+}
 
-            {/* Style Profile */}
-            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden mb-10">
-              <div className="p-8">
-                <div className="flex flex-col md:flex-row items-center">
-                  <div className="md:w-1/2 mb-8 md:mb-0 flex justify-center">
-                    <div className="relative w-64 h-64">
-                      {/* Circular chart */}
-                      <svg viewBox="0 0 100 100" className="w-full h-full">
-                        {/* Background circle */}
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="#E6E6E6" strokeWidth="10" />
-                        
-                        {/* Primary archetype segment - 80% */}
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="45" 
-                          fill="none" 
-                          stroke={getArchetypeColor(data.archetypes?.[0] || 'urban')} 
-                          strokeWidth="10" 
-                          strokeDasharray="282.6, 353.25" 
-                          strokeDashoffset="0" 
-                          transform="rotate(-90 50 50)" 
-                        />
-                        
-                        {/* Secondary archetype segment - 20% */}
-                        {data.archetypes?.[1] && (
-                          <circle 
-                            cx="50" 
-                            cy="50" 
-                            r="45" 
-                            fill="none" 
-                            stroke={getArchetypeColor(data.archetypes[1])} 
-                            strokeWidth="10" 
-                            strokeDasharray="70.65, 353.25" 
-                            strokeDashoffset="-282.6" 
-                            transform="rotate(-90 50 50)" 
-                          />
-                        )}
-                        
-                        {/* Center text */}
-                        <text x="50" y="45" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#333">
-                          Jouw Stijlprofiel
-                        </text>
-                        <text x="50" y="60" textAnchor="middle" fontSize="10" fill="#666">
-                          {getArchetypeName(data.archetypes?.[0] || 'urban')}
-                        </text>
-                      </svg>
-                    </div>
-                  </div>
-                  
-                  <div className="md:w-1/2">
-                    <h3 className="font-bold text-text-primary text-xl mb-6">
-                      Jouw stijlmix
-                    </h3>
-                    
-                    <div className="space-y-6">
-                      {data.archetypes?.map((archetype, index) => (
-                        <div key={archetype}>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="font-medium text-text-primary">{getArchetypeName(archetype)}</span>
-                            <span className="text-text-secondary">{getArchetypePercentage(archetype, index)}%</span>
-                          </div>
-                          <div className="w-full bg-light-grey/50 rounded h-1.5">
-                            <div 
-                              className="h-1.5 rounded" 
-                              style={{ 
-                                width: `${getArchetypePercentage(archetype, index)}%`,
-                                backgroundColor: getArchetypeColor(archetype)
-                              }}
-                            ></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="mt-8 p-6 bg-turquoise/10 rounded text-sm text-textSecondary">
-                      <p>
-                        <strong>{getArchetypeName(data.archetypes?.[0] || 'urban')}:</strong> {getArchetypeDescription(data.archetypes?.[0] || 'urban')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+@layer components {
+  .container-slim {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-slim {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-slim {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section-wrapper {
+    @apply max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
 
-            {/* Outfit Recommendations */}
-            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden mb-10">
-              <div className="p-8">
-                <h3 className="font-bold text-text-primary text-xl mb-8">
-                  Outfits voor jou
-                </h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {outfits.map((outfit) => (
-                    <div key={outfit.id} className="bg-light-grey rounded overflow-hidden shadow-sm border border-light-grey">
-                      <div className="relative">
-                        <ImageWithFallback 
-                          src={outfit.imageUrl} 
-                          alt={outfit.title}
-                          className="w-full h-64 object-cover"
-                          componentName="ResultsStep"
-                        />
-                        <div className="absolute top-4 left-4 bg-white/90 text-turquoise px-4 py-2 rounded text-sm font-bold flex items-center">
-                          <Star size={14} className="mr-1" />
-                          {outfit.matchPercentage}% Match
-                        </div>
-                      </div>
-                      
-                      <div className="p-4">
-                        <h4 className="font-bold text-text-primary mb-2">{outfit.title}</h4>
-                        <p className="text-text-secondary text-sm mb-4">
-                          {outfit.description}
-                        </p>
-                        
-                        <div className="flex space-x-2 mb-6">
-                          {outfit.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className="px-3 py-1 bg-light-grey text-text-secondary rounded text-xs">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        
-                        <div className="flex space-x-3">
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            icon={<ShoppingBag size={16} />}
-                            iconPosition="left"
-                            className="flex-1"
-                          >
-                            Bekijk outfit
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={<Heart size={16} />}
-                            iconPosition="left"
-                            className="w-10 h-10 p-0 flex items-center justify-center border border-light-grey hover:bg-light-grey"
-                            aria-label="Opslaan"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-            {/* Individual Items */}
-            <div className="bg-white rounded shadow-sm border border-light-grey overflow-hidden mb-10">
-              <div className="p-8">
-                <h3 className="font-bold text-text-primary text-xl mb-8">
-                  Individuele items voor jou
-                </h3>
-                
-                <div className="grid grid-cols-3 gap-6">
-                  {items.map((item) => (
-                    <div key={item.id} className="bg-light-grey rounded overflow-hidden border border-light-grey">
-                      <div className="aspect-square">
-                        <ImageWithFallback 
-                          src={item.imageUrl} 
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                          componentName="ResultsStep"
-                        />
-                      </div>
-                      <div className="p-3">
-                        <h4 className="font-medium text-text-primary text-sm truncate">{item.name}</h4>
-                        <div className="flex justify-between items-center mt-1">
-                          <p className="text-sm text-text-secondary">€{item.price.toFixed(2)}</p>
-                          <button className="text-turquoise hover:text-turquoise-dark">
-                            <ShoppingBag size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-            {/* Navigation Buttons */}
-            <div className="flex space-x-4">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={goToPreviousStep}
-                icon={<ArrowLeft size={18} />}
-                iconPosition="left"
-                className="flex-1 text-text-secondary border border-light-grey hover:bg-light-grey"
-              >
-                Terug
-              </Button>
-              <Button
-                type="button"
-                variant="primary"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1"
-              >
-                {isSubmitting ? 'Even geduld...' : 'Ontdek al je aanbevelingen'}
-              </Button>
-            </div>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
-            {/* Privacy indicator */}
-            <div className="mt-8 bg-light-grey rounded p-6 flex items-center justify-center space-x-2">
-              <ShieldCheck size={18} className="text-turquoise" />
-              <span className="text-sm text-text-secondary">Je gegevens zijn veilig en versleuteld</span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-export default ResultsStep;
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Hide scrollbar for slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #89CFF0;
+  outline-offset: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #89CFF0;
+  transition: width 0.3s ease-out;
+}
+
+/* Snap scrolling */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-mandatory {
+  scroll-snap-stop: always;
+}
