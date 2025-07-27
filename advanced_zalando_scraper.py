@@ -504,7 +504,6 @@ class ZalandoStealthScraper:
         f.write(page_content)
         logger.info("Live HTML opgeslagen als zalando_livepage.html")
 
-        
         # Wacht op product grid te laden
         try:
             await self.page.wait_for_selector(
