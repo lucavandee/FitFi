@@ -715,7 +715,7 @@ if __name__ == "__main__":
    
     def is_valid_wehkamp_url(self, url: str) -> bool:
         """
-        Valideer of URL een echte Wehkamp product URL is
+        # Valideer of URL een echte Wehkamp product URL is
         
         Args:
             url: URL om te valideren
