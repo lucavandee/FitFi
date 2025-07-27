@@ -374,6 +374,15 @@ class ZalandoStealthScraper:
                         
             except PlaywrightTimeoutError:
                 logger.error(f"Timeout on attempt {attempt + 1}")
+                if self.page:
+                    try:
+                        page_content = await self.page.content()
+                        with open(f"timeout_debug_{attempt+1}.html", "w", encoding="utf-8") as f:
+                            f.write(page_content)
+                        await self.page.screenshot(path=f"timeout_debug_{attempt+1}.png")
+                        logger.info(f"Timeout debug HTML and screenshot saved for attempt {attempt+1}")
+                    except Exception as debug_e:
+                        logger.warning(f"Failed to save debug HTML/screenshot: {debug_e}")
                 if attempt < max_retries - 1:
                     await self.human_like_delay(10000, 15000)
                     continue
@@ -381,6 +390,15 @@ class ZalandoStealthScraper:
                     return False
             except Exception as e:
                 logger.error(f"Navigation error on attempt {attempt + 1}: {e}")
+                if self.page:
+                    try:
+                        page_content = await self.page.content()
+                        with open(f"timeout_debug_{attempt+1}.html", "w", encoding="utf-8") as f:
+                            f.write(page_content)
+                        await self.page.screenshot(path=f"timeout_debug_{attempt+1}.png")
+                        logger.info(f"Timeout debug HTML and screenshot saved for attempt {attempt+1}")
+                    except Exception as debug_e:
+                        logger.warning(f"Failed to save debug HTML/screenshot: {debug_e}")
                 if attempt < max_retries - 1:
                     await self.human_like_delay(5000, 10000)
                     continue
