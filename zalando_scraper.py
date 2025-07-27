@@ -158,9 +158,9 @@ class ZalandoScraper:
             logger.error(f"Request error voor {url}: {e}")
             return self.make_request(url, retries + 1)
     
-   def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
-    url = f"{self.base_url}/{category}/?p={page}"
-    logger.info(f"Scraping categorie pagina: {url}")
+      def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
+      url = f"{self.base_url}/{category}/?p={page}"
+      logger.info(f"Scraping categorie pagina: {url}")
 
     html_content = None
     soup = None
