@@ -737,9 +737,9 @@ def main():
         
         # Optioneel: importeer naar Supabase
         # Uncomment en vul je Supabase credentials in:
-        # supabase_url = os.getenv('SUPABASE_URL', 'https://your-project.supabase.co')
-        # supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY', 'your-service-role-key')
-        # scraper.import_to_supabase(supabase_url, supabase_key)
+        supabase_url = 'https://wojexzgjyhijuxzperhq.supabase.co'
+        supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDg1MzY0MCwiZXhwIjoyMDY2NDI5NjQwfQ.2vyS0H7lhXr2sa6TVfvaWV0mGqAuEZQ0F-j_IvHiOig'
+        scraper.import_to_supabase(supabase_url, supabase_key)
         
         # Statistieken
         total_products = len(scraper.scraped_products)
