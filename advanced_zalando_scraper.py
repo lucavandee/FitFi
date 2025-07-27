@@ -393,10 +393,10 @@ class ZalandoStealthScraper:
                 if self.page:
                     try:
                         page_content = await self.page.content()
-                        with open(f"timeout_debug_{attempt+1}.html", "w", encoding="utf-8") as f:
+                        with open(f"error_debug_{attempt+1}.html", "w", encoding="utf-8") as f:
                             f.write(page_content)
-                        await self.page.screenshot(path=f"timeout_debug_{attempt+1}.png")
-                        logger.info(f"Timeout debug HTML and screenshot saved for attempt {attempt+1}")
+                        await self.page.screenshot(path=f"error_debug_{attempt+1}.png")
+                        logger.info(f"Error debug HTML and screenshot saved for attempt {attempt+1}")
                     except Exception as debug_e:
                         logger.warning(f"Failed to save debug HTML/screenshot: {debug_e}")
                 if attempt < max_retries - 1:
@@ -508,18 +508,17 @@ class ZalandoStealthScraper:
         logger.info(f"Extracting product URLs from: {category_url}")
         
         # Navigate naar categorie pagina
-        # Na navigatie:
         success = await self.navigate_with_retry(category_url)
         if not success:
-        logger.error(f"Failed to load category page: {category_url}")
-        return []
+            logger.error(f"Failed to load category page: {category_url}")
+            return []
 
         # Maak direct screenshot en save de HTML
         await self.page.screenshot(path="zalando_screenshot.png")
         logger.info("Screenshot genomen: zalando_screenshot.png")
         page_content = await self.page.content()
         with open("zalando_livepage.html", "w", encoding="utf-8") as f:
-        f.write(page_content)
+            f.write(page_content)
         logger.info("Live HTML opgeslagen als zalando_livepage.html")
 
         # Wacht op product grid te laden
