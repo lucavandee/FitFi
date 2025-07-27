@@ -608,7 +608,7 @@ def main():
     
     try:
         # Test met één categorie (herenmode-jassen)
-        test_category_url = "https://www.wehkamp.nl/herenmode-jassen/"
+        test_category_url = "https://www.wehkamp.nl/heren-kleding/"
         
         logger.info(f"Test scraping van: {test_category_url}")
         products = scraper.scrape_wehkamp(test_category_url, limit=20)
