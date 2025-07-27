@@ -93,12 +93,13 @@ class ZalandoScraper:
         
         # Zalando categorieën om te scrapen
         self.categories = [
-            "dameskleding",
+            "heren-home",
             "herenkleding", 
-            "damesschoenen",
             "herenschoenen",
-            "damestassen",
-            "herenaccessoires"
+            "heren-accesoires",
+            "dameskleding",
+            "damesschoenen",
+            "tassen-accesoires"
         ]
         
         logger.info("Zalando Scraper geïnitialiseerd")
