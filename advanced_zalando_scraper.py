@@ -94,7 +94,7 @@ class ZalandoStealthScraper:
         
         # Launch browser met stealth opties
         self.browser = await playwright.chromium.launch(
-            headless=True,
+            headless=False,
             args=[
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -490,10 +490,20 @@ class ZalandoStealthScraper:
         logger.info(f"Extracting product URLs from: {category_url}")
         
         # Navigate naar categorie pagina
+        # Na navigatie:
         success = await self.navigate_with_retry(category_url)
         if not success:
-            logger.error(f"Failed to load category page: {category_url}")
-            return []
+        logger.error(f"Failed to load category page: {category_url}")
+        return []
+
+        # Maak direct screenshot en save de HTML
+        await self.page.screenshot(path="zalando_screenshot.png")
+        logger.info("Screenshot genomen: zalando_screenshot.png")
+        page_content = await self.page.content()
+        with open("zalando_livepage.html", "w", encoding="utf-8") as f:
+        f.write(page_content)
+        logger.info("Live HTML opgeslagen als zalando_livepage.html")
+
         
         # Wacht op product grid te laden
         try:
