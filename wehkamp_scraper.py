@@ -164,7 +164,10 @@ class WehkampScraper:
         if 'wehkamp.nl' not in url:
             return False
             
-        if not ('/p/' in url or '/product/' in url):
+        if 'wehkamp.nl' not in url:
+            return False
+        
+        if not ('/product/' in url or '/artikel/' in url):
             return False
         
         # Should not contain unwanted paths
@@ -207,16 +210,15 @@ class WehkampScraper:
         
         # Verschillende selectors voor Wehkamp product links
         selectors = [
-            'a[href^="/p/"]',
-            'a[href*="/p/"]',
-            '.product-tile a',
-            '.product-card a',
-            'a.product-link',
+            'a[href*="/product/"]',
+            'a[href*="/artikel/"]',
+            '.ProductTile a',
+            '.ProductCard a',
+            '[data-testid="product-card"] a',
             '[data-testid="product-tile"] a',
-            'article a[href*="/p/"]',
-            '.grid-item a',
-            '.product-item a',
-            'a[href*="wehkamp.nl/p/"]'
+            '.product-link',
+            'article a[href*="/product/"]',
+            '.tile a'
         ]
         
         for selector in selectors:
@@ -224,7 +226,7 @@ class WehkampScraper:
             logger.debug(f"Selector '{selector}' found {len(links)} links")
             for link in links:
                 href = link.get('href')
-                if href and ('/p/' in href or '/product/' in href):
+                if href and ('/product/' in href or '/artikel/' in href):
                     full_url = urljoin(self.base_url, href)
                     # Clean URL (remove query parameters)
                     clean_url = full_url.split('?')[0].split('#')[0]
