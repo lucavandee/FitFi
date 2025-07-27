@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class WehkampScraper:
     """
-    Hoofdklasse voor Wehkamp product scraping
+    Hoofdklasse voor Wehkamp product scraping.
     
     Features:
     - Anti-bot protection met user-agent rotatie
@@ -55,6 +55,9 @@ class WehkampScraper:
     """
     
     def __init__(self):
+        """
+        Initialiseer de Wehkamp scraper met basis configuratie.
+        """
         self.base_url = "https://www.wehkamp.nl"
         self.session = requests.Session()
         self.ua = UserAgent()
@@ -84,10 +87,10 @@ class WehkampScraper:
     
     def get_random_headers(self) -> Dict[str, str]:
         """
-        Genereer random headers voor anti-bot protection
+        Genereer random headers voor anti-bot protection.
         
         Returns:
-            Dict met HTTP headers
+            Dict met HTTP headers voor requests.
         """
         return {
             'User-Agent': self.ua.random,
@@ -105,14 +108,14 @@ class WehkampScraper:
     
     def make_request(self, url: str, retries: int = 0) -> Optional[requests.Response]:
         """
-        Maak een HTTP request met retry logica en anti-bot protection
+        Maak een HTTP request met retry logica en anti-bot protection.
         
         Args:
-            url: URL om te scrapen
-            retries: Aantal retries al geprobeerd
+            url (str): URL om te scrapen.
+            retries (int): Aantal retries al geprobeerd.
             
         Returns:
-            Response object of None bij failure
+            Optional[requests.Response]: Response object of None bij failure.
         """
         if retries >= self.max_retries:
             logger.error(f"Max retries bereikt voor {url}")
@@ -144,16 +147,53 @@ class WehkampScraper:
             logger.error(f"Request error voor {url}: {e}")
             return self.make_request(url, retries + 1)
     
-    def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
+    def is_valid_wehkamp_url(self, url: str) -> bool:
         """
-        Scrape een categorie pagina voor product URLs
+        Valideer of URL een echte Wehkamp product URL is.
         
         Args:
-            category: Categorie naam
-            page: Pagina nummer
+            url (str): URL om te valideren.
             
         Returns:
-            List van product URLs
+            bool: True als URL geldig is.
+        """
+        if not url or not isinstance(url, str):
+            return False
+        
+        # Must contain wehkamp.nl and /p/ or /product/
+        if 'wehkamp.nl' not in url:
+            return False
+            
+        if not ('/p/' in url or '/product/' in url):
+            return False
+        
+        # Should not contain unwanted paths
+        unwanted_paths = [
+            '/help/',
+            '/klantenservice/',
+            '/size-guide/',
+            '/merk/',
+            '/campaign/',
+            '/inspiratie/',
+            '/magazine/'
+        ]
+        
+        for unwanted in unwanted_paths:
+            if unwanted in url:
+                return False
+        
+        return True
+    
+    def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
+        """
+        Scrape een categorie pagina voor product URLs.
+        
+        Args:
+            category (str): Categorie naam.
+            page (int): Pagina nummer.
+            
+        Returns:
+            List[str]: List van product URLs.
         """
         url = f"{self.base_url}/{category}/?page={page}"
         logger.info(f"Scraping categorie pagina: {url}")
@@ -210,13 +250,13 @@ class WehkampScraper:
     
     def extract_price(self, soup: BeautifulSoup) -> tuple[float, float]:
         """
-        Extraheer prijs en originele prijs uit product pagina
+        Extraheer prijs en originele prijs uit product pagina.
         
         Args:
-            soup: BeautifulSoup object van product pagina
+            soup (BeautifulSoup): BeautifulSoup object van product pagina.
             
         Returns:
-            Tuple van (huidige_prijs, originele_prijs)
+            tuple[float, float]: Tuple van (huidige_prijs, originele_prijs).
         """
         current_price = 0.0
         original_price = 0.0
@@ -270,13 +310,13 @@ class WehkampScraper:
     
     def extract_images(self, soup: BeautifulSoup) -> List[str]:
         """
-        Extraheer product afbeeldingen
+        Extraheer product afbeeldingen.
         
         Args:
-            soup: BeautifulSoup object van product pagina
+            soup (BeautifulSoup): BeautifulSoup object van product pagina.
             
         Returns:
-            List van afbeelding URLs
+            List[str]: List van afbeelding URLs.
         """
         images = []
         
@@ -309,13 +349,13 @@ class WehkampScraper:
     
     def extract_brand_and_title(self, soup: BeautifulSoup) -> tuple[str, str]:
         """
-        Extraheer merk en titel van product
+        Extraheer merk en titel van product.
         
         Args:
-            soup: BeautifulSoup object van product pagina
+            soup (BeautifulSoup): BeautifulSoup object van product pagina.
             
         Returns:
-            Tuple van (brand, title)
+            tuple[str, str]: Tuple van (brand, title).
         """
         # Titel selectors
         title_selectors = [
@@ -369,13 +409,13 @@ class WehkampScraper:
     
     def extract_category_from_url(self, url: str) -> str:
         """
-        Extraheer categorie uit URL
+        Extraheer categorie uit URL.
         
         Args:
-            url: Product of categorie URL
+            url (str): Product of categorie URL.
             
         Returns:
-            Categorie naam
+            str: Categorie naam.
         """
         if 'herenmode-jassen' in url:
             return 'Heren Jassen'
@@ -402,14 +442,14 @@ class WehkampScraper:
     
     def scrape_product_details(self, product_url: str, category: str = "") -> Optional[Dict[str, Any]]:
         """
-        Scrape gedetailleerde product informatie van een product pagina
+        Scrape gedetailleerde product informatie van een product pagina.
         
         Args:
-            product_url: URL van het product
-            category: Categorie van het product
+            product_url (str): URL van het product.
+            category (str): Categorie van het product.
             
         Returns:
-            Dict met product data of None bij failure
+            Optional[Dict[str, Any]]: Dict met product data of None bij failure.
         """
         logger.debug(f"Scraping product details: {product_url}")
         
@@ -498,14 +538,14 @@ class WehkampScraper:
     
     def scrape_wehkamp(self, category_url: str, limit: int = 50) -> List[Dict[str, Any]]:
         """
-        Scrape producten van een specifieke Wehkamp categorie
+        Scrape producten van een specifieke Wehkamp categorie.
         
         Args:
-            category_url: URL van de categorie
-            limit: Maximum aantal producten om te scrapen
+            category_url (str): URL van de categorie.
+            limit (int): Maximum aantal producten om te scrapen.
             
         Returns:
-            List van product dictionaries
+            List[Dict[str, Any]]: List van product dictionaries.
         """
         logger.info(f"Start scraping van {category_url} (limit: {limit})")
         
@@ -548,11 +588,11 @@ class WehkampScraper:
     
     def scrape_all_categories(self, max_pages_per_category: int = 2, max_products_per_category: int = 25) -> None:
         """
-        Scrape alle geconfigureerde categorieën
+        Scrape alle geconfigureerde categorieën.
         
         Args:
-            max_pages_per_category: Maximum aantal pagina's per categorie
-            max_products_per_category: Maximum aantal producten per categorie
+            max_pages_per_category (int): Maximum aantal pagina's per categorie.
+            max_products_per_category (int): Maximum aantal producten per categorie.
         """
         logger.info(f"Start scraping van {len(self.categories)} categorieën")
         
@@ -570,7 +610,7 @@ class WehkampScraper:
     
     def clean_and_validate_data(self) -> None:
         """
-        Clean en valideer de gescrapete data
+        Clean en valideer de gescrapete data.
         """
         logger.info("Data cleaning en validatie gestart")
         
@@ -608,10 +648,10 @@ class WehkampScraper:
     
     def export_to_json(self, filename: str = "wehkamp_products.json") -> None:
         """
-        Exporteer gescrapete producten naar JSON bestand
+        Exporteer gescrapete producten naar JSON bestand.
         
         Args:
-            filename: Naam van het output bestand
+            filename (str): Naam van het output bestand.
         """
         try:
             with open(filename, 'w', encoding='utf-8') as f:
@@ -625,7 +665,7 @@ class WehkampScraper:
 
 def main():
     """
-    Hoofdfunctie voor het uitvoeren van de scraper
+    Hoofdfunctie voor het uitvoeren van de scraper.
     """
     logger.info("=== Wehkamp Scraper Gestart ===")
     
@@ -701,99 +741,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# --- END OF FILE ---
-
-"""
-=== WEHKAMP SCRAPER GEBRUIKSINSTRUCTIES ===
-
-1. Basis gebruik:
-   python wehkamp_scraper.py
-
-2. Programmatisch gebruik:
-   from wehkamp_scraper import WehkampScraper
-   
-    def is_valid_wehkamp_url(self, url: str) -> bool:
-        """
-        # Valideer of URL een echte Wehkamp product URL is
-        
-        Args:
-            url: URL om te valideren
-            
-        Returns:
-            True als URL geldig is
-        """
-        if not url or not isinstance(url, str):
-            return False
-        
-        # Must contain wehkamp.nl and /p/ or /product/
-        if 'wehkamp.nl' not in url:
-            return False
-            
-        if not ('/p/' in url or '/product/' in url):
-            return False
-        
-        # Should not contain unwanted paths
-        unwanted_paths = [
-            '/help/',
-            '/klantenservice/',
-            '/size-guide/',
-            '/merk/',
-            '/campaign/',
-            '/inspiratie/',
-            '/magazine/'
-        ]
-        
-        for unwanted in unwanted_paths:
-            if unwanted in url:
-                return False
-        
-        return True
-    
-   scraper = WehkampScraper()
-   products = scraper.scrape_wehkamp("https://www.wehkamp.nl/herenmode-jassen/", limit=50)
-   scraper.export_to_json("my_products.json")
-
-3. Output formaat (compatible met FitFi):
-   {
-     "id": "uuid",
-     "title": "Product naam",
-     "brand": "Merknaam", 
-     "price": "99.99",
-     "image": "https://...",
-     "link": "https://...",
-     "category": "Heren Jassen",
-     "description": "...",
-     "retailer": "Wehkamp",
-     "tags": ["fashion", "sale"],
-     "created_at": "2025-01-27T...",
-     "updated_at": "2025-01-27T..."
-   }
-
-4. Beschikbare categorieën:
-   - herenmode-jassen
-   - herenmode-truien-vesten  
-   - herenmode-overhemden
-   - herenmode-broeken
-   - herenmode-schoenen
-   - damesmode-jassen
-   - damesmode-truien-vesten
-   - damesmode-jurken
-   - damesmode-broeken
-   - damesmode-schoenen
-
-5. Throttling:
-   - Automatische delays tussen 1.0-2.5 seconden
-   - Rate limiting protection
-   - Retry logica bij failures
-
-6. Error handling:
-   - Graceful handling van missende velden
-   - Logging van failed URLs
-   - Fallback waardes voor ontbrekende data
-
-=== INTEGRATIE MET FITFI ===
-
-De output is direct compatible met de bestaande FitFi product structuur.
-Gebruik dezelfde import procedures als voor zalando_scraper.py.
-"""
