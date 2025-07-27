@@ -1,0 +1,44 @@
+{
+  "check_interval": 300,
+  "max_concurrent": 10,
+  "notifications": {
+    "email": {
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "from_email": "your-email@gmail.com",
+      "username": "your-email@gmail.com",
+      "password": "your-app-password"
+    },
+    "webhook": {
+      "default_url": "https://your-webhook-url.com/price-alert"
+    },
+    "slack": {
+      "webhook_url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+    }
+  },
+  "products_to_monitor": [
+    {
+      "id": "nike-air-max-90",
+      "name": "Nike Air Max 90",
+      "url": "https://www.zalando.nl/nike-air-max-90-sneakers-laag-white-ni111a0bu-a11.html",
+      "target_price": 100.0
+    },
+    {
+      "id": "zara-blazer-basic",
+      "name": "Zara Basic Blazer",
+      "url": "https://www.zalando.nl/zara-blazer-black-za121g0a7-q11.html",
+      "target_price": 50.0
+    }
+  ],
+  "ml_enhancement": {
+    "enabled": true,
+    "models": {
+      "category_classifier": "category_model.pkl",
+      "sentiment_analyzer": "nlptown/bert-base-multilingual-uncased-sentiment"
+    }
+  },
+  "database": {
+    "price_history_retention_days": 365,
+    "cleanup_interval_hours": 24
+  }
+}
