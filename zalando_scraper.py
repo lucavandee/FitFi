@@ -92,14 +92,14 @@ class ZalandoScraper:
         self.max_retries = 3  # Maximum aantal retries per request
         
         # Zalando categorieën om te scrapen
-        self.categories = [
-            "dames-kleding",
-            "heren-kleding", 
-            "dames-schoenen",
-            "heren-schoenen",
-            "dames-tassen",
-            "heren-accessoires"
-        ]
+    self.categories = [
+    "dameskleding",
+    "herenkleding",
+    "damesschoenen",
+    "herenschoenen",
+    "damestassen",
+    "herenaccessoires"
+]
         
         logger.info("Zalando Scraper geïnitialiseerd")
     
