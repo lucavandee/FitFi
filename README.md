@@ -30,3 +30,21 @@ Dit project is onderdeel van het FitFi-platform en haalt automatisch productdata
 git clone https://github.com/lucavandee/fitfi-zalando-scraper.git
 cd fitfi-zalando-scraper
 npm install
+
+```
+
+### 🕷️ Zalando Product Scraper
+
+Voor het automatisch ophalen van productdata van Zalando.nl:
+
+```bash
+# Installeer Python dependencies
+pip install -r requirements.txt
+
+# Installeer Playwright browsers (optioneel, voor JavaScript rendering)
+playwright install chromium
+
+# Run de scraper
+python zalando_scraper.py
+
+# Output: zalandoProducts.json met alle product data
