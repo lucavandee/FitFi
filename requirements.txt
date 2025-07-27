@@ -19,7 +19,7 @@ apscheduler==3.10.0
 aiohttp==3.8.0
 python-socketio==5.9.0
 tensorflow==2.15.0
-torch
+torch==2.1.0
 torchvision==0.16.0
 web3==6.11.0
 eth-account==0.9.0
