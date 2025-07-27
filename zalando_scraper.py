@@ -164,46 +164,42 @@ class ZalandoScraper:
             logger.error(f"Request error voor {url}: {e}")
             return self.make_request(url, retries + 1)
     
-    def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
-        """
-        Scrape product URLs van een categorie pagina
-        
-        Args:
-            category: Zalando categorie (bijv. "dames-kleding")
-            page: Paginanummer
-            
-        Returns:
-            List van product URLs
-        """
-        url = f"{self.base_url}/{category}/?p={page}"
-        logger.info(f"Scraping categorie pagina: {url}")
-        
-        response = self.make_request(url)
-        if not response:
-            return []
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        product_urls = []
-        
-        # Zoek product links (Zalando gebruikt verschillende selectors)
-        selectors = [
-            'a[href*="/p/"]',  # Product pagina links
-            '.cat_articleLink',  # Artikel links
-            '[data-testid="product-item"] a',  # Product item links
-            '.catalogArticlesList_item a'  # Catalog item links
-        ]
-        
-        for selector in selectors:
-            links = soup.select(selector)
-            for link in links:
-                href = link.get('href')
-                if href and '/p/' in href:
-                    full_url = urljoin(self.base_url, href)
-                    if full_url not in product_urls:
-                        product_urls.append(full_url)
-        
-        logger.info(f"Gevonden {len(product_urls)} product URLs op pagina {page}")
-        return product_urls
+ def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
+    url = f"{self.base_url}/{category}/?p={page}"
+    logger.info(f"Scraping categorie pagina: {url}")
+
+    response = self.make_request(url)
+    if not response:
+        return []
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+    product_urls = []
+
+    # Zalando selectors voor product-links
+    selectors = [
+        'a[href*="/p/"]',
+        '[data-testid="product-card-link"]',
+        '[data-testid="product-item"] a'
+    ]
+    for selector in selectors:
+        links = soup.select(selector)
+        for link in links:
+            href = link.get('href')
+            if href and '/p/' in href:
+                full_url = urljoin(self.base_url, href)
+                if full_url not in product_urls:
+                    product_urls.append(full_url)
+
+    logger.info(f"Gevonden {len(product_urls)} product URLs op pagina {page}")
+
+    # **Debug: Sla de HTML op als er geen producten gevonden zijn**
+    if len(product_urls) == 0:
+        debug_file = f'debug_{category}_p{page}.html'
+        with open(debug_file, 'w', encoding='utf-8') as f:
+            f.write(response.text)
+        logger.warning(f"Geen producten gevonden. HTML opgeslagen als {debug_file}")
+
+    return product_urls
     
     def extract_price(self, soup: BeautifulSoup) -> tuple[float, float]:
         """
