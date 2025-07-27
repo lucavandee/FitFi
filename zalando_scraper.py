@@ -96,10 +96,10 @@ class ZalandoScraper:
             "heren-home",
             "herenkleding", 
             "herenschoenen",
-            "heren-accesoires",
+            "heren-accessoires",
             "dameskleding",
             "damesschoenen",
-            "tassen-accesoires"
+            "tassen-accessoires"
         ]
         
         logger.info("Zalando Scraper geïnitialiseerd")
