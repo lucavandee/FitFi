@@ -100,7 +100,6 @@ class ZalandoScraper:
     "damestassen",
     "herenaccessoires"
 ]
-        
         logger.info("Zalando Scraper geïnitialiseerd")
     
     def get_random_headers(self) -> Dict[str, str]:
