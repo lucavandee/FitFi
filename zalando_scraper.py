@@ -25,6 +25,14 @@ Supabase Import:
     1. Python Supabase client (zie import_to_supabase functie)
     2. Supabase Dashboard > Table Editor > Import
     3. Bash script met curl naar Supabase REST API
+
+KWALITEITSVERBETERINGEN MOGELIJK:
+- Async/await implementatie voor betere performance
+- Database connection pooling
+- Meer robuuste error recovery
+- Rate limiting configuratie
+- Product data validation schema
+- Automated testing suite
 """
 
 import requests
@@ -67,6 +75,7 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
 
 class ZalandoScraper:
     """
@@ -158,59 +167,70 @@ class ZalandoScraper:
             logger.error(f"Request error voor {url}: {e}")
             return self.make_request(url, retries + 1)
     
-      def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
-      url = f"{self.base_url}/{category}/?p={page}"
-      logger.info(f"Scraping categorie pagina: {url}")
+    def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
+        """
+        Scrape een categorie pagina voor product URLs
+        
+        Args:
+            category: Categorie naam
+            page: Pagina nummer
+            
+        Returns:
+            List van product URLs
+        """
+        url = f"{self.base_url}/{category}/?p={page}"
+        logger.info(f"Scraping categorie pagina: {url}")
 
-    html_content = None
-    soup = None
-    response = None
+        html_content = None
+        soup = None
+        response = None
 
-    # PROBEER EERST PLAYWRIGHT
-    if PLAYWRIGHT_AVAILABLE:
-        html_content = self.scrape_with_playwright(url)
-        if html_content:
-            soup = BeautifulSoup(html_content, 'html.parser')
+        # PROBEER EERST PLAYWRIGHT
+        if PLAYWRIGHT_AVAILABLE:
+            html_content = self.scrape_with_playwright(url)
+            if html_content:
+                soup = BeautifulSoup(html_content, 'html.parser')
+            else:
+                logger.warning("Playwright faalde, fallback naar requests")
+                response = self.make_request(url)
+                if not response:
+                    return []
+                soup = BeautifulSoup(response.content, 'html.parser')
         else:
-            logger.warning("Playwright faalde, fallback naar requests")
             response = self.make_request(url)
             if not response:
                 return []
             soup = BeautifulSoup(response.content, 'html.parser')
-    else:
-        response = self.make_request(url)
-        if not response:
-            return []
-        soup = BeautifulSoup(response.content, 'html.parser')
 
-    product_urls = []
-    selectors = [
-        'a[href*="/p/"]',
-        '[data-testid="product-card-link"]',
-        '[data-testid="product-item"] a'
-    ]
-    for selector in selectors:
-        links = soup.select(selector)
-        for link in links:
-            href = link.get('href')
-            if href and '/p/' in href:
-                full_url = urljoin(self.base_url, href)
-                if full_url not in product_urls:
-                    product_urls.append(full_url)
+        product_urls = []
+        selectors = [
+            'a[href*="/p/"]',
+            '[data-testid="product-card-link"]',
+            '[data-testid="product-item"] a'
+        ]
+        
+        for selector in selectors:
+            links = soup.select(selector)
+            for link in links:
+                href = link.get('href')
+                if href and '/p/' in href:
+                    full_url = urljoin(self.base_url, href)
+                    if full_url not in product_urls:
+                        product_urls.append(full_url)
 
-    logger.info(f"Gevonden {len(product_urls)} product URLs op pagina {page}")
+        logger.info(f"Gevonden {len(product_urls)} product URLs op pagina {page}")
 
-    if len(product_urls) == 0:
-        debug_file = f'debug_{category}_p{page}.html'
-        with open(debug_file, 'w', encoding='utf-8') as f:
-            # Sla de Playwright-HTML op als die beschikbaar is, anders de requests-HTML
-            if html_content:
-                f.write(html_content)
-            elif response:
-                f.write(response.text)
-        logger.warning(f"Geen producten gevonden. HTML opgeslagen als {debug_file}")
+        if len(product_urls) == 0:
+            debug_file = f'debug_{category}_p{page}.html'
+            with open(debug_file, 'w', encoding='utf-8') as f:
+                # Sla de Playwright-HTML op als die beschikbaar is, anders de requests-HTML
+                if html_content:
+                    f.write(html_content)
+                elif response:
+                    f.write(response.text)
+            logger.warning(f"Geen producten gevonden. HTML opgeslagen als {debug_file}")
 
-    return product_urls
+        return product_urls
     
     def extract_price(self, soup: BeautifulSoup) -> tuple[float, float]:
         """
@@ -720,6 +740,7 @@ class ZalandoScraper:
         
         logger.info("Affiliate links toegevoegd aan alle producten")
 
+
 def main():
     """
     Hoofdfunctie voor het uitvoeren van de scraper
@@ -730,8 +751,8 @@ def main():
     scraper = ZalandoScraper()
     
     try:
-        # Scrape alle categorieën (max 2 pagina's per categorie voor demo)
-        scraper.scrape_all_categories(max_pages_per_category=2)
+        # Scrape alle categorieën (max 1 pagina per categorie voor snelle test)
+        scraper.scrape_all_categories(max_pages_per_category=1)
         
         # Clean en valideer data
         scraper.clean_and_validate_data()
@@ -742,11 +763,22 @@ def main():
         # Exporteer naar JSON
         scraper.export_to_json("zalandoProducts.json")
         
-        # Optioneel: importeer naar Supabase
-        # Uncomment en vul je Supabase credentials in:
+        # Directe Supabase import met opgegeven credentials
         supabase_url = 'https://wojexzgjyhijuxzperhq.supabase.co'
         supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDg1MzY0MCwiZXhwIjoyMDY2NDI5NjQwfQ.2vyS0H7lhXr2sa6TVfvaWV0mGqAuEZQ0F-j_IvHiOig'
+        
+        logger.info("=== Supabase Import Gestart ===")
         scraper.import_to_supabase(supabase_url, supabase_key)
+        
+        # Toon 5 voorbeeldproducten
+        logger.info("=== Voorbeeldproducten ===")
+        for i, product in enumerate(scraper.scraped_products[:5], 1):
+            logger.info(f"{i}. ID: {product['id']}")
+            logger.info(f"   Naam: {product['name']}")
+            logger.info(f"   Prijs: €{product['price']}")
+            logger.info(f"   Merk: {product['brand']}")
+            logger.info(f"   URL: {product['product_url']}")
+            logger.info("   ---")
         
         # Statistieken
         total_products = len(scraper.scraped_products)
@@ -755,7 +787,12 @@ def main():
         logger.info("=== Scraping Voltooid ===")
         logger.info(f"Totaal producten gescraped: {total_products}")
         logger.info(f"Gefaalde URLs: {failed_urls}")
-        logger.info(f"Succes rate: {(total_products / (total_products + failed_urls) * 100):.1f}%")
+        
+        if total_products + failed_urls > 0:
+            success_rate = (total_products / (total_products + failed_urls) * 100)
+            logger.info(f"Success rate: {success_rate:.1f}%")
+        else:
+            logger.info("Success rate: 0% (geen data gevonden)")
         
         if scraper.failed_urls:
             logger.info("Gefaalde URLs:")
@@ -769,8 +806,11 @@ def main():
     finally:
         logger.info("Scraper afgesloten")
 
+
 if __name__ == "__main__":
     main()
+
+# --- END OF FILE ---
 
 """
 === SUPABASE IMPORT INSTRUCTIES ===
