@@ -167,31 +167,44 @@ class WehkampScraper:
         
         # Verschillende selectors voor Wehkamp product links
         selectors = [
-            'a[href*="/product/"]',
-            'a[data-testid="product-link"]',
-            '.product-item a',
+            'a[href^="/p/"]',
+            'a[href*="/p/"]',
+            '.product-tile a',
             '.product-card a',
-            'article a[href*="/product/"]',
-            '[data-testid="product-item"] a'
+            'a.product-link',
+            '[data-testid="product-tile"] a',
+            'article a[href*="/p/"]',
+            '.grid-item a',
+            '.product-item a',
+            'a[href*="wehkamp.nl/p/"]'
         ]
         
         for selector in selectors:
             links = soup.select(selector)
+            logger.debug(f"Selector '{selector}' found {len(links)} links")
             for link in links:
                 href = link.get('href')
-                if href and '/product/' in href:
+                if href and ('/p/' in href or '/product/' in href):
                     full_url = urljoin(self.base_url, href)
-                    if full_url not in product_urls:
-                        product_urls.append(full_url)
+                    # Clean URL (remove query parameters)
+                    clean_url = full_url.split('?')[0].split('#')[0]
+                    if clean_url not in product_urls and self.is_valid_wehkamp_url(clean_url):
+                        product_urls.append(clean_url)
         
         logger.info(f"Gevonden {len(product_urls)} product URLs op pagina {page}")
         
         # Debug: save page content als we weinig URLs vinden
-        if len(product_urls) == 0:
+        if len(product_urls) < 5:
             debug_file = f'debug_wehkamp_{category}_p{page}.html'
             with open(debug_file, 'w', encoding='utf-8') as f:
                 f.write(response.text)
-            logger.warning(f"Geen producten gevonden. HTML opgeslagen als {debug_file}")
+            logger.warning(f"Weinig producten gevonden ({len(product_urls)}). HTML opgeslagen als {debug_file}")
+            
+            # Log alle gevonden links voor debugging
+            all_links = soup.find_all('a', href=True)
+            logger.debug(f"Totaal {len(all_links)} links gevonden op pagina")
+            sample_links = [link.get('href') for link in all_links[:10]]
+            logger.debug(f"Sample links: {sample_links}")
         
         return product_urls
     
@@ -210,21 +223,26 @@ class WehkampScraper:
         
         # Verschillende selectors voor prijzen op Wehkamp
         price_selectors = [
+            '[data-testid="price-current"]',
+            '[data-testid="price"]',
             '.price-current',
             '.price-now',
-            '[data-testid="price-current"]',
             '.product-price .current',
             '.price .current',
-            '.price-value'
+            '.price-value',
+            '.price-info .current',
+            '.current-price'
         ]
         
         original_price_selectors = [
+            '[data-testid="price-original"]',
+            '[data-testid="price-was"]',
             '.price-original',
             '.price-was',
-            '[data-testid="price-original"]',
             '.product-price .original',
             '.price .original',
-            '.price-old'
+            '.price-old',
+            '.was-price'
         ]
         
         # Zoek huidige prijs
@@ -264,12 +282,15 @@ class WehkampScraper:
         
         # Verschillende selectors voor afbeeldingen op Wehkamp
         img_selectors = [
+            '[data-testid="product-image"] img',
+            '[data-testid="hero-image"] img',
             '.product-images img',
             '.product-gallery img',
-            '[data-testid="product-image"] img',
             '.product-media img',
             '.hero-image img',
-            '.main-image img'
+            '.main-image img',
+            '.product-image-container img',
+            '.image-gallery img'
         ]
         
         for selector in img_selectors:
@@ -298,11 +319,14 @@ class WehkampScraper:
         """
         # Titel selectors
         title_selectors = [
-            'h1',
             '[data-testid="product-title"]',
+            '[data-testid="product-name"]',
+            'h1',
             '.product-title',
             '.product-name',
-            '.pdp-title'
+            '.pdp-title',
+            '.product-info h1',
+            '.product-header h1'
         ]
         
         title = "Onbekend Product"
@@ -315,10 +339,13 @@ class WehkampScraper:
         # Merk selectors
         brand_selectors = [
             '[data-testid="product-brand"]',
+            '[data-testid="brand-name"]',
             '.product-brand',
             '.brand-name',
             '.pdp-brand',
-            '.manufacturer'
+            '.manufacturer',
+            '.product-info .brand',
+            '.brand-link'
         ]
         
         brand = "Onbekend Merk"
@@ -491,15 +518,12 @@ class WehkampScraper:
         
         while len(products) < limit and page <= max_pages:
             # Scrape categorie pagina
-            if page == 1:
-                page_url = category_url
-            else:
-                page_url = f"{category_url}?page={page}"
+            # Extract category path from URL for scrape_category_page
+            category_path = category_url.replace(self.base_url + '/', '').rstrip('/')
             
-            product_urls = self.scrape_category_page(
-                category_url.replace(self.base_url + '/', '').rstrip('/'),
-                page
-            )
+            product_urls = self.scrape_category_page(category_path, page)
+            
+            logger.info(f"Pagina {page}: {len(product_urls)} product URLs gevonden")
             
             if not product_urls:
                 logger.info(f"Geen producten meer gevonden op pagina {page}")
@@ -514,6 +538,8 @@ class WehkampScraper:
                 if product_data:
                     products.append(product_data)
                     logger.info(f"Product {len(products)}/{limit}: {product_data['title']}")
+                else:
+                    logger.warning(f"Failed to scrape product: {url}")
             
             page += 1
         
@@ -607,11 +633,11 @@ def main():
     scraper = WehkampScraper()
     
     try:
-        # Test met één categorie (herenmode-jassen)
+        # Test met heren-kleding categorie
         test_category_url = "https://www.wehkamp.nl/heren-kleding/"
         
         logger.info(f"Test scraping van: {test_category_url}")
-        products = scraper.scrape_wehkamp(test_category_url, limit=20)
+        products = scraper.scrape_wehkamp(test_category_url, limit=15)
         
         # Sla producten op in scraper voor export
         scraper.scraped_products = products
@@ -621,6 +647,11 @@ def main():
         
         # Exporteer naar JSON
         scraper.export_to_json("wehkamp_products.json")
+        
+        # Print aantal gevonden producten (voor console output)
+        print(f"\n=== WEHKAMP SCRAPING RESULTATEN ===")
+        print(f"Totaal producten gevonden: {len(scraper.scraped_products)}")
+        print(f"Output opgeslagen in: wehkamp_products.json")
         
         # Toon voorbeeldproducten
         logger.info("=== Voorbeeldproducten ===")
@@ -641,11 +672,18 @@ def main():
         logger.info(f"Totaal producten gescraped: {total_products}")
         logger.info(f"Gefaalde URLs: {failed_urls}")
         
+        # Console output voor snelle verificatie
+        print(f"Succesvol gescraped: {total_products} producten")
+        if failed_urls > 0:
+            print(f"Gefaalde URLs: {failed_urls}")
+        
         if total_products + failed_urls > 0:
             success_rate = (total_products / (total_products + failed_urls) * 100)
             logger.info(f"Success rate: {success_rate:.1f}%")
+            print(f"Success rate: {success_rate:.1f}%")
         else:
             logger.info("Success rate: 0% (geen data gevonden)")
+            print("⚠️  Geen producten gevonden - check debug HTML bestanden")
         
         if scraper.failed_urls:
             logger.info("Gefaalde URLs:")
@@ -656,6 +694,7 @@ def main():
         logger.info("Scraping onderbroken door gebruiker")
     except Exception as e:
         logger.error(f"Onverwachte error: {e}")
+        print(f"❌ Error: {e}")
     finally:
         logger.info("Scraper afgesloten")
 
@@ -674,6 +713,43 @@ if __name__ == "__main__":
 2. Programmatisch gebruik:
    from wehkamp_scraper import WehkampScraper
    
+    def is_valid_wehkamp_url(self, url: str) -> bool:
+        """
+        Valideer of URL een echte Wehkamp product URL is
+        
+        Args:
+            url: URL om te valideren
+            
+        Returns:
+            True als URL geldig is
+        """
+        if not url or not isinstance(url, str):
+            return False
+        
+        # Must contain wehkamp.nl and /p/ or /product/
+        if 'wehkamp.nl' not in url:
+            return False
+            
+        if not ('/p/' in url or '/product/' in url):
+            return False
+        
+        # Should not contain unwanted paths
+        unwanted_paths = [
+            '/help/',
+            '/klantenservice/',
+            '/size-guide/',
+            '/merk/',
+            '/campaign/',
+            '/inspiratie/',
+            '/magazine/'
+        ]
+        
+        for unwanted in unwanted_paths:
+            if unwanted in url:
+                return False
+        
+        return True
+    
    scraper = WehkampScraper()
    products = scraper.scrape_wehkamp("https://www.wehkamp.nl/herenmode-jassen/", limit=50)
    scraper.export_to_json("my_products.json")
