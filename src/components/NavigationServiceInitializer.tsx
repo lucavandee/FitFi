@@ -6,7 +6,7 @@ import { navigationService } from '../services/NavigationService';
  * Component that initializes the NavigationService with the navigate function
  * Must be rendered inside a Router context to access useNavigate
  */
-const NavigationServiceInitializer: React.FC = () => {
+export const NavigationServiceInitializer: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,5 +16,3 @@ const NavigationServiceInitializer: React.FC = () => {
   // This component doesn't render anything
   return null;
 };
-
-export default NavigationServiceInitializer;
