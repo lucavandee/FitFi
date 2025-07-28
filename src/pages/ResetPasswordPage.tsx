@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 
 const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -76,26 +77,21 @@ const ResetPasswordPage: React.FC = () => {
       return;
     }
 
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    
-    if (!accessToken || !refreshToken) {
-      setErrors({ general: 'Ongeldige reset link. Vraag een nieuwe aan.' });
-      return;
-    }
 
     setIsLoading(true);
     setErrors({});
 
     try {
-      // Mock password reset for now
-      console.log('Password reset for tokens:', accessToken, refreshToken);
-      
-      // Simulate successful reset
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase.auth.updateUser({
+        password: formData.password
+      });
+
+      if (error) {
+        setErrors({ general: error.message });
+        return;
+      }
 
       setIsSuccess(true);
-      toast.success('Wachtwoord succesvol gewijzigd!');
       
       // Track password reset completion
       if (typeof window.gtag === 'function') {
@@ -111,7 +107,6 @@ const ResetPasswordPage: React.FC = () => {
       }, 3000);
     } catch (error: any) {
       console.error('Password reset error:', error);
-      
       setErrors({ general: 'Er ging iets mis bij het wijzigen van je wachtwoord. Probeer het opnieuw.' });
     } finally {
       setIsLoading(false);
