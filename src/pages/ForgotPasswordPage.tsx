@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -27,14 +28,16 @@ const ForgotPasswordPage: React.FC = () => {
     setError('');
 
     try {
-      // Mock password reset for now
-      console.log('Password reset request for:', email);
-      
-      // Simulate successful request
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/wachtwoord-reset`
+      });
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
 
       setIsSuccess(true);
-      toast.success('Reset link verzonden!');
       
       // Track password reset request
       if (typeof window.gtag === 'function') {
@@ -45,7 +48,6 @@ const ForgotPasswordPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Password reset error:', error);
-      
       setError('Er ging iets mis. Probeer het opnieuw.');
     } finally {
       setIsLoading(false);

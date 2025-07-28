@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 export interface UserProfile {
   id: string;
@@ -19,8 +21,8 @@ export interface UserProfile {
 interface UserContextType {
   user: UserProfile | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
 }
@@ -32,60 +34,153 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Mock auth for now - just set loading to false
-    setIsLoading(false);
+    // Check for existing session
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // Create user profile from session
+          const userProfile: UserProfile = {
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            stylePreferences: {
+              casual: 3,
+              formal: 3,
+              sporty: 3,
+              vintage: 3,
+              minimalist: 3
+            },
+            isPremium: false,
+            savedRecommendations: []
+          };
+          setUser(userProfile);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const userProfile: UserProfile = {
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            stylePreferences: {
+              casual: 3,
+              formal: 3,
+              sporty: 3,
+              vintage: 3,
+              minimalist: 3
+            },
+            isPremium: false,
+            savedRecommendations: []
+          };
+          setUser(userProfile);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    // Mock login - create a user session
-    console.log('Mock login:', email);
-    setUser({
-      id: 'mock-user-id',
-      name: 'Test User',
-      email: email,
-      stylePreferences: {
-        casual: 3,
-        formal: 3,
-        sporty: 3,
-        vintage: 3,
-        minimalist: 3
-      },
-      isPremium: false,
-      savedRecommendations: []
-    });
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return false;
+      }
+
+      if (data.user) {
+        toast.success('Welkom terug!');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Er ging iets mis bij het inloggen');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    // Mock registration - create a user session
-    console.log('Mock registration:', name, email);
-    setUser({
-      id: 'mock-user-id',
-      name: name,
-      email: email,
-      stylePreferences: {
-        casual: 3,
-        formal: 3,
-        sporty: 3,
-        vintage: 3,
-        minimalist: 3
-      },
-      isPremium: false,
-      savedRecommendations: []
-    });
+  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name
+          }
+        }
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return false;
+      }
+
+      if (data.user) {
+        toast.success('Account succesvol aangemaakt!');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast.error('Er ging iets mis bij het registreren');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = async () => {
-    // Mock logout
-    console.log('Mock logout');
-    setUser(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Uitgelogd');
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Er ging iets mis bij het uitloggen');
+    }
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!user) return;
 
-    // Mock profile update
-    console.log('Mock profile update:', updates);
-    setUser(prev => prev ? { ...prev, ...updates } : null);
+    try {
+      setUser(prev => prev ? { ...prev, ...updates } : null);
+      toast.success('Profiel bijgewerkt');
+    } catch (error) {
+      console.error('Profile update error:', error);
+      toast.error('Er ging iets mis bij het bijwerken van je profiel');
+    }
   };
 
   const value: UserContextType = {
