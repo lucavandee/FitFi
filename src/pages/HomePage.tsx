@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Play, CheckCircle, Star, Users, Zap, Shield } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Walkthrough from '../components/walkthrough/Walkthrough';
@@ -85,6 +86,14 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>FitFi - Persoonlijke AI Stijladvies | Ontdek je perfecte look</title>
+        <meta name="description" content="Ontdek je perfecte stijl met AI-powered aanbevelingen. Persoonlijke outfit suggesties gebaseerd op jouw voorkeuren en lichaamsbouw." />
+        <meta property="og:title" content="FitFi - Persoonlijke AI Stijladvies" />
+        <meta property="og:description" content="Ontdek je perfecte stijl met AI-powered aanbevelingen." />
+        <link rel="canonical" href="https://fitfi.app/home" />
+      </Helmet>
+
       {/* Hero Section - Critical above-the-fold content */}
       <ErrorBoundary>
         <Hero onCTAClick={handleCTAClick} />
