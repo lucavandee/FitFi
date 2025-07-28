@@ -74,10 +74,14 @@ const Button: React.FC<ButtonProps> = ({
     </>
   );
   
+  // Add default aria-label for primary buttons if not provided
+  const ariaLabel = props['aria-label'] || (variant === 'primary' ? `${children}` : undefined);
+  
   if (Component === Link || props.to) {
     return (
       <Link
         className={classes}
+        aria-label={ariaLabel}
         {...props}
       >
         {content}
@@ -90,6 +94,7 @@ const Button: React.FC<ButtonProps> = ({
       <a
         className={classes}
         onClick={onClick}
+        aria-label={ariaLabel}
         {...props}
       >
         {content}
@@ -103,6 +108,7 @@ const Button: React.FC<ButtonProps> = ({
       className={classes}
       onClick={onClick}
       disabled={disabled || loading}
+      aria-label={ariaLabel}
       {...props}
     >
       {content}
