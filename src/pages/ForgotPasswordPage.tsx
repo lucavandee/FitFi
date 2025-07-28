@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
-import supabase from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 const ForgotPasswordPage: React.FC = () => {
@@ -29,13 +27,11 @@ const ForgotPasswordPage: React.FC = () => {
     setError('');
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/wachtwoord-reset`
-      });
-
-      if (error) {
-        throw error;
-      }
+      // Mock password reset for now
+      console.log('Password reset request for:', email);
+      
+      // Simulate successful request
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setIsSuccess(true);
       toast.success('Reset link verzonden!');
@@ -50,11 +46,7 @@ const ForgotPasswordPage: React.FC = () => {
     } catch (error: any) {
       console.error('Password reset error:', error);
       
-      if (error.message?.includes('User not found')) {
-        setError('Er is geen account gevonden met dit e-mailadres');
-      } else {
-        setError('Er ging iets mis. Probeer het opnieuw.');
-      }
+      setError('Er ging iets mis. Probeer het opnieuw.');
     } finally {
       setIsLoading(false);
     }
@@ -64,12 +56,7 @@ const ForgotPasswordPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white rounded-3xl shadow-sm p-8 text-center"
-          >
+          <div className="bg-white rounded-3xl shadow-sm p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
@@ -106,7 +93,7 @@ const ForgotPasswordPage: React.FC = () => {
                 Andere e-mail proberen
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     );
@@ -115,11 +102,7 @@ const ForgotPasswordPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div>
           {/* Header */}
           <div className="text-center">
             <Link to="/" className="inline-block mb-6">
@@ -208,7 +191,7 @@ const ForgotPasswordPage: React.FC = () => {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

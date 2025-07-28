@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
  * Component that protects routes based on authentication status
  * Can be used to protect authenticated routes or redirect authenticated users
  */
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireAuth = true,
   redirectTo
@@ -49,3 +49,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   return <>{children}</>;
 };
+
+export { ProtectedRoute };
+export default ProtectedRoute;
