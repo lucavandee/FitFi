@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.2.4] - 2025-01-28
+
+### Fixed
+- Fixed Netlify build by removing Python dependencies from frontend build
+- Separated Python backend completely from frontend deployment
+- Updated .gitignore to exclude Python files from frontend builds
+- Simplified requirements.txt to only essential scraping dependencies
+
+### Changed
+- Python backend now completely separate from frontend deployment
+- Netlify builds only frontend assets, no Python compilation needed
+- Cleaner separation of concerns between frontend and backend
+
+## [1.2.4] - 2025-01-28
+
+### Fixed
+- Fixed Netlify build by removing Python dependencies from frontend build
+- Separated Python backend completely from frontend deployment
+- Updated .gitignore to exclude Python files from frontend builds
+- Simplified requirements.txt to only essential scraping dependencies
+
+### Changed
+- Python backend now completely separate from frontend deployment
+- Netlify builds only frontend assets, no Python compilation needed
+- Cleaner separation of concerns between frontend and backend
+
+## [1.2.3] - 2025-01-28
+
+### Fixed
+- Fixed Python build errors caused by Cython version conflicts
+- Updated scikit-learn to >=1.4.0 for better Cython 3.x compatibility
+- Added proper build dependencies (build-essential, python3-dev)
+- Upgraded TensorFlow and PyTorch to latest compatible versions
+- Added comprehensive Python build CI pipeline
+
+### Added
+- Dockerfile for Python backend with proper build environment
+- Installation script (backend/install.sh) for local development
+- GitHub Actions workflow for Python dependency testing
+- Security scanning with safety for Python dependencies
+- Multi-Python version testing (3.9, 3.10, 3.11)
+
+## [1.2.2] - 2025-01-28
+
+### Added
+- Axe-core accessibility testing with Playwright
+- WCAG-AA compliance validation for home page
+- Automated a11y testing in CI pipeline
+- npm run test:a11y script for local testing
+
 ## [1.2.1] - 2025-01-28
 
 ### Fixed
