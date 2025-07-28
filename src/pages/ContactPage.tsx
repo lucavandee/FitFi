@@ -1,471 +1,669 @@
-import React, { useState } from 'react';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  MessageCircle, 
-  Send, 
-  User, 
-  AtSign, 
-  FileText, 
-  HelpCircle 
-} from 'lucide-react';
-import Button from '../components/ui/Button';
-import ErrorBoundary from '../components/ErrorBoundary';
+#!/usr/bin/env python3
+"""
+Robust Wehkamp Scraper - Full Page Rendering
+============================================
 
-const ContactPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    acceptTerms: false
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState('');
+Een complete, robuuste scraper voor Wehkamp.nl producten met:
+- Automatische fallback van requests naar Playwright
+- Correct UTF-8 debug HTML opslag (altijd als plaintext)
+- Anti-bot protection en uitgebreide foutafhandeling
+- Gestructureerde JSON output
+- Stap-voor-stap logging
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+Dependencies:
+    pip install requests beautifulsoup4 playwright fake-useragent
+    playwright install chromium
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: checked
-    }));
-  };
+Gebruik:
+    python wehkamp_scraper.py
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+Features:
+- Requests eerst proberen (sneller)
+- Automatische Playwright fallback bij dynamische content
+- Debug HTML altijd correct opgeslagen als UTF-8 text
+- Uitgebreide logging van elke stap
+- Robuuste error handling
+- Gestructureerde JSON output
+
+Output:
+- wehkamp_products.json (product data)
+- debug_wehkamp_[timestamp].html (debug HTML)
+- wehkamp_scraper.log (logging)
+"""
+
+import asyncio
+import json
+import logging
+import random
+import re
+import time
+from datetime import datetime
+from typing import List, Dict, Any, Optional, Tuple
+from urllib.parse import urljoin, urlparse
+
+import requests
+from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
+
+# Playwright import met fallback
+try:
+    from playwright.async_api import async_playwright, Browser, Page
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+    print("⚠️  Playwright niet beschikbaar. Installeer met: pip install playwright && playwright install chromium")
+
+# Logging configuratie
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('wehkamp_scraper.log', encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+
+class RobustWehkampScraper:
+    """
+    Robuuste Wehkamp scraper met automatische fallback van requests naar Playwright.
+    """
     
-    if (!formData.name || !formData.email || !formData.message || !formData.acceptTerms) {
-      setSubmitError('Vul alle verplichte velden in en accepteer de voorwaarden.');
-      return;
-    }
+    def __init__(self):
+        """
+        Initialiseer de scraper met anti-bot configuratie.
+        """
+        self.base_url = "https://www.wehkamp.nl"
+        self.ua = UserAgent()
+        self.session = requests.Session()
+        self.scraped_products = []
+        self.failed_extractions = []
+        
+        # Anti-bot protection instellingen
+        self.min_delay = 1.0
+        self.max_delay = 2.5
+        self.max_retries = 3
+        
+        # Setup session headers
+        self.setup_session_headers()
+        
     
-    setIsSubmitting(true);
-    setSubmitError('');
+    def setup_session_headers(self) -> None:
+        """
+        Setup realistische headers voor de requests session.
+        """
+        self.session.headers.update({
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
+            'DNT': '1'
+        })
+        logger.debug("📡 Session headers geconfigureerd")
     
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Success
-      setSubmitSuccess(true);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        acceptTerms: false
-      });
-    } catch (error) {
-      setSubmitError('Er is iets misgegaan. Probeer het later opnieuw.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[#FAF8F6]">
-      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
-        {/* Hero Section */}
-        <ErrorBoundary>
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-light text-gray-900 mb-6">
-            Neem contact op
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We helpen je graag! Vul het formulier in of gebruik een van onze andere contactmogelijkheden.
-          </p>
-        </div>
-        </ErrorBoundary>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Contact Form */}
-          <ErrorBoundary>
-          <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-            <div className="p-8">
-              <h2 className="text-2xl font-medium text-gray-900 mb-6">
-                Stuur ons een bericht
-              </h2>
-              
-              {submitSuccess ? (
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Send className="text-green-500" size={24} />
-                  </div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-2">
-                    Bericht verzonden!
-                  </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    Bedankt voor je bericht. We nemen zo snel mogelijk contact met je op.
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => setSubmitSuccess(false)}
-                    className="rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105"
-                  >
-                    Nieuw bericht
-                  </Button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit}>
-                  <div className="space-y-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Naam <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User size={18} className="text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          required
-                          className="block w-full pl-10 pr-3 py-3 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 placeholder-gray-500 transition-all"
-                          placeholder="Je volledige naam"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        E-mailadres <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <AtSign size={18} className="text-gray-400" />
-                        </div>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                          className="block w-full pl-10 pr-3 py-3 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 placeholder-gray-500 transition-all"
-                          placeholder="je@email.com"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                        Onderwerp
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <FileText size={18} className="text-gray-400" />
-                        </div>
-                        <select
-                          id="subject"
-                          name="subject"
-                          value={formData.subject}
-                          onChange={handleInputChange}
-                          className="block w-full pl-10 pr-3 py-3 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 transition-all"
-                        >
-                          <option value="">Selecteer een onderwerp</option>
-                          <option value="account">Account & Inloggen</option>
-                          <option value="billing">Betalingen & Abonnementen</option>
-                          <option value="styling">Stijladvies & Aanbevelingen</option>
-                          <option value="technical">Technische problemen</option>
-                          <option value="feedback">Feedback & Suggesties</option>
-                          <option value="other">Overig</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                        Bericht <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        required
-                        rows={5}
-                        className="block w-full px-4 py-3 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 placeholder-gray-500 transition-all"
-                        placeholder="Hoe kunnen we je helpen?"
-                      ></textarea>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="acceptTerms"
-                          name="acceptTerms"
-                          type="checkbox"
-                          checked={formData.acceptTerms}
-                          onChange={handleCheckboxChange}
-                          required
-                          className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label htmlFor="acceptTerms" className="text-gray-600">
-                          Ik ga akkoord met de <a href="/privacy-policy" className="text-[#bfae9f] hover:text-[#a89a8c] transition-colors">privacyvoorwaarden</a> en geef toestemming om contact met mij op te nemen. <span className="text-red-500">*</span>
-                        </label>
-                      </div>
-                    </div>
-                    
-                    {submitError && (
-                      <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-2xl text-sm">
-                        {submitError}
-                      </div>
-                    )}
-                    
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      fullWidth
-                      disabled={isSubmitting}
-                      icon={isSubmitting ? undefined : <Send size={16} />}
-                      iconPosition="right"
-                      className="rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105 mt-2"
-                    >
-                      {isSubmitting ? 'Verzenden...' : 'Bericht verzenden'}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-          </ErrorBoundary>
-
-          {/* Contact Info */}
-          <ErrorBoundary>
-          <div>
-            {/* Contact Methods */}
-            <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-8">
-              <div className="p-8">
-                <h2 className="text-2xl font-medium text-gray-900 mb-6">
-                  Contactgegevens
-                </h2>
+    def save_debug_html(self, html_content: str, method: str = "requests") -> str:
+        """
+        Sla HTML content op als UTF-8 plaintext debug bestand.
+        
+        Args:
+            html_content (str): HTML content om op te slaan
+            method (str): Methode gebruikt (requests/playwright)
+            
+        Returns:
+            str: Bestandsnaam van opgeslagen debug file
+        """
+        timestamp = int(time.time())
+        filename = f"debug_wehkamp_{method}_{timestamp}.html"
+        
+        try:
+            # Forceer UTF-8 encoding en plaintext opslag
+            with open(filename, 'w', encoding='utf-8', newline='') as f:
+                f.write(html_content)
+            
+            # Verificeer dat bestand correct is opgeslagen
+            file_size = len(html_content.encode('utf-8'))
+            
+            # Test of bestand leesbaar is
+            with open(filename, 'r', encoding='utf-8') as f:
+                test_content = f.read()
+                if len(test_content) != len(html_content):
+                    logger.warning(f"⚠️  Bestand grootte mismatch: {len(test_content)} vs {len(html_content)}")
+            
+            logger.info(f"💾 Debug HTML opgeslagen: {filename} ({file_size:,} bytes, UTF-8 plaintext)")
+            return filename
+            
+        except Exception as e:
+            logger.error(f"❌ Error bij opslaan debug HTML: {e}")
+            return ""
+    
+    def validate_html_content(self, html_content: str) -> Tuple[bool, str]:
+        """
+        Valideer of HTML content Wehkamp producten bevat.
+        
+        Args:
+            html_content (str): HTML content om te valideren
+            
+        Returns:
+            Tuple[bool, str]: (is_valid, reason)
+        """
+        if not html_content or len(html_content) < 1000:
+            return False, f"HTML te kort: {len(html_content)} chars"
+        
+        # Check voor Wehkamp-specifieke content
+        wehkamp_indicators = [
+            'wehkamp',
+            'product',
+            'artikel',
+            'prijs',
+            '€',
+            'data-testid'
+        ]
+        
+        found_indicators = sum(1 for indicator in wehkamp_indicators 
+                             if indicator.lower() in html_content.lower())
+        
+        if found_indicators < 3:
+            return False, f"Onvoldoende Wehkamp indicators: {found_indicators}/6"
+        
+        # Check voor blocked/error pagina's
+        blocked_indicators = [
+            'access denied',
+            'blocked',
+            'captcha',
+            'bot detection',
+            'cloudflare',
+            'security check'
+        ]
+        
+        for indicator in blocked_indicators:
+            if indicator.lower() in html_content.lower():
+                return False, f"Blocked page detected: {indicator}"
+        
+        return True, f"Valid HTML: {len(html_content):,} chars, {found_indicators}/6 indicators"
+    
+    def scrape_with_requests(self, url: str) -> Tuple[Optional[str], Dict[str, Any]]:
+        """
+        Probeer scraping met requests (sneller).
+        
+        Args:
+            url (str): URL om te scrapen
+            
+        Returns:
+            Tuple[Optional[str], Dict[str, Any]]: (html_content, metadata)
+        """
+        logger.info(f"🌐 Probeer requests scraping: {url}")
+        
+        metadata = {
+            'method': 'requests',
+            'success': False,
+            'status_code': None,
+            'content_type': None,
+            'content_length': 0,
+            'error': None
+        }
+        
+        try:
+            # Anti-bot delay
+            delay = random.uniform(self.min_delay, self.max_delay)
+            logger.debug(f"⏱️  Anti-bot delay: {delay:.2f}s")
+            time.sleep(delay)
+            
+            # Maak request
+            response = self.session.get(url, timeout=30)
+            
+            metadata.update({
+                'status_code': response.status_code,
+                'content_type': response.headers.get('content-type', ''),
+                'content_length': len(response.content)
+            })
+            
+            logger.info(f"📊 Response: {response.status_code}, "
+                       f"Content-Type: {response.headers.get('content-type', 'unknown')}, "
+                       f"Size: {len(response.content):,} bytes")
+            
+            if response.status_code == 200:
+                html_content = response.text
                 
-                <div className="space-y-6">
-                  <div className="flex items-start">
-                    <div className="bg-[#bfae9f]/20 p-3 rounded-full mr-4">
-                      <Mail className="text-[#bfae9f]" size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 mb-1">
-                        E-mail
-                      </h3>
-                      <p className="text-gray-600 mb-1">
-                        Voor algemene vragen:
-                      </p>
-                      <a href="mailto:info@fitfi.nl" className="text-[#bfae9f] hover:text-[#a89a8c] transition-colors">
-                        info@fitfi.nl
-                      </a>
-                      <p className="text-gray-600 mt-2 mb-1">
-                        Voor ondersteuning:
-                      </p>
-                      <a href="mailto:support@fitfi.nl" className="text-[#bfae9f] hover:text-[#a89a8c] transition-colors">
-                        support@fitfi.nl
-                      </a>
-                      <p className="text-gray-600 mt-2 mb-1">
-                        Voor zakelijke vragen:
-                      </p>
-                      <a href="mailto:partner@fitfi.nl" className="text-[#bfae9f] hover:text-[#a89a8c] transition-colors">
-                        partner@fitfi.nl
-                      </a>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 p-3 rounded-full mr-4">
-                      <Phone className="text-blue-500" size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 mb-1">
-                        Telefoon
-                      </h3>
-                      <p className="text-gray-600 mb-1">
-                        Klantenservice:
-                      </p>
-                      <a href="tel:+31201234567" className="text-[#bfae9f] hover:text-[#a89a8c] transition-colors">
-                        +31 20 123 4567
-                      </a>
-                      <p className="text-gray-500 text-sm mt-1">
-                        Ma-Vr: 9:00 - 17:00 (Premium & Business)
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="bg-green-100 p-3 rounded-full mr-4">
-                      <MessageCircle className="text-green-500" size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 mb-1">
-                        Live Chat
-                      </h3>
-                      <p className="text-gray-600 mb-3 leading-relaxed">
-                        Direct contact met ons supportteam via de chat-functie in de app.
-                      </p>
-                      <Button 
-                        variant="outline"
-                        size="sm"
-                        className="rounded-2xl shadow-sm px-4 py-2 transition-transform hover:scale-105"
-                        icon={<MessageCircle size={16} />}
-                        iconPosition="left"
-                      >
-                        Start chat
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="bg-purple-100 p-3 rounded-full mr-4">
-                      <MapPin className="text-purple-500" size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 mb-1">
-                        Adres
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        FitFi B.V.<br />
-                        Herengracht 123<br />
-                        1015 BS Amsterdam<br />
-                        Nederland
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* FAQ */}
-            <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-              <div className="p-8">
-                <div className="flex items-center mb-6">
-                  <div className="bg-yellow-100 p-3 rounded-full mr-4">
-                    <HelpCircle className="text-yellow-500" size={20} />
-                  </div>
-                  <h2 className="text-2xl font-medium text-gray-900">
-                    Veelgestelde vragen
-                  </h2>
-                </div>
+                # Valideer content
+                is_valid, reason = self.validate_html_content(html_content)
                 
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Hoe snel kan ik een reactie verwachten?
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      We streven ernaar om binnen 24 uur te reageren op alle e-mails. Premium en Business klanten krijgen prioriteit ondersteuning.
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Kan ik een persoonlijke afspraak maken?
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Business klanten kunnen een persoonlijke afspraak maken met onze accountmanagers. Neem contact op via partner@fitfi.nl.
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Hoe kan ik feedback geven over de app?
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      We waarderen je feedback! Je kunt het contactformulier gebruiken of direct mailen naar feedback@fitfi.nl.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          </ErrorBoundary>
-        </div>
+                if is_valid:
+                    metadata['success'] = True
+                    logger.info(f"✅ Requests scraping succesvol: {reason}")
+                    return html_content, metadata
+                else:
+                    metadata['error'] = f"Invalid content: {reason}"
+                    logger.warning(f"⚠️  Requests content invalid: {reason}")
+                    return html_content, metadata  # Return anyway voor debug
+            else:
+                metadata['error'] = f"HTTP {response.status_code}"
+                logger.warning(f"⚠️  HTTP error: {response.status_code}")
+                return None, metadata
+                
+        except requests.exceptions.RequestException as e:
+            metadata['error'] = str(e)
+            logger.error(f"❌ Requests error: {e}")
+            return None, metadata
+    
+    async def scrape_with_playwright(self, url: str) -> Tuple[Optional[str], Dict[str, Any]]:
+        """
+        Scrape met Playwright (fallback voor dynamische content).
+        
+        Args:
+            url (str): URL om te scrapen
+            
+        Returns:
+            Tuple[Optional[str], Dict[str, Any]]: (html_content, metadata)
+        """
+        if not PLAYWRIGHT_AVAILABLE:
+            logger.error("❌ Playwright niet beschikbaar")
+            return None, {'method': 'playwright', 'success': False, 'error': 'Playwright not available'}
+        
+        logger.info(f"🎭 Playwright scraping: {url}")
+        
+        metadata = {
+            'method': 'playwright',
+            'success': False,
+            'content_length': 0,
+            'error': None
+        }
+        
+        browser = None
+        
+        try:
+            # Setup Playwright
+            playwright = await async_playwright().start()
+            
+            browser = await playwright.chromium.launch(
+                headless=False,  # Headed mode voor volledige rendering zoals echte gebruiker
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-blink-features=AutomationControlled'
+                ]
+            )
+            
+            context = await browser.new_context(
+                viewport={'width': 1920, 'height': 1080},
+                locale='nl-NL',
+                timezone_id='Europe/Amsterdam'
+            )
+            
+            page = await context.new_page()
+            
+            # Anti-detectie script
+            await page.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined,
+                });
+            """)
+            
+            logger.info("🎭 Navigeren naar pagina...")
+            
+            # Navigeer naar pagina
+            await page.goto(url, wait_until='domcontentloaded', timeout=60000)
+            
+            # Wacht op producten
+            logger.info("⏳ Wachten op product content...")
+            
+            try:
+                await page.wait_for_selector(
+                    'article[data-testid="product-card"], .product-tile, .product-card',
+                    timeout=30000
+                )
+                logger.info("✅ Product selectors gevonden")
+            except:
+                logger.warning("⚠️  Product selectors timeout - probeer anyway")
+            
+            # Extra delay voor dynamic content
+            await asyncio.sleep(3)
+            
+            # Scroll om lazy loading te triggeren
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
+            await asyncio.sleep(2)
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            await asyncio.sleep(2)
+            
+            # Haal HTML op
+            html_content = await page.content()
+            
+            metadata.update({
+                'content_length': len(html_content),
+                'success': True
+            })
+            
+            logger.info(f"✅ Playwright scraping succesvol: {len(html_content):,} chars")
+            
+            return html_content, metadata
+            
+        except Exception as e:
+            metadata['error'] = str(e)
+            logger.error(f"❌ Playwright error: {e}")
+            return None, metadata
+            
+        finally:
+            if browser:
+                await browser.close()
+    
+    def extract_products_from_html(self, html_content: str) -> List[Dict[str, Any]]:
+        """
+        Extract product data uit HTML content.
+        
+        Args:
+            html_content (str): HTML content om te parsen
+            
+        Returns:
+            List[Dict[str, Any]]: List van product data
+        """
+        logger.info("🔍 Extracting products from HTML...")
+        
+        soup = BeautifulSoup(html_content, 'html.parser')
+        products = []
+        
+        # Wehkamp-specifieke selectors (gebaseerd op moderne e-commerce structuur)
+        product_selectors = [
+            'article[data-testid="product-card"]',
+            'article[data-testid="product-tile"]',
+            '.product-tile',
+            '.product-card',
+            '.product-item',
+            'article[class*="product"]',
+            '[data-testid*="product"]'
+        ]
+        
+        product_elements = []
+        
+        # Probeer elke selector
+        for selector in product_selectors:
+            elements = soup.select(selector)
+            if elements:
+                logger.info(f"✅ Gevonden {len(elements)} elementen met selector: {selector}")
+                product_elements = elements
+                break
+            else:
+                logger.debug(f"❌ Geen elementen met selector: {selector}")
+        
+        if not product_elements:
+            logger.warning("⚠️  Geen product elementen gevonden met bekende selectors")
+            # Debug: zoek naar alle article tags
+            all_articles = soup.find_all('article')
+            logger.info(f"🔍 Debug: Gevonden {len(all_articles)} article tags totaal")
+            
+            # Debug: zoek naar links met /p/ of /product/
+            all_product_links = soup.find_all('a', href=re.compile(r'/(p|product)/'))
+            logger.info(f"🔍 Debug: Gevonden {len(all_product_links)} links met /p/ of /product/")
+            
+            return []
+        
+        # Extract data van elk product element
+        for i, element in enumerate(product_elements[:20], 1):  # Limit tot 20 voor test
+            try:
+                product_data = self.extract_single_product(element, i)
+                if product_data:
+                    products.append(product_data)
+                    logger.info(f"✅ Product {len(products)}: {product_data['title'][:50]}...")
+                else:
+                    self.failed_extractions.append(f"Product {i}: extraction failed")
+                    
+            except Exception as e:
+                logger.error(f"❌ Error extracting product {i}: {e}")
+                self.failed_extractions.append(f"Product {i}: {str(e)}")
+        
+        logger.info(f"🎯 Extraction voltooid: {len(products)} producten, {len(self.failed_extractions)} failures")
+        return products
+    
+    def extract_single_product(self, element, index: int) -> Optional[Dict[str, Any]]:
+        """
+        Extract data van een enkel product element.
+        
+        Args:
+            element: BeautifulSoup element
+            index (int): Product index voor debugging
+            
+        Returns:
+            Optional[Dict[str, Any]]: Product data of None
+        """
+        try:
+            # Titel extractie
+            title = None
+            title_selectors = ['h3', 'h2', 'h4', '[data-testid="product-title"]', '.product-title', '.title']
+            
+            for selector in title_selectors:
+                title_elem = element.select_one(selector)
+                if title_elem:
+                    title = title_elem.get_text(strip=True)
+                    break
+            
+            if not title:
+                logger.debug(f"❌ Product {index}: Geen titel gevonden")
+                return None
+            
+            # Prijs extractie
+            price = None
+            price_selectors = [
+                '[data-testid="price"]',
+                '.price',
+                '.product-price',
+                '[class*="price"]',
+                '.amount'
+            ]
+            
+            for selector in price_selectors:
+                price_elem = element.select_one(selector)
+                if price_elem:
+                    price_text = price_elem.get_text(strip=True)
+                    # Clean price text
+                    price = re.sub(r'[^\d,.-]', '', price_text).replace(',', '.')
+                    break
+            
+            if not price:
+                logger.debug(f"❌ Product {index}: Geen prijs gevonden")
+                return None
+            
+            # URL extractie
+            url = None
+            link_elem = element.select_one('a')
+            if link_elem:
+                href = link_elem.get('href')
+                if href:
+                    if href.startswith('/'):
+                        url = urljoin(self.base_url, href)
+                    else:
+                        url = href
+            
+            if not url:
+                logger.debug(f"❌ Product {index}: Geen URL gevonden")
+                return None
+            
+            # Afbeelding extractie
+            image = None
+            img_elem = element.select_one('img')
+            if img_elem:
+                image_src = (img_elem.get('src') or 
+                           img_elem.get('data-src') or 
+                           img_elem.get('data-lazy-src'))
+                
+                if image_src:
+                    if image_src.startswith('/'):
+                        image = urljoin(self.base_url, image_src)
+                    else:
+                        image = image_src
+            
+            # Brand extractie (optioneel)
+            brand = None
+            brand_selectors = ['.brand', '.product-brand', '[data-testid="brand"]']
+            for selector in brand_selectors:
+                brand_elem = element.select_one(selector)
+                if brand_elem:
+                    brand = brand_elem.get_text(strip=True)
+                    break
+            
+            product_data = {
+                "title": title,
+                "price": price,
+                "url": url,
+                "image": image,
+                "brand": brand or "Onbekend",
+                "retailer": "Wehkamp",
+                "category": "Heren Kleding",
+                "scraped_at": datetime.now().isoformat()
+            }
+            
+            return product_data
+            
+        except Exception as e:
+            logger.error(f"❌ Error extracting product {index}: {e}")
+            return None
+    
+    def export_to_json(self, filename: str = "wehkamp_products.json") -> None:
+        """
+        Export products naar JSON bestand.
+        
+        Args:
+            filename (str): Output bestandsnaam
+        """
+        try:
+            export_data = {
+                "scraped_at": datetime.now().isoformat(),
+                "total_products": len(self.scraped_products),
+                "failed_extractions": len(self.failed_extractions),
+                "products": self.scraped_products,
+                "failures": self.failed_extractions
+            }
+            
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(export_data, f, ensure_ascii=False, indent=2)
+            
+            logger.info(f"💾 Data geëxporteerd naar {filename}: {len(self.scraped_products)} producten")
+            
+        except Exception as e:
+            logger.error(f"❌ Error bij JSON export: {e}")
+    
+    async def scrape_wehkamp_category(self, url: str) -> List[Dict[str, Any]]:
+        """
+        Scrape Wehkamp categorie met automatische fallback.
+        
+        Args:
+            url (str): Categorie URL om te scrapen
+            
+        Returns:
+            List[Dict[str, Any]]: Gescrapete producten
+        """
+        logger.info(f"🎯 Start scraping: {url}")
+        
+        html_content = None
+        final_metadata = {}
+        
+        # STAP 1: Probeer eerst requests (sneller)
+        html_content, requests_metadata = self.scrape_with_requests(url)
+        
+        if html_content and requests_metadata['success']:
+            logger.info("✅ Requests scraping succesvol")
+            final_metadata = requests_metadata
+        else:
+            logger.warning("⚠️  Requests scraping gefaald, fallback naar Playwright...")
+            
+            # STAP 2: Fallback naar Playwright
+            html_content, playwright_metadata = await self.scrape_with_playwright(url)
+            final_metadata = playwright_metadata
+            
+            if not html_content:
+                logger.error("❌ Beide scraping methoden gefaald")
+                return []
+        
+        # STAP 3: Sla debug HTML op (altijd)
+        if html_content:
+            debug_filename = self.save_debug_html(html_content, final_metadata['method'])
+            logger.info(f"💾 Debug HTML: {debug_filename}")
+        
+        # STAP 4: Extract producten
+        if html_content:
+            products = self.extract_products_from_html(html_content)
+            self.scraped_products = products
+            
+            # STAP 5: Export naar JSON
+            if products:
+                self.export_to_json()
+                logger.info(f"🎉 Scraping voltooid: {len(products)} producten gevonden")
+            else:
+                logger.warning("⚠️  Geen producten gevonden - check debug HTML")
+            
+            return products
+        
+        return []
+    
+    def print_summary(self) -> None:
+        """
+        Print samenvatting van scraping resultaten.
+        """
+        total_products = len(self.scraped_products)
+        failed_count = len(self.failed_extractions)
+        
+        print(f"\n{'='*50}")
+        print(f"🎯 WEHKAMP SCRAPING RESULTATEN")
+        print(f"{'='*50}")
+        print(f"✅ Succesvol gescraped: {total_products} producten")
+        print(f"❌ Gefaalde extracties: {failed_count}")
+        print(f"📁 Output opgeslagen in: wehkamp_products.json")
+        print(f"🐛 Debug HTML beschikbaar voor analyse")
+        
+        if total_products > 0:
+            print(f"\n📦 Voorbeeld producten:")
+            for i, product in enumerate(self.scraped_products[:3], 1):
+                print(f"  {i}. {product['title'][:60]}...")
+                print(f"     💰 {product['price']}")
+                print(f"     🔗 {product['url'][:80]}...")
+        
+        if failed_count > 0:
+            print(f"\n❌ Gefaalde extracties: {failed_count}")
+            for failure in self.failed_extractions[:3]:
+                print(f"  - {failure}")
+        
+        print(f"{'='*50}")
 
-        {/* Business Contact */}
-        <ErrorBoundary>
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-3xl shadow-sm overflow-hidden mb-16">
-          <div className="p-8 md:flex items-center">
-            <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
-              <h2 className="text-2xl font-medium text-white mb-4">
-                Zakelijke mogelijkheden
-              </h2>
-              <p className="text-white/90 mb-0 leading-relaxed">
-                Geïnteresseerd in een samenwerking, API-integratie of white-label oplossing? Ons Business team staat klaar om je te helpen.
-              </p>
-            </div>
-            <div className="md:w-1/3">
-              <Button 
-                as="a"
-                href="mailto:partner@fitfi.nl"
-                variant="secondary"
-                className="bg-white text-blue-600 hover:bg-gray-100 rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105 w-full"
-              >
-                Zakelijke aanvraag
-              </Button>
-            </div>
-          </div>
-        </div>
-        </ErrorBoundary>
 
-        {/* Social Media */}
-        <ErrorBoundary>
-        <div className="text-center">
-          <h2 className="text-2xl font-medium text-gray-900 mb-6">
-            Volg ons op social media
-          </h2>
-          <p className="text-gray-600 mb-6 leading-relaxed">
-            Blijf op de hoogte van de nieuwste updates, stijltips en meer door ons te volgen.
-          </p>
-          <div className="flex justify-center space-x-6">
-            <a href="#" className="text-gray-500 hover:text-[#bfae9f] transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-              </svg>
-              <span className="sr-only">Facebook</span>
-            </a>
-            <a href="#" className="text-gray-500 hover:text-[#bfae9f] transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
-              </svg>
-              <span className="sr-only">Instagram</span>
-            </a>
-            <a href="#" className="text-gray-500 hover:text-[#bfae9f] transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-              </svg>
-              <span className="sr-only">Twitter</span>
-            </a>
-            <a href="#" className="text-gray-500 hover:text-[#bfae9f] transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-              </svg>
-              <span className="sr-only">GitHub</span>
-            </a>
-            <a href="#" className="text-gray-500 hover:text-[#bfae9f] transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z" clipRule="evenodd" />
-              </svg>
-              <span className="sr-only">Dribbble</span>
-            </a>
-          </div>
-        </div>
-        </ErrorBoundary>
-      </div>
-    </div>
-  );
-};
+async def main():
+    """
+    Hoofdfunctie voor het uitvoeren van de Wehkamp scraper.
+    """
+    logger.info("🚀 === Robust Wehkamp Scraper Gestart ===")
+    
+    # Initialiseer scraper
+    scraper = RobustWehkampScraper()
+    
+    try:
+        # Test URL: Heren kleding categorie
+        test_url = "https://www.wehkamp.nl/heren-kleding/"
+        
+        # Scrape producten
+        products = await scraper.scrape_wehkamp_category(test_url)
+        
+        # Print resultaten
+        scraper.print_summary()
+        
+        # Console output voor directe feedback
+        if products:
+            print(f"\n🎉 SUCCESS: {len(products)} producten gevonden!")
+            print(f"📄 Check wehkamp_products.json voor volledige data")
+        else:
+            print(f"\n⚠️  GEEN PRODUCTEN GEVONDEN")
+            print(f"🐛 Check debug HTML bestanden voor analyse")
+        
+    except KeyboardInterrupt:
+        logger.info("⏹️  Scraping onderbroken door gebruiker")
+    except Exception as e:
+        logger.error(f"💥 Onverwachte error: {e}")
+    finally:
+        logger.info("🏁 Scraper afgesloten")
 
-export default ContactPage;
+
+if __name__ == "__main__":
+    # Direct uitvoerbaar script
+    asyncio.run(main())
