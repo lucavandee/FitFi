@@ -1,652 +1,359 @@
 #!/usr/bin/env python3
 """
-Wehkamp Scraper - Production Ready
-==================================
+Wehkamp Playwright Scraper - Production Ready
+=============================================
 
-Een complete, robuuste scraper voor Wehkamp.nl producten met:
-- Anti-bot protection (user-agent rotatie, delays, retries)
-- Modulaire opbouw voor onderhoud
-- JSON export in FitFi-compatible format
-- Uitgebreide logging en error handling
+Een complete Playwright-gebaseerde scraper voor Wehkamp.nl producten.
+
+Dependencies:
+    pip install playwright beautifulsoup4 requests fake-useragent
+    playwright install chromium
 
 Gebruik:
     python wehkamp_scraper.py
 
-Cron scheduling voorbeeld:
-    # Dagelijks om 3:00 AM
-    0 3 * * * /usr/bin/python3 /path/to/wehkamp_scraper.py >> /var/log/wehkamp_scraper.log 2>&1
+Features:
+- Playwright headless browser voor JavaScript rendering
+- Extractie van titel, prijs, URL, afbeelding per product
+- JSON export naar wehkamp_products.json
+- Uitgebreide foutafhandeling en logging
+- Anti-bot protection met delays en user-agent rotatie
+
+Selectors:
+- Productkaart: article[data-testid="product-card"]
+- Titel: h3 binnen de kaart
+- Prijs: [data-testid="price"]
+- Link: <a> binnen de kaart
+- Afbeelding: <img> binnen de kaart (src attribuut)
 """
 
-import requests
-from bs4 import BeautifulSoup
+import asyncio
 import json
-import uuid
-import time
-import random
 import logging
-from datetime import datetime, timezone
-from typing import List, Dict, Optional, Any
+import random
+import time
+from datetime import datetime
+from typing import List, Dict, Any, Optional
+from urllib.parse import urljoin
+
+from playwright.async_api import async_playwright, Browser, Page
 from fake_useragent import UserAgent
-import os
-from urllib.parse import urljoin, urlparse
-import re
 
 # Logging configuratie
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('wehkamp_scraper.log'),
+        logging.FileHandler('wehkamp_playwright_scraper.log'),
         logging.StreamHandler()
     ]
 )
 logger = logging.getLogger(__name__)
 
 
-class WehkampScraper:
+class WehkampPlaywrightScraper:
     """
-    Hoofdklasse voor Wehkamp product scraping.
-    
-    Features:
-    - Anti-bot protection met user-agent rotatie
-    - Retry mechanisme voor failed requests
-    - Modulaire functies voor verschillende scraping taken
-    - JSON export in FitFi-compatible format
+    Playwright-gebaseerde scraper voor Wehkamp.nl producten.
     """
     
     def __init__(self):
         """
-        Initialiseer de Wehkamp scraper met basis configuratie.
+        Initialiseer de Wehkamp Playwright scraper.
         """
         self.base_url = "https://www.wehkamp.nl"
-        self.session = requests.Session()
         self.ua = UserAgent()
         self.scraped_products = []
-        self.failed_urls = []
+        self.failed_products = []
         
         # Anti-bot protection instellingen
-        self.min_delay = 1.0  # Minimum delay tussen requests (seconden)
-        self.max_delay = 2.5  # Maximum delay tussen requests
-        self.max_retries = 3  # Maximum aantal retries per request
+        self.min_delay = 1.0
+        self.max_delay = 2.5
         
-        # Wehkamp categorieën om te scrapen
-        self.categories = [
-            "herenmode-jassen",
-            "herenmode-truien-vesten",
-            "herenmode-overhemden",
-            "herenmode-broeken",
-            "herenmode-schoenen",
-            "damesmode-jassen",
-            "damesmode-truien-vesten",
-            "damesmode-jurken",
-            "damesmode-broeken",
-            "damesmode-schoenen"
-        ]
-        
-        logger.info("Wehkamp Scraper geïnitialiseerd")
+        logger.info("Wehkamp Playwright Scraper geïnitialiseerd")
     
-    def get_random_headers(self) -> Dict[str, str]:
+    async def setup_browser(self) -> Browser:
         """
-        Genereer random headers voor anti-bot protection.
+        Setup Playwright browser met anti-detectie configuratie.
         
         Returns:
-            Dict met HTTP headers voor requests.
+            Browser: Geconfigureerde Playwright browser instance.
         """
-        return {
-            'User-Agent': self.ua.random,
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Cache-Control': 'max-age=0',
-            'DNT': '1'
-        }
-    
-    def make_request(self, url: str, retries: int = 0) -> Optional[requests.Response]:
-        """
-        Maak een HTTP request met retry logica en anti-bot protection.
+        playwright = await async_playwright().start()
         
-        Args:
-            url (str): URL om te scrapen.
-            retries (int): Aantal retries al geprobeerd.
-            
-        Returns:
-            Optional[requests.Response]: Response object of None bij failure.
-        """
-        if retries >= self.max_retries:
-            logger.error(f"Max retries bereikt voor {url}")
-            self.failed_urls.append(url)
-            return None
-        
-        try:
-            # Random delay voor anti-bot protection
-            delay = random.uniform(self.min_delay, self.max_delay)
-            time.sleep(delay)
-            
-            # Maak request met random headers
-            headers = self.get_random_headers()
-            response = self.session.get(url, headers=headers, timeout=15)
-            
-            if response.status_code == 200:
-                logger.debug(f"Succesvol gescraped: {url}")
-                return response
-            elif response.status_code == 429:
-                # Rate limited - wacht langer en probeer opnieuw
-                logger.warning(f"Rate limited voor {url}, wacht 30 seconden...")
-                time.sleep(30)
-                return self.make_request(url, retries + 1)
-            else:
-                logger.warning(f"HTTP {response.status_code} voor {url}")
-                return self.make_request(url, retries + 1)
-                
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Request error voor {url}: {e}")
-            return self.make_request(url, retries + 1)
-    
-    def is_valid_wehkamp_url(self, url: str) -> bool:
-        """
-        Valideer of URL een echte Wehkamp product URL is.
-        
-        Args:
-            url (str): URL om te valideren.
-            
-        Returns:
-            bool: True als URL geldig is.
-        """
-        if not url or not isinstance(url, str):
-            return False
-        
-        # Must contain wehkamp.nl and /p/ or /product/
-        if 'wehkamp.nl' not in url:
-            return False
-            
-        if 'wehkamp.nl' not in url:
-            return False
-        
-        if not ('/product/' in url or '/artikel/' in url):
-            return False
-        
-        # Should not contain unwanted paths
-        unwanted_paths = [
-            '/help/',
-            '/klantenservice/',
-            '/size-guide/',
-            '/merk/',
-            '/campaign/',
-            '/inspiratie/',
-            '/magazine/'
-        ]
-        
-        for unwanted in unwanted_paths:
-            if unwanted in url:
-                return False
-        
-        return True
-    
-    def scrape_category_page(self, category: str, page: int = 1) -> List[str]:
-        """
-        Scrape een categorie pagina voor product URLs.
-        
-        Args:
-            category (str): Categorie naam.
-            page (int): Pagina nummer.
-            
-        Returns:
-            List[str]: List van product URLs.
-        """
-        url = f"{self.base_url}/{category}/?page={page}"
-        logger.info(f"Scraping categorie pagina: {url}")
-        
-        response = self.make_request(url)
-        if not response:
-            return []
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        product_urls = []
-        
-        # Verschillende selectors voor Wehkamp product links
-        selectors = [
-            'a[href*="/product/"]',
-            'a[href*="/artikel/"]',
-            '.ProductTile a',
-            '.ProductCard a',
-            '[data-testid="product-card"] a',
-            '[data-testid="product-tile"] a',
-            '.product-link',
-            'article a[href*="/product/"]',
-            '.tile a'
-        ]
-        
-        for selector in selectors:
-            links = soup.select(selector)
-            logger.debug(f"Selector '{selector}' found {len(links)} links")
-            for link in links:
-                href = link.get('href')
-                if href and ('/product/' in href or '/artikel/' in href):
-                    full_url = urljoin(self.base_url, href)
-                    # Clean URL (remove query parameters)
-                    clean_url = full_url.split('?')[0].split('#')[0]
-                    if clean_url not in product_urls and self.is_valid_wehkamp_url(clean_url):
-                        product_urls.append(clean_url)
-        
-        logger.info(f"Gevonden {len(product_urls)} product URLs op pagina {page}")
-        
-        # Debug: save page content als we weinig URLs vinden
-        if len(product_urls) < 5:
-            debug_file = f'debug_wehkamp_{category}_p{page}.html'
-            with open(debug_file, 'w', encoding='utf-8') as f:
-                f.write(response.text)
-            logger.warning(f"Weinig producten gevonden ({len(product_urls)}). HTML opgeslagen als {debug_file}")
-            
-            # Log alle gevonden links voor debugging
-            all_links = soup.find_all('a', href=True)
-            logger.debug(f"Totaal {len(all_links)} links gevonden op pagina")
-            sample_links = [link.get('href') for link in all_links[:10]]
-            logger.debug(f"Sample links: {sample_links}")
-        
-        return product_urls
-    
-    def extract_price(self, soup: BeautifulSoup) -> tuple[float, float]:
-        """
-        Extraheer prijs en originele prijs uit product pagina.
-        
-        Args:
-            soup (BeautifulSoup): BeautifulSoup object van product pagina.
-            
-        Returns:
-            tuple[float, float]: Tuple van (huidige_prijs, originele_prijs).
-        """
-        current_price = 0.0
-        original_price = 0.0
-        
-        # Verschillende selectors voor prijzen op Wehkamp
-        price_selectors = [
-            '[data-testid="price-current"]',
-            '[data-testid="price"]',
-            '.price-current',
-            '.price-now',
-            '.product-price .current',
-            '.price .current',
-            '.price-value',
-            '.price-info .current',
-            '.current-price'
-        ]
-        
-        original_price_selectors = [
-            '[data-testid="price-original"]',
-            '[data-testid="price-was"]',
-            '.price-original',
-            '.price-was',
-            '.product-price .original',
-            '.price .original',
-            '.price-old',
-            '.was-price'
-        ]
-        
-        # Zoek huidige prijs
-        for selector in price_selectors:
-            price_elem = soup.select_one(selector)
-            if price_elem:
-                price_text = price_elem.get_text(strip=True)
-                # Extraheer numerieke waarde
-                price_match = re.search(r'(\d+(?:,\d{2})?)', price_text.replace('€', '').replace('.', ''))
-                if price_match:
-                    current_price = float(price_match.group(1).replace(',', '.'))
-                    break
-        
-        # Zoek originele prijs (bij sale items)
-        for selector in original_price_selectors:
-            price_elem = soup.select_one(selector)
-            if price_elem:
-                price_text = price_elem.get_text(strip=True)
-                price_match = re.search(r'(\d+(?:,\d{2})?)', price_text.replace('€', '').replace('.', ''))
-                if price_match:
-                    original_price = float(price_match.group(1).replace(',', '.'))
-                    break
-        
-        return current_price, original_price
-    
-    def extract_images(self, soup: BeautifulSoup) -> List[str]:
-        """
-        Extraheer product afbeeldingen.
-        
-        Args:
-            soup (BeautifulSoup): BeautifulSoup object van product pagina.
-            
-        Returns:
-            List[str]: List van afbeelding URLs.
-        """
-        images = []
-        
-        # Verschillende selectors voor afbeeldingen op Wehkamp
-        img_selectors = [
-            '[data-testid="product-image"] img',
-            '[data-testid="hero-image"] img',
-            '.product-images img',
-            '.product-gallery img',
-            '.product-media img',
-            '.hero-image img',
-            '.main-image img',
-            '.product-image-container img',
-            '.image-gallery img'
-        ]
-        
-        for selector in img_selectors:
-            img_elements = soup.select(selector)
-            for img in img_elements:
-                src = img.get('src') or img.get('data-src') or img.get('data-lazy-src')
-                if src and ('http' in src or src.startswith('//')):
-                    # Maak absolute URL
-                    if src.startswith('//'):
-                        src = 'https:' + src
-                    elif src.startswith('/'):
-                        src = urljoin(self.base_url, src)
-                    images.append(src)
-        
-        return list(set(images))  # Remove duplicates
-    
-    def extract_brand_and_title(self, soup: BeautifulSoup) -> tuple[str, str]:
-        """
-        Extraheer merk en titel van product.
-        
-        Args:
-            soup (BeautifulSoup): BeautifulSoup object van product pagina.
-            
-        Returns:
-            tuple[str, str]: Tuple van (brand, title).
-        """
-        # Titel selectors
-        title_selectors = [
-            '[data-testid="product-title"]',
-            '[data-testid="product-name"]',
-            'h1',
-            '.product-title',
-            '.product-name',
-            '.pdp-title',
-            '.product-info h1',
-            '.product-header h1'
-        ]
-        
-        title = "Onbekend Product"
-        for selector in title_selectors:
-            title_elem = soup.select_one(selector)
-            if title_elem:
-                title = title_elem.get_text(strip=True)
-                break
-        
-        # Merk selectors
-        brand_selectors = [
-            '[data-testid="product-brand"]',
-            '[data-testid="brand-name"]',
-            '.product-brand',
-            '.brand-name',
-            '.pdp-brand',
-            '.manufacturer',
-            '.product-info .brand',
-            '.brand-link'
-        ]
-        
-        brand = "Onbekend Merk"
-        for selector in brand_selectors:
-            brand_elem = soup.select_one(selector)
-            if brand_elem:
-                brand = brand_elem.get_text(strip=True)
-                break
-        
-        # Als merk niet gevonden, probeer uit titel te extraheren
-        if brand == "Onbekend Merk" and title:
-            # Veel merken staan aan het begin van de titel
-            title_words = title.split()
-            if title_words:
-                potential_brand = title_words[0]
-                # Check of het een bekend merk lijkt (begint met hoofdletter)
-                if potential_brand and potential_brand[0].isupper():
-                    brand = potential_brand
-        
-        return brand, title
-    
-    def extract_category_from_url(self, url: str) -> str:
-        """
-        Extraheer categorie uit URL.
-        
-        Args:
-            url (str): Product of categorie URL.
-            
-        Returns:
-            str: Categorie naam.
-        """
-        if 'herenmode-jassen' in url:
-            return 'Heren Jassen'
-        elif 'herenmode-truien' in url:
-            return 'Heren Truien'
-        elif 'herenmode-overhemden' in url:
-            return 'Heren Overhemden'
-        elif 'herenmode-broeken' in url:
-            return 'Heren Broeken'
-        elif 'herenmode-schoenen' in url:
-            return 'Heren Schoenen'
-        elif 'damesmode-jassen' in url:
-            return 'Dames Jassen'
-        elif 'damesmode-truien' in url:
-            return 'Dames Truien'
-        elif 'damesmode-jurken' in url:
-            return 'Dames Jurken'
-        elif 'damesmode-broeken' in url:
-            return 'Dames Broeken'
-        elif 'damesmode-schoenen' in url:
-            return 'Dames Schoenen'
-        else:
-            return 'Kleding'
-    
-    def scrape_product_details(self, product_url: str, category: str = "") -> Optional[Dict[str, Any]]:
-        """
-        Scrape gedetailleerde product informatie van een product pagina.
-        
-        Args:
-            product_url (str): URL van het product.
-            category (str): Categorie van het product.
-            
-        Returns:
-            Optional[Dict[str, Any]]: Dict met product data of None bij failure.
-        """
-        logger.debug(f"Scraping product details: {product_url}")
-        
-        response = self.make_request(product_url)
-        if not response:
-            return None
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        try:
-            # Basis product informatie
-            brand, title = self.extract_brand_and_title(soup)
-            
-            # Prijzen
-            current_price, original_price = self.extract_price(soup)
-            
-            # Afbeeldingen
-            images = self.extract_images(soup)
-            main_image = images[0] if images else ""
-            
-            # Categorie bepalen
-            if not category:
-                category = self.extract_category_from_url(product_url)
-            
-            # Beschrijving
-            desc_selectors = [
-                '[data-testid="product-description"]',
-                '.product-description',
-                '.description',
-                '.product-details',
-                '.pdp-description'
+        # Launch browser in headless mode
+        browser = await playwright.chromium.launch(
+            headless=True,
+            args=[
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-blink-features=AutomationControlled'
             ]
-            description = ""
-            for selector in desc_selectors:
-                desc_elem = soup.select_one(selector)
-                if desc_elem:
-                    description = desc_elem.get_text(strip=True)
-                    break
+        )
+        
+        logger.info("Playwright browser gestart (headless mode)")
+        return browser
+    
+    async def create_page(self, browser: Browser) -> Page:
+        """
+        Creëer nieuwe pagina met anti-detectie configuratie.
+        
+        Args:
+            browser (Browser): Playwright browser instance.
             
-            # Fallback beschrijving
-            if not description:
-                description = f"{title} van {brand}"
+        Returns:
+            Page: Geconfigureerde pagina instance.
+        """
+        context = await browser.new_context(
+            user_agent=self.ua.random,
+            viewport={'width': 1920, 'height': 1080},
+            locale='nl-NL',
+            timezone_id='Europe/Amsterdam'
+        )
+        
+        page = await context.new_page()
+        
+        # Inject anti-detectie script
+        await page.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined,
+            });
+        """)
+        
+        return page
+    
+    async def extract_product_data(self, product_element, page: Page) -> Optional[Dict[str, Any]]:
+        """
+        Extraheer product data van een product element.
+        
+        Args:
+            product_element: Playwright element van product kaart.
+            page (Page): Playwright pagina instance.
             
-            # Voorraadstatus
-            in_stock = True
-            stock_indicators = soup.select('.out-of-stock, .not-available, [data-testid="out-of-stock"]')
-            if stock_indicators or 'uitverkocht' in response.text.lower():
-                in_stock = False
+        Returns:
+            Optional[Dict[str, Any]]: Product data of None bij failure.
+        """
+        try:
+            # Titel extractie (h3 binnen de kaart)
+            title_element = await product_element.query_selector('h3')
+            title = await title_element.inner_text() if title_element else None
             
-            # Tags genereren
-            tags = []
-            if original_price > current_price:
-                tags.append("sale")
-            if brand.lower() in ["nike", "adidas", "puma", "under armour"]:
-                tags.append("sport")
-            if "premium" in description.lower() or "luxury" in description.lower():
-                tags.append("premium")
-            if not tags:
-                tags = ["fashion", "style"]
+            if not title:
+                # Fallback selectors voor titel
+                title_selectors = [
+                    '[data-testid="product-title"]',
+                    '.product-title',
+                    'h2',
+                    'h4',
+                    '.title'
+                ]
+                for selector in title_selectors:
+                    title_element = await product_element.query_selector(selector)
+                    if title_element:
+                        title = await title_element.inner_text()
+                        break
             
-            # Product data samenstellen (compatible met FitFi format)
+            # Prijs extractie
+            price_element = await product_element.query_selector('[data-testid="price"]')
+            price = await price_element.inner_text() if price_element else None
+            
+            if not price:
+                # Fallback selectors voor prijs
+                price_selectors = [
+                    '.price',
+                    '.product-price',
+                    '[class*="price"]',
+                    '.amount'
+                ]
+                for selector in price_selectors:
+                    price_element = await product_element.query_selector(selector)
+                    if price_element:
+                        price = await price_element.inner_text()
+                        break
+            
+            # URL extractie (a tag binnen de kaart)
+            link_element = await product_element.query_selector('a')
+            relative_url = await link_element.get_attribute('href') if link_element else None
+            
+            if relative_url:
+                # Maak absolute URL
+                if relative_url.startswith('/'):
+                    product_url = urljoin(self.base_url, relative_url)
+                else:
+                    product_url = relative_url
+            else:
+                product_url = None
+            
+            # Afbeelding extractie (img binnen de kaart)
+            img_element = await product_element.query_selector('img')
+            image_url = None
+            
+            if img_element:
+                # Probeer verschillende image attributen
+                image_url = (await img_element.get_attribute('src') or 
+                           await img_element.get_attribute('data-src') or
+                           await img_element.get_attribute('data-lazy-src'))
+                
+                # Maak absolute URL voor afbeelding
+                if image_url and image_url.startswith('/'):
+                    image_url = urljoin(self.base_url, image_url)
+            
+            # Valideer dat we minimaal titel en prijs hebben
+            if not title or not price:
+                logger.warning(f"Product overgeslagen: ontbrekende titel ({title}) of prijs ({price})")
+                return None
+            
+            # Clean price (verwijder extra tekst, behoud alleen prijs)
+            if price:
+                price = price.strip()
+            
             product_data = {
-                "id": str(uuid.uuid4()),
-                "title": title,  # Wehkamp gebruikt 'title' ipv 'name'
-                "brand": brand,
-                "price": str(current_price) if current_price > 0 else "0",  # Als string voor compatibility
-                "original_price": original_price if original_price > current_price else current_price,
-                "image": main_image,  # Wehkamp gebruikt 'image' ipv 'image_url'
-                "link": product_url,  # Wehkamp gebruikt 'link' ipv 'product_url'
-                "category": category,
-                "description": description[:500] if description else f"{title} van {brand}",
-                "images": images,
-                "in_stock": in_stock,
-                "retailer": "Wehkamp",
-                "tags": tags,
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "updated_at": datetime.now(timezone.utc).isoformat()
+                "title": title.strip() if title else "Onbekend Product",
+                "price": price,
+                "url": product_url,
+                "image": image_url
             }
             
-            logger.debug(f"Product gescraped: {title} - €{current_price}")
+            logger.debug(f"Product extracted: {title} - {price}")
             return product_data
             
         except Exception as e:
-            logger.error(f"Error bij scrapen product {product_url}: {e}")
+            logger.error(f"Error extracting product data: {e}")
             return None
     
-    def scrape_wehkamp(self, category_url: str, limit: int = 50) -> List[Dict[str, Any]]:
+    async def scrape_category_page(self, page: Page, category_url: str, limit: int = 20) -> List[Dict[str, Any]]:
         """
-        Scrape producten van een specifieke Wehkamp categorie.
+        Scrape producten van een categorie pagina.
         
         Args:
+            page (Page): Playwright pagina instance.
             category_url (str): URL van de categorie.
             limit (int): Maximum aantal producten om te scrapen.
             
         Returns:
-            List[Dict[str, Any]]: List van product dictionaries.
+            List[Dict[str, Any]]: List van product data.
         """
-        logger.info(f"Start scraping van {category_url} (limit: {limit})")
+        logger.info(f"Scraping categorie: {category_url}")
         
-        products = []
-        page = 1
-        max_pages = 5  # Veiligheidsgrens
-        
-        # Extraheer categorie naam uit URL
-        category = self.extract_category_from_url(category_url)
-        
-        while len(products) < limit and page <= max_pages:
-            # Scrape categorie pagina
-            # Extract category path from URL for scrape_category_page
-            category_path = category_url.replace(self.base_url + '/', '').rstrip('/')
+        try:
+            # Navigeer naar categorie pagina
+            await page.goto(category_url, wait_until='domcontentloaded', timeout=30000)
             
-            product_urls = self.scrape_category_page(category_path, page)
+            # Wacht op product grid
+            await page.wait_for_selector('article[data-testid="product-card"]', timeout=15000)
             
-            logger.info(f"Pagina {page}: {len(product_urls)} product URLs gevonden")
+            # Extra delay voor dynamic content
+            await asyncio.sleep(random.uniform(2.0, 4.0))
             
-            if not product_urls:
-                logger.info(f"Geen producten meer gevonden op pagina {page}")
-                break
+            # Scroll om lazy loading te triggeren
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
+            await asyncio.sleep(1)
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            await asyncio.sleep(2)
             
-            # Scrape product details
-            for url in product_urls:
-                if len(products) >= limit:
-                    break
+            # Zoek alle product kaarten
+            product_elements = await page.query_selector_all('article[data-testid="product-card"]')
+            
+            logger.info(f"Gevonden {len(product_elements)} product kaarten")
+            
+            if len(product_elements) == 0:
+                # Fallback selectors als hoofdselector niet werkt
+                fallback_selectors = [
+                    '.product-card',
+                    '.product-tile',
+                    '.product-item',
+                    '[data-testid="product-tile"]',
+                    'article[class*="product"]'
+                ]
                 
-                product_data = self.scrape_product_details(url, category)
-                if product_data:
-                    products.append(product_data)
-                    logger.info(f"Product {len(products)}/{limit}: {product_data['title']}")
-                else:
-                    logger.warning(f"Failed to scrape product: {url}")
+                for selector in fallback_selectors:
+                    product_elements = await page.query_selector_all(selector)
+                    if product_elements:
+                        logger.info(f"Fallback selector '{selector}' found {len(product_elements)} elements")
+                        break
             
-            page += 1
-        
-        logger.info(f"Scraping voltooid: {len(products)} producten verzameld")
-        return products
+            # Debug: save page content als geen producten gevonden
+            if len(product_elements) == 0:
+                page_content = await page.content()
+                debug_filename = f"debug_wehkamp_no_products_{int(time.time())}.html"
+                with open(debug_filename, 'w', encoding='utf-8') as f:
+                    f.write(page_content)
+                logger.warning(f"Geen producten gevonden. HTML opgeslagen als {debug_filename}")
+                return []
+            
+            # Extract product data
+            products = []
+            failed_count = 0
+            
+            for i, element in enumerate(product_elements[:limit]):
+                try:
+                    product_data = await self.extract_product_data(element, page)
+                    
+                    if product_data:
+                        products.append(product_data)
+                        logger.info(f"Product {len(products)}: {product_data['title']}")
+                    else:
+                        failed_count += 1
+                        self.failed_products.append(f"Product {i+1}: extraction failed")
+                    
+                    # Delay tussen product extracties
+                    await asyncio.sleep(random.uniform(0.1, 0.3))
+                    
+                except Exception as e:
+                    logger.error(f"Error processing product {i+1}: {e}")
+                    failed_count += 1
+                    self.failed_products.append(f"Product {i+1}: {str(e)}")
+            
+            logger.info(f"Scraping voltooid: {len(products)} succesvol, {failed_count} gefaald")
+            return products
+            
+        except Exception as e:
+            logger.error(f"Error scraping category page: {e}")
+            
+            # Save debug HTML bij error
+            try:
+                page_content = await page.content()
+                debug_filename = f"debug_wehkamp_error_{int(time.time())}.html"
+                with open(debug_filename, 'w', encoding='utf-8') as f:
+                    f.write(page_content)
+                logger.info(f"Error debug HTML opgeslagen als {debug_filename}")
+            except:
+                pass
+            
+            return []
     
-    def scrape_all_categories(self, max_pages_per_category: int = 2, max_products_per_category: int = 25) -> None:
+    async def scrape_wehkamp(self, category_url: str, limit: int = 20) -> List[Dict[str, Any]]:
         """
-        Scrape alle geconfigureerde categorieën.
+        Hoofdfunctie voor het scrapen van Wehkamp producten.
         
         Args:
-            max_pages_per_category (int): Maximum aantal pagina's per categorie.
-            max_products_per_category (int): Maximum aantal producten per categorie.
+            category_url (str): URL van de categorie om te scrapen.
+            limit (int): Maximum aantal producten om te scrapen.
+            
+        Returns:
+            List[Dict[str, Any]]: List van product data.
         """
-        logger.info(f"Start scraping van {len(self.categories)} categorieën")
+        browser = None
         
-        for category in self.categories:
-            logger.info(f"Scraping categorie: {category}")
+        try:
+            # Setup browser
+            browser = await self.setup_browser()
+            page = await self.create_page(browser)
             
-            category_url = f"{self.base_url}/{category}/"
-            category_products = self.scrape_wehkamp(category_url, max_products_per_category)
+            # Scrape producten
+            products = await self.scrape_category_page(page, category_url, limit)
             
-            self.scraped_products.extend(category_products)
+            self.scraped_products = products
+            return products
             
-            logger.info(f"Categorie {category} voltooid: {len(category_products)} producten")
+        except Exception as e:
+            logger.error(f"Scraping error: {e}")
+            return []
         
-        logger.info(f"Alle categorieën voltooid: {len(self.scraped_products)} totaal producten")
-    
-    def clean_and_validate_data(self) -> None:
-        """
-        Clean en valideer de gescrapete data.
-        """
-        logger.info("Data cleaning en validatie gestart")
-        
-        cleaned_products = []
-        
-        for product in self.scraped_products:
-            # Valideer verplichte velden
-            if not product.get('title') or not product.get('price'):
-                logger.warning(f"Product overgeslagen: ontbrekende titel of prijs")
-                continue
-            
-            # Clean price data
-            if isinstance(product['price'], str):
-                # Verwijder alle non-numerieke karakters behalve punt en komma
-                clean_price = re.sub(r'[^\d.,]', '', product['price'])
-                if clean_price:
-                    try:
-                        product['price'] = str(float(clean_price.replace(',', '.')))
-                    except ValueError:
-                        product['price'] = "0"
-                else:
-                    product['price'] = "0"
-            
-            # Ensure minimum required fields
-            product.setdefault('brand', 'Onbekend')
-            product.setdefault('category', 'Kleding')
-            product.setdefault('description', f"{product['title']} van {product['brand']}")
-            product.setdefault('tags', ['fashion'])
-            product.setdefault('retailer', 'Wehkamp')
-            
-            cleaned_products.append(product)
-        
-        self.scraped_products = cleaned_products
-        logger.info(f"Data cleaning voltooid: {len(cleaned_products)} geldige producten")
+        finally:
+            if browser:
+                await browser.close()
+                logger.info("Browser gesloten")
     
     def export_to_json(self, filename: str = "wehkamp_products.json") -> None:
         """
@@ -656,90 +363,74 @@ class WehkampScraper:
             filename (str): Naam van het output bestand.
         """
         try:
+            export_data = {
+                "scraped_at": datetime.now().isoformat(),
+                "total_products": len(self.scraped_products),
+                "failed_products": len(self.failed_products),
+                "products": self.scraped_products
+            }
+            
             with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(self.scraped_products, f, ensure_ascii=False, indent=2)
+                json.dump(export_data, f, ensure_ascii=False, indent=2)
             
             logger.info(f"Data geëxporteerd naar {filename}: {len(self.scraped_products)} producten")
             
         except Exception as e:
             logger.error(f"Error bij JSON export: {e}")
+    
+    def print_summary(self) -> None:
+        """
+        Print samenvatting van scraping resultaten.
+        """
+        total_products = len(self.scraped_products)
+        failed_count = len(self.failed_products)
+        
+        print(f"\n=== WEHKAMP SCRAPING RESULTATEN ===")
+        print(f"Succesvol gescraped: {total_products} producten")
+        print(f"Gefaalde extracties: {failed_count}")
+        print(f"Output opgeslagen in: wehkamp_products.json")
+        
+        if total_products > 0:
+            print(f"\nVoorbeeld producten:")
+            for i, product in enumerate(self.scraped_products[:3], 1):
+                print(f"{i}. {product['title']} - {product['price']}")
+        
+        if failed_count > 0:
+            print(f"\nGefaalde extracties: {failed_count}")
+            for failure in self.failed_products[:5]:
+                print(f"  - {failure}")
 
 
-def main():
+async def main():
     """
-    Hoofdfunctie voor het uitvoeren van de scraper.
+    Hoofdfunctie voor het uitvoeren van de Wehkamp scraper.
     """
-    logger.info("=== Wehkamp Scraper Gestart ===")
+    logger.info("=== Wehkamp Playwright Scraper Gestart ===")
     
     # Initialiseer scraper
-    scraper = WehkampScraper()
+    scraper = WehkampPlaywrightScraper()
     
     try:
-        # Test met heren-kleding categorie
-        test_category_url = "https://www.wehkamp.nl/heren-kleding/"
-        
-        logger.info(f"Test scraping van: {test_category_url}")
-        products = scraper.scrape_wehkamp(test_category_url, limit=15)
-        
-        # Sla producten op in scraper voor export
-        scraper.scraped_products = products
-        
-        # Clean en valideer data
-        scraper.clean_and_validate_data()
+        # Scrape heren-kleding categorie
+        category_url = "https://www.wehkamp.nl/heren-kleding/"
+        products = await scraper.scrape_wehkamp(category_url, limit=20)
         
         # Exporteer naar JSON
         scraper.export_to_json("wehkamp_products.json")
         
-        # Print aantal gevonden producten (voor console output)
-        print(f"\n=== WEHKAMP SCRAPING RESULTATEN ===")
-        print(f"Totaal producten gevonden: {len(scraper.scraped_products)}")
-        print(f"Output opgeslagen in: wehkamp_products.json")
+        # Print resultaten
+        scraper.print_summary()
         
-        # Toon voorbeeldproducten
-        logger.info("=== Voorbeeldproducten ===")
-        for i, product in enumerate(scraper.scraped_products[:5], 1):
-            logger.info(f"{i}. ID: {product['id']}")
-            logger.info(f"   Titel: {product['title']}")
-            logger.info(f"   Prijs: €{product['price']}")
-            logger.info(f"   Merk: {product['brand']}")
-            logger.info(f"   Categorie: {product['category']}")
-            logger.info(f"   Link: {product['link']}")
-            logger.info("   ---")
-        
-        # Statistieken
-        total_products = len(scraper.scraped_products)
-        failed_urls = len(scraper.failed_urls)
-        
-        logger.info("=== Scraping Voltooid ===")
-        logger.info(f"Totaal producten gescraped: {total_products}")
-        logger.info(f"Gefaalde URLs: {failed_urls}")
-        
-        # Console output voor snelle verificatie
-        print(f"Succesvol gescraped: {total_products} producten")
-        if failed_urls > 0:
-            print(f"Gefaalde URLs: {failed_urls}")
-        
-        if total_products + failed_urls > 0:
-            success_rate = (total_products / (total_products + failed_urls) * 100)
-            logger.info(f"Success rate: {success_rate:.1f}%")
-            print(f"Success rate: {success_rate:.1f}%")
-        else:
-            logger.info("Success rate: 0% (geen data gevonden)")
-            print("⚠️  Geen producten gevonden - check debug HTML bestanden")
-        
-        if scraper.failed_urls:
-            logger.info("Gefaalde URLs:")
-            for url in scraper.failed_urls[:5]:  # Toon eerste 5
-                logger.info(f"  - {url}")
+        # Log samenvatting
+        logger.info(f"Scraping voltooid: {len(products)} producten verzameld")
         
     except KeyboardInterrupt:
         logger.info("Scraping onderbroken door gebruiker")
     except Exception as e:
         logger.error(f"Onverwachte error: {e}")
-        print(f"❌ Error: {e}")
     finally:
         logger.info("Scraper afgesloten")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
