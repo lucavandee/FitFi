@@ -129,7 +129,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   return (
     <div className={`relative ${className}`}>
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 animate-pulse">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 animate-pulse" aria-hidden="true">
           <div className="w-8 h-8 border-2 border-gray-300 dark:border-gray-600 border-t-orange-500 rounded-full animate-spin"></div>
         </div>
       )}
@@ -143,6 +143,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
         decoding={decoding}
         width={width}
         height={height}
+        role={alt ? 'img' : 'presentation'}
         {...rest}
       />
     </div>

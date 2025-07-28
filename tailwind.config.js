@@ -21,13 +21,13 @@ export default {
           900: '#0D1B2A'
         },
         accent: {
-          DEFAULT: '#89CFF0',
+          DEFAULT: '#0ea5e9', // Improved contrast ratio
           50: '#F0FBFF',
           100: '#E1F7FF',
           200: '#C3EFFF',
           300: '#A5E7FF',
           400: '#87DFFF',
-          500: '#89CFF0',
+          500: '#0ea5e9',
           600: '#6BB7D8',
           700: '#4D9FC0',
           800: '#2F87A8',
