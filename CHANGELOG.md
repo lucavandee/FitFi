@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0] - 2025-01-28
+
+### Fixed
+- Cleaned up main.css to use proper Tailwind imports with Google Fonts
+- Moved all Python scraper files from src/ to backend/scrapers/ for proper separation
+- Updated tsconfig.json and vite.config.ts to exclude backend directory from frontend build
+- Resolved build errors caused by Python files in frontend source directory
+
+### Added
+- CSS custom properties for FitFi color palette consistency
+- Backend/scrapers directory structure with README
+- Proper font loading with Inter and Space Grotesk from Google Fonts
+
+### Changed
+- Improved build configuration to prevent Python files from interfering with frontend build
+- Enhanced file system restrictions in Vite config for better security
+
 ## [1.1.0] - 2025-06-26
 
 ### Fixed
