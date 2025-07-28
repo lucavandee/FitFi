@@ -14,7 +14,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Button from '../components/ui/Button';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 interface FAQItem {
   question: string;
