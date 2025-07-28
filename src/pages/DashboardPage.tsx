@@ -12,7 +12,7 @@ import {
 import { useUser } from '../context/UserContext';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 // Import new dashboard components
 import WelcomeSection from '../components/dashboard/WelcomeSection';

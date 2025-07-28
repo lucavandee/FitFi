@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Star, ArrowRight, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 const PricingPage: React.FC = () => {
   const plans = [
