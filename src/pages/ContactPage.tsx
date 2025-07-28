@@ -12,8 +12,10 @@ import {
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const ContactPage: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -77,19 +79,31 @@ const ContactPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.rpc('submit_contact', {
-        contact_name: formData.name,
-        contact_email: formData.email,
-        contact_subject: formData.subject,
-        contact_message: formData.message,
-        contact_type: formData.type
-      });
+      try {
+        // Try Supabase first
+        const { error } = await supabase.rpc('submit_contact', {
+          contact_name: formData.name,
+          contact_email: formData.email,
+          contact_subject: formData.subject,
+          contact_message: formData.message,
+          contact_type: formData.type
+        });
 
-      if (error) {
-        throw error;
+        if (error) {
+          throw error;
+        }
+      } catch (supabaseError) {
+        console.warn('Supabase failed, using mailto fallback:', supabaseError);
+        
+        // Fallback to mailto
+        const mailtoUrl = `mailto:info@fitfi.nl?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
+          `Naam: ${formData.name}\nE-mail: ${formData.email}\nType: ${formData.type}\n\nBericht:\n${formData.message}`
+        )}`;
+        
+        window.location.href = mailtoUrl;
       }
 
-      toast.success('Bericht succesvol verzonden! We nemen binnen 24 uur contact op.');
+      toast.success('Bedankt voor je bericht! We reageren binnen 24 uur.');
       
       // Reset form
       setFormData({
@@ -99,6 +113,9 @@ const ContactPage: React.FC = () => {
         message: '',
         type: 'general'
       });
+      
+      // Redirect to thank you page
+      setTimeout(() => navigate('/bedankt'), 1500);
     } catch (error) {
       console.error('Error submitting contact form:', error);
       toast.error('Er ging iets mis bij het verzenden. Probeer het opnieuw.');
