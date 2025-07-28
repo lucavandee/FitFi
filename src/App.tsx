@@ -33,6 +33,10 @@ import HowItWorksPage from './pages/HowItWorksPage';
 import SuccessStoriesPage from './pages/SuccessStoriesPage';
 import GenderSelectPage from './pages/GenderSelectPage';
 import ProductPage from './pages/ProductPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import BlogDetailPage from './pages/BlogDetailPage';
+import ThankYouPage from './pages/ThankYouPage';
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -81,6 +85,10 @@ function App() {
                     <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
                     <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
                     <Route path="/product/:id" element={<ProductPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/algemene-voorwaarden" element={<TermsPage />} />
+                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                    <Route path="/bedankt" element={<ThankYouPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     
                     {/* Protected Routes */}
