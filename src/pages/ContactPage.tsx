@@ -333,7 +333,7 @@ const ContactPage: React.FC = () => {
                     <CheckCircle className="text-green-600" size={20} />
                     <span className="font-medium text-green-800">Algemene vragen</span>
                   </div>
-                  <span className="text-green-600 font-medium">< 24 uur</span>
+                  <span className="text-green-600 font-medium">{"< 24 uur"}</span>
                 </div>
                 
                 <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
@@ -341,7 +341,7 @@ const ContactPage: React.FC = () => {
                     <Clock className="text-blue-600" size={20} />
                     <span className="font-medium text-blue-800">Technische support</span>
                   </div>
-                  <span className="text-blue-600 font-medium">< 4 uur</span>
+                  <span className="text-blue-600 font-medium">{"< 4 uur"}</span>
                 </div>
                 
                 <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
@@ -349,7 +349,7 @@ const ContactPage: React.FC = () => {
                     <MessageSquare className="text-purple-600" size={20} />
                     <span className="font-medium text-purple-800">Zakelijke vragen</span>
                   </div>
-                  <span className="text-purple-600 font-medium">< 2 uur</span>
+                  <span className="text-purple-600 font-medium">{"< 2 uur"}</span>
                 </div>
               </div>
             </div>
