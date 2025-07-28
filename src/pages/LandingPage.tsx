@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import LoadingFallback from '../components/ui/LoadingFallback';
 
 // Import components directly (not lazy loaded for better LCP)
