@@ -1,669 +1,269 @@
-#!/usr/bin/env python3
-"""
-Robust Wehkamp Scraper - Full Page Rendering
-============================================
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  Search, 
+  Calendar, 
+  User, 
+  ArrowRight, 
+  Clock,
+  Tag
+} from 'lucide-react';
+import Button from '../components/ui/Button';
+import ErrorBoundary from '../components/ErrorBoundary';
 
-Een complete, robuuste scraper voor Wehkamp.nl producten met:
-- Automatische fallback van requests naar Playwright
-- Correct UTF-8 debug HTML opslag (altijd als plaintext)
-- Anti-bot protection en uitgebreide foutafhandeling
-- Gestructureerde JSON output
-- Stap-voor-stap logging
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  imageUrl: string;
+  slug: string;
+}
 
-Dependencies:
-    pip install requests beautifulsoup4 playwright fake-useragent
-    playwright install chromium
+const BlogPage: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-Gebruik:
-    python wehkamp_scraper.py
+  const blogPosts: BlogPost[] = [
+    {
+      id: '1',
+      title: 'De Psychologie Achter Jouw Kledingkeuzes',
+      excerpt: 'Ontdek wat jouw stijlvoorkeuren vertellen over jouw persoonlijkheid en hoe je dit kunt gebruiken om je doelen te bereiken.',
+      author: 'Dr. Sarah van der Berg',
+      date: '2024-12-15',
+      readTime: '5 min',
+      category: 'Psychologie',
+      imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'psychologie-achter-kledingkeuzes'
+    },
+    {
+      id: '2',
+      title: '5 Stijlregels Die Je Kunt Breken in 2025',
+      excerpt: 'Mode-regels zijn er om gebroken te worden. Leer welke traditionele stijlregels je veilig kunt negeren voor een modernere look.',
+      author: 'Emma Styling',
+      date: '2024-12-12',
+      readTime: '7 min',
+      category: 'Trends',
+      imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'stijlregels-breken-2025'
+    },
+    {
+      id: '3',
+      title: 'Capsule Wardrobe: Minder is Meer',
+      excerpt: 'Hoe je met 30 items een complete garderobe creëert die altijd werkt. Tips voor het bouwen van een duurzame, veelzijdige kledingkast.',
+      author: 'Lisa Minimalist',
+      date: '2024-12-10',
+      readTime: '6 min',
+      category: 'Lifestyle',
+      imageUrl: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'capsule-wardrobe-gids'
+    },
+    {
+      id: '4',
+      title: 'Kleuranalyse: Vind Jouw Perfecte Palet',
+      excerpt: 'Leer hoe je jouw huidtoon, oogkleur en haarkleur kunt gebruiken om de kleuren te vinden die je het beste laten uitkomen.',
+      author: 'Color Expert Nina',
+      date: '2024-12-08',
+      readTime: '8 min',
+      category: 'Styling',
+      imageUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'kleuranalyse-perfecte-palet'
+    },
+    {
+      id: '5',
+      title: 'Duurzame Mode: Stijlvol én Bewust',
+      excerpt: 'Hoe je stijlvol kunt zijn terwijl je bewuste keuzes maakt. Een gids voor duurzame mode zonder compromissen.',
+      author: 'Green Fashion Team',
+      date: '2024-12-05',
+      readTime: '9 min',
+      category: 'Duurzaamheid',
+      imageUrl: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'duurzame-mode-gids'
+    },
+    {
+      id: '6',
+      title: 'Body Positivity en Stijl: Kleed Je Voor Jezelf',
+      excerpt: 'Hoe je kleding kunt gebruiken om je zelfvertrouwen te boosten en je authentieke zelf uit te drukken, ongeacht je lichaamsvorm.',
+      author: 'Body Positive Stylist',
+      date: '2024-12-03',
+      readTime: '6 min',
+      category: 'Lifestyle',
+      imageUrl: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'body-positivity-stijl'
+    }
+  ];
 
-Features:
-- Requests eerst proberen (sneller)
-- Automatische Playwright fallback bij dynamische content
-- Debug HTML altijd correct opgeslagen als UTF-8 text
-- Uitgebreide logging van elke stap
-- Robuuste error handling
-- Gestructureerde JSON output
+  const categories = ['Alle', 'Psychologie', 'Trends', 'Lifestyle', 'Styling', 'Duurzaamheid'];
 
-Output:
-- wehkamp_products.json (product data)
-- debug_wehkamp_[timestamp].html (debug HTML)
-- wehkamp_scraper.log (logging)
-"""
-
-import asyncio
-import json
-import logging
-import random
-import re
-import time
-from datetime import datetime
-from typing import List, Dict, Any, Optional, Tuple
-from urllib.parse import urljoin, urlparse
-
-import requests
-from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
-
-# Playwright import met fallback
-try:
-    from playwright.async_api import async_playwright, Browser, Page
-    PLAYWRIGHT_AVAILABLE = True
-except ImportError:
-    PLAYWRIGHT_AVAILABLE = False
-    print("⚠️  Playwright niet beschikbaar. Installeer met: pip install playwright && playwright install chromium")
-
-# Logging configuratie
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('wehkamp_scraper.log', encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
-
-
-class RobustWehkampScraper:
-    """
-    Robuuste Wehkamp scraper met automatische fallback van requests naar Playwright.
-    """
+  const filteredPosts = blogPosts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || selectedCategory === 'Alle' || post.category === selectedCategory;
     
-    def __init__(self):
-        """
-        Initialiseer de scraper met anti-bot configuratie.
-        """
-        self.base_url = "https://www.wehkamp.nl"
-        self.ua = UserAgent()
-        self.session = requests.Session()
-        self.scraped_products = []
-        self.failed_extractions = []
-        
-        # Anti-bot protection instellingen
-        self.min_delay = 1.0
-        self.max_delay = 2.5
-        self.max_retries = 3
-        
-        # Setup session headers
-        self.setup_session_headers()
-        
-    
-    def setup_session_headers(self) -> None:
-        """
-        Setup realistische headers voor de requests session.
-        """
-        self.session.headers.update({
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            'Cache-Control': 'max-age=0',
-            'DNT': '1'
-        })
-        logger.debug("📡 Session headers geconfigureerd")
-    
-    def save_debug_html(self, html_content: str, method: str = "requests") -> str:
-        """
-        Sla HTML content op als UTF-8 plaintext debug bestand.
-        
-        Args:
-            html_content (str): HTML content om op te slaan
-            method (str): Methode gebruikt (requests/playwright)
-            
-        Returns:
-            str: Bestandsnaam van opgeslagen debug file
-        """
-        timestamp = int(time.time())
-        filename = f"debug_wehkamp_{method}_{timestamp}.html"
-        
-        try:
-            # Forceer UTF-8 encoding en plaintext opslag
-            with open(filename, 'w', encoding='utf-8', newline='') as f:
-                f.write(html_content)
-            
-            # Verificeer dat bestand correct is opgeslagen
-            file_size = len(html_content.encode('utf-8'))
-            
-            # Test of bestand leesbaar is
-            with open(filename, 'r', encoding='utf-8') as f:
-                test_content = f.read()
-                if len(test_content) != len(html_content):
-                    logger.warning(f"⚠️  Bestand grootte mismatch: {len(test_content)} vs {len(html_content)}")
-            
-            logger.info(f"💾 Debug HTML opgeslagen: {filename} ({file_size:,} bytes, UTF-8 plaintext)")
-            return filename
-            
-        except Exception as e:
-            logger.error(f"❌ Error bij opslaan debug HTML: {e}")
-            return ""
-    
-    def validate_html_content(self, html_content: str) -> Tuple[bool, str]:
-        """
-        Valideer of HTML content Wehkamp producten bevat.
-        
-        Args:
-            html_content (str): HTML content om te valideren
-            
-        Returns:
-            Tuple[bool, str]: (is_valid, reason)
-        """
-        if not html_content or len(html_content) < 1000:
-            return False, f"HTML te kort: {len(html_content)} chars"
-        
-        # Check voor Wehkamp-specifieke content
-        wehkamp_indicators = [
-            'wehkamp',
-            'product',
-            'artikel',
-            'prijs',
-            '€',
-            'data-testid'
-        ]
-        
-        found_indicators = sum(1 for indicator in wehkamp_indicators 
-                             if indicator.lower() in html_content.lower())
-        
-        if found_indicators < 3:
-            return False, f"Onvoldoende Wehkamp indicators: {found_indicators}/6"
-        
-        # Check voor blocked/error pagina's
-        blocked_indicators = [
-            'access denied',
-            'blocked',
-            'captcha',
-            'bot detection',
-            'cloudflare',
-            'security check'
-        ]
-        
-        for indicator in blocked_indicators:
-            if indicator.lower() in html_content.lower():
-                return False, f"Blocked page detected: {indicator}"
-        
-        return True, f"Valid HTML: {len(html_content):,} chars, {found_indicators}/6 indicators"
-    
-    def scrape_with_requests(self, url: str) -> Tuple[Optional[str], Dict[str, Any]]:
-        """
-        Probeer scraping met requests (sneller).
-        
-        Args:
-            url (str): URL om te scrapen
-            
-        Returns:
-            Tuple[Optional[str], Dict[str, Any]]: (html_content, metadata)
-        """
-        logger.info(f"🌐 Probeer requests scraping: {url}")
-        
-        metadata = {
-            'method': 'requests',
-            'success': False,
-            'status_code': None,
-            'content_type': None,
-            'content_length': 0,
-            'error': None
-        }
-        
-        try:
-            # Anti-bot delay
-            delay = random.uniform(self.min_delay, self.max_delay)
-            logger.debug(f"⏱️  Anti-bot delay: {delay:.2f}s")
-            time.sleep(delay)
-            
-            # Maak request
-            response = self.session.get(url, timeout=30)
-            
-            metadata.update({
-                'status_code': response.status_code,
-                'content_type': response.headers.get('content-type', ''),
-                'content_length': len(response.content)
-            })
-            
-            logger.info(f"📊 Response: {response.status_code}, "
-                       f"Content-Type: {response.headers.get('content-type', 'unknown')}, "
-                       f"Size: {len(response.content):,} bytes")
-            
-            if response.status_code == 200:
-                html_content = response.text
+    return matchesSearch && matchesCategory;
+  });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F6F6F6]">
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
+        {/* Hero Section */}
+        <ErrorBoundary>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-light text-[#0D1B2A] mb-6">
+            FitFi Blog
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+            Ontdek de laatste trends, styling tips en inzichten over mode, persoonlijkheid en zelfexpressie.
+          </p>
+          
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Zoek artikelen..."
+                  className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] text-gray-900 placeholder-gray-500 transition-all"
+                />
+                <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-2.5 bg-[#89CFF0] text-white px-4 py-1 rounded-xl hover:bg-[#89CFF0]/90 transition-colors"
+                >
+                  Zoeken
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        </ErrorBoundary>
+
+        {/* Categories */}
+        <ErrorBoundary>
+        <div className="mb-12">
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category === 'Alle' ? null : category)}
+                className={`px-6 py-2 rounded-full transition-colors ${
+                  (selectedCategory === category) || (selectedCategory === null && category === 'Alle')
+                    ? 'bg-[#89CFF0] text-[#0D1B2A] font-medium'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+        </ErrorBoundary>
+
+        {/* Blog Posts Grid */}
+        <ErrorBoundary>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {filteredPosts.map((post) => (
+            <article key={post.id} className="bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="aspect-video overflow-hidden">
+                <img 
+                  src={post.imageUrl} 
+                  alt={post.title}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <div className="p-6">
+                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                  <div className="flex items-center space-x-1">
+                    <Calendar size={14} />
+                    <span>{new Date(post.date).toLocaleDateString('nl-NL')}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Clock size={14} />
+                    <span>{post.readTime}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Tag size={14} />
+                    <span>{post.category}</span>
+                  </div>
+                </div>
                 
-                # Valideer content
-                is_valid, reason = self.validate_html_content(html_content)
+                <h2 className="text-xl font-semibold text-[#0D1B2A] mb-3 leading-tight">
+                  {post.title}
+                </h2>
                 
-                if is_valid:
-                    metadata['success'] = True
-                    logger.info(f"✅ Requests scraping succesvol: {reason}")
-                    return html_content, metadata
-                else:
-                    metadata['error'] = f"Invalid content: {reason}"
-                    logger.warning(f"⚠️  Requests content invalid: {reason}")
-                    return html_content, metadata  # Return anyway voor debug
-            else:
-                metadata['error'] = f"HTTP {response.status_code}"
-                logger.warning(f"⚠️  HTTP error: {response.status_code}")
-                return None, metadata
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  {post.excerpt}
+                </p>
                 
-        except requests.exceptions.RequestException as e:
-            metadata['error'] = str(e)
-            logger.error(f"❌ Requests error: {e}")
-            return None, metadata
-    
-    async def scrape_with_playwright(self, url: str) -> Tuple[Optional[str], Dict[str, Any]]:
-        """
-        Scrape met Playwright (fallback voor dynamische content).
-        
-        Args:
-            url (str): URL om te scrapen
-            
-        Returns:
-            Tuple[Optional[str], Dict[str, Any]]: (html_content, metadata)
-        """
-        if not PLAYWRIGHT_AVAILABLE:
-            logger.error("❌ Playwright niet beschikbaar")
-            return None, {'method': 'playwright', 'success': False, 'error': 'Playwright not available'}
-        
-        logger.info(f"🎭 Playwright scraping: {url}")
-        
-        metadata = {
-            'method': 'playwright',
-            'success': False,
-            'content_length': 0,
-            'error': None
-        }
-        
-        browser = None
-        
-        try:
-            # Setup Playwright
-            playwright = await async_playwright().start()
-            
-            browser = await playwright.chromium.launch(
-                headless=False,  # Headed mode voor volledige rendering zoals echte gebruiker
-                args=[
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-blink-features=AutomationControlled'
-                ]
-            )
-            
-            context = await browser.new_context(
-                viewport={'width': 1920, 'height': 1080},
-                locale='nl-NL',
-                timezone_id='Europe/Amsterdam'
-            )
-            
-            page = await context.new_page()
-            
-            # Anti-detectie script
-            await page.add_init_script("""
-                Object.defineProperty(navigator, 'webdriver', {
-                    get: () => undefined,
-                });
-            """)
-            
-            logger.info("🎭 Navigeren naar pagina...")
-            
-            # Navigeer naar pagina
-            await page.goto(url, wait_until='domcontentloaded', timeout=60000)
-            
-            # Wacht op producten
-            logger.info("⏳ Wachten op product content...")
-            
-            try:
-                await page.wait_for_selector(
-                    'article[data-testid="product-card"], .product-tile, .product-card',
-                    timeout=30000
-                )
-                logger.info("✅ Product selectors gevonden")
-            except:
-                logger.warning("⚠️  Product selectors timeout - probeer anyway")
-            
-            # Extra delay voor dynamic content
-            await asyncio.sleep(3)
-            
-            # Scroll om lazy loading te triggeren
-            await page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
-            await asyncio.sleep(2)
-            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-            await asyncio.sleep(2)
-            
-            # Haal HTML op
-            html_content = await page.content()
-            
-            metadata.update({
-                'content_length': len(html_content),
-                'success': True
-            })
-            
-            logger.info(f"✅ Playwright scraping succesvol: {len(html_content):,} chars")
-            
-            return html_content, metadata
-            
-        except Exception as e:
-            metadata['error'] = str(e)
-            logger.error(f"❌ Playwright error: {e}")
-            return None, metadata
-            
-        finally:
-            if browser:
-                await browser.close()
-    
-    def extract_products_from_html(self, html_content: str) -> List[Dict[str, Any]]:
-        """
-        Extract product data uit HTML content.
-        
-        Args:
-            html_content (str): HTML content om te parsen
-            
-        Returns:
-            List[Dict[str, Any]]: List van product data
-        """
-        logger.info("🔍 Extracting products from HTML...")
-        
-        soup = BeautifulSoup(html_content, 'html.parser')
-        products = []
-        
-        # Wehkamp-specifieke selectors (gebaseerd op moderne e-commerce structuur)
-        product_selectors = [
-            'article[data-testid="product-card"]',
-            'article[data-testid="product-tile"]',
-            '.product-tile',
-            '.product-card',
-            '.product-item',
-            'article[class*="product"]',
-            '[data-testid*="product"]'
-        ]
-        
-        product_elements = []
-        
-        # Probeer elke selector
-        for selector in product_selectors:
-            elements = soup.select(selector)
-            if elements:
-                logger.info(f"✅ Gevonden {len(elements)} elementen met selector: {selector}")
-                product_elements = elements
-                break
-            else:
-                logger.debug(f"❌ Geen elementen met selector: {selector}")
-        
-        if not product_elements:
-            logger.warning("⚠️  Geen product elementen gevonden met bekende selectors")
-            # Debug: zoek naar alle article tags
-            all_articles = soup.find_all('article')
-            logger.info(f"🔍 Debug: Gevonden {len(all_articles)} article tags totaal")
-            
-            # Debug: zoek naar links met /p/ of /product/
-            all_product_links = soup.find_all('a', href=re.compile(r'/(p|product)/'))
-            logger.info(f"🔍 Debug: Gevonden {len(all_product_links)} links met /p/ of /product/")
-            
-            return []
-        
-        # Extract data van elk product element
-        for i, element in enumerate(product_elements[:20], 1):  # Limit tot 20 voor test
-            try:
-                product_data = self.extract_single_product(element, i)
-                if product_data:
-                    products.append(product_data)
-                    logger.info(f"✅ Product {len(products)}: {product_data['title'][:50]}...")
-                else:
-                    self.failed_extractions.append(f"Product {i}: extraction failed")
-                    
-            except Exception as e:
-                logger.error(f"❌ Error extracting product {i}: {e}")
-                self.failed_extractions.append(f"Product {i}: {str(e)}")
-        
-        logger.info(f"🎯 Extraction voltooid: {len(products)} producten, {len(self.failed_extractions)} failures")
-        return products
-    
-    def extract_single_product(self, element, index: int) -> Optional[Dict[str, Any]]:
-        """
-        Extract data van een enkel product element.
-        
-        Args:
-            element: BeautifulSoup element
-            index (int): Product index voor debugging
-            
-        Returns:
-            Optional[Dict[str, Any]]: Product data of None
-        """
-        try:
-            # Titel extractie
-            title = None
-            title_selectors = ['h3', 'h2', 'h4', '[data-testid="product-title"]', '.product-title', '.title']
-            
-            for selector in title_selectors:
-                title_elem = element.select_one(selector)
-                if title_elem:
-                    title = title_elem.get_text(strip=True)
-                    break
-            
-            if not title:
-                logger.debug(f"❌ Product {index}: Geen titel gevonden")
-                return None
-            
-            # Prijs extractie
-            price = None
-            price_selectors = [
-                '[data-testid="price"]',
-                '.price',
-                '.product-price',
-                '[class*="price"]',
-                '.amount'
-            ]
-            
-            for selector in price_selectors:
-                price_elem = element.select_one(selector)
-                if price_elem:
-                    price_text = price_elem.get_text(strip=True)
-                    # Clean price text
-                    price = re.sub(r'[^\d,.-]', '', price_text).replace(',', '.')
-                    break
-            
-            if not price:
-                logger.debug(f"❌ Product {index}: Geen prijs gevonden")
-                return None
-            
-            # URL extractie
-            url = None
-            link_elem = element.select_one('a')
-            if link_elem:
-                href = link_elem.get('href')
-                if href:
-                    if href.startswith('/'):
-                        url = urljoin(self.base_url, href)
-                    else:
-                        url = href
-            
-            if not url:
-                logger.debug(f"❌ Product {index}: Geen URL gevonden")
-                return None
-            
-            # Afbeelding extractie
-            image = None
-            img_elem = element.select_one('img')
-            if img_elem:
-                image_src = (img_elem.get('src') or 
-                           img_elem.get('data-src') or 
-                           img_elem.get('data-lazy-src'))
-                
-                if image_src:
-                    if image_src.startswith('/'):
-                        image = urljoin(self.base_url, image_src)
-                    else:
-                        image = image_src
-            
-            # Brand extractie (optioneel)
-            brand = None
-            brand_selectors = ['.brand', '.product-brand', '[data-testid="brand"]']
-            for selector in brand_selectors:
-                brand_elem = element.select_one(selector)
-                if brand_elem:
-                    brand = brand_elem.get_text(strip=True)
-                    break
-            
-            product_data = {
-                "title": title,
-                "price": price,
-                "url": url,
-                "image": image,
-                "brand": brand or "Onbekend",
-                "retailer": "Wehkamp",
-                "category": "Heren Kleding",
-                "scraped_at": datetime.now().isoformat()
-            }
-            
-            return product_data
-            
-        except Exception as e:
-            logger.error(f"❌ Error extracting product {index}: {e}")
-            return None
-    
-    def export_to_json(self, filename: str = "wehkamp_products.json") -> None:
-        """
-        Export products naar JSON bestand.
-        
-        Args:
-            filename (str): Output bestandsnaam
-        """
-        try:
-            export_data = {
-                "scraped_at": datetime.now().isoformat(),
-                "total_products": len(self.scraped_products),
-                "failed_extractions": len(self.failed_extractions),
-                "products": self.scraped_products,
-                "failures": self.failed_extractions
-            }
-            
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(export_data, f, ensure_ascii=False, indent=2)
-            
-            logger.info(f"💾 Data geëxporteerd naar {filename}: {len(self.scraped_products)} producten")
-            
-        except Exception as e:
-            logger.error(f"❌ Error bij JSON export: {e}")
-    
-    async def scrape_wehkamp_category(self, url: str) -> List[Dict[str, Any]]:
-        """
-        Scrape Wehkamp categorie met automatische fallback.
-        
-        Args:
-            url (str): Categorie URL om te scrapen
-            
-        Returns:
-            List[Dict[str, Any]]: Gescrapete producten
-        """
-        logger.info(f"🎯 Start scraping: {url}")
-        
-        html_content = None
-        final_metadata = {}
-        
-        # STAP 1: Probeer eerst requests (sneller)
-        html_content, requests_metadata = self.scrape_with_requests(url)
-        
-        if html_content and requests_metadata['success']:
-            logger.info("✅ Requests scraping succesvol")
-            final_metadata = requests_metadata
-        else:
-            logger.warning("⚠️  Requests scraping gefaald, fallback naar Playwright...")
-            
-            # STAP 2: Fallback naar Playwright
-            html_content, playwright_metadata = await self.scrape_with_playwright(url)
-            final_metadata = playwright_metadata
-            
-            if not html_content:
-                logger.error("❌ Beide scraping methoden gefaald")
-                return []
-        
-        # STAP 3: Sla debug HTML op (altijd)
-        if html_content:
-            debug_filename = self.save_debug_html(html_content, final_metadata['method'])
-            logger.info(f"💾 Debug HTML: {debug_filename}")
-        
-        # STAP 4: Extract producten
-        if html_content:
-            products = self.extract_products_from_html(html_content)
-            self.scraped_products = products
-            
-            # STAP 5: Export naar JSON
-            if products:
-                self.export_to_json()
-                logger.info(f"🎉 Scraping voltooid: {len(products)} producten gevonden")
-            else:
-                logger.warning("⚠️  Geen producten gevonden - check debug HTML")
-            
-            return products
-        
-        return []
-    
-    def print_summary(self) -> None:
-        """
-        Print samenvatting van scraping resultaten.
-        """
-        total_products = len(self.scraped_products)
-        failed_count = len(self.failed_extractions)
-        
-        print(f"\n{'='*50}")
-        print(f"🎯 WEHKAMP SCRAPING RESULTATEN")
-        print(f"{'='*50}")
-        print(f"✅ Succesvol gescraped: {total_products} producten")
-        print(f"❌ Gefaalde extracties: {failed_count}")
-        print(f"📁 Output opgeslagen in: wehkamp_products.json")
-        print(f"🐛 Debug HTML beschikbaar voor analyse")
-        
-        if total_products > 0:
-            print(f"\n📦 Voorbeeld producten:")
-            for i, product in enumerate(self.scraped_products[:3], 1):
-                print(f"  {i}. {product['title'][:60]}...")
-                print(f"     💰 {product['price']}")
-                print(f"     🔗 {product['url'][:80]}...")
-        
-        if failed_count > 0:
-            print(f"\n❌ Gefaalde extracties: {failed_count}")
-            for failure in self.failed_extractions[:3]:
-                print(f"  - {failure}")
-        
-        print(f"{'='*50}")
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <User size={16} className="text-gray-400" />
+                    <span className="text-sm text-gray-600">{post.author}</span>
+                  </div>
+                  
+                  <Button
+                    as={Link}
+                    to={`/blog/${post.slug}`}
+                    variant="ghost"
+                    size="sm"
+                    icon={<ArrowRight size={16} />}
+                    iconPosition="right"
+                    className="text-[#89CFF0] hover:bg-[#89CFF0]/10"
+                  >
+                    Lees meer
+                  </Button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        </ErrorBoundary>
 
+        {/* Newsletter Signup */}
+        <ErrorBoundary>
+        <div className="bg-gradient-to-r from-[#89CFF0] to-blue-500 rounded-3xl shadow-sm overflow-hidden">
+          <div className="p-8 md:p-12 text-center">
+            <h2 className="text-3xl font-light text-white mb-4">
+              Blijf op de hoogte
+            </h2>
+            <p className="text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Ontvang wekelijks de nieuwste styling tips, trends en persoonlijke groei-inzichten direct in je inbox.
+            </p>
+            
+            <div className="max-w-md mx-auto">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  placeholder="Je e-mailadres"
+                  className="flex-1 px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-white/50 text-gray-900"
+                />
+                <Button
+                  variant="secondary"
+                  className="bg-white text-[#89CFF0] hover:bg-gray-100 px-6 py-3"
+                >
+                  Aanmelden
+                </Button>
+              </div>
+              <p className="text-white/80 text-sm mt-3">
+                Geen spam, alleen waardevolle content. Uitschrijven kan altijd.
+              </p>
+            </div>
+          </div>
+        </div>
+        </ErrorBoundary>
+      </div>
+    </div>
+  );
+};
 
-async def main():
-    """
-    Hoofdfunctie voor het uitvoeren van de Wehkamp scraper.
-    """
-    logger.info("🚀 === Robust Wehkamp Scraper Gestart ===")
-    
-    # Initialiseer scraper
-    scraper = RobustWehkampScraper()
-    
-    try:
-        # Test URL: Heren kleding categorie
-        test_url = "https://www.wehkamp.nl/heren-kleding/"
-        
-        # Scrape producten
-        products = await scraper.scrape_wehkamp_category(test_url)
-        
-        # Print resultaten
-        scraper.print_summary()
-        
-        # Console output voor directe feedback
-        if products:
-            print(f"\n🎉 SUCCESS: {len(products)} producten gevonden!")
-            print(f"📄 Check wehkamp_products.json voor volledige data")
-        else:
-            print(f"\n⚠️  GEEN PRODUCTEN GEVONDEN")
-            print(f"🐛 Check debug HTML bestanden voor analyse")
-        
-    except KeyboardInterrupt:
-        logger.info("⏹️  Scraping onderbroken door gebruiker")
-    except Exception as e:
-        logger.error(f"💥 Onverwachte error: {e}")
-    finally:
-        logger.info("🏁 Scraper afgesloten")
-
-
-if __name__ == "__main__":
-    # Direct uitvoerbaar script
-    asyncio.run(main())
+export default BlogPage;
