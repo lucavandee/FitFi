@@ -1,932 +1,669 @@
-import supabase, { isValidUUID, TEST_USER_ID } from '../lib/supabase';
-import { StylePreference, UserProfile } from '../context/UserContext';
-import toast from 'react-hot-toast';
-import { env } from '../utils/env';
-import { generateMockUser, generateMockGamification, generateMockOutfits } from '../utils/mockDataUtils';
+#!/usr/bin/env python3
+"""
+Robust Wehkamp Scraper - Full Page Rendering
+============================================
 
-/**
- * @fileoverview Centralized Supabase service for all CRUD operations
- * This service handles all interactions with Supabase, including error handling,
- * retries, and fallbacks to ensure a robust user experience.
- */
+Een complete, robuuste scraper voor Wehkamp.nl producten met:
+- Automatische fallback van requests naar Playwright
+- Correct UTF-8 debug HTML opslag (altijd als plaintext)
+- Anti-bot protection en uitgebreide foutafhandeling
+- Gestructureerde JSON output
+- Stap-voor-stap logging
 
-// Configuration
-const MAX_RETRIES = 2;
-const RETRY_DELAY = 1000; // ms
-const REQUEST_TIMEOUT = 10000; // 10 seconds
+Dependencies:
+    pip install requests beautifulsoup4 playwright fake-useragent
+    playwright install chromium
 
-// Types for gamification
-export interface UserGamification {
-  id: string;
-  user_id: string;
-  points: number;
-  level: string;
-  badges: string[];
-  streak: number;
-  last_check_in: string | null;
-  completed_challenges: string[];
-  total_referrals: number;
-  seasonal_event_progress: Record<string, any>;
-  created_at: string;
-  updated_at: string;
-}
+Gebruik:
+    python wehkamp_scraper.py
 
-export interface DailyChallenge {
-  id: string;
-  user_id: string;
-  challenge_id: string;
-  completed: boolean;
-  created_at: string;
-}
+Features:
+- Requests eerst proberen (sneller)
+- Automatische Playwright fallback bij dynamische content
+- Debug HTML altijd correct opgeslagen als UTF-8 text
+- Uitgebreide logging van elke stap
+- Robuuste error handling
+- Gestructureerde JSON output
 
-/**
- * Executes a Supabase query with retry logic and timeout
- * @param operation - Function that performs the Supabase query
- * @param fallback - Optional fallback value if all retries fail
- * @param retries - Number of retries to attempt
- * @returns The result of the operation or fallback value
- */
-async function executeWithRetry<T>(
-  operation: () => Promise<T>,
-  fallback: T | null = null,
-  retries: number = MAX_RETRIES
-): Promise<T | null> {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – skipping database operation');
-    return fallback;
-  }
+Output:
+- wehkamp_products.json (product data)
+- debug_wehkamp_[timestamp].html (debug HTML)
+- wehkamp_scraper.log (logging)
+"""
 
-  let lastError: Error | null = null;
-  
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      // Set up timeout
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Request timeout')), REQUEST_TIMEOUT);
-      });
-      
-      // Race between the operation and timeout
-      const result = await Promise.race([operation(), timeoutPromise]) as T;
-      return result;
-    } catch (error) {
-      lastError = error as Error;
-      console.error(`Attempt ${attempt + 1}/${retries + 1} failed:`, error);
-      
-      if (attempt < retries) {
-        // Wait before retrying with exponential backoff
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * Math.pow(2, attempt)));
-      }
-    }
-  }
-  
-  // All retries failed
-  console.error(`All ${retries + 1} attempts failed for Supabase operation:`, lastError);
-  return fallback;
-}
+import asyncio
+import json
+import logging
+import random
+import re
+import time
+from datetime import datetime
+from typing import List, Dict, Any, Optional, Tuple
+from urllib.parse import urljoin, urlparse
 
-// User Services
+import requests
+from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
-/**
- * Creates a new user in the database
- * @param userData - User data to create
- * @returns The created user profile or null if failed
- */
-export const createUser = async (userData: Omit<UserProfile, 'id' | 'stylePreferences' | 'savedRecommendations'>): Promise<UserProfile | null> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock user creation');
-    // Return mock user as fallback
-    return {
-      id: TEST_USER_ID,
-      name: userData.name,
-      email: userData.email,
-      gender: userData.gender as 'male' | 'female' | undefined,
-      isPremium: false,
-      stylePreferences: {
-        casual: 3,
-        formal: 3,
-        sporty: 3,
-        vintage: 3,
-        minimalist: 3,
-      },
-      savedRecommendations: [],
-    };
-  }
+# Playwright import met fallback
+try:
+    from playwright.async_api import async_playwright, Browser, Page
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+    print("⚠️  Playwright niet beschikbaar. Installeer met: pip install playwright && playwright install chromium")
 
-  try {
-    // First, create auth user if not in mock mode
-    let userId = TEST_USER_ID;
+# Logging configuratie
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('wehkamp_scraper.log', encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+
+class RobustWehkampScraper:
+    """
+    Robuuste Wehkamp scraper met automatische fallback van requests naar Playwright.
+    """
     
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: userData.email,
-      password: userData.password || generateRandomPassword(),
-      options: {
-        data: {
-          name: userData.name,
-        },
-      },
-    });
-
-    if (authError) {
-      console.error('Auth error during user creation:', authError);
-      // Continue with test user ID if auth fails
-    } else if (authData.user) {
-      userId = authData.user.id;
-    }
-
-    // Validate UUID before proceeding
-    if (!isValidUUID(userId)) {
-      console.error(`Invalid UUID format for createUser: ${userId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    // Then, upsert into users table to avoid duplicate key errors
-    const operation = async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .upsert({
-          id: userId,
-          name: userData.name,
-          email: userData.email,
-          gender: userData.gender,
-          is_premium: userData.isPremium || false,
-        }, { 
-          onConflict: 'id' 
+    def __init__(self):
+        """
+        Initialiseer de scraper met anti-bot configuratie.
+        """
+        self.base_url = "https://www.wehkamp.nl"
+        self.ua = UserAgent()
+        self.session = requests.Session()
+        self.scraped_products = []
+        self.failed_extractions = []
+        
+        # Anti-bot protection instellingen
+        self.min_delay = 1.0
+        self.max_delay = 2.5
+        self.max_retries = 3
+        
+        # Setup session headers
+        self.setup_session_headers()
+        
+    
+    def setup_session_headers(self) -> None:
+        """
+        Setup realistische headers voor de requests session.
+        """
+        self.session.headers.update({
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
+            'DNT': '1'
         })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    };
-
-    const data = await executeWithRetry(operation);
+        logger.debug("📡 Session headers geconfigureerd")
     
-    if (!data) {
-      throw new Error('Failed to create user in database');
-    }
-
-    return {
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      gender: data.gender as 'male' | 'female' | undefined,
-      isPremium: data.is_premium,
-      stylePreferences: {
-        casual: 3,
-        formal: 3,
-        sporty: 3,
-        vintage: 3,
-        minimalist: 3,
-      },
-      savedRecommendations: [],
-    };
-  } catch (error) {
-    console.error('Error creating user:', error);
-    toast.error('Failed to create user account. Please try again.');
-    if (env.USE_MOCK_DATA) {
-    }
-    if (env.USE_MOCK_DATA) {
-      return {
-        id: TEST_USER_ID,
-        name: userData.name,
-        email: userData.email,
-        gender: userData.gender as 'male' | 'female' | undefined,
-        isPremium: false,
-        stylePreferences: {
-          casual: 3,
-          formal: 3,
-          sporty: 3,
-          vintage: 3,
-          minimalist: 3,
-        },
-        savedRecommendations: [],
-      };
-    }
+    def save_debug_html(self, html_content: str, method: str = "requests") -> str:
+        """
+        Sla HTML content op als UTF-8 plaintext debug bestand.
+        
+        Args:
+            html_content (str): HTML content om op te slaan
+            method (str): Methode gebruikt (requests/playwright)
+            
+        Returns:
+            str: Bestandsnaam van opgeslagen debug file
+        """
+        timestamp = int(time.time())
+        filename = f"debug_wehkamp_{method}_{timestamp}.html"
+        
+        try:
+            # Forceer UTF-8 encoding en plaintext opslag
+            with open(filename, 'w', encoding='utf-8', newline='') as f:
+                f.write(html_content)
+            
+            # Verificeer dat bestand correct is opgeslagen
+            file_size = len(html_content.encode('utf-8'))
+            
+            # Test of bestand leesbaar is
+            with open(filename, 'r', encoding='utf-8') as f:
+                test_content = f.read()
+                if len(test_content) != len(html_content):
+                    logger.warning(f"⚠️  Bestand grootte mismatch: {len(test_content)} vs {len(html_content)}")
+            
+            logger.info(f"💾 Debug HTML opgeslagen: {filename} ({file_size:,} bytes, UTF-8 plaintext)")
+            return filename
+            
+        except Exception as e:
+            logger.error(f"❌ Error bij opslaan debug HTML: {e}")
+            return ""
     
-    return null;
-  }
-};
-
-/**
- * Gets a user by ID from the database
- * @param userId - User ID to fetch
- * @returns The user profile or null if not found
- */
-export const getUserById = async (userId: string): Promise<UserProfile | null> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock user data');
-    return generateMockUser(userId);
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    def validate_html_content(self, html_content: str) -> Tuple[bool, str]:
+        """
+        Valideer of HTML content Wehkamp producten bevat.
+        
+        Args:
+            html_content (str): HTML content om te valideren
+            
+        Returns:
+            Tuple[bool, str]: (is_valid, reason)
+        """
+        if not html_content or len(html_content) < 1000:
+            return False, f"HTML te kort: {len(html_content)} chars"
+        
+        # Check voor Wehkamp-specifieke content
+        wehkamp_indicators = [
+            'wehkamp',
+            'product',
+            'artikel',
+            'prijs',
+            '€',
+            'data-testid'
+        ]
+        
+        found_indicators = sum(1 for indicator in wehkamp_indicators 
+                             if indicator.lower() in html_content.lower())
+        
+        if found_indicators < 3:
+            return False, f"Onvoldoende Wehkamp indicators: {found_indicators}/6"
+        
+        # Check voor blocked/error pagina's
+        blocked_indicators = [
+            'access denied',
+            'blocked',
+            'captcha',
+            'bot detection',
+            'cloudflare',
+            'security check'
+        ]
+        
+        for indicator in blocked_indicators:
+            if indicator.lower() in html_content.lower():
+                return False, f"Blocked page detected: {indicator}"
+        
+        return True, f"Valid HTML: {len(html_content):,} chars, {found_indicators}/6 indicators"
     
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for getUserById: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    // Get user data - use maybeSingle() to handle no results gracefully
-    const getUserOperation = async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', effectiveUserId)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    };
-
-    const userData = await executeWithRetry(getUserOperation);
-    
-    if (!userData) {
-      console.log('User not found in database, creating new user record');
-      // Create a new user record if it doesn't exist using upsert to avoid duplicates
-      const createUserOperation = async () => {
-        const { data, error } = await supabase
-          .from('users')
-          .upsert({
-            id: effectiveUserId,
-            name: 'Test User',
-            email: 'test@example.com',
-            gender: 'neutral',
-            is_premium: false,
-          }, { 
-            onConflict: 'id' 
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      };
-
-      const newUserData = await executeWithRetry(createUserOperation);
-      
-      if (!newUserData) {
-        throw new Error('Failed to create user record');
-      }
-      
-      // Use the newly created user data
-      const createdUser = newUserData;
-      
-      return {
-        id: createdUser.id,
-        name: createdUser.name,
-        email: createdUser.email,
-        gender: createdUser.gender as 'male' | 'female' | 'neutral' | undefined,
-        isPremium: createdUser.is_premium,
-        stylePreferences: {
-          casual: 3,
-          formal: 3,
-          sporty: 3,
-          vintage: 3,
-          minimalist: 3,
-        },
-        savedRecommendations: [],
-      };
-    }
-
-    // Get style preferences
-    const getStyleOperation = async () => {
-      const { data, error } = await supabase
-        .from('style_preferences')
-        .select('*')
-        .eq('user_id', effectiveUserId)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    };
-
-    const styleData = await executeWithRetry(getStyleOperation);
-
-    // Get saved recommendations
-    const getSavedOperation = async () => {
-      const { data, error } = await supabase
-        .from('saved_outfits')
-        .select('outfit_id')
-        .eq('user_id', effectiveUserId);
-
-      if (error) throw error;
-      return data;
-    };
-
-    const savedData = await executeWithRetry(getSavedOperation, []);
-
-    return {
-      id: userData.id,
-      name: userData.name,
-      email: userData.email,
-      gender: userData.gender as 'male' | 'female' | 'neutral' | undefined,
-      isPremium: userData.is_premium,
-      stylePreferences: styleData ? {
-        casual: styleData.casual,
-        formal: styleData.formal,
-        sporty: styleData.sporty,
-        vintage: styleData.vintage,
-        minimalist: styleData.minimalist,
-      } : {
-        casual: 3,
-        formal: 3,
-        sporty: 3,
-        vintage: 3,
-        minimalist: 3,
-      },
-      savedRecommendations: savedData ? savedData.map(item => item.outfit_id) : [],
-    };
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    
-    if (env.USE_MOCK_DATA) {
-      // Return mock user as fallback
-      return generateMockUser(userId);
-    }
-    
-    return null;
-  }
-};
-
-/**
- * Updates a user in the database
- * @param userId - User ID to update
- * @param updates - User profile updates
- * @returns The updated user profile or null if failed
- */
-export const updateUser = async (userId: string, updates: Partial<UserProfile>): Promise<UserProfile | null> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock user update');
-    // Return mock updated user
-    const mockUser = generateMockUser(userId);
-    return {
-      ...mockUser,
-      ...updates,
-      stylePreferences: {
-        ...mockUser.stylePreferences,
-        ...(updates.stylePreferences || {})
-      }
-    };
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for updateUser: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    // Update user table
-    const userUpdates: any = {};
-    if (updates.name) userUpdates.name = updates.name;
-    if (updates.email) userUpdates.email = updates.email;
-    if (updates.gender) userUpdates.gender = updates.gender;
-    if (updates.isPremium !== undefined) userUpdates.is_premium = updates.isPremium;
-    
-    if (Object.keys(userUpdates).length > 0) {
-      userUpdates.updated_at = new Date().toISOString();
-      
-      const updateUserOperation = async () => {
-        const { error } = await supabase
-          .from('users')
-          .update(userUpdates)
-          .eq('id', effectiveUserId);
-
-        if (error) throw error;
-        return true;
-      };
-
-      const userUpdateSuccess = await executeWithRetry(updateUserOperation, false);
-      
-      if (!userUpdateSuccess) {
-        console.warn('Failed to update user data');
-      }
-    }
-
-    // Update style preferences if provided
-    if (updates.stylePreferences) {
-      const checkPrefsOperation = async () => {
-        const { data, error } = await supabase
-          .from('style_preferences')
-          .select('id')
-          .eq('user_id', effectiveUserId)
-          .maybeSingle();
-
-        if (error) throw error;
-        return data;
-      };
-
-      const existingPrefs = await executeWithRetry(checkPrefsOperation);
-
-      if (existingPrefs) {
-        // Update existing preferences
-        const updatePrefsOperation = async () => {
-          const { error } = await supabase
-            .from('style_preferences')
-            .update({
-              ...updates.stylePreferences,
-              updated_at: new Date().toISOString(),
+    def scrape_with_requests(self, url: str) -> Tuple[Optional[str], Dict[str, Any]]:
+        """
+        Probeer scraping met requests (sneller).
+        
+        Args:
+            url (str): URL om te scrapen
+            
+        Returns:
+            Tuple[Optional[str], Dict[str, Any]]: (html_content, metadata)
+        """
+        logger.info(f"🌐 Probeer requests scraping: {url}")
+        
+        metadata = {
+            'method': 'requests',
+            'success': False,
+            'status_code': None,
+            'content_type': None,
+            'content_length': 0,
+            'error': None
+        }
+        
+        try:
+            # Anti-bot delay
+            delay = random.uniform(self.min_delay, self.max_delay)
+            logger.debug(f"⏱️  Anti-bot delay: {delay:.2f}s")
+            time.sleep(delay)
+            
+            # Maak request
+            response = self.session.get(url, timeout=30)
+            
+            metadata.update({
+                'status_code': response.status_code,
+                'content_type': response.headers.get('content-type', ''),
+                'content_length': len(response.content)
             })
-            .eq('user_id', effectiveUserId);
-
-          if (error) throw error;
-          return true;
-        };
-
-        const prefsUpdateSuccess = await executeWithRetry(updatePrefsOperation, false);
+            
+            logger.info(f"📊 Response: {response.status_code}, "
+                       f"Content-Type: {response.headers.get('content-type', 'unknown')}, "
+                       f"Size: {len(response.content):,} bytes")
+            
+            if response.status_code == 200:
+                html_content = response.text
+                
+                # Valideer content
+                is_valid, reason = self.validate_html_content(html_content)
+                
+                if is_valid:
+                    metadata['success'] = True
+                    logger.info(f"✅ Requests scraping succesvol: {reason}")
+                    return html_content, metadata
+                else:
+                    metadata['error'] = f"Invalid content: {reason}"
+                    logger.warning(f"⚠️  Requests content invalid: {reason}")
+                    return html_content, metadata  # Return anyway voor debug
+            else:
+                metadata['error'] = f"HTTP {response.status_code}"
+                logger.warning(f"⚠️  HTTP error: {response.status_code}")
+                return None, metadata
+                
+        except requests.exceptions.RequestException as e:
+            metadata['error'] = str(e)
+            logger.error(f"❌ Requests error: {e}")
+            return None, metadata
+    
+    async def scrape_with_playwright(self, url: str) -> Tuple[Optional[str], Dict[str, Any]]:
+        """
+        Scrape met Playwright (fallback voor dynamische content).
         
-        if (!prefsUpdateSuccess) {
-          console.warn('Failed to update style preferences');
-        }
-      } else {
-        // Insert new preferences using upsert to avoid conflicts
-        const insertPrefsOperation = async () => {
-          const { error } = await supabase
-            .from('style_preferences')
-            .upsert({
-              user_id: effectiveUserId,
-              ...updates.stylePreferences,
-            }, { 
-              onConflict: 'user_id' 
-            });
-
-          if (error) throw error;
-          return true;
-        };
-
-        const prefsInsertSuccess = await executeWithRetry(insertPrefsOperation, false);
+        Args:
+            url (str): URL om te scrapen
+            
+        Returns:
+            Tuple[Optional[str], Dict[str, Any]]: (html_content, metadata)
+        """
+        if not PLAYWRIGHT_AVAILABLE:
+            logger.error("❌ Playwright niet beschikbaar")
+            return None, {'method': 'playwright', 'success': False, 'error': 'Playwright not available'}
         
-        if (!prefsInsertSuccess) {
-          console.warn('Failed to insert style preferences');
+        logger.info(f"🎭 Playwright scraping: {url}")
+        
+        metadata = {
+            'method': 'playwright',
+            'success': False,
+            'content_length': 0,
+            'error': None
         }
-      }
-    }
-
-    // Get updated user profile
-    return await getUserById(effectiveUserId);
-  } catch (error) {
-    console.error('Error updating user:', error);
-    toast.error('Failed to update user profile. Please try again.');
+        
+        browser = None
+        
+        try:
+            # Setup Playwright
+            playwright = await async_playwright().start()
+            
+            browser = await playwright.chromium.launch(
+                headless=False,  # Headed mode voor volledige rendering zoals echte gebruiker
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-blink-features=AutomationControlled'
+                ]
+            )
+            
+            context = await browser.new_context(
+                viewport={'width': 1920, 'height': 1080},
+                locale='nl-NL',
+                timezone_id='Europe/Amsterdam'
+            )
+            
+            page = await context.new_page()
+            
+            # Anti-detectie script
+            await page.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined,
+                });
+            """)
+            
+            logger.info("🎭 Navigeren naar pagina...")
+            
+            # Navigeer naar pagina
+            await page.goto(url, wait_until='domcontentloaded', timeout=60000)
+            
+            # Wacht op producten
+            logger.info("⏳ Wachten op product content...")
+            
+            try:
+                await page.wait_for_selector(
+                    'article[data-testid="product-card"], .product-tile, .product-card',
+                    timeout=30000
+                )
+                logger.info("✅ Product selectors gevonden")
+            except:
+                logger.warning("⚠️  Product selectors timeout - probeer anyway")
+            
+            # Extra delay voor dynamic content
+            await asyncio.sleep(3)
+            
+            # Scroll om lazy loading te triggeren
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
+            await asyncio.sleep(2)
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            await asyncio.sleep(2)
+            
+            # Haal HTML op
+            html_content = await page.content()
+            
+            metadata.update({
+                'content_length': len(html_content),
+                'success': True
+            })
+            
+            logger.info(f"✅ Playwright scraping succesvol: {len(html_content):,} chars")
+            
+            return html_content, metadata
+            
+        except Exception as e:
+            metadata['error'] = str(e)
+            logger.error(f"❌ Playwright error: {e}")
+            return None, metadata
+            
+        finally:
+            if browser:
+                await browser.close()
     
-    if (env.USE_MOCK_DATA) {
-      // Return mock updated user
-      const mockUser = generateMockUser(userId);
-      return {
-        ...mockUser,
-        ...updates,
-        stylePreferences: {
-          ...mockUser.stylePreferences,
-          ...(updates.stylePreferences || {})
-        }
-      };
-    }
+    def extract_products_from_html(self, html_content: str) -> List[Dict[str, Any]]:
+        """
+        Extract product data uit HTML content.
+        
+        Args:
+            html_content (str): HTML content om te parsen
+            
+        Returns:
+            List[Dict[str, Any]]: List van product data
+        """
+        logger.info("🔍 Extracting products from HTML...")
+        
+        soup = BeautifulSoup(html_content, 'html.parser')
+        products = []
+        
+        # Wehkamp-specifieke selectors (gebaseerd op moderne e-commerce structuur)
+        product_selectors = [
+            'article[data-testid="product-card"]',
+            'article[data-testid="product-tile"]',
+            '.product-tile',
+            '.product-card',
+            '.product-item',
+            'article[class*="product"]',
+            '[data-testid*="product"]'
+        ]
+        
+        product_elements = []
+        
+        # Probeer elke selector
+        for selector in product_selectors:
+            elements = soup.select(selector)
+            if elements:
+                logger.info(f"✅ Gevonden {len(elements)} elementen met selector: {selector}")
+                product_elements = elements
+                break
+            else:
+                logger.debug(f"❌ Geen elementen met selector: {selector}")
+        
+        if not product_elements:
+            logger.warning("⚠️  Geen product elementen gevonden met bekende selectors")
+            # Debug: zoek naar alle article tags
+            all_articles = soup.find_all('article')
+            logger.info(f"🔍 Debug: Gevonden {len(all_articles)} article tags totaal")
+            
+            # Debug: zoek naar links met /p/ of /product/
+            all_product_links = soup.find_all('a', href=re.compile(r'/(p|product)/'))
+            logger.info(f"🔍 Debug: Gevonden {len(all_product_links)} links met /p/ of /product/")
+            
+            return []
+        
+        # Extract data van elk product element
+        for i, element in enumerate(product_elements[:20], 1):  # Limit tot 20 voor test
+            try:
+                product_data = self.extract_single_product(element, i)
+                if product_data:
+                    products.append(product_data)
+                    logger.info(f"✅ Product {len(products)}: {product_data['title'][:50]}...")
+                else:
+                    self.failed_extractions.append(f"Product {i}: extraction failed")
+                    
+            except Exception as e:
+                logger.error(f"❌ Error extracting product {i}: {e}")
+                self.failed_extractions.append(f"Product {i}: {str(e)}")
+        
+        logger.info(f"🎯 Extraction voltooid: {len(products)} producten, {len(self.failed_extractions)} failures")
+        return products
     
-    return null;
-  }
-};
-
-/**
- * Saves an outfit to a user's favorites
- * @param userId - User ID
- * @param outfitId - Outfit ID to save
- * @returns Success status
- */
-export const saveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock outfit save');
-    return true;
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    def extract_single_product(self, element, index: int) -> Optional[Dict[str, Any]]:
+        """
+        Extract data van een enkel product element.
+        
+        Args:
+            element: BeautifulSoup element
+            index (int): Product index voor debugging
+            
+        Returns:
+            Optional[Dict[str, Any]]: Product data of None
+        """
+        try:
+            # Titel extractie
+            title = None
+            title_selectors = ['h3', 'h2', 'h4', '[data-testid="product-title"]', '.product-title', '.title']
+            
+            for selector in title_selectors:
+                title_elem = element.select_one(selector)
+                if title_elem:
+                    title = title_elem.get_text(strip=True)
+                    break
+            
+            if not title:
+                logger.debug(f"❌ Product {index}: Geen titel gevonden")
+                return None
+            
+            # Prijs extractie
+            price = None
+            price_selectors = [
+                '[data-testid="price"]',
+                '.price',
+                '.product-price',
+                '[class*="price"]',
+                '.amount'
+            ]
+            
+            for selector in price_selectors:
+                price_elem = element.select_one(selector)
+                if price_elem:
+                    price_text = price_elem.get_text(strip=True)
+                    # Clean price text
+                    price = re.sub(r'[^\d,.-]', '', price_text).replace(',', '.')
+                    break
+            
+            if not price:
+                logger.debug(f"❌ Product {index}: Geen prijs gevonden")
+                return None
+            
+            # URL extractie
+            url = None
+            link_elem = element.select_one('a')
+            if link_elem:
+                href = link_elem.get('href')
+                if href:
+                    if href.startswith('/'):
+                        url = urljoin(self.base_url, href)
+                    else:
+                        url = href
+            
+            if not url:
+                logger.debug(f"❌ Product {index}: Geen URL gevonden")
+                return None
+            
+            # Afbeelding extractie
+            image = None
+            img_elem = element.select_one('img')
+            if img_elem:
+                image_src = (img_elem.get('src') or 
+                           img_elem.get('data-src') or 
+                           img_elem.get('data-lazy-src'))
+                
+                if image_src:
+                    if image_src.startswith('/'):
+                        image = urljoin(self.base_url, image_src)
+                    else:
+                        image = image_src
+            
+            # Brand extractie (optioneel)
+            brand = None
+            brand_selectors = ['.brand', '.product-brand', '[data-testid="brand"]']
+            for selector in brand_selectors:
+                brand_elem = element.select_one(selector)
+                if brand_elem:
+                    brand = brand_elem.get_text(strip=True)
+                    break
+            
+            product_data = {
+                "title": title,
+                "price": price,
+                "url": url,
+                "image": image,
+                "brand": brand or "Onbekend",
+                "retailer": "Wehkamp",
+                "category": "Heren Kleding",
+                "scraped_at": datetime.now().isoformat()
+            }
+            
+            return product_data
+            
+        except Exception as e:
+            logger.error(f"❌ Error extracting product {index}: {e}")
+            return None
     
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for saveOutfit: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    const saveOutfitOperation = async () => {
-      const { error } = await supabase
-        .from('saved_outfits')
-        .upsert({
-          user_id: effectiveUserId,
-          outfit_id: outfitId,
-        }, { 
-          onConflict: 'user_id,outfit_id' 
-        });
-
-      if (error) throw error;
-      return true;
-    };
-
-    return await executeWithRetry(saveOutfitOperation, false);
-  } catch (error) {
-    console.error('Error saving outfit:', error);
-    toast.error('Failed to save outfit. Please try again.');
-    return false;
-  }
-};
-
-/**
- * Removes an outfit from a user's favorites
- * @param userId - User ID
- * @param outfitId - Outfit ID to remove
- * @returns Success status
- */
-export const unsaveOutfit = async (userId: string, outfitId: string): Promise<boolean> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock outfit unsave');
-    return true;
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    def export_to_json(self, filename: str = "wehkamp_products.json") -> None:
+        """
+        Export products naar JSON bestand.
+        
+        Args:
+            filename (str): Output bestandsnaam
+        """
+        try:
+            export_data = {
+                "scraped_at": datetime.now().isoformat(),
+                "total_products": len(self.scraped_products),
+                "failed_extractions": len(self.failed_extractions),
+                "products": self.scraped_products,
+                "failures": self.failed_extractions
+            }
+            
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(export_data, f, ensure_ascii=False, indent=2)
+            
+            logger.info(f"💾 Data geëxporteerd naar {filename}: {len(self.scraped_products)} producten")
+            
+        except Exception as e:
+            logger.error(f"❌ Error bij JSON export: {e}")
     
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for unsaveOutfit: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    const unsaveOutfitOperation = async () => {
-      const { error } = await supabase
-        .from('saved_outfits')
-        .delete()
-        .eq('user_id', effectiveUserId)
-        .eq('outfit_id', outfitId);
-
-      if (error) throw error;
-      return true;
-    };
-
-    return await executeWithRetry(unsaveOutfitOperation, false);
-  } catch (error) {
-    console.error('Error removing saved outfit:', error);
-    toast.error('Failed to remove saved outfit. Please try again.');
-    return false;
-  }
-};
-
-// Gamification Services
-
-/**
- * Gets user gamification data from the database
- * @param userId - User ID to fetch gamification data for
- * @returns The user gamification data or null if not found
- */
-export const getUserGamification = async (userId: string): Promise<UserGamification | null> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock gamification data');
-    return generateMockGamification(userId);
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
+    async def scrape_wehkamp_category(self, url: str) -> List[Dict[str, Any]]:
+        """
+        Scrape Wehkamp categorie met automatische fallback.
+        
+        Args:
+            url (str): Categorie URL om te scrapen
+            
+        Returns:
+            List[Dict[str, Any]]: Gescrapete producten
+        """
+        logger.info(f"🎯 Start scraping: {url}")
+        
+        html_content = None
+        final_metadata = {}
+        
+        # STAP 1: Probeer eerst requests (sneller)
+        html_content, requests_metadata = self.scrape_with_requests(url)
+        
+        if html_content and requests_metadata['success']:
+            logger.info("✅ Requests scraping succesvol")
+            final_metadata = requests_metadata
+        else:
+            logger.warning("⚠️  Requests scraping gefaald, fallback naar Playwright...")
+            
+            # STAP 2: Fallback naar Playwright
+            html_content, playwright_metadata = await self.scrape_with_playwright(url)
+            final_metadata = playwright_metadata
+            
+            if not html_content:
+                logger.error("❌ Beide scraping methoden gefaald")
+                return []
+        
+        # STAP 3: Sla debug HTML op (altijd)
+        if html_content:
+            debug_filename = self.save_debug_html(html_content, final_metadata['method'])
+            logger.info(f"💾 Debug HTML: {debug_filename}")
+        
+        # STAP 4: Extract producten
+        if html_content:
+            products = self.extract_products_from_html(html_content)
+            self.scraped_products = products
+            
+            # STAP 5: Export naar JSON
+            if products:
+                self.export_to_json()
+                logger.info(f"🎉 Scraping voltooid: {len(products)} producten gevonden")
+            else:
+                logger.warning("⚠️  Geen producten gevonden - check debug HTML")
+            
+            return products
+        
+        return []
     
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for getUserGamification: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
+    def print_summary(self) -> None:
+        """
+        Print samenvatting van scraping resultaten.
+        """
+        total_products = len(self.scraped_products)
+        failed_count = len(self.failed_extractions)
+        
+        print(f"\n{'='*50}")
+        print(f"🎯 WEHKAMP SCRAPING RESULTATEN")
+        print(f"{'='*50}")
+        print(f"✅ Succesvol gescraped: {total_products} producten")
+        print(f"❌ Gefaalde extracties: {failed_count}")
+        print(f"📁 Output opgeslagen in: wehkamp_products.json")
+        print(f"🐛 Debug HTML beschikbaar voor analyse")
+        
+        if total_products > 0:
+            print(f"\n📦 Voorbeeld producten:")
+            for i, product in enumerate(self.scraped_products[:3], 1):
+                print(f"  {i}. {product['title'][:60]}...")
+                print(f"     💰 {product['price']}")
+                print(f"     🔗 {product['url'][:80]}...")
+        
+        if failed_count > 0:
+            print(f"\n❌ Gefaalde extracties: {failed_count}")
+            for failure in self.failed_extractions[:3]:
+                print(f"  - {failure}")
+        
+        print(f"{'='*50}")
 
-    const getGamificationOperation = async () => {
-      const { data, error } = await supabase
-        .from('user_gamification')
-        .select('*')
-        .eq('user_id', effectiveUserId)
-        .maybeSingle();
 
-      if (error) throw error;
-      return data;
-    };
-
-    const gamificationData = await executeWithRetry(getGamificationOperation);
+async def main():
+    """
+    Hoofdfunctie voor het uitvoeren van de Wehkamp scraper.
+    """
+    logger.info("🚀 === Robust Wehkamp Scraper Gestart ===")
     
-    if (!gamificationData) {
-      // Create default gamification record if it doesn't exist
-      const createGamificationOperation = async () => {
-        const { data, error } = await supabase
-          .from('user_gamification')
-          .upsert({
-            user_id: effectiveUserId,
-            points: 0,
-            level: 'beginner',
-            badges: [],
-            streak: 0,
-            completed_challenges: [],
-            total_referrals: 0,
-            seasonal_event_progress: {},
-          }, { 
-            onConflict: 'user_id' 
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      };
-
-      const newGamificationData = await executeWithRetry(createGamificationOperation);
-      
-      if (!newGamificationData) {
-        throw new Error('Failed to create gamification record');
-      }
-      
-      return newGamificationData as UserGamification;
-    }
-
-    return gamificationData as UserGamification;
-  } catch (error) {
-    console.error('Error fetching user gamification:', error);
+    # Initialiseer scraper
+    scraper = RobustWehkampScraper()
     
-    if (env.USE_MOCK_DATA) {
-      // Return mock gamification data as fallback
-      return generateMockGamification(userId);
-    }
-    
-    return null;
-  }
-};
+    try:
+        # Test URL: Heren kleding categorie
+        test_url = "https://www.wehkamp.nl/heren-kleding/"
+        
+        # Scrape producten
+        products = await scraper.scrape_wehkamp_category(test_url)
+        
+        # Print resultaten
+        scraper.print_summary()
+        
+        # Console output voor directe feedback
+        if products:
+            print(f"\n🎉 SUCCESS: {len(products)} producten gevonden!")
+            print(f"📄 Check wehkamp_products.json voor volledige data")
+        else:
+            print(f"\n⚠️  GEEN PRODUCTEN GEVONDEN")
+            print(f"🐛 Check debug HTML bestanden voor analyse")
+        
+    except KeyboardInterrupt:
+        logger.info("⏹️  Scraping onderbroken door gebruiker")
+    except Exception as e:
+        logger.error(f"💥 Onverwachte error: {e}")
+    finally:
+        logger.info("🏁 Scraper afgesloten")
 
-/**
- * Updates user gamification data in the database
- * @param userId - User ID to update
- * @param updates - Gamification updates
- * @returns The updated gamification data or null if failed
- */
-export const updateUserGamification = async (userId: string, updates: Partial<Omit<UserGamification, 'id' | 'user_id' | 'created_at' | 'updated_at'>>): Promise<UserGamification | null> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock gamification update');
-    const mockData = generateMockGamification(userId);
-    return {
-      ...mockData,
-      ...updates,
-      updated_at: new Date().toISOString()
-    };
-  }
 
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for updateUserGamification: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    const updateGamificationOperation = async () => {
-      const { data, error } = await supabase
-        .from('user_gamification')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', effectiveUserId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    };
-
-    const updatedData = await executeWithRetry(updateGamificationOperation);
-    
-    if (!updatedData) {
-      throw new Error('Failed to update gamification data');
-    }
-
-    return updatedData as UserGamification;
-  } catch (error) {
-    console.error('Error updating user gamification:', error);
-    toast.error('Failed to update gamification data. Please try again.');
-    
-    if (env.USE_MOCK_DATA) {
-      // Return mock updated gamification data
-      const mockData = generateMockGamification(userId);
-      return {
-        ...mockData,
-        ...updates,
-        updated_at: new Date().toISOString()
-      };
-    }
-    
-    return null;
-  }
-};
-
-/**
- * Completes a challenge for a user
- * @param userId - User ID
- * @param challengeId - Challenge ID to complete
- * @returns Success status
- */
-export const completeChallenge = async (userId: string, challengeId: string): Promise<boolean> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock challenge completion');
-    return true;
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for completeChallenge: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    const completeChallengeOperation = async () => {
-      const { error } = await supabase
-        .from('daily_challenges')
-        .upsert({
-          user_id: effectiveUserId,
-          challenge_id: challengeId,
-          completed: true,
-        }, { 
-          onConflict: 'user_id,challenge_id' 
-        });
-
-      if (error) throw error;
-      return true;
-    };
-
-    const success = await executeWithRetry(completeChallengeOperation, false);
-    
-    if (success) {
-      // Update user gamification to add the challenge to completed_challenges
-      const currentGamification = await getUserGamification(effectiveUserId);
-      if (currentGamification && !currentGamification.completed_challenges.includes(challengeId)) {
-        await updateUserGamification(effectiveUserId, {
-          completed_challenges: [...currentGamification.completed_challenges, challengeId],
-          points: currentGamification.points + 10, // Award 10 points for completing a challenge
-        });
-      }
-    }
-
-    return success;
-  } catch (error) {
-    console.error('Error completing challenge:', error);
-    toast.error('Failed to complete challenge. Please try again.');
-    return false;
-  }
-};
-
-/**
- * Gets daily challenges for a user
- * @param userId - User ID to fetch challenges for
- * @returns Array of daily challenges
- */
-export const getDailyChallenges = async (userId: string): Promise<DailyChallenge[]> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – using mock daily challenges');
-    return [
-      {
-        id: 'mock-challenge-1',
-        user_id: userId,
-        challenge_id: 'daily_style_quiz',
-        completed: false,
-        created_at: new Date().toISOString(),
-      },
-      {
-        id: 'mock-challenge-2',
-        user_id: userId,
-        challenge_id: 'save_outfit',
-        completed: false,
-        created_at: new Date().toISOString(),
-      },
-      {
-        id: 'mock-challenge-3',
-        user_id: userId,
-        challenge_id: 'share_look',
-        completed: false,
-        created_at: new Date().toISOString(),
-      }
-    ];
-  }
-
-  try {
-    // Always use test user ID for development
-    const effectiveUserId = TEST_USER_ID;
-    
-    // Validate UUID before making database query
-    if (!isValidUUID(effectiveUserId)) {
-      console.error(`Invalid UUID format for getDailyChallenges: ${effectiveUserId}`);
-      throw new Error('Invalid UUID format');
-    }
-
-    const getChallengesOperation = async () => {
-      const { data, error } = await supabase
-        .from('daily_challenges')
-        .select('*')
-        .eq('user_id', effectiveUserId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    };
-
-    const challengesData = await executeWithRetry(getChallengesOperation, []);
-    
-    return (challengesData || []) as DailyChallenge[];
-  } catch (error) {
-    console.error('Error fetching daily challenges:', error);
-    
-    if (env.USE_MOCK_DATA) {
-      // Return mock challenges as fallback
-      return [
-        {
-          id: 'mock-challenge-1',
-          user_id: userId,
-          challenge_id: 'daily_style_quiz',
-          completed: false,
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 'mock-challenge-2',
-          user_id: userId,
-          challenge_id: 'save_outfit',
-          completed: false,
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 'mock-challenge-3',
-          user_id: userId,
-          challenge_id: 'share_look',
-          completed: false,
-          created_at: new Date().toISOString(),
-        }
-      ];
-    }
-    
-    return [];
-  }
-};
-
-/**
- * Fetches products from Supabase database and filters out products with invalid images
- * @returns Array of products with valid images
- */
-export const fetchProductsFromSupabase = async (): Promise<any[]> => {
-  if (!env.USE_SUPABASE) {
-    console.log('[Fallback] Supabase disabled – skipping product fetch from Supabase');
-    return [];
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      console.error('Error fetching products from Supabase:', error);
-      return [];
-    }
-    
-    if (!data || data.length === 0) {
-      console.warn('No products found in Supabase');
-      return [];
-    }
-    
-    console.log(`[Supabase] Fetched ${data.length} products`);
-    
-    return data;
-  } catch (error) {
-    console.error('Exception when fetching products from Supabase:', error);
-    return [];
-  }
-};
-
-// Helpers
-
-/**
- * Generates a random password
- * @returns Random password string
- */
-const generateRandomPassword = (): string => {
-  return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-};
-
-export default {
-  createUser,
-  getUserById,
-  updateUser,
-  saveOutfit,
-  unsaveOutfit,
-  getUserGamification,
-  updateUserGamification,
-  completeChallenge,
-  getDailyChallenges,
-  fetchProductsFromSupabase
-};
+if __name__ == "__main__":
+    # Direct uitvoerbaar script
+    asyncio.run(main())
