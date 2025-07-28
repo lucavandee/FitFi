@@ -5,7 +5,7 @@ import { ArrowRight, Play, CheckCircle, Star, Users, Zap, Shield } from 'lucide-
 import Button from '../components/ui/Button';
 import Walkthrough from '../components/walkthrough/Walkthrough';
 import StyleArchetypeSlider from '../components/home/StyleArchetypeSlider';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import LoadingFallback from '../components/ui/LoadingFallback';
 
 // Import new components directly (not lazy loaded for better LCP)
