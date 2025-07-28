@@ -21,6 +21,10 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
 import AboutPage from './pages/AboutPage';
+import HowItWorksPage from './pages/HowItWorksPage';
+import PricingPage from './pages/PricingPage';
+import BlogIndexPage from './pages/BlogIndexPage';
+import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PricingPage from './pages/PricingPage';
 import BlogPage from './pages/BlogPage';
@@ -68,20 +72,20 @@ function App() {
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/home" element={<HomePage />} />
+                    <Route path="/over-ons" element={<AboutPage />} />
+                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                    <Route path="/prijzen" element={<PricingPage />} />
+                    <Route path="/blog" element={<BlogIndexPage />} />
                     <Route path="/inloggen" element={<LoginPage />} />
                     <Route path="/registreren" element={<RegisterPage />} />
                     <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
                     <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
-                    <Route path="/over-ons" element={<AboutPage />} />
                     <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/prijzen" element={<PricingPage />} />
-                    <Route path="/blog" element={<BlogPage />} />
                     <Route path="/veelgestelde-vragen" element={<FAQPage />} />
                     <Route path="/juridisch" element={<LegalPage />} />
                     <Route path="/ondersteuning" element={<SupportPage />} />
                     <Route path="/help" element={<HelpCenterPage />} />
                     <Route path="/feedback" element={<FeedbackPage />} />
-                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                     <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
                     <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
                     <Route path="/product/:id" element={<ProductPage />} />
