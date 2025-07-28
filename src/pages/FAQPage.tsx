@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   ChevronDown, 
   ChevronUp, 
@@ -225,6 +226,25 @@ const FAQPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF8F6]">
+      <Helmet>
+        <title>Veelgestelde Vragen - FitFi | Hulp en Ondersteuning</title>
+        <meta name="description" content="Vind antwoorden op veelgestelde vragen over FitFi. Van account beheer tot stijladvies - alle informatie die je nodig hebt." />
+        <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqData.slice(0, 10).map(faq => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.answer
+            }
+          }))
+        })}
+        </script>
+      </Helmet>
+
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Hero Section */}
         <ErrorBoundary>
