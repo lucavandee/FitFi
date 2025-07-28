@@ -142,53 +142,6 @@ const PricingPage: React.FC = () => {
           </div>
         </ErrorBoundary>
 
-        {/* FAQ Section */}
-        <ErrorBoundary>
-          <div className="bg-white rounded-3xl shadow-sm p-8 md:p-12 mb-16">
-            <h2 className="text-3xl font-light text-[#0D1B2A] text-center mb-12">
-              Veelgestelde vragen
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">
-                  Kan ik altijd opzeggen?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Ja, je kunt je abonnement op elk moment opzeggen. Er zijn geen verborgen kosten of lange contracten.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">
-                  Hoe nauwkeurig zijn de aanbevelingen?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Onze AI heeft een nauwkeurigheid van 95% en wordt continu verbeterd op basis van gebruikersfeedback.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">
-                  Wat gebeurt er met mijn foto's?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Je foto's worden veilig opgeslagen en alleen gebruikt voor stijlanalyse. Je kunt ze altijd verwijderen.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">
-                  Is er een proefperiode?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Ja, Premium heeft een gratis proefperiode van 14 dagen. Je kunt altijd binnen deze periode opzeggen.
-                </p>
-              </div>
-            </div>
-          </div>
-        </ErrorBoundary>
-
         {/* CTA Section */}
         <ErrorBoundary>
           <div className="bg-gradient-to-r from-[#89CFF0] to-blue-500 rounded-3xl shadow-sm overflow-hidden">

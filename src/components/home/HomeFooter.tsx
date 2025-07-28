@@ -17,8 +17,28 @@ const HomeFooter: React.FC<HomeFooterProps> = ({ className = '' }) => {
       icon: <HelpCircle size={16} />
     },
     {
-      label: 'Privacybeleid',
-      href: '/juridisch',
+      label: 'Over ons',
+      href: '/over-ons',
+      icon: <HelpCircle size={16} />
+    },
+    {
+      label: 'Hoe het werkt',
+      href: '/hoe-het-werkt',
+      icon: <HelpCircle size={16} />
+    },
+    {
+      label: 'Prijzen',
+      href: '/prijzen',
+      icon: <HelpCircle size={16} />
+    },
+    {
+      label: 'Blog',
+      href: '/blog',
+      icon: <HelpCircle size={16} />
+    },
+    {
+      label: 'Privacy',
+      href: '/privacy-policy',
       icon: <Shield size={16} />
     },
     {
