@@ -26,13 +26,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      exclude: ["lucide-react"],
+      exclude: ["lucide-react", "backend"],
     },
     server: {
       port: 3000,
       open: true,
       fs: { 
-        strict: true 
+        strict: true,
+        allow: ['src']
       },
       middlewareMode: false,
       // Prevent serving HTML for JS/CSS assets
