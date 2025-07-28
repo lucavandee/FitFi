@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Check for Python headers in frontend code
+if grep -RIlE '(#!/usr/bin/env python3|Robust Wehkamp Scraper)' src; then
+  echo '❌ Python header gevonden in frontend code – commit geweigerd'
+  echo 'Verwijder alle Python headers uit src/ bestanden voordat je commit.'
+  exit 1
+fi
+
+echo '✅ Geen Python headers gevonden in frontend code'
