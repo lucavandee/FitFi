@@ -19,6 +19,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ProfilePage from './pages/ProfilePage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PricingPage from './pages/PricingPage';
@@ -35,6 +36,19 @@ import ProductPage from './pages/ProductPage';
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+
+// NotFound component
+const NotFound: React.FC = () => (
+  <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+      <p className="text-gray-600 mb-6">Pagina niet gevonden</p>
+      <a href="/" className="text-[#bfae9f] hover:text-[#a89a8c] font-medium">
+        Terug naar home
+      </a>
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -67,6 +81,7 @@ function App() {
                     <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
                     <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
                     <Route path="/product/:id" element={<ProductPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                     
                     {/* Protected Routes */}
                     <Route path="/onboarding" element={
@@ -96,7 +111,7 @@ function App() {
                     } />
                     
                     {/* Fallback */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                 </div>
               </Router>

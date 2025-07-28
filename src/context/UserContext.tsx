@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { User } from '@supabase/supabase-js';
 
 export interface UserProfile {
   id: string;
@@ -34,154 +32,60 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        loadUserProfile(session.user);
-      } else {
-        setIsLoading(false);
-      }
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        await loadUserProfile(session.user);
-      } else {
-        setUser(null);
-        setIsLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    // Mock auth for now - just set loading to false
+    setIsLoading(false);
   }, []);
 
-  const loadUserProfile = async (authUser: User) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authUser.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      if (data) {
-        setUser({
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          gender: data.gender,
-          stylePreferences: {
-            casual: 3,
-            formal: 3,
-            sporty: 3,
-            vintage: 3,
-            minimalist: 3
-          },
-          isPremium: data.is_premium || false,
-          savedRecommendations: []
-        });
-      } else {
-        // Create user profile if it doesn't exist
-        const newProfile = {
-          id: authUser.id,
-          name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-          email: authUser.email!,
-          gender: null,
-          is_premium: false
-        };
-
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert([newProfile]);
-
-        if (insertError) {
-          console.error('Error creating user profile:', insertError);
-        }
-
-        setUser({
-          id: authUser.id,
-          name: newProfile.name,
-          email: newProfile.email,
-          stylePreferences: {
-            casual: 3,
-            formal: 3,
-            sporty: 3,
-            vintage: 3,
-            minimalist: 3
-          },
-          isPremium: false,
-          savedRecommendations: []
-        });
-      }
-    } catch (error) {
-      console.error('Error loading user profile:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+    // Mock login - create a user session
+    console.log('Mock login:', email);
+    setUser({
+      id: 'mock-user-id',
+      name: 'Test User',
+      email: email,
+      stylePreferences: {
+        casual: 3,
+        formal: 3,
+        sporty: 3,
+        vintage: 3,
+        minimalist: 3
+      },
+      isPremium: false,
+      savedRecommendations: []
     });
-
-    if (error) {
-      throw error;
-    }
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name
-        }
-      }
+    // Mock registration - create a user session
+    console.log('Mock registration:', name, email);
+    setUser({
+      id: 'mock-user-id',
+      name: name,
+      email: email,
+      stylePreferences: {
+        casual: 3,
+        formal: 3,
+        sporty: 3,
+        vintage: 3,
+        minimalist: 3
+      },
+      isPremium: false,
+      savedRecommendations: []
     });
-
-    if (error) {
-      throw error;
-    }
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
-    }
+    // Mock logout
+    console.log('Mock logout');
     setUser(null);
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!user) return;
 
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({
-          name: updates.name,
-          email: updates.email,
-          gender: updates.gender,
-          is_premium: updates.isPremium
-        })
-        .eq('id', user.id);
-
-      if (error) {
-        throw error;
-      }
-
-      setUser(prev => prev ? { ...prev, ...updates } : null);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      throw error;
-    }
+    // Mock profile update
+    console.log('Mock profile update:', updates);
+    setUser(prev => prev ? { ...prev, ...updates } : null);
   };
 
   const value: UserContextType = {

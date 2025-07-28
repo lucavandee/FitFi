@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import toast from 'react-hot-toast';
@@ -68,7 +67,11 @@ const LoginPage: React.FC = () => {
     setErrors({});
 
     try {
-      await login(formData.email, formData.password);
+      // Mock login for now
+      console.log('Login attempt:', formData.email);
+      
+      // Simulate successful login
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Track successful login
       if (typeof window.gtag === 'function') {
@@ -84,13 +87,7 @@ const LoginPage: React.FC = () => {
       console.error('Login error:', error);
       
       // Handle specific error types
-      if (error.message?.includes('Invalid login credentials')) {
-        setErrors({ general: 'Onjuist e-mailadres of wachtwoord' });
-      } else if (error.message?.includes('Email not confirmed')) {
-        setErrors({ general: 'Bevestig eerst je e-mailadres via de link in je inbox' });
-      } else {
-        setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
-      }
+      setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
     } finally {
       setIsLoading(false);
     }
@@ -99,11 +96,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div>
           {/* Header */}
           <div className="text-center">
             <Link to="/" className="inline-block mb-6">
@@ -256,7 +249,7 @@ const LoginPage: React.FC = () => {
               ← Terug naar home
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
