@@ -67,26 +67,23 @@ const LoginPage: React.FC = () => {
     setErrors({});
 
     try {
-      // Mock login for now
-      console.log('Login attempt:', formData.email);
+      const success = await login(formData.email, formData.password);
       
-      // Simulate successful login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Track successful login
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'login', {
-          event_category: 'authentication',
-          event_label: 'email_login'
-        });
+      if (success) {
+        // Track successful login
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'login', {
+            event_category: 'authentication',
+            event_label: 'email_login'
+          });
+        }
+        navigate(from, { replace: true });
+      } else {
+        setErrors({ general: 'Ongeldige inloggegevens' });
       }
 
-      toast.success('Welkom terug!');
-      navigate(from, { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
-      
-      // Handle specific error types
       setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
     } finally {
       setIsLoading(false);

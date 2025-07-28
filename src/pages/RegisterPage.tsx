@@ -86,28 +86,25 @@ const RegisterPage: React.FC = () => {
     setErrors({});
 
     try {
-      // Mock registration for now
-      console.log('Registration attempt:', formData.name, formData.email);
+      const success = await register(formData.name, formData.email, formData.password);
       
-      // Simulate successful registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Track successful registration
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'sign_up', {
-          event_category: 'authentication',
-          event_label: 'email_registration'
-        });
+      if (success) {
+        // Track successful registration
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'sign_up', {
+            event_category: 'authentication',
+            event_label: 'email_registration'
+          });
+        }
+        
+        // Redirect to onboarding
+        navigate('/onboarding', { replace: true });
+      } else {
+        setErrors({ general: 'Er ging iets mis bij het aanmaken van je account.' });
       }
 
-      toast.success('Account succesvol aangemaakt! Welkom bij FitFi!');
-      
-      // Redirect to onboarding flow
-      navigate('/onboarding', { replace: true });
     } catch (error: any) {
       console.error('Registration error:', error);
-      
-      // Handle specific error types
       setErrors({ general: 'Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.' });
     } finally {
       setIsLoading(false);
