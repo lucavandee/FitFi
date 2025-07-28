@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.1] - 2025-01-28
+
+### Fixed
+- Fix PostCSS error – main.css cleanup
+- Removed all custom CSS causing PostCSS compilation failures
+- Added stylelint guard to prevent future main.css bloat
+- Ensured main.css contains exactly 4 essential lines only
+
+### Added
+- Stylelint configuration to enforce max 4 lines in main.css
+- Build verification to catch PostCSS errors early
+
 ## [1.2.0] - 2025-01-28
 
 ### Fixed
