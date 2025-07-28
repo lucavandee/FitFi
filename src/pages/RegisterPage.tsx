@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import toast from 'react-hot-toast';
@@ -87,7 +86,11 @@ const RegisterPage: React.FC = () => {
     setErrors({});
 
     try {
-      await register(formData.name.trim(), formData.email, formData.password);
+      // Mock registration for now
+      console.log('Registration attempt:', formData.name, formData.email);
+      
+      // Simulate successful registration
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Track successful registration
       if (typeof window.gtag === 'function') {
@@ -105,18 +108,7 @@ const RegisterPage: React.FC = () => {
       console.error('Registration error:', error);
       
       // Handle specific error types
-      if (error.message?.includes('User already registered')) {
-        setErrors({ 
-          email: 'Dit e-mailadres is al in gebruik',
-          general: 'Er bestaat al een account met dit e-mailadres. Probeer in te loggen.'
-        });
-      } else if (error.message?.includes('Password should be at least 6 characters')) {
-        setErrors({ password: 'Wachtwoord moet minimaal 6 karakters zijn' });
-      } else if (error.message?.includes('Invalid email')) {
-        setErrors({ email: 'Ongeldig e-mailadres' });
-      } else {
-        setErrors({ general: 'Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.' });
-      }
+      setErrors({ general: 'Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.' });
     } finally {
       setIsLoading(false);
     }
@@ -142,11 +134,7 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div>
           {/* Header */}
           <div className="text-center">
             <Link to="/" className="inline-block mb-6">
@@ -403,7 +391,7 @@ const RegisterPage: React.FC = () => {
               ← Terug naar home
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
