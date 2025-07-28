@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Robust Wehkamp Scraper - Production Ready
-=========================================
+Robust Wehkamp Scraper - Full Page Rendering
+============================================
 
 Een complete, robuuste scraper voor Wehkamp.nl producten met:
 - Automatische fallback van requests naar Playwright
@@ -81,24 +81,19 @@ class RobustWehkampScraper:
         self.failed_extractions = []
         
         # Anti-bot protection instellingen
-        self.min_delay = 1.0
         self.max_delay = 2.5
         self.max_retries = 3
         
         # Setup session headers
         self.setup_session_headers()
         
-        logger.info("🚀 Robust Wehkamp Scraper geïnitialiseerd")
     
     def setup_session_headers(self) -> None:
         """
         Setup realistische headers voor de requests session.
         """
-        self.session.headers.update({
-            'User-Agent': self.ua.chrome,
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
             'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',</parameter>
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
@@ -284,17 +279,10 @@ class RobustWehkampScraper:
             playwright = await async_playwright().start()
             
             browser = await playwright.chromium.launch(
-                headless=True,
+                headless=False,  # Headed mode voor volledige rendering zoals echte gebruiker
                 args=[
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-blink-features=AutomationControlled'
-                ]
-            )
-            
-            context = await browser.new_context(
-                user_agent=self.ua.chrome,
                 viewport={'width': 1920, 'height': 1080},
                 locale='nl-NL',
                 timezone_id='Europe/Amsterdam'
