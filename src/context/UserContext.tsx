@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { getReferralCookie, clearReferralCookie } from '../utils/referralUtils';
 
 export interface UserProfile {
   id: string;
@@ -185,6 +186,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         toast.success('Account succesvol aangemaakt!');
+        
+        // Process referral if exists
+        const referralCode = getReferralCookie();
+        if (referralCode) {
+          try {
+            await fetch(`/api/referral/register?code=${referralCode}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'signup',
+                user_id: data.user.id
+              })
+            });
+            clearReferralCookie();
+          } catch (error) {
+            console.error('Error processing referral:', error);
+          }
+        }
+        
         return { success: true, redirectTo: `/onboarding?user=${data.user.id}` };
       }
 
