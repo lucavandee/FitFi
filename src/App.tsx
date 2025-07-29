@@ -29,7 +29,6 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
 import AboutPage from './pages/AboutPage';
-import HowItWorksPage from './pages/HowItWorksPage';
 import PricingPage from './pages/PricingPage';
 import BlogIndexPage from './pages/BlogIndexPage';
 import ContactPage from './pages/ContactPage';
