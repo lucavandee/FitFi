@@ -31,26 +31,18 @@ const HowItWorksPage: React.FC = () => {
       icon: <FileText size={32} />,
       color: 'bg-green-50 text-green-600',
       image: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
-    },
-    {
-      id: 4,
-      title: 'Shop je look',
-      description: 'Klik door naar onze partner retailers en shop je perfecte outfit met exclusieve kortingen.',
-      icon: <Sparkles size={32} />,
-      color: 'bg-orange-50 text-orange-600',
-      image: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2'
     }
   ];
 
   return (
     <div className="min-h-screen bg-[#F6F6F6]">
       <Helmet>
-        <title>Hoe het werkt - AI Personal Styling in 4 stappen | FitFi</title>
-        <meta name="description" content="Ontdek hoe FitFi's AI-powered personal styling werkt. Upload foto → Doe quiz → Ontvang rapport → Shop je look. Slechts 2 minuten!" />
-        <meta property="og:title" content="Hoe het werkt - AI Personal Styling in 4 stappen" />
-        <meta property="og:description" content="Upload foto → Doe quiz → Ontvang rapport → Shop je look. Slechts 2 minuten!" />
-        <meta property="og:image" content="https://fitfi.ai/og-how-it-works.jpg" />
-        <link rel="canonical" href="https://fitfi.ai/hoe-het-werkt" />
+        <title>Hoe het werkt - AI Personal Styling in 3 stappen | FitFi</title>
+        <meta name="description" content="Ontdek hoe FitFi's AI-powered personal styling werkt. Upload foto → Doe quiz → Ontvang gepersonaliseerd stijlrapport. Slechts 2 minuten!" />
+        <meta property="og:title" content="Hoe het werkt - AI Personal Styling in 3 stappen" />
+        <meta property="og:description" content="Upload foto → Doe quiz → Ontvang gepersonaliseerd stijlrapport. Slechts 2 minuten!" />
+        <meta property="og:image" content="https://fitfi.app/og-how-it-works.jpg" />
+        <link rel="canonical" href="https://fitfi.app/hoe-het-werkt" />
       </Helmet>
 
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
@@ -65,7 +57,7 @@ const HowItWorksPage: React.FC = () => {
               Hoe FitFi werkt
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Van foto tot perfect passende outfits in slechts 4 eenvoudige stappen
+              Van foto tot perfect passende outfits in slechts 3 eenvoudige stappen
             </p>
           </section>
         </ErrorBoundary>
@@ -73,11 +65,11 @@ const HowItWorksPage: React.FC = () => {
         {/* Steps Illustration */}
         <ErrorBoundary>
           <section className="mb-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
               {steps.map((step, index) => (
                 <div key={step.id} className="relative">
                   {/* Connection Line */}
-                  {index < steps.length - 1 && index % 2 === 0 && (
+                  {index < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gray-200 transform translate-x-6 z-0">
                       <div className="absolute right-0 top-1/2 transform translate-y-1/2 w-3 h-3 bg-gray-200 rounded-full"></div>
                     </div>
@@ -117,6 +109,62 @@ const HowItWorksPage: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+        </ErrorBoundary>
+
+        {/* How AI Works */}
+        <ErrorBoundary>
+          <section className="bg-white rounded-3xl shadow-sm p-8 md:p-12 mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-light text-[#0D1B2A] mb-6">
+                  Hoe onze AI werkt
+                </h2>
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-8 h-8 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-[#89CFF0] font-bold text-sm">1</span>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-[#0D1B2A] mb-2">Foto Analyse</h3>
+                      <p className="text-gray-600">Onze computer vision AI analyseert je lichaamsbouw, proportions en huidige stijl.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-4">
+                    <div className="w-8 h-8 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-[#89CFF0] font-bold text-sm">2</span>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-[#0D1B2A] mb-2">Persoonlijkheidsanalyse</h3>
+                      <p className="text-gray-600">Machine learning algoritmes bepalen je stijlpersoonlijkheid op basis van je antwoorden.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-4">
+                    <div className="w-8 h-8 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-[#89CFF0] font-bold text-sm">3</span>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-[#0D1B2A] mb-2">Smart Matching</h3>
+                      <p className="text-gray-600">Onze AI matcht je profiel met duizenden kledingstukken voor perfecte aanbevelingen.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="aspect-square bg-gradient-to-br from-[#89CFF0]/20 to-blue-50 rounded-3xl flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-[#89CFF0] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-12 h-12 text-white" />
+                    </div>
+                    <h3 className="text-xl font-medium text-[#0D1B2A] mb-2">AI Engine</h3>
+                    <p className="text-gray-600">95% nauwkeurigheid</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         </ErrorBoundary>
