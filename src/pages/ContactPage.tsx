@@ -329,8 +329,8 @@ const ContactPage: React.FC = () => {
                   <div>
                     <h4 className="font-medium text-[#0D1B2A] mb-1">Adres</h4>
                     <p className="text-gray-600">
-                      Herengracht 123<br />
-                      1015 BG Amsterdam<br />
+                      Marktstraat 15D<br />
+                      7551 DR Hengelo<br />
                       Nederland
                     </p>
                   </div>
