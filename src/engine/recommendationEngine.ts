@@ -1,6 +1,6 @@
+import React from 'react';
 import { UserProfile, Product, Outfit, Season, ProductCategory, UserArchetypeProfile, OutfitGenerationOptions, Weather, ExtendedUserProfile, VariationLevel } from './types';
 import { filterAndSortProducts, getTopProductsByType } from './filterAndSortProducts';
-import generateOutfits from './generateOutfits';
 import { analyzeUserProfile, determineArchetypesFromAnswers, getStyleKeywords } from './profile-mapping';
 import dutchProducts from '../data/dutchProducts';
 import { getCurrentSeason, isProductInSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
@@ -9,6 +9,8 @@ import { isValidImageUrl } from '../utils/imageUtils';
 import { env } from '../utils/env';
 import { fetchProductsFromSupabase } from '../services/supabaseService';
 
+// Dynamic import for code splitting
+const generateOutfits = React.lazy(() => import('./generateOutfits'));
 /**
  * Interface for recommendation options
  */
