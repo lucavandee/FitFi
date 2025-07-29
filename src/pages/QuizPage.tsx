@@ -7,6 +7,9 @@ import { QuizAnswers, QuizProgress } from '../types/quiz';
 import { quizSteps } from '../data/quizSteps';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import StylePreview from '../components/quiz/StylePreview';
+import ProgressMotivation from '../components/quiz/ProgressMotivation';
+import CompletionCelebration from '../components/quiz/CompletionCelebration';
 import toast from 'react-hot-toast';
 
 const QuizPage: React.FC = () => {
@@ -23,6 +26,8 @@ const QuizPage: React.FC = () => {
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   // Scroll to top on step change
   useEffect(() => {
@@ -88,6 +93,11 @@ const QuizPage: React.FC = () => {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
+    
+    // Show preview after answering
+    if (!showPreview) {
+      setTimeout(() => setShowPreview(true), 300);
+    }
   };
 
   const handleNext = () => {
@@ -100,6 +110,9 @@ const QuizPage: React.FC = () => {
         ...prev,
         currentStep: prev.currentStep + 1
       }));
+      
+      // Reset preview for next question
+      setShowPreview(false);
     }
   };
 
@@ -110,6 +123,9 @@ const QuizPage: React.FC = () => {
         currentStep: prev.currentStep - 1
       }));
     }
+    
+    // Show preview immediately when going back
+    setShowPreview(true);
   };
 
   const handleSubmit = async () => {
@@ -142,6 +158,9 @@ const QuizPage: React.FC = () => {
       const success = await submitQuizAnswers(progress.answers as QuizAnswers);
       
       if (success) {
+        // Show celebration before redirect
+        setShowCelebration(true);
+        
         // Track quiz completion
         if (typeof window.gtag === 'function') {
           window.gtag('event', 'quiz_complete', {
@@ -150,18 +169,20 @@ const QuizPage: React.FC = () => {
             user_id: user.id
           });
         }
-
-        toast.success('Quiz voltooid! Je resultaten worden geladen...');
-        navigate('/results');
       } else {
         toast.error('Er ging iets mis bij het opslaan van je antwoorden. Probeer het opnieuw.');
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Quiz submission error:', error);
       toast.error('Er ging iets mis. Probeer het opnieuw.');
-    } finally {
       setIsSubmitting(false);
     }
+  };
+  
+  const handleCelebrationComplete = () => {
+    toast.success('Quiz voltooid! Je resultaten worden geladen...');
+    navigate('/results');
   };
 
   const renderQuestionInput = () => {
@@ -319,6 +340,17 @@ const QuizPage: React.FC = () => {
 
   const isLastStep = progress.currentStep === progress.totalSteps;
   const canProceed = !errors[currentStepData.field];
+  
+  // Show celebration overlay
+  if (showCelebration) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] flex items-center justify-center">
+        <div className="max-w-md mx-auto">
+          <CompletionCelebration onComplete={handleCelebrationComplete} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] py-8">
@@ -340,6 +372,13 @@ const QuizPage: React.FC = () => {
             <p className="text-gray-600">
               Beantwoord enkele vragen voor gepersonaliseerd stijladvies
             </p>
+            
+            {/* Progress Motivation */}
+            <ProgressMotivation 
+              currentStep={progress.currentStep}
+              totalSteps={progress.totalSteps}
+              className="mt-4"
+            />
           </div>
         </div>
 
@@ -388,6 +427,16 @@ const QuizPage: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Style Preview - Show after answering */}
+            {showPreview && Object.keys(progress.answers).length > 0 && (
+              <div className="mb-8 animate-fade-in">
+                <StylePreview 
+                  answers={progress.answers}
+                  currentStep={progress.currentStep}
+                />
+              </div>
+            )}
 
             {/* Navigation */}
             <div className="flex items-center justify-between">
