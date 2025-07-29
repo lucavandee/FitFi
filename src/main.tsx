@@ -21,7 +21,9 @@ initializeAnalytics();
 setupAutoSave();
 
 // Register service worker with error handling
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
+if ('serviceWorker' in navigator && import.meta.env.PROD && 
+    !window.location.hostname.includes('webcontainer.io') && 
+    !window.location.hostname.includes('stackblitz.io')) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/serviceWorker.js')
       .then((registration) => {
