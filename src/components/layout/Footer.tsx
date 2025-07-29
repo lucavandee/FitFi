@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Linkedin } from 'lucide-react';
 import Logo from '../ui/Logo';
 
 interface FooterLink {
@@ -53,26 +53,14 @@ const Footer: React.FC = () => {
   const socialLinks = [
     { 
       label: 'Instagram', 
-      href: 'https://www.instagram.com/xfitfi/, 
+      href: 'https://www.instagram.com/xfitfi/', 
       icon: <Instagram size={20} />,
-      external: true 
-    },
-    { 
-      label: 'Twitter', 
-      href: 'https://twitter.com/fitfi', 
-      icon: <Twitter size={20} />,
       external: true 
     },
     { 
       label: 'LinkedIn', 
       href: 'https://www.linkedin.com/company/fitfi-ai', 
       icon: <Linkedin size={20} />,
-      external: true 
-    },
-    { 
-      label: 'YouTube', 
-      href: 'https://youtube.com/@fitfi', 
-      icon: <Youtube size={20} />,
       external: true 
     }
   ];
