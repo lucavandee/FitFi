@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0] - 2025-01-28
+
+### Added
+- Complete affiliate partnership collateral package
+- Media kit in English and Dutch with audience personas and traffic projections
+- 10-slide pitch deck covering problem, solution, market size, and business model
+- Comprehensive API documentation for /api/v1/products endpoint
+- Demo video production guide with 30-second script and compliance requirements
+- Partnership-ready materials for Awin, Zalando & Bijenkorf applications
+
+### Documentation
+- Added /docs/affiliate-pack/ directory with all partnership materials
+
 ## [1.5.2] - 2025-01-28
 
 ### Fixed
