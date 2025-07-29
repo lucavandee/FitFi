@@ -10,7 +10,6 @@ export default {
         brandPurple: '#6E2EB7',
         brandPink: '#B043FF',
         brandPurpleLight: '#ECE7FB',
-        brandPurpleLight: '#ECE7FB',
         navy: '#0A0E23',
         foundersGradientFrom: '#6E2EB7',
         foundersGradientTo: '#B043FF',

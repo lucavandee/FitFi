@@ -68,7 +68,6 @@ function App() {
               <Router>
                 <NavigationServiceInitializer />
                 <ScrollToTop />
-                <ScrollToTop />
                 <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
                   <Navbar />
                   <Routes>
