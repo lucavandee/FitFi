@@ -1,6 +1,27 @@
 import { supabase } from '../lib/supabase';
 import { UserProfile } from '../context/UserContext';
 
+// Quiz answer retrieval with proper error handling
+export const getQuizAnswer = async (userId: string, qId: string) => {
+  try {
+    const { data, error, status } = await supabase
+      .from('quiz_answers')
+      .select('*', { head: false })
+      .eq('user_id', userId)
+      .eq('question_id', qId)
+      .single();
+
+    if (error) {
+      console.error('[🔴 Supabase]', status, error.message);
+      return null;               // veilige fallback -> voorkomt crash
+    }
+    return data;
+  } catch (error) {
+    console.error('[🔴 Supabase] Unexpected error:', error);
+    return null;
+  }
+};
+
 // Retry configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second

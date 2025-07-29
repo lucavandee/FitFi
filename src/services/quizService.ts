@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { QuizAnswers, QuizSubmission } from '../types/quiz';
 import { quizSteps } from '../data/quizSteps';
+import { getQuizAnswer } from './supabaseService';
 
 // Fallback quiz data
 const mockQuizData = {
@@ -76,16 +77,8 @@ export class QuizService {
         return null;
       }
 
-      const { data, error } = await supabase
-        .from('quiz_answers')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('question_id', 'style_quiz_v1')
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
+      // Use the improved getQuizAnswer function with proper error handling
+      const data = await getQuizAnswer(userId, 'style_quiz_v1');
 
       return data ? {
         id: data.id,
