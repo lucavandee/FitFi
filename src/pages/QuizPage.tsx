@@ -550,7 +550,7 @@ const QuizPage: React.FC = () => {
                   disabled={!canProceed || isSubmitting}
                   icon={isSubmitting ? undefined : <CheckCircle size={16} />}
                   iconPosition="right"
-                  className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cta-btn disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">

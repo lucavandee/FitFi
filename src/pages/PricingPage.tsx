@@ -161,13 +161,10 @@ const PricingPage: React.FC = () => {
                 <Button
                   as={Link}
                   to={plan.ctaLink}
-                  variant={plan.id === 'basic' ? "outline" : "primary"}
+                  variant="primary"
                   size="lg"
                   fullWidth
-                  className={plan.id === 'basic' 
-                    ? "border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A]" 
-                    : "bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-                  }
+                  className="cta-btn"
                 >
                   {plan.cta}
                 </Button>
@@ -215,13 +212,10 @@ const PricingPage: React.FC = () => {
                 <Button
                   as={Link}
                   to={plan.ctaLink}
-                  variant={plan.id === 'basic' ? "outline" : "primary"}
+                  variant="primary"
                   size="lg"
                   fullWidth
-                  className={plan.id === 'basic' 
-                    ? "border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A]" 
-                    : "bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-                  }
+                  className="cta-btn"
                 >
                   {plan.cta}
                 </Button>
