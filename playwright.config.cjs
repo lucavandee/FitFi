@@ -47,6 +47,6 @@ module.exports = defineConfig({
   ],
 
   /* Global setup and teardown */
-  globalSetup: require.resolve('./tests/global-setup.cjs'),
-  globalTeardown: require.resolve('./tests/global-teardown.cjs')
+  globalSetup: require.resolve('./tests/global-setup.js'),
+  globalTeardown: require.resolve('./tests/global-teardown.js')
 });
