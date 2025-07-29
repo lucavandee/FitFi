@@ -48,6 +48,6 @@ module.exports = defineConfig({
   ],
 
   /* Global setup and teardown */
-  globalSetup: path.resolve(__dirname, './tests/global-setup.js'),
-  globalTeardown: path.resolve(__dirname, './tests/global-teardown.js')
+  globalSetup: path.resolve(__dirname, './tests/global-setup.cjs'),
+  globalTeardown: path.resolve(__dirname, './tests/global-teardown.cjs')
 });
