@@ -163,11 +163,11 @@ const WhyFitFiPage: React.FC = () => {
               <Button 
                 as={Link}
                 to="/registreren" 
-                variant="secondary"
+                variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
-                className="bg-white text-[#89CFF0] hover:bg-gray-50 text-lg px-8 py-4 font-medium shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 rounded-2xl"
+                className="cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
               >
                 Start nu gratis
               </Button>

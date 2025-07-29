@@ -352,7 +352,7 @@ const RegisterPage: React.FC = () => {
                 disabled={isLoading}
                 icon={isLoading ? undefined : <ArrowRight size={20} />}
                 iconPosition="right"
-                className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
+                className="cta-btn"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
