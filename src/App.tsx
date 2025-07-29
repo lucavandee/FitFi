@@ -6,6 +6,8 @@ import { GamificationProvider } from './context/GamificationContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { NavigationServiceInitializer } from './components/NavigationServiceInitializer';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -65,6 +67,7 @@ function App() {
               <Router>
                 <NavigationServiceInitializer />
                 <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+                  <Navbar />
                   <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPage />} />
@@ -122,6 +125,7 @@ function App() {
                     {/* Fallback */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
+                  <Footer />
                 </div>
               </Router>
             </OnboardingProvider>
