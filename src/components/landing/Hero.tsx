@@ -58,7 +58,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
-                className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                className="cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                 aria-label="Start je gratis AI Style Report"
               >
                 Ontvang jouw gratis AI Style Report
