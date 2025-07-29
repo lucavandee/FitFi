@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
+    "button-inventory": "node scripts/button-inventory.js",
     "test:matching": "vitest tests/matching.test.ts",
     "test:coverage": "vitest --coverage",
     "link-check": "node scripts/link-check.js",
@@ -19,15 +20,16 @@
     "test:links": "npm run link-check",
     "test:images": "npm run image-check",
     "test:all": "npm run lint && npm run link-check && npm run image-check && npm run build",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --config=playwright.config.cjs",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:auth": "playwright test tests/auth",
     "test:quiz": "playwright test tests/quiz-flow.spec.js",
     "test:a11y": "playwright test tests/a11y",
-    "test:visual": "playwright test tests/visual --update-snapshots",
+    "test:a11y:cta": "playwright test tests/a11y/cta-contrast.test.ts",
+    "test:visual": "playwright test tests/visual --update-snapshots --config=playwright.config.cjs",
     "lhci": "lhci autorun",
-    "lighthouse": "npm run lhci",
+    "lighthouse": "lhci autorun --config=.lighthouserc.cjs",
     "lighthouse:mobile": "lhci autorun --config=.lighthouserc.js",
     "bundle-analyze": "vite build && npx vite-bundle-analyzer dist",
     "audit:security": "npm audit --production --audit-level=high",
@@ -58,6 +60,7 @@
     "swr": "^2.2.4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^9.9.1",
     "@lhci/cli": "^0.12.0",
     "@netlify/functions": "^4.1.11",
@@ -83,7 +86,7 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2",
-    "vitest": "^3.2.4",
-    "vite-plugin-inspect": "^0.7.0"
+    "vite-plugin-inspect": "^0.7.0",
+    "vitest": "^3.2.4"
   }
 }
