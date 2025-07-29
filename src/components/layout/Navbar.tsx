@@ -22,6 +22,7 @@ const Navbar: React.FC = () => {
     { label: 'Waarom FitFi', href: '/over-ons' },
     { label: 'Hoe het werkt', href: '/hoe-het-werkt' },
     { label: 'Prijzen', href: '/prijzen' },
+    { label: 'Aanbevelingen', href: '/outfits' },
     { label: 'Outfits', href: '/outfits' },
     { label: 'Blog', href: '/blog' }
   ];
