@@ -224,14 +224,14 @@ const ResultsPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
               as={Link}
-              to="/dashboard" 
+              to="/outfits" 
               variant="primary"
               size="lg"
               icon={<TrendingUp size={20} />}
               iconPosition="left"
               className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
             >
-              Bekijk Aanbevelingen
+              Bekijk Outfits
             </Button>
             <Button 
               as={Link}
