@@ -122,16 +122,7 @@ const QuizPage: React.FC = () => {
   };
 
   const handleNext = () => {
-    // Fix: voorkom 'undefined' bij laatste index of ontbrekende vraag
-    setProgress(prev => {
-      const nextStep = prev.currentStep + 1;
-      if (nextStep > quizSteps.length) {
-        console.warn('Invalid question index → redirect to results');
-        navigate('/results');
-        return prev; // blijf op huidige step om crash te vermijden
-      }
-      return { ...prev, currentStep: nextStep };
-    });
+    if (!validateCurrentStep()) {
       return;
     }
 
@@ -174,12 +165,6 @@ const QuizPage: React.FC = () => {
     }
 
     if (!validateCurrentStep()) {
-      return;
-    }
-
-    // Extra guard: check if we have valid quiz data
-    if (!quizSteps || quizSteps.length === 0) {
-      toast.error('Quiz data niet beschikbaar. Probeer de pagina te vernieuwen.');
       return;
     }
 
@@ -458,6 +443,7 @@ const QuizPage: React.FC = () => {
       </div>
     );
   }
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
