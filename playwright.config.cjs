@@ -1,6 +1,7 @@
 // @ts-check
 const AxeBuilder = require('@axe-core/playwright').default;
 const { defineConfig, devices } = require('@playwright/test');
+const path = require('path');
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -47,6 +48,6 @@ module.exports = defineConfig({
   ],
 
   /* Global setup and teardown */
-  globalSetup: require.resolve('./tests/global-setup.js'),
-  globalTeardown: require.resolve('./tests/global-teardown.js')
+  globalSetup: path.resolve(__dirname, './tests/global-setup.js'),
+  globalTeardown: path.resolve(__dirname, './tests/global-teardown.js')
 });
