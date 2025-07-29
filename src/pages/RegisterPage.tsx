@@ -86,9 +86,9 @@ const RegisterPage: React.FC = () => {
     setErrors({});
 
     try {
-      const success = await register(formData.name, formData.email, formData.password);
+      const result = await register(formData.name, formData.email, formData.password);
       
-      if (success) {
+      if (result.success) {
         // Track successful registration
         if (typeof window.gtag === 'function') {
           window.gtag('event', 'sign_up', {
@@ -98,7 +98,7 @@ const RegisterPage: React.FC = () => {
         }
         
         // Redirect to onboarding
-        navigate('/onboarding', { replace: true });
+        navigate(result.redirectTo || '/onboarding', { replace: true });
       } else {
         setErrors({ general: 'Er ging iets mis bij het aanmaken van je account.' });
       }
