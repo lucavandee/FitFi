@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
@@ -121,21 +121,6 @@ const QuizPage: React.FC = () => {
           >
             ← Terug naar onboarding
           </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default QuizPage;
-            </h1>
-            <p className="text-text-secondary">
-              Beantwoord enkele vragen en ontvang gepersonaliseerde stijladvies
-            </p>
-          </div>
-          
-          {debugLog('Rendering Quiz component')}
-          <Quiz />
         </div>
       </div>
     </div>
