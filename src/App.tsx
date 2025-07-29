@@ -6,6 +6,7 @@ import { GamificationProvider } from './context/GamificationContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { NavigationServiceInitializer } from './components/NavigationServiceInitializer';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ScrollToTop } from './components/ScrollToTop';
 import Navbar from './components/layout/Navbar';
 // Footer moved to individual pages that need it
 
