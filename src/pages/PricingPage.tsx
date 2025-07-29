@@ -88,7 +88,7 @@ const PricingPage: React.FC = () => {
         <link rel="canonical" href="https://fitfi.app/prijzen" />
       </Helmet>
 
-      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
+      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
         
         {/* Hero Section */}
         <ErrorBoundary>
@@ -101,17 +101,17 @@ const PricingPage: React.FC = () => {
             </p>
             
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center space-x-8 text-sm text-gray-500 mb-8">
+            <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-gray-600">
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                 <span>10.000+ tevreden gebruikers</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                 <span>4.8/5 gemiddelde beoordeling</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
                 <span>14 dagen geld terug</span>
               </div>
             </div>
@@ -120,87 +120,111 @@ const PricingPage: React.FC = () => {
 
         {/* Pricing Cards */}
         <ErrorBoundary>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="pricing-scroll flex gap-6 sm:hidden mb-16">
             {plans.map((plan) => (
               <div 
                 key={plan.id} 
-                className={`bg-white rounded-3xl shadow-sm overflow-hidden relative transition-all hover:shadow-lg ${
+                className={`flex flex-col rounded-3xl shadow-lg/10 ring-1 ring-gray-100 bg-white px-8 py-10 gap-6 grow min-w-[88%] scroll-snap-align-center relative ${
                   plan.highlight ? 'ring-2 ring-[#89CFF0]/20 shadow-lg scale-105' : ''
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="bg-[#89CFF0] text-[#0D1B2A] px-4 py-1 rounded-full text-sm font-medium flex items-center">
-                      <Star size={14} className="mr-1" />
-                      Populairste keuze
-                    </div>
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-[#89CFF0] px-4 py-1 text-xs font-medium text-white shadow-md">
+                    <Star size={14} className="mr-1" />
+                    Populairste keuze
                   </div>
                 )}
                 
-                {plan.savings && (
-                  <div className="absolute top-4 right-4">
-                    <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-                      {plan.savings}
-                    </div>
+                {/* Card content */}
+                <div className="text-center">
+                  <h3 className="text-2xl font-medium text-[#0D1B2A] mb-2">
+                    {plan.name}
+                  </h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-light text-[#0D1B2A]">{plan.price}</span>
+                    <span className="text-gray-600 ml-2">{plan.period}</span>
                   </div>
-                )}
-                
-                <div className="p-8">
-                  <div className="text-center mb-8">
-                    <div className={`w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center ${
-                      plan.highlight ? 'bg-[#89CFF0] text-white' : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {plan.icon}
-                    </div>
-                    
-                    <h3 className="text-2xl font-medium text-[#0D1B2A] mb-2">
-                      {plan.name}
-                    </h3>
-                    
-                    <div className="mb-4">
-                      <span className="text-4xl font-light text-[#0D1B2A]">{plan.price}</span>
-                      <span className="text-gray-600 ml-2">{plan.period}</span>
-                      {plan.originalPrice && (
-                        <div className="text-sm text-gray-500 line-through mt-1">
-                          Was {plan.originalPrice}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <p className="text-gray-600 leading-relaxed">
-                      {plan.description}
-                    </p>
-                  </div>
-                  
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start space-x-3">
-                        <Check className="text-[#89CFF0] flex-shrink-0 mt-0.5" size={18} />
-                        <span className="text-gray-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <Button
-                    as={Link}
-                    to={plan.ctaLink}
-                    variant={plan.highlight ? "primary" : "outline"}
-                    size="lg"
-                    fullWidth
-                    className={plan.highlight 
-                      ? "bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]" 
-                      : "border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A]"
-                    }
-                  >
-                    {plan.cta}
-                  </Button>
-                  
-                  {plan.id === 'premium' && (
-                    <p className="text-center text-sm text-gray-500 mt-3">
-                      14 dagen gratis proberen
-                    </p>
-                  )}
+                  <p className="text-gray-600 leading-relaxed">
+                    {plan.description}
+                  </p>
                 </div>
+                
+                <ul className="space-y-4">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start space-x-3">
+                      <Check className="text-[#89CFF0] flex-shrink-0 mt-0.5" size={18} />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <Button
+                  as={Link}
+                  to={plan.ctaLink}
+                  variant={plan.id === 'basic' ? "outline" : "primary"}
+                  size="lg"
+                  fullWidth
+                  className={plan.id === 'basic' 
+                    ? "border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A]" 
+                    : "bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                  }
+                >
+                  {plan.cta}
+                </Button>
+              </div>
+            ))}
+          </div>
+          
+          <div className="hidden sm:grid max-w-5xl mx-auto sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 mb-16">
+            {plans.map((plan) => (
+              <div 
+                key={plan.id} 
+                className={`flex flex-col rounded-3xl shadow-lg/10 ring-1 ring-gray-100 bg-white px-8 py-10 gap-6 grow relative transition-all hover:shadow-lg ${
+                  plan.highlight ? 'ring-2 ring-[#89CFF0]/20 shadow-lg scale-105' : ''
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-[#89CFF0] px-4 py-1 text-xs font-medium text-white shadow-md">
+                    <Star size={14} className="mr-1" />
+                    Populairste keuze
+                  </div>
+                )}
+                
+                <div className="text-center">
+                  <h3 className="text-2xl font-medium text-[#0D1B2A] mb-2">
+                    {plan.name}
+                  </h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-light text-[#0D1B2A]">{plan.price}</span>
+                    <span className="text-gray-600 ml-2">{plan.period}</span>
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">
+                    {plan.description}
+                  </p>
+                </div>
+                
+                <ul className="space-y-4">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start space-x-3">
+                      <Check className="text-[#89CFF0] flex-shrink-0 mt-0.5" size={18} />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <Button
+                  as={Link}
+                  to={plan.ctaLink}
+                  variant={plan.id === 'basic' ? "outline" : "primary"}
+                  size="lg"
+                  fullWidth
+                  className={plan.id === 'basic' 
+                    ? "border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A]" 
+                    : "bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                  }
+                >
+                  {plan.cta}
+                </Button>
               </div>
             ))}
           </div>
@@ -264,7 +288,8 @@ const PricingPage: React.FC = () => {
             </div>
           </div>
         </ErrorBoundary>
-      </div>
+      </section>
+      <div className="pb-24"></div>
     </div>
   );
 };
