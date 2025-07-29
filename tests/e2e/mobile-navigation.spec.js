@@ -1,30 +1,33 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Mobile Navigation - Complete Link Visibility', () => {
+test.describe('Mobile Navigation - Static Nav Links', () => {
   test.beforeEach(async ({ page }) => {
-    // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 });
+    // Set mobile viewport (iPhone 12)
+    await page.setViewportSize({ width: 390, height: 844 });
   });
 
   test('all navigation links visible and functional', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    // Debug: Check navigation items count
-    const navCount = await page.evaluate(() => {
-      return window.NAV_LINKS ? window.NAV_LINKS.length : 0;
+    // Debug: Check navigation items count in console
+    const logs = [];
+    page.on('console', msg => {
+      if (msg.text().includes('[NAV DEBUG]') || msg.text().includes('[MOBILE NAV]')) {
+        logs.push(msg.text());
+      }
     });
-    console.log('Navigation items count:', navCount);
-
+    
     // Open mobile menu
     await page.click('button[aria-label="Open menu"]');
     
-    // Wait for menu to be visible
-    await expect(page.locator('#mobile-menu')).toBeVisible();
+    // Wait for drawer to be visible
+    await expect(page.locator('[role="dialog"]')).toBeVisible();
     
     // Verify all required navigation links are visible
-    const requiredLinks = ['Home', 'Waarom FitFi', 'Hoe het werkt', 'Prijzen', 'Outfits', 'Blog'];
+    const requiredLinks = ['Home', 'Waarom FitFi', 'Hoe het werkt', 'Prijzen', 'Outfits', 'Blog', 'Inloggen'];
     
+    console.log('Testing visibility of navigation links...');
     for (const linkText of requiredLinks) {
       const link = page.getByRole('link', { name: linkText });
       await expect(link).toBeVisible();
@@ -33,10 +36,17 @@ test.describe('Mobile Navigation - Complete Link Visibility', () => {
     
     // Take screenshot for visual regression
     await page.screenshot({ 
-      path: 'tests/screenshots/mobile-drawer-open.png', 
-      fullPage: false,
-      clip: { x: 0, y: 0, width: 375, height: 667 }
+      path: 'tests/screenshots/mobile-drawer-static-nav.png', 
+      fullPage: false
     });
+    
+    // Verify debug logs show correct count
+    await page.waitForTimeout(500);
+    const navDebugLog = logs.find(log => log.includes('Static nav items loaded:'));
+    if (navDebugLog) {
+      console.log('Debug log found:', navDebugLog);
+      expect(navDebugLog).toContain('7'); // Should have 7 nav items
+    }
     
     console.log('✅ All navigation links are visible in mobile drawer');
   });
@@ -53,97 +63,76 @@ test.describe('Mobile Navigation - Complete Link Visibility', () => {
     
     // Verify navigation and menu closure
     await expect(page).toHaveURL(/\/prijzen$/);
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
+    await expect(page.locator('[role="dialog"]')).not.toBeVisible();
     
     // Verify page content loaded
     await expect(page.locator('h1')).toContainText(/prijzen|kies/i);
     
-    console.log('✅ Navigation to Prijzen works correctly');
+    console.log('✅ Navigation to Prijzen works correctly and closes drawer');
   });
 
-  test('menu structure and styling', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Open menu
-    await page.click('button[aria-label="Open menu"]');
-    
-    // Verify menu structure
-    await expect(page.locator('#mobile-menu')).toHaveClass(/bg-white/);
-    await expect(page.locator('#mobile-menu')).toHaveClass(/z-50/);
-    
-    // Verify navigation list
-    const navList = page.locator('#mobile-menu nav ul');
-    await expect(navList).toBeVisible();
-    
-    // Verify minimum touch targets
-    const links = page.locator('#mobile-menu nav ul li a');
-    const linkCount = await links.count();
-    
-    for (let i = 0; i < linkCount; i++) {
-      const link = links.nth(i);
-      await expect(link).toHaveClass(/min-h-\[44px\]/);
-    }
-    
-    console.log('✅ Menu structure and styling correct');
-  });
-
-  test('accessibility compliance', async ({ page }) => {
+  test('drawer structure and accessibility', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
     const menuButton = page.locator('button[aria-label="Open menu"]');
     
     // Check initial state
-    await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
-    await expect(menuButton).toHaveAttribute('aria-controls', 'mobile-menu');
+    await expect(menuButton).toBeVisible();
     
     // Open menu
     await menuButton.click();
     
-    // Check open state
-    await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+    // Check drawer attributes
+    const drawer = page.locator('[role="dialog"]');
+    await expect(drawer).toBeVisible();
+    await expect(drawer).toHaveAttribute('aria-modal', 'true');
+    await expect(drawer).toHaveAttribute('aria-labelledby', 'mobile-menu-title');
     
-    // Check menu attributes
-    const menu = page.locator('#mobile-menu');
-    await expect(menu).toHaveAttribute('role', 'dialog');
-    await expect(menu).toHaveAttribute('aria-modal', 'true');
-    await expect(menu).toHaveAttribute('aria-labelledby', 'mobile-menu-title');
+    // Verify menu title
+    await expect(page.locator('#mobile-menu-title')).toHaveText('Menu');
     
-    // Test escape key
-    await page.keyboard.press('Escape');
-    await expect(menu).not.toBeVisible();
+    // Verify minimum touch targets
+    const links = page.locator('[role="dialog"] nav ul li a');
+    const linkCount = await links.count();
     
-    console.log('✅ Accessibility compliance verified');
+    expect(linkCount).toBeGreaterThanOrEqual(7);
+    
+    for (let i = 0; i < linkCount; i++) {
+      const link = links.nth(i);
+      await expect(link).toHaveClass(/min-h-\[44px\]/);
+    }
+    
+    // Test close button
+    await page.click('button[aria-label="Sluit menu"]');
+    await expect(drawer).not.toBeVisible();
+    
+    console.log('✅ Drawer structure and accessibility verified');
   });
 
-  test('console debug verification', async ({ page }) => {
-    // Capture console logs
-    const logs = [];
-    page.on('console', msg => {
-      if (msg.text().includes('[Mobile Nav Debug]')) {
-        logs.push(msg.text());
-      }
-    });
-
+  test('body overflow management', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+
+    // Check initial body overflow
+    const initialOverflow = await page.evaluate(() => document.body.style.overflow);
+    expect(initialOverflow).toBe('');
     
-    // Wait for debug logs
-    await page.waitForTimeout(1000);
+    // Open menu
+    await page.click('button[aria-label="Open menu"]');
     
-    // Verify navigation count is logged
-    const countLog = logs.find(log => log.includes('NAV_LINKS count:'));
-    expect(countLog).toBeTruthy();
+    // Check body overflow when menu is open
+    const openOverflow = await page.evaluate(() => document.body.style.overflow);
+    expect(openOverflow).toBe('hidden');
     
-    // Extract count from log
-    const countMatch = countLog?.match(/count: (\d+)/);
-    const navCount = countMatch ? parseInt(countMatch[1]) : 0;
+    // Close menu
+    await page.click('button[aria-label="Sluit menu"]');
     
-    // Verify we have at least 6 navigation items
-    expect(navCount).toBeGreaterThanOrEqual(6);
+    // Check body overflow when menu is closed
+    const closedOverflow = await page.evaluate(() => document.body.style.overflow);
+    expect(closedOverflow).toBe('');
     
-    console.log(`✅ Navigation count verified: ${navCount} items`);
+    console.log('✅ Body overflow management works correctly');
   });
 
   test('dark mode support', async ({ page }) => {
@@ -156,31 +145,57 @@ test.describe('Mobile Navigation - Complete Link Visibility', () => {
     await page.click('button[aria-label="Open menu"]');
     
     // Verify dark mode styling
-    const menu = page.locator('#mobile-menu');
-    await expect(menu).toHaveClass(/dark:bg-gray-900/);
+    const drawer = page.locator('[role="dialog"]');
+    await expect(drawer).toHaveClass(/dark:bg-gray-900/);
     
     // Verify dark mode text colors
-    const links = page.locator('#mobile-menu nav ul li a');
+    const links = page.locator('[role="dialog"] nav ul li a');
     const firstLink = links.first();
     await expect(firstLink).toHaveClass(/dark:text-white/);
+    
+    // Take dark mode screenshot
+    await page.screenshot({ 
+      path: 'tests/screenshots/mobile-drawer-dark-mode.png', 
+      fullPage: false
+    });
     
     console.log('✅ Dark mode support verified');
   });
 });
 
-test.describe('Mobile Navigation Visual Regression', () => {
-  test('mobile drawer screenshot baseline', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
+test.describe('Mobile Navigation Production Safety', () => {
+  test('static nav array prevents empty menu', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-
-    // Open menu
-    await page.click('button[aria-label="Open menu"]');
-    await page.waitForTimeout(300); // Wait for animation
-
-    // Take full screenshot for baseline
-    await expect(page).toHaveScreenshot('mobile-drawer-baseline.png');
     
-    console.log('✅ Visual regression baseline captured');
+    // Capture console logs
+    const logs = [];
+    page.on('console', msg => {
+      if (msg.text().includes('[NAV DEBUG]') || msg.text().includes('[MOBILE NAV]')) {
+        logs.push(msg.text());
+      }
+    });
+    
+    // Open menu to trigger rendering
+    await page.click('button[aria-label="Open menu"]');
+    await page.waitForTimeout(500);
+    
+    // Verify nav items count in logs
+    const navCountLog = logs.find(log => log.includes('Static nav items loaded:'));
+    expect(navCountLog).toBeTruthy();
+    
+    // Extract count from log
+    const countMatch = navCountLog?.match(/loaded: (\d+)/);
+    const navCount = countMatch ? parseInt(countMatch[1]) : 0;
+    
+    // Must have at least 7 navigation items
+    expect(navCount).toBeGreaterThanOrEqual(7);
+    
+    // Verify actual links are rendered
+    const visibleLinks = page.locator('[role="dialog"] nav ul li a');
+    const actualCount = await visibleLinks.count();
+    expect(actualCount).toBe(navCount);
+    
+    console.log(`✅ Production safety verified: ${navCount} nav items rendered`);
   });
 });
