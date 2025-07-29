@@ -38,6 +38,8 @@ import FeedbackPage from './pages/FeedbackPage';
 import SuccessStoriesPage from './pages/SuccessStoriesPage';
 import GenderSelectPage from './pages/GenderSelectPage';
 import ProductPage from './pages/ProductPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import ThankYouPage from './pages/ThankYouPage';
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
