@@ -75,6 +75,12 @@ const QuizPage: React.FC = () => {
   }
 
   const currentStepData = quizSteps[progress.currentStep - 1];
+  
+  // Guard against undefined currentStepData
+  if (!currentStepData) {
+    return <LoadingFallback fullScreen message="Quiz data laden..." />;
+  }
+  
   const progressPercentage = (progress.currentStep / progress.totalSteps) * 100;
 
   const validateCurrentStep = (): boolean => {
@@ -121,9 +127,17 @@ const QuizPage: React.FC = () => {
     }
 
     if (progress.currentStep < progress.totalSteps) {
+      // Fix: voorkom 'undefined' bij laatste index of ontbrekende vraag
+      const nextStep = progress.currentStep + 1;
+      if (nextStep > quizSteps.length) {
+        console.warn('Invalid question index → redirect to results');
+        navigate('/results');
+        return;
+      }
+      
       setProgress(prev => ({
         ...prev,
-        currentStep: prev.currentStep + 1
+        currentStep: nextStep
       }));
       
       // Reset preview for next question
@@ -145,6 +159,12 @@ const QuizPage: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!validateCurrentStep()) {
+      return;
+    }
+
+    // Extra guard: check if we have valid quiz data
+    if (!quizSteps || quizSteps.length === 0) {
+      toast.error('Quiz data niet beschikbaar. Probeer de pagina te vernieuwen.');
       return;
     }
 
