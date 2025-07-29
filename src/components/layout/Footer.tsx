@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
     },
     { 
       label: 'LinkedIn', 
-      href: 'https://linkedin.com/company/fitfi', 
+      href: 'https://www.linkedin.com/company/fitfi-ai', 
       icon: <Linkedin size={20} />,
       external: true 
     },
