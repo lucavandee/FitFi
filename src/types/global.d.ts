@@ -2,6 +2,13 @@
  * Global type definitions for the application
  */
 
+// GTM DataLayer
+declare global {
+  interface Window {
+    dataLayer?: any[];
+  }
+}
+
 // Google Analytics
 interface Window {
   gtag?: (
