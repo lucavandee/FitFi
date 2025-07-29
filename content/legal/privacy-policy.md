@@ -113,7 +113,7 @@ Voor vragen over dit privacybeleid kun je contact opnemen met:
 **FitFi B.V.**  
 E-mail: info@fitfi.ai 
 Adres: Marktstraat 15D, 7551 DR Hengelo  
-Telefoon: +31 20 123 4567
+Telefoon: +31 6 203 709 68
 
 **Data Protection Officer:**  
 E-mail: info@fitfi.ai
