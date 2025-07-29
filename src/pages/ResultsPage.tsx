@@ -14,7 +14,7 @@ const ResultsPage: React.FC = () => {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   
   // Get any data passed from quiz/onboarding
-  const quizData = location.state?.quizData;
+  const onboardingQuizData = location.state?.quizData;
 
   // Redirect to quiz if not completed
   useEffect(() => {
@@ -116,13 +116,13 @@ const ResultsPage: React.FC = () => {
             
             <div className="bg-gradient-to-r from-[#bfae9f]/10 to-purple-50 rounded-2xl p-6 mb-6">
               <h3 className="text-xl font-medium text-gray-900 mb-3">
-                {getStyleProfileTitle(quizData?.answers)}
+                {getStyleProfileTitle(quizData)}
               </h3>
               <p className="text-gray-700 leading-relaxed mb-4">
-                {getStyleDescription(quizData?.answers)}
+                {getStyleDescription(quizData)}
               </p>
               <div className="flex flex-wrap gap-2">
-                {getStyleTags(quizData?.answers).map((tag) => (
+                {getStyleTags(quizData).map((tag) => (
                   <span key={tag} className="px-3 py-1 bg-white rounded-full text-sm font-medium text-gray-700">
                     {tag}
                   </span>
