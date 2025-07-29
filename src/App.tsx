@@ -7,7 +7,7 @@ import { OnboardingProvider } from './context/OnboardingContext';
 import { NavigationServiceInitializer } from './components/NavigationServiceInitializer';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';
+// Footer moved to individual pages that need it
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -125,7 +125,6 @@ function App() {
                     {/* Fallback */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                  <Footer />
                 </div>
               </Router>
             </OnboardingProvider>

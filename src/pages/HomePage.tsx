@@ -14,7 +14,7 @@ import Hero from '../components/home/Hero';
 import Testimonials from '../components/home/Testimonials';
 import HowItWorks from '../components/home/HowItWorks';
 import Features from '../components/home/Features';
-import HomeFooter from '../components/home/HomeFooter';
+import Footer from '../components/layout/Footer';
 
 // Lazy load heavy components for better performance
 const PreviewCarousel = React.lazy(() => 
@@ -142,7 +142,7 @@ const HomePage: React.FC = () => {
 
       {/* Footer */}
       <ErrorBoundary>
-        <HomeFooter />
+        <Footer />
       </ErrorBoundary>
     </div>
   );
