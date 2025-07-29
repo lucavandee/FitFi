@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Star, TrendingUp, Heart, Share2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
+import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import LoadingFallback from '../components/ui/LoadingFallback';
 
 const ResultsPage: React.FC = () => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading: userLoading } = useUser();
+  const { quizData, isLoading: quizLoading, isQuizCompleted } = useQuizAnswers();
   const location = useLocation();
+  const navigate = useNavigate();
   const [analysisComplete, setAnalysisComplete] = useState(false);
   
   // Get any data passed from quiz/onboarding
   const quizData = location.state?.quizData;
+
+  // Redirect to quiz if not completed
+  useEffect(() => {
+    if (!quizLoading && !isQuizCompleted()) {
+      navigate('/quiz', { replace: true });
+    }
+  }, [quizLoading, isQuizCompleted, navigate]);
 
   useEffect(() => {
     // Simulate AI analysis completion
@@ -22,7 +32,7 @@ const ResultsPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
+  if (userLoading || quizLoading) {
     return <LoadingFallback fullScreen message="Resultaten laden..." />;
   }
 
@@ -38,6 +48,11 @@ const ResultsPage: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // Don't show results if quiz not completed (will redirect)
+  if (!isQuizCompleted()) {
+    return <LoadingFallback fullScreen message="Quiz controleren..." />;
   }
 
   if (!analysisComplete) {
@@ -78,7 +93,7 @@ const ResultsPage: React.FC = () => {
             <div className="w-16 h-16 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4" id="results-heading">
               Jouw AI-Stijlanalyse
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -91,7 +106,7 @@ const ResultsPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Main Analysis Card */}
           <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm p-8">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6" role="region" aria-labelledby="style-profile-heading">
               <h2 className="text-2xl font-medium text-gray-900">Jouw Stijlprofiel</h2>
               <div className="flex items-center space-x-2">
                 <Star className="w-5 h-5 text-yellow-400 fill-current" />
@@ -101,15 +116,13 @@ const ResultsPage: React.FC = () => {
             
             <div className="bg-gradient-to-r from-[#bfae9f]/10 to-purple-50 rounded-2xl p-6 mb-6">
               <h3 className="text-xl font-medium text-gray-900 mb-3">
-                Modern Minimalist
+                {getStyleProfileTitle(quizData?.answers)}
               </h3>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Jouw stijl straalt rust en zelfvertrouwen uit. Je houdt van clean lijnen, 
-                neutrale kleuren en tijdloze stukken die veelzijdig te combineren zijn. 
-                Deze aanpak toont dat je waarde hecht aan kwaliteit boven kwantiteit.
+                {getStyleDescription(quizData?.answers)}
               </p>
               <div className="flex flex-wrap gap-2">
-                {['Minimalistisch', 'Tijdloos', 'Verfijnd', 'Veelzijdig'].map((tag) => (
+                {getStyleTags(quizData?.answers).map((tag) => (
                   <span key={tag} className="px-3 py-1 bg-white rounded-full text-sm font-medium text-gray-700">
                     {tag}
                   </span>
@@ -118,7 +131,7 @@ const ResultsPage: React.FC = () => {
             </div>
             
             <div className="space-y-4">
-              <h4 className="font-medium text-gray-900">Jouw stijlmix:</h4>
+              <h4 className="font-medium text-gray-900">Jouw voorkeuren:</h4>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
@@ -235,5 +248,57 @@ const ResultsPage: React.FC = () => {
     </div>
   );
 };
+
+// Helper functions to generate content based on quiz answers
+function getStyleProfileTitle(answers: any): string {
+  if (!answers?.stylePreferences) return 'Jouw Unieke Stijl';
+  
+  const preferences = answers.stylePreferences;
+  if (preferences.includes('minimalist')) return 'Modern Minimalist';
+  if (preferences.includes('classic')) return 'Tijdloos Elegant';
+  if (preferences.includes('bohemian')) return 'Bohemian Spirit';
+  if (preferences.includes('streetwear')) return 'Urban Trendsetter';
+  if (preferences.includes('romantic')) return 'Romantisch Chic';
+  if (preferences.includes('edgy')) return 'Edgy & Bold';
+  
+  return 'Eclectische Stijl';
+}
+
+function getStyleDescription(answers: any): string {
+  if (!answers) return 'Jouw unieke stijl combineert verschillende elementen die perfect bij jouw persoonlijkheid passen.';
+  
+  const baseColors = answers.baseColors;
+  const occasions = answers.occasions || [];
+  
+  let description = 'Jouw stijl ';
+  
+  if (baseColors === 'neutral') {
+    description += 'straalt rust en verfijning uit met neutrale tinten die tijdloos en veelzijdig zijn. ';
+  } else if (baseColors === 'bold') {
+    description += 'is gedurfd en expressief met felle kleuren die je persoonlijkheid laten zien. ';
+  }
+  
+  if (occasions.includes('work')) {
+    description += 'Je waardeert professionaliteit en wilt er altijd verzorgd uitzien. ';
+  }
+  
+  return description + 'Deze combinatie toont dat je bewuste keuzes maakt die bij jouw lifestyle passen.';
+}
+
+function getStyleTags(answers: any): string[] {
+  if (!answers?.stylePreferences) return ['Uniek', 'Persoonlijk', 'Stijlvol'];
+  
+  const tagMap: Record<string, string> = {
+    minimalist: 'Minimalistisch',
+    classic: 'Tijdloos',
+    bohemian: 'Vrij',
+    streetwear: 'Urban',
+    romantic: 'Romantisch',
+    edgy: 'Gedurfd'
+  };
+  
+  const tags = answers.stylePreferences.map((pref: string) => tagMap[pref] || pref);
+  return [...tags, 'Veelzijdig', 'Authentiek'].slice(0, 4);
+}
 
 export default ResultsPage;
