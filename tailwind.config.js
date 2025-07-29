@@ -7,7 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
-       brandPurple: '#6E2EB7',
+        brandPurple: '#6E2EB7',
+        brandPink: '#B043FF',
+        navy: '#0A0E23',
         foundersGradientFrom: '#6E2EB7',
         foundersGradientTo: '#B043FF',
         foundersCardBg: '#FFFFFF',

@@ -1,5 +1,40 @@
 # FitFi Design System
 
+## Mobile Navigation
+
+### Design Tokens
+```css
+brandPurple: #6E2EB7    /* Primary navigation color */
+brandPink: #B043FF      /* Accent and hover states */
+navy: #0A0E23           /* Dark mode background */
+white: #FFFFFF          /* Light mode background */
+```
+
+### Component Specifications
+
+#### MobileNavDrawer
+- **Animation**: 240ms slide-in with fade (Headless UI Transition)
+- **Backdrop**: Navy/80 with backdrop-blur-sm
+- **Panel**: 85vw width, max-width 384px (xs)
+- **Touch Targets**: Minimum 44px height for accessibility
+- **Focus Management**: Automatic focus trap with ESC key support
+
+#### Responsive Behavior
+- **< 768px**: Full hamburger drawer experience
+- **≥ 768px**: Desktop navigation, hamburger hidden
+
+#### Accessibility Features
+- **ARIA**: `role="dialog"`, `aria-modal="true"`, `aria-labelledby`
+- **Keyboard**: Tab navigation, ESC to close, focus trap
+- **Screen Reader**: Proper list structure and menu semantics
+- **Touch**: 44px minimum touch targets
+
+#### Dark Mode Support
+- **Background**: `bg-white dark:bg-navy`
+- **Text**: `text-navy dark:text-white`
+- **Hover**: `hover:bg-brandPurple/10 dark:hover:bg-white/10`
+- **Borders**: `border-slate-100 dark:border-white/10`
+
 ## Founders Club UI Components
 
 ### Design Tokens
