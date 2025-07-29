@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { VitePWA } from 'vite-plugin-pwa';
 import path from "path";
 
 export default defineConfig(({ mode }) => {
@@ -12,19 +11,6 @@ export default defineConfig(({ mode }) => {
         jsxRuntime: "automatic",
         jsxImportSource: "react",
       }),
-      VitePWA({
-        registerType: 'autoUpdate',
-        filename: 'sw.js',
-        includeAssets: ['favicon.svg', 'placeholder.png'],
-        manifest: {
-          name: 'FitFi - AI Style Recommendations',
-          short_name: 'FitFi',
-          start_url: '/',
-          display: 'standalone',
-          theme_color: '#0D1B2A',
-          background_color: '#FAF8F6'
-        }
-      })
     ],
     resolve: {
       alias: {
