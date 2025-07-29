@@ -16,6 +16,12 @@ import OnboardingPage from './pages/OnboardingPage';
 import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
 import EnhancedResultsPage from './pages/EnhancedResultsPage';
+import WhyFitFiPage from './pages/WhyFitFiPage';
+import HowItWorksPage from './pages/HowItWorksPage';
+import PricingPage from './pages/PricingPage';
+import BlogPage from './pages/BlogPage';
+import PrivacyPage from './pages/PrivacyPage';
+import FaqPage from './pages/FaqPage';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -73,6 +79,12 @@ function App() {
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/home" element={<HomePage />} />
+                    <Route path="/waarom-fitfi" element={<WhyFitFiPage />} />
+                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                    <Route path="/prijzen" element={<PricingPage />} />
+                    <Route path="/blog" element={<BlogPage />} />
+                    <Route path="/privacy" element={<PrivacyPage />} />
+                    <Route path="/faq" element={<FaqPage />} />
                     <Route path="/over-ons" element={<AboutPage />} />
                     <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                     <Route path="/prijzen" element={<PricingPage />} />

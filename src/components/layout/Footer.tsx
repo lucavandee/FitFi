@@ -22,11 +22,12 @@ const Footer: React.FC = () => {
       title: 'Navigatie',
       links: [
         { label: 'Home', href: '/' },
-        { label: 'Waarom FitFi', href: '/over-ons' },
+        { label: 'Waarom FitFi', href: '/waarom-fitfi' },
         { label: 'Hoe het werkt', href: '/hoe-het-werkt' },
         { label: 'Prijzen', href: '/prijzen' },
+        { label: 'Aanbevelingen', href: '/outfits' },
         { label: 'Blog', href: '/blog' },
-        { label: 'Contact', href: '/contact' }
+        { label: 'FAQ', href: '/faq' }
       ]
     },
     {
@@ -34,7 +35,8 @@ const Footer: React.FC = () => {
       links: [
         { label: 'Privacybeleid', href: '/privacy-policy' },
         { label: 'Algemene voorwaarden', href: '/algemene-voorwaarden' },
-        { label: 'Cookiebeleid', href: '/juridisch' },
+        { label: 'Privacy', href: '/privacy' },
+        { label: 'Contact', href: '/contact' },
         { label: 'Veelgestelde vragen', href: '/veelgestelde-vragen' },
         { label: 'Ondersteuning', href: '/ondersteuning' }
       ]

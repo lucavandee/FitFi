@@ -19,11 +19,12 @@ const Navbar: React.FC = () => {
 
   const navLinks: NavLink[] = [
     { label: 'Home', href: '/' },
-    { label: 'Waarom FitFi', href: '/over-ons' },
+    { label: 'Waarom FitFi', href: '/waarom-fitfi' },
     { label: 'Hoe het werkt', href: '/hoe-het-werkt' },
     { label: 'Prijzen', href: '/prijzen' },
     { label: 'Aanbevelingen', href: '/outfits' },
-    { label: 'Outfits', href: '/outfits' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'FAQ', href: '/faq' },
     { label: 'Blog', href: '/blog' }
   ];
 
