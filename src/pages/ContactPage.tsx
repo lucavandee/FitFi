@@ -96,7 +96,7 @@ const ContactPage: React.FC = () => {
         console.warn('Supabase failed, using mailto fallback:', supabaseError);
         
         // Fallback to mailto
-        const mailtoUrl = `mailto:info@fitfi.nl?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
+        const mailtoUrl = `mailto:info@fitfi.ai?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
           `Naam: ${formData.name}\nE-mail: ${formData.email}\nType: ${formData.type}\n\nBericht:\n${formData.message}`
         )}`;
         
