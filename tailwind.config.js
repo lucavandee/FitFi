@@ -54,8 +54,12 @@ export default {
       },
       spacing: {
         '18': '4.5rem',
+        '72': '4.5rem', // Header height
         '88': '22rem',
         '128': '32rem'
+      },
+      height: {
+        'header': '4.5rem', // 72px
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
