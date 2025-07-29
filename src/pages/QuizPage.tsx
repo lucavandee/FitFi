@@ -415,9 +415,11 @@ const QuizPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] flex items-center justify-center">
         <div className="max-w-md mx-auto">
-          <CompletionCelebration onComplete={handleCelebrationComplete} />
+          <CompletionCelebration 
             onComplete={handleCelebrationComplete}
             variant={celebrationVariant}
+          />
+        </div>
       </div>
     );
   }
