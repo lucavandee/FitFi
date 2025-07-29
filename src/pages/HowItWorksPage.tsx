@@ -182,11 +182,11 @@ const HowItWorksPage: React.FC = () => {
               <Button 
                 as={Link}
                 to="/registreren" 
-                variant="secondary"
+                variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
-                className="bg-white text-[#89CFF0] hover:bg-gray-100 px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                className="cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
               >
                 Probeer nu gratis
               </Button>
