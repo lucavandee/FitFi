@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
               <div className="flex items-center space-x-3 text-gray-300">
                 <Mail size={16} />
                 <a 
-                  href="mailto:info@fitfi.nl" 
+                  href="mailto:info@fitfi.ai" 
                   className="hover:text-[#89CFF0] transition-colors"
                 >
                   info@fitfi.ai
