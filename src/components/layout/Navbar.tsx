@@ -307,7 +307,6 @@ const Navbar: React.FC = () => {
                       )}
                     </div>
                   </div>
-                </div>
               </motion.div>
             </>
           )}
