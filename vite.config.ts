@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import { inspect } from "vite-plugin-inspect";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
@@ -11,6 +12,7 @@ export default defineConfig(({ mode }) => {
         jsxRuntime: "automatic",
         jsxImportSource: "react",
       }),
+      inspect(),
     ],
     resolve: {
       alias: {
@@ -18,11 +20,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
+      // Only expose non-sensitive environment variables
       "import.meta.env": {
-        ...Object.entries(env).reduce((acc, [key, val]) => {
-          acc[key] = JSON.stringify(val);
-          return acc;
-        }, {}),
+        ...Object.entries(env)
+          .filter(([key]) => key.startsWith('VITE_'))
+          .reduce((acc, [key, val]) => {
+            acc[key] = JSON.stringify(val);
+            return acc;
+          }, {}),
       },
     },
     optimizeDeps: {
@@ -39,11 +44,18 @@ export default defineConfig(({ mode }) => {
       middlewareMode: false,
       // Prevent serving HTML for JS/CSS assets
       proxy: {},
+      headers: {
+        // Security headers for development
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block'
+      }
     },
     build: {
       outDir: "dist",
-      sourcemap: true,
       assetsDir: "assets",
+      // Security: Don't expose source maps in production
+      sourcemap: mode === 'development',
       // Ensure proper asset naming and chunking
       rollupOptions: {
         output: {
@@ -73,7 +85,9 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             vendor: ['react', 'react-dom'],
             router: ['react-router-dom'],
-            ui: ['lucide-react', 'framer-motion']
+            ui: ['lucide-react'],
+            engine: ['./src/engine/recommendationEngine'],
+            utils: ['./src/utils/analytics', './src/utils/imageUtils']
           }
         },
         // Prevent circular dependencies that could cause loading issues
