@@ -53,19 +53,17 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
             <div className="space-y-6">
               <Button
                 onClick={handleCTAClick}
-                variant="primary"
+                variant="secondary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
-                className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-                aria-label="Start je gratis AI Style Report"
-              >
+                className="px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                 Ontvang jouw gratis AI Style Report
               </Button>
               
               <div className="flex items-center justify-center lg:justify-start space-x-4 text-sm text-gray-500">
                 <div className="flex items-center space-x-1">
-                  <Sparkles size={16} className="text-[#bfae9f]" />
+                  <Sparkles size={16} className="text-btnFg" />
                   <span>100% gratis</span>
                 </div>
                 <span>•</span>
@@ -115,6 +113,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
         </div>
       </div>
     </section>
+  )
   );
 };
 
