@@ -36,6 +36,7 @@
     "scrape-and-convert": "npm run scrape-zalando && npm run validate-products"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.6",
     "@sentry/react": "^9.39.0",
     "@supabase/supabase-js": "^2.53.0",
     "cheerio": "^1.1.0",

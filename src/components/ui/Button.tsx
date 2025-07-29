@@ -36,20 +36,20 @@ const Button: React.FC<ButtonProps> = ({
   as: Component = 'button',
   ...props
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
-    primary: 'bg-[#0D1B2A] text-white hover:bg-[#0D1B2A]/90 focus:ring-[#0D1B2A]',
-    secondary: 'bg-[#89CFF0] text-[#0D1B2A] hover:bg-[#89CFF0]/90 focus:ring-[#89CFF0]',
-    outline: 'border-2 border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A] focus:ring-[#89CFF0]',
-    ghost: 'text-[#0D1B2A] hover:bg-[#F6F6F6] focus:ring-[#89CFF0]',
+    primary: 'bg-[#89CFF0] text-[#0D1B2A] hover:bg-[#89CFF0]/90 focus:ring-[#89CFF0] shadow-sm hover:shadow-md',
+    secondary: 'bg-[#0D1B2A] text-white hover:bg-[#0D1B2A]/90 focus:ring-[#0D1B2A] shadow-sm hover:shadow-md',
+    outline: 'border-2 border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-[#0D1B2A] focus:ring-[#89CFF0] bg-white',
+    ghost: 'text-[#0D1B2A] hover:bg-[#F6F6F6] focus:ring-[#89CFF0] bg-transparent',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
   };
   
   const sizeClasses = {
-    sm: 'px-3 py-2 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg'
+    sm: 'px-4 py-2 text-sm',
+    md: 'px-6 py-3 text-base',
+    lg: 'px-8 py-4 text-lg'
   };
   
   const widthClass = fullWidth ? 'w-full' : '';
