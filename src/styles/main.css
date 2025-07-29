@@ -3,12 +3,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for consistent header height */
+:root {
+  --header-height: 4.5rem;
+}
+
+/* Scroll margin for sections to account for sticky header */
+section[id],
+div[id] {
+  scroll-margin-top: var(--header-height);
+}
+
 /* CTA Button Global Styling */
 .cta-btn {
   @apply inline-flex items-center justify-center px-6 py-4 font-semibold
          rounded-2xl border-2 border-brandPurple
          bg-white text-brandPurple hover:bg-purple-50
          focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
+}
+
+/* Mobile menu focus trap */
+.mobile-menu-open {
+  overflow: hidden;
 }
 
 /* Quiz animations */
