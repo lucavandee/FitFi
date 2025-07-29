@@ -19,7 +19,7 @@ const CommunityChallenge: React.FC<CommunityChallengeProps> = ({ className = '' 
     
     // Open platform-specific sharing
     if (platform === 'instagram') {
-      window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+      window.open('https://www.instagram.com/xfitfi/', '_blank', 'noopener,noreferrer');
     } else {
       window.open('https://www.tiktok.com/', '_blank', 'noopener,noreferrer');
     }
