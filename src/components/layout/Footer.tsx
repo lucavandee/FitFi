@@ -53,7 +53,7 @@ const Footer: React.FC = () => {
   const socialLinks = [
     { 
       label: 'Instagram', 
-      href: 'https://instagram.com/fitfi', 
+      href: 'https://www.instagram.com/xfitfi/, 
       icon: <Instagram size={20} />,
       external: true 
     },
