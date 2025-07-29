@@ -7,6 +7,7 @@ import { initializeSentry } from './utils/sentryConfig';
 import { initializeAnalytics } from './utils/analytics';
 import './styles/main.css';
 import { setupAutoSave } from './utils/progressPersistence';
+import { processReferralOnLoad } from './utils/referralUtils';
 
 // Configure React Router future flags to suppress warnings
 configureRouterFutureFlags();
@@ -19,6 +20,9 @@ initializeAnalytics();
 
 // Setup auto-save for progress persistence
 setupAutoSave();
+
+// Process referral codes on page load
+processReferralOnLoad();
 
 // Global error handler for chunk loading failures
 window.addEventListener('error', (event) => {

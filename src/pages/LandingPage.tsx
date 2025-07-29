@@ -19,10 +19,10 @@ const PreviewCarousel = React.lazy(() =>
   })
 );
 
-const CommunityChallenge = React.lazy(() => 
-  import('../components/landing/CommunityChallenge').catch(err => {
-    console.error('Failed to load CommunityChallenge:', err);
-    return { default: () => <div>Community challenge niet beschikbaar</div> };
+const FoundersBlock = React.lazy(() => 
+  import('../components/founders/FoundersBlock').catch(err => {
+    console.error('Failed to load FoundersBlock:', err);
+    return { default: () => <div>Founders Club niet beschikbaar</div> };
   })
 );
 
@@ -94,10 +94,10 @@ const LandingPage: React.FC = () => {
         </Suspense>
       </ErrorBoundary>
 
-      {/* Community Challenge - Lazy loaded */}
+      {/* Founders Club - Lazy loaded */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Community challenge laden..." />}>
-          <CommunityChallenge />
+        <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
+          <FoundersBlock />
         </Suspense>
       </ErrorBoundary>
 

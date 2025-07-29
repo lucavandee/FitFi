@@ -24,10 +24,10 @@ const PreviewCarousel = React.lazy(() =>
   })
 );
 
-const CommunityUGC = React.lazy(() => 
-  import('../components/home/CommunityUGC').catch(err => {
-    console.error('Failed to load CommunityUGC:', err);
-    return { default: () => <div>Community sectie niet beschikbaar</div> };
+const FoundersBlock = React.lazy(() => 
+  import('../components/founders/FoundersBlock').catch(err => {
+    console.error('Failed to load FoundersBlock:', err);
+    return { default: () => <div>Founders Club niet beschikbaar</div> };
   })
 );
 
@@ -126,10 +126,10 @@ const HomePage: React.FC = () => {
         <StyleArchetypeSlider />
       </ErrorBoundary>
 
-      {/* Community UGC - Lazy loaded */}
+      {/* Founders Club - Lazy loaded */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Community sectie laden..." />}>
-          <CommunityUGC />
+        <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
+          <FoundersBlock />
         </Suspense>
       </ErrorBoundary>
 
