@@ -260,7 +260,8 @@ const Navbar: React.FC = () => {
                         </Link>
                         </li>
                       ))}
-                      </ul>
+                     </ul>
+                    </div>
                     </div>
                     {/* Auth Section */}
                     <div className="px-6 pb-6 border-t border-gray-100">
