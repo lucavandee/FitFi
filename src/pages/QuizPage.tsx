@@ -1,17 +1,42 @@
-import React from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle } from 'lucide-react';
-import Button from '../components/ui/Button';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import { useQuizAnswers } from '../hooks/useQuizAnswers';
+import { QuizAnswers, QuizProgress } from '../types/quiz';
+import { quizSteps } from '../data/quizSteps';
+import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
-import Quiz from '../components/Quiz';
+import toast from 'react-hot-toast';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useUser();
-  const { step } = useParams<{ step: string }>();
+  const { user, isLoading: userLoading } = useUser();
+  const { submitQuizAnswers, isQuizCompleted, isLoading: quizLoading } = useQuizAnswers();
+  
+  const [progress, setProgress] = useState<QuizProgress>({
+    currentStep: 1,
+    totalSteps: quizSteps.length,
+    isComplete: false,
+    answers: {}
+  });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (isLoading) {
+  // Scroll to top on step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [progress.currentStep]);
+
+  // Redirect if already completed
+  useEffect(() => {
+    if (!quizLoading && isQuizCompleted()) {
+      navigate('/results');
+    }
+  }, [quizLoading, isQuizCompleted, navigate]);
+
+  if (userLoading || quizLoading) {
     return <LoadingFallback fullScreen message="Quiz laden..." />;
   }
 
@@ -29,94 +54,393 @@ const QuizPage: React.FC = () => {
     );
   }
 
-  const handleQuizComplete = async (quizData: any) => {
-    try {
-      // Track quiz completion
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'quiz_complete', {
-          event_category: 'onboarding',
-          event_label: 'style_quiz',
-          user_id: user.id
-        });
+  const currentStepData = quizSteps[progress.currentStep - 1];
+  const progressPercentage = (progress.currentStep / progress.totalSteps) * 100;
+
+  const validateCurrentStep = (): boolean => {
+    const field = currentStepData.field;
+    const value = progress.answers[field];
+    
+    if (currentStepData.required) {
+      if (!value || 
+          (Array.isArray(value) && value.length === 0) ||
+          (typeof value === 'string' && value.trim() === '') ||
+          (typeof value === 'number' && value <= 0)) {
+        setErrors({ [field]: 'Dit veld is verplicht' });
+        return false;
       }
+    }
+    
+    setErrors({});
+    return true;
+  };
 
-      // TODO: Save quiz data to Supabase profile
-      // const { error } = await supabase
-      //   .from('users')
-      //   .update({ quiz_data: quizData })
-      //   .eq('id', user.id);
-
-      // Navigate to results with quiz data
-      navigate('/results', { 
-        state: { quizData },
-        replace: true 
-      });
-    } catch (error) {
-      console.error('Error saving quiz data:', error);
-      // Still navigate to results even if save fails
-      navigate('/results', { replace: true });
+  const handleAnswerChange = (field: keyof QuizAnswers, value: any) => {
+    setProgress(prev => ({
+      ...prev,
+      answers: {
+        ...prev.answers,
+        [field]: value
+      }
+    }));
+    
+    // Clear error when user provides input
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
+  const handleNext = () => {
+    if (!validateCurrentStep()) {
+      return;
+    }
+
+    if (progress.currentStep < progress.totalSteps) {
+      setProgress(prev => ({
+        ...prev,
+        currentStep: prev.currentStep + 1
+      }));
+    }
+  };
+
+  const handlePrevious = () => {
+    if (progress.currentStep > 1) {
+      setProgress(prev => ({
+        ...prev,
+        currentStep: prev.currentStep - 1
+      }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!validateCurrentStep()) {
+      return;
+    }
+
+    // Validate all required fields
+    const missingFields: string[] = [];
+    quizSteps.forEach(step => {
+      if (step.required) {
+        const value = progress.answers[step.field];
+        if (!value || 
+            (Array.isArray(value) && value.length === 0) ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (typeof value === 'number' && value <= 0)) {
+          missingFields.push(step.title);
+        }
+      }
+    });
+
+    if (missingFields.length > 0) {
+      toast.error(`Vul alle vereiste velden in: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const success = await submitQuizAnswers(progress.answers as QuizAnswers);
+      
+      if (success) {
+        // Track quiz completion
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'quiz_complete', {
+            event_category: 'onboarding',
+            event_label: 'style_quiz',
+            user_id: user.id
+          });
+        }
+
+        toast.success('Quiz voltooid! Je resultaten worden geladen...');
+        navigate('/results');
+      } else {
+        toast.error('Er ging iets mis bij het opslaan van je antwoorden. Probeer het opnieuw.');
+      }
+    } catch (error) {
+      console.error('Quiz submission error:', error);
+      toast.error('Er ging iets mis. Probeer het opnieuw.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const renderQuestionInput = () => {
+    const field = currentStepData.field;
+    const value = progress.answers[field];
+
+    switch (currentStepData.type) {
+      case 'checkbox':
+        return (
+          <fieldset className="space-y-3">
+            <legend className="sr-only">{currentStepData.title}</legend>
+            {currentStepData.options?.map((option) => (
+              <label
+                key={option.value}
+                className="flex items-start space-x-3 p-4 border border-gray-200 rounded-xl hover:border-[#89CFF0] transition-colors cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value={option.value}
+                  checked={Array.isArray(value) && value.includes(option.value)}
+                  onChange={(e) => {
+                    const currentValues = Array.isArray(value) ? value : [];
+                    const newValues = e.target.checked
+                      ? [...currentValues, option.value]
+                      : currentValues.filter(v => v !== option.value);
+                    handleAnswerChange(field, newValues);
+                  }}
+                  className="mt-1 h-4 w-4 text-[#89CFF0] focus:ring-[#89CFF0] border-gray-300 rounded"
+                />
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">{option.label}</div>
+                  {option.description && (
+                    <div className="text-sm text-gray-600 mt-1">{option.description}</div>
+                  )}
+                </div>
+              </label>
+            ))}
+          </fieldset>
+        );
+
+      case 'radio':
+        return (
+          <fieldset className="space-y-3">
+            <legend className="sr-only">{currentStepData.title}</legend>
+            {currentStepData.options?.map((option) => (
+              <label
+                key={option.value}
+                className="flex items-start space-x-3 p-4 border border-gray-200 rounded-xl hover:border-[#89CFF0] transition-colors cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name={field}
+                  value={option.value}
+                  checked={value === option.value}
+                  onChange={(e) => handleAnswerChange(field, e.target.value)}
+                  className="mt-1 h-4 w-4 text-[#89CFF0] focus:ring-[#89CFF0] border-gray-300"
+                />
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">{option.label}</div>
+                  {option.description && (
+                    <div className="text-sm text-gray-600 mt-1">{option.description}</div>
+                  )}
+                </div>
+              </label>
+            ))}
+          </fieldset>
+        );
+
+      case 'select':
+        return (
+          <select
+            value={value || ''}
+            onChange={(e) => handleAnswerChange(field, e.target.value)}
+            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+            aria-label={currentStepData.title}
+          >
+            <option value="">Selecteer een optie...</option>
+            {currentStepData.options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        );
+
+      case 'multiselect':
+        return (
+          <fieldset className="space-y-3">
+            <legend className="sr-only">{currentStepData.title}</legend>
+            {currentStepData.options?.map((option) => (
+              <label
+                key={option.value}
+                className="flex items-start space-x-3 p-4 border border-gray-200 rounded-xl hover:border-[#89CFF0] transition-colors cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value={option.value}
+                  checked={Array.isArray(value) && value.includes(option.value)}
+                  onChange={(e) => {
+                    const currentValues = Array.isArray(value) ? value : [];
+                    const newValues = e.target.checked
+                      ? [...currentValues, option.value]
+                      : currentValues.filter(v => v !== option.value);
+                    handleAnswerChange(field, newValues);
+                  }}
+                  className="mt-1 h-4 w-4 text-[#89CFF0] focus:ring-[#89CFF0] border-gray-300 rounded"
+                />
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">{option.label}</div>
+                  {option.description && (
+                    <div className="text-sm text-gray-600 mt-1">{option.description}</div>
+                  )}
+                </div>
+              </label>
+            ))}
+          </fieldset>
+        );
+
+      case 'slider':
+        const sliderValue = typeof value === 'number' ? value : currentStepData.min || 0;
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-[#89CFF0] mb-2">
+                €{sliderValue}
+              </div>
+              <div className="text-sm text-gray-600">per kledingstuk</div>
+            </div>
+            <div className="px-4">
+              <input
+                type="range"
+                min={currentStepData.min}
+                max={currentStepData.max}
+                step={currentStepData.step}
+                value={sliderValue}
+                onChange={(e) => handleAnswerChange(field, parseInt(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                style={{
+                  background: `linear-gradient(to right, #89CFF0 0%, #89CFF0 ${((sliderValue - (currentStepData.min || 0)) / ((currentStepData.max || 100) - (currentStepData.min || 0))) * 100}%, #E5E7EB ${((sliderValue - (currentStepData.min || 0)) / ((currentStepData.max || 100) - (currentStepData.min || 0))) * 100}%, #E5E7EB 100%)`
+                }}
+                aria-label={`Budget range: €${sliderValue}`}
+              />
+              <div className="flex justify-between text-sm text-gray-500 mt-2">
+                <span>€{currentStepData.min}</span>
+                <span>€{currentStepData.max}+</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const isLastStep = progress.currentStep === progress.totalSteps;
+  const canProceed = !errors[currentStepData.field];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] py-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-            Ontdek je perfecte stijl
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Beantwoord enkele vragen en ontvang gepersonaliseerde stijladvies
-          </p>
-        </div>
-        
-        {/* Placeholder Quiz Content */}
-        <div className="bg-white rounded-3xl shadow-sm p-8 mb-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#bfae9f]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-[#bfae9f]" />
-            </div>
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">
-              Quiz Placeholder
-            </h2>
-            
-            <div className="bg-[#bfae9f]/10 rounded-2xl p-6 mb-6">
-              <h3 className="font-medium text-gray-900 mb-2">Wat de quiz zal bevatten:</h3>
-              <ul className="text-left text-gray-700 space-y-2">
-                <li>• Stijlvoorkeuren en persoonlijkheid</li>
-                <li>• Kleur- en materiaalvoorkeur</li>
-                <li>• Lichaamsbouw en pasvorm</li>
-                <li>• Gelegenheden en lifestyle</li>
-                <li>• Budget en merkvoorkeuren</li>
-              </ul>
-            </div>
-            
-            <Button
-              onClick={() => handleQuizComplete({ 
-                style: 'minimalist', 
-                preferences: { casual: 4, formal: 3 },
-                completed_at: new Date().toISOString()
-              })}
-              variant="primary"
-              size="lg"
-              icon={<ArrowRight size={20} />}
-              iconPosition="right"
-              className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
-            >
-              Ga naar Resultaten
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Link 
+            to="/onboarding" 
+            className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
+          >
+            <ArrowLeft size={20} className="mr-2" />
+            Terug naar onboarding
+          </Link>
+          
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2">
+              Stijlquiz
+            </h1>
+            <p className="text-gray-600">
+              Beantwoord enkele vragen voor gepersonaliseerd stijladvies
+            </p>
           </div>
         </div>
-        
-        <div className="text-center">
-          <Button 
-            as={Link} 
-            to="/onboarding" 
-            variant="ghost"
-            className="text-gray-600 hover:bg-gray-50"
-          >
-            ← Terug naar onboarding
-          </Button>
+
+        {/* Quiz Card */}
+        <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
+          {/* Progress Bar */}
+          <div className="h-2 bg-gray-200">
+            <div 
+              className="h-full bg-[#89CFF0] transition-all duration-300 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+              role="progressbar"
+              aria-valuenow={progressPercentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`Quiz voortgang: ${Math.round(progressPercentage)}%`}
+            />
+          </div>
+
+          <div className="p-8">
+            {/* Step Info */}
+            <div className="text-center mb-8">
+              <div className="text-sm text-gray-500 mb-2">
+                Vraag {progress.currentStep} van {progress.totalSteps}
+              </div>
+              <h2 className="text-2xl font-medium text-gray-900 mb-3">
+                {currentStepData.title}
+              </h2>
+              <p className="text-gray-600">
+                {currentStepData.description}
+              </p>
+            </div>
+
+            {/* Question Input */}
+            <div className="mb-8">
+              {renderQuestionInput()}
+              
+              {/* Error Message */}
+              {errors[currentStepData.field] && (
+                <div 
+                  className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-3"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-red-700 text-sm">{errors[currentStepData.field]}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                onClick={handlePrevious}
+                disabled={progress.currentStep === 1}
+                icon={<ArrowLeft size={16} />}
+                iconPosition="left"
+                className="text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Vorige
+              </Button>
+
+              {isLastStep ? (
+                <Button
+                  variant="primary"
+                  onClick={handleSubmit}
+                  disabled={!canProceed || isSubmitting}
+                  icon={isSubmitting ? undefined : <CheckCircle size={16} />}
+                  iconPosition="right"
+                  className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Versturen...
+                    </div>
+                  ) : (
+                    'Verstuur Quiz'
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  onClick={handleNext}
+                  disabled={!canProceed}
+                  icon={<ArrowRight size={16} />}
+                  iconPosition="right"
+                  className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Volgende
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Quiz Info */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-500">
+            Je antwoorden worden veilig opgeslagen en alleen gebruikt voor jouw persoonlijke stijladvies
+          </p>
         </div>
       </div>
     </div>
