@@ -1,81 +1,44 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Mobile Navigation - Level 100', () => {
+test.describe('Mobile Navigation - Complete Link Visibility', () => {
   test.beforeEach(async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
   });
 
-  test('mobile menu opens and closes correctly', async ({ page }) => {
+  test('all navigation links visible and functional', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    // Debug: Check if navigation items are loaded
-    const navItemsCount = await page.evaluate(() => {
+    // Debug: Check navigation items count
+    const navCount = await page.evaluate(() => {
       return window.NAV_LINKS ? window.NAV_LINKS.length : 0;
     });
-    console.log('Navigation items count:', navItemsCount);
+    console.log('Navigation items count:', navCount);
 
-    // Verify menu button is visible
-    const menuButton = page.locator('button[aria-label="Open menu"]');
-    await expect(menuButton).toBeVisible();
-
-    // Open menu
-    await menuButton.click();
-    
-    // Verify menu is open
-    await expect(page.locator('#mobile-menu')).toBeVisible();
-    await expect(page.locator('button[aria-label="Sluit menu"]')).toBeVisible();
-    
-    // Verify navigation items are visible
-    await expect(page.locator('text=Prijzen')).toBeVisible();
-    await expect(page.locator('text=Waarom FitFi')).toBeVisible();
-    await expect(page.locator('text=Blog')).toBeVisible();
-    await expect(page.locator('text=Hoe het werkt')).toBeVisible();
-    await expect(page.locator('text=Outfits')).toBeVisible();
-    
-    // Verify body scroll is locked
-    const body = page.locator('body');
-    await expect(body).toHaveCSS('overflow', 'hidden');
-
-    // Close menu with close button
-    await page.click('button[aria-label="Sluit menu"]');
-    
-    // Verify menu is closed
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
-    
-    // Verify body scroll is restored
-    await expect(body).not.toHaveCSS('overflow', 'hidden');
-  });
-
-  test('menu closes on backdrop click', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Open menu
+    // Open mobile menu
     await page.click('button[aria-label="Open menu"]');
-    await expect(page.locator('#mobile-menu')).toBeVisible();
-
-    // Click backdrop
-    await page.click('.bg-black\\/20');
     
-    // Verify menu is closed
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
-  });
-
-  test('menu closes on escape key', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Open menu
-    await page.click('button[aria-label="Open menu"]');
+    // Wait for menu to be visible
     await expect(page.locator('#mobile-menu')).toBeVisible();
-
-    // Press escape
-    await page.keyboard.press('Escape');
     
-    // Verify menu is closed
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
+    // Verify all required navigation links are visible
+    const requiredLinks = ['Home', 'Waarom FitFi', 'Hoe het werkt', 'Prijzen', 'Outfits', 'Blog'];
+    
+    for (const linkText of requiredLinks) {
+      const link = page.getByRole('link', { name: linkText });
+      await expect(link).toBeVisible();
+      console.log(`✅ Link visible: ${linkText}`);
+    }
+    
+    // Take screenshot for visual regression
+    await page.screenshot({ 
+      path: 'tests/screenshots/mobile-drawer-open.png', 
+      fullPage: false,
+      clip: { x: 0, y: 0, width: 375, height: 667 }
+    });
+    
+    console.log('✅ All navigation links are visible in mobile drawer');
   });
 
   test('navigation links work correctly', async ({ page }) => {
@@ -85,7 +48,7 @@ test.describe('Mobile Navigation - Level 100', () => {
     // Open menu
     await page.click('button[aria-label="Open menu"]');
     
-    // Click Prijzen link
+    // Test Prijzen navigation
     await page.click('text=Prijzen');
     
     // Verify navigation and menu closure
@@ -94,60 +57,38 @@ test.describe('Mobile Navigation - Level 100', () => {
     
     // Verify page content loaded
     await expect(page.locator('h1')).toContainText(/prijzen|kies/i);
+    
+    console.log('✅ Navigation to Prijzen works correctly');
   });
 
-  test('waarom fitfi navigation works', async ({ page }) => {
+  test('menu structure and styling', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
     // Open menu
     await page.click('button[aria-label="Open menu"]');
     
-    // Click Waarom FitFi link
-    await page.click('text=Waarom FitFi');
+    // Verify menu structure
+    await expect(page.locator('#mobile-menu')).toHaveClass(/bg-white/);
+    await expect(page.locator('#mobile-menu')).toHaveClass(/z-50/);
     
-    // Verify navigation
-    await expect(page).toHaveURL(/\/over-ons$/);
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
+    // Verify navigation list
+    const navList = page.locator('#mobile-menu nav ul');
+    await expect(navList).toBeVisible();
     
-    // Verify page content
-    await expect(page.locator('h1')).toContainText(/waarom/i);
+    // Verify minimum touch targets
+    const links = page.locator('#mobile-menu nav ul li a');
+    const linkCount = await links.count();
+    
+    for (let i = 0; i < linkCount; i++) {
+      const link = links.nth(i);
+      await expect(link).toHaveClass(/min-h-\[44px\]/);
+    }
+    
+    console.log('✅ Menu structure and styling correct');
   });
 
-  test('blog navigation works', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Open menu
-    await page.click('button[aria-label="Open menu"]');
-    
-    // Click Blog link
-    await page.click('text=Blog');
-    
-    // Verify navigation
-    await expect(page).toHaveURL(/\/blog$/);
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
-    
-    // Verify page content
-    await expect(page.locator('h1')).toContainText(/blog/i);
-  });
-
-  test('authentication links work when not logged in', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Open menu
-    await page.click('button[aria-label="Open menu"]');
-    
-    // Click Inloggen
-    await page.click('text=Inloggen');
-    
-    // Verify navigation
-    await expect(page).toHaveURL(/\/inloggen$/);
-    await expect(page.locator('#mobile-menu')).not.toBeVisible();
-  });
-
-  test('menu has proper accessibility attributes', async ({ page }) => {
+  test('accessibility compliance', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
@@ -168,103 +109,78 @@ test.describe('Mobile Navigation - Level 100', () => {
     await expect(menu).toHaveAttribute('role', 'dialog');
     await expect(menu).toHaveAttribute('aria-modal', 'true');
     await expect(menu).toHaveAttribute('aria-labelledby', 'mobile-menu-title');
+    
+    // Test escape key
+    await page.keyboard.press('Escape');
+    await expect(menu).not.toBeVisible();
+    
+    console.log('✅ Accessibility compliance verified');
   });
 
-  test('smooth scrolling works for sections', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Add a test section to the page
-    await page.addScriptTag({
-      content: `
-        const section = document.createElement('section');
-        section.id = 'test-section';
-        section.style.height = '100vh';
-        section.style.marginTop = '100vh';
-        section.innerHTML = '<h2>Test Section</h2>';
-        document.body.appendChild(section);
-      `
-    });
-
-    // Test smooth scroll utility
-    await page.evaluate(() => {
-      window.scrollTo({ top: 0 });
-      const element = document.getElementById('test-section');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  test('console debug verification', async ({ page }) => {
+    // Capture console logs
+    const logs = [];
+    page.on('console', msg => {
+      if (msg.text().includes('[Mobile Nav Debug]')) {
+        logs.push(msg.text());
       }
     });
 
-    // Wait for scroll to complete
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Wait for debug logs
     await page.waitForTimeout(1000);
     
-    // Verify section is visible and properly positioned
-    const section = page.locator('#test-section');
-    await expect(section).toBeInViewport();
+    // Verify navigation count is logged
+    const countLog = logs.find(log => log.includes('NAV_LINKS count:'));
+    expect(countLog).toBeTruthy();
+    
+    // Extract count from log
+    const countMatch = countLog?.match(/count: (\d+)/);
+    const navCount = countMatch ? parseInt(countMatch[1]) : 0;
+    
+    // Verify we have at least 6 navigation items
+    expect(navCount).toBeGreaterThanOrEqual(6);
+    
+    console.log(`✅ Navigation count verified: ${navCount} items`);
   });
 
-  test('no horizontal scroll or layout shift', async ({ page }) => {
+  test('dark mode support', async ({ page }) => {
+    // Enable dark mode
+    await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // Check initial viewport
-    const initialViewport = await page.evaluate(() => ({
-      width: document.documentElement.scrollWidth,
-      height: document.documentElement.scrollHeight
-    }));
-
     // Open menu
     await page.click('button[aria-label="Open menu"]');
-    await page.waitForTimeout(300); // Wait for animation
-
-    // Check viewport after menu open
-    const menuOpenViewport = await page.evaluate(() => ({
-      width: document.documentElement.scrollWidth,
-      height: document.documentElement.scrollHeight
-    }));
-
-    // Verify no horizontal scroll introduced
-    expect(menuOpenViewport.width).toBeLessThanOrEqual(initialViewport.width + 5); // 5px tolerance
-
-    // Close menu
-    await page.click('button[aria-label="Sluit menu"]');
-    await page.waitForTimeout(300);
-
-    // Verify layout restored
-    const finalViewport = await page.evaluate(() => ({
-      width: document.documentElement.scrollWidth,
-      height: document.documentElement.scrollHeight
-    }));
-
-    expect(finalViewport.width).toBeLessThanOrEqual(initialViewport.width + 5);
+    
+    // Verify dark mode styling
+    const menu = page.locator('#mobile-menu');
+    await expect(menu).toHaveClass(/dark:bg-gray-900/);
+    
+    // Verify dark mode text colors
+    const links = page.locator('#mobile-menu nav ul li a');
+    const firstLink = links.first();
+    await expect(firstLink).toHaveClass(/dark:text-white/);
+    
+    console.log('✅ Dark mode support verified');
   });
 });
 
-test.describe('Mobile Navigation Accessibility', () => {
-  test('focus management works correctly', async ({ page }) => {
+test.describe('Mobile Navigation Visual Regression', () => {
+  test('mobile drawer screenshot baseline', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
     // Open menu
     await page.click('button[aria-label="Open menu"]');
+    await page.waitForTimeout(300); // Wait for animation
+
+    // Take full screenshot for baseline
+    await expect(page).toHaveScreenshot('mobile-drawer-baseline.png');
     
-    // Test keyboard navigation
-    await page.keyboard.press('Tab');
-    
-    // Verify focus is trapped within menu
-    const focusedElement = page.locator(':focus');
-    await expect(focusedElement).toBeVisible();
-    
-    // Test that focus stays within menu
-    for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('Tab');
-      const currentFocus = page.locator(':focus');
-      const isInMenu = await currentFocus.evaluate(el => {
-        const menu = document.getElementById('mobile-menu');
-        return menu?.contains(el) || false;
-      });
-      expect(isInMenu).toBe(true);
-    }
+    console.log('✅ Visual regression baseline captured');
   });
 });

@@ -5,7 +5,7 @@ import { useUser } from '../../context/UserContext';
 import Button from '../ui/Button';
 import Logo from '../ui/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
-import NAV_LINKS from '../../constants/navigation';
+import NAV_LINKS, { getNavItemsCount } from '../../constants/navigation';
 import { scrollToHash } from '../../utils/scrollUtils';
 
 const Navbar: React.FC = () => {
@@ -13,6 +13,12 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, logout } = useUser();
   const location = useLocation();
+
+  // Debug logging for production verification
+  useEffect(() => {
+    console.log('[Mobile Nav Debug] NAV_LINKS count:', getNavItemsCount());
+    console.log('[Mobile Nav Debug] NAV_LINKS:', NAV_LINKS.map(link => link.label));
+  }, []);
 
   // Handle scroll effect
   useEffect(() => {
@@ -64,12 +70,15 @@ const Navbar: React.FC = () => {
   };
 
   const handleNavClick = (href: string) => {
+    console.log('[Mobile Nav] Navigating to:', href);
     setIsOpen(false);
     scrollToHash(href);
   };
 
-  // Debug log for production
-  console.log('NAV_LINKS length:', NAV_LINKS.length);
+  const closeDrawer = () => {
+    console.log('[Mobile Nav] Closing drawer');
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -185,8 +194,8 @@ const Navbar: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 bg-black/20 z-[50] md:hidden"
-                onClick={() => setIsOpen(false)}
+                className="fixed inset-0 bg-black/20 z-40 md:hidden"
+                onClick={closeDrawer}
                 aria-hidden="true"
               />
               
@@ -197,18 +206,18 @@ const Navbar: React.FC = () => {
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: '100%', opacity: 0 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
-                className="fixed inset-y-0 right-0 z-[60] w-[85vw] max-w-xs bg-white dark:bg-[#1E1B2E] flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.06)]"
+                className="fixed inset-y-0 right-0 z-50 w-[85vw] max-w-xs bg-white dark:bg-gray-900 flex flex-col h-full overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.06)]"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="mobile-menu-title"
               >
                 {/* Header */}
-                <header className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-white/10">
+                <header className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-white/10 flex-shrink-0">
                   <h2 id="mobile-menu-title" className="text-xl font-semibold text-gray-900 dark:text-white">
                     Menu
                   </h2>
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={closeDrawer}
                     className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
                     aria-label="Sluit menu"
                   >
@@ -243,12 +252,12 @@ const Navbar: React.FC = () => {
                 </nav>
 
                 {/* Auth Section */}
-                <div className="px-6 pb-6 border-t border-gray-100 dark:border-white/10">
+                <div className="px-6 pb-6 border-t border-gray-100 dark:border-white/10 flex-shrink-0">
                   {user ? (
                     <div className="space-y-2 pt-6">
                       <Link
                         to="/dashboard"
-                        onClick={() => setIsOpen(false)}
+                        onClick={closeDrawer}
                         className="flex items-center px-4 py-3 text-base font-medium text-gray-900 dark:text-white hover:text-[#6E2EB7] hover:bg-[#F4F0FB] dark:hover:bg-white/5 rounded-xl transition-colors min-h-[44px]"
                       >
                         <User size={20} className="mr-3" />
@@ -270,7 +279,7 @@ const Navbar: React.FC = () => {
                         variant="ghost"
                         fullWidth
                         className="justify-start min-h-[44px]"
-                        onClick={() => setIsOpen(false)}
+                        onClick={closeDrawer}
                       >
                         Inloggen
                       </Button>
@@ -280,7 +289,7 @@ const Navbar: React.FC = () => {
                         variant="primary"
                         fullWidth
                         className="min-h-[44px]"
-                        onClick={() => setIsOpen(false)}
+                        onClick={closeDrawer}
                       >
                         Gratis starten
                       </Button>
