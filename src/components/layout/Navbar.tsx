@@ -79,10 +79,10 @@ const Navbar: React.FC = () => {
     <>
       {/* Navbar */}
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`sticky top-0 z-40 bg-white/70 backdrop-blur transition-all duration-300 ${
           isScrolled 
-            ? 'bg-white/95 backdrop-blur-md shadow-sm' 
-            : 'bg-white/90 backdrop-blur-sm'
+            ? 'shadow-sm' 
+            : ''
         }`}
         role="navigation"
         aria-label="Hoofdnavigatie"
@@ -109,7 +109,7 @@ const Navbar: React.FC = () => {
                     to={link.href}
                     className={`px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-lg ${
                       isActiveLink(link.href)
-                        ? 'text-[#89CFF0] bg-[#89CFF0]/10'
+                        ? 'text-[#89CFF0] font-semibold border-b-2 border-[#89CFF0]/30'
                         : 'text-gray-700 hover:text-[#89CFF0] hover:bg-gray-50'
                     }`}
                     aria-current={isActiveLink(link.href) ? 'page' : undefined}

@@ -1,0 +1,11 @@
+/* Pricing Component Styles */
+@media (max-width: 639px) {
+  .pricing-scroll {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .pricing-scroll > * {
+    min-width: 88%;
+    scroll-snap-align: center;
+  }
+}
