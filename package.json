@@ -1,6 +1,6 @@
 {
   "name": "fitfi-site",
-  "version": "1.5.2",
+  "version": "1.5.4",
   "description": "AI-powered personal style recommendations platform",
   "type": "module",
   "scripts": {
@@ -28,6 +28,10 @@
     "test:visual": "playwright test tests/visual --update-snapshots",
     "lhci": "lhci autorun",
     "lighthouse": "npm run lhci",
+    "lighthouse:mobile": "lhci autorun --config=.lighthouserc.js",
+    "bundle-analyze": "vite build && npx vite-bundle-analyzer dist",
+    "audit:security": "npm audit --production --audit-level=high",
+    "audit:deps": "npm audit --production",
     "audit:full": "playwright test tests/audit/full-audit.spec.js",
     "audit:lighthouse": "lhci autorun --config=tests/audit/lighthouse-config.js",
     "audit:complete": "npm run audit:full && npm run audit:lighthouse",
@@ -79,6 +83,7 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vite-plugin-inspect": "^0.7.0"
   }
 }
