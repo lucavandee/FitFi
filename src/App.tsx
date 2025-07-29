@@ -127,6 +127,11 @@ function App() {
                         <OutfitsPage />
                       </ProtectedRoute>
                     } />
+                    <Route path="/outfits" element={
+                      <ProtectedRoute>
+                        <OutfitsPage />
+                      </ProtectedRoute>
+                    } />
                     
                     {/* Fallback */}
                     <Route path="*" element={<NotFound />} />

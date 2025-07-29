@@ -1,0 +1,194 @@
+[
+  {
+    "id": "outfit-001",
+    "brand": "Zara",
+    "title": "Oversized Blazer Navy",
+    "price": 79.95,
+    "imageUrl": "https://picsum.photos/400/600?random=1",
+    "deeplink": "https://www.zalando.nl/zara-blazer-navy"
+  },
+  {
+    "id": "outfit-002",
+    "brand": "H&M",
+    "title": "Slim Fit Jeans Zwart",
+    "price": 39.99,
+    "imageUrl": "https://picsum.photos/400/600?random=2",
+    "deeplink": "https://www.zalando.nl/hm-jeans-zwart"
+  },
+  {
+    "id": "outfit-003",
+    "brand": "Nike",
+    "title": "Air Max Sneakers Wit",
+    "price": 129.95,
+    "imageUrl": "https://picsum.photos/400/600?random=3",
+    "deeplink": "https://www.zalando.nl/nike-air-max-wit"
+  },
+  {
+    "id": "outfit-004",
+    "brand": "Mango",
+    "title": "Midi Jurk Beige",
+    "price": 59.99,
+    "imageUrl": "https://picsum.photos/400/600?random=4",
+    "deeplink": "https://www.zalando.nl/mango-jurk-beige"
+  },
+  {
+    "id": "outfit-005",
+    "brand": "COS",
+    "title": "Wollen Trui Grijs",
+    "price": 89.00,
+    "imageUrl": "https://picsum.photos/400/600?random=5",
+    "deeplink": "https://www.zalando.nl/cos-trui-grijs"
+  },
+  {
+    "id": "outfit-006",
+    "brand": "Weekday",
+    "title": "Mom Jeans Lichtblauw",
+    "price": 49.00,
+    "imageUrl": "https://picsum.photos/400/600?random=6",
+    "deeplink": "https://www.zalando.nl/weekday-mom-jeans"
+  },
+  {
+    "id": "outfit-007",
+    "brand": "Adidas",
+    "title": "Stan Smith Sneakers",
+    "price": 99.95,
+    "imageUrl": "https://picsum.photos/400/600?random=7",
+    "deeplink": "https://www.zalando.nl/adidas-stan-smith"
+  },
+  {
+    "id": "outfit-008",
+    "brand": "& Other Stories",
+    "title": "Silk Blouse Wit",
+    "price": 69.00,
+    "imageUrl": "https://picsum.photos/400/600?random=8",
+    "deeplink": "https://www.zalando.nl/other-stories-blouse"
+  },
+  {
+    "id": "outfit-009",
+    "brand": "Selected Homme",
+    "title": "Chino Broek Beige",
+    "price": 45.95,
+    "imageUrl": "https://picsum.photos/400/600?random=9",
+    "deeplink": "https://www.zalando.nl/selected-chino-beige"
+  },
+  {
+    "id": "outfit-010",
+    "brand": "Arket",
+    "title": "Cashmere Cardigan",
+    "price": 149.00,
+    "imageUrl": "https://picsum.photos/400/600?random=10",
+    "deeplink": "https://www.zalando.nl/arket-cardigan"
+  },
+  {
+    "id": "outfit-011",
+    "brand": "Levi's",
+    "title": "501 Original Jeans",
+    "price": 99.95,
+    "imageUrl": "https://picsum.photos/400/600?random=11",
+    "deeplink": "https://www.zalando.nl/levis-501-jeans"
+  },
+  {
+    "id": "outfit-012",
+    "brand": "Massimo Dutti",
+    "title": "Leren Loafers Zwart",
+    "price": 119.00,
+    "imageUrl": "https://picsum.photos/400/600?random=12",
+    "deeplink": "https://www.zalando.nl/massimo-dutti-loafers"
+  },
+  {
+    "id": "outfit-013",
+    "brand": "Ganni",
+    "title": "Print Midi Rok",
+    "price": 195.00,
+    "imageUrl": "https://picsum.photos/400/600?random=13",
+    "deeplink": "https://www.zalando.nl/ganni-midi-rok"
+  },
+  {
+    "id": "outfit-014",
+    "brand": "Acne Studios",
+    "title": "Oversized T-shirt",
+    "price": 120.00,
+    "imageUrl": "https://picsum.photos/400/600?random=14",
+    "deeplink": "https://www.zalando.nl/acne-studios-tshirt"
+  },
+  {
+    "id": "outfit-015",
+    "brand": "Veja",
+    "title": "V-10 Sneakers Wit",
+    "price": 150.00,
+    "imageUrl": "https://picsum.photos/400/600?random=15",
+    "deeplink": "https://www.zalando.nl/veja-v10-sneakers"
+  },
+  {
+    "id": "outfit-016",
+    "brand": "Filippa K",
+    "title": "Soft Sport Legging",
+    "price": 89.00,
+    "imageUrl": "https://picsum.photos/400/600?random=16",
+    "deeplink": "https://www.zalando.nl/filippa-k-legging"
+  },
+  {
+    "id": "outfit-017",
+    "brand": "Wood Wood",
+    "title": "Graphic Hoodie",
+    "price": 139.00,
+    "imageUrl": "https://picsum.photos/400/600?random=17",
+    "deeplink": "https://www.zalando.nl/wood-wood-hoodie"
+  },
+  {
+    "id": "outfit-018",
+    "brand": "Samsøe Samsøe",
+    "title": "Knit Vest Camel",
+    "price": 99.00,
+    "imageUrl": "https://picsum.photos/400/600?random=18",
+    "deeplink": "https://www.zalando.nl/samsoe-vest-camel"
+  },
+  {
+    "id": "outfit-019",
+    "brand": "Stussy",
+    "title": "Logo T-shirt Zwart",
+    "price": 45.00,
+    "imageUrl": "https://picsum.photos/400/600?random=19",
+    "deeplink": "https://www.zalando.nl/stussy-logo-tshirt"
+  },
+  {
+    "id": "outfit-020",
+    "brand": "Totême",
+    "title": "Wool Coat Beige",
+    "price": 590.00,
+    "imageUrl": "https://picsum.photos/400/600?random=20",
+    "deeplink": "https://www.zalando.nl/toteme-wool-coat"
+  },
+  {
+    "id": "outfit-021",
+    "brand": "Dr. Martens",
+    "title": "1460 Boots Zwart",
+    "price": 169.00,
+    "imageUrl": "https://picsum.photos/400/600?random=21",
+    "deeplink": "https://www.zalando.nl/dr-martens-1460-boots"
+  },
+  {
+    "id": "outfit-022",
+    "brand": "Gant",
+    "title": "Oxford Shirt Wit",
+    "price": 89.95,
+    "imageUrl": "https://picsum.photos/400/600?random=22",
+    "deeplink": "https://www.zalando.nl/gant-oxford-shirt"
+  },
+  {
+    "id": "outfit-023",
+    "brand": "Maison Margiela",
+    "title": "Tabi Boots Zwart",
+    "price": 1290.00,
+    "imageUrl": "https://picsum.photos/400/600?random=23",
+    "deeplink": "https://www.zalando.nl/maison-margiela-tabi"
+  },
+  {
+    "id": "outfit-024",
+    "brand": "Uniqlo",
+    "title": "Heattech Longsleeve",
+    "price": 19.90,
+    "imageUrl": "https://picsum.photos/400/600?random=24",
+    "deeplink": "https://www.zalando.nl/uniqlo-heattech"
+  }
+]

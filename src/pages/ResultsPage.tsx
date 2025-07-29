@@ -228,7 +228,7 @@ const ResultsPage: React.FC = () => {
               variant="primary"
               size="lg"
               icon={<TrendingUp size={20} />}
-              iconPosition="left"
+              Bekijk Aanbevelingen
               className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
             >
               Bekijk Outfits
