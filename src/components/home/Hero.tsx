@@ -58,6 +58,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
                 className="px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
                 Ontvang jouw gratis AI Style Report
               </Button>
               
