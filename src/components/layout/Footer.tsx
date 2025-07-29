@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
                   href="mailto:info@fitfi.nl" 
                   className="hover:text-[#89CFF0] transition-colors"
                 >
-                  info@fitfi.nl
+                  info@fitfi.ai
                 </a>
               </div>
               <div className="flex items-center space-x-3 text-gray-300">
@@ -107,14 +107,14 @@ const Footer: React.FC = () => {
                   href="tel:+31201234567" 
                   className="hover:text-[#89CFF0] transition-colors"
                 >
-                  +31 20 123 4567
+                  +31 6 203 709 68
                 </a>
               </div>
               <div className="flex items-start space-x-3 text-gray-300">
                 <MapPin size={16} className="mt-0.5 flex-shrink-0" />
                 <span>
-                  Herengracht 123<br />
-                  1015 BG Amsterdam<br />
+                  Marktstraat 15D<br />
+                  7551 DR Hengelo<br />
                   Nederland
                 </span>
               </div>
