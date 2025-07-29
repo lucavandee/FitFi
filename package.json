@@ -51,7 +51,7 @@
     "@supabase/supabase-js": "^2.53.0",
     "cheerio": "^1.1.0",
     "dotenv": "^16.6.1",
-    "framer-motion": "^10.16.16",
+    "framer-motion": "^12.23.11",
     "lucide-react": "^0.532.0",
     "nanoid": "^5.1.5",
     "puppeteer": "^22.15.0",
