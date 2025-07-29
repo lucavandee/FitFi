@@ -31,17 +31,29 @@ test.describe('Quiz Flow', () => {
     // Should be on quiz page
     await expect(page.url()).toContain('/quiz');
     await expect(page.locator('h1')).toContainText('Stijlquiz');
+    
+    // Verify progress bar is visible
+    await expect(page.locator('[role="progressbar"]')).toBeVisible();
 
     // Fill out quiz step by step
     
     // Step 1: Style preferences (checkbox)
     await page.check('input[value="minimalist"]');
     await page.check('input[value="classic"]');
+    
+    // Wait for style preview to appear
+    await page.waitForSelector('text=Jouw Stijl Ontdekking', { timeout: 2000 });
+    await expect(page.locator('text=Modern Minimalist')).toBeVisible();
+    
     await page.click('text=Volgende');
     await page.waitForTimeout(500);
 
     // Step 2: Base colors (radio)
     await page.check('input[value="neutral"]');
+    
+    // Verify style preview updates
+    await page.waitForSelector('text=Neutrale Elegantie', { timeout: 2000 });
+    
     await page.click('text=Volgende');
     await page.waitForTimeout(500);
 
@@ -61,15 +73,21 @@ test.describe('Quiz Flow', () => {
     
     // Submit quiz
     await page.click('text=Verstuur Quiz');
-    await page.waitForTimeout(3000);
+    
+    // Wait for celebration animation
+    await page.waitForSelector('text=Quiz Voltooid! 🎉', { timeout: 5000 });
+    await page.waitForTimeout(4000); // Wait for celebration to complete
 
     // Should be redirected to results
     await expect(page.url()).toContain('/results');
-    await expect(page.locator('h1')).toContainText('AI-Stijlanalyse');
+    await expect(page.locator('h1')).toContainText('Jouw AI-Stijlanalyse');
 
     // Verify results page content
     await expect(page.locator('text=Jouw Stijlprofiel')).toBeVisible();
     await expect(page.locator('text=87% Match')).toBeVisible();
+    
+    // Verify style insights are shown
+    await expect(page.locator('text=Modern Minimalist')).toBeVisible();
 
     console.log('✅ Quiz flow completed successfully');
   });
