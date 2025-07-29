@@ -262,7 +262,7 @@ const Navbar: React.FC = () => {
                       ))}
                      </ul>
                     </div>
-                    </div>
+                    </nav>
                     {/* Auth Section */}
                     <div className="px-6 pb-6 border-t border-gray-100">
                       {user ? (
