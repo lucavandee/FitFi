@@ -31,6 +31,8 @@ import BlogPage from './pages/BlogPage';
 import FAQPage from './pages/FAQPage';
 import LegalPage from './pages/LegalPage';
 import SupportPage from './pages/SupportPage';
+import BlogDetailPage from './pages/BlogDetailPage';
+import TermsPage from './pages/TermsPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 import FeedbackPage from './pages/FeedbackPage';
 import SuccessStoriesPage from './pages/SuccessStoriesPage';
@@ -38,8 +40,6 @@ import GenderSelectPage from './pages/GenderSelectPage';
 import ProductPage from './pages/ProductPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
-import BlogDetailPage from './pages/BlogDetailPage';
-import ThankYouPage from './pages/ThankYouPage';
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -91,7 +91,6 @@ function App() {
                     <Route path="/product/:id" element={<ProductPage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                     <Route path="/algemene-voorwaarden" element={<TermsPage />} />
-                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/bedankt" element={<ThankYouPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     

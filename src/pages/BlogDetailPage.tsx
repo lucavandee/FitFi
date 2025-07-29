@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Calendar, Clock, User, Share2, Heart } from 'lucide-react';
 import Button from '../components/ui/Button';
+import LoadingFallback from '../components/ui/LoadingFallback';
 
 interface BlogPost {
   title: string;
@@ -10,6 +12,7 @@ interface BlogPost {
   readTime: string;
   content: string;
   imageUrl: string;
+  excerpt: string;
 }
 
 const BlogDetailPage: React.FC = () => {
@@ -45,13 +48,22 @@ const BlogDetailPage: React.FC = () => {
         const dateMatch = frontmatter.match(/• (.*?) •/);
         const readTimeMatch = frontmatter.match(/• (.*?) leestijd\*/);
         
+        // Extract title from content
+        const titleMatch = content.match(/^# (.+)$/m);
+        const title = titleMatch ? titleMatch[1] : 'Artikel';
+        
+        // Extract excerpt from first paragraph
+        const excerptMatch = content.match(/\n\n([^#\n]+)/);
+        const excerpt = excerptMatch ? excerptMatch[1].substring(0, 160) + '...' : '';
+        
         setPost({
-          title: 'De Psychologie Achter Jouw Kledingkeuzes',
+          title,
           author: authorMatch ? authorMatch[1] : 'FitFi Team',
           date: dateMatch ? dateMatch[1] : '15 december 2024',
           readTime: readTimeMatch ? readTimeMatch[1] : '5 min',
           content: content,
-          imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2'
+          imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2',
+          excerpt
         });
       } catch (error) {
         console.error('Error loading blog post:', error);
@@ -73,7 +85,7 @@ const BlogDetailPage: React.FC = () => {
       .replace(/^\*\*(.*)\*\*/gim, '<strong class="font-semibold">$1</strong>')
       .replace(/^\*(.*)\*/gim, '<em class="italic">$1</em>')
       .replace(/^- (.*$)/gim, '<li class="mb-1 ml-4">• $1</li>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-[#bfae9f] hover:text-[#a89a8c] underline">$1</a>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-[#89CFF0] hover:text-[#89CFF0]/80 underline">$1</a>')
       .replace(/\n\n/g, '</p><p class="text-gray-700 leading-relaxed mb-6">')
       .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-gray-700 leading-relaxed mb-6">')
       .replace(/$(?![>])/gm, '</p>');
@@ -91,19 +103,12 @@ const BlogDetailPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#bfae9f] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Artikel laden...</p>
-        </div>
-      </div>
-    );
+    return <LoadingFallback fullScreen message="Artikel laden..." />;
   }
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Artikel niet gevonden</h1>
           <p className="text-gray-600 mb-6">{error || 'Het opgevraagde artikel bestaat niet.'}</p>
@@ -116,13 +121,23 @@ const BlogDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6]">
+    <div className="min-h-screen bg-[#F6F6F6]">
+      <Helmet>
+        <title>{post.title} | FitFi Blog</title>
+        <meta name="description" content={post.excerpt} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:image" content={post.imageUrl} />
+        <meta property="og:type" content="article" />
+        <link rel="canonical" href={`https://fitfi.app/blog/${slug}`} />
+      </Helmet>
+
       <div className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Header */}
         <div className="mb-8">
           <Link 
             to="/blog" 
-            className="inline-flex items-center text-[#bfae9f] hover:text-[#a89a8c] transition-colors mb-6"
+            className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
           >
             <ArrowLeft size={20} className="mr-2" />
             Terug naar blog
@@ -158,11 +173,6 @@ const BlogDetailPage: React.FC = () => {
               </div>
             </div>
             
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-8 leading-tight">
-              {post.title}
-            </h1>
-            
             {/* Actions */}
             <div className="flex items-center space-x-4 mb-8 pb-8 border-b border-gray-200">
               <Button
@@ -171,7 +181,7 @@ const BlogDetailPage: React.FC = () => {
                 icon={<Share2 size={16} />}
                 iconPosition="left"
                 onClick={handleShare}
-                className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
+                className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
               >
                 Delen
               </Button>
@@ -228,7 +238,7 @@ const BlogDetailPage: React.FC = () => {
         </div>
 
         {/* Newsletter CTA */}
-        <div className="mt-12 bg-gradient-to-r from-[#bfae9f] to-purple-600 rounded-3xl p-8 text-center">
+        <div className="mt-12 bg-gradient-to-r from-[#89CFF0] to-blue-500 rounded-3xl p-8 text-center">
           <h2 className="text-2xl font-medium text-white mb-4">
             Meer artikelen zoals deze?
           </h2>
@@ -237,7 +247,7 @@ const BlogDetailPage: React.FC = () => {
           </p>
           <Button
             variant="secondary"
-            className="bg-white text-[#bfae9f] hover:bg-gray-100"
+            className="bg-white text-[#89CFF0] hover:bg-gray-100"
           >
             Aanmelden voor newsletter
           </Button>
