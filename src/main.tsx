@@ -15,15 +15,6 @@ configureRouterFutureFlags();
 // Initialize Sentry
 initializeSentry();
 
-// Initialize Google Analytics
-initializeAnalytics();
-
-// Setup auto-save for progress persistence
-setupAutoSave();
-
-// Process referral codes on page load
-processReferralOnLoad();
-
 // Global error handler for chunk loading failures
 window.addEventListener('error', (event) => {
   if (event.message && event.message.includes('Loading chunk')) {
