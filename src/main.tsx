@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
+import { Workbox } from 'workbox-window';
 import App from './App.tsx';
 import { configureRouterFutureFlags } from './utils/routerUtils';
 import { initializeSentry } from './utils/sentryConfig';
@@ -25,13 +26,10 @@ if ('serviceWorker' in navigator && import.meta.env.PROD &&
     !window.location.hostname.includes('webcontainer.io') && 
     !window.location.hostname.includes('stackblitz.io')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/serviceWorker.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.error('SW registration failed: ', registrationError);
-      });
+    const wb = new Workbox('/sw.js');
+    wb.register()
+      .then(() => console.log('SW registered successfully'))
+      .catch((err) => console.error('SW registration failed: ', err));
   });
 }
 
