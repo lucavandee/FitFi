@@ -318,25 +318,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile menu overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-40 md:hidden"
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Spacer for fixed navbar */}
-      <div className="h-18" aria-hidden="true" />
-    </>
-  );
-};
-
-export default Navbar;
