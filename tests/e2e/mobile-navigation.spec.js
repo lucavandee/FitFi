@@ -21,6 +21,11 @@ test.describe('Mobile Navigation - Level 100', () => {
     await expect(page.locator('#mobile-menu')).toBeVisible();
     await expect(page.locator('button[aria-label="Sluit menu"]')).toBeVisible();
     
+    // Verify navigation items are visible
+    await expect(page.locator('text=Prijzen')).toBeVisible();
+    await expect(page.locator('text=Waarom FitFi')).toBeVisible();
+    await expect(page.locator('text=Blog')).toBeVisible();
+    
     // Verify body scroll is locked
     const body = page.locator('body');
     await expect(body).toHaveCSS('overflow', 'hidden');

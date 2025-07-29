@@ -5,15 +5,8 @@ import { useUser } from '../../context/UserContext';
 import Button from '../ui/Button';
 import Logo from '../ui/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NAV_LINKS } from '../../constants/navigation';
 
-interface NavLink {
-  label: string;
-  href: string;
-  external?: boolean;
-  icon?: React.ReactNode;
-  isSection?: boolean;
-  sectionId?: string;
-}
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,14 +14,7 @@ const Navbar: React.FC = () => {
   const { user, logout } = useUser();
   const location = useLocation();
 
-  const navLinks: NavLink[] = [
-    { label: 'Home', href: '/', icon: <Home size={20} /> },
-    { label: 'Waarom FitFi', href: '/over-ons', icon: <Info size={20} /> },
-    { label: 'Hoe het werkt', href: '/hoe-het-werkt', icon: <HelpCircle size={20} /> },
-    { label: 'Prijzen', href: '/prijzen', icon: <DollarSign size={20} /> },
-    { label: 'Outfits', href: '/outfits', icon: <ShoppingBag size={20} /> },
-    { label: 'Blog', href: '/blog', icon: <BookOpen size={20} /> }
-  ];
+  const navLinks = NAV_LINKS;
 
   // Handle scroll effect
   useEffect(() => {
@@ -215,16 +201,16 @@ const Navbar: React.FC = () => {
               {/* Mobile Menu Drawer */}
               <motion.div
                 id="mobile-menu"
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
+                initial={{ x: '100%', opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: '100%', opacity: 0 }}
                 transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-                className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 md:hidden"
+                className="fixed inset-y-0 right-0 z-[60] w-80 max-w-[85vw] bg-white dark:bg-[#1E1B2E] shadow-2xl md:hidden flex flex-col overflow-hidden"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="mobile-menu-title"
               >
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full overflow-hidden">
                   {/* Header */}
                   <div className="flex items-center justify-between p-6 border-b border-gray-100">
                     <h2 id="mobile-menu-title" className="text-lg font-semibold text-gray-900">
@@ -240,8 +226,9 @@ const Navbar: React.FC = () => {
                   </div>
                   
                   {/* Navigation Links */}
-                  <nav className="flex-1 px-6 py-4 overflow-y-auto">
-                    <div className="space-y-2">
+                  <nav className="flex-1 overflow-y-auto">
+                    <div className="px-6 py-4">
+                      <ul className="space-y-2" role="list">
                       {navLinks.map((link) => (
                         <Link
                           key={link.href}
@@ -254,23 +241,24 @@ const Navbar: React.FC = () => {
                           }`}
                           aria-current={isActiveLink(link.href) ? 'page' : undefined}
                         >
-                          {link.icon}
+                              <link.icon size={20} />
                           <span>{link.label}</span>
                         </Link>
                       ))}
                     </div>
-                    
                     {/* Auth Section */}
                     <div className="mt-6 pt-6 border-t border-gray-100">
                       {user ? (
                         <div className="space-y-2">
-                          <Link
-                            to="/dashboard"
+                    <div className="px-6 pb-6 border-t border-gray-100">
+                            <Link
+                        <div className="space-y-2 pt-6">
                             className="flex items-center space-x-3 px-4 py-3 text-base font-medium text-gray-700 hover:text-[#89CFF0] hover:bg-gray-50 rounded-xl transition-colors"
                           >
                             <User size={20} />
                             <span>{user.name}</span>
-                          </Link>
+                            </Link>
+                          </li>
                           <button
                             onClick={handleLogout}
                             className="flex items-center space-x-3 px-4 py-3 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors w-full text-left"
@@ -281,7 +269,7 @@ const Navbar: React.FC = () => {
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          <Button
+                        <div className="space-y-3 pt-6">
                             as={Link}
                             to="/inloggen"
                             variant="ghost"
@@ -302,6 +290,7 @@ const Navbar: React.FC = () => {
                           </Button>
                         </div>
                       )}
+                      </ul>
                     </div>
                   </nav>
                 </div>
