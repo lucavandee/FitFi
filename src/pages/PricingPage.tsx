@@ -8,8 +8,8 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 const PricingPage: React.FC = () => {
   const plans = [
     {
-      id: 'basic',
-      name: 'Basic',
+      id: 'free',
+      name: 'Free',
       price: 'Gratis',
       period: 'altijd',
       description: 'Perfect om te beginnen met je stijlreis',
@@ -28,14 +28,14 @@ const PricingPage: React.FC = () => {
       highlight: false
     },
     {
-      id: 'premium',
-      name: 'Premium',
+      id: 'plus',
+      name: 'Plus',
       price: '€29',
       period: 'per maand',
       description: 'Voor wie het beste uit hun stijl wil halen',
       icon: <Crown size={24} />,
       features: [
-        'Alles van Basic',
+        'Alles van Free',
         'Onbeperkte outfit aanbevelingen',
         'Onbeperkte foto uploads',
         'Gedetailleerd stijladvies',
@@ -45,8 +45,8 @@ const PricingPage: React.FC = () => {
         'Geavanceerde filters',
         'Personal shopping service'
       ],
-      cta: 'Start premium',
-      ctaLink: '/registreren?plan=premium',
+      cta: 'Start Plus',
+      ctaLink: '/registreren?plan=plus',
       popular: true,
       highlight: true
     },
@@ -59,7 +59,7 @@ const PricingPage: React.FC = () => {
       description: 'Voor stylisten en fashion professionals',
       icon: <Zap size={24} />,
       features: [
-        'Alles van Premium',
+        'Alles van Plus',
         'Client management tools',
         'Bulk outfit generatie',
         'White-label opties',
@@ -81,11 +81,11 @@ const PricingPage: React.FC = () => {
     <div className="min-h-screen bg-[#F6F6F6]">
       <Helmet>
         <title>Prijzen - Kies je FitFi abonnement | FitFi</title>
-        <meta name="description" content="Kies het FitFi abonnement dat bij je past. Basic gratis, Premium €29/maand, Pro €79/jaar. 14 dagen gratis proberen." />
+        <meta name="description" content="Kies het FitFi abonnement dat bij je past. Free gratis, Plus €29/maand, Pro €79/jaar. 14 dagen gratis proberen." />
         <meta property="og:title" content="Prijzen - Kies je FitFi abonnement" />
-        <meta property="og:description" content="Basic gratis, Premium €29/maand, Pro €79/jaar. 14 dagen gratis proberen." />
-        <meta property="og:image" content="https://fitfi.app/og-pricing.jpg" />
-        <link rel="canonical" href="https://fitfi.app/prijzen" />
+        <meta property="og:description" content="Free gratis, Plus €29/maand, Pro €79/jaar. 14 dagen gratis proberen." />
+        <meta property="og:image" content="https://fitfi.ai/og-pricing.jpg" />
+        <link rel="canonical" href="https://fitfi.ai/prijzen" />
       </Helmet>
 
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
@@ -195,7 +195,7 @@ const PricingPage: React.FC = () => {
                     {plan.cta}
                   </Button>
                   
-                  {plan.id === 'premium' && (
+                  {plan.id === 'plus' && (
                     <p className="text-center text-sm text-gray-500 mt-3">
                       14 dagen gratis proberen
                     </p>
@@ -204,37 +204,6 @@ const PricingPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </ErrorBoundary>
-
-        {/* FAQ Section */}
-        <ErrorBoundary>
-          <section className="bg-white rounded-3xl shadow-sm p-8 md:p-12 mb-16">
-            <h2 className="text-2xl font-medium text-[#0D1B2A] text-center mb-8">
-              Veelgestelde vragen over prijzen
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="font-medium text-[#0D1B2A] mb-2">Kan ik op elk moment opzeggen?</h3>
-                <p className="text-gray-600 text-sm">Ja, je kunt je abonnement op elk moment opzeggen. Geen verborgen kosten of lange contracten.</p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-[#0D1B2A] mb-2">Hoe werkt de geld-terug garantie?</h3>
-                <p className="text-gray-600 text-sm">Niet tevreden binnen 14 dagen? Krijg je geld terug, geen vragen gesteld.</p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-[#0D1B2A] mb-2">Welke betaalmethoden accepteren jullie?</h3>
-                <p className="text-gray-600 text-sm">iDEAL, creditcard, PayPal en bankoverschrijving. Alle betalingen zijn beveiligd.</p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-[#0D1B2A] mb-2">Kan ik later upgraden?</h3>
-                <p className="text-gray-600 text-sm">Ja, je kunt op elk moment upgraden. Je betaalt alleen het verschil voor de resterende periode.</p>
-              </div>
-            </div>
-          </section>
         </ErrorBoundary>
 
         {/* CTA Section */}
