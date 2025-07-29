@@ -45,6 +45,10 @@ test.describe('Quiz Flow', () => {
     await page.waitForSelector('text=Jouw Stijl Ontdekking', { timeout: 2000 });
     await expect(page.locator('text=Modern Minimalist')).toBeVisible();
     
+    // Check for achievement progress
+    const achievementProgress = page.locator('text=Achievement');
+    // Achievement might not always appear, so we don't require it
+    
     await page.click('text=Volgende');
     await page.waitForTimeout(500);
 
@@ -77,6 +81,14 @@ test.describe('Quiz Flow', () => {
     // Wait for celebration animation
     await page.waitForSelector('text=Quiz Voltooid! 🎉', { timeout: 5000 });
     await page.waitForTimeout(4000); // Wait for celebration to complete
+    
+    // Check for achievement notification (optional)
+    const achievementModal = page.locator('text=Achievement Unlocked');
+    if (await achievementModal.isVisible()) {
+      console.log('Achievement notification appeared');
+      await page.click('text=Geweldig!');
+      await page.waitForTimeout(1000);
+    }
 
     // Should be redirected to results
     await expect(page.url()).toContain('/results');
@@ -88,6 +100,10 @@ test.describe('Quiz Flow', () => {
     
     // Verify style insights are shown
     await expect(page.locator('text=Modern Minimalist')).toBeVisible();
+    
+    // Check for social sharing options (if achievements were earned)
+    const shareButton = page.locator('text=Deel Resultaat');
+    // Share button might not always be visible, so we don't require it
 
     console.log('✅ Quiz flow completed successfully');
   });
