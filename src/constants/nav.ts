@@ -1,13 +1,24 @@
-export const NAV_ITEMS = [
-  { href: '/', label: 'Home' },
-  { href: '/over-ons', label: 'Waarom FitFi' },
-  { href: '/hoe-het-werkt', label: 'Hoe het werkt' },
-  { href: '/prijzen', label: 'Prijzen' },
-  { href: '/results', label: 'Aanbevelingen' },
-  { href: '/outfits', label: 'Outfits' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/inloggen', label: 'Inloggen' },
-  { href: '/dashboard', label: 'Dashboard' },
+import { Home, Info, HelpCircle, DollarSign, BookOpen, ShoppingBag, User, LogIn } from 'lucide-react';
+
+export interface NavLink {
+  label: string;
+  href: string;
+  external?: boolean;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  isSection?: boolean;
+  sectionId?: string;
+}
+
+export const NAV_ITEMS: NavLink[] = [
+  { label: 'Home', href: '/', icon: Home },
+  { label: 'Waarom FitFi', href: '/over-ons', icon: Info },
+  { label: 'Hoe het werkt', href: '/hoe-het-werkt', icon: HelpCircle },
+  { label: 'Prijzen', href: '/prijzen', icon: DollarSign },
+  { label: 'Aanbevelingen', href: '/results', icon: ShoppingBag },
+  { label: 'Outfits', href: '/outfits', icon: ShoppingBag },
+  { label: 'Blog', href: '/blog', icon: BookOpen },
+  { label: 'Inloggen', href: '/inloggen', icon: LogIn },
+  { label: 'Dashboard', href: '/dashboard', icon: User }
 ];
 
 export default NAV_ITEMS;
