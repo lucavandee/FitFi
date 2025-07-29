@@ -3,6 +3,15 @@
   command = "npm run build"
   publish = "dist"
 
+# ------------------------------------------------------------------
+# Forceer alles van het oude Netlify-subdomein naar het hoofddomein
+# ------------------------------------------------------------------
+[[redirects]]
+  from   = "https://dapper-sunflower-9949c9.netlify.app/*"
+  to     = "https://fitfi.ai/:splat"
+  status = 301
+  force  = true
+
 [functions]
   directory = "netlify-functions"
   node_bundler = "esbuild"
