@@ -9,7 +9,7 @@ import Hero from '../components/landing/Hero';
 import SocialProof from '../components/landing/SocialProof';
 import HowItWorks from '../components/landing/HowItWorks';
 import Features from '../components/landing/Features';
-import LandingFooter from '../components/landing/LandingFooter';
+import Footer from '../components/layout/Footer';
 
 // Lazy load heavy components for better performance
 const PreviewCarousel = React.lazy(() => 
@@ -117,7 +117,7 @@ const LandingPage: React.FC = () => {
 
       {/* Footer */}
       <ErrorBoundary>
-        <LandingFooter />
+        <Footer />
       </ErrorBoundary>
     </div>
   );
