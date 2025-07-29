@@ -4,7 +4,7 @@ import { Menu, X, User, LogOut } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import Button from '../ui/Button';
 import Logo from '../ui/Logo';
-import { NAV_LINKS } from '../../constants/navigation';
+import { NAV_ITEMS } from '../../constants/nav';
 import MobileNavDrawer from './MobileNavDrawer';
 
 const Navbar: React.FC = () => {
@@ -94,7 +94,7 @@ const Navbar: React.FC = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8">
-                {NAV_LINKS.map((link) => (
+                {NAV_ITEMS.map((link) => (
                   <Link
                     key={link.href}
                     to={link.href}

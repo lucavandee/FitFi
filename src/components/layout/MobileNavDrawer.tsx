@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { NAV_LINKS } from '../../constants/navigation';
+import { NAV_ITEMS } from '../constants/nav';
 
 interface MobileNavDrawerProps {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface MobileNavDrawerProps {
 
 export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProps) {
   // Debug logging
-  console.log('[MOBILE NAV] Rendering drawer with items:', NAV_LINKS.length);
+  console.log('[MOBILE NAV] Rendering drawer with items:', NAV_ITEMS.length);
   
   if (!isOpen) return null;
 
@@ -47,7 +47,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto">
           <ul className="divide-y divide-gray-100 dark:divide-white/10">
-            {NAV_LINKS.map(({ href, label }) => (
+            {NAV_ITEMS.map(({ href, label }) => (
               <li key={href}>
                 <Link
                   to={href}
