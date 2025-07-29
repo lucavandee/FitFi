@@ -67,9 +67,9 @@ const LoginPage: React.FC = () => {
     setErrors({});
 
     try {
-      const success = await login(formData.email, formData.password);
+      const result = await login(formData.email, formData.password);
       
-      if (success) {
+      if (result.success) {
         // Track successful login
         if (typeof window.gtag === 'function') {
           window.gtag('event', 'login', {
@@ -77,7 +77,7 @@ const LoginPage: React.FC = () => {
             event_label: 'email_login'
           });
         }
-        navigate(from, { replace: true });
+        navigate(result.redirectTo || from, { replace: true });
       } else {
         setErrors({ general: 'Ongeldige inloggegevens' });
       }

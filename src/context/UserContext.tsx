@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export interface UserProfile {
   id: string;
@@ -21,8 +22,8 @@ export interface UserProfile {
 interface UserContextType {
   user: UserProfile | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; redirectTo?: string }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; redirectTo?: string }>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
 }
@@ -34,28 +35,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
+    // Check for existing session on mount
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          // Create user profile from session
-          const userProfile: UserProfile = {
-            id: session.user.id,
-            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
-            email: session.user.email || '',
-            stylePreferences: {
-              casual: 3,
-              formal: 3,
-              sporty: 3,
-              vintage: 3,
-              minimalist: 3
-            },
-            isPremium: false,
-            savedRecommendations: []
-          };
-          setUser(userProfile);
+          await createUserProfileFromSession(session);
         }
       } catch (error) {
         console.error('Session check error:', error);
@@ -66,25 +52,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     checkSession();
 
-    // Listen for auth changes
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const userProfile: UserProfile = {
-            id: session.user.id,
-            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
-            email: session.user.email || '',
-            stylePreferences: {
-              casual: 3,
-              formal: 3,
-              sporty: 3,
-              vintage: 3,
-              minimalist: 3
-            },
-            isPremium: false,
-            savedRecommendations: []
-          };
-          setUser(userProfile);
+        console.log('Auth state change:', event, session?.user?.id);
+        
+        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+          await createUserProfileFromSession(session);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
         }
@@ -95,7 +69,75 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  // Helper function to create user profile from session
+  const createUserProfileFromSession = async (session: any) => {
+    try {
+      // Try to get existing profile from Supabase
+      const { data: existingProfile, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      let userProfile: UserProfile;
+
+      if (existingProfile && !error) {
+        // Use existing profile from database
+        userProfile = {
+          id: existingProfile.id,
+          name: existingProfile.name,
+          email: existingProfile.email,
+          gender: existingProfile.gender,
+          stylePreferences: {
+            casual: 3,
+            formal: 3,
+            sporty: 3,
+            vintage: 3,
+            minimalist: 3
+          },
+          isPremium: existingProfile.is_premium || false,
+          savedRecommendations: []
+        };
+      } else {
+        // Create new profile from session metadata
+        userProfile = {
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          stylePreferences: {
+            casual: 3,
+            formal: 3,
+            sporty: 3,
+            vintage: 3,
+            minimalist: 3
+          },
+          isPremium: false,
+          savedRecommendations: []
+        };
+
+        // Insert new user into database
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert([{
+            id: userProfile.id,
+            name: userProfile.name,
+            email: userProfile.email,
+            gender: userProfile.gender,
+            is_premium: userProfile.isPremium
+          }]);
+
+        if (insertError) {
+          console.error('Error creating user profile:', insertError);
+        }
+      }
+
+      setUser(userProfile);
+    } catch (error) {
+      console.error('Error creating user profile from session:', error);
+    }
+  };
+
+  const login = async (email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -105,25 +147,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         toast.error(error.message);
-        return false;
+        return { success: false };
       }
 
       if (data.user) {
         toast.success('Welkom terug!');
-        return true;
+        return { success: true, redirectTo: '/dashboard' };
       }
 
-      return false;
+      return { success: false };
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Er ging iets mis bij het inloggen');
-      return false;
+      return { success: false };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase.auth.signUp({
@@ -138,19 +180,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         toast.error(error.message);
-        return false;
+        return { success: false };
       }
 
       if (data.user) {
         toast.success('Account succesvol aangemaakt!');
-        return true;
+        return { success: true, redirectTo: `/onboarding?user=${data.user.id}` };
       }
 
-      return false;
+      return { success: false };
     } catch (error) {
       console.error('Registration error:', error);
       toast.error('Er ging iets mis bij het registreren');
-      return false;
+      return { success: false };
     } finally {
       setIsLoading(false);
     }
@@ -158,6 +200,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
+      setIsLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast.error(error.message);
@@ -168,6 +211,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Er ging iets mis bij het uitloggen');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -175,7 +220,28 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
 
     try {
+      // Update local state immediately
       setUser(prev => prev ? { ...prev, ...updates } : null);
+      
+      // Update in Supabase database
+      const { error } = await supabase
+        .from('users')
+        .update({
+          name: updates.name,
+          email: updates.email,
+          gender: updates.gender,
+          is_premium: updates.isPremium
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Profile update error:', error);
+        toast.error('Er ging iets mis bij het bijwerken van je profiel');
+        // Revert local state on error
+        setUser(prev => prev ? { ...prev, ...user } : null);
+        return;
+      }
+      
       toast.success('Profiel bijgewerkt');
     } catch (error) {
       console.error('Profile update error:', error);

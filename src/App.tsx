@@ -106,11 +106,12 @@ function App() {
                         <QuizPage />
                       </ProtectedRoute>
                     } />
-                    <Route path="/resultaten" element={
+                    <Route path="/results" element={
                       <ProtectedRoute>
                         <ResultsPage />
                       </ProtectedRoute>
                     } />
+                    <Route path="/resultaten" element={<Navigate to="/results" replace />} />
                     <Route path="/enhanced-resultaten" element={
                       <ProtectedRoute>
                         <EnhancedResultsPage />
