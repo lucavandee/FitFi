@@ -1,19 +1,28 @@
 import React from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useEffect } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
+import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import LoadingFallback from '../components/ui/LoadingFallback';
 
 const OnboardingPage: React.FC = () => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading: userLoading } = useUser();
+  const { isQuizCompleted, isLoading: quizLoading } = useQuizAnswers();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
   // Get user ID from URL params if available
   const userIdFromUrl = searchParams.get('user');
 
-  if (isLoading) {
+  // Redirect to results if quiz already completed
+  useEffect(() => {
+    if (!quizLoading && isQuizCompleted()) {
+      navigate('/results');
+    }
+  }, [quizLoading, isQuizCompleted, navigate]);
+
+  if (userLoading || quizLoading) {
     return <LoadingFallback fullScreen message="Onboarding laden..." />;
   }
 
@@ -43,6 +52,11 @@ const OnboardingPage: React.FC = () => {
     );
   }
 
+  // Don't show onboarding if quiz completed (will redirect)
+  if (isQuizCompleted()) {
+    return <LoadingFallback fullScreen message="Doorsturen naar resultaten..." />;
+  }
+
   const handleStartQuiz = () => {
     // Track quiz start
     if (typeof window.gtag === 'function') {
@@ -53,7 +67,7 @@ const OnboardingPage: React.FC = () => {
       });
     }
     
-    // Navigate to quiz (placeholder for now)
+    // Navigate to quiz
     navigate('/quiz');
   };
   return (
@@ -124,11 +138,11 @@ const OnboardingPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
               as={Link} 
-              to="/dashboard" 
+              to="/quiz" 
               variant="outline"
               className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
             >
-              Ga naar Dashboard
+              Start Quiz
             </Button>
             <Button 
               as={Link} 
