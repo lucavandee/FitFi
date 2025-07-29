@@ -79,10 +79,6 @@ const QuizPage: React.FC = () => {
             <h2 className="text-2xl font-medium text-gray-900 mb-4">
               Quiz Placeholder
             </h2>
-            <p className="text-gray-600 mb-6">
-              De volledige stijlquiz wordt binnenkort geïmplementeerd. 
-              Voor nu kun je direct naar je resultaten gaan.
-            </p>
             
             <div className="bg-[#bfae9f]/10 rounded-2xl p-6 mb-6">
               <h3 className="font-medium text-gray-900 mb-2">Wat de quiz zal bevatten:</h3>
