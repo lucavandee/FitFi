@@ -25,6 +25,7 @@
     "test:auth": "playwright test tests/auth",
     "test:quiz": "playwright test tests/quiz-flow.spec.js",
     "test:a11y": "playwright test tests/a11y",
+    "test:visual": "playwright test tests/visual --update-snapshots",
     "lhci": "lhci autorun",
     "lighthouse": "npm run lhci",
     "audit:full": "playwright test tests/audit/full-audit.spec.js",
