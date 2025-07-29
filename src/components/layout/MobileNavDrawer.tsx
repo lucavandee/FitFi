@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
-import { X } from 'lucide-react';
+import { X, Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, LogIn, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { NAV_ITEMS } from '../../constants/nav';
 import { useUser } from '../../context/UserContext';
@@ -48,12 +48,9 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
     };
   }, [open, onClose]);
 
-  const handleNavClick = async (href: string) => {
-    // Close drawer first
+  const handleNavClick = (href: string) => {
+    // Close drawer - ScrollToTop component handles the scrolling
     onClose();
-    
-    // Scroll to top with smooth behavior
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     // Track analytics
     if (typeof window.gtag === 'function') {
@@ -68,7 +65,6 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   const handleLogout = async () => {
     await logout();
     onClose();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const isActiveLink = (href: string) => {
@@ -82,7 +78,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   const getNavigationItems = () => {
     if (user) {
       return NAV_ITEMS.filter(item => item.href !== '/inloggen').concat([
-        { href: '/dashboard', label: 'Dashboard', icon: NAV_ITEMS.find(item => item.href === '/dashboard')?.icon || NAV_ITEMS[0].icon }
+        { href: '/dashboard', label: 'Dashboard', icon: User }
       ]);
     } else {
       return NAV_ITEMS.filter(item => !item.href.includes('/dashboard'));
@@ -165,20 +161,20 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute inset-y-0 right-0 w-[80vw] max-w-[320px] bg-white dark:bg-navy flex flex-col shadow-menu rounded-l-2xl"
+            className="fixed inset-y-0 right-0 z-50 w-[80vw] max-w-[320px] bg-white dark:bg-[#14172B] rounded-l-2xl shadow-menu flex flex-col"
           >
-            {/* Header with Brand Gradient */}
-            <header className="flex items-center justify-between p-6 bg-gradient-to-r from-brandPurple to-brandPink text-white rounded-tl-2xl">
+            {/* Header */}
+            <header className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
               <Dialog.Title 
                 id="mobile-menu-title"
-                className="text-xl font-bold"
+                className="text-xl font-bold text-brandPurple dark:text-white"
               >
                 Menu
               </Dialog.Title>
               <button
                 onClick={onClose}
                 aria-label="Sluit menu"
-                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brandPurple"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-brandPurple hover:bg-brandPurpleLight dark:text-white dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-offset-2"
               >
                 <X size={20} />
               </button>
@@ -202,37 +198,32 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
                     >
                       {/* Active Route Indicator */}
                       {isActive && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-brandPurple to-brandPink" />
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-brandPurple" />
                       )}
                       
                       <Link
                         to={href}
                         onClick={() => handleNavClick(href)}
-                        className={`flex items-center gap-4 px-6 py-4 min-h-[44px] text-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-inset ${
+                        className={`flex items-center gap-4 px-6 py-4 min-h-[44px] text-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-inset ${
                           isActive 
-                            ? 'bg-brandPurple/10 dark:bg-brandPink/10 text-brandPurple dark:text-brandPink font-semibold' 
-                            : 'text-navy dark:text-white hover:bg-brandPurple/5 dark:hover:bg-white/5 hover:text-brandPurple dark:hover:text-brandPink'
+                            ? 'bg-brandPurpleLight dark:bg-white/5 text-brandPurple dark:text-white font-semibold' 
+                            : 'text-navy dark:text-white hover:bg-brandPurpleLight dark:hover:bg-white/5'
                         }`}
                         role="menuitem"
                       >
                         <IconComponent 
-                          className={`h-5 w-5 transition-all duration-200 group-hover:scale-110 ${
+                          className={`h-5 w-5 transition-all duration-200 group-hover:scale-105 ${
                             isActive 
-                              ? 'text-brandPurple dark:text-brandPink' 
-                              : 'text-brandPurple group-hover:text-brandPink'
+                              ? 'text-brandPurple dark:text-white' 
+                              : 'text-brandPurple opacity-70 group-hover:opacity-100'
                           }`} 
                         />
                         <span className="flex-1">{label}</span>
-                        
-                        {/* Hover Indicator */}
-                        <span className={`h-2 w-2 rounded-full bg-gradient-to-r from-brandPurple to-brandPink transition-opacity duration-200 ${
-                          isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                        }`} />
                       </Link>
                       
                       {/* Divider */}
                       {index < navigationItems.length - 1 && (
-                        <div className="h-[1px] bg-black/5 dark:bg-white/10 mx-6" />
+                        <div className="border-b border-black/5 dark:border-white/10 mx-6" />
                       )}
                     </motion.li>
                   );
@@ -242,10 +233,10 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
 
             {/* Auth Section */}
             {user && (
-              <div className="px-6 pb-6 border-t border-slate-100 dark:border-white/10">
+              <div className="px-6 pb-6 border-t border-black/5 dark:border-white/10">
                 <div className="pt-4">
-                  <div className="flex items-center space-x-3 mb-4 p-3 rounded-xl bg-gradient-to-r from-brandPurple/5 to-brandPink/5">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-brandPurple to-brandPink flex items-center justify-center">
+                  <div className="flex items-center space-x-3 mb-4 p-3 rounded-xl bg-brandPurpleLight dark:bg-white/5">
+                    <div className="w-10 h-10 rounded-full bg-brandPurple flex items-center justify-center">
                       <span className="text-white font-medium text-sm">
                         {user.name?.charAt(0).toUpperCase() || 'U'}
                       </span>

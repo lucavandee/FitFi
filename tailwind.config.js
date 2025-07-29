@@ -9,6 +9,8 @@ export default {
       colors: {
         brandPurple: '#6E2EB7',
         brandPink: '#B043FF',
+        brandPurpleLight: '#ECE7FB',
+        brandPurpleLight: '#ECE7FB',
         navy: '#0A0E23',
         foundersGradientFrom: '#6E2EB7',
         foundersGradientTo: '#B043FF',
@@ -49,7 +51,7 @@ export default {
         'founders': '0 10px 40px rgba(0, 0, 0, 0.06)',
         'founders-dark': '0 10px 40px rgba(0, 0, 0, 0.3)',
         'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
-        'menu': '0 12px 40px rgba(0, 0, 0, 0.12)',
+        'menu': '0 10px 32px rgba(0, 0, 0, 0.08)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
