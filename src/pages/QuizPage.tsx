@@ -423,7 +423,6 @@ const QuizPage: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
