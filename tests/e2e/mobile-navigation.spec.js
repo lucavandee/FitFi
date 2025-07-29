@@ -9,6 +9,12 @@ test.describe('Mobile Navigation - Level 100', () => {
   test('mobile menu opens and closes correctly', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    
+    // Debug: Check if navigation items are loaded
+    const navItemsCount = await page.evaluate(() => {
+      return window.NAV_LINKS ? window.NAV_LINKS.length : 0;
+    });
+    console.log('Navigation items count:', navItemsCount);
 
     // Verify menu button is visible
     const menuButton = page.locator('button[aria-label="Open menu"]');
@@ -25,6 +31,8 @@ test.describe('Mobile Navigation - Level 100', () => {
     await expect(page.locator('text=Prijzen')).toBeVisible();
     await expect(page.locator('text=Waarom FitFi')).toBeVisible();
     await expect(page.locator('text=Blog')).toBeVisible();
+    await expect(page.locator('text=Hoe het werkt')).toBeVisible();
+    await expect(page.locator('text=Outfits')).toBeVisible();
     
     // Verify body scroll is locked
     const body = page.locator('body');

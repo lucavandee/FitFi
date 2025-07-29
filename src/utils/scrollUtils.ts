@@ -37,6 +37,21 @@ export function scrollToTop(): void {
 }
 
 /**
+ * Handle hash-based navigation with header offset
+ * @param href - URL with potential hash
+ */
+export function scrollToHash(href: string): void {
+  if (href.includes('#')) {
+    const hash = href.split('#')[1];
+    if (hash) {
+      setTimeout(() => {
+        scrollToSection(hash);
+      }, 100);
+    }
+  }
+}
+
+/**
  * Check if an element is in viewport
  * @param element - DOM element to check
  * @param threshold - Percentage of element that should be visible (0-1)
@@ -92,5 +107,6 @@ export default {
   isElementInViewport,
   addScrollMarginToSections,
   accessibleScrollTo,
+  scrollToHash,
   HEADER_HEIGHT
 };
