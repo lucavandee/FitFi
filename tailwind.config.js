@@ -8,6 +8,10 @@ export default {
     extend: {
       colors: {
        brandPurple: '#6E2EB7',
+        foundersGradientFrom: '#6E2EB7',
+        foundersGradientTo: '#B043FF',
+        foundersCardBg: '#FFFFFF',
+        foundersCardBgDark: '#1E1B2E',
         primary: {
           DEFAULT: '#0D1B2A',
           50: '#E8F4FD',
@@ -39,6 +43,11 @@ export default {
           light: '#F6F6F6'
         }
       },
+      boxShadow: {
+        'founders': '0 10px 40px rgba(0, 0, 0, 0.06)',
+        'founders-dark': '0 10px 40px rgba(0, 0, 0, 0.3)',
+        'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
+      },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif']
@@ -51,7 +60,9 @@ export default {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
-        'bounce-gentle': 'bounceGentle 2s infinite'
+        'bounce-gentle': 'bounceGentle 2s infinite',
+        'count-up': 'countUp 0.8s ease-out',
+        'progress-fill': 'progressFill 0.8s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -65,6 +76,14 @@ export default {
         bounceGentle: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' }
+        },
+        countUp: {
+          '0%': { transform: 'scale(0.8)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
+        },
+        progressFill: {
+          '0%': { strokeDashoffset: '283' },
+          '100%': { strokeDashoffset: 'var(--progress-offset)' }
         }
       }
     },
