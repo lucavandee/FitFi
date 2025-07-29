@@ -7,6 +7,10 @@ import { QuizAnswers, QuizProgress } from '../types/quiz';
 import { quizSteps } from '../data/quizSteps';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import { useABTesting } from '../hooks/useABTesting';
+import { useAchievements } from '../hooks/useAchievements';
+import AchievementNotification from '../components/quiz/AchievementNotification';
+import SocialShareModal from '../components/quiz/SocialShareModal';
 import StylePreview from '../components/quiz/StylePreview';
 import ProgressMotivation from '../components/quiz/ProgressMotivation';
 import CompletionCelebration from '../components/quiz/CompletionCelebration';
@@ -16,6 +20,13 @@ const QuizPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading: userLoading } = useUser();
   const { submitQuizAnswers, isQuizCompleted, isLoading: quizLoading } = useQuizAnswers();
+  const { checkAndAwardAchievements } = useAchievements();
+  
+  // A/B Testing for celebration animations
+  const { variant: celebrationVariant, trackConversion } = useABTesting({
+    testName: 'quiz_celebration',
+    variants: [{ name: 'control', weight: 50 }, { name: 'variant_a', weight: 50 }]
+  });
   
   const [progress, setProgress] = useState<QuizProgress>({
     currentStep: 1,
@@ -27,6 +38,10 @@ const QuizPage: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [startTime] = useState(Date.now());
+  const [newAchievements, setNewAchievements] = useState<any[]>([]);
+  const [showAchievement, setShowAchievement] = useState(false);
+  const [showSocialShare, setShowSocialShare] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
   // Scroll to top on step change
@@ -158,6 +173,19 @@ const QuizPage: React.FC = () => {
       const success = await submitQuizAnswers(progress.answers as QuizAnswers);
       
       if (success) {
+        // Calculate completion time for achievements
+        const completionTime = Date.now() - startTime;
+        
+        // Check for achievements
+        const earnedAchievements = await checkAndAwardAchievements(
+          progress.answers,
+          { completionTime, celebrationVariant }
+        );
+        
+        if (earnedAchievements.length > 0) {
+          setNewAchievements(earnedAchievements);
+        }
+        
         // Show celebration before redirect
         setShowCelebration(true);
         
@@ -169,6 +197,10 @@ const QuizPage: React.FC = () => {
             user_id: user.id
           });
         }
+        
+        // Track A/B test conversion
+        trackConversion({ completionTime, achievementsEarned: earnedAchievements.length });
+        
       } else {
         toast.error('Er ging iets mis bij het opslaan van je antwoorden. Probeer het opnieuw.');
         setIsSubmitting(false);
@@ -181,8 +213,45 @@ const QuizPage: React.FC = () => {
   };
   
   const handleCelebrationComplete = () => {
-    toast.success('Quiz voltooid! Je resultaten worden geladen...');
-    navigate('/results');
+    // Show achievements first if any
+    if (newAchievements.length > 0) {
+      setShowAchievement(true);
+    } else {
+      toast.success('Quiz voltooid! Je resultaten worden geladen...');
+      navigate('/results');
+    }
+  };
+
+  const handleAchievementClose = () => {
+    setShowAchievement(false);
+    
+    // Show next achievement or navigate to results
+    if (newAchievements.length > 1) {
+      // For now, just show the first one
+      toast.success('Quiz voltooid! Je resultaten worden geladen...');
+      navigate('/results');
+    } else {
+      toast.success('Quiz voltooid! Je resultaten worden geladen...');
+      navigate('/results');
+    }
+  };
+
+  const handleAchievementShare = () => {
+    setShowSocialShare(true);
+  };
+
+  const handleSocialShare = (platform: string) => {
+    // Track social sharing
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'social_share', {
+        event_category: 'engagement',
+        event_label: `achievement_${platform}`,
+        achievement_id: newAchievements[0]?.id
+      });
+    }
+    
+    setShowSocialShare(false);
+    handleAchievementClose();
   };
 
   const renderQuestionInput = () => {
@@ -347,7 +416,8 @@ const QuizPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] flex items-center justify-center">
         <div className="max-w-md mx-auto">
           <CompletionCelebration onComplete={handleCelebrationComplete} />
-        </div>
+            onComplete={handleCelebrationComplete}
+            variant={celebrationVariant}
       </div>
     );
   }
@@ -491,6 +561,33 @@ const QuizPage: React.FC = () => {
             Je antwoorden worden veilig opgeslagen en alleen gebruikt voor jouw persoonlijke stijladvies
           </p>
         </div>
+
+        {/* Achievement Notification */}
+        {showAchievement && newAchievements.length > 0 && (
+          <AchievementNotification
+            achievement={newAchievements[0]}
+            onClose={handleAchievementClose}
+            onShare={handleAchievementShare}
+          />
+        )}
+
+        {/* Social Share Modal */}
+        {showSocialShare && newAchievements.length > 0 && (
+          <SocialShareModal
+            shareData={{
+              achievement: newAchievements[0],
+              userProfile: {
+                name: user?.name || 'FitFi User',
+                styleType: 'Modern Minimalist', // Would be dynamic based on answers
+                matchPercentage: 87 // Would be calculated based on answers
+              },
+              shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
+              shareUrl: 'https://fitfi.app?ref=achievement'
+            }}
+            onClose={() => setShowSocialShare(false)}
+            onShare={handleSocialShare}
+          />
+        )}
       </div>
     </div>
   );
