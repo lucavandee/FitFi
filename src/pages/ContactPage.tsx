@@ -295,7 +295,7 @@ const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-medium text-[#0D1B2A] mb-1">E-mail</h4>
-                    <p className="text-gray-600">info@fitfi.nl</p>
+                    <p className="text-gray-600">info@fitfi.ai</p>
                     <p className="text-sm text-gray-500">Voor algemene vragen</p>
                   </div>
                 </div>
