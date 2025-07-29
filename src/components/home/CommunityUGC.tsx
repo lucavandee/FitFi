@@ -180,7 +180,7 @@ const CommunityUGC: React.FC<CommunityUGCProps> = ({ className = '' }) => {
               Laat zien hoe Nova jouw stijl heeft getransformeerd en inspireer anderen
             </p>
             <div className="text-sm text-gray-500">
-              Gebruik <span className="font-medium text-[#bfae9f]">#NovaKnows</span> en tag <span className="font-medium">@fitfi</span>
+              Gebruik <span className="font-medium text-[#bfae9f]">#NovaKnows</span> en tag <span className="font-medium">@xfitfi</span>
             </div>
           </div>
         </div>
