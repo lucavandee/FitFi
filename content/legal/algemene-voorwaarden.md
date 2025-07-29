@@ -163,12 +163,12 @@ FitFi mag rechten en verplichtingen uit deze overeenkomst overdragen. Gebruikers
 ## 14. Contact
 
 **FitFi B.V.**  
-Herengracht 123  
-1015 BG Amsterdam  
+Marktstraat 15D 
+7551DR Hengelo 
 Nederland
 
-**E-mail:** info@fitfi.nl  
-**Telefoon:** +31 20 123 4567  
+**E-mail:** info@fitfi.ai  
+**Telefoon:** +31 6 203 709 68
 **KvK-nummer:** 12345678  
 **BTW-nummer:** NL123456789B01
 
