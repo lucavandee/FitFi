@@ -139,7 +139,7 @@ Bij beëindiging vervallen alle rechten en worden accounts en data verwijderd co
 
 ### 12.1 Klachtenprocedure
 Klachten kunnen worden ingediend via:
-- E-mail: klachten@fitfi.nl
+- E-mail: info@fitfi.ai
 - Contactformulier op onze website
 - Schriftelijk naar ons adres
 
