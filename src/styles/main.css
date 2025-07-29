@@ -3,6 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CTA Button Global Styling */
+.cta-btn {
+  @apply inline-flex items-center justify-center px-6 py-4 font-semibold
+         rounded-2xl border-2 border-brandPurple
+         bg-white text-brandPurple hover:bg-purple-50
+         focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
+}
+
 /* Quiz animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

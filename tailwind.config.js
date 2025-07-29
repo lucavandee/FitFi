@@ -7,6 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
+       brandPurple: '#6E2EB7',
         primary: {
           DEFAULT: '#0D1B2A',
           50: '#E8F4FD',

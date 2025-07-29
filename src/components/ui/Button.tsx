@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
-    primary: 'bg-[var(--brand-gradient)] text-[var(--text-on-brand)] hover:bg-[var(--brand-blue-hover)] focus:ring-[var(--ring-brand)] shadow-sm hover:shadow-md',
+    primary: 'cta-btn',
     secondary: 'bg-[#0D1B2A] text-white hover:bg-[#0D1B2A]/90 focus:ring-[#0D1B2A] shadow-sm hover:shadow-md',
     outline: 'border-2 border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-[var(--text-on-brand)] focus:ring-[var(--ring-brand)] bg-white',
     ghost: 'text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10 focus:ring-[var(--ring-brand)] bg-transparent',
