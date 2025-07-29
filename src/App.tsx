@@ -40,6 +40,7 @@ import GenderSelectPage from './pages/GenderSelectPage';
 import ProductPage from './pages/ProductPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ThankYouPage from './pages/ThankYouPage';
+import OutfitsPage from './pages/OutfitsPage';
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -119,6 +120,11 @@ function App() {
                     <Route path="/dashboard" element={
                       <ProtectedRoute>
                         <DashboardPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/outfits" element={
+                      <ProtectedRoute>
+                        <OutfitsPage />
                       </ProtectedRoute>
                     } />
                     
