@@ -1,6 +1,6 @@
 {
   "name": "fitfi-site",
-  "version": "1.0.0",
+  "version": "1.5.2",
   "description": "AI-powered personal style recommendations platform",
   "type": "module",
   "scripts": {
@@ -78,8 +78,6 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2",
-    "vite-plugin-pwa": "^1.0.2",
-    "vitest": "^3.2.4",
-    "workbox-window": "^7.3.0"
+    "vitest": "^3.2.4"
   }
 }

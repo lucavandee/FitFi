@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.2] - 2025-01-28
+
+### Fixed
+- Fixed FOUC (Flash of Unstyled Content) by moving CSS preload to head
+- Removed problematic Service Worker causing runtime errors
+- Cleaned up workbox-window and vite-plugin-pwa dependencies
+- Improved initial page load performance and visual stability
+
+### Removed
+- Service Worker registration and related files
+
 ## [1.2.1] - 2025-01-28
 
 ### Fixed

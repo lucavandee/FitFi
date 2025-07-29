@@ -5,6 +5,10 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- CSS preload for FOUC prevention -->
+    <link rel="preload" href="/src/styles/main.css" as="style" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     
@@ -104,6 +108,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" crossorigin src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
