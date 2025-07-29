@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { inspect } from "vite-plugin-inspect";
+import Inspect from "vite-plugin-inspect";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
         jsxRuntime: "automatic",
         jsxImportSource: "react",
       }),
-      inspect(),
+      Inspect(),
     ],
     resolve: {
       alias: {
