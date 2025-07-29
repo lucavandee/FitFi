@@ -48,11 +48,11 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
             <div className="mb-12">
               <Button
                 onClick={handleCTAClick}
-                variant="secondary"
+                variant="primary"
                 size="lg"
                 icon={<ArrowRight size={24} />}
                 iconPosition="right"
-                className="bg-white text-[#bfae9f] hover:bg-gray-50 px-12 py-5 text-xl font-medium shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+                className="cta-btn px-12 py-5 text-xl font-medium shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
                 aria-label="Start je gratis AI Style Report nu"
               >
                 Ja, geef mij mijn gratis AI Style Report

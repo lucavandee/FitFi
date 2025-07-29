@@ -53,11 +53,11 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
             <div className="space-y-6">
               <Button
                 onClick={handleCTAClick}
-                variant="secondary"
+                variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
-                className="px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                className="cta-btn text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
               >
                 Ontvang jouw gratis AI Style Report
               </Button>

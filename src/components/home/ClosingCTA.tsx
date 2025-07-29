@@ -52,7 +52,7 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
                 size="lg"
                 icon={<ArrowRight size={24} />}
                 iconPosition="right"
-                className="px-12 py-5 text-xl font-medium shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+                className="cta-btn px-12 py-5 text-xl font-medium shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
               >
                 Vraag direct jouw gratis AI Style Report aan
               </Button>
