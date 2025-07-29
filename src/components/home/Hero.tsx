@@ -114,7 +114,6 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
         </div>
       </div>
     </section>
-  )
   );
 };
 
