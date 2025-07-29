@@ -5,10 +5,9 @@ export interface NavLink {
   href: string;
   external?: boolean;
   icon: React.ComponentType<{ size?: number; className?: string }>;
-  isSection?: boolean;
-  sectionId?: string;
 }
 
+// Complete navigation items array - NEVER filter in production
 export const NAV_LINKS: NavLink[] = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'Waarom FitFi', href: '/over-ons', icon: Info },
@@ -18,4 +17,8 @@ export const NAV_LINKS: NavLink[] = [
   { label: 'Blog', href: '/blog', icon: BookOpen }
 ];
 
+// Export as both named and default to prevent tree-shaking issues
 export default NAV_LINKS;
+
+// Debug helper for production verification
+export const getNavItemsCount = () => NAV_LINKS.length;
