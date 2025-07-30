@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Button from '../components/ui/Button';
@@ -6,6 +6,12 @@ import LoadingFallback from '../components/ui/LoadingFallback';
 
 const DashboardPage: React.FC = () => {
   const { user, isLoading, logout } = useUser();
+  
+  // Lazy load dashboard-specific Founders Block
+  const FoundersBlockDashboard = React.lazy(() => 
+    import('../components/founders/FoundersBlockDashboard')
+  );
+
 
   if (isLoading) {
     return <LoadingFallback fullScreen message="Dashboard laden..." />;
@@ -26,7 +32,7 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+    <div className="min-h-screen bg-[#FAF8F6] py-12 px-4">
       <div className="text-center max-w-md mx-auto p-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Dashboard</h1>
         <p className="text-gray-600 mb-4">Welkom, {user.name}!</p>
@@ -42,6 +48,13 @@ const DashboardPage: React.FC = () => {
             Uitloggen
           </Button>
         </div>
+      </div>
+      
+      {/* Founders Club Dashboard */}
+      <div className="mt-12">
+        <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
+          <FoundersBlockDashboard />
+        </Suspense>
       </div>
     </div>
   );
