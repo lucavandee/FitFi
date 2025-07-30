@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
+import { storageAvailable } from '../utils/storageUtils';
 import toast from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
@@ -17,11 +18,16 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   // Get redirect path from location state
   const from = location.state?.from?.pathname || '/dashboard';
 
+  // Show storage warning if needed
+  useEffect(() => {
+    if (!storageAvailable() && import.meta.env.DEV) {
+      console.warn('[Login] localStorage not available - using cookie fallback');
+    }
+  }, []);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -67,20 +73,8 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setErrors({});
 
-    // Set timeout fallback (8 seconds)
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-      setErrors({ general: 'Inloggen duurt te lang. Controleer je internetverbinding en probeer opnieuw.' });
-    }, 8000);
-    setTimeoutId(timeout);
     try {
       const result = await login(formData.email, formData.password);
-      
-      // Clear timeout on success/failure
-      if (timeoutId) {
-        clearTimeout(timeout);
-        setTimeoutId(null);
-      }
       
       if (result.success) {
         // Track successful login
@@ -92,17 +86,12 @@ const LoginPage: React.FC = () => {
         }
         navigate(result.redirectTo || from, { replace: true });
       } else {
-        setErrors({ general: 'E-mail of wachtwoord onjuist' });
+        // Error message is already shown via toast in UserContext
+        setErrors({ general: 'Inloggen mislukt. Controleer je gegevens.' });
       }
 
     } catch (error: any) {
       console.error('[LoginPage] Login error:', error);
-      
-      // Clear timeout on error
-      if (timeoutId) {
-        clearTimeout(timeout);
-        setTimeoutId(null);
-      }
       
       if (error.message?.includes('network') || error.message?.includes('fetch')) {
         setErrors({ general: 'Verbindingsfout. Controleer je internetverbinding.' });
@@ -114,14 +103,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [timeoutId]);
   return (
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
