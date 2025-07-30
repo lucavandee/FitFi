@@ -157,9 +157,8 @@ Word ook Founding Member via mijn link: ${referralUrl}
                     icon={<Instagram size={20} />}
                     iconPosition="left"
                     className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all duration-300 hover:scale-[1.02]"
-              >
-                <Sparkles className="w-8 h-8 text-white" />
-              </motion.div>
+                  >
+                    Instagram Story
                   </Button>
                   
                   <Button
