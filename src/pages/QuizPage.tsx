@@ -164,12 +164,6 @@ const QuizPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    // Extra guard: check if we have valid quiz data
-    if (!quizSteps || quizSteps.length === 0) {
-      toast.error('Quiz data niet beschikbaar. Probeer de pagina te vernieuwen.');
-      return;
-    }
-
     if (!validateCurrentStep()) {
       return;
     }
@@ -229,11 +223,11 @@ const QuizPage: React.FC = () => {
         
       } else {
         toast.error('Er ging iets mis bij het opslaan van je antwoorden. Probeer het opnieuw.');
-        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Quiz submission error:', error);
       toast.error('Er ging iets mis. Probeer het opnieuw.');
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -243,7 +237,6 @@ const QuizPage: React.FC = () => {
     if (newAchievements.length > 0) {
       setShowAchievement(true);
     } else {
-      toast.success('Quiz voltooid! Je resultaten worden geladen...');
       navigate('/results');
     }
   };
@@ -254,10 +247,8 @@ const QuizPage: React.FC = () => {
     // Show next achievement or navigate to results
     if (newAchievements.length > 1) {
       // For now, just show the first one
-      toast.success('Quiz voltooid! Je resultaten worden geladen...');
       navigate('/results');
     } else {
-      toast.success('Quiz voltooid! Je resultaten worden geladen...');
       navigate('/results');
     }
   };
