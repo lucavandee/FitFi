@@ -180,6 +180,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (name: string, email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
     try {
       setIsLoading(true);
+      console.log('[Auth] Attempting registration for:', email);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -190,24 +192,22 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
+      console.log('[Auth] Registration response:', { data: data?.user?.id, error: error?.message });
       if (error) {
-        console.error('[Auth] Login error:', error);
+        console.error('[Auth] Registration error:', error);
         
-        // Handle specific error types
-        if (error.message.includes('Invalid login credentials')) {
-          toast.error('E-mail of wachtwoord onjuist');
-        } else if (error.message.includes('Too many requests')) {
-          toast.error('Te veel inlogpogingen. Probeer het later opnieuw.');
-        } else if (error.message.includes('Email not confirmed')) {
-          toast.error('Bevestig eerst je e-mailadres');
+        if (error.message.includes('User already registered')) {
+          toast.error('Dit e-mailadres is al geregistreerd');
+        } else if (error.message.includes('Password should be')) {
+          toast.error('Wachtwoord moet minimaal 6 karakters bevatten');
         } else {
-          toast.error('Inloggen mislukt. Probeer het opnieuw.');
+          toast.error('Registratie mislukt. Probeer het opnieuw.');
         }
         return { success: false };
       }
 
       if (data.user) {
-        console.log('[Auth] Login successful for user:', data.user.id);
+        console.log('[Auth] Registration successful for user:', data.user.id);
         toast.success('Account succesvol aangemaakt!');
         
         // Process referral if exists
@@ -224,17 +224,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
             clearReferralCookie();
           } catch (error) {
-            console.error('Error processing referral:', error);
+            console.error('[Auth] Error processing referral:', error);
           }
         }
         
         return { success: true, redirectTo: `/onboarding?user=${data.user.id}` };
       }
 
-      console.warn('[Auth] Login succeeded but no user data received');
+      console.warn('[Auth] Registration succeeded but no user data received');
       return { success: false };
     } catch (error) {
-      console.error('[Auth] Login exception:', error);
+      console.error('[Auth] Registration exception:', error);
       toast.error('Verbindingsfout. Controleer je internetverbinding.');
       return { success: false };
     } finally {
@@ -247,19 +247,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(true);
       console.log('[Auth] Attempting logout...');
       
-      console.log('[Auth] Attempting registration for:', email);
-      
-        console.error('[Auth] Logout error:', error);
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.log('[Auth] Logout successful');
+        console.error('[Auth] Logout error:', error);
         toast.error(error.message);
       } else {
+        console.log('[Auth] Logout successful');
         toast.success('Uitgelogd');
         setUser(null);
-      console.error('[Auth] Logout exception:', error);
+      }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('[Auth] Logout exception:', error);
       toast.error('Er ging iets mis bij het uitloggen');
     } finally {
       setIsLoading(false);
@@ -278,32 +276,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('users')
         .update({
           name: updates.name,
-        console.log('[Auth] Registration successful for user:', data.user.id);
           email: updates.email,
           gender: updates.gender,
           is_premium: updates.isPremium
         })
         .eq('id', user.id);
-      console.log('[Auth] Registration response:', { data: data?.user?.id, error: error?.message });
 
       if (error) {
         console.error('Profile update error:', error);
         toast.error('Er ging iets mis bij het bijwerken van je profiel');
         // Revert local state on error
-        console.error('[Auth] Registration error:', error);
-        
-        if (error.message.includes('User already registered')) {
-          toast.error('Dit e-mailadres is al geregistreerd');
-        } else if (error.message.includes('Password should be')) {
-            console.error('[Auth] Error processing referral:', error);
-        } else {
-          toast.error('Registratie mislukt. Probeer het opnieuw.');
-        }
+        setUser(prev => prev ? { ...prev, ...user } : null);
         return;
       }
       
-      console.error('[Auth] Registration exception:', error);
-      toast.error('Verbindingsfout. Controleer je internetverbinding.');
+      toast.success('Profiel bijgewerkt');
     } catch (error) {
       console.error('Profile update error:', error);
       toast.error('Er ging iets mis bij het bijwerken van je profiel');
