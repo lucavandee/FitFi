@@ -110,6 +110,16 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 <div className="text-sm font-medium text-gray-900">Leider</div>
               </div>
             </div>
+            
+            {/* FAQ Link - Mobile only */}
+            <div className="md:hidden text-center">
+              <a 
+                href="/veelgestelde-vragen" 
+                className="text-sm text-[#bfae9f] hover:text-[#a89a8c] underline transition-colors"
+              >
+                Veelgestelde vragen
+              </a>
+            </div>
           </div>
         </div>
       </div>

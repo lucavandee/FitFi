@@ -4,29 +4,27 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Play, CheckCircle, Star, Users, Zap, Shield } from 'lucide-react';
 import Button from '../components/ui/Button';
-import Walkthrough from '../components/walkthrough/Walkthrough';
-import StyleArchetypeSlider from '../components/home/StyleArchetypeSlider';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import { HOME_SECTIONS, MOBILE_FLAGS } from '../constants/homeFlags';
 
 // Import new components directly (not lazy loaded for better LCP)
 import Hero from '../components/home/Hero';
-import Testimonials from '../components/home/Testimonials';
-import HowItWorks from '../components/home/HowItWorks';
+import KPIBadges from '../components/home/KPIBadges';
+import HorizontalFlow from '../components/home/HorizontalFlow';
+import ScrollIndicator from '../components/home/ScrollIndicator';
+import BackToTopFAB from '../components/home/BackToTopFAB';
 import Features from '../components/home/Features';
 import Footer from '../components/layout/Footer';
 
-// Lazy load heavy components for better performance
-const PreviewCarousel = React.lazy(() => 
-  import('../components/home/PreviewCarousel').catch(err => {
-    console.error('Failed to load PreviewCarousel:', err);
-    return { default: () => <div>Preview niet beschikbaar</div> };
-  })
-);
+// Lazy load components for better performance
+const Testimonials = React.lazy(() => import('../components/home/Testimonials'));
+const StyleArchetypeSlider = React.lazy(() => import('../components/home/StyleArchetypeSlider'));
+const PreviewCarousel = React.lazy(() => import('../components/home/PreviewCarousel'));
 
 const FoundersBlockTeaser = React.lazy(() => 
-  import('../components/founders/FoundersBlock').catch(err => {
-    console.error('Failed to load FoundersBlock:', err);
+  import('../components/founders/FoundersBlockTeaser').catch(err => {
+    console.error('Failed to load FoundersBlockTeaser:', err);
     return { default: () => <div>Founders Club niet beschikbaar</div> };
   })
 );
@@ -92,7 +90,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" data-page="homepage">
       <Helmet>
         <title>FitFi - Persoonlijke AI Stijladvies | Ontdek je perfecte look</title>
         <meta name="description" content="Ontdek je perfecte stijl met AI-powered aanbevelingen. Persoonlijke outfit suggesties gebaseerd op jouw voorkeuren en lichaamsbouw." />
@@ -102,54 +100,116 @@ const HomePage: React.FC = () => {
       </Helmet>
 
       {/* Hero Section - Critical above-the-fold content */}
-      <ErrorBoundary>
-        <Hero onCTAClick={handleCTAClick} />
-      </ErrorBoundary>
+      {HOME_SECTIONS.HERO && (
+        <ErrorBoundary>
+          <section data-section="hero">
+            <Hero onCTAClick={handleCTAClick} />
+            
+            {/* KPI Badges - Mobile only, below hero CTA */}
+            {MOBILE_FLAGS.SHOW_KPI_BADGES_IN_HERO && (
+              <div className="md:hidden -mt-8 pb-8">
+                <KPIBadges />
+              </div>
+            )}
+          </section>
+        </ErrorBoundary>
+      )}
 
-      {/* Social Proof - Important for conversion */}
-      <ErrorBoundary>
-        <Testimonials />
-      </ErrorBoundary>
+      {/* Scroll Indicator - Mobile only */}
+      <div className="md:hidden">
+        <ScrollIndicator />
+      </div>
 
-      {/* How It Works - Core value proposition */}
-      <ErrorBoundary>
-        <HowItWorks />
-      </ErrorBoundary>
+      {/* How It Works - Horizontal Flow on Mobile */}
+      {HOME_SECTIONS.HOW_IT_WORKS && (
+        <ErrorBoundary>
+          <HorizontalFlow />
+        </ErrorBoundary>
+      )}
+
+      {/* Social Proof - Lazy loaded */}
+      {HOME_SECTIONS.SOCIAL_PROOF && (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback message="Testimonials laden..." />}>
+            <section data-section="testimonials">
+              <Testimonials />
+            </section>
+          </Suspense>
+        </ErrorBoundary>
+      )}
 
       {/* Features - Product details */}
-      <ErrorBoundary>
-        <Features />
-      </ErrorBoundary>
+      {HOME_SECTIONS.FEATURES && (
+        <ErrorBoundary>
+          <section data-section="features">
+            <Features />
+          </section>
+        </ErrorBoundary>
+      )}
 
       {/* Preview Carousel - Lazy loaded for performance */}
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
-          <PreviewCarousel />
-        </Suspense>
-      </ErrorBoundary>
+      {HOME_SECTIONS.PREVIEW_CAROUSEL && (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
+            <section data-section="preview">
+              <PreviewCarousel />
+            </section>
+          </Suspense>
+        </ErrorBoundary>
+      )}
 
       {/* Style Archetypes - Keep existing component */}
-      <ErrorBoundary>
-        <StyleArchetypeSlider />
-      </ErrorBoundary>
+      {HOME_SECTIONS.STYLE_ARCHETYPES && (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback message="Stijlen laden..." />}>
+            <section data-section="archetypes" className="hidden md:block">
+              <StyleArchetypeSlider />
+            </section>
+          </Suspense>
+        </ErrorBoundary>
+      )}
 
       {/* Founders Club - Lazy loaded */}
-      <ErrorBoundary>
-        <Suspense fallback={null}>
-          <FoundersBlockTeaser />
-        </Suspense>
-      </ErrorBoundary>
+      {HOME_SECTIONS.FOUNDERS_CLUB && (
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            <section data-section="founders" className="hidden md:block">
+              <FoundersBlockTeaser />
+            </section>
+          </Suspense>
+        </ErrorBoundary>
+      )}
+
+      {/* UGC Gallery - Hidden on mobile */}
+      {HOME_SECTIONS.UGC_GALLERY && (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback message="Verhalen laden..." />}>
+            <section data-section="ugc" className="hidden md:block">
+              <UGCGallery />
+            </section>
+          </Suspense>
+        </ErrorBoundary>
+      )}
 
       {/* Closing CTA - Lazy loaded */}
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
-          <ClosingCTA onCTAClick={handleCTAClick} />
-        </Suspense>
-      </ErrorBoundary>
+      {HOME_SECTIONS.CLOSING_CTA && (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
+            <section data-section="closingCta">
+              <ClosingCTA onCTAClick={handleCTAClick} />
+            </section>
+          </Suspense>
+        </ErrorBoundary>
+      )}
+
+      {/* Back to Top FAB */}
+      {MOBILE_FLAGS.SHOW_BACK_TO_TOP_FAB && <BackToTopFAB />}
 
       {/* Footer */}
       <ErrorBoundary>
-        <Footer />
+        <section data-section="footer">
+          <Footer />
+        </section>
       </ErrorBoundary>
     </div>
   );
