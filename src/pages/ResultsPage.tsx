@@ -302,7 +302,7 @@ function getStyleTags(answers: any): string[] {
     bohemian: 'Vrij',
     streetwear: 'Urban',
     romantic: 'Romantisch',
-    handleQuizRestart();
+    edgy: 'Gedurfd'
   };
 
   const handleQuizRestart = async () => {
