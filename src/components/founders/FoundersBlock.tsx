@@ -59,28 +59,42 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
     if (!user?.id) return;
 
     try {
-      // Get user's referral code
+      // Get user's referral code from profiles table
       const { data: referralData, error: referralError } = await supabase
-        .from('referrals')
-        .select('code')
-        .eq('user_id', user.id)
-        .single();
+        .from('profiles')
+        .select('referral_code')
+        .eq('id', user.id)
+        .maybeSingle();
 
       if (referralError) {
         console.error('Error loading referral code:', referralError);
         return;
       }
 
-      if (referralData) {
-        setReferralCode(referralData.code);
+      if (referralData?.referral_code) {
+        setReferralCode(referralData.referral_code);
+      } else {
+        // Generate new referral code if none exists
+        const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ referral_code: newCode })
+          .eq('id', user.id);
+
+        if (updateError) {
+          console.error('Error creating referral code:', updateError);
+          return;
+        }
+
+        setReferralCode(newCode);
       }
 
       // Get referral count
-      const { count, error: countError } = await supabase
-        .from('referrals')
+      const { count, error: countError } = await supabase  
+        .from('profiles')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .not('referred_user_id', 'is', null);
+        .eq('referred_by', user.id);
 
       if (countError) {
         console.error('Error loading referral count:', countError);
