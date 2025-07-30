@@ -154,48 +154,6 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
     return <Wifi className="w-3 h-3 text-green-500" />;
   };
 
-  // Smart prefetching on hover
-  const handleHoverStart = async () => {
-    if (!user?.id || isPrefetching || prefetchedData) return;
-
-    setIsPrefetching(true);
-    try {
-      // Prefetch dashboard data
-      const [referralData, leaderboardData] = await Promise.all([
-        supabase
-          .from('referrals')
-          .select('code')
-          .eq('user_id', user.id)
-          .single(),
-        supabase
-          .rpc('get_referral_leaderboard')
-      ]);
-
-      setPrefetchedData({
-        referralCode: referralData.data?.code,
-        leaderboard: leaderboardData.data || []
-      });
-
-      // Store in sessionStorage for dashboard
-      sessionStorage.setItem('fitfi-prefetched-founders', JSON.stringify({
-        data: prefetchedData,
-        timestamp: Date.now()
-      }));
-    } catch (error) {
-      console.warn('Prefetch failed:', error);
-    } finally {
-      setIsPrefetching(false);
-    }
-  };
-
-  // Adaptive loading indicator
-  const getLoadingIndicator = () => {
-    if (connectionSpeed === 'slow') {
-      return <WifiOff className="w-3 h-3 text-gray-400 animate-pulse" />;
-    }
-    return <Wifi className="w-3 h-3 text-green-500" />;
-  };
-
   // Progressive enhancement: show count if available
   const renderProgressiveContent = () => {
     if (!user) {
