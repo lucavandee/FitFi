@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -24,10 +24,24 @@ const PreviewCarousel = React.lazy(() =>
   })
 );
 
-const FoundersBlock = React.lazy(() => 
+const FoundersBlockTeaser = React.lazy(() => 
   import('../components/founders/FoundersBlock').catch(err => {
     console.error('Failed to load FoundersBlock:', err);
     return { default: () => <div>Founders Club niet beschikbaar</div> };
+  })
+);
+
+const UGCGallery = React.lazy(() => 
+  import('../components/founders/FoundersBlockTeaser').catch(err => {
+    console.error('Failed to load FoundersBlockTeaser:', err);
+    return { default: () => null };
+  })
+);
+
+const UGCGallery = React.lazy(() => 
+  import('../components/home/UGCGallery').catch(err => {
+    console.error('Failed to load UGCGallery:', err);
+    return { default: () => <div>Gebruikersverhalen niet beschikbaar</div> };
   })
 );
 
@@ -128,8 +142,8 @@ const HomePage: React.FC = () => {
 
       {/* Founders Club - Lazy loaded */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
-          <FoundersBlock />
+        <Suspense fallback={null}>
+          <FoundersBlockTeaser />
         </Suspense>
       </ErrorBoundary>
 
