@@ -113,16 +113,23 @@ const FoundersBlockDashboard: React.FC = () => {
       setReferralCode(code);
 
       // Get referral count
-      const { count, error: countError } = await supabase
+      const { data: referredUsers, error: countError } = await supabase
         .from('profiles')
-        .select('*', { count: 'exact', head: true })
+        .select('id')
         .eq('referred_by', user.id);
 
       if (countError) {
         throw countError;
       }
 
-      setReferralCount(count || 0);
+      const count = referredUsers?.length || 0;
+      setReferralCount(count);
+      
+      // Update referral_count in profile
+      await supabase
+        .from('profiles')
+        .update({ referral_count: count })
+        .eq('id', user.id);
       
       // Broadcast update to peers
       realtimeCollaboration.broadcastUpdate({
