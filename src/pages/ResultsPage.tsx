@@ -18,10 +18,10 @@ const ResultsPage: React.FC = () => {
 
   // Redirect to quiz if not completed
   useEffect(() => {
-    if (!quizLoading && !isQuizCompleted()) {
+    if (!quizLoading && !userLoading && !isQuizCompleted()) {
       navigate('/quiz', { replace: true });
     }
-  }, [quizLoading, isQuizCompleted, navigate]);
+  }, [quizLoading, userLoading, isQuizCompleted, navigate]);
 
   useEffect(() => {
     // Simulate AI analysis completion

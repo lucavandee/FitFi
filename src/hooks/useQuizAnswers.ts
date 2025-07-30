@@ -54,6 +54,7 @@ export function useQuizAnswers() {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
+        setError(null);
         return true;
       }
       
