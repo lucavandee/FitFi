@@ -9,7 +9,7 @@ export const getQuizAnswer = async (userId: string, qId: string) => {
       .select('*', { head: false })
       .eq('user_id', userId)
       .eq('question_id', qId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('[🔴 Supabase]', status, error.message);
