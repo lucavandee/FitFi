@@ -255,7 +255,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('[Auth] Logout successful');
         toast.success('Uitgelogd');
         setUser(null);
-      }
     } catch (error) {
       console.error('[Auth] Logout exception:', error);
       toast.error('Er ging iets mis bij het uitloggen');
