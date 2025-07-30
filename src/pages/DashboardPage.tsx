@@ -1,22 +1,21 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import DashboardHeader from '../components/dashboard/DashboardHeader';
+import FoundersCard from '../components/dashboard/FoundersCard';
+import QuickActions from '../components/dashboard/QuickActions';
 import toast from 'react-hot-toast';
 
-const DashboardPage: React.FC = () => {
+const DashboardContent: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading, logout } = useUser();
   const { resetQuiz, isResetting } = useQuizAnswers();
-  
-  // Lazy load dashboard-specific Founders Block
-  const FoundersBlockDashboard = React.lazy(() => 
-    import('../components/founders/FoundersBlockDashboard')
-  );
-
+  const { data, isLoading: dashboardLoading, error } = useDashboard();
 
   if (isLoading) {
     return <LoadingFallback fullScreen message="Dashboard laden..." />;
@@ -24,8 +23,8 @@ const DashboardPage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-        <div className="bg-white p-6 rounded-2xl shadow-lg text-center max-w-md">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-3xl shadow-card text-center max-w-md">
           <h2 className="text-2xl font-bold mb-4">Inloggen vereist</h2>
           <p className="mb-6">Je moet ingelogd zijn om het dashboard te gebruiken.</p>
           <Button as={Link} to="/inloggen" variant="primary">
@@ -50,48 +49,74 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#FAF8F6] py-12 px-4">
-      <div className="text-center max-w-md mx-auto p-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Dashboard</h1>
-        <p className="text-gray-600 mb-4">Welkom, {user.name}!</p>
-        <p className="text-gray-600 mb-6">Coming soon - Hier komt je persoonlijke dashboard</p>
-        <div className="space-y-4">
-          <Button as={Link} to="/results" variant="primary" fullWidth>
-            Bekijk Resultaten
-          </Button>
-          <Button 
-            onClick={handleQuizRestart}
-            variant="outline" 
-            fullWidth
-            disabled={isResetting}
-            aria-busy={isResetting}
-          >
-            {isResetting ? (
-              <div className="flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></div>
-                Quiz resetten...
+  if (dashboardLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Skeleton Header */}
+          <div className="bg-white rounded-3xl shadow-card p-6 mb-6 animate-pulse">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+              <div className="space-y-2">
+                <div className="h-6 bg-gray-200 rounded w-48"></div>
+                <div className="h-4 bg-gray-200 rounded w-32"></div>
               </div>
-            ) : (
-              'Quiz opnieuw doen'
-            )}
-          </Button>
-          <Button as={Link} to="/" variant="outline" fullWidth>
-            Terug naar Home
-          </Button>
-          <Button onClick={logout} variant="ghost" fullWidth>
-            Uitloggen
-          </Button>
+            </div>
+          </div>
+          
+          {/* Skeleton Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-3xl shadow-card p-6 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+              <div className="h-32 bg-gray-200 rounded-2xl"></div>
+            </div>
+            <div className="bg-white rounded-3xl shadow-card p-6 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
+              <div className="space-y-3">
+                <div className="h-12 bg-gray-200 rounded-xl"></div>
+                <div className="h-12 bg-gray-200 rounded-xl"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      
-      {/* Founders Club Dashboard */}
-      <div className="mt-12">
-        <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
-          <FoundersBlockDashboard />
-        </Suspense>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Dashboard Header */}
+        {data?.profile && (
+          <DashboardHeader profile={data.profile} />
+        )}
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Founders Club Card */}
+          {data?.referrals && (
+            <FoundersCard 
+              referrals={data.referrals}
+              shareLink={data.shareLink}
+            />
+          )}
+
+          {/* Quick Actions */}
+          <QuickActions 
+            onRestartQuiz={handleQuizRestart}
+            isResetting={isResetting}
+          />
+        </div>
       </div>
     </div>
+  );
+};
+
+const DashboardPage: React.FC = () => {
+  return (
+    <DashboardProvider>
+      <DashboardContent />
+    </DashboardProvider>
   );
 };
 
