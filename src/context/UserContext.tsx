@@ -29,6 +29,36 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+// Helper function to ensure user profile exists in database
+const ensureUserProfileExists = async (user: any): Promise<void> => {
+  try {
+    // Try to fetch existing profile
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    // If profile doesn't exist, create it
+    if (!data) {
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          full_name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+          referral_code: Math.random().toString(36).substring(2, 8).toUpperCase(),
+          referral_count: 0
+        });
+
+      if (insertError) {
+        console.error('Error creating profile:', insertError);
+      }
+    }
+  } catch (error) {
+    console.error('Error ensuring profile exists:', error);
+  }
+};
+
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +70,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
+          // Ensure profile exists in database
+          await ensureUserProfileExists(session.user);
+          
           // Create user profile from session - no extra fetch needed
           const userProfile: UserProfile = {
             id: session.user.id,
@@ -71,6 +104,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+          // Ensure profile exists in database
+          await ensureUserProfileExists(session.user);
+          
           const userProfile: UserProfile = {
             id: session.user.id,
             name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
