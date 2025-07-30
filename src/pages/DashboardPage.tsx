@@ -1,11 +1,16 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import toast from 'react-hot-toast';
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, isLoading, logout } = useUser();
+  const { resetQuiz, isResetting } = useQuizAnswers();
   
   // Lazy load dashboard-specific Founders Block
   const FoundersBlockDashboard = React.lazy(() => 
@@ -31,6 +36,20 @@ const DashboardPage: React.FC = () => {
     );
   }
 
+  const handleQuizRestart = async () => {
+    try {
+      const success = await resetQuiz();
+      
+      if (success) {
+        toast.success('Quiz opnieuw gestart!');
+        navigate('/quiz', { replace: true });
+      }
+    } catch (error) {
+      console.error('Quiz restart error:', error);
+      toast.error('Kan quiz niet resetten. Probeer opnieuw.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F6] py-12 px-4">
       <div className="text-center max-w-md mx-auto p-8">
@@ -40,6 +59,22 @@ const DashboardPage: React.FC = () => {
         <div className="space-y-4">
           <Button as={Link} to="/results" variant="primary" fullWidth>
             Bekijk Resultaten
+          </Button>
+          <Button 
+            onClick={handleQuizRestart}
+            variant="outline" 
+            fullWidth
+            disabled={isResetting}
+            aria-busy={isResetting}
+          >
+            {isResetting ? (
+              <div className="flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                Quiz resetten...
+              </div>
+            ) : (
+              'Quiz opnieuw doen'
+            )}
           </Button>
           <Button as={Link} to="/" variant="outline" fullWidth>
             Terug naar Home

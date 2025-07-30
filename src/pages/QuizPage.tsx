@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading: userLoading } = useUser();
-  const { submitQuizAnswers, isQuizCompleted, isLoading: quizLoading } = useQuizAnswers();
+  const { submitQuizAnswers, isQuizCompleted, isLoading: quizLoading, resetQuiz } = useQuizAnswers();
   const { checkAndAwardAchievements } = useAchievements();
   
   // A/B Testing for celebration animations
@@ -51,8 +51,14 @@ const QuizPage: React.FC = () => {
 
   // Redirect if already completed
   useEffect(() => {
-    if (!quizLoading && isQuizCompleted()) {
-      navigate('/results');
+    if (!quizLoading) {
+      // Check if quiz is completed and user hasn't explicitly restarted
+      if (isQuizCompleted() && !sessionStorage.getItem('quiz-restarted')) {
+        navigate('/results');
+      }
+      
+      // Clear restart flag if it exists
+      sessionStorage.removeItem('quiz-restarted');
     }
   }, [quizLoading, isQuizCompleted, navigate]);
 

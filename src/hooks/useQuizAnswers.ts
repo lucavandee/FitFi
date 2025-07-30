@@ -9,6 +9,7 @@ export function useQuizAnswers() {
   const [quizData, setQuizData] = useState<QuizSubmission | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     if (!user?.id) {
@@ -64,6 +65,42 @@ export function useQuizAnswers() {
     }
   };
 
+  const resetQuiz = async (): Promise<boolean> => {
+    if (!user?.id) {
+      setError('User not authenticated');
+      return false;
+    }
+
+    setIsResetting(true);
+    setError(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('reset-quiz', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+
+      if (error) {
+        console.error('Quiz reset error:', error);
+        setError('Kan quiz niet resetten. Probeer opnieuw.');
+        return false;
+      }
+
+      // Clear local state
+      setQuizData(null);
+      setError(null);
+      
+      return true;
+    } catch (err) {
+      console.error('Quiz reset error:', err);
+      setError('Er ging iets mis bij het resetten van de quiz.');
+      return false;
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   const isQuizCompleted = (): boolean => {
     return !!(quizData?.completed_at);
   };
@@ -71,8 +108,10 @@ export function useQuizAnswers() {
   return {
     quizData,
     isLoading,
+    isResetting,
     error,
     submitQuizAnswers,
+    resetQuiz,
     isQuizCompleted,
     refetch: fetchQuizAnswers
   };

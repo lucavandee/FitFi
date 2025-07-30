@@ -8,7 +8,7 @@ import LoadingFallback from '../components/ui/LoadingFallback';
 
 const ResultsPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
-  const { quizData, isLoading: quizLoading, isQuizCompleted } = useQuizAnswers();
+  const { quizData, isLoading: quizLoading, isQuizCompleted, resetQuiz, isResetting } = useQuizAnswers();
   const location = useLocation();
   const navigate = useNavigate();
   const [analysisComplete, setAnalysisComplete] = useState(false);
@@ -234,13 +234,21 @@ const ResultsPage: React.FC = () => {
               Bekijk Outfits
             </Button>
             <Button 
-              as={Link}
-              to="/onboarding" 
+              onClick={handleQuizRestart}
               variant="outline"
               size="lg"
               className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
+              disabled={isResetting}
+              aria-busy={isResetting}
             >
-              Quiz Opnieuw Doen
+              {isResetting ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-[#bfae9f] border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Quiz resetten...
+                </div>
+              ) : (
+                'Quiz Opnieuw Doen'
+              )}
             </Button>
           </div>
         </div>
@@ -294,7 +302,23 @@ function getStyleTags(answers: any): string[] {
     bohemian: 'Vrij',
     streetwear: 'Urban',
     romantic: 'Romantisch',
-    edgy: 'Gedurfd'
+    handleQuizRestart();
+  };
+
+  const handleQuizRestart = async () => {
+    try {
+      const success = await resetQuiz();
+      
+      if (success) {
+        // Set flag to prevent redirect back to results
+        sessionStorage.setItem('quiz-restarted', 'true');
+        toast.success('Quiz opnieuw gestart!');
+        navigate('/quiz', { replace: true });
+      }
+    } catch (error) {
+      console.error('Quiz restart error:', error);
+      toast.error('Kan quiz niet resetten. Probeer opnieuw.');
+    }
   };
   
   const tags = answers.stylePreferences.map((pref: string) => tagMap[pref] || pref);
