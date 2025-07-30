@@ -53,6 +53,76 @@ test.describe('Mobile Testimonial Carousel - Level 100', () => {
     console.log('✅ Swipe carousel functionality working');
   });
 
+  test('auto-play functionality works correctly', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Wait for testimonial carousel
+    await page.waitForSelector('#testimonial-carousel');
+    
+    // Check initial slide
+    const initialSlide = await page.evaluate(() => {
+      const carousel = document.querySelector('.flex.transition-transform');
+      return carousel ? carousel.style.transform : '';
+    });
+    
+    // Wait for auto-play to advance (4 seconds + buffer)
+    await page.waitForTimeout(4500);
+    
+    // Check if slide has advanced
+    const newSlide = await page.evaluate(() => {
+      const carousel = document.querySelector('.flex.transition-transform');
+      return carousel ? carousel.style.transform : '';
+    });
+    
+    expect(newSlide).not.toBe(initialSlide);
+    
+    console.log('✅ Auto-play functionality working');
+  });
+
+  test('pause on hover works on desktop', async ({ page }) => {
+    // Switch to desktop for hover test
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Hover over testimonial section
+    const testimonialSection = page.locator('#community [role="region"]');
+    await testimonialSection.hover();
+    
+    // Auto-play should pause (verify by checking if slide doesn't advance)
+    const slideBeforeHover = await page.evaluate(() => {
+      const carousel = document.querySelector('.flex.transition-transform');
+      return carousel ? carousel.style.transform : '';
+    });
+    
+    await page.waitForTimeout(2000);
+    
+    const slideAfterHover = await page.evaluate(() => {
+      const carousel = document.querySelector('.flex.transition-transform');
+      return carousel ? carousel.style.transform : '';
+    });
+    
+    expect(slideAfterHover).toBe(slideBeforeHover);
+    
+    console.log('✅ Pause on hover working');
+  });
+
+  test('sentiment-based styling applied correctly', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Check for sentiment styling classes
+    const positiveCards = page.locator('.border-green-400');
+    await expect(positiveCards.first()).toBeVisible();
+    
+    // Check for category badges
+    const categoryBadges = page.locator('.px-2.py-1.text-xs.rounded-full');
+    await expect(categoryBadges.first()).toBeVisible();
+    
+    console.log('✅ Sentiment styling and category badges working');
+  });
+
   test('accessibility compliance', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');

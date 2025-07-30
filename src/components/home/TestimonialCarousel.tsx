@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Star, CheckCircle } from 'lucide-react';
+import { Star, CheckCircle, Play, Pause } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { TESTIMONIALS, Testimonial } from '../../data/testimonials';
+import { TESTIMONIALS, Testimonial, fetchLiveTestimonials } from '../../data/testimonials';
 import ImageWithFallback from '../ui/ImageWithFallback';
 
 interface TestimonialCarouselProps {
   className?: string;
+  autoPlay?: boolean;
+  autoPlayInterval?: number;
 }
 
-const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '' }) => {
+const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ 
+  className = '',
+  autoPlay = true,
+  autoPlayInterval = 4000
+}) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS);
+  const [isPlaying, setIsPlaying] = useState(autoPlay);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Check if mobile
   useEffect(() => {
@@ -23,6 +32,50 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Load live testimonials
+  useEffect(() => {
+    const loadLiveTestimonials = async () => {
+      try {
+        const liveData = await fetchLiveTestimonials();
+        if (liveData.length > 0) {
+          setTestimonials(liveData);
+        }
+      } catch (error) {
+        console.warn('Using static testimonials');
+      }
+    };
+
+    loadLiveTestimonials();
+  }, []);
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isPlaying || isPaused || !isVisible) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+    }, autoPlayInterval);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, isPaused, isVisible, testimonials.length, autoPlayInterval]);
+
+  // Pause on hover (desktop only)
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      setIsPaused(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setIsPaused(false);
+    }
+  };
+
+  const toggleAutoPlay = () => {
+    setIsPlaying(!isPlaying);
+  };
 
   // Intersection observer for fade-in animation
   useEffect(() => {
@@ -52,7 +105,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   const goToSlide = (index: number) => {
@@ -71,10 +124,37 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
     ));
   };
 
+  // Sentiment-based styling
+  const getSentimentStyling = (sentiment?: string) => {
+    switch (sentiment) {
+      case 'positive':
+        return 'border-l-4 border-green-400 bg-gradient-to-r from-green-50/50 to-transparent';
+      case 'neutral':
+        return 'border-l-4 border-blue-400 bg-gradient-to-r from-blue-50/50 to-transparent';
+      case 'negative':
+        return 'border-l-4 border-orange-400 bg-gradient-to-r from-orange-50/50 to-transparent';
+      default:
+        return 'border-l-4 border-gray-300';
+    }
+  };
+
+  // Category badge
+  const getCategoryBadge = (category?: string) => {
+    const badges = {
+      style: { label: 'Stijl', color: 'bg-purple-100 text-purple-700' },
+      service: { label: 'Service', color: 'bg-blue-100 text-blue-700' },
+      results: { label: 'Resultaten', color: 'bg-green-100 text-green-700' },
+      experience: { label: 'Ervaring', color: 'bg-orange-100 text-orange-700' }
+    };
+    return badges[category as keyof typeof badges];
+  };
+
   const renderTestimonialCard = (testimonial: Testimonial, index: number) => (
     <div
       key={testimonial.id}
-      className="bg-white dark:bg-[#1E1B2E] rounded-3xl shadow-lg p-6 flex flex-col gap-4 h-full transition-colors duration-300"
+      className={`bg-white dark:bg-[#1E1B2E] rounded-3xl shadow-lg p-6 flex flex-col gap-4 h-full transition-all duration-300 ${getSentimentStyling(testimonial.sentiment)}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center gap-3">
         <div className="relative">
@@ -94,6 +174,11 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
         <div className="flex-1">
           <h4 className="font-semibold text-[#6E2EB7] dark:text-[#B043FF]">
             {testimonial.name}
+            {testimonial.category && (
+              <span className={`ml-2 px-2 py-1 text-xs rounded-full ${getCategoryBadge(testimonial.category)?.color}`}>
+                {getCategoryBadge(testimonial.category)?.label}
+              </span>
+            )}
           </h4>
           <div className="flex items-center gap-2">
             <div className="flex">
@@ -110,6 +195,9 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
       <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed italic">
         "{testimonial.text}"
       </blockquote>
+      <div className="text-xs text-gray-400 text-right">
+        {new Date().toLocaleDateString('nl-NL')}
+      </div>
     </div>
   );
 
@@ -117,6 +205,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
   if (isMobile) {
     return (
       <motion.div
+        id="testimonial-carousel"
         className={`relative ${className}`}
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -124,6 +213,24 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
         role="region"
         aria-label="Klantbeoordelingen"
       >
+        {/* Auto-play Controls */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="text-sm text-gray-500">
+            {testimonials.length} beoordelingen
+          </div>
+          <button
+            onClick={toggleAutoPlay}
+            className="flex items-center space-x-2 text-sm text-[#6E2EB7] hover:text-[#5A2596] transition-colors"
+            aria-label={isPlaying ? 'Pauzeer auto-play' : 'Start auto-play'}
+          >
+            {isPlaying ? (
+              <><Pause size={14} /> <span>Pauzeer</span></>
+            ) : (
+              <><Play size={14} /> <span>Afspelen</span></>
+            )}
+          </button>
+        </div>
+
         {/* Screen reader instructions */}
         <div className="sr-only">
           Veeg om meer reviews te zien
@@ -135,14 +242,14 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
             className="flex transition-transform duration-300 ease-out"
             style={{ 
               transform: `translateX(-${currentSlide * 85}%)`,
-              width: `${TESTIMONIALS.length * 85}%`
+              width: `${testimonials.length * 85}%`
             }}
           >
-            {TESTIMONIALS.map((testimonial, index) => (
+            {testimonials.map((testimonial, index) => (
               <div
                 key={testimonial.id}
                 className="flex-none w-[80%] px-2"
-                style={{ width: `${80 / TESTIMONIALS.length}%` }}
+                style={{ width: `${80 / testimonials.length}%` }}
                 aria-hidden={index !== currentSlide}
               >
                 {renderTestimonialCard(testimonial, index)}
@@ -153,7 +260,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
 
         {/* Navigation Dots */}
         <div className="flex justify-center space-x-2 mt-6">
-          {TESTIMONIALS.map((_, index) => (
+          {testimonials.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
@@ -185,6 +292,8 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
   // Desktop Grid (unchanged)
   return (
     <motion.div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}
       initial={{ opacity: 0, y: 20 }}
       animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -192,7 +301,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ className = '
       role="region"
       aria-label="Klantbeoordelingen"
     >
-      {TESTIMONIALS.slice(0, 6).map((testimonial, index) => (
+      {testimonials.slice(0, 6).map((testimonial, index) => (
         <motion.div
           key={testimonial.id}
           initial={{ opacity: 0, y: 20 }}

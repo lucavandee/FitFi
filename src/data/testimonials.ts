@@ -6,6 +6,8 @@ export interface Testimonial {
   rating: number;
   location?: string;
   verified?: boolean;
+  sentiment?: 'positive' | 'neutral' | 'negative';
+  category?: 'style' | 'service' | 'results' | 'experience';
 }
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -16,7 +18,9 @@ export const TESTIMONIALS: Testimonial[] = [
     text: 'Alsof deze AI recht door mij heen keek, superwaardevol!',
     rating: 5,
     location: 'Amsterdam',
-    verified: true
+    verified: true,
+    sentiment: 'positive',
+    category: 'results'
   },
   {
     id: 2,
@@ -25,7 +29,9 @@ export const TESTIMONIALS: Testimonial[] = [
     text: 'Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter.',
     rating: 5,
     location: 'Utrecht',
-    verified: true
+    verified: true,
+    sentiment: 'positive',
+    category: 'style'
   },
   {
     id: 3,
@@ -34,7 +40,9 @@ export const TESTIMONIALS: Testimonial[] = [
     text: 'Nova begrijpt precies wie ik ben. Geweldig!',
     rating: 5,
     location: 'Rotterdam',
-    verified: true
+    verified: true,
+    sentiment: 'positive',
+    category: 'experience'
   },
   {
     id: 4,
@@ -43,7 +51,9 @@ export const TESTIMONIALS: Testimonial[] = [
     text: 'Voor het eerst weet ik écht wat bij mij past!',
     rating: 5,
     location: 'Den Haag',
-    verified: true
+    verified: true,
+    sentiment: 'positive',
+    category: 'style'
   },
   {
     id: 5,
@@ -52,8 +62,22 @@ export const TESTIMONIALS: Testimonial[] = [
     text: 'De inzichten zijn zo accuraat, ik ben onder de indruk!',
     rating: 5,
     location: 'Eindhoven',
-    verified: true
+    verified: true,
+    sentiment: 'positive',
+    category: 'results'
   }
 ];
+
+// API endpoint voor real-time testimonials
+export const fetchLiveTestimonials = async (): Promise<Testimonial[]> => {
+  try {
+    const response = await fetch('/api/testimonials/live');
+    if (!response.ok) throw new Error('Failed to fetch');
+    return await response.json();
+  } catch (error) {
+    console.warn('Live testimonials unavailable, using static data');
+    return TESTIMONIALS;
+  }
+};
 
 export default TESTIMONIALS;
