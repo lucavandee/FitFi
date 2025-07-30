@@ -34,6 +34,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profileTimeout, setProfileTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Check for existing session on mount with storage fallback support
@@ -87,73 +88,130 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Helper function to create user profile from session
   const createUserProfileFromSession = async (session: any) => {
+    const timeoutId = setTimeout(() => {
+      console.warn('[Auth] Profile loading timeout - proceeding with fallback');
+      setUser({
+        id: session.user.id,
+        name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+        email: session.user.email || '',
+        stylePreferences: {
+          casual: 3,
+          formal: 3,
+          sporty: 3,
+          vintage: 3,
+          minimalist: 3
+        },
+        isPremium: false,
+        savedRecommendations: []
+      });
+      setIsLoading(false);
+    }, 8000); // 8 second timeout
+    
+    setProfileTimeout(timeoutId);
+
     try {
       console.log('[Auth] Creating user profile from session...');
-      // Try to get existing profile from Supabase
-      const { data: existingProfile, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
-
-      let userProfile: UserProfile;
-
-      if (existingProfile && !error) {
-        console.log('[Auth] Found existing user profile');
-        // Use existing profile from database
-        userProfile = {
-          id: existingProfile.id,
-          name: existingProfile.name,
-          email: existingProfile.email,
-          gender: existingProfile.gender,
-          stylePreferences: {
-            casual: 3,
-            formal: 3,
-            sporty: 3,
-            vintage: 3,
-            minimalist: 3
-          },
-          isPremium: existingProfile.is_premium || false,
-          savedRecommendations: []
-        };
-      } else {
-        console.log('[Auth] Creating new user profile');
-        // Create new profile from session metadata
-        userProfile = {
-          id: session.user.id,
-          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
-          email: session.user.email || '',
-          stylePreferences: {
-            casual: 3,
-            formal: 3,
-            sporty: 3,
-            vintage: 3,
-            minimalist: 3
-          },
-          isPremium: false,
-          savedRecommendations: []
-        };
-
-        // Insert new user into database
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert([{
-            id: userProfile.id,
-            name: userProfile.name,
-            email: userProfile.email,
-            gender: userProfile.gender,
-            is_premium: userProfile.isPremium
-          }]);
-
-        if (insertError) {
-          console.error('[Auth] Error creating user profile:', insertError);
-        }
-      }
+      
+      // Load profile with fail-safe auto-creation
+      const profile = await loadProfileWithAutoCreate(session.user.id);
+      
+      const userProfile: UserProfile = {
+        id: session.user.id,
+        name: profile?.full_name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+        email: session.user.email || '',
+        gender: profile?.gender,
+        stylePreferences: {
+          casual: 3,
+          formal: 3,
+          sporty: 3,
+          vintage: 3,
+          minimalist: 3
+        },
+        isPremium: profile?.is_premium || false,
+        savedRecommendations: []
+      };
 
       setUser(userProfile);
       console.log('[Auth] User profile set successfully:', userProfile.id);
+      
     } catch (error) {
       console.error('[Auth] Error creating user profile from session:', error);
+      
+      // Sentry breadcrumb
+      if (typeof window.Sentry !== 'undefined') {
+        window.Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'Profile fetch error',
+          level: 'error',
+          data: { 
+            error_code: error?.code || 'unknown',
+            user_id: session.user.id 
+          }
+        });
+      }
+      
+      // Fallback profile to prevent blocking
+      setUser({
+        id: session.user.id,
+        name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+        email: session.user.email || '',
+        stylePreferences: {
+          casual: 3,
+          formal: 3,
+          sporty: 3,
+          vintage: 3,
+          minimalist: 3
+        },
+        isPremium: false,
+        savedRecommendations: []
+      });
+    } finally {
+      if (profileTimeout) {
+        clearTimeout(profileTimeout);
+        setProfileTimeout(null);
+      }
+      setIsLoading(false);
+    }
+  };
+
+  // Fail-safe profile loading with auto-creation
+  const loadProfileWithAutoCreate = async (userId: string) => {
+    try {
+      const { data, error, status } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error && status === 406) {
+        // Profile doesn't exist - try to create it
+        console.log('[Auth] Profile not found, creating new profile');
+        
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({ 
+            id: userId,
+            full_name: null // Will be updated later
+          });
+
+        if (insertError) {
+          console.error('[Auth] Error creating profile:', insertError);
+          return {}; // Return empty profile to allow app to continue
+        }
+        
+        return {}; // Return empty profile after creation
+      }
+
+      if (error) {
+        console.error('[Auth] Profile fetch error:', error);
+        return {}; // Return empty profile to allow app to continue
+      }
+
+      return data;
+      
+    } catch (error) {
+      console.error('[Auth] Profile loading exception:', error);
+      return {}; // Return empty profile to allow app to continue
     }
   };
 
