@@ -160,15 +160,6 @@ Word ook Founding Member via mijn link: ${referralUrl}
               >
                 <Sparkles className="w-8 h-8 text-white" />
               </motion.div>
-              
-              <h2 className="font-display text-2xl font-bold text-gray-900 dark:text-neutral-100 mb-2">
-                Deel je Founders Club link
-              </h2>
-              
-              <p className="text-gray-600 dark:text-neutral-300">
-                Help vrienden hun perfecte stijl te ontdekken
-              </p>
-                    Deel op Instagram
                   </Button>
                   
                   <Button
