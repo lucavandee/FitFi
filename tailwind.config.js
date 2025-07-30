@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         brandPurple: '#6E2EB7',
+        brandPurple: '#6E2EB7',
         brandPink: '#B043FF',
         brandPurpleLight: '#ECE7FB',
         navy: '#0A0E23',
@@ -15,6 +16,8 @@ export default {
         foundersGradientTo: '#B043FF',
         foundersCardBg: '#FFFFFF',
         foundersCardBgDark: '#1E1B2E',
+        brandGradientFrom: '#6E2EB7',
+        brandGradientTo: '#B043FF',
         primary: {
           DEFAULT: '#0D1B2A',
           50: '#E8F4FD',
@@ -48,6 +51,7 @@ export default {
       },
       boxShadow: {
         'founders': '0 10px 40px rgba(0, 0, 0, 0.06)',
+        'card': '0 8px 30px rgba(0, 0, 0, 0.06)',
         'founders-dark': '0 10px 40px rgba(0, 0, 0, 0.3)',
         'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
         'menu': '0 10px 32px rgba(0, 0, 0, 0.08)',
