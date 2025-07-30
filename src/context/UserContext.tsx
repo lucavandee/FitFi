@@ -39,13 +39,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check for existing session on mount
     const checkSession = async () => {
       try {
+        console.log('[Auth] Checking existing session...');
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
+          console.log('[Auth] Found existing session:', session.user.id);
           await createUserProfileFromSession(session);
+        } else {
+          console.log('[Auth] No existing session found');
         }
       } catch (error) {
-        console.error('Session check error:', error);
+        console.error('[Auth] Session check error:', error);
       } finally {
         setIsLoading(false);
       }
@@ -56,7 +60,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.id);
+        console.log('[Auth] State change:', event, session?.user?.id);
         
         if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
           await createUserProfileFromSession(session);
@@ -73,6 +77,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Helper function to create user profile from session
   const createUserProfileFromSession = async (session: any) => {
     try {
+      console.log('[Auth] Creating user profile from session...');
       // Try to get existing profile from Supabase
       const { data: existingProfile, error } = await supabase
         .from('users')
@@ -83,6 +88,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let userProfile: UserProfile;
 
       if (existingProfile && !error) {
+        console.log('[Auth] Found existing user profile');
         // Use existing profile from database
         userProfile = {
           id: existingProfile.id,
@@ -100,6 +106,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           savedRecommendations: []
         };
       } else {
+        console.log('[Auth] Creating new user profile');
         // Create new profile from session metadata
         userProfile = {
           id: session.user.id,
@@ -128,24 +135,28 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }]);
 
         if (insertError) {
-          console.error('Error creating user profile:', insertError);
+          console.error('[Auth] Error creating user profile:', insertError);
         }
       }
 
       setUser(userProfile);
+      console.log('[Auth] User profile set successfully:', userProfile.id);
     } catch (error) {
-      console.error('Error creating user profile from session:', error);
+      console.error('[Auth] Error creating user profile from session:', error);
     }
   };
 
   const login = async (email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
     try {
       setIsLoading(true);
+      console.log('[Auth] Attempting login for:', email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
+      console.log('[Auth] Login response:', { data: data?.user?.id, error: error?.message });
       if (error) {
         toast.error(error.message);
         return { success: false };
@@ -180,11 +191,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
-        toast.error(error.message);
+        console.error('[Auth] Login error:', error);
+        
+        // Handle specific error types
+        if (error.message.includes('Invalid login credentials')) {
+          toast.error('E-mail of wachtwoord onjuist');
+        } else if (error.message.includes('Too many requests')) {
+          toast.error('Te veel inlogpogingen. Probeer het later opnieuw.');
+        } else if (error.message.includes('Email not confirmed')) {
+          toast.error('Bevestig eerst je e-mailadres');
+        } else {
+          toast.error('Inloggen mislukt. Probeer het opnieuw.');
+        }
         return { success: false };
       }
 
       if (data.user) {
+        console.log('[Auth] Login successful for user:', data.user.id);
         toast.success('Account succesvol aangemaakt!');
         
         // Process referral if exists
@@ -208,10 +231,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: true, redirectTo: `/onboarding?user=${data.user.id}` };
       }
 
+      console.warn('[Auth] Login succeeded but no user data received');
       return { success: false };
     } catch (error) {
-      console.error('Registration error:', error);
-      toast.error('Er ging iets mis bij het registreren');
+      console.error('[Auth] Login exception:', error);
+      toast.error('Verbindingsfout. Controleer je internetverbinding.');
       return { success: false };
     } finally {
       setIsLoading(false);
@@ -221,13 +245,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setIsLoading(true);
+      console.log('[Auth] Attempting logout...');
+      
+      console.log('[Auth] Attempting registration for:', email);
+      
+        console.error('[Auth] Logout error:', error);
       const { error } = await supabase.auth.signOut();
       if (error) {
+        console.log('[Auth] Logout successful');
         toast.error(error.message);
       } else {
         toast.success('Uitgelogd');
         setUser(null);
-      }
+      console.error('[Auth] Logout exception:', error);
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Er ging iets mis bij het uitloggen');
@@ -248,21 +278,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('users')
         .update({
           name: updates.name,
+        console.log('[Auth] Registration successful for user:', data.user.id);
           email: updates.email,
           gender: updates.gender,
           is_premium: updates.isPremium
         })
         .eq('id', user.id);
+      console.log('[Auth] Registration response:', { data: data?.user?.id, error: error?.message });
 
       if (error) {
         console.error('Profile update error:', error);
         toast.error('Er ging iets mis bij het bijwerken van je profiel');
         // Revert local state on error
-        setUser(prev => prev ? { ...prev, ...user } : null);
+        console.error('[Auth] Registration error:', error);
+        
+        if (error.message.includes('User already registered')) {
+          toast.error('Dit e-mailadres is al geregistreerd');
+        } else if (error.message.includes('Password should be')) {
+            console.error('[Auth] Error processing referral:', error);
+        } else {
+          toast.error('Registratie mislukt. Probeer het opnieuw.');
+        }
         return;
       }
       
-      toast.success('Profiel bijgewerkt');
+      console.error('[Auth] Registration exception:', error);
+      toast.error('Verbindingsfout. Controleer je internetverbinding.');
     } catch (error) {
       console.error('Profile update error:', error);
       toast.error('Er ging iets mis bij het bijwerken van je profiel');

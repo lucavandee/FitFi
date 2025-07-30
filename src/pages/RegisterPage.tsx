@@ -100,12 +100,17 @@ const RegisterPage: React.FC = () => {
         // Redirect to onboarding
         navigate(result.redirectTo || '/onboarding', { replace: true });
       } else {
-        setErrors({ general: 'Er ging iets mis bij het aanmaken van je account.' });
+        setErrors({ general: 'Registratie mislukt. Controleer je gegevens en probeer opnieuw.' });
       }
 
     } catch (error: any) {
-      console.error('Registration error:', error);
-      setErrors({ general: 'Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.' });
+      console.error('[RegisterPage] Registration error:', error);
+      
+      if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        setErrors({ general: 'Verbindingsfout. Controleer je internetverbinding.' });
+      } else {
+        setErrors({ general: 'Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.' });
+      }
     } finally {
       setIsLoading(false);
     }
