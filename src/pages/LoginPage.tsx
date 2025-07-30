@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
-import { storageAvailable } from '../utils/storageUtils';
 import toast from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
@@ -22,12 +21,6 @@ const LoginPage: React.FC = () => {
   // Get redirect path from location state
   const from = location.state?.from?.pathname || '/dashboard';
 
-  // Show storage warning if needed
-  useEffect(() => {
-    if (!storageAvailable() && import.meta.env.DEV) {
-      console.warn('[Login] localStorage not available - using cookie fallback');
-    }
-  }, []);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -77,37 +70,14 @@ const LoginPage: React.FC = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        // Track successful login
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'login', {
-            event_category: 'authentication',
-            event_label: 'email_login'
-          });
-        }
-        
-        // Verify session was properly stored
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          // Session storage failed - likely private browsing
-          setErrors({ general: 'Sessie opslaan mislukt. Probeer de standaard browser of schakel privé-modus uit.' });
-          return;
-        }
-        
+        // Navigate immediately - no extra checks needed
         navigate(result.redirectTo || from, { replace: true });
       } else {
-        // Error message is already shown via toast in UserContext
         setErrors({ general: 'Inloggen mislukt. Controleer je gegevens.' });
       }
-
     } catch (error: any) {
-      console.error('[LoginPage] Login error:', error);
-      
-      if (error.message?.includes('network') || error.message?.includes('fetch')) {
-        setErrors({ general: 'Verbindingsfout. Controleer je internetverbinding.' });
-      } else {
-        setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
-      }
+      console.error('Login error:', error);
+      setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
     } finally {
       setIsLoading(false);
     }
@@ -168,8 +138,6 @@ const LoginPage: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    aria-describedby={errors.email ? "email-error" : undefined}
-                    aria-invalid={errors.email ? "true" : "false"}
                     className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
                     }`}
@@ -177,7 +145,7 @@ const LoginPage: React.FC = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p id="email-error" className="mt-1 text-sm text-red-600" role="alert">
+                  <p className="mt-1 text-sm text-red-600" role="alert">
                     {errors.email}
                   </p>
                 )}
@@ -200,8 +168,6 @@ const LoginPage: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    aria-describedby={errors.password ? "password-error" : undefined}
-                    aria-invalid={errors.password ? "true" : "false"}
                     className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
                       errors.password ? 'border-red-300' : 'border-gray-300'
                     }`}
@@ -221,7 +187,7 @@ const LoginPage: React.FC = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <p id="password-error" className="mt-1 text-sm text-red-600" role="alert">
+                  <p className="mt-1 text-sm text-red-600" role="alert">
                     {errors.password}
                   </p>
                 )}
@@ -247,10 +213,9 @@ const LoginPage: React.FC = () => {
                 icon={isLoading ? undefined : <ArrowRight size={20} />}
                 iconPosition="right"
                 className="cta-btn"
-                aria-describedby={isLoading ? "loading-status" : undefined}
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center" id="loading-status" aria-live="polite">
+                  <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     Inloggen...
                   </div>
