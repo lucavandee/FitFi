@@ -17,6 +17,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   // Get redirect path from location state
   const from = location.state?.from?.pathname || '/dashboard';
@@ -66,8 +67,20 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setErrors({});
 
+    // Set timeout fallback (8 seconds)
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+      setErrors({ general: 'Inloggen duurt te lang. Controleer je internetverbinding en probeer opnieuw.' });
+    }, 8000);
+    setTimeoutId(timeout);
     try {
       const result = await login(formData.email, formData.password);
+      
+      // Clear timeout on success/failure
+      if (timeoutId) {
+        clearTimeout(timeout);
+        setTimeoutId(null);
+      }
       
       if (result.success) {
         // Track successful login
@@ -79,17 +92,36 @@ const LoginPage: React.FC = () => {
         }
         navigate(result.redirectTo || from, { replace: true });
       } else {
-        setErrors({ general: 'Ongeldige inloggegevens' });
+        setErrors({ general: 'E-mail of wachtwoord onjuist' });
       }
 
     } catch (error: any) {
-      console.error('Login error:', error);
-      setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
+      console.error('[LoginPage] Login error:', error);
+      
+      // Clear timeout on error
+      if (timeoutId) {
+        clearTimeout(timeout);
+        setTimeoutId(null);
+      }
+      
+      if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        setErrors({ general: 'Verbindingsfout. Controleer je internetverbinding.' });
+      } else {
+        setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
   return (
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -118,7 +150,11 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
-                <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3">
+                <div 
+                  className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3"
+                  role="alert"
+                  aria-live="assertive"
+                >
                   <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
                   <p className="text-red-700 text-sm">{errors.general}</p>
                 </div>
@@ -141,6 +177,8 @@ const LoginPage: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
+                    aria-describedby={errors.email ? "email-error" : undefined}
+                    aria-invalid={errors.email ? "true" : "false"}
                     className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
                     }`}
@@ -148,7 +186,9 @@ const LoginPage: React.FC = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  <p id="email-error" className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
@@ -169,6 +209,8 @@ const LoginPage: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
+                    aria-describedby={errors.password ? "password-error" : undefined}
+                    aria-invalid={errors.password ? "true" : "false"}
                     className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
                       errors.password ? 'border-red-300' : 'border-gray-300'
                     }`}
@@ -178,6 +220,7 @@ const LoginPage: React.FC = () => {
                     type="button"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5 text-gray-400" />
@@ -187,7 +230,9 @@ const LoginPage: React.FC = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                  <p id="password-error" className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.password}
+                  </p>
                 )}
               </div>
 
@@ -211,9 +256,10 @@ const LoginPage: React.FC = () => {
                 icon={isLoading ? undefined : <ArrowRight size={20} />}
                 iconPosition="right"
                 className="cta-btn"
+                aria-describedby={isLoading ? "loading-status" : undefined}
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center" id="loading-status" aria-live="polite">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     Inloggen...
                   </div>
