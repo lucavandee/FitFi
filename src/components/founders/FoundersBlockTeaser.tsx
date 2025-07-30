@@ -43,18 +43,6 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
       return unsubscribe;
     }
   }, [user?.id]);
-  const [connectionSpeed, setConnectionSpeed] = useState<'slow' | 'fast'>('fast');
-  const [isPrefetching, setIsPrefetching] = useState(false);
-  const [prefetchedData, setPrefetchedData] = useState<any>(null);
-
-  // Detect connection speed
-  useEffect(() => {
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-    if (connection) {
-      const speed = connection.effectiveType === '4g' || connection.downlink > 2 ? 'fast' : 'slow';
-      setConnectionSpeed(speed);
-    }
-  }, []);
 
   // Load real-time referral count (progressive enhancement)
   useEffect(() => {
@@ -80,9 +68,6 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
     };
 
     // Only load if fast connection or user explicitly wants it
-    if (connectionSpeed === 'fast') {
-      loadReferralCount();
-    }
     if (connectionSpeed === 'fast') {
       loadReferralCount();
     }
