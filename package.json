@@ -48,6 +48,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.6",
     "@sentry/react": "^9.39.0",
+    "@supabase/auth-helpers-shared": "^0.7.0",
     "@supabase/supabase-js": "^2.53.0",
     "cheerio": "^1.1.0",
     "dotenv": "^16.6.1",

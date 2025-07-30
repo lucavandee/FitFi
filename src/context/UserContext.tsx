@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 import { getReferralCookie, clearReferralCookie } from '../utils/referralUtils';
+import { storageAvailable } from '../utils/storageUtils';
 
 export interface UserProfile {
   id: string;
@@ -36,10 +36,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount
+    // Check for existing session on mount with storage fallback support
     const checkSession = async () => {
       try {
         console.log('[Auth] Checking existing session...');
+        
+        // Log storage availability for debugging
+        if (import.meta.env.DEV) {
+          console.log('[Auth] Storage available:', storageAvailable());
+        }
+        
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
@@ -50,6 +56,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error) {
         console.error('[Auth] Session check error:', error);
+        
+        // Show storage warning if needed
+        if (!storageAvailable() && import.meta.env.DEV) {
+          console.warn('[Auth] localStorage not available - using cookie fallback');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -163,6 +174,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
+        // Verify session was properly stored
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          // Session storage failed - likely private browsing
+          toast.error('Sessie opslaan mislukt. Probeer de standaard browser of schakel privé-modus uit.');
+          return { success: false };
+        }
+        
         toast.success('Welkom terug!');
         return { success: true, redirectTo: '/dashboard' };
       }
@@ -208,6 +228,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         console.log('[Auth] Registration successful for user:', data.user.id);
+        
+        // Verify session was properly stored
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          // Session storage failed - likely private browsing
+          toast.error('Account aangemaakt maar sessie opslaan mislukt. Log in via de standaard browser.');
+          return { success: false };
+        }
+        
         toast.success('Account succesvol aangemaakt!');
         
         // Process referral if exists
