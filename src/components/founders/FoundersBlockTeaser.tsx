@@ -4,6 +4,8 @@ import { Rocket, Crown, Users, ArrowRight, Wifi, WifiOff } from 'lucide-react';
 import Button from '../ui/Button';
 import { useUser } from '../../context/UserContext';
 import { supabase } from '../../lib/supabase';
+import { predictivePrefetcher } from '../../services/PredictivePrefetcher';
+import { realtimeCollaboration } from '../../services/RealtimeCollaboration';
 
 interface FoundersBlockTeaserProps {
   className?: string;
@@ -13,6 +15,34 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
   const { user } = useUser();
   const [referralCount, setReferralCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [connectionSpeed, setConnectionSpeed] = useState<'slow' | 'fast'>('fast');
+  const [isPrefetching, setIsPrefetching] = useState(false);
+  const [prefetchedData, setPrefetchedData] = useState<any>(null);
+
+  // Detect connection speed
+  useEffect(() => {
+    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    if (connection) {
+      const speed = connection.effectiveType === '4g' || connection.downlink > 2 ? 'fast' : 'slow';
+      setConnectionSpeed(speed);
+    }
+  }, []);
+
+  // Initialize real-time collaboration
+  useEffect(() => {
+    if (user?.id) {
+      realtimeCollaboration.setUserId(user.id);
+      
+      // Subscribe to real-time referral updates
+      const unsubscribe = realtimeCollaboration.onUpdate((update) => {
+        if (update.userId === user.id) {
+          setReferralCount(update.referralCount);
+        }
+      });
+
+      return unsubscribe;
+    }
+  }, [user?.id]);
   const [connectionSpeed, setConnectionSpeed] = useState<'slow' | 'fast'>('fast');
   const [isPrefetching, setIsPrefetching] = useState(false);
   const [prefetchedData, setPrefetchedData] = useState<any>(null);
@@ -53,7 +83,91 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
     if (connectionSpeed === 'fast') {
       loadReferralCount();
     }
+    if (connectionSpeed === 'fast') {
+      loadReferralCount();
+    }
   }, [user?.id, connectionSpeed]);
+
+  // Register predictive prefetch
+  useEffect(() => {
+    if (user?.id) {
+      predictivePrefetcher.registerPrefetch('founders-dashboard', async () => {
+        setIsPrefetching(true);
+        try {
+          // Prefetch dashboard data
+          const [referralData, leaderboardData] = await Promise.all([
+            supabase
+              .from('referrals')
+              .select('code')
+              .eq('user_id', user.id)
+              .single(),
+            supabase
+              .rpc('get_referral_leaderboard')
+          ]);
+
+          const prefetchData = {
+            referralCode: referralData.data?.code,
+            leaderboard: leaderboardData.data || []
+          };
+
+          setPrefetchedData(prefetchData);
+
+          // Store in sessionStorage for dashboard
+          sessionStorage.setItem('fitfi-prefetched-founders', JSON.stringify({
+            data: prefetchData,
+            timestamp: Date.now()
+          }));
+
+        } catch (error) {
+          console.warn('Prefetch failed:', error);
+        } finally {
+          setIsPrefetching(false);
+        }
+      });
+    }
+  }, [user?.id]);
+
+  // Smart prefetching on hover
+  const handleHoverStart = async () => {
+    if (!user?.id || isPrefetching || prefetchedData) return;
+
+    setIsPrefetching(true);
+    try {
+      // Prefetch dashboard data
+      const [referralData, leaderboardData] = await Promise.all([
+        supabase
+          .from('referrals')
+          .select('code')
+          .eq('user_id', user.id)
+          .single(),
+        supabase
+          .rpc('get_referral_leaderboard')
+      ]);
+
+      setPrefetchedData({
+        referralCode: referralData.data?.code,
+        leaderboard: leaderboardData.data || []
+      });
+
+      // Store in sessionStorage for dashboard
+      sessionStorage.setItem('fitfi-prefetched-founders', JSON.stringify({
+        data: prefetchedData,
+        timestamp: Date.now()
+      }));
+    } catch (error) {
+      console.warn('Prefetch failed:', error);
+    } finally {
+      setIsPrefetching(false);
+    }
+  };
+
+  // Adaptive loading indicator
+  const getLoadingIndicator = () => {
+    if (connectionSpeed === 'slow') {
+      return <WifiOff className="w-3 h-3 text-gray-400 animate-pulse" />;
+    }
+    return <Wifi className="w-3 h-3 text-green-500" />;
+  };
 
   // Smart prefetching on hover
   const handleHoverStart = async () => {
@@ -154,11 +268,16 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
       <div 
         className="bg-white shadow-md rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 transition-all duration-300 hover:shadow-lg"
         onMouseEnter={handleHoverStart}
+        onMouseEnter={handleHoverStart}
       >
         {/* Icon */}
         <div className="flex-shrink-0">
           <div className="w-16 h-16 bg-gradient-to-br from-brandPurple to-purple-600 rounded-full flex items-center justify-center shadow-lg relative">
             <Rocket className="w-8 h-8 text-white" />
+            {/* Connection indicator */}
+            <div className="absolute -top-1 -right-1">
+              {getLoadingIndicator()}
+            </div>
             {/* Connection indicator */}
             <div className="absolute -top-1 -right-1">
               {getLoadingIndicator()}
@@ -188,6 +307,12 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
               <Users className="w-3 h-3 text-brandPurple" />
               <span>Community events</span>
             </div>
+            {isPrefetching && (
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 border border-brandPurple border-t-transparent rounded-full animate-spin"></div>
+                <span>Prefetching...</span>
+              </div>
+            )}
             {isPrefetching && (
               <div className="flex items-center space-x-1">
                 <div className="w-3 h-3 border border-brandPurple border-t-transparent rounded-full animate-spin"></div>

@@ -72,6 +72,7 @@
     "@types/node": "^20.19.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
+    "@types/webrtc": "^0.0.46",
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.18",
