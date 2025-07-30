@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { CookieStorage } from '@supabase/auth-helpers-shared';
 import { storageAvailable } from '../utils/storageUtils';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -18,19 +17,11 @@ const getStorageConfig = () => {
       detectSessionInUrl: true
     };
   } else {
-    // Cookie fallback for private browsing mode
+    // Simple fallback for private browsing mode - use default storage
     return {
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
-      storage: new CookieStorage({
-        cookieOptions: {
-          maxAge: 60 * 60 * 24 * 7, // 7 days
-          sameSite: 'lax',
-          secure: window.location.protocol === 'https:',
-          path: '/'
-        }
-      })
+      detectSessionInUrl: true
     };
   }
 };
