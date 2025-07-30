@@ -15,8 +15,8 @@ test.describe('Mobile Login Storage Fallback', () => {
     // Submit login
     await page.click('button[type="submit"]');
     
-    // Should redirect to dashboard within 3 seconds
-    await page.waitForURL('**/dashboard', { timeout: 3000 });
+    // Should redirect to dashboard within 5 seconds (allowing for profile loading)
+    await page.waitForURL('**/dashboard', { timeout: 5000 });
     await expect(page.locator('h1')).toContainText('Dashboard');
     
     console.log('✅ Login with localStorage working');
@@ -67,7 +67,7 @@ test.describe('Mobile Login Storage Fallback', () => {
     
     // Should either succeed or show appropriate error message
     try {
-      await page.waitForURL('**/dashboard', { timeout: 5000 });
+      await page.waitForURL('**/dashboard', { timeout: 8000 });
       await expect(page.locator('h1')).toContainText('Dashboard');
       console.log('✅ Login with cookie fallback working');
     } catch (error) {

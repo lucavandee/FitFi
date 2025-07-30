@@ -84,6 +84,16 @@ const LoginPage: React.FC = () => {
             event_label: 'email_login'
           });
         }
+        
+        // Verify session was properly stored
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          // Session storage failed - likely private browsing
+          setErrors({ general: 'Sessie opslaan mislukt. Probeer de standaard browser of schakel privé-modus uit.' });
+          return;
+        }
+        
         navigate(result.redirectTo || from, { replace: true });
       } else {
         // Error message is already shown via toast in UserContext
