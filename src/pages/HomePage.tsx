@@ -32,13 +32,6 @@ const FoundersBlockTeaser = React.lazy(() =>
 );
 
 const UGCGallery = React.lazy(() => 
-  import('../components/founders/FoundersBlockTeaser').catch(err => {
-    console.error('Failed to load FoundersBlockTeaser:', err);
-    return { default: () => null };
-  })
-);
-
-const UGCGallery = React.lazy(() => 
   import('../components/home/UGCGallery').catch(err => {
     console.error('Failed to load UGCGallery:', err);
     return { default: () => <div>Gebruikersverhalen niet beschikbaar</div> };
