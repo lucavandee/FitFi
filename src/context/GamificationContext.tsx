@@ -9,48 +9,65 @@ import {
   getDailyChallengesData,
 } from "../services/DataRouter";
 import toast from "react-hot-toast";
+import { trackEvent } from "../utils/analytics";
 
 interface GamificationState {
   points: number;
   level: string;
+  levelRank: number;
   badges: string[];
   streak: number;
   dailyChallengeStatus: Record<string, boolean>;
+  weeklyChallengeStatus: Record<string, boolean>;
   referralCode: string;
   lastCheckIn: string | null;
   completedChallenges: string[];
   totalReferrals: number;
   seasonalEventProgress: Record<string, any>;
+  leaderboardRank: number;
+  weeklyPoints: number;
+  monthlyPoints: number;
 }
 
 interface GamificationContextType {
   points: number;
   level: string;
+  levelRank: number;
   currentLevelInfo: any;
   nextLevelInfo: any;
+  progressToNextLevel: number;
   badges: string[];
   earnedBadges: any[];
   streak: number;
   dailyChallengeStatus: Record<string, boolean>;
+  weeklyChallengeStatus: Record<string, boolean>;
   availableChallenges: any[];
+  availableWeeklyChallenges: any[];
   referralCode: string;
   totalReferrals: number;
+  leaderboardRank: number;
+  weeklyPoints: number;
+  monthlyPoints: number;
   isLoading: boolean;
 
   completeQuiz: () => Promise<void>;
   makePurchase: (amount?: number) => Promise<void>;
   checkIn: () => Promise<void>;
   completeChallenge: (challengeId: string) => Promise<void>;
+  completeWeeklyChallenge: (challengeId: string) => Promise<void>;
   recordReferral: () => Promise<void>;
   viewRecommendation: () => Promise<void>;
   shareOutfit: () => Promise<void>;
   saveOutfit: () => Promise<void>;
+  levelUp: (newLevel: string) => Promise<void>;
 
   getPointsForAction: (action: string) => number;
   canEarnBadge: (badgeId: string) => boolean;
   getProgressToNextLevel: () => number;
   isSeasonalEventActive: () => boolean;
   getSeasonalMultiplier: () => number;
+  getLeaderboardPosition: () => Promise<number>;
+  getCurrentLevelPerks: () => string[];
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
@@ -59,18 +76,24 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [availableChallenges, setAvailableChallenges] = useState<any[]>([]);
+  const [availableWeeklyChallenges, setAvailableWeeklyChallenges] = useState<any[]>([]);
 
   const [gamificationState, setGamificationState] = useState<GamificationState>({
     points: 0,
     level: "beginner",
+    levelRank: 1,
     badges: [],
     streak: 0,
     dailyChallengeStatus: {},
+    weeklyChallengeStatus: {},
     referralCode: generateReferralCode(),
     lastCheckIn: null,
     completedChallenges: [],
     totalReferrals: 0,
     seasonalEventProgress: {},
+    leaderboardRank: 1,
+    weeklyPoints: 0,
+    monthlyPoints: 0,
   });
 
   useEffect(() => {
@@ -85,14 +108,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setGamificationState({
       points: 0,
       level: "beginner",
+      levelRank: 1,
       badges: [],
       streak: 0,
       dailyChallengeStatus: {},
+      weeklyChallengeStatus: {},
       referralCode: generateReferralCode(),
       lastCheckIn: null,
       completedChallenges: [],
       totalReferrals: 0,
       seasonalEventProgress: {},
+      leaderboardRank: 1,
+      weeklyPoints: 0,
+      monthlyPoints: 0,
     });
     setIsLoading(false);
   };
@@ -104,16 +132,23 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     try {
       const data = await getGamificationData(user.id);
       const dailyChallenges = await getDailyChallengesData(user.id);
+      const leaderboardRank = await getLeaderboardPosition();
 
       setGamificationState({
         ...data,
         dailyChallengeStatus: dailyChallenges,
+        leaderboardRank,
       });
 
+      // Filter daily and weekly challenges
+      const allChallenges = Array.isArray(gamificationConfig.challenges) ? gamificationConfig.challenges : [];
+      
       setAvailableChallenges(
-        Array.isArray(gamificationConfig.challenges) ? gamificationConfig.challenges.filter(
-          (ch) => !data.completedChallenges.includes(ch.id)
-        ) : []
+        allChallenges.filter(ch => ch.type === 'daily' && !data.completedChallenges.includes(ch.id))
+      );
+      
+      setAvailableWeeklyChallenges(
+        allChallenges.filter(ch => ch.type === 'weekly' && !data.completedChallenges.includes(ch.id))
       );
     } catch (err) {
       console.error("[⚠️ Gamification] Fout bij laden van data:", err);
@@ -123,11 +158,29 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   };
 
-  const updatePoints = async (points: number) => {
+  const updatePoints = async (points: number, action?: string) => {
     if (!user?.id) return;
     const newPoints = gamificationState.points + points;
+    
+    // Check for level up
+    const currentLevel = getCurrentLevelInfo();
+    const newLevel = calculateLevel(newPoints);
+    
+    if (newLevel.rank > currentLevel.rank) {
+      await levelUp(newLevel.id);
+    }
+    
     await updateGamificationData(user.id, { points: newPoints });
     setGamificationState((prev) => ({ ...prev, points: newPoints }));
+    
+    // Track points earned
+    if (action) {
+      trackEvent('points_earned', 'gamification', action, points, {
+        user_id: user.id,
+        total_points: newPoints,
+        level: gamificationState.level
+      });
+    }
   };
 
   const completeChallenge = async (challengeId: string) => {
@@ -137,25 +190,120 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       await completeDataRouterChallenge(user.id, challengeId);
       toast.success("✅ Challenge voltooid!");
 
+      const challenge = gamificationConfig.challenges?.find(ch => ch.id === challengeId);
+      const points = challenge?.points || getPointsForAction("challenge");
+
       setGamificationState((prev) => ({
         ...prev,
         completedChallenges: [...prev.completedChallenges, challengeId],
-        points: prev.points + getPointsForAction("challenge"),
+        points: prev.points + points,
       }));
+      
+      // Track challenge completion
+      trackEvent('challenge_completed', 'gamification', challengeId, points, {
+        user_id: user.id,
+        challenge_type: challenge?.type || 'daily',
+        difficulty: challenge?.difficulty || 'medium'
+      });
     } catch (err) {
       console.error("❌ Challenge voltooiing mislukt:", err);
       toast.error("Challenge kon niet worden voltooid.");
     }
   };
 
+  const completeWeeklyChallenge = async (challengeId: string) => {
+    if (!user?.id) return;
+
+    try {
+      await completeDataRouterChallenge(user.id, challengeId);
+      toast.success("🎉 Weekly Challenge voltooid!");
+
+      const challenge = gamificationConfig.challenges?.find(ch => ch.id === challengeId);
+      const points = challenge?.points || 75;
+
+      setGamificationState((prev) => ({
+        ...prev,
+        completedChallenges: [...prev.completedChallenges, challengeId],
+        points: prev.points + points,
+        weeklyPoints: prev.weeklyPoints + points,
+      }));
+      
+      trackEvent('weekly_challenge_completed', 'gamification', challengeId, points, {
+        user_id: user.id,
+        difficulty: challenge?.difficulty || 'medium'
+      });
+    } catch (err) {
+      console.error("❌ Weekly challenge voltooiing mislukt:", err);
+      toast.error("Weekly challenge kon niet worden voltooid.");
+    }
+  };
+
+  const levelUp = async (newLevel: string) => {
+    if (!user?.id) return;
+
+    const levelInfo = gamificationConfig.levels.find(l => l.id === newLevel);
+    if (!levelInfo) return;
+
+    try {
+      await updateGamificationData(user.id, { 
+        level: newLevel,
+        updated_at: new Date().toISOString()
+      });
+      
+      setGamificationState((prev) => ({ 
+        ...prev, 
+        level: newLevel,
+        levelRank: levelInfo.rank
+      }));
+      
+      // Show level up notification
+      toast.success(`🎉 Level Up! Je bent nu ${levelInfo.name}!`, { duration: 5000 });
+      
+      // Track level up
+      trackEvent('level_up', 'gamification', newLevel, levelInfo.rank, {
+        user_id: user.id,
+        previous_level: gamificationState.level,
+        points_at_levelup: gamificationState.points
+      });
+    } catch (err) {
+      console.error("❌ Level up mislukt:", err);
+    }
+  };
+
+  const calculateLevel = (points: number) => {
+    const levels = gamificationConfig.levels.sort((a, b) => b.minPoints - a.minPoints);
+    return levels.find(level => points >= level.minPoints) || levels[levels.length - 1];
+  };
+
+  const getCurrentLevelInfo = () => {
+    return gamificationConfig.levels.find(l => l.id === gamificationState.level) || gamificationConfig.levels[0];
+  };
+
+  const getLeaderboardPosition = async (): Promise<number> => {
+    if (!user?.id) return 1;
+    
+    try {
+      // This would be implemented with a Supabase RPC function
+      // For now, return a mock position
+      return Math.floor(Math.random() * 100) + 1;
+    } catch (error) {
+      console.error('Error getting leaderboard position:', error);
+      return 1;
+    }
+  };
+
+  const getCurrentLevelPerks = (): string[] => {
+    const currentLevel = getCurrentLevelInfo();
+    return currentLevel?.perks || [];
+  };
   // Acties
-  const completeQuiz = () => updatePoints(getPointsForAction("quiz"));
-  const makePurchase = (amount = 1) => updatePoints(getPointsForAction("purchase") * amount);
-  const checkIn = () => updatePoints(getPointsForAction("checkin"));
-  const recordReferral = () => updatePoints(getPointsForAction("referral"));
-  const viewRecommendation = () => updatePoints(getPointsForAction("view"));
-  const shareOutfit = () => updatePoints(getPointsForAction("share"));
-  const saveOutfit = () => updatePoints(getPointsForAction("save"));
+  const completeQuiz = () => updatePoints(getPointsForAction("quiz"), "quiz");
+  const makePurchase = (amount = 1) => updatePoints(getPointsForAction("purchase") * amount, "purchase");
+  const checkIn = () => updatePoints(getPointsForAction("checkin"), "checkin");
+  const recordReferral = () => updatePoints(getPointsForAction("referral"), "referral");
+  const viewRecommendation = () => updatePoints(getPointsForAction("view"), "view");
+  const shareOutfit = () => updatePoints(getPointsForAction("share"), "share");
+  const saveOutfit = () => updatePoints(getPointsForAction("save"), "save");
 
   // Helpers
   const getPointsForAction = (action: string): number => {
@@ -167,10 +315,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const getProgressToNextLevel = (): number => {
-    const current = gamificationConfig.levels.find((l) => l.id === gamificationState.level);
-    const next = gamificationConfig.levels.find((l) => l.rank === (current?.rank || 0) + 1);
+    const current = getCurrentLevelInfo();
+    const next = gamificationConfig.levels.find((l) => l.rank === current.rank + 1);
 
-    if (!current || !next) return 0;
+    if (!next) return 100; // Max level reached
 
     const range = next.minPoints - current.minPoints;
     const progress = gamificationState.points - current.minPoints;
@@ -180,9 +328,9 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const isSeasonalEventActive = () => true; // TODO: Replace with real logic
   const getSeasonalMultiplier = () => 1; // TODO: Replace with real logic
 
-  const currentLevelInfo = gamificationConfig.levels.find((l) => l.id === gamificationState.level);
+  const currentLevelInfo = getCurrentLevelInfo();
   const nextLevelInfo = gamificationConfig.levels.find(
-    (l) => l.rank === (currentLevelInfo?.rank || 0) + 1
+    (l) => l.rank === currentLevelInfo.rank + 1
   );
   const earnedBadges = (gamificationConfig.badges || []).filter((b) =>
     gamificationState.badges.includes(b.id)
@@ -193,20 +341,26 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       value={{
         ...gamificationState,
         availableChallenges,
+        availableWeeklyChallenges,
         isLoading,
+        progressToNextLevel: getProgressToNextLevel(),
         completeQuiz,
         makePurchase,
         checkIn,
         completeChallenge,
+        completeWeeklyChallenge,
         recordReferral,
         viewRecommendation,
         shareOutfit,
         saveOutfit,
+        levelUp,
         getPointsForAction,
         canEarnBadge,
         getProgressToNextLevel,
         isSeasonalEventActive,
         getSeasonalMultiplier,
+        getLeaderboardPosition,
+        getCurrentLevelPerks,
         currentLevelInfo,
         nextLevelInfo,
         earnedBadges,

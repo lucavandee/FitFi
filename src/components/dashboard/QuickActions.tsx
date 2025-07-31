@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TrendingUp, RefreshCw, User, BookOpen, Settings } from 'lucide-react';
+import { TrendingUp, RefreshCw, User, BookOpen, Settings, Trophy } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface QuickActionsProps {
@@ -33,6 +33,15 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       variant: 'outline' as const,
       className: 'border-2 border-brandPurple text-brandPurple hover:bg-brandPurple hover:text-white'
     }
+    },
+    {
+      id: 'gamification',
+      title: 'Gamification',
+      description: 'Bekijk je level, challenges en leaderboard positie',
+      icon: <Trophy className="w-6 h-6" />,
+      href: '/gamification',
+      variant: 'outline' as const,
+      className: 'border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-white'
   ];
 
   return (
