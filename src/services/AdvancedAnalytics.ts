@@ -77,6 +77,11 @@ export class AdvancedAnalytics {
     });
   }
 
+  private setupEventListeners = (): void => {
+    // Initialize event listeners for tracking
+    this.initializeHeatmapTracking();
+  };
+
   /**
    * Funnel Analytics Implementation
    */
