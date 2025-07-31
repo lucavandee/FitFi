@@ -150,6 +150,57 @@ export const trackConversion = (
   });
 };
 
+/**
+ * Track funnel step completion
+ */
+export const trackFunnelStep = (
+  funnelType: string,
+  stepId: string,
+  stepOrder: number,
+  metadata: Record<string, any> = {}
+): void => {
+  trackEvent('funnel_step', 'funnel', `${funnelType}_${stepId}`, stepOrder, {
+    funnel_type: funnelType,
+    step_id: stepId,
+    step_order: stepOrder,
+    ...metadata
+  });
+};
+
+/**
+ * Track heatmap interaction
+ */
+export const trackHeatmapInteraction = (
+  interactionType: 'click' | 'hover' | 'scroll',
+  element: string,
+  coordinates?: { x: number; y: number },
+  metadata: Record<string, any> = {}
+): void => {
+  trackEvent('heatmap_interaction', 'ux', `${interactionType}_${element}`, 1, {
+    interaction_type: interactionType,
+    element,
+    coordinates,
+    ...metadata
+  });
+};
+
+/**
+ * Track predictive model insights
+ */
+export const trackPredictiveInsight = (
+  insightType: string,
+  confidence: number,
+  action: string,
+  metadata: Record<string, any> = {}
+): void => {
+  trackEvent('predictive_insight', 'ai', insightType, Math.round(confidence * 100), {
+    insight_type: insightType,
+    confidence,
+    recommended_action: action,
+    ...metadata
+  });
+};
+
 export default {
   initializeAnalytics,
   trackPageView,
@@ -158,5 +209,8 @@ export default {
   trackOutfitView,
   trackProductClick,
   trackUserRegistration,
-  trackConversion
+  trackConversion,
+  trackFunnelStep,
+  trackHeatmapInteraction,
+  trackPredictiveInsight
 };
