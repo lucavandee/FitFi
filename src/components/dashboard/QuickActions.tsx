@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, RefreshCw, User, BookOpen, Settings, Trophy } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface QuickActionsProps {
@@ -41,6 +42,15 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       href: '/gamification',
       variant: 'outline' as const,
       className: 'border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-white'
+    },
+    {
+      id: 'analytics',
+      title: 'Analytics Dashboard',
+      description: 'Bekijk diepgaande gebruikersinzichten en conversie-data',
+      icon: <BarChart3 size={20} />,
+      href: '/analytics',
+      variant: 'outline' as const,
+      className: 'border-2 border-purple-500 text-purple-600 hover:bg-purple-500 hover:text-white'
     }
   ];
 
