@@ -5,6 +5,7 @@ import App from './App.tsx';
 import { configureRouterFutureFlags } from './utils/routerUtils';
 import { initializeSentry } from './utils/sentryConfig';
 import { initializeAnalytics } from './utils/analytics';
+import { advancedAnalytics } from './services/AdvancedAnalytics';
 import './styles/main.css';
 import { setupAutoSave } from './utils/progressPersistence';
 import { processReferralOnLoad } from './utils/referralUtils';
@@ -14,6 +15,21 @@ configureRouterFutureFlags();
 
 // Initialize Sentry
 initializeSentry();
+
+// Initialize Advanced Analytics
+if (typeof window !== 'undefined') {
+  // Start advanced analytics tracking
+  window.addEventListener('load', () => {
+    // Initialize with user ID if available
+    const userId = localStorage.getItem('supabase.auth.token') ? 'user' : undefined;
+    // Advanced analytics is already initialized in the constructor
+  });
+  
+  // Save analytics data before page unload
+  window.addEventListener('beforeunload', () => {
+    advancedAnalytics.stopTracking();
+  });
+}
 
 // Global error handler for chunk loading failures
 window.addEventListener('error', (event) => {
