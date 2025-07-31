@@ -32,7 +32,6 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       href: '/outfits',
       variant: 'outline' as const,
       className: 'border-2 border-brandPurple text-brandPurple hover:bg-brandPurple hover:text-white'
-    }
     },
     {
       id: 'gamification',
@@ -42,6 +41,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       href: '/gamification',
       variant: 'outline' as const,
       className: 'border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-white'
+    }
   ];
 
   return (
