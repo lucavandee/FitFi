@@ -1,47 +1,97 @@
-# Logs
-logs
+###############################################################################
+# FitFi — .gitignore
+#   React / Vite / Tailwind / Supabase mono-repo
+#   Keep this list in sync with build tooling and CI rules.
+###############################################################################
+
+#################################
+# 1. Logs & debug output
+#################################
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+#################################
+# 2. Dependency directories
+#################################
+node_modules/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Bolt specific files
-.bolt/
-.bolt-cache/
-fetch.worker.js
-
-# Supabase
-.supabase/
-
-# Build artifacts
+#################################
+# 3. Build / output artefacts
+#################################
+dist/
+dist-ssr/
 build/
+.storybook-static/
+playwright-report/
 coverage/
+supabase/.temp/            # local Supabase temp build
 
-# Temporary files
+#################################
+# 4. Temporary / cache folders
+#################################
+tmp/
 .tmp/
 temp/
+.bolt/
+.bolt-cache/
+.vite/
+.next/
+.cache/
+__trash_review/            # staging area for deletions
+
+#################################
+# 5. Environment & secrets
+#################################
+.env*
+!.env.example              # keep template
+
+#################################
+# 6. Supabase generated files
+#################################
+.supabase/
+
+#################################
+# 7. OS-, editor-, IDE-specific
+#################################
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+!.vscode/extensions.json   # share recommended extensions
+
+# JetBrains & others
+.idea/
+*.iml
+*.suo
+*.njsproj
+*.sln
+
+#################################
+# 8. Source maps & misc
+#################################
+*.map
+*.local
+
+#################################
+# 9. Storybook & test snapshots
+#################################
+.storybook-static/
+__snapshots__/
+
+#################################
+# 10. Package managers
+#################################
+package-lock.json          # ignore if using pnpm/yarn lock instead
+.pnpm-store/
