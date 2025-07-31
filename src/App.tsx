@@ -17,6 +17,8 @@ import OnboardingPage from './pages/OnboardingPage';
 import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
 import EnhancedResultsPage from './pages/EnhancedResultsPage';
+import DynamicOnboardingPage from './pages/DynamicOnboardingPage';
+import DynamicResultsPage from './pages/DynamicResultsPage';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -108,12 +110,22 @@ function App() {
                         <QuizPage />
                       </ProtectedRoute>
                     } />
+                    <Route path="/dynamic-onboarding" element={
+                      <ProtectedRoute>
+                        <DynamicOnboardingPage />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/results" element={
                       <ProtectedRoute>
                         <ResultsPage />
                       </ProtectedRoute>
                     } />
                     <Route path="/resultaten" element={<Navigate to="/results" replace />} />
+                    <Route path="/dynamic-results" element={
+                      <ProtectedRoute>
+                        <DynamicResultsPage />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/enhanced-resultaten" element={
                       <ProtectedRoute>
                         <EnhancedResultsPage />

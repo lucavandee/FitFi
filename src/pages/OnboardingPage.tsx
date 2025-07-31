@@ -67,8 +67,8 @@ const OnboardingPage: React.FC = () => {
       });
     }
     
-    // Navigate to quiz
-    navigate('/quiz');
+    // Navigate to dynamic onboarding
+    navigate('/dynamic-onboarding');
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0]">

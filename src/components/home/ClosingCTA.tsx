@@ -12,8 +12,8 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
     if (onCTAClick) {
       onCTAClick();
     } else {
-      // Default behavior: navigate to onboarding
-      window.location.href = '/onboarding';
+      // Default behavior: navigate to dynamic onboarding
+      window.location.href = '/dynamic-onboarding';
     }
     
     // Track final CTA click
