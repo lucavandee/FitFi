@@ -44,6 +44,7 @@ import ProductPage from './pages/ProductPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ThankYouPage from './pages/ThankYouPage';
 import OutfitsPage from './pages/OutfitsPage';
+import GamificationPage from './pages/GamificationPage';
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -141,9 +142,9 @@ function App() {
                         <OutfitsPage />
                       </ProtectedRoute>
                     } />
-                    <Route path="/outfits" element={
+                    <Route path="/gamification" element={
                       <ProtectedRoute>
-                        <OutfitsPage />
+                        <GamificationPage />
                       </ProtectedRoute>
                     } />
                     
