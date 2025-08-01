@@ -13,7 +13,6 @@ import {
   MapPin,
   Palette
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { useUser } from '../context/UserContext';
@@ -177,12 +176,10 @@ const EnhancedResultsPage: React.FC = () => {
           {outfits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {outfits.map((outfit, index) => (
-                <motion.div
+                <div
                   key={outfit.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden"
+                  className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="relative aspect-[3/4]">
                     <img 
@@ -231,7 +228,7 @@ const EnhancedResultsPage: React.FC = () => {
                       Shop deze look
                     </Button>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (
@@ -255,12 +252,10 @@ const EnhancedResultsPage: React.FC = () => {
           {products.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
               {products.map((product, index) => (
-                <motion.div
+                <div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
-                  className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden"
+                  className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="relative aspect-square">
                     <img 
@@ -281,7 +276,7 @@ const EnhancedResultsPage: React.FC = () => {
                     <p className="text-xs text-gray-600 mb-2">{product.brand}</p>
                     <p className="font-bold text-secondary">€{product.price?.toFixed(2)}</p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (
