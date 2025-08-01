@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://fitfi.ai/sitemap.xml
