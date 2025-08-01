@@ -107,3 +107,4 @@
   VITE_USE_BOLT = "true"
   VITE_USE_ZALANDO = "true"
   VITE_DEBUG_MODE = "false"
+  VITE_GTAG_ID = "G-D1PPLR2L3R"
