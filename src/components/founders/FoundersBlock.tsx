@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Rocket, Copy, Check, Crown, Users, Trophy, CheckCircle, Gift } from 'lucide-react';
-import { motion, useInView, useAnimation } from 'framer-motion';
 import { useUser } from '../../context/UserContext';
 import { supabase } from '../../lib/supabase';
 import Button from '../ui/Button';
@@ -37,23 +36,6 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
   const leaderboardControls = useAnimation();
 
   useEffect(() => {
-    if (user?.id) {
-      loadReferralData();
-      loadLeaderboard();
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (isProgressInView) {
-      progressControls.start('visible');
-    }
-  }, [isProgressInView, progressControls]);
-
-  useEffect(() => {
-    if (isLeaderboardInView) {
-      leaderboardControls.start('visible');
-    }
-  }, [isLeaderboardInView, leaderboardControls]);
 
   const loadReferralData = async () => {
     if (!user?.id) return;
@@ -146,44 +128,9 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
 
   const isFoundingMember = referralCount >= 3;
   const progress = Math.min((referralCount / 3) * 100, 100);
-  const progressOffset = 283 - (283 * progress) / 100;
 
   // Check for reduced motion preference
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const progressVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: prefersReducedMotion ? 0 : 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const leaderboardVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { 
-        duration: prefersReducedMotion ? 0 : 0.8,
-        ease: "easeOut",
-        staggerChildren: prefersReducedMotion ? 0 : 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: prefersReducedMotion ? 0 : 0.4 }
-    }
-  };
 
   if (isLoading) {
     return (
@@ -203,39 +150,21 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
         className={`max-w-4xl mx-auto ${className}`} 
         aria-labelledby="founders-heading"
       >
-        <motion.div 
-          className="bg-foundersCardBg dark:bg-foundersCardBgDark rounded-3xl shadow-founders dark:shadow-founders-dark p-6 md:p-8 xl:p-12 transition-colors duration-300"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: "easeOut" }}
-        >
+        <div className="bg-foundersCardBg dark:bg-foundersCardBgDark rounded-3xl shadow-founders dark:shadow-founders-dark p-6 md:p-8 xl:p-12 transition-colors duration-300 animate-slide-up">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Progress Section */}
-            <motion.div 
+            <div 
               ref={progressRef}
-              variants={progressVariants}
-              initial="hidden"
-              animate={progressControls}
-              className="space-y-6"
+              className="space-y-6 animate-fade-in"
             >
               {/* Header */}
               <div className="text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start space-x-3 mb-4">
                   <div className="relative">
                     {isFoundingMember ? (
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: 0.3 }}
-                        onAnimationComplete={() => {
-                          if (!prefersReducedMotion) {
-                            setShowTooltip(true);
-                            setTimeout(() => setShowTooltip(false), 3000);
-                          }
-                        }}
-                      >
+                      <div className="animate-scale-in">
                         <FoundersBadge size="lg" />
-                      </motion.div>
+                      </div>
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-foundersGradientFrom to-foundersGradientTo flex items-center justify-center">
                         <Rocket className="w-6 h-6 text-white" />
@@ -244,15 +173,10 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                     
                     {/* Tooltip */}
                     {showTooltip && isFoundingMember && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap"
-                      >
+                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap animate-fade-in">
                         Founding Member unlocked!
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                      </motion.div>
+                      </div>
                     )}
                   </div>
                   
@@ -287,7 +211,7 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                     />
                     
                     {/* Progress circle */}
-                    <motion.circle
+                    <circle
                       cx="50"
                       cy="50"
                       r="45"
@@ -296,15 +220,8 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                       fill="none"
                       strokeLinecap="round"
                       strokeDasharray="283"
-                      initial={{ strokeDashoffset: 283 }}
-                      animate={{ 
-                        strokeDashoffset: isProgressInView ? progressOffset : 283 
-                      }}
-                      transition={{ 
-                        duration: prefersReducedMotion ? 0 : 0.8, 
-                        delay: 0.2,
-                        ease: "easeOut"
-                      }}
+                      strokeDashoffset={`${283 - (283 * progress) / 100}`}
+                      className="transition-all duration-1000 ease-out"
                     />
                     
                     {/* Gradient definition */}
@@ -318,14 +235,9 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                   
                   {/* Center content */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <motion.span 
-                      className="text-2xl font-bold text-gray-900 dark:text-neutral-100"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: isProgressInView ? 1 : 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.4, delay: 0.6 }}
-                    >
+                    <span className="text-2xl font-bold text-gray-900 dark:text-neutral-100 animate-count-up">
                       {referralCount}
-                    </motion.span>
+                    </span>
                     <span className="text-sm text-gray-600 dark:text-neutral-300">van 3</span>
                   </div>
                 </div>
@@ -343,14 +255,14 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                     'Vroege toegang tot nieuwe features',
                     'Speciale community events'
                   ].map((benefit, index) => (
-                    <motion.li 
+                    <li 
                       key={index}
-                      className="flex items-center space-x-2"
-                      variants={itemVariants}
+                      className="flex items-center space-x-2 animate-slide-up"
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <CheckCircle className="w-4 h-4 text-foundersGradientFrom flex-shrink-0" />
                       <span>{benefit}</span>
-                    </motion.li>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -384,15 +296,12 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                   fitfi.ai?ref={referralCode}
                 </p>
               )}
-            </motion.div>
+            </div>
 
             {/* Leaderboard Section */}
-            <motion.div 
+            <div 
               ref={leaderboardRef}
-              variants={leaderboardVariants}
-              initial="hidden"
-              animate={leaderboardControls}
-              className="space-y-6"
+              className="space-y-6 animate-slide-in-right"
             >
               <div className="flex items-center space-x-2 mb-6">
                 <Trophy className="w-5 h-5 text-yellow-500" />
@@ -405,14 +314,14 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                 <div className="backdrop-blur-md bg-white/60 dark:bg-white/10 rounded-2xl p-4 border border-white/20">
                   <div className="space-y-3">
                     {leaderboard.slice(0, 10).map((entry, index) => (
-                      <motion.div 
+                      <div 
                         key={entry.user_id}
-                        variants={itemVariants}
-                        className={`flex items-center justify-between p-3 rounded-xl transition-all duration-300 ${
+                        className={`flex items-center justify-between p-3 rounded-xl transition-all duration-300 animate-slide-up ${
                           entry.user_id === user?.id 
                             ? 'bg-gradient-to-r from-foundersGradientFrom/10 to-foundersGradientTo/10 border border-foundersGradientFrom/20' 
                             : 'bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10'
                         }`}
+                        style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         <div className="flex items-center space-x-3">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
@@ -438,20 +347,12 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                         </div>
                         
                         <div className="text-right">
-                          <motion.div 
-                            className="font-bold text-foundersGradientFrom text-lg"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ 
-                              duration: prefersReducedMotion ? 0 : 0.4, 
-                              delay: index * 0.1 + 0.5 
-                            }}
-                          >
+                          <div className="font-bold text-foundersGradientFrom text-lg animate-count-up">
                             {entry.referral_count}
-                          </motion.div>
+                          </div>
                           <div className="text-xs text-gray-500 dark:text-neutral-400">referrals</div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -462,9 +363,9 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
                   <p className="text-sm text-gray-400 dark:text-neutral-500">Wees de eerste!</p>
                 </div>
               )}
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Share Modal */}

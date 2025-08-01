@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Crown, Copy, Check, Users, Share2, Trophy } from 'lucide-react';
-import { motion, useInView, useAnimation } from 'framer-motion';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
 
@@ -24,18 +23,9 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
   const [copied, setCopied] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, threshold: 0.3 });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (isInView) {
-      controls.start('visible');
-    }
-  }, [isInView, controls]);
+  const ref = useRef<HTMLDivElement>(null);
 
   const progress = Math.min((referrals.total / 3) * 100, 100);
-  const progressOffset = 283 - (283 * progress) / 100;
 
   const handleCopyLink = async () => {
     if (!shareLink) {
@@ -67,31 +57,10 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
     }
   };
 
-  const progressVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
-  };
-
   return (
-    <motion.div
+    <div
       ref={ref}
-      variants={cardVariants}
-      initial="hidden"
-      animate={controls}
-      className={`bg-white rounded-3xl shadow-card p-6 ${className}`}
+      className={`bg-white rounded-3xl shadow-card p-6 animate-fade-in ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -117,14 +86,9 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
         </div>
 
         {referrals.is_founding_member && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
-            className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-full text-xs font-medium"
-          >
+          <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-full text-xs font-medium animate-scale-in">
             ✨ Founding Member
-          </motion.div>
+          </div>
         )}
       </div>
 
@@ -132,10 +96,7 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Progress Ring */}
         <div className="flex justify-center">
-          <motion.div 
-            variants={progressVariants}
-            className="relative w-32 h-32"
-          >
+          <div className="relative w-32 h-32 animate-scale-in">
             <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
               {/* Background circle */}
               <circle
@@ -149,7 +110,7 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
               />
               
               {/* Progress circle */}
-              <motion.circle
+              <circle
                 cx="50"
                 cy="50"
                 r="45"
@@ -158,15 +119,8 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
                 fill="none"
                 strokeLinecap="round"
                 strokeDasharray="283"
-                initial={{ strokeDashoffset: 283 }}
-                animate={{ 
-                  strokeDashoffset: isInView ? progressOffset : 283 
-                }}
-                transition={{ 
-                  duration: 0.8, 
-                  delay: 0.2,
-                  ease: "easeOut"
-                }}
+                strokeDashoffset={`${283 - (283 * progress) / 100}`}
+                className="transition-all duration-1000 ease-out"
               />
               
               {/* Gradient definition */}
@@ -180,17 +134,12 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
             
             {/* Center content */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <motion.span 
-                className="text-2xl font-bold text-gray-900"
-                initial={{ scale: 0 }}
-                animate={{ scale: isInView ? 1 : 0 }}
-                transition={{ duration: 0.4, delay: 0.6 }}
-              >
+              <span className="text-2xl font-bold text-gray-900 animate-count-up">
                 {referrals.total}
-              </motion.span>
+              </span>
               <span className="text-sm text-gray-600">van 3</span>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Stats */}
@@ -267,7 +216,7 @@ const FoundersCard: React.FC<FoundersCardProps> = ({
           {shareLink.replace('https://', '')}
         </p>
       )}
-    </motion.div>
+    </div>
   );
 };
 
