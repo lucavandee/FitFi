@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Star, Brain, Share2, Heart, ShoppingBag, Target, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
 import { RealtimeProfile, OutfitPreview } from '../types/dynamicOnboarding';
@@ -159,14 +158,9 @@ const DynamicResultsPage: React.FC = () => {
             </Link>
             
             <div className="text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="w-20 h-20 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6"
-              >
+              <div className="w-20 h-20 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-scale-in">
                 <Brain className="w-10 h-10 text-white" />
-              </motion.div>
+              </div>
               
               <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
                 Jouw Dynamische Stijlprofiel
