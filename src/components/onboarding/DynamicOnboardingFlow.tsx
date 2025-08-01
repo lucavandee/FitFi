@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Sparkles, Brain, Zap, Target } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../../context/UserContext';
 import { DynamicOnboardingEngine } from '../../services/DynamicOnboardingEngine';
 import { DynamicQuestion, OutfitPreview, RealtimeProfile } from '../../types/dynamicOnboarding';
@@ -360,11 +359,9 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
             
             {/* Dynamic progress bar */}
             <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-              <motion.div 
-                className="bg-gradient-to-r from-[#89CFF0] to-blue-500 h-3 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.5 }}
+              <div 
+                className="bg-gradient-to-r from-[#89CFF0] to-blue-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
               />
             </div>
             <p className="text-sm text-gray-500">
@@ -376,15 +373,10 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Question Section */}
           <div className="space-y-6">
-            <AnimatePresence mode="wait">
               {currentQuestion && (
-                <motion.div
+                <div
                   key={currentQuestion.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-3xl shadow-sm p-8"
+                  className="bg-white rounded-3xl shadow-sm p-8 animate-fade-in"
                 >
                   {/* Question header */}
                   <div className="mb-6">
@@ -410,19 +402,16 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
 
                   {/* Question input */}
                   {renderQuestionInput()}
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
           </div>
 
           {/* AI Feedback Section */}
           <div className="space-y-6">
             {/* Profile preview */}
             {profile && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl shadow-sm p-6"
+              <div
+                className="bg-white rounded-3xl shadow-sm p-6 animate-fade-in"
               >
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-8 h-8 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
@@ -472,26 +461,22 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* AI Feedback */}
-            <AnimatePresence>
               {renderAIFeedback()}
-            </AnimatePresence>
 
             {/* Processing indicator */}
             {isProcessing && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="bg-white rounded-2xl p-6 text-center"
+              <div
+                className="bg-white rounded-2xl p-6 text-center animate-fade-in"
               >
                 <div className="w-12 h-12 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <div className="w-6 h-6 border-2 border-[#89CFF0] border-t-transparent rounded-full animate-spin"></div>
                 </div>
                 <p className="text-gray-600">Nova analyseert jouw antwoord...</p>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>

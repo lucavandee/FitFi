@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Crown, Star, Users, TrendingUp, Medal } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useUser } from '../../context/UserContext';
 import { useGamification } from '../../context/GamificationContext';
 import { supabase } from '../../lib/supabase';
@@ -219,12 +218,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       {/* Leaderboard List */}
       <div className="space-y-3">
         {leaderboard.map((entry, index) => (
-          <motion.div
+          <div
             key={entry.user_id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className={`flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${getRankStyling(entry.rank, entry.is_current_user || false)}`}
+            className={`flex items-center justify-between p-4 rounded-xl transition-all duration-300 animate-fade-in ${getRankStyling(entry.rank, entry.is_current_user || false)}`}
+            style={{ animationDelay: `${index * 0.05}s` }}
           >
             <div className="flex items-center space-x-4">
               {/* Rank */}
@@ -275,7 +272,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               </div>
               <div className="text-xs text-gray-500">punten</div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Trophy, Star, Target, Users, TrendingUp, Gift } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useGamification } from '../../context/GamificationContext';
 import LevelProgress from './LevelProgress';
 import Leaderboard from './Leaderboard';
@@ -104,12 +103,10 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
             {/* Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
-                <motion.div
+                <div
                   key={stat.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 animate-scale-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className={`w-10 h-10 ${stat.bgColor} rounded-full flex items-center justify-center mb-3`}>
                     <div className={stat.color}>
@@ -118,7 +115,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
                   </div>
                   <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
-                </motion.div>
+                </div>
               ))}
             </div>
 
@@ -135,17 +132,15 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {earnedBadges.slice(0, 8).map((badge, index) => (
-                    <motion.div
+                    <div
                       key={badge.id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                      className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors animate-scale-in"
+                      style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       <div className="text-2xl mb-2">{badge.icon}</div>
                       <div className="text-sm font-medium text-gray-900">{badge.label}</div>
                       <div className="text-xs text-gray-600 mt-1">{badge.description}</div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
                 

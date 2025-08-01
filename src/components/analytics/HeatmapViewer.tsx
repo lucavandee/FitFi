@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { MousePointer, Eye, Zap, AlertTriangle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { HeatmapData } from '../../types/analytics';
 import { supabase } from '../../lib/supabase';
 
@@ -191,12 +190,10 @@ const HeatmapViewer: React.FC<HeatmapViewerProps> = ({ pageUrl, className = '' }
                           Math.round(element.avg_scroll_depth);
 
               return (
-                <motion.div
+                <div
                   key={element.selector}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="flex items-center space-x-3">
                     <div 
@@ -211,7 +208,7 @@ const HeatmapViewer: React.FC<HeatmapViewerProps> = ({ pageUrl, className = '' }
                     {value.toLocaleString()}
                     {viewMode === 'scroll' && '%'}
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
