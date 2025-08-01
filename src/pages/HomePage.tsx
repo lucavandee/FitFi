@@ -17,10 +17,27 @@ import BackToTopFAB from '../components/home/BackToTopFAB';
 import Features from '../components/home/Features';
 import Footer from '../components/layout/Footer';
 
-// Lazy load components for better performance
-const Testimonials = React.lazy(() => import('../components/home/Testimonials'));
-const StyleArchetypeSlider = React.lazy(() => import('../components/home/StyleArchetypeSlider'));
-const PreviewCarousel = React.lazy(() => import('../components/home/PreviewCarousel'));
+// Lazy load heavy components with better error handling
+const Testimonials = React.lazy(() => 
+  import('../components/home/Testimonials').catch(err => {
+    console.error('Failed to load Testimonials:', err);
+    return { default: () => <div className="py-8 text-center text-gray-500">Testimonials tijdelijk niet beschikbaar</div> };
+  })
+);
+
+const StyleArchetypeSlider = React.lazy(() => 
+  import('../components/home/StyleArchetypeSlider').catch(err => {
+    console.error('Failed to load StyleArchetypeSlider:', err);
+    return { default: () => <div className="py-8 text-center text-gray-500">Stijl slider tijdelijk niet beschikbaar</div> };
+  })
+);
+
+const PreviewCarousel = React.lazy(() => 
+  import('../components/home/PreviewCarousel').catch(err => {
+    console.error('Failed to load PreviewCarousel:', err);
+    return { default: () => <div className="py-8 text-center text-gray-500">Preview tijdelijk niet beschikbaar</div> };
+  })
+);
 
 const FoundersBlockTeaser = React.lazy(() => 
   import('../components/founders/FoundersBlockTeaser').catch(err => {

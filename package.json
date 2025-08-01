@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "build:check": "npm run build"
+    "build:check": "npm run build",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist",
+    "build:size": "npm run build && du -sh dist/*",
+    "perf:audit": "lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.6",

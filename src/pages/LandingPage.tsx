@@ -11,32 +11,32 @@ import HowItWorks from '../components/landing/HowItWorks';
 import Features from '../components/landing/Features';
 import Footer from '../components/layout/Footer';
 
-// Lazy load heavy components for better performance
+// Lazy load heavy components with better error handling
 const PreviewCarousel = React.lazy(() => 
   import('../components/landing/PreviewCarousel').catch(err => {
     console.error('Failed to load PreviewCarousel:', err);
-    return { default: () => <div>Preview niet beschikbaar</div> };
+    return { default: () => <div className="py-8 text-center text-gray-500">Preview tijdelijk niet beschikbaar</div> };
   })
 );
 
 const FoundersBlock = React.lazy(() => 
   import('../components/founders/FoundersBlock').catch(err => {
     console.error('Failed to load FoundersBlock:', err);
-    return { default: () => <div>Founders Club niet beschikbaar</div> };
+    return { default: () => <div className="py-8 text-center text-gray-500">Founders Club tijdelijk niet beschikbaar</div> };
   })
 );
 
 const UGCGallery = React.lazy(() => 
   import('../components/landing/UGCGallery').catch(err => {
     console.error('Failed to load UGCGallery:', err);
-    return { default: () => <div>Gebruikersverhalen niet beschikbaar</div> };
+    return { default: () => <div className="py-8 text-center text-gray-500">Gebruikersverhalen tijdelijk niet beschikbaar</div> };
   })
 );
 
 const ClosingCTA = React.lazy(() => 
   import('../components/landing/ClosingCTA').catch(err => {
     console.error('Failed to load ClosingCTA:', err);
-    return { default: () => <div>CTA niet beschikbaar</div> };
+    return { default: () => <div className="py-8 text-center text-gray-500">CTA tijdelijk niet beschikbaar</div> };
   })
 );
 

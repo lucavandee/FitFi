@@ -12,7 +12,6 @@ export default defineConfig(({ mode }) => {
         jsxRuntime: "automatic",
         jsxImportSource: "react",
       }),
-      Inspect(),
     ],
     resolve: {
       alias: {
@@ -56,6 +55,16 @@ export default defineConfig(({ mode }) => {
       assetsDir: "assets",
       // Security: Don't expose source maps in production
       sourcemap: mode === 'development',
+      // Performance optimizations
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: mode === 'production',
+          drop_debugger: true,
+        },
+      },
+      // Chunk size warnings
+      chunkSizeWarningLimit: 1000,
       // Ensure proper asset naming and chunking
       rollupOptions: {
         output: {
@@ -83,11 +92,41 @@ export default defineConfig(({ mode }) => {
             return `assets/[name]-[hash].[ext]`;
           },
           manualChunks: {
-            vendor: ['react', 'react-dom'],
-            router: ['react-router-dom'],
-            ui: ['lucide-react'],
-            engine: ['./src/engine/recommendationEngine'],
-            utils: ['./src/utils/analytics', './src/utils/imageUtils']
+            // Core React chunks
+            'react-vendor': ['react', 'react-dom'],
+            'react-router': ['react-router-dom'],
+            
+            // UI Library chunks
+            'ui-icons': ['lucide-react'],
+            'ui-components': ['@headlessui/react'],
+            
+            // FitFi Engine chunks
+            'fitfi-engine': [
+              './src/engine/recommendationEngine',
+              './src/engine/generateOutfits',
+              './src/engine/profile-mapping'
+            ],
+            
+            // Services chunks
+            'fitfi-services': [
+              './src/services/DataRouter',
+              './src/services/boltService',
+              './src/services/supabaseService'
+            ],
+            
+            // Utils chunks
+            'fitfi-utils': [
+              './src/utils/analytics',
+              './src/utils/imageUtils',
+              './src/utils/userUtils'
+            ],
+            
+            // Context chunks
+            'fitfi-context': [
+              './src/context/UserContext',
+              './src/context/GamificationContext',
+              './src/context/OnboardingContext'
+            ]
           }
         },
         // Prevent circular dependencies that could cause loading issues
@@ -97,5 +136,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
+    // Image optimization
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
   };
 });

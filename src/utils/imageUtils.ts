@@ -90,13 +90,14 @@ export const optimizeImageUrl = (
     width?: number;
     height?: number;
     quality?: number;
+    format?: 'webp' | 'avif' | 'auto';
   } = {}
 ): string => {
   if (!isValidImageUrl(url)) {
     return '/placeholder.png';
   }
   
-  const { width, height, quality = 80 } = options;
+  const { width, height, quality = 80, format = 'auto' } = options;
   
   // Optimize Pexels images
   if (url.includes('pexels.com')) {
@@ -106,6 +107,32 @@ export const optimizeImageUrl = (
     if (width) params.append('w', width.toString());
     if (height) params.append('h', height.toString());
     params.append('dpr', '2');
+    
+    // Add format optimization for modern browsers
+    if (format === 'auto') {
+      // Check browser support for modern formats
+      if (typeof window !== 'undefined') {
+        const canvas = document.createElement('canvas');
+        const supportsWebP = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+        if (supportsWebP) {
+          params.append('fm', 'webp');
+        }
+      }
+    } else if (format !== 'auto') {
+      params.append('fm', format);
+    }
+    
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}${params.toString()}`;
+  }
+  
+  // Optimize other CDN images if possible
+  if (url.includes('unsplash.com')) {
+    const params = new URLSearchParams();
+    if (width) params.append('w', width.toString());
+    if (height) params.append('h', height.toString());
+    params.append('q', quality.toString());
+    if (format !== 'auto') params.append('fm', format);
     
     const separator = url.includes('?') ? '&' : '?';
     return `${url}${separator}${params.toString()}`;
