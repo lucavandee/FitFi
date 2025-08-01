@@ -1,0 +1,16 @@
+[
+  {
+    "id": "challenge-1",
+    "title": "Bekijk je outfit van vandaag",
+    "description": "Open je aanbevolen outfit en klik op minstens één product.",
+    "points": 10,
+    "completed": false
+  },
+  {
+    "id": "challenge-2",
+    "title": "Vergelijk twee stijlen",
+    "description": "Bekijk producten van minstens twee verschillende archetypes.",
+    "points": 15,
+    "completed": false
+  }
+]
