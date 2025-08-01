@@ -67,19 +67,12 @@ export class ErrorBoundary extends Component<Props, State> {
     }
     
     // Initialize Sentry if available and capture error
-    if (typeof window.Sentry !== 'undefined') {
-      window.Sentry.captureException(error, {
-        contexts: {
-          react: {
-            componentStack: errorInfo.componentStack
-          }
-        },
-        tags: {
-          component: 'ErrorBoundary',
-          userId: TEST_USER_ID
-        }
-      });
-    }
+    // Sentry removed for optimization - using console.error instead
+    console.error('Error captured by ErrorBoundary:', {
+      error: error.message,
+      componentStack: errorInfo.componentStack,
+      userId: TEST_USER_ID
+    });
   }
 
   private handleReset = (): void => {
