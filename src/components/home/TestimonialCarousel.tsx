@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Star, CheckCircle, Play, Pause } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { TESTIMONIALS, Testimonial, fetchLiveTestimonials } from '../../data/testimonials';
 import ImageWithFallback from '../ui/ImageWithFallback';
 
@@ -204,12 +203,9 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
   // Mobile Swiper Implementation
   if (isMobile) {
     return (
-      <motion.div
+      <div
         id="testimonial-carousel"
-        className={`relative ${className}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={`relative ${className} ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
         role="region"
         aria-label="Klantbeoordelingen"
       >
@@ -285,33 +281,29 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
             aria-label="Volgende testimonial"
           />
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   // Desktop Grid (unchanged)
   return (
-    <motion.div
+    <div
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className} ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
       role="region"
       aria-label="Klantbeoordelingen"
     >
       {testimonials.slice(0, 6).map((testimonial, index) => (
-        <motion.div
+        <div
           key={testimonial.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.4, delay: index * 0.1 }}
+          className={`${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
+          style={{ animationDelay: `${index * 0.1}s` }}
         >
           {renderTestimonialCard(testimonial, index)}
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

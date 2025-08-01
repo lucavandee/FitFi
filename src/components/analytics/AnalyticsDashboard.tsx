@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, MousePointer, Brain, AlertTriangle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { AnalyticsDashboardData, FunnelMetrics, HeatmapSummary, PredictiveInsight } from '../../types/analytics';
 import { advancedAnalytics } from '../../services/AdvancedAnalytics';
 import LoadingFallback from '../ui/LoadingFallback';
@@ -64,11 +63,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(dashboardData.funnels).map(([funnelName, metrics]) => (
-          <motion.div
+          <div
             key={funnelName}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-6 border border-gray-200"
+            className="bg-white rounded-2xl p-6 border border-gray-200 animate-fade-in"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium text-gray-900 capitalize">{funnelName} Funnel</h3>
@@ -106,7 +103,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
@@ -116,11 +113,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(dashboardData.heatmaps).map(([pageName, summary]) => (
-          <motion.div
+          <div
             key={pageName}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-6 border border-gray-200"
+            className="bg-white rounded-2xl p-6 border border-gray-200 animate-fade-in"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium text-gray-900 capitalize">{pageName}</h3>
@@ -156,7 +151,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
@@ -166,11 +161,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(dashboardData.predictions).map(([predictionType, insights]) => (
-          <motion.div
+          <div
             key={predictionType}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-6 border border-gray-200"
+            className="bg-white rounded-2xl p-6 border border-gray-200 animate-fade-in"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium text-gray-900 capitalize">
@@ -203,7 +196,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
@@ -212,56 +205,48 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
   const renderRealtimeMetrics = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl p-6 border border-gray-200 text-center"
+        <div
+          className="bg-white rounded-2xl p-6 border border-gray-200 text-center animate-scale-in"
         >
           <Users className="w-8 h-8 text-green-600 mx-auto mb-3" />
           <div className="text-2xl font-bold text-gray-900 mb-1">
             {dashboardData.realtime.active_users}
           </div>
           <div className="text-sm text-gray-600">Active Users</div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl p-6 border border-gray-200 text-center"
+        <div
+          className="bg-white rounded-2xl p-6 border border-gray-200 text-center animate-scale-in"
+          style={{ animationDelay: '0.1s' }}
         >
           <TrendingUp className="w-8 h-8 text-[#89CFF0] mx-auto mb-3" />
           <div className="text-2xl font-bold text-gray-900 mb-1">
             {Math.round(dashboardData.realtime.conversion_rate * 100)}%
           </div>
           <div className="text-sm text-gray-600">Conversion Rate</div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 border border-gray-200 text-center"
+        <div
+          className="bg-white rounded-2xl p-6 border border-gray-200 text-center animate-scale-in"
+          style={{ animationDelay: '0.2s' }}
         >
           <BarChart3 className="w-8 h-8 text-purple-600 mx-auto mb-3" />
           <div className="text-2xl font-bold text-gray-900 mb-1">
             {Math.round(dashboardData.realtime.avg_session_duration / 1000)}s
           </div>
           <div className="text-sm text-gray-600">Avg. Session</div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl p-6 border border-gray-200 text-center"
+        <div
+          className="bg-white rounded-2xl p-6 border border-gray-200 text-center animate-scale-in"
+          style={{ animationDelay: '0.3s' }}
         >
           <AlertTriangle className="w-8 h-8 text-orange-600 mx-auto mb-3" />
           <div className="text-2xl font-bold text-gray-900 mb-1">
             {Math.round(dashboardData.realtime.bounce_rate * 100)}%
           </div>
           <div className="text-sm text-gray-600">Bounce Rate</div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -311,17 +296,15 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
       </div>
 
       {/* Content */}
-      <motion.div
+      <div
         key={activeTab}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        className="animate-fade-in"
       >
         {activeTab === 'funnels' && renderFunnelAnalytics()}
         {activeTab === 'heatmaps' && renderHeatmapAnalytics()}
         {activeTab === 'predictions' && renderPredictiveAnalytics()}
         {activeTab === 'realtime' && renderRealtimeMetrics()}
-      </motion.div>
+      </div>
     </div>
   );
 };

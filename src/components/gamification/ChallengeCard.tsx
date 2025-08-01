@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { CheckCircle, Clock, Star, Zap, Target, Crown } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useGamification } from '../../context/GamificationContext';
 import Button from '../ui/Button';
 import { trackEvent } from '../../utils/analytics';
@@ -110,11 +109,8 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     : 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      className={`bg-white rounded-2xl border border-gray-200 p-6 transition-all duration-300 hover:shadow-md ${
+    <div
+      className={`bg-white rounded-2xl border border-gray-200 p-6 transition-all duration-300 hover:shadow-md hover:transform hover:-translate-y-1 animate-fade-in ${
         challenge.completed ? 'opacity-75' : ''
       } ${className}`}
     >
@@ -163,11 +159,9 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <motion.div 
-              className="bg-gradient-to-r from-[#89CFF0] to-blue-500 h-2 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 0.5 }}
+            <div 
+              className="bg-gradient-to-r from-[#89CFF0] to-blue-500 h-2 rounded-full transition-all duration-500"
+              style={{ width: `${progressPercentage}%` }}
             />
           </div>
         </div>
@@ -208,7 +202,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
           </Button>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 
