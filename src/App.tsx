@@ -13,13 +13,6 @@ import Navbar from './components/layout/Navbar';
 // Pages
 import HomePage from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
-import OnboardingPage from './pages/OnboardingPage';
-import QuizPage from './pages/QuizPage';
-import ResultsPage from './pages/ResultsPage';
-import EnhancedResultsPage from './pages/EnhancedResultsPage';
-import DynamicOnboardingPage from './pages/DynamicOnboardingPage';
-import DynamicResultsPage from './pages/DynamicResultsPage';
-import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -28,27 +21,46 @@ import ProfilePage from './pages/ProfilePage';
 import AboutPage from './pages/AboutPage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import PricingPage from './pages/PricingPage';
-import BlogIndexPage from './pages/BlogIndexPage';
 import ContactPage from './pages/ContactPage';
-import BlogPage from './pages/BlogPage';
 import FAQPage from './pages/FAQPage';
 import LegalPage from './pages/LegalPage';
 import SupportPage from './pages/SupportPage';
-import BlogDetailPage from './pages/BlogDetailPage';
 import TermsPage from './pages/TermsPage';
-import HelpCenterPage from './pages/HelpCenterPage';
-import FeedbackPage from './pages/FeedbackPage';
-import SuccessStoriesPage from './pages/SuccessStoriesPage';
 import GenderSelectPage from './pages/GenderSelectPage';
 import ProductPage from './pages/ProductPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ThankYouPage from './pages/ThankYouPage';
-import OutfitsPage from './pages/OutfitsPage';
-import GamificationPage from './pages/GamificationPage';
-import AnalyticsPage from './pages/AnalyticsPage';
+
+// Lazy load heavy pages for better performance
+const OnboardingPage = React.lazy(() => import('./pages/OnboardingPage'));
+const QuizPage = React.lazy(() => import('./pages/QuizPage'));
+const ResultsPage = React.lazy(() => import('./pages/ResultsPage'));
+const EnhancedResultsPage = React.lazy(() => import('./pages/EnhancedResultsPage'));
+const DynamicOnboardingPage = React.lazy(() => import('./pages/DynamicOnboardingPage'));
+const DynamicResultsPage = React.lazy(() => import('./pages/DynamicResultsPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const BlogIndexPage = React.lazy(() => import('./pages/BlogIndexPage'));
+const BlogPage = React.lazy(() => import('./pages/BlogPage'));
+const BlogDetailPage = React.lazy(() => import('./pages/BlogDetailPage'));
+const HelpCenterPage = React.lazy(() => import('./pages/HelpCenterPage'));
+const FeedbackPage = React.lazy(() => import('./pages/FeedbackPage'));
+const SuccessStoriesPage = React.lazy(() => import('./pages/SuccessStoriesPage'));
+const OutfitsPage = React.lazy(() => import('./pages/OutfitsPage'));
+const GamificationPage = React.lazy(() => import('./pages/GamificationPage'));
+const AnalyticsPage = React.lazy(() => import('./pages/AnalyticsPage'));
 
 // Auth
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+
+// Loading fallback component
+const PageLoadingFallback = () => (
+  <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-600">Pagina laden...</p>
+    </div>
+  </div>
+);
 
 // NotFound component
 const NotFound: React.FC = () => (
@@ -75,6 +87,7 @@ function App() {
                 <ScrollToTop />
                 <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
                   <Navbar />
+                  <React.Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPage />} />
@@ -157,6 +170,7 @@ function App() {
                     {/* Fallback */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
+                  </React.Suspense>
                 </div>
               </Router>
             </OnboardingProvider>

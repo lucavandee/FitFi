@@ -6,6 +6,7 @@ import { configureRouterFutureFlags } from './utils/routerUtils';
 import { initializeSentry } from './utils/sentryConfig';
 import { initializeAnalytics } from './utils/analytics';
 import { advancedAnalytics } from './services/AdvancedAnalytics';
+import { initializePerformanceOptimizations } from './utils/performanceUtils';
 import './styles/main.css';
 import { setupAutoSave } from './utils/progressPersistence';
 import { processReferralOnLoad } from './utils/referralUtils';
@@ -15,6 +16,9 @@ configureRouterFutureFlags();
 
 // Initialize Sentry
 initializeSentry();
+
+// Initialize performance optimizations
+initializePerformanceOptimizations();
 
 // Initialize Advanced Analytics
 if (typeof window !== 'undefined') {
