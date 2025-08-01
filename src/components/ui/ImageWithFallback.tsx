@@ -12,6 +12,8 @@ interface ImageWithFallbackProps {
   width?: number | string;
   height?: number | string;
   componentName?: string;
+  optimize?: boolean;
+  quality?: number;
 }
 
 /**
@@ -33,6 +35,8 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   width,
   height,
   componentName = 'Unknown',
+  optimize = true,
+  quality = 80,
   ...rest
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(src);
@@ -46,9 +50,11 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     // Reset state when src changes
     setIsLoading(true);
     setHasError(false);
-    setImgSrc(src);
+    // Apply optimization if enabled
+    const optimizedSrc = optimize ? optimizeImageUrl(src, { width: typeof width === 'number' ? width : undefined, height: typeof height === 'number' ? height : undefined, quality }) : src;
+    setImgSrc(optimizedSrc);
     retryCount.current = 0;
-  }, [src]);
+  }, [src, optimize, width, height, quality]);
   
   // Use fallback immediately if URL is invalid
   useEffect(() => {
@@ -120,11 +126,6 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     }
   };
 
-  // Optimize image URL
-  const optimizedSrc = optimizeImageUrl(imgSrc, {
-    width: typeof width === 'number' ? width : undefined,
-    height: typeof height === 'number' ? height : undefined
-  });
 
   return (
     <div className={`relative ${className}`}>
@@ -134,7 +135,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
         </div>
       )}
       <img
-        src={optimizedSrc}
+        src={imgSrc}
         alt={alt}
         className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
         onError={handleError}
