@@ -1,0 +1,15 @@
+{
+  "id": "mock-user",
+  "name": "Test User",
+  "email": "test@example.com",
+  "gender": "female",
+  "stylePreferences": {
+    "casual": 3,
+    "formal": 3,
+    "sporty": 3,
+    "vintage": 3,
+    "minimalist": 3
+  },
+  "isPremium": false,
+  "savedRecommendations": []
+}
