@@ -9,6 +9,7 @@ import ImageWithFallback from '../components/ui/ImageWithFallback';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const DynamicResultsPage: React.FC = () => {
   const { user } = useUser();
@@ -168,27 +169,26 @@ const DynamicResultsPage: React.FC = () => {
               
               <div className="flex items-center justify-center space-x-4 mb-6">
                 <div className="flex items-center space-x-2">
-                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                  <span className="text-lg font-medium text-gray-900">
-                    {Math.round(dynamicProfile.confidence * 100)}% Nauwkeurigheid
-                  </span>
+                  <div className={`bg-white rounded-3xl shadow-sm p-6 transition-all duration-500 ${
+                    showPersonalityInsights ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-5'
+                  }`}>
+                    <span className="text-gray-600 capitalize">
+                      {dynamicProfile.styleArchetype.replace('_', ' ')} Archetype
+                    </span>
+                  </div>
                 </div>
-                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                <span className="text-gray-600 capitalize">
-                  {dynamicProfile.styleArchetype.replace('_', ' ')} Archetype
-                </span>
-              </div>
 
-              <Button
-                onClick={handleShareResults}
-                variant="outline"
-                disabled={isSharing}
-                icon={<Share2 size={16} />}
-                iconPosition="left"
-                className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
-              >
-                {isSharing ? 'Delen...' : 'Deel je resultaten'}
-              </Button>
+                <Button
+                  onClick={handleShareResults}
+                  variant="outline"
+                  disabled={isSharing}
+                  icon={<Share2 size={16} />}
+                  iconPosition="left"
+                  className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                >
+                  {isSharing ? 'Delen...' : 'Deel je resultaten'}
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -412,7 +412,8 @@ const DynamicResultsPage: React.FC = () => {
                   </Button>
                   
                   <Button
-                    onClick={() => navigate('/dynamic-onboarding')}
+                    as={Link}
+                    to="/dynamic-onboarding"
                     variant="outline"
                     size="sm"
                     fullWidth
@@ -429,12 +430,18 @@ const DynamicResultsPage: React.FC = () => {
 
           {/* Selected Outfit Modal */}
           {selectedOutfit && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
               onClick={() => setSelectedOutfit(null)}
             >
-              <div
-                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in"
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-8">
@@ -505,8 +512,8 @@ const DynamicResultsPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           )}
         </div>
       </div>
