@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 
@@ -55,19 +54,14 @@ const GenderSelectPage: React.FC = () => {
             </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-center mb-8"
-          >
+          <div className="text-center mb-8 animate-fade-in">
             <h1 className="text-3xl font-bold text-white mb-2">
               Hoe identificeer je jezelf?
             </h1>
             <p className="text-white/80">
               Dit helpt ons de juiste stijladvies voor je te vinden
             </p>
-          </motion.div>
+          </div>
 
           <div className="glass-card overflow-hidden">
             <div className="p-6">
@@ -76,7 +70,7 @@ const GenderSelectPage: React.FC = () => {
                   { id: 'male', label: 'Man', description: 'Mannelijke stijladvies' },
                   { id: 'female', label: 'Vrouw', description: 'Vrouwelijke stijladvies' }
                 ].map((option) => (
-                  <motion.button
+                  <button
                     key={option.id}
                     onClick={() => handleGenderSelect(option.id as 'male' | 'female')}
                     className={`
@@ -85,8 +79,6 @@ const GenderSelectPage: React.FC = () => {
                         ? 'border-[#FF8600] bg-white/10'
                         : 'border-white/30 hover:border-[#FF8600] hover:bg-white/5'}
                     `}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ y: 0 }}
                   >
                     <div className="flex items-center space-x-4">
                       <div>
@@ -98,7 +90,7 @@ const GenderSelectPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </motion.button>
+                  </button>
                 ))}
               </div>
 

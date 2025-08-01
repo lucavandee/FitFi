@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { X, Instagram, Copy, Share2, Sparkles } from 'lucide-react';
-import { Dialog, Transition } from '@headlessui/react';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
-import { Fragment } from 'react';
 
 interface ShareModalProps {
   referralCode: string;
@@ -74,40 +72,15 @@ Word ook Founding Member via mijn link: ${referralUrl}
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog 
-        as="div" 
-        className={`relative z-60 ${className}`} 
-        onClose={handleClose}
-        aria-labelledby="share-modal-title"
-        aria-describedby="share-modal-description"
-      >
-        {/* Backdrop */}
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
-        </Transition.Child>
+    <div className={`fixed inset-0 z-60 flex items-center justify-center p-4 ${className} ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300`}>
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm" 
+        onClick={handleClose}
+      />
 
-        {/* Modal Panel */}
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl bg-foundersCardBg dark:bg-foundersCardBgDark border border-white/20 p-8 text-left align-middle shadow-2xl transition-all">
+      {/* Modal Panel */}
+      <div className={`w-full max-w-md transform overflow-hidden rounded-3xl bg-foundersCardBg dark:bg-foundersCardBgDark border border-white/20 p-8 text-left align-middle shadow-2xl transition-all duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
                 {/* Close Button */}
                 <button
                   onClick={handleClose}
@@ -125,20 +98,13 @@ Word ook Founding Member via mijn link: ${referralUrl}
                     <Sparkles className="w-8 h-8 text-white" />
                   </div>
                   
-                  <Dialog.Title 
-                    as="h2" 
-                    id="share-modal-title"
-                    className="font-display text-2xl font-bold text-gray-900 dark:text-neutral-100 mb-2"
-                  >
+                  <h2 className="font-display text-2xl font-bold text-gray-900 dark:text-neutral-100 mb-2">
                     Deel je Founders Club link
-                  </Dialog.Title>
+                  </h2>
                   
-                  <Dialog.Description 
-                    id="share-modal-description"
-                    className="text-gray-600 dark:text-neutral-300"
-                  >
+                  <p className="text-gray-600 dark:text-neutral-300">
                     Help vrienden hun perfecte stijl te ontdekken
-                  </Dialog.Description>
+                  </p>
                 </div>
 
                 {/* Preview */}
@@ -183,12 +149,8 @@ Word ook Founding Member via mijn link: ${referralUrl}
                     Meer opties
                   </Button>
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+      </div>
+    </div>
   );
 };
 

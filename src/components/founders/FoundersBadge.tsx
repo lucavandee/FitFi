@@ -1,6 +1,5 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface FoundersBadgeProps {
   className?: string;
@@ -27,7 +26,7 @@ const FoundersBadge: React.FC<FoundersBadgeProps> = ({
 
   const BadgeContent = () => (
     <div 
-      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-foundersGradientFrom to-foundersGradientTo flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 ${className}`}
+      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-foundersGradientFrom to-foundersGradientTo flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ${className}`}
       title="FitFi Founding Member"
       aria-label="FitFi Founding Member badge"
     >
@@ -43,25 +42,9 @@ const FoundersBadge: React.FC<FoundersBadgeProps> = ({
   }
 
   return (
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
-      animate={{ scale: 1, opacity: 1, rotate: 0 }}
-      whileHover={{ 
-        scale: 1.1, 
-        rotate: 5,
-        transition: { duration: 0.2 }
-      }}
-      whileTap={{ scale: 0.95 }}
-      transition={{ 
-        duration: 0.6, 
-        ease: "easeOut",
-        type: "spring",
-        stiffness: 300,
-        damping: 20
-      }}
-    >
+    <div className="animate-scale-in hover:scale-110 active:scale-95 transition-transform duration-300">
       <BadgeContent />
-    </motion.div>
+    </div>
   );
 };
 
