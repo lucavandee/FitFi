@@ -13,8 +13,6 @@ import {
   MapPin,
   Palette
 } from 'lucide-react';
-import Button from '../components/ui/Button';
-import LoadingFallback from '../components/ui/LoadingFallback';
 import { useUser } from '../context/UserContext';
 import { getOutfits, getRecommendedProducts } from '../services/DataRouter';
 import { Outfit, Product } from '../engine';
