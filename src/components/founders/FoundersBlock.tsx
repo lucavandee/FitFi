@@ -6,6 +6,7 @@ import Button from '../ui/Button';
 import FoundersBadge from './FoundersBadge';
 import ShareModal from './ShareModal';
 import toast from 'react-hot-toast';
+import { useInView, useAnimation } from 'framer-motion';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -36,6 +37,9 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
   const leaderboardControls = useAnimation();
 
   useEffect(() => {
+    loadReferralData();
+    loadLeaderboard();
+  }, [user?.id]);
 
   const loadReferralData = async () => {
     if (!user?.id) return;
