@@ -95,20 +95,22 @@ const OutfitsPage: React.FC = () => {
             <Loader className="animate-spin text-[#89CFF0]" size={32} />
           </div>
         ) : (
-        {/* Outfits Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-          {outfits.map((item) => (
-            <ProductCard
-              key={item.id}
-              id={item.id}
-              brand={item.brand}
-              title={item.title}
-              price={item.price}
-              imageUrl={item.imageUrl}
-              deeplink={item.deeplink}
-            />
-          ))}
-        </div>
+          <>
+            {/* Outfits Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+              {outfits.map((item) => (
+                <ProductCard
+                  key={item.id}
+                  id={item.id}
+                  brand={item.brand}
+                  title={item.title}
+                  price={item.price}
+                  imageUrl={item.imageUrl}
+                  deeplink={item.deeplink}
+                />
+              ))}
+            </div>
+          </>
         )}
 
         {/* Bottom CTA */}
