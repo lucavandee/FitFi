@@ -211,7 +211,6 @@ const FoundersBlockTeaser: React.FC<FoundersBlockTeaserProps> = ({ className = '
       <div 
         className="bg-white shadow-md rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 transition-all duration-300 hover:shadow-lg"
         onMouseEnter={handleHoverStart}
-        onMouseEnter={handleHoverStart}
       >
         {/* Icon */}
         <div className="flex-shrink-0">
