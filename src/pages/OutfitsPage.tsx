@@ -1,4 +1,5 @@
 import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Loader, Heart, Share2, Filter } from 'lucide-react';
 import { useUser } from '../context/UserContext';
@@ -6,10 +7,29 @@ import ProductCard from '../components/ProductCard';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
-import mockOutfits from '../data/mockOutfits.json';
+import { getRecommendedProducts } from '../services/DataRouter';
 
 const OutfitsPage: React.FC = () => {
   const { user } = useUser();
+  const [outfits, setOutfits] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOutfits = async () => {
+      try {
+        setLoading(true);
+        const products = await getRecommendedProducts();
+        setOutfits(products);
+      } catch (error) {
+        console.error('Error fetching outfits:', error);
+        setOutfits([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOutfits();
+  }, []);
 
   if (!user) {
     return (
@@ -71,9 +91,14 @@ const OutfitsPage: React.FC = () => {
           </div>
         </div>
 
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader className="animate-spin text-[#89CFF0]" size={32} />
+          </div>
+        ) : (
         {/* Outfits Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-          {mockOutfits.map((item) => (
+          {outfits.map((item) => (
             <ProductCard
               key={item.id}
               id={item.id}
@@ -85,6 +110,7 @@ const OutfitsPage: React.FC = () => {
             />
           ))}
         </div>
+        )}
 
         {/* Bottom CTA */}
         <div className="bg-white rounded-3xl shadow-sm p-8 text-center">
