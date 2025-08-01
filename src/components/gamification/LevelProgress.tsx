@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, Crown, TrendingUp, Gift } from 'lucide-react';
 import { useGamification } from '../../context/GamificationContext';
+import { motion } from 'framer-motion';
 
 interface LevelProgressProps {
   showPerks?: boolean;
@@ -56,9 +57,11 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           </div>
         )}
       </div>
-                <div 
-                  className="h-3 rounded-full bg-gradient-to-r from-[#89CFF0] to-blue-500 transition-all duration-1000 ease-out"
-                  style={{ width: `${progressToNextLevel}%` }}
+    );
+  }
+
+  return (
+    <div className={`bg-white rounded-2xl p-6 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
