@@ -1,7 +1,6 @@
 import React from 'react';
 import { Star, Crown, TrendingUp, Gift } from 'lucide-react';
 import { useGamification } from '../../context/GamificationContext';
-import { motion } from 'framer-motion';
 
 interface LevelProgressProps {
   showPerks?: boolean;
@@ -93,11 +92,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           
           <div className="relative">
             <div className="w-full bg-gray-200 rounded-full h-3">
-              <motion.div 
+              <div 
                 className="h-3 rounded-full bg-gradient-to-r from-[#89CFF0] to-blue-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressToNextLevel}%` }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                style={{ 
+                  width: `${progressToNextLevel}%`,
+                  transition: 'width 0.8s ease-out'
+                }}
               />
             </div>
             
