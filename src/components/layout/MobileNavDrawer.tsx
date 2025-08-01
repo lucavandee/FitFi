@@ -2,7 +2,6 @@ import React, { Fragment, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, LogIn, User } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { NAV_ITEMS } from '../../constants/nav';
 import { useUser } from '../../context/UserContext';
 
@@ -87,40 +86,6 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
 
   const navigationItems = getNavigationItems();
 
-  const containerVariants = {
-    hidden: { x: '100%', opacity: 0 },
-    visible: { 
-      x: 0, 
-      opacity: 1,
-      transition: {
-        duration: 0.24,
-        ease: "easeOut",
-        staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    },
-    exit: { 
-      x: '100%', 
-      opacity: 0,
-      transition: {
-        duration: 0.24,
-        ease: "easeIn"
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { x: 20, opacity: 0 },
-    visible: { 
-      x: 0, 
-      opacity: 1,
-      transition: {
-        duration: 0.2,
-        ease: "easeOut"
-      }
-    }
-  };
-
   return (
     <Transition show={open} as={Fragment}>
       <Dialog 
@@ -156,13 +121,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
           leaveFrom="translate-x-0 opacity-100"
           leaveTo="translate-x-full opacity-0"
         >
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed inset-y-0 right-0 z-50 w-[80vw] max-w-[320px] bg-white dark:bg-[#14172B] rounded-l-2xl shadow-menu flex flex-col"
-          >
+          <div className="fixed inset-y-0 right-0 z-50 w-[80vw] max-w-[320px] bg-white dark:bg-[#14172B] rounded-l-2xl shadow-menu flex flex-col animate-slide-in-right">
             {/* Header */}
             <header className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
               <Dialog.Title 
@@ -182,19 +141,15 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
 
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto" role="navigation">
-              <motion.ul 
-                className="py-2"
-                role="list"
-                variants={containerVariants}
-              >
+              <ul className="py-2" role="list">
                 {navigationItems.map(({ href, label, icon: IconComponent }, index) => {
                   const isActive = isActiveLink(href);
                   
                   return (
-                    <motion.li 
+                    <li 
                       key={href} 
-                      className="group relative"
-                      variants={itemVariants}
+                      className="group relative animate-fade-in"
+                      style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       {/* Active Route Indicator */}
                       {isActive && (
@@ -225,10 +180,10 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
                       {index < navigationItems.length - 1 && (
                         <div className="border-b border-black/5 dark:border-white/10 mx-6" />
                       )}
-                    </motion.li>
+                    </li>
                   );
                 })}
-              </motion.ul>
+              </ul>
             </nav>
 
             {/* Auth Section */}
@@ -255,7 +210,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         </Transition.Child>
       </Dialog>
     </Transition>
