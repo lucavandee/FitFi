@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Star, Brain, Share2, Heart, ShoppingBag, Target, Zap } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  Sparkles, 
+  Star, 
+  Brain, 
+  Share2, 
+  Heart, 
+  ShoppingBag, 
+  Target, 
+  Zap 
+} from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
 import { RealtimeProfile, OutfitPreview } from '../types/dynamicOnboarding';
@@ -9,7 +19,6 @@ import ImageWithFallback from '../components/ui/ImageWithFallback';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
 
 const DynamicResultsPage: React.FC = () => {
   const { user } = useUser();
@@ -98,10 +107,6 @@ const DynamicResultsPage: React.FC = () => {
     }
   };
 
-  if (!dynamicProfile) {
-    return <LoadingFallback fullScreen message="Resultaten laden..." />;
-  }
-
   const getPersonalityInsights = () => {
     const traits = dynamicProfile.personalityTraits;
     const insights = [];
@@ -135,6 +140,10 @@ const DynamicResultsPage: React.FC = () => {
 
     return insights;
   };
+
+  if (!dynamicProfile) {
+    return <LoadingFallback fullScreen message="Resultaten laden..." />;
+  }
 
   return (
     <>
@@ -196,11 +205,7 @@ const DynamicResultsPage: React.FC = () => {
             {/* Main Results */}
             <div className="lg:col-span-2 space-y-8">
               {/* Style Analysis */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl shadow-sm p-8"
-              >
+              <div className="bg-white rounded-3xl shadow-sm p-8 animate-fade-in">
                 <h2 className="text-2xl font-medium text-[#0D1B2A] mb-6">
                   Jouw Stijlanalyse
                 </h2>
@@ -233,15 +238,10 @@ const DynamicResultsPage: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Outfit Recommendations */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white rounded-3xl shadow-sm p-8"
-              >
+              <div className="bg-white rounded-3xl shadow-sm p-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-medium text-[#0D1B2A]">
                     Jouw AI-Gegenereerde Outfits
@@ -255,12 +255,10 @@ const DynamicResultsPage: React.FC = () => {
                 {dynamicOutfits && dynamicOutfits.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {dynamicOutfits.map((outfit, index) => (
-                      <motion.div
+                      <div
                         key={outfit.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="group cursor-pointer"
+                        className="group cursor-pointer animate-fade-in"
+                        style={{ animationDelay: `${index * 0.1}s` }}
                         onClick={() => handleOutfitSelect(outfit)}
                       >
                         <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-4">
@@ -314,7 +312,7 @@ const DynamicResultsPage: React.FC = () => {
                             {outfit.products.length} items • €{outfit.products.reduce((sum, p) => sum + p.price, 0).toFixed(0)} totaal
                           </p>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -325,17 +323,16 @@ const DynamicResultsPage: React.FC = () => {
                     <p className="text-gray-600">Geen outfits gegenereerd</p>
                   </div>
                 )}
-              </motion.div>
+              </div>
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Personality Insights */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: showPersonalityInsights ? 1 : 0, x: showPersonalityInsights ? 0 : 20 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-3xl shadow-sm p-6"
+              <div
+                className={`bg-white rounded-3xl shadow-sm p-6 transition-all duration-500 ${
+                  showPersonalityInsights ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-5'
+                }`}
               >
                 <div className="flex items-center space-x-2 mb-4">
                   <Brain className="w-5 h-5 text-[#89CFF0]" />
@@ -344,12 +341,10 @@ const DynamicResultsPage: React.FC = () => {
 
                 <div className="space-y-4">
                   {getPersonalityInsights().map((insight, index) => (
-                    <motion.div
+                    <div
                       key={index}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.2 }}
-                      className="flex items-start space-x-3"
+                      className="flex items-start space-x-3 animate-fade-in"
+                      style={{ animationDelay: `${index * 0.2}s` }}
                     >
                       <div className={`${insight.color} mt-1`}>
                         {insight.icon}
@@ -358,10 +353,10 @@ const DynamicResultsPage: React.FC = () => {
                         <h4 className="font-medium text-[#0D1B2A] text-sm">{insight.title}</h4>
                         <p className="text-gray-600 text-xs">{insight.description}</p>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
 
               {/* Behavior Analytics */}
               {analytics && (
@@ -430,18 +425,12 @@ const DynamicResultsPage: React.FC = () => {
 
           {/* Selected Outfit Modal */}
           {selectedOutfit && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in"
               onClick={() => setSelectedOutfit(null)}
             >
-              <motion.div
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.9 }}
-                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              <div
+                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-8">
@@ -512,46 +501,13 @@ const DynamicResultsPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           )}
         </div>
       </div>
     </>
   );
-};
-
-const getPersonalityInsights = (traits: Record<string, number>) => {
-  const insights = [];
-
-  if (traits.confidence > 0.7) {
-    insights.push({
-      icon: <Target className="w-5 h-5" />,
-      title: 'Natuurlijke Leider',
-      description: 'Je uitstraalt zelfvertrouwen en neemt graag het voortouw.',
-      color: 'text-blue-600'
-    });
-  }
-
-  if (traits.creativity > 0.7) {
-    insights.push({
-      icon: <Sparkles className="w-5 h-5" />,
-      title: 'Creatieve Geest',
-      description: 'Je hebt een artistieke kijk op mode en durft te experimenteren.',
-      color: 'text-purple-600'
-    });
-  }
-
-  if (traits.authenticity > 0.7) {
-    insights.push({
-      icon: <Heart className="w-5 h-5" />,
-      title: 'Authentiek Persoon',
-      description: 'Je blijft trouw aan jezelf en je eigen stijl.',
-      color: 'text-pink-600'
-    });
-  }
-
-  return insights;
 };
 
 export default DynamicResultsPage;
