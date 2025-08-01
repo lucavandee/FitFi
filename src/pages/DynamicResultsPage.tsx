@@ -429,18 +429,12 @@ const DynamicResultsPage: React.FC = () => {
 
           {/* Selected Outfit Modal */}
           {selectedOutfit && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in"
               onClick={() => setSelectedOutfit(null)}
             >
-              <motion.div
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.9 }}
-                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              <div
+                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-8">
@@ -511,8 +505,8 @@ const DynamicResultsPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           )}
         </div>
       </div>
