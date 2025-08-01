@@ -1,6 +1,5 @@
 import React from 'react';
 import { ChevronDown, AlertCircle, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { FunnelMetrics } from '../../types/analytics';
 
 interface FunnelVisualizerProps {
@@ -50,12 +49,10 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
           const isDropOffPoint = metrics.drop_off_points.some(p => p.step === step.id && p.rate > 0.3);
 
           return (
-            <motion.div
+            <div
               key={step.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="relative"
+              className="relative animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Step Container */}
               <div className="flex items-center space-x-4">
@@ -81,26 +78,26 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
                   </div>
                   
                   <div className="w-full bg-gray-200 rounded-full h-6 relative overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: getStepWidth(completionRate) }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
-                      className={`h-full rounded-full ${getStepColor(completionRate)} flex items-center justify-end pr-3`}
+                    <div
+                      className={`h-full rounded-full ${getStepColor(completionRate)} flex items-center justify-end pr-3 transition-all duration-1000 ease-out`}
+                      style={{ 
+                        width: getStepWidth(completionRate),
+                        animationDelay: `${index * 0.1}s`
+                      }}
                     >
                       <span className="text-white text-xs font-medium">
                         {Math.round(completionRate * 100)}%
                       </span>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Drop-off Warning */}
               {isDropOffPoint && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="ml-12 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg"
+                <div
+                  className="ml-12 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg animate-fade-in"
+                  style={{ animationDelay: `${(index + 1) * 0.1}s` }}
                 >
                   <div className="flex items-center space-x-2">
                     <AlertCircle className="w-4 h-4 text-red-600" />
@@ -109,7 +106,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
                   <p className="text-xs text-red-700 mt-1">
                     {Math.round(metrics.drop_off_points.find(p => p.step === step.id)?.rate! * 100)}% of users drop off at this step
                   </p>
-                </motion.div>
+                </div>
               )}
 
               {/* Connector Arrow */}
@@ -118,7 +115,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
                   <ChevronDown className="w-5 h-5 text-gray-400" />
                 </div>
               )}
-            </motion.div>
+            </div>
           );
         })}
       </div>
