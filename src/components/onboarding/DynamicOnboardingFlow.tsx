@@ -35,6 +35,7 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
   const [selectedAnswer, setSelectedAnswer] = useState<string | string[] | null>(null);
   const [showAIFeedback, setShowAIFeedback] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   // Initialize onboarding
   useEffect(() => {
@@ -98,7 +99,7 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
           setIsProcessing(false);
         }, 2000); // Show AI feedback for 2 seconds
       } else {
-        // Complete onboarding
+        // No more questions - complete onboarding
         setTimeout(async () => {
           await completeOnboarding();
         }, 2000);
@@ -112,7 +113,10 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
   }, [currentQuestion, answers, isProcessing, engine]);
 
   const completeOnboarding = async () => {
+    if (isCompleting) return; // Prevent double completion
+    
     try {
+      setIsCompleting(true);
       setProgress(100);
       
       const result = await engine.completeOnboarding(answers);
@@ -141,6 +145,8 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
     } catch (error) {
       console.error('Error completing onboarding:', error);
       toast.error('Er ging iets mis bij het voltooien van de onboarding');
+    } finally {
+      setIsCompleting(false);
     }
   };
 
@@ -169,8 +175,8 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
 
     return (
       <div className="space-y-4">
-        {currentQuestion.options.map((option) => (
-          <motion.button
+        {currentQuestion && currentQuestion.options.map((option) => (
+          <button
             key={option.id}
             onClick={() => handleAnswerSelect(option.id)}
             disabled={isProcessing}
@@ -179,11 +185,6 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
                 ? 'border-[#89CFF0] bg-[#89CFF0]/10 shadow-lg'
                 : 'border-gray-200 hover:border-[#89CFF0]/50 hover:bg-gray-50'
             } ${isProcessing ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'}`}
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
           >
             <div className="flex items-start space-x-4">
               {/* Visual Preview */}
@@ -220,16 +221,12 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
               
               {/* Selection indicator */}
               {selectedAnswer === option.id && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="flex-shrink-0 w-6 h-6 bg-[#89CFF0] rounded-full flex items-center justify-center"
-                >
+                <div className="flex-shrink-0 w-6 h-6 bg-[#89CFF0] rounded-full flex items-center justify-center animate-scale-in">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
-                </motion.div>
+                </div>
               )}
             </div>
-          </motion.button>
+          </button>
         ))}
       </div>
     );
@@ -239,12 +236,7 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
     if (!showAIFeedback || !profile) return null;
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="bg-gradient-to-br from-[#89CFF0]/10 to-purple-50 rounded-2xl p-6 mb-6"
-      >
+      <div className="bg-gradient-to-br from-[#89CFF0]/10 to-purple-50 rounded-2xl p-6 mb-6 animate-fade-in">
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-[#89CFF0] rounded-full flex items-center justify-center">
             <Brain className="w-5 h-5 text-white" />
@@ -261,12 +253,10 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
         {outfitPreviews.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
             {outfitPreviews.slice(0, 3).map((outfit, index) => (
-              <motion.div
+              <div
                 key={outfit.id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
-                className="relative aspect-[3/4] rounded-lg overflow-hidden group"
+                className="relative aspect-[3/4] rounded-lg overflow-hidden group animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <ImageWithFallback
                   src={outfit.imageUrl}
@@ -280,7 +270,7 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
                     <p className="text-white/80 text-xs">{outfit.matchPercentage}% match</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}
@@ -297,12 +287,36 @@ const DynamicOnboardingFlow: React.FC<DynamicOnboardingFlowProps> = ({
             {profile.personalityTraits.creativity > 0.7 ? ' Creatief' : ' Klassiek'}
           </p>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
+  // Helper to check if no more questions
+  const noMoreQuestions = !currentQuestion;
+
   if (isLoading) {
     return <LoadingFallback fullScreen message="Dynamische onboarding laden..." />;
+  }
+
+  // Auto-complete when no more questions and we have answers
+  if (noMoreQuestions && Object.keys(answers).length > 0 && !isCompleting) {
+    completeOnboarding();
+    return (
+      <LoadingFallback
+        fullScreen
+        message="Even geduld… we berekenen jouw outfits"
+      />
+    );
+  }
+
+  // Show completion loading
+  if (isCompleting) {
+    return (
+      <LoadingFallback
+        fullScreen
+        message="Even geduld… we berekenen jouw outfits"
+      />
+    );
   }
 
   if (!currentQuestion && Object.keys(answers).length === 0) {
