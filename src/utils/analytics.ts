@@ -7,6 +7,35 @@ const GA_TRACKING_ID = import.meta.env.VITE_GTAG_ID;
 const ANALYTICS_ENABLED = import.meta.env.VITE_ENABLE_ANALYTICS === 'true';
 
 /**
+ * Record event with test data marking
+ */
+export const recordEvent = (
+  eventData: any,
+  isTest: boolean = import.meta.env.DEV
+): void => {
+  // Mark test data
+  const markedData = {
+    ...eventData,
+    is_test: isTest,
+    environment: import.meta.env.VITE_ENVIRONMENT || 'development'
+  };
+  
+  // Log in development
+  if (import.meta.env.DEV) {
+    console.log('[Analytics] Event recorded:', markedData);
+  }
+  
+  // In production, this would save to Supabase with is_test flag
+  // For now, just track in Google Analytics
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'custom_event', {
+      ...markedData,
+      non_interaction: isTest
+    });
+  }
+};
+
+/**
  * Initialize Google Analytics
  */
 export const initializeAnalytics = (): void => {
@@ -74,10 +103,20 @@ export const trackEvent = (
 ): void => {
   if (!window.gtag || !ANALYTICS_ENABLED) return;
 
+  // Record with test marking
+  recordEvent({
+    action,
+    category,
+    label,
+    value,
+    ...custom_parameters
+  });
+
   window.gtag('event', action, {
     event_category: category,
     event_label: label,
     value: value,
+    is_test: import.meta.env.DEV,
     ...custom_parameters
   });
 };

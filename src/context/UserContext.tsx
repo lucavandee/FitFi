@@ -7,6 +7,7 @@ export interface UserProfile {
   name: string;
   email: string;
   gender?: 'male' | 'female' | 'neutral';
+  role?: 'admin' | 'user';
   stylePreferences: {
     casual: number;
     formal: number;
@@ -21,6 +22,7 @@ export interface UserProfile {
 interface UserContextType {
   user: UserProfile | null;
   isLoading: boolean;
+  authEventPending: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; redirectTo?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; redirectTo?: string }>;
   logout: () => Promise<void>;
@@ -62,6 +64,7 @@ const ensureUserProfileExists = async (user: any): Promise<void> => {
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authEventPending, setAuthEventPending] = useState(false);
 
   useEffect(() => {
     // Check for existing session on mount
@@ -78,6 +81,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             id: session.user.id,
             name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
             email: session.user.email || '',
+            role: session.user.user_metadata?.role || 'user',
             stylePreferences: {
               casual: 3,
               formal: 3,
@@ -103,7 +107,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        if (event === 'SIGNED_IN' && session?.user) {
           // Ensure profile exists in database
           await ensureUserProfileExists(session.user);
           
@@ -111,6 +115,27 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             id: session.user.id,
             name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
             email: session.user.email || '',
+            role: session.user.user_metadata?.role || 'user',
+            stylePreferences: {
+              casual: 3,
+              formal: 3,
+              sporty: 3,
+              vintage: 3,
+              minimalist: 3
+            },
+            isPremium: false,
+            savedRecommendations: []
+          };
+          
+          setUser(userProfile);
+          setAuthEventPending(false);
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+          // Don't reset authEventPending for token refresh
+          const userProfile: UserProfile = {
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            role: session.user.user_metadata?.role || 'user',
             stylePreferences: {
               casual: 3,
               formal: 3,
@@ -125,6 +150,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(userProfile);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
+          setAuthEventPending(false);
         }
         setIsLoading(false);
       }
@@ -135,26 +161,39 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
     try {
-      setIsLoading(true);
+      setAuthEventPending(true);
       
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      // Add timeout to prevent hanging
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Auth timeout')), 10000)
+      );
+      
+      const { error } = await Promise.race([
+        supabase.auth.signInWithPassword({
+          email,
+          password
+        }),
+        timeout
+      ]) as any;
 
       if (error) {
+        setAuthEventPending(false);
         toast.error('E-mail of wachtwoord onjuist');
         return { success: false };
       }
 
       toast.success('Welkom terug!');
-      return { success: true, redirectTo: '/dashboard' };
+      return { success: true };
     } catch (error: any) {
+      setAuthEventPending(false);
       console.error('Login error:', error);
-      toast.error('Er ging iets mis bij het inloggen');
+      
+      if (error.message === 'Auth timeout') {
+        toast.error('Server reageert traag – probeer het opnieuw.');
+      } else {
+        toast.error('Er ging iets mis bij het inloggen');
+      }
       return { success: false };
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -248,6 +287,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value: UserContextType = {
     user,
     isLoading,
+    authEventPending,
     login,
     register,
     logout,
