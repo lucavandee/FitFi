@@ -678,8 +678,13 @@ export class AdvancedAnalytics {
       return `#${element.id}`;
     }
     
-    if (element.className) {
-      const classes = element.className.split(' ').filter(c => c.length > 0);
+    // Handle both HTML and SVG elements
+    const className = typeof element.className === 'string' 
+      ? element.className 
+      : element.className?.baseVal || '';
+    
+    if (className) {
+      const classes = className.split(' ').filter(c => c.length > 0);
       if (classes.length > 0) {
         return `.${classes[0]}`;
       }
