@@ -673,21 +673,18 @@ export class AdvancedAnalytics {
    * Utility Methods
    */
   private getElementSelector(element: HTMLElement): string {
-    // Generate a unique selector for the element
     if (element.id) {
       return `#${element.id}`;
     }
     
-    // Handle both HTML and SVG elements
-    const className = typeof element.className === 'string' 
-      ? element.className 
-      : element.className?.baseVal || '';
+    // Prefer classList (DOMTokenList) first - works for both HTML and SVG
+    if ('classList' in element && element.classList.length > 0) {
+      return `.${element.classList.item(0)}`;
+    }
     
-    if (className) {
-      const classes = className.split(' ').filter(c => c.length > 0);
-      if (classes.length > 0) {
-        return `.${classes[0]}`;
-      }
+    // Fallback to className string handling
+    if (typeof element.className === 'string' && element.className.trim()) {
+      return `.${element.className.split(/\s+/)[0]}`;
     }
     
     return element.tagName.toLowerCase();
