@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, Sparkles, Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
-import { generateNovaStyleTips, saveUserFeedback, processRealtimeFeedback } from '../../engine/recommendationEngine';
+import { saveUserFeedback, processRealtimeFeedback } from '../../engine/recommendationEngine';
+import { generateNovaStyleTips } from '../../engine/explainOutfit';
 import { Outfit } from '../../engine/types';
 import Button from '../ui/Button';
 import ImageWithFallback from '../ui/ImageWithFallback';
