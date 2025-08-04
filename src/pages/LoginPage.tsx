@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useUser();
+  const { user, login, authEventPending } = useUser();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -20,6 +20,13 @@ const LoginPage: React.FC = () => {
 
   // Get redirect path from location state
   const from = location.state?.from?.pathname || '/dashboard';
+
+  // Handle successful login redirect
+  useEffect(() => {
+    if (user && !authEventPending) {
+      navigate(from, { replace: true });
+    }
+  }, [user, authEventPending, navigate, from]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,12 +76,10 @@ const LoginPage: React.FC = () => {
     try {
       const result = await login(formData.email, formData.password);
       
-      if (result.success) {
-        // Navigate immediately - no extra checks needed
-        navigate(result.redirectTo || from, { replace: true });
-      } else {
+      if (!result.success) {
         setErrors({ general: 'Inloggen mislukt. Controleer je gegevens.' });
       }
+      // Don't navigate here - useEffect handles it when user state updates
     } catch (error: any) {
       console.error('Login error:', error);
       setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
@@ -82,6 +87,18 @@ const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Show loading while auth is pending
+  if (authEventPending) {
+    return (
+      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#bfae9f] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Inloggen...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

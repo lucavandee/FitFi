@@ -616,7 +616,8 @@ export class AdvancedAnalytics {
   private async getFunnelMetrics(): Promise<AnalyticsDashboardData['funnels']> {
     const { data } = await supabase
       .rpc('get_funnel_metrics', { 
-        time_range: '7d' 
+        time_range: '7d',
+        exclude_test_data: !import.meta.env.DEV
       });
 
     return data || {
@@ -629,7 +630,8 @@ export class AdvancedAnalytics {
   private async getHeatmapSummaries(): Promise<AnalyticsDashboardData['heatmaps']> {
     const { data } = await supabase
       .rpc('get_heatmap_summary', { 
-        time_range: '7d' 
+        time_range: '7d',
+        exclude_test_data: !import.meta.env.DEV
       });
 
     return data || {
@@ -642,7 +644,8 @@ export class AdvancedAnalytics {
   private async getPredictiveInsights(): Promise<AnalyticsDashboardData['predictions']> {
     const { data } = await supabase
       .rpc('get_predictive_insights', { 
-        limit_per_type: 10 
+        limit_per_type: 10,
+        exclude_test_data: !import.meta.env.DEV
       });
 
     return data || {
@@ -654,7 +657,9 @@ export class AdvancedAnalytics {
 
   private async getRealtimeMetrics(): Promise<AnalyticsDashboardData['realtime']> {
     const { data } = await supabase
-      .rpc('get_realtime_metrics');
+      .rpc('get_realtime_metrics', {
+        exclude_test_data: !import.meta.env.DEV
+      });
 
     return data || {
       active_users: 0,
