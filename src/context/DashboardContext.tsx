@@ -57,7 +57,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const { data: dashboardData, error: dashboardError } = await supabase.functions.invoke('dashboard-init', {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        }
+        },
+        body: {}
       });
 
       if (dashboardError) {
