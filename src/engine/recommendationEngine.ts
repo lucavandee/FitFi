@@ -8,9 +8,36 @@ import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { isValidImageUrl } from '../utils/imageUtils';
 import { env } from '../utils/env';
 import { fetchProductsFromSupabase } from '../services/supabaseService';
+import { supabase } from '../lib/supabase';
 
 // Dynamic import for code splitting
 const generateOutfits = React.lazy(() => import('./generateOutfits'));
+
+/**
+ * Interface for user feedback on recommendations
+ */
+export interface UserFeedback {
+  user_id: string;
+  item_id: string;
+  item_type: 'outfit' | 'product';
+  feedback_type: 'like' | 'dislike' | 'love' | 'not_interested';
+  reason?: string;
+  context?: Record<string, any>;
+  timestamp: number;
+}
+
+/**
+ * Interface for realtime recommendation updates
+ */
+export interface RealtimeRecommendation {
+  id: string;
+  type: 'outfit' | 'product';
+  confidence: number;
+  reasoning: string[];
+  adaptedFor: string; // What user input/feedback this was adapted for
+  timestamp: number;
+}
+
 /**
  * Interface for recommendation options
  */
@@ -24,6 +51,8 @@ interface RecommendationOptions {
   enforceCompletion?: boolean;
   minCompleteness?: number;
   useZalandoProducts?: boolean;
+  userFeedback?: UserFeedback[];
+  realtime?: boolean;
 }
 
 /**
@@ -33,10 +62,16 @@ interface RecommendationOptions {
  * @param options - Optional configuration for recommendations
  * @returns Array of recommended outfits
  */
-export function generateRecommendations(user: UserProfile, options?: RecommendationOptions): Outfit[] {
+export async function generateRecommendations(
+  user: UserProfile, 
+  options?: RecommendationOptions
+): Promise<Outfit[]> {
   if (!env.USE_SUPABASE) {
     console.log('Supabase uitgeschakeld – fallback actief');
   }
+  
+  // Get user feedback to adapt recommendations
+  const userFeedback = options?.userFeedback || await getUserFeedback(user.id);
   
   // Step 1: Get current season or preferred season
   const preferredSeasons = options?.preferredSeasons;
@@ -53,8 +88,6 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
   // Step 3: Get all available products from local data
   const useZalandoProducts = options?.useZalandoProducts !== undefined ? options.useZalandoProducts : true;
   
-  // Use an async IIFE to handle the async product loading
-  return (async () => {
     let allProducts: Product[] = [];
     
     // Try to get Supabase products if enabled
@@ -133,7 +166,7 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
     // Step 6: Filter and sort products based on user preferences
     // Use seasonal products if we have enough, otherwise fall back to all products
     const productsToUse = seasonalProducts.length >= 10 ? seasonalProducts : validProducts;
-    const sortedProducts = filterAndSortProducts(productsToUse, user);
+    const sortedProducts = filterAndSortProducts(productsToUse, user, userFeedback);
     console.log(`Filtered and sorted ${sortedProducts.length} products`);
     
     // Log product category distribution
@@ -167,8 +200,14 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
     );
     console.log(`Generated ${outfits.length} outfits`);
     
+    // Apply user feedback to outfit ranking
+    const adaptedOutfits = await applyUserFeedbackToOutfits(outfits, userFeedback, user);
+    
+    // Add Nova's explanations to outfits
+    const outfitsWithExplanations = await addNovaExplanations(adaptedOutfits, user);
+    
     // Log outfit composition
-    outfits.forEach((outfit, index) => {
+    outfitsWithExplanations.forEach((outfit, index) => {
       console.log(`Outfit ${index + 1} composition:`, 
         outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).join(', ')
       );
@@ -187,8 +226,249 @@ export function generateRecommendations(user: UserProfile, options?: Recommendat
       console.log(`Outfit ${index + 1} weather:`, outfit.weather);
     });
     
-    return outfits;
-  })();
+    return outfitsWithExplanations;
+}
+
+/**
+ * Get user feedback for adaptive recommendations
+ */
+async function getUserFeedback(userId: string): Promise<UserFeedback[]> {
+  try {
+    const { data, error } = await supabase
+      .from('user_feedback')
+      .select('*')
+      .eq('user_id', userId)
+      .order('timestamp', { ascending: false })
+      .limit(50); // Last 50 feedback items
+
+    if (error) {
+      console.warn('Could not load user feedback:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.warn('Error loading user feedback:', error);
+    return [];
+  }
+}
+
+/**
+ * Apply user feedback to outfit ranking and filtering
+ */
+async function applyUserFeedbackToOutfits(
+  outfits: Outfit[], 
+  feedback: UserFeedback[], 
+  user: UserProfile
+): Promise<Outfit[]> {
+  if (feedback.length === 0) return outfits;
+
+  // Analyze feedback patterns
+  const likedStyles = feedback
+    .filter(f => f.feedback_type === 'like' || f.feedback_type === 'love')
+    .map(f => f.context?.style || f.context?.archetype)
+    .filter(Boolean);
+
+  const dislikedStyles = feedback
+    .filter(f => f.feedback_type === 'dislike' || f.feedback_type === 'not_interested')
+    .map(f => f.context?.style || f.context?.archetype)
+    .filter(Boolean);
+
+  // Boost outfits that match liked styles
+  const adaptedOutfits = outfits.map(outfit => {
+    let confidenceBoost = 0;
+    
+    // Boost for liked archetypes
+    if (likedStyles.includes(outfit.archetype)) {
+      confidenceBoost += 10;
+    }
+    
+    // Penalize for disliked archetypes
+    if (dislikedStyles.includes(outfit.archetype)) {
+      confidenceBoost -= 15;
+    }
+    
+    // Boost for liked occasions
+    const likedOccasions = feedback
+      .filter(f => f.feedback_type === 'like' || f.feedback_type === 'love')
+      .map(f => f.context?.occasion)
+      .filter(Boolean);
+    
+    if (likedOccasions.includes(outfit.occasion)) {
+      confidenceBoost += 5;
+    }
+
+    return {
+      ...outfit,
+      matchPercentage: Math.max(0, Math.min(100, outfit.matchPercentage + confidenceBoost)),
+      explanation: outfit.explanation + (confidenceBoost > 0 
+        ? ` Nova heeft deze aanbeveling aangepast op basis van je eerdere voorkeuren.`
+        : '')
+    };
+  });
+
+  // Sort by adapted match percentage
+  return adaptedOutfits.sort((a, b) => b.matchPercentage - a.matchPercentage);
+}
+
+/**
+ * Add Nova's AI explanations to outfits
+ */
+async function addNovaExplanations(outfits: Outfit[], user: UserProfile): Promise<Outfit[]> {
+  const { generateNovaExplanation } = await import('./explainOutfit');
+  
+  return Promise.all(outfits.map(async (outfit) => {
+    const novaExplanation = await generateNovaExplanation(outfit.id, user, outfit);
+    
+    return {
+      ...outfit,
+      explanation: outfit.explanation,
+      novaExplanation // Add Nova's personalized explanation
+    };
+  }));
+}
+
+/**
+ * Save user feedback for future recommendations
+ */
+export async function saveUserFeedback(feedback: Omit<UserFeedback, 'timestamp'>): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('user_feedback')
+      .insert([{
+        ...feedback,
+        timestamp: Date.now()
+      }]);
+
+    if (error) {
+      console.error('Error saving user feedback:', error);
+      return false;
+    }
+
+    console.log('User feedback saved successfully');
+    return true;
+  } catch (error) {
+    console.error('Error saving user feedback:', error);
+    return false;
+  }
+}
+
+/**
+ * Process realtime feedback and update recommendations
+ */
+export async function processRealtimeFeedback(
+  feedback: Omit<UserFeedback, 'timestamp'>,
+  currentOutfits: Outfit[]
+): Promise<{
+  updatedOutfits: Outfit[];
+  newRecommendations: RealtimeRecommendation[];
+}> {
+  // Save feedback
+  await saveUserFeedback(feedback);
+  
+  // Get updated user feedback
+  const allFeedback = await getUserFeedback(feedback.user_id);
+  
+  // Re-rank current outfits based on new feedback
+  const user = { id: feedback.user_id } as UserProfile; // Simplified for this context
+  const updatedOutfits = await applyUserFeedbackToOutfits(currentOutfits, allFeedback, user);
+  
+  // Generate new recommendations based on feedback
+  const newRecommendations: RealtimeRecommendation[] = [];
+  
+  if (feedback.feedback_type === 'like' || feedback.feedback_type === 'love') {
+    // User liked something - find similar items
+    const likedOutfit = currentOutfits.find(o => o.id === feedback.item_id);
+    if (likedOutfit) {
+      newRecommendations.push({
+        id: `nova_rec_${Date.now()}`,
+        type: 'outfit',
+        confidence: 0.85,
+        reasoning: [
+          `Omdat je ${likedOutfit.title} leuk vond`,
+          `Vergelijkbare ${likedOutfit.archetype} stijl`,
+          'Nova heeft dit speciaal voor jou geselecteerd'
+        ],
+        adaptedFor: 'positive_feedback',
+        timestamp: Date.now()
+      });
+    }
+  }
+  
+  return {
+    updatedOutfits,
+    newRecommendations
+  };
+}
+
+/**
+ * Generate realtime recommendations based on current user interaction
+ */
+export async function generateRealtimeRecommendations(
+  user: UserProfile,
+  currentContext: {
+    currentPage?: string;
+    viewedItems?: string[];
+    recentFeedback?: UserFeedback[];
+  }
+): Promise<RealtimeRecommendation[]> {
+  const recommendations: RealtimeRecommendation[] = [];
+  
+  try {
+    // Get recent user behavior
+    const recentFeedback = currentContext.recentFeedback || await getUserFeedback(user.id);
+    
+    // Generate contextual recommendations
+    if (currentContext.currentPage === '/quiz' || currentContext.currentPage === '/dynamic-onboarding') {
+      // During onboarding - show preview recommendations
+      const previewOutfits = await generateRecommendations(user, { 
+        count: 2, 
+        userFeedback: recentFeedback,
+        realtime: true 
+      });
+      
+      recommendations.push(...previewOutfits.map(outfit => ({
+        id: outfit.id,
+        type: 'outfit' as const,
+        confidence: outfit.matchPercentage / 100,
+        reasoning: [
+          `Past bij jouw ${outfit.archetype} stijl`,
+          `Geschikt voor ${outfit.occasion}`,
+          `${outfit.matchPercentage}% match met je voorkeuren`
+        ],
+        adaptedFor: 'onboarding_preview',
+        timestamp: Date.now()
+      })));
+    }
+    
+    if (currentContext.currentPage === '/results') {
+      // On results page - show adaptive recommendations
+      const adaptiveOutfits = await generateRecommendations(user, {
+        count: 3,
+        excludeIds: currentContext.viewedItems,
+        userFeedback: recentFeedback,
+        realtime: true
+      });
+      
+      recommendations.push(...adaptiveOutfits.map(outfit => ({
+        id: outfit.id,
+        type: 'outfit' as const,
+        confidence: outfit.matchPercentage / 100,
+        reasoning: [
+          `Nova heeft dit speciaal voor jou geselecteerd`,
+          `Gebaseerd op je ${outfit.archetype} voorkeur`,
+          recentFeedback.length > 0 ? 'Aangepast op basis van je feedback' : 'Nieuwe aanbeveling'
+        ],
+        adaptedFor: 'results_adaptive',
+        timestamp: Date.now()
+      })));
+    }
+    
+    return recommendations;
+  } catch (error) {
+    console.error('Error generating realtime recommendations:', error);
+    return [];
+  }
 }
 
 /**

@@ -1,5 +1,6 @@
 import { Product, Outfit, Season, ProductCategory, Weather, CategoryRatio } from './types';
 import { getDutchSeasonName, getDutchWeatherDescription } from './helpers';
+import { UserProfile } from '../context/UserContext';
 
 /**
  * Generates a personalized explanation for why an outfit fits the user's style and occasion
@@ -188,6 +189,194 @@ export function generateOutfitExplanation(
   }
 
   return explanation;
+}
+
+/**
+ * Generate Nova's AI explanation for why this outfit was recommended
+ * 
+ * @param outfitId - The outfit ID to explain
+ * @param user - User profile for personalization
+ * @param outfit - The outfit object (optional, will fetch if not provided)
+ * @returns Nova's explanation string
+ */
+export async function generateNovaExplanation(
+  outfitId: string, 
+  user: UserProfile, 
+  outfit?: Outfit
+): Promise<string> {
+  try {
+    // If outfit not provided, we'd fetch it (for now use provided)
+    if (!outfit) {
+      console.warn('Outfit not provided for explanation');
+      return 'Nova kon geen uitleg genereren voor deze outfit.';
+    }
+
+    const userName = user.name?.split(' ')[0] || 'daar';
+    
+    // Nova's personality-driven explanations
+    const novaIntros = [
+      `Hoi ${userName}! Nova hier. `,
+      `${userName}, ik heb iets leuks voor je gevonden! `,
+      `Perfect timing, ${userName}! `,
+      `${userName}, dit wordt jouw nieuwe favoriet: `
+    ];
+    
+    const novaReasonings = {
+      'klassiek': [
+        'Deze outfit straalt de tijdloze elegantie uit die perfect bij jouw persoonlijkheid past.',
+        'De verfijnde details en klassieke snit complementeren jouw natuurlijke stijlgevoel.',
+        'Deze combinatie toont jouw voorkeur voor kwaliteit en sophistication.'
+      ],
+      'casual_chic': [
+        'Deze moeiteloze look past perfect bij jouw relaxte maar stijlvolle uitstraling.',
+        'De balans tussen comfort en elegantie is precies wat jij zoekt.',
+        'Deze outfit laat zien dat stijl niet ingewikkeld hoeft te zijn.'
+      ],
+      'urban': [
+        'Deze functionele look is gemaakt voor jouw dynamische lifestyle.',
+        'De praktische details en moderne snit passen bij jouw stadse energie.',
+        'Deze outfit combineert stijl met de functionaliteit die jij waardeert.'
+      ],
+      'streetstyle': [
+        'Deze expressieve look laat jouw authentieke persoonlijkheid zien.',
+        'De gedurfde elementen en unieke details passen bij jouw creatieve geest.',
+        'Deze outfit toont dat jij niet bang bent om op te vallen.'
+      ],
+      'retro': [
+        'Deze vintage-geïnspireerde look past bij jouw unieke smaak.',
+        'De nostalgische elementen met moderne twist zijn typisch jouw stijl.',
+        'Deze outfit toont jouw waardering voor tijdloze mode met een persoonlijke draai.'
+      ],
+      'luxury': [
+        'Deze exclusieve look past bij jouw verfijnde smaak.',
+        'De hoogwaardige materialen en perfecte afwerking zijn wat jij verdient.',
+        'Deze outfit straalt de kwaliteit en elegantie uit die jij waardeert.'
+      ]
+    };
+    
+    const novaClosings = [
+      ' Wat denk je ervan?',
+      ' Ik ben benieuwd naar je reactie!',
+      ' Laat me weten of dit klopt!',
+      ' Dit wordt vast een favoriet van je!'
+    ];
+    
+    // Build Nova's explanation
+    const intro = novaIntros[Math.floor(Math.random() * novaIntros.length)];
+    const reasoning = novaReasonings[outfit.archetype] || novaReasonings['casual_chic'];
+    const mainReason = reasoning[Math.floor(Math.random() * reasoning.length)];
+    const closing = novaClosings[Math.floor(Math.random() * novaClosings.length)];
+    
+    // Add specific details about the outfit
+    let specificDetails = '';
+    if (outfit.products && outfit.products.length > 0) {
+      const keyProduct = outfit.products[0];
+      specificDetails = ` De ${keyProduct.name?.toLowerCase() || 'items'} ${outfit.products.length > 1 ? 'en bijpassende stukken ' : ''}zijn zorgvuldig geselecteerd om jouw ${outfit.archetype.replace('_', ' ')} stijl te versterken.`;
+    }
+    
+    // Add seasonal context
+    let seasonalContext = '';
+    if (outfit.season) {
+      seasonalContext = ` Perfect voor het ${getDutchSeasonName(outfit.season).toLowerCase()}seizoen!`;
+    }
+    
+    return `${intro}${mainReason}${specificDetails}${seasonalContext}${closing}`;
+    
+  } catch (error) {
+    console.error('Error generating Nova explanation:', error);
+    return `Nova kon geen uitleg genereren voor deze outfit. Probeer het later opnieuw.`;
+  }
+}
+
+/**
+ * Generate detailed explanation for why an outfit was recommended
+ */
+export async function generateDetailedExplanation(
+  outfitId: string, 
+  user: UserProfile, 
+  outfit?: Outfit,
+  context?: {
+    userFeedback?: UserFeedback[];
+    currentSeason?: Season;
+    occasion?: string;
+  }
+): Promise<{
+  summary: string;
+  details: {
+    styleMatch: string;
+    seasonalFit: string;
+    occasionSuitability: string;
+    personalityAlignment: string;
+  };
+  novaInsight: string;
+}> {
+  if (!outfit) {
+    return {
+      summary: 'Nova kon geen uitleg genereren voor deze outfit.',
+      details: {
+        styleMatch: '',
+        seasonalFit: '',
+        occasionSuitability: '',
+        personalityAlignment: ''
+      },
+      novaInsight: ''
+    };
+  }
+
+  const userName = user.name?.split(' ')[0] || 'daar';
+  
+  // Generate detailed explanations
+  const styleMatch = `Deze ${outfit.archetype.replace('_', ' ')} outfit past ${outfit.matchPercentage}% bij jouw stijlvoorkeuren. De ${outfit.products.map(p => p.type).join(', ')} zijn geselecteerd op basis van jouw voorkeur voor ${Object.entries(user.stylePreferences || {}).filter(([_, value]) => value > 3).map(([key]) => key).join(', ')}.`;
+  
+  const seasonalFit = outfit.season 
+    ? `Perfect geschikt voor het ${getDutchSeasonName(outfit.season).toLowerCase()}seizoen met ${outfit.weather ? getDutchWeatherDescription(outfit.weather) : 'mild'} weer.`
+    : 'Tijdloos ontwerp dat het hele jaar door gedragen kan worden.';
+  
+  const occasionSuitability = `Ideaal voor ${outfit.occasion.toLowerCase()} met ${outfit.completeness}% outfit-volledigheid. De ${outfit.structure?.join(', ') || 'items'} zorgen voor de juiste balans.`;
+  
+  const personalityAlignment = `Deze outfit reflecteert jouw ${user.gender === 'male' ? 'mannelijke' : 'vrouwelijke'} stijl en past bij jouw persoonlijkheid. ${outfit.secondaryArchetype ? `De mix van ${outfit.archetype} en ${outfit.secondaryArchetype} elementen (${Math.round((outfit.mixFactor || 0) * 100)}% invloed) creëert een unieke look.` : ''}`;
+  
+  const novaInsight = await generateNovaExplanation(outfitId, user, outfit);
+  
+  return {
+    summary: `${userName}, deze outfit is ${outfit.matchPercentage}% geschikt voor jouw ${outfit.archetype.replace('_', ' ')} stijl en ${outfit.occasion.toLowerCase()} gelegenheden.`,
+    details: {
+      styleMatch,
+      seasonalFit,
+      occasionSuitability,
+      personalityAlignment
+    },
+    novaInsight
+  };
+}
+
+/**
+ * Generate quick style tips from Nova
+ */
+export function generateNovaStyleTips(user: UserProfile, context: string = 'general'): string[] {
+  const tips: Record<string, string[]> = {
+    'onboarding': [
+      'Tip van Nova: Wees eerlijk over je voorkeuren - ik leer van elke keuze die je maakt!',
+      'Nova\'s geheim: De beste outfits voelen als een tweede huid.',
+      'Wist je dat? Nova analyseert niet alleen wat je leuk vindt, maar ook waarom je het leuk vindt.',
+      'Pro-tip: Experimenteren is oké! Ik help je ontdekken wat werkt en wat niet.'
+    ],
+    'results': [
+      'Nova\'s advies: Probeer één nieuwe stijl per week om je comfort zone uit te breiden.',
+      'Geheim van stijl: Confidence is het beste accessoire dat je kunt dragen.',
+      'Nova\'s observatie: De beste outfits vertellen jouw verhaal zonder woorden.',
+      'Style hack: Mix één onverwacht element in een klassieke outfit voor instant upgrade.'
+    ],
+    'general': [
+      'Nova\'s wijsheid: Stijl is niet wat je draagt, maar hoe je het draagt.',
+      'Fashion fact: Kleuren kunnen je humeur beïnvloeden - kies bewust!',
+      'Nova\'s tip: Investeer in basics die je 100x kunt dragen.',
+      'Style secret: De perfecte pasvorm is belangrijker dan het merk.'
+    ]
+  };
+  
+  const contextTips = tips[context] || tips['general'];
+  return contextTips;
 }
 
 /**
