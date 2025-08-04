@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext';
 import DynamicOnboardingFlow from '../components/onboarding/DynamicOnboardingFlow';
 import { RealtimeProfile, OutfitPreview } from '../types/dynamicOnboarding';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import NovaChat from '../components/ai/NovaChat';
 
 const DynamicOnboardingPage: React.FC = () => {
   const { user, isLoading } = useUser();
@@ -53,6 +54,11 @@ const DynamicOnboardingPage: React.FC = () => {
       </Helmet>
 
       <DynamicOnboardingFlow onComplete={handleOnboardingComplete} />
+      
+      {/* Nova Chat for Onboarding */}
+      <NovaChat 
+        context="onboarding"
+      />
     </>
   );
 };

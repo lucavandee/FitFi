@@ -11,12 +11,18 @@ import {
   User,
   Calendar,
   MapPin,
-  Palette
+  Palette,
+  HelpCircle
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { getOutfits, getRecommendedProducts } from '../services/DataRouter';
 import { Outfit, Product } from '../engine';
 import { getSafeUser } from '../utils/userUtils';
+import { generateDetailedExplanation } from '../engine/explainOutfit';
+import NovaChat from '../components/ai/NovaChat';
+import VirtualTryOnPreview from '../components/ai/VirtualTryOnPreview';
+import Popover from '../components/ui/Popover';
+import LoadingFallback from '../components/ui/LoadingFallback';
 
 const EnhancedResultsPage: React.FC = () => {
   const location = useLocation();
@@ -26,6 +32,8 @@ const EnhancedResultsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
+  const [showVirtualTryOn, setShowVirtualTryOn] = useState(false);
 
   // Get onboarding data from navigation state
   const onboardingData = location.state?.onboardingData;
@@ -71,6 +79,49 @@ const EnhancedResultsPage: React.FC = () => {
     console.log('Sharing outfit:', outfitId);
   };
 
+  const handleOutfitClick = (outfit: Outfit) => {
+    setSelectedOutfit(outfit);
+    setShowVirtualTryOn(true);
+  };
+
+  const handleOutfitUpdate = (updatedOutfits: Outfit[]) => {
+    setOutfits(updatedOutfits);
+  };
+
+  const renderOutfitExplanation = (outfit: Outfit) => {
+    if (!user) return null;
+
+    return (
+      <Popover
+        trigger={
+          <button className="w-6 h-6 rounded-full bg-[#89CFF0]/20 hover:bg-[#89CFF0]/30 flex items-center justify-center transition-colors">
+            <HelpCircle size={14} className="text-[#89CFF0]" />
+          </button>
+        }
+        content={
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-[#89CFF0]" />
+              <span className="font-medium text-gray-900">Waarom deze outfit?</span>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {outfit.explanation}
+            </p>
+            {outfit.novaExplanation && (
+              <div className="p-2 bg-[#89CFF0]/10 rounded-lg">
+                <p className="text-xs text-gray-700 italic">
+                  💬 Nova: "{outfit.novaExplanation}"
+                </p>
+              </div>
+            )}
+          </div>
+        }
+        placement="top"
+        maxWidth="max-w-xs"
+      />
+    );
+  };
+
   if (isLoading) {
     return <LoadingFallback fullScreen message="Je gepersonaliseerde aanbevelingen worden geladen..." />;
   }
@@ -90,7 +141,8 @@ const EnhancedResultsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-primary">
+    <>
+      <div className="min-h-screen bg-primary">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
         {/* Header */}
         <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg mb-8">
@@ -178,6 +230,7 @@ const EnhancedResultsPage: React.FC = () => {
                   key={outfit.id}
                   className="bg-accent text-text-dark rounded-2xl shadow-lg overflow-hidden animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => handleOutfitClick(outfit)}
                 >
                   <div className="relative aspect-[3/4]">
                     <img 
@@ -189,6 +242,7 @@ const EnhancedResultsPage: React.FC = () => {
                       {outfit.matchPercentage}% Match
                     </div>
                     <div className="absolute top-3 right-3 flex space-x-2">
+                      {renderOutfitExplanation(outfit)}
                       <button
                         onClick={() => handleSaveOutfit(outfit.id)}
                         className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
@@ -317,7 +371,45 @@ const EnhancedResultsPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* Nova Chat */}
+      <NovaChat 
+        currentOutfits={outfits}
+        onOutfitUpdate={handleOutfitUpdate}
+        context="results"
+      />
+
+      {/* Virtual Try-On Modal */}
+      {showVirtualTryOn && selectedOutfit && user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-medium text-gray-900">Virtual Try-On Preview</h3>
+                <button
+                  onClick={() => setShowVirtualTryOn(false)}
+                  className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <VirtualTryOnPreview
+                outfit={selectedOutfit}
+                user={user}
+                onInteraction={(interaction) => {
+                  console.log('Virtual try-on interaction:', interaction);
+                  if (interaction === 'like' || interaction === 'dislike') {
+                    // Handle feedback
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -51,6 +51,7 @@ export interface Outfit {
   weather?: Weather; // Weather property
   categoryRatio?: CategoryRatio; // Added category ratio
   completeness?: number; // Added completeness score (0-100)
+  novaExplanation?: string; // Nova's personalized explanation
 }
 
 /**
