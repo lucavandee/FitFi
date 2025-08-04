@@ -7,18 +7,20 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAuth?: boolean;
   redirectTo?: string;
+  allowedRoles?: ('admin' | 'user')[];
 }
 
 export function ProtectedRoute({
   children,
   requireAuth = true,
-  redirectTo
+  redirectTo,
+  allowedRoles
 }: ProtectedRouteProps) {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, authEventPending } = useUser();
   const location = useLocation();
 
   // Show loading while checking authentication
-  if (isLoading) {
+  if (isLoading || authEventPending) {
     return <LoadingFallback fullScreen message="Authenticatie controleren..." />;
   }
 
@@ -30,6 +32,21 @@ export function ProtectedRoute({
         state={{ from: location }} 
         replace 
       />
+    );
+  }
+
+  // Check role-based access
+  if (requireAuth && user && allowedRoles && !allowedRoles.includes(user.role || 'user')) {
+    return (
+      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
+          <h2 className="text-2xl font-light text-gray-900 mb-4">Toegang geweigerd</h2>
+          <p className="text-gray-600 mb-6">Je hebt geen toegang tot deze pagina.</p>
+          <Button as={Link} to="/dashboard" variant="primary" fullWidth>
+            Terug naar dashboard
+          </Button>
+        </div>
+      </div>
     );
   }
 
