@@ -24,9 +24,13 @@ initializePerformanceOptimizations();
 if (typeof window !== 'undefined') {
   // Start advanced analytics tracking
   window.addEventListener('load', () => {
-    // Initialize with user ID if available
-    const userId = localStorage.getItem('supabase.auth.token') ? 'user' : undefined;
-    // Advanced analytics is already initialized in the constructor
+    try {
+      // Initialize with user ID if available
+      const userId = localStorage.getItem('supabase.auth.token') ? 'user' : undefined;
+      // Advanced analytics is already initialized in the constructor
+    } catch (error) {
+      console.warn('Analytics initialization failed:', error);
+    }
   });
   
   // Save analytics data before page unload
