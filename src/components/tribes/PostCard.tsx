@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, MoreHorizontal, Send } from 'lucide-react';
+import { MessageCircle, Share2, MoreHorizontal, Send } from 'lucide-react';
 import { TribePost, TribePostComment } from '../../types/tribes';
-import { TribesService } from '../../services/tribesService';
 import { useUser } from '../../context/UserContext';
+import { supabase } from '../../lib/supabase';
 import ImageWithFallback from '../ui/ImageWithFallback';
 import Button from '../ui/Button';
+import LikeButton from './LikeButton';
 import toast from 'react-hot-toast';
 
 interface PostCardProps {
@@ -19,23 +20,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdate, className = '' }) =
   const [newComment, setNewComment] = useState('');
   const [isCommenting, setIsCommenting] = useState(false);
 
-  const handleToggleLike = async () => {
-    if (!user?.id) return;
-
-    try {
-      const isLiked = await TribesService.togglePostLike(post.id, user.id);
-      
-      const updatedPost = {
-        ...post,
-        is_liked: isLiked,
-        likes_count: isLiked ? post.likes_count + 1 : post.likes_count - 1
-      };
-      
-      onUpdate(updatedPost);
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      toast.error('Kon like niet verwerken');
-    }
+  const handleLikeUpdate = (newLikesCount: number, newIsLiked: boolean) => {
+    const updatedPost = {
+      ...post,
+      likes_count: newLikesCount,
+      is_liked_by_current_user: newIsLiked
+    };
+    onUpdate(updatedPost);
   };
 
   const handleAddComment = async () => {
@@ -43,7 +34,23 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdate, className = '' }) =
 
     try {
       setIsCommenting(true);
-      const comment = await TribesService.addComment(post.id, newComment.trim(), user.id);
+      
+      const { data: comment, error } = await supabase
+        .from('tribe_post_comments')
+        .insert({
+          post_id: post.id,
+          user_id: user.id,
+          content: newComment.trim()
+        })
+        .select(`
+          *,
+          user_profile:profiles!tribe_post_comments_user_id_fkey(full_name, avatar_url)
+        `)
+        .single();
+
+      if (error) {
+        throw error;
+      }
       
       if (comment) {
         const updatedPost = {
@@ -159,15 +166,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdate, className = '' }) =
       {/* Post Actions */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
         <div className="flex items-center space-x-6">
-          <button
-            onClick={handleToggleLike}
-            className={`flex items-center space-x-2 transition-colors ${
-              post.is_liked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'
-            }`}
-          >
-            <Heart size={18} className={post.is_liked ? 'fill-current' : ''} />
-            <span className="text-sm font-medium">{post.likes_count}</span>
-          </button>
+          <LikeButton
+            postId={post.id}
+            likesCount={post.likes_count}
+            isLiked={post.is_liked_by_current_user || false}
+            firstLikeUser={post.first_like_user_id ? {
+              id: post.first_like_user_id,
+              name: post.first_like_name || 'Unknown',
+              avatar: post.first_like_avatar || ''
+            } : undefined}
+            onUpdate={handleLikeUpdate}
+          />
           
           <button
             onClick={() => setShowComments(!showComments)}
