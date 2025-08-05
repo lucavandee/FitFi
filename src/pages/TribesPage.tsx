@@ -1,0 +1,321 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Users, Plus, Search, TrendingUp, Star, ArrowRight } from 'lucide-react';
+import { useUser } from '../context/UserContext';
+import { TribesService } from '../services/tribesService';
+import { Tribe } from '../types/tribes';
+import Button from '../components/ui/Button';
+import ImageWithFallback from '../components/ui/ImageWithFallback';
+import LoadingFallback from '../components/ui/LoadingFallback';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import toast from 'react-hot-toast';
+
+const TribesPage: React.FC = () => {
+  const { user } = useUser();
+  const [tribes, setTribes] = useState<Tribe[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [featureEnabled, setFeatureEnabled] = useState(false);
+
+  useEffect(() => {
+    checkFeatureFlag();
+  }, []);
+
+  useEffect(() => {
+    if (featureEnabled) {
+      loadTribes();
+    }
+  }, [featureEnabled, user?.id]);
+
+  const checkFeatureFlag = async () => {
+    const enabled = await TribesService.isStyleTribesEnabled();
+    setFeatureEnabled(enabled);
+    
+    if (!enabled) {
+      setIsLoading(false);
+    }
+  };
+
+  const loadTribes = async () => {
+    try {
+      setIsLoading(true);
+      const tribesData = await TribesService.getTribes(user?.id);
+      setTribes(tribesData);
+    } catch (error) {
+      console.error('Error loading tribes:', error);
+      toast.error('Kon tribes niet laden');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleJoinTribe = async (tribeId: string) => {
+    if (!user?.id) {
+      toast.error('Je moet ingelogd zijn om een tribe te joinen');
+      return;
+    }
+
+    try {
+      const success = await TribesService.joinTribe(tribeId, user.id);
+      if (success) {
+        toast.success('Je bent toegetreden tot de tribe!');
+        loadTribes(); // Refresh to update membership status
+      } else {
+        toast.error('Kon niet toetreden tot tribe');
+      }
+    } catch (error) {
+      console.error('Error joining tribe:', error);
+      toast.error('Er ging iets mis');
+    }
+  };
+
+  const filteredTribes = tribes.filter(tribe =>
+    tribe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tribe.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (!featureEnabled) {
+    return (
+      <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
+        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Users className="w-8 h-8 text-gray-400" />
+          </div>
+          <h2 className="text-2xl font-light text-gray-900 mb-4">Style Tribes</h2>
+          <p className="text-gray-600 mb-6">
+            Deze feature is momenteel niet beschikbaar. Kom later terug!
+          </p>
+          <Button as={Link} to="/dashboard" variant="primary">
+            Terug naar Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <LoadingFallback fullScreen message="Style Tribes laden..." />;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F6F6F6]">
+      <Helmet>
+        <title>Style Tribes - Community voor Stijlliefhebbers | FitFi</title>
+        <meta name="description" content="Sluit je aan bij Style Tribes en deel je outfits met gelijkgestemde stijlliefhebbers. Ontdek nieuwe trends en inspiratie." />
+        <meta property="og:title" content="Style Tribes - Community voor Stijlliefhebbers" />
+        <meta property="og:description" content="Deel je outfits en ontdek nieuwe stijlinspiratie in onze community." />
+        <link rel="canonical" href="https://fitfi.app/tribes" />
+      </Helmet>
+
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
+        {/* Hero Section */}
+        <ErrorBoundary>
+          <div className="text-center mb-12">
+            <div className="w-20 h-20 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-10 h-10 text-white" />
+            </div>
+            
+            <h1 className="text-4xl font-light text-[#0D1B2A] mb-6">
+              Style Tribes
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+              Sluit je aan bij communities van gelijkgestemde stijlliefhebbers. 
+              Deel je outfits, ontdek nieuwe trends en laat je inspireren.
+            </p>
+
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Zoek tribes..."
+                  className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] text-gray-900 placeholder-gray-500 transition-all"
+                />
+                <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              </div>
+            </div>
+
+            {/* Create Tribe CTA */}
+            {user && (
+              <Button
+                as={Link}
+                to="/tribes/create"
+                variant="primary"
+                icon={<Plus size={20} />}
+                iconPosition="left"
+                className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+              >
+                Maak je eigen tribe
+              </Button>
+            )}
+          </div>
+        </ErrorBoundary>
+
+        {/* Tribes Grid */}
+        <ErrorBoundary>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredTribes.map((tribe, index) => (
+              <div
+                key={tribe.id}
+                className="bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-md transition-all hover:transform hover:scale-105 animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* Cover Image */}
+                <div className="relative aspect-video overflow-hidden">
+                  <ImageWithFallback
+                    src={tribe.cover_img || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&dpr=2'}
+                    alt={`${tribe.name} tribe cover`}
+                    className="w-full h-full object-cover"
+                    componentName="TribesPage"
+                  />
+                  
+                  {/* Member count overlay */}
+                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <Users size={14} className="inline mr-1" />
+                    {tribe.member_count}
+                  </div>
+
+                  {/* Membership status */}
+                  {tribe.is_member && (
+                    <div className="absolute top-4 left-4 bg-[#89CFF0] text-white px-3 py-1 rounded-full text-sm font-medium">
+                      ✓ Member
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-medium text-[#0D1B2A] mb-2">
+                        {tribe.name}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {tribe.description}
+                      </p>
+                    </div>
+                    
+                    {tribe.user_role === 'owner' && (
+                      <div className="ml-3">
+                        <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                          <Star size={14} className="text-yellow-600" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Stats */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <div className="flex items-center space-x-1">
+                        <Users size={14} />
+                        <span>{tribe.member_count} members</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <TrendingUp size={14} />
+                        <span>Actief</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex space-x-3">
+                    <Button
+                      as={Link}
+                      to={`/tribes/${tribe.slug}`}
+                      variant="primary"
+                      size="sm"
+                      className="flex-1 bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                      icon={<ArrowRight size={16} />}
+                      iconPosition="right"
+                    >
+                      Bekijk tribe
+                    </Button>
+                    
+                    {!tribe.is_member && user && (
+                      <Button
+                        onClick={() => handleJoinTribe(tribe.id)}
+                        variant="outline"
+                        size="sm"
+                        className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                        icon={<Plus size={16} />}
+                        iconPosition="left"
+                      >
+                        Join
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ErrorBoundary>
+
+        {/* Empty State */}
+        {filteredTribes.length === 0 && !isLoading && (
+          <ErrorBoundary>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Search className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-medium text-gray-900 mb-4">
+                {searchQuery ? 'Geen tribes gevonden' : 'Nog geen tribes'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {searchQuery 
+                  ? 'Probeer een andere zoekterm of maak je eigen tribe.'
+                  : 'Wees de eerste om een style tribe te maken!'
+                }
+              </p>
+              {user && (
+                <Button
+                  as={Link}
+                  to="/tribes/create"
+                  variant="primary"
+                  icon={<Plus size={20} />}
+                  iconPosition="left"
+                  className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                >
+                  Maak eerste tribe
+                </Button>
+              )}
+            </div>
+          </ErrorBoundary>
+        )}
+
+        {/* CTA Section */}
+        {!user && (
+          <ErrorBoundary>
+            <div className="mt-16 bg-gradient-to-r from-[#89CFF0] to-blue-500 rounded-3xl shadow-sm overflow-hidden">
+              <div className="p-8 md:p-12 text-center">
+                <h2 className="text-3xl font-light text-white mb-6">
+                  Sluit je aan bij de community
+                </h2>
+                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+                  Maak een account aan om tribes te joinen, outfits te delen en deel uit te maken van onze stijlcommunity.
+                </p>
+                <Button 
+                  as={Link}
+                  to="/registreren" 
+                  variant="primary"
+                  size="lg"
+                  icon={<ArrowRight size={20} />}
+                  iconPosition="right"
+                  className="cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                >
+                  Gratis account maken
+                </Button>
+              </div>
+            </div>
+          </ErrorBoundary>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TribesPage;
