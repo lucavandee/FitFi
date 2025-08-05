@@ -16,6 +16,23 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
+// Global error interceptor for 401 handling
+const originalRequest = supabase.rest.request;
+supabase.rest.request = async function(options: any) {
+  try {
+    return await originalRequest.call(this, options);
+  } catch (error: any) {
+    // Handle 401 errors gracefully - show toast but don't sign out
+    if (error?.status === 401 || error?.code === '42501') {
+      console.warn('Supabase 401 error intercepted:', error.message);
+      toast.error('Toegang geweigerd - probeer opnieuw in te loggen');
+      // Don't automatically sign out - let user decide
+      return { data: null, error };
+    }
+    throw error;
+  }
+};
+
 // Test user ID for development
 export const TEST_USER_ID = 'test-user-123';
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Trophy, Star, Target, Users, TrendingUp, Gift } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useGamification } from '../../context/GamificationContext';
 import LevelProgress from './LevelProgress';
 import Leaderboard from './Leaderboard';
@@ -16,7 +15,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
   const { 
     points, 
     currentLevelInfo, 
-    earnedBadges, 
+    badges: earnedBadges, 
     streak,
     leaderboardRank,
     weeklyPoints,
@@ -45,7 +44,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
     },
     {
       label: 'Huidige Level',
-      value: currentLevelInfo?.name || 'Beginner',
+      value: currentLevelInfo?.level_name || 'Beginner',
       icon: <Trophy className="w-5 h-5" />,
       color: 'text-[#89CFF0]',
       bgColor: 'bg-blue-50'
@@ -93,11 +92,9 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
       </div>
 
       {/* Content */}
-      <motion.div
+      <div
         key={activeView}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        className="animate-fade-in"
       >
         {activeView === 'overview' && (
           <div className="space-y-6">
@@ -136,13 +133,15 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {earnedBadges.slice(0, 8).map((badge, index) => (
                     <div
-                      key={badge.id}
+                      key={badge.badge_id}
                       className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors animate-scale-in"
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
-                      <div className="text-2xl mb-2">{badge.icon}</div>
-                      <div className="text-sm font-medium text-gray-900">{badge.label}</div>
-                      <div className="text-xs text-gray-600 mt-1">{badge.description}</div>
+                      <div className="text-2xl mb-2">{badge.badge_icon}</div>
+                      <div className="text-sm font-medium text-gray-900">{badge.badge_name}</div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        {new Date(badge.earned_at).toLocaleDateString('nl-NL')}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -216,7 +215,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
             </div>
           </div>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 };
