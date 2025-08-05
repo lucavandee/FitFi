@@ -189,22 +189,3 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     }
   }
 });
-
-// Initialize request interceptors
-let interceptorsInitialized = false;
-
-if (!interceptorsInitialized) {
-  // Wrap the original request method
-  const originalRequest = supabase.rest.request.bind(supabase.rest);
-  supabase.rest.request = async function(options: any) {
-    return enhancedRequest(originalRequest, options, supabase.rest);
-  };
-
-  // Wrap the functions invoke method
-  const originalInvoke = supabase.functions.invoke.bind(supabase.functions);
-  supabase.functions.invoke = async function(functionName: string, options: any = {}) {
-    return enhancedRequest(originalInvoke, [functionName, options], supabase.functions);
-  };
-
-  interceptorsInitialized = true;
-}
