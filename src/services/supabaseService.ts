@@ -238,10 +238,11 @@ export async function getDailyChallenges(userId: string) {
  */
 export async function getAchievements(userId: string) {
   if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
+    console.warn('[Supabase] Invalid user ID format for achievements');
+    return [];
   }
 
-  return executeWithRetry(async () => {
+  try {
     const { data, error } = await supabase
       .from('quiz_achievements')
       .select('id, achievement_id, achievement_type, earned_at, metadata')
@@ -253,11 +254,15 @@ export async function getAchievements(userId: string) {
         console.warn('[Supabase] Achievements permission denied, returning empty array');
         return [];
       }
-      throw new Error(`Supabase achievements error: ${error.message}`);
+      console.error('[Supabase] Achievements error:', error.message);
+      return [];
     }
 
     return data || [];
-  });
+  } catch (error) {
+    console.error('[Supabase] Achievements query failed:', error);
+    return [];
+  }
 }
 
 /**

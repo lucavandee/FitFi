@@ -162,7 +162,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           case 'TOKEN_REFRESH_FAILED':
             console.warn('[UserContext] Token refresh failed, signing out user');
             setAuthEventPending(false);
-            setUser(null);
+            setAuthEventPending(false);
             toast.error('Je sessie is verlopen, log opnieuw in.');
             break;
             

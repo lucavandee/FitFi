@@ -144,10 +144,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
       
       // Safe achievements query - user is never null here
-      const { data: achievements, error: achievementsError } = await getAchievements(user.id);
+      const achievements = await getAchievements(user.id);
       
-      if (achievementsError) {
-        console.error('Achievements error', achievementsError);
+      if (!achievements || achievements.length === 0) {
+        console.warn('[Gamification] No achievements data available');
         // Don't throw, don't sign out - just use empty array
       }
       

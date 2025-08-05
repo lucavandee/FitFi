@@ -115,9 +115,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
                   </div>
                   <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+          <Leaderboard type="all_time" limit={10} />
 
             {/* Level Progress */}
             <LevelProgress showPerks={true} />

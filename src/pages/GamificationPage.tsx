@@ -51,13 +51,13 @@ const GamificationPage: React.FC = () => {
             </Link>
           </div>
           
-          <div className="bg-white rounded-3xl shadow-card p-8 text-center">
+          <div className="bg-white rounded-3xl shadow-sm p-8 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Trophy className="w-8 h-8 text-red-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">We konden je levels niet laden</h2>
             <p className="text-gray-600 mb-6">
-              Probeer het later opnieuw.
+              Er ging iets mis bij het laden van je gamification data. Probeer het later opnieuw.
             </p>
             <div className="flex justify-center space-x-4">
               <Button 
