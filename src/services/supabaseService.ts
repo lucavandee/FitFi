@@ -250,33 +250,6 @@ export default {
  */
 export const getAchievements = async (userId: string) => {
   if (!isValidUUID(userId)) {
-    console.error('Invalid user ID format for achievements');
-    return { data: [], error: null };
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from('quiz_achievements')
-      .select('id, achievement_id, achievement_type, earned_at, metadata')
-      .eq('user_id', userId);
-
-    if (error) {
-      console.error('Achievements error:', error);
-      return { data: [], error }; // Return empty array, don't throw
-    }
-
-    return { data: data || [], error: null };
-  } catch (error) {
-    console.error('Achievements query failed:', error);
-    return { data: [], error }; // Return empty array, don't throw
-  }
-};
-
-/**
- * Safe achievements query with proper error handling
- */
-export const getAchievements = async (userId: string) => {
-  if (!isValidUUID(userId)) {
     throw new Error('Invalid user ID format');
   }
 
