@@ -53,7 +53,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         });
 
       if (error) {
-        console.error('Leaderboard error:', error);
+        console.error('[Leaderboard] RPC error:', error);
         // Use mock data as fallback
         setLeaderboard(generateMockLeaderboard());
         return;
@@ -84,7 +84,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
             });
           
           if (userRank) {
-            setCurrentUserEntry({
+        if (rankError) {
+          console.error('[Leaderboard] User rank error:', rankError);
+        } else if (userRank) {
               user_id: user.id,
               username: user.name || 'You',
               points: userRank.points || 0,
@@ -96,6 +98,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
             });
           }
         }
+      } catch (rankError) {
+        console.error('[Leaderboard] User rank query failed:', rankError);
       }
 
       // Track leaderboard view
@@ -203,7 +207,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
           <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
             <Trophy className="w-5 h-5 text-white" />
           </div>
-          <div>
+        const { data: userRank, error: rankError } = await supabase
             <h2 className="text-xl font-bold text-gray-900">Leaderboard</h2>
             <p className="text-gray-600 text-sm">{getTypeLabel()}</p>
           </div>
