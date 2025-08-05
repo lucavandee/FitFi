@@ -14,8 +14,8 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
     availableChallenges, 
     availableWeeklyChallenges,
     isLoading,
-    points,
-    currentLevelInfo
+    awardPoints,
+    refreshData
   } = useGamification();
   
   const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'special'>('daily');
@@ -102,18 +102,18 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     
-    // Simulate refresh delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      await refreshData();
+    } catch (error) {
+      console.error('Error refreshing challenges:', error);
+    }
     
     setRefreshing(false);
-    
-    trackEvent('challenges_refreshed', 'engagement', activeTab, 1);
   };
 
   const handleChallengeComplete = (challengeId: string) => {
-    // Challenge completion is handled by the ChallengeCard component
-    // This is just for additional tracking or UI updates
-    console.log(`Challenge ${challengeId} completed`);
+    // Refresh data after challenge completion
+    refreshData();
   };
 
   const challenges = getChallengesForTab();

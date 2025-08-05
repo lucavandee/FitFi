@@ -1,75 +1,82 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useUser } from "./UserContext";
-import gamificationConfig from "../config/gamification.json";
 import { env } from "../utils/env";
-import {
-  getGamificationData,
-  updateGamificationData,
-  completeChallenge as completeDataRouterChallenge,
-  getDailyChallengesData,
-} from "../services/DataRouter";
-import { getAchievements, getGamificationSafe } from "../services/supabaseService";
+import { supabase } from "../lib/supabase";
 import toast from "react-hot-toast";
 import { trackEvent } from "../utils/analytics";
 
+interface Level {
+  id: number;
+  level_name: string;
+  min_xp: number;
+  max_xp: number | null;
+  icon: string;
+  color: string;
+  perks: string[];
+}
+
+interface Badge {
+  id: string;
+  badge_id: string;
+  badge_name: string;
+  badge_icon: string;
+  earned_at: string;
+  metadata: Record<string, any>;
+}
+
+interface Challenge {
+  id: string;
+  type: 'daily' | 'weekly' | 'special';
+  label: string;
+  description: string;
+  points: number;
+  icon: string;
+  difficulty: 'easy' | 'medium' | 'hard' | 'legendary';
+  completed?: boolean;
+  progress?: number;
+  maxProgress?: number;
+}
+
 interface GamificationState {
   points: number;
-  level: string;
+  level: Level | null;
   levelRank: number;
-  badges: string[];
+  badges: Badge[];
   streak: number;
-  dailyChallengeStatus: Record<string, boolean>;
-  weeklyChallengeStatus: Record<string, boolean>;
-  referralCode: string;
-  lastCheckIn: string | null;
-  completedChallenges: string[];
-  totalReferrals: number;
-  seasonalEventProgress: Record<string, any>;
-  leaderboardRank: number;
   weeklyPoints: number;
   monthlyPoints: number;
+  leaderboardRank: number;
+  lastLevelUp: string | null;
 }
 
 interface GamificationContextType {
   points: number;
-  level: string;
+  level: Level | null;
   levelRank: number;
-  currentLevelInfo: any;
-  nextLevelInfo: any;
+  currentLevelInfo: Level | null;
+  nextLevelInfo: Level | null;
   progressToNextLevel: number;
-  badges: string[];
-  earnedBadges: any[];
+  badges: Badge[];
+  earnedBadges: Badge[];
   streak: number;
-  dailyChallengeStatus: Record<string, boolean>;
-  weeklyChallengeStatus: Record<string, boolean>;
-  availableChallenges: any[];
-  availableWeeklyChallenges: any[];
-  referralCode: string;
-  totalReferrals: number;
+  availableChallenges: Challenge[];
+  availableWeeklyChallenges: Challenge[];
   leaderboardRank: number;
   weeklyPoints: number;
   monthlyPoints: number;
+  lastLevelUp: string | null;
   isLoading: boolean;
   error: string | null;
 
-  completeQuiz: () => Promise<void>;
-  makePurchase: (amount?: number) => Promise<void>;
-  checkIn: () => Promise<void>;
   completeChallenge: (challengeId: string) => Promise<void>;
   completeWeeklyChallenge: (challengeId: string) => Promise<void>;
-  recordReferral: () => Promise<void>;
-  viewRecommendation: () => Promise<void>;
-  shareOutfit: () => Promise<void>;
+  awardPoints: (actionType: string, points?: number, metadata?: Record<string, any>) => Promise<void>;
   saveOutfit: () => Promise<void>;
-  levelUp: (newLevel: string) => Promise<void>;
-
-  getPointsForAction: (action: string) => number;
-  canEarnBadge: (badgeId: string) => boolean;
-  getProgressToNextLevel: () => number;
-  isSeasonalEventActive: () => boolean;
-  getSeasonalMultiplier: () => number;
-  getLeaderboardPosition: () => Promise<number>;
+  shareOutfit: () => Promise<void>;
+  dailyCheckIn: () => Promise<void>;
   getCurrentLevelPerks: () => string[];
+  getProgressToNextLevel: () => number;
+  refreshData: () => Promise<void>;
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
@@ -78,148 +85,263 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [availableChallenges, setAvailableChallenges] = useState<any[]>([]);
-  const [availableWeeklyChallenges, setAvailableWeeklyChallenges] = useState<any[]>([]);
+  const [availableChallenges, setAvailableChallenges] = useState<Challenge[]>([]);
+  const [availableWeeklyChallenges, setAvailableWeeklyChallenges] = useState<Challenge[]>([]);
+  const [allLevels, setAllLevels] = useState<Level[]>([]);
 
   const [gamificationState, setGamificationState] = useState<GamificationState>({
     points: 0,
-    level: "beginner",
+    level: null,
     levelRank: 1,
     badges: [],
     streak: 0,
-    dailyChallengeStatus: {},
-    weeklyChallengeStatus: {},
-    referralCode: generateReferralCode(),
-    lastCheckIn: null,
-    completedChallenges: [],
-    totalReferrals: 0,
-    seasonalEventProgress: {},
-    leaderboardRank: 1,
     weeklyPoints: 0,
     monthlyPoints: 0,
+    leaderboardRank: 1,
+    lastLevelUp: null,
   });
 
   useEffect(() => {
     if (user?.id) {
-      loadGamificationState();
+      loadGamificationData();
     } else {
       resetGamificationState();
     }
   }, [user]);
 
+  const loadLevels = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('levels')
+        .select('*')
+        .order('min_xp', { ascending: true });
+
+      if (error) {
+        console.error('Error loading levels:', error);
+        return;
+      }
+
+      setAllLevels(data || []);
+    } catch (error) {
+      console.error('Error loading levels:', error);
+    }
+  };
+
   const resetGamificationState = () => {
     setGamificationState({
       points: 0,
-      level: "beginner",
+      level: null,
       levelRank: 1,
       badges: [],
       streak: 0,
-      dailyChallengeStatus: {},
-      weeklyChallengeStatus: {},
-      referralCode: generateReferralCode(),
-      lastCheckIn: null,
-      completedChallenges: [],
-      totalReferrals: 0,
-      seasonalEventProgress: {},
-      leaderboardRank: 1,
       weeklyPoints: 0,
       monthlyPoints: 0,
+      leaderboardRank: 1,
+      lastLevelUp: null,
     });
     setIsLoading(false);
   };
 
-  const loadGamificationState = async () => {
+  const loadGamificationData = async () => {
     if (!user?.id) return;
 
     setIsLoading(true);
     setError(null);
+    
     try {
-      // Safe gamification query - never throws
-      const data = await getGamificationSafe(user.id);
-      
-      if (!data) {
-        console.warn('[Gamification] No data available, using fallback');
-        resetGamificationState();
-        return;
-      }
-      
-      // Safe achievements query - user is never null here
-      const achievements = await getAchievements(user.id);
-      
-      if (!achievements || achievements.length === 0) {
-        console.warn('[Gamification] No achievements data available');
-        // Don't throw, don't sign out - just use empty array
-      }
-      
-      // Safe fetch challenges
-      let dailyChallenges = [];
-      try {
-        dailyChallenges = await getDailyChallengesData(user.id);
-      } catch (challengeError) {
-        console.warn('[Gamification] Challenge error, using fallback:', challengeError);
-        dailyChallenges = [];
-      }
-      
-      let leaderboardRank = 1;
-      try {
-        leaderboardRank = await getLeaderboardPosition();
-      } catch (leaderboardError) {
-        console.warn('[Gamification] Could not load leaderboard rank, using fallback');
+      // Load levels first
+      await loadLevels();
+
+      // Load user points
+      const { data: pointsData, error: pointsError } = await supabase
+        .from('user_points')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (pointsError && pointsError.code !== 'PGRST116') {
+        throw pointsError;
       }
 
-      setGamificationState({
-        ...data,
-        achievements: achievements || [],
-        completedChallenges: data.completedChallenges || [],
-        dailyChallengeStatus: Array.isArray(dailyChallenges) ? {} : dailyChallenges,
-        leaderboardRank,
-      });
+      // Create user points record if doesn't exist
+      if (!pointsData) {
+        const { error: insertError } = await supabase
+          .from('user_points')
+          .insert({
+            user_id: user.id,
+            total_points: 0,
+            weekly_points: 0,
+            monthly_points: 0,
+            current_level: 1
+          });
 
-      // Filter daily and weekly challenges
-      const allChallenges = Array.isArray(gamificationConfig.challenges) ? gamificationConfig.challenges : [];
-      
-      setAvailableChallenges(
-        allChallenges.filter(ch => ch.type === 'daily' && !((data.completedChallenges || []).includes(ch.id)))
-      );
-      
-      setAvailableWeeklyChallenges(
-        allChallenges.filter(ch => ch.type === 'weekly' && !((data.completedChallenges || []).includes(ch.id)))
-      );
+        if (insertError) {
+          throw insertError;
+        }
+
+        // Set default state
+        setGamificationState(prev => ({
+          ...prev,
+          points: 0,
+          level: allLevels[0] || null,
+          levelRank: 1,
+          weeklyPoints: 0,
+          monthlyPoints: 0
+        }));
+      } else {
+        // Find current level
+        const currentLevel = allLevels.find(l => l.id === pointsData.current_level) || allLevels[0];
+
+        setGamificationState(prev => ({
+          ...prev,
+          points: pointsData.total_points,
+          level: currentLevel,
+          levelRank: currentLevel?.id || 1,
+          weeklyPoints: pointsData.weekly_points,
+          monthlyPoints: pointsData.monthly_points,
+          lastLevelUp: pointsData.last_level_up
+        }));
+      }
+
+      // Load user badges
+      const { data: badgesData, error: badgesError } = await supabase
+        .from('user_badges')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (badgesError) {
+        console.warn('Error loading badges:', badgesError);
+      } else {
+        setGamificationState(prev => ({
+          ...prev,
+          badges: badgesData || []
+        }));
+      }
+
+      // Load available challenges
+      const dailyChallenges: Challenge[] = [
+        {
+          id: 'daily_checkin',
+          type: 'daily',
+          label: 'Dagelijkse Check-in',
+          description: 'Log in en check je stijlupdates',
+          points: 10,
+          icon: '📅',
+          difficulty: 'easy'
+        },
+        {
+          id: 'view_recommendations',
+          type: 'daily',
+          label: 'Bekijk 3 aanbevelingen',
+          description: 'Ontdek nieuwe outfit ideeën',
+          points: 20,
+          icon: '👀',
+          difficulty: 'easy',
+          maxProgress: 3
+        },
+        {
+          id: 'save_outfit',
+          type: 'daily',
+          label: 'Bewaar een outfit',
+          description: 'Voeg een outfit toe aan je favorieten',
+          points: 15,
+          icon: '💾',
+          difficulty: 'easy'
+        }
+      ];
+
+      const weeklyChallenges: Challenge[] = [
+        {
+          id: 'weekly_streak',
+          type: 'weekly',
+          label: '7 dagen actief',
+          description: 'Log 7 dagen achter elkaar in',
+          points: 100,
+          icon: '🔥',
+          difficulty: 'hard',
+          maxProgress: 7
+        },
+        {
+          id: 'share_outfits',
+          type: 'weekly',
+          label: 'Deel 3 outfits',
+          description: 'Deel je favoriete looks op social media',
+          points: 75,
+          icon: '📱',
+          difficulty: 'medium',
+          maxProgress: 3
+        }
+      ];
+
+      setAvailableChallenges(dailyChallenges);
+      setAvailableWeeklyChallenges(weeklyChallenges);
+
+      // Get leaderboard rank
+      try {
+        const { data: rankData, error: rankError } = await supabase
+          .rpc('get_user_leaderboard_rank', {
+            user_uuid: user.id,
+            leaderboard_type: 'all_time'
+          });
+
+        if (!rankError && rankData && rankData.length > 0) {
+          setGamificationState(prev => ({
+            ...prev,
+            leaderboardRank: rankData[0].rank || 1
+          }));
+        }
+      } catch (rankError) {
+        console.warn('Could not load leaderboard rank:', rankError);
+      }
+
     } catch (err) {
-      console.error("[⚠️ Gamification] Error loading data:", err);
-      
-      // For any error, show fallback but don't spam user with toasts
-      console.warn('[Gamification] Using fallback data due to error');
-      setError('We konden je levels niet laden. Probeer het later opnieuw.');
-      toast.error('We konden je levels niet laden. Probeer opnieuw.');
+      console.error("Gamification loading error:", err);
+      setError('Kon gamification data niet laden');
       resetGamificationState();
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updatePoints = async (points: number, action?: string) => {
+  const awardPoints = async (actionType: string, points?: number, metadata?: Record<string, any>) => {
     if (!user?.id) return;
-    const newPoints = gamificationState.points + points;
-    
-    // Check for level up
-    const currentLevel = getCurrentLevelInfo();
-    const newLevel = calculateLevel(newPoints);
-    
-    if (newLevel.rank > currentLevel.rank) {
-      await levelUp(newLevel.id);
-    }
-    
-    await updateGamificationData(user.id, { points: newPoints });
-    setGamificationState((prev) => ({ ...prev, points: newPoints }));
-    
-    // Track points earned
-    if (action) {
-      trackEvent('points_earned', 'gamification', action, points, {
-        user_id: user.id,
-        total_points: newPoints,
-        level: gamificationState.level
+
+    try {
+      const { data, error } = await supabase.functions.invoke('calculate-points', {
+        body: {
+          action_type: actionType,
+          points,
+          metadata
+        },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
       });
+
+      if (error) {
+        throw error;
+      }
+
+      // Refresh data to get updated state
+      await loadGamificationData();
+
+      // Show success message
+      if (data.level_up) {
+        toast.success(`🎉 Level Up! Je bent nu ${data.new_level}!`, { duration: 5000 });
+      } else {
+        toast.success(`+${data.points_awarded} punten verdiend!`);
+      }
+
+      // Track points earned
+      trackEvent('points_earned', 'gamification', actionType, data.points_awarded, {
+        user_id: user.id,
+        total_points: data.new_total,
+        level_up: data.level_up
+      });
+
+    } catch (err) {
+      console.error('Error awarding points:', err);
+      toast.error('Kon punten niet toekennen');
     }
   };
 
@@ -227,26 +349,36 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!user?.id) return;
 
     try {
-      await completeDataRouterChallenge(user.id, challengeId);
+      const { data, error } = await supabase.functions.invoke('submit-challenge', {
+        body: {
+          challenge_id: challengeId,
+          challenge_type: 'daily'
+        },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+
+      if (error) {
+        if (error.message?.includes('already completed')) {
+          toast.error('Challenge al voltooid vandaag!');
+          return;
+        }
+        throw error;
+      }
+
       toast.success("✅ Challenge voltooid!");
 
-      const challenge = gamificationConfig.challenges?.find(ch => ch.id === challengeId);
-      const points = challenge?.points || getPointsForAction("challenge");
+      // Refresh data
+      await loadGamificationData();
 
-      setGamificationState((prev) => ({
-        ...prev,
-        completedChallenges: [...prev.completedChallenges, challengeId],
-        points: prev.points + points,
-      }));
-      
-      // Track challenge completion
-      trackEvent('challenge_completed', 'gamification', challengeId, points, {
+      trackEvent('challenge_completed', 'gamification', challengeId, data.points_earned, {
         user_id: user.id,
-        challenge_type: challenge?.type || 'daily',
-        difficulty: challenge?.difficulty || 'medium'
+        challenge_type: 'daily'
       });
+
     } catch (err) {
-      console.error("❌ Challenge voltooiing mislukt:", err);
+      console.error("Challenge completion failed:", err);
       toast.error("Challenge kon niet worden voltooid.");
     }
   };
@@ -255,126 +387,90 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!user?.id) return;
 
     try {
-      await completeDataRouterChallenge(user.id, challengeId);
+      const { data, error } = await supabase.functions.invoke('submit-challenge', {
+        body: {
+          challenge_id: challengeId,
+          challenge_type: 'weekly'
+        },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+
+      if (error) {
+        if (error.message?.includes('already completed')) {
+          toast.error('Weekly challenge al voltooid!');
+          return;
+        }
+        throw error;
+      }
+
       toast.success("🎉 Weekly Challenge voltooid!");
 
-      const challenge = gamificationConfig.challenges?.find(ch => ch.id === challengeId);
-      const points = challenge?.points || 75;
+      // Refresh data
+      await loadGamificationData();
 
-      setGamificationState((prev) => ({
-        ...prev,
-        completedChallenges: [...prev.completedChallenges, challengeId],
-        points: prev.points + points,
-        weeklyPoints: prev.weeklyPoints + points,
-      }));
-      
-      trackEvent('weekly_challenge_completed', 'gamification', challengeId, points, {
+      trackEvent('weekly_challenge_completed', 'gamification', challengeId, data.points_earned, {
         user_id: user.id,
-        difficulty: challenge?.difficulty || 'medium'
+        challenge_type: 'weekly'
       });
+
     } catch (err) {
-      console.error("❌ Weekly challenge voltooiing mislukt:", err);
+      console.error("Weekly challenge completion failed:", err);
       toast.error("Weekly challenge kon niet worden voltooid.");
     }
   };
 
-  const levelUp = async (newLevel: string) => {
-    if (!user?.id) return;
-
-    const levelInfo = gamificationConfig.levels.find(l => l.id === newLevel);
-    if (!levelInfo) return;
-
-    try {
-      await updateGamificationData(user.id, { 
-        level: newLevel,
-        updated_at: new Date().toISOString()
-      });
-      
-      setGamificationState((prev) => ({ 
-        ...prev, 
-        level: newLevel,
-        levelRank: levelInfo.rank
-      }));
-      
-      // Show level up notification
-      toast.success(`🎉 Level Up! Je bent nu ${levelInfo.name}!`, { duration: 5000 });
-      
-      // Track level up
-      trackEvent('level_up', 'gamification', newLevel, levelInfo.rank, {
-        user_id: user.id,
-        previous_level: gamificationState.level,
-        points_at_levelup: gamificationState.points
-      });
-    } catch (err) {
-      console.error("❌ Level up mislukt:", err);
-    }
+  const saveOutfit = async () => {
+    await awardPoints('outfit_save', 15);
   };
 
-  const calculateLevel = (points: number) => {
-    const levels = gamificationConfig.levels.sort((a, b) => b.minPoints - a.minPoints);
-    return levels.find(level => points >= level.minPoints) || levels[levels.length - 1];
+  const shareOutfit = async () => {
+    await awardPoints('outfit_share', 30);
   };
 
-  const getCurrentLevelInfo = () => {
-    return gamificationConfig.levels.find(l => l.id === gamificationState.level) || gamificationConfig.levels[0];
+  const dailyCheckIn = async () => {
+    await awardPoints('daily_checkin', 10);
   };
 
-  const getLeaderboardPosition = async (): Promise<number> => {
-    if (!user?.id) return 1;
+  const getCurrentLevelInfo = (): Level | null => {
+    return gamificationState.level;
+  };
+
+  const getNextLevelInfo = (): Level | null => {
+    if (!gamificationState.level) return allLevels[0] || null;
     
-    try {
-      // This would be implemented with a Supabase RPC function
-      // For now, return a mock position
-      return Math.floor(Math.random() * 100) + 1;
-    } catch (error) {
-      console.error('Error getting leaderboard position:', error);
-      return 1;
-    }
-  };
-
-  const getCurrentLevelPerks = (): string[] => {
-    const currentLevel = getCurrentLevelInfo();
-    return currentLevel?.perks || [];
-  };
-  // Acties
-  const completeQuiz = () => updatePoints(getPointsForAction("quiz"), "quiz");
-  const makePurchase = (amount = 1) => updatePoints(getPointsForAction("purchase") * amount, "purchase");
-  const checkIn = () => updatePoints(getPointsForAction("checkin"), "checkin");
-  const recordReferral = () => updatePoints(getPointsForAction("referral"), "referral");
-  const viewRecommendation = () => updatePoints(getPointsForAction("view"), "view");
-  const shareOutfit = () => updatePoints(getPointsForAction("share"), "share");
-  const saveOutfit = () => updatePoints(getPointsForAction("save"), "save");
-
-  // Helpers
-  const getPointsForAction = (action: string): number => {
-    return gamificationConfig.actions?.[action]?.points || 0;
-  };
-
-  const canEarnBadge = (badgeId: string): boolean => {
-    return !gamificationState.badges.includes(badgeId);
+    const currentLevelIndex = allLevels.findIndex(l => l.id === gamificationState.level?.id);
+    return allLevels[currentLevelIndex + 1] || null;
   };
 
   const getProgressToNextLevel = (): number => {
-    const current = getCurrentLevelInfo();
-    const next = gamificationConfig.levels.find((l) => l.rank === current.rank + 1);
-
-    if (!next) return 100; // Max level reached
-
-    const range = next.minPoints - current.minPoints;
-    const progress = gamificationState.points - current.minPoints;
+    const currentLevel = getCurrentLevelInfo();
+    const nextLevel = getNextLevelInfo();
+    
+    if (!currentLevel || !nextLevel) return 100;
+    
+    const currentPoints = gamificationState.points;
+    const range = nextLevel.min_xp - currentLevel.min_xp;
+    const progress = currentPoints - currentLevel.min_xp;
+    
     return Math.min(100, Math.round((progress / range) * 100));
   };
 
-  const isSeasonalEventActive = () => true; // TODO: Replace with real logic
-  const getSeasonalMultiplier = () => 1; // TODO: Replace with real logic
+  const getCurrentLevelPerks = (): string[] => {
+    return gamificationState.level?.perks || [];
+  };
 
+  const refreshData = async () => {
+    if (!user?.id) return;
+    await loadGamificationData();
+  };
+
+  // Computed values
   const currentLevelInfo = getCurrentLevelInfo();
-  const nextLevelInfo = gamificationConfig.levels.find(
-    (l) => l.rank === currentLevelInfo.rank + 1
-  );
-  const earnedBadges = (gamificationConfig.badges || []).filter((b) =>
-    gamificationState.badges.includes(b.id)
-  );
+  const nextLevelInfo = getNextLevelInfo();
+  const progressToNextLevel = getProgressToNextLevel();
+  const earnedBadges = gamificationState.badges;
 
   return (
     <GamificationContext.Provider
@@ -384,27 +480,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         availableWeeklyChallenges,
         isLoading,
         error,
-        progressToNextLevel: getProgressToNextLevel(),
-        completeQuiz,
-        makePurchase,
-        checkIn,
-        completeChallenge,
-        completeWeeklyChallenge,
-        recordReferral,
-        viewRecommendation,
-        shareOutfit,
-        saveOutfit,
-        levelUp,
-        getPointsForAction,
-        canEarnBadge,
-        getProgressToNextLevel,
-        isSeasonalEventActive,
-        getSeasonalMultiplier,
-        getLeaderboardPosition,
-        getCurrentLevelPerks,
         currentLevelInfo,
         nextLevelInfo,
+        progressToNextLevel,
         earnedBadges,
+        completeChallenge,
+        completeWeeklyChallenge,
+        awardPoints,
+        saveOutfit,
+        shareOutfit,
+        dailyCheckIn,
+        getCurrentLevelPerks,
+        getProgressToNextLevel,
+        refreshData,
       }}
     >
       {children}
@@ -419,7 +507,3 @@ export const useGamification = () => {
   }
   return context;
 };
-
-function generateReferralCode(): string {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}

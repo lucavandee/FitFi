@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Crown, Star, Users, TrendingUp, Medal } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
-import { useGamification } from '../../context/GamificationContext';
 import { supabase } from '../../lib/supabase';
 import { trackEvent } from '../../utils/analytics';
 import LoadingFallback from '../ui/LoadingFallback';
@@ -32,10 +31,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
   className = ''
 }) => {
   const { user } = useUser();
-  const { currentLevelInfo } = useGamification();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserEntry, setCurrentUserEntry] = useState<LeaderboardEntry | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadLeaderboard();
@@ -43,9 +42,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
 
   const loadLeaderboard = async () => {
     setIsLoading(true);
+    setError(null);
     
     try {
-      // Get leaderboard data from Supabase
+      // Use RPC function with proper error handling
       const { data, error } = await supabase
         .rpc('get_leaderboard', { 
           leaderboard_type: type,
@@ -53,9 +53,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         });
 
       if (error) {
-        console.error('[Leaderboard] RPC error:', error);
-        // Use mock data as fallback
-        setLeaderboard(generateMockLeaderboard());
+        // Don't throw on auth errors - show fallback data
+        if (error.code === '42501' || error.message.includes('permission denied')) {
+          console.warn('Leaderboard permission denied, using fallback');
+          setLeaderboard(generateMockLeaderboard());
+        } else {
+          throw error;
+        }
         return;
       }
 
@@ -84,22 +88,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 leaderboard_type: type 
               });
             
-            if (rankError) {
-              console.error('[Leaderboard] User rank error:', rankError);
-            } else if (userRank) {
+            if (!rankError && userRank && userRank.length > 0) {
+              const rankData = userRank[0];
               setCurrentUserEntry({
                 user_id: user.id,
                 username: user.name || 'You',
-                points: userRank.points || 0,
-                level: userRank.level || 'beginner',
-                rank: userRank.rank || 999,
-                weekly_points: userRank.weekly_points || 0,
-                monthly_points: userRank.monthly_points || 0,
+                points: rankData.points || 0,
+                level: rankData.level || 'Beginner',
+                rank: rankData.rank || 999,
+                weekly_points: rankData.weekly_points || 0,
+                monthly_points: rankData.monthly_points || 0,
                 is_current_user: true
               });
+            } else {
+              console.warn('Could not load user rank:', rankError);
             }
           } catch (rankError) {
-            console.error('[Leaderboard] User rank query failed:', rankError);
+            console.warn('User rank query failed:', rankError);
           }
         }
       }
@@ -112,7 +117,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       });
 
     } catch (error) {
-      console.error('Error loading leaderboard:', error);
+      console.error('Leaderboard loading error:', error);
+      setError('Kon leaderboard niet laden');
       setLeaderboard(generateMockLeaderboard());
     } finally {
       setIsLoading(false);
@@ -121,16 +127,16 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
 
   const generateMockLeaderboard = (): LeaderboardEntry[] => {
     const mockUsers = [
-      { name: 'StyleMaster', level: 'master', points: 8500 },
-      { name: 'FashionGuru', level: 'guru', points: 7200 },
-      { name: 'TrendSetter', level: 'icon', points: 6800 },
-      { name: 'StyleIcon', level: 'influencer', points: 5400 },
-      { name: 'ChicExpert', level: 'trendsetter', points: 4200 },
-      { name: 'ModeLover', level: 'enthusiast', points: 3100 },
-      { name: 'StyleSeeker', level: 'explorer', points: 2400 },
-      { name: 'FashionFan', level: 'explorer', points: 1800 },
-      { name: 'StyleBeginner', level: 'beginner', points: 900 },
-      { name: 'NewUser', level: 'beginner', points: 450 }
+      { name: 'StyleMaster', level: 'Master', points: 8500 },
+      { name: 'FashionGuru', level: 'Guru', points: 7200 },
+      { name: 'TrendSetter', level: 'Icon', points: 6800 },
+      { name: 'StyleIcon', level: 'Influencer', points: 5400 },
+      { name: 'ChicExpert', level: 'Trendsetter', points: 4200 },
+      { name: 'ModeLover', level: 'Enthusiast', points: 3100 },
+      { name: 'StyleSeeker', level: 'Explorer', points: 2400 },
+      { name: 'FashionFan', level: 'Explorer', points: 1800 },
+      { name: 'StyleBeginner', level: 'Beginner', points: 900 },
+      { name: 'NewUser', level: 'Beginner', points: 450 }
     ];
 
     return mockUsers.map((mockUser, index) => ({
@@ -199,6 +205,24 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
 
   if (isLoading) {
     return <LoadingFallback message="Leaderboard laden..." />;
+  }
+
+  if (error) {
+    return (
+      <div className={`bg-white rounded-3xl shadow-sm p-6 ${className}`}>
+        <div className="text-center py-8">
+          <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Leaderboard niet beschikbaar</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={loadLeaderboard}
+            className="text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium"
+          >
+            Probeer opnieuw
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

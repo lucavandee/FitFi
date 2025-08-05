@@ -29,7 +29,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
   onComplete,
   className = ''
 }) => {
-  const { completeChallenge, completeWeeklyChallenge } = useGamification();
+  const { completeChallenge, completeWeeklyChallenge, awardPoints } = useGamification();
   const [isCompleting, setIsCompleting] = useState(false);
 
   const getDifficultyColor = (difficulty: string) => {
@@ -98,7 +98,8 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         onComplete(challenge.id);
       }
     } catch (error) {
-      console.error('Error completing challenge:', error);
+      console.error('Challenge completion error:', error);
+      toast.error('Challenge kon niet worden voltooid');
     } finally {
       setIsCompleting(false);
     }
