@@ -244,6 +244,66 @@ export default {
 };
 
 /**
+ * Safe achievements query with proper error handling
+ */
+export const getAchievements = async (userId: string) => {
+  if (!isValidUUID(userId)) {
+    throw new Error('Invalid user ID format');
+  }
+
+  return executeWithRetry(async () => {
+    const { data, error } = await supabase
+      .from('quiz_achievements')
+      .select('id, achievement_id, achievement_type, earned_at, metadata')
+      .eq('user_id', userId);
+
+    if (error) {
+      // Don't throw on auth errors - return empty array instead
+      if (error.code === '42501' || error.message.includes('permission denied')) {
+        console.warn('[Supabase] Achievements permission denied, returning empty array');
+        return [];
+      }
+      throw new Error(`Supabase achievements error: ${error.message}`);
+    }
+
+    return data || [];
+  });
+};
+
+/**
+ * Safe gamification query with fallback
+ */
+export const getGamificationSafe = async (userId: string) => {
+  if (!isValidUUID(userId)) {
+    return null;
+  }
+
+  try {
+    return await getUserGamification(userId);
+  } catch (error: any) {
+    // Handle auth errors gracefully
+    if (error.message?.includes('permission denied') || 
+        error.message?.includes('401') || 
+        error.message?.includes('403')) {
+      console.warn('[Supabase] Gamification permission denied, using fallback');
+      return {
+        user_id: userId,
+        points: 0,
+        level: 'beginner',
+        badges: [],
+        streak: 0,
+        completed_challenges: [],
+        total_referrals: 0,
+        seasonal_event_progress: {},
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+    }
+    throw error;
+  }
+};
+
+/**
  * Fetch user achievements with proper error handling
  */
 export async function fetchUserAchievements(userId: string) {

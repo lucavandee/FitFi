@@ -10,7 +10,7 @@ import Button from '../components/ui/Button';
 
 const GamificationPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
-  const { isLoading: gamificationLoading } = useGamification();
+  const { isLoading: gamificationLoading, error } = useGamification();
 
   if (userLoading || gamificationLoading) {
     return <LoadingFallback fullScreen message="Gamification laden..." />;
@@ -30,6 +30,42 @@ const GamificationPage: React.FC = () => {
           <Button as={Link} to="/inloggen" variant="primary" fullWidth>
             Inloggen
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state with fallback instead of redirect
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-card p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trophy className="w-8 h-8 text-red-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Gamification tijdelijk niet beschikbaar</h2>
+            <p className="text-gray-600 mb-6">
+              We konden je gamification data niet laden. Probeer het later opnieuw.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Button 
+                onClick={() => window.location.reload()} 
+                variant="primary"
+                className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+              >
+                Probeer opnieuw
+              </Button>
+              <Button 
+                as={Link} 
+                to="/dashboard" 
+                variant="outline"
+                className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+              >
+                Terug naar dashboard
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
