@@ -9,6 +9,7 @@ import { isValidImageUrl } from '../utils/imageUtils';
 import { env } from '../utils/env';
 import { fetchProductsFromSupabase } from '../services/supabaseService';
 import { supabase } from '../lib/supabase';
+import { generateNovaExplanation } from './explainOutfit';
 
 /**
  * Interface for user feedback on recommendations
@@ -312,8 +313,6 @@ async function applyUserFeedbackToOutfits(
  * Add Nova's AI explanations to outfits
  */
 async function addNovaExplanations(outfits: Outfit[], user: UserProfile): Promise<Outfit[]> {
-  const { generateNovaExplanation } = await import('./explainOutfit');
-  
   return Promise.all(outfits.map(async (outfit) => {
     const novaExplanation = await generateNovaExplanation(outfit.id, user, outfit);
     
