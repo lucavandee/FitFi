@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { supabase } from '../../lib/supabase';
 
 interface ImageWithFallbackProps {
   src: string;
@@ -14,6 +15,10 @@ interface ImageWithFallbackProps {
   componentName?: string;
   optimize?: boolean;
   quality?: number;
+  context?: 'outfit' | 'product' | 'user_avatar';
+  productType?: string;
+  brand?: string;
+  autoGenerateAlt?: boolean;
 }
 
 /**
@@ -37,11 +42,16 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   componentName = 'Unknown',
   optimize = true,
   quality = 80,
+  context = 'general',
+  productType,
+  brand,
+  autoGenerateAlt = true,
   ...rest
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(src);
   const [hasError, setHasError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [generatedAlt, setGeneratedAlt] = useState<string>(alt);
   const retryCount = useRef<number>(0);
   const MAX_RETRIES = 2;
   
@@ -50,10 +60,16 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     // Reset state when src changes
     setIsLoading(true);
     setHasError(false);
+    setGeneratedAlt(alt);
     // Apply optimization if enabled
     const optimizedSrc = optimize ? optimizeImageUrl(src, { width: typeof width === 'number' ? width : undefined, height: typeof height === 'number' ? height : undefined, quality }) : src;
     setImgSrc(optimizedSrc);
     retryCount.current = 0;
+    
+    // Generate alt text if needed
+    if (autoGenerateAlt && (!alt || alt.trim() === '')) {
+      generateAltText();
+    }
   }, [src, optimize, width, height, quality]);
   
   // Use fallback immediately if URL is invalid
@@ -119,6 +135,25 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     }
   };
 
+  const generateAltText = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-alt-text', {
+        body: {
+          image_url: src,
+          context,
+          product_type: productType,
+          brand
+        }
+      });
+
+      if (!error && data?.alt_text) {
+        setGeneratedAlt(data.alt_text);
+      }
+    } catch (error) {
+      console.warn('Failed to generate alt text:', error);
+    }
+  };
+  
   const handleLoad = () => {
     setIsLoading(false);
     if (onLoad) {
@@ -136,7 +171,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       )}
       <img
         src={imgSrc}
-        alt={alt}
+        alt={generatedAlt}
         className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
         onError={handleError}
         onLoad={handleLoad}
@@ -144,7 +179,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
         decoding={decoding}
         width={width}
         height={height}
-        role={alt ? 'img' : 'presentation'}
+        role={generatedAlt ? 'img' : 'presentation'}
         {...rest}
       />
     </div>
