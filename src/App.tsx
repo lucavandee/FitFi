@@ -42,6 +42,8 @@ const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const BlogIndexPage = React.lazy(() => import('./pages/BlogIndexPage'));
 const BlogPage = React.lazy(() => import('./pages/BlogPage'));
 const BlogDetailPage = React.lazy(() => import('./pages/BlogDetailPage'));
+const TribesPage = React.lazy(() => import('./pages/TribesPage'));
+const TribeDetailPage = React.lazy(() => import('./pages/TribeDetailPage'));
 const HelpCenterPage = React.lazy(() => import('./pages/HelpCenterPage'));
 const FeedbackPage = React.lazy(() => import('./pages/FeedbackPage'));
 const SuccessStoriesPage = React.lazy(() => import('./pages/SuccessStoriesPage'));
@@ -164,6 +166,16 @@ function App() {
                     <Route path="/analytics" element={
                       <ProtectedRoute allowedRoles={['admin']}>
                         <AnalyticsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/tribes" element={
+                      <ProtectedRoute>
+                        <TribesPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/tribes/:slug" element={
+                      <ProtectedRoute>
+                        <TribeDetailPage />
                       </ProtectedRoute>
                     } />
                     
