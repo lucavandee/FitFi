@@ -152,11 +152,11 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const allChallenges = Array.isArray(gamificationConfig.challenges) ? gamificationConfig.challenges : [];
       
       setAvailableChallenges(
-        allChallenges.filter(ch => ch.type === 'daily' && !data.completedChallenges.includes(ch.id))
+        allChallenges.filter(ch => ch.type === 'daily' && !(data.completedChallenges || []).includes(ch.id))
       );
       
       setAvailableWeeklyChallenges(
-        allChallenges.filter(ch => ch.type === 'weekly' && !data.completedChallenges.includes(ch.id))
+        allChallenges.filter(ch => ch.type === 'weekly' && !(data.completedChallenges || []).includes(ch.id))
       );
     } catch (err) {
       console.error("[⚠️ Gamification] Error loading data:", err);
