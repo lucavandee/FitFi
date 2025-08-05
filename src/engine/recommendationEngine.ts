@@ -10,6 +10,7 @@ import { env } from '../utils/env';
 import { fetchProductsFromSupabase } from '../services/supabaseService';
 import { supabase } from '../lib/supabase';
 import { generateNovaExplanation } from './explainOutfit';
+import { loadProductFeed } from '../services/productFeedLoader';
 
 /**
  * Interface for user feedback on recommendations
@@ -54,6 +55,163 @@ interface RecommendationOptions {
 }
 
 /**
+ * Enhanced scoring system for products
+ */
+interface ProductScores {
+  seasonScore: number;
+  colorHarmonyScore: number;
+  fitScore: number;
+  styleScore: number;
+  finalMatchScore: number;
+}
+
+/**
+ * Calculate season score for a product
+ */
+function calculateSeasonScore(product: Product, targetSeason: Season): number {
+  if (!product.season || !Array.isArray(product.season)) {
+    return 0.5; // Neutral score for products without season data
+  }
+  
+  // Perfect match for target season
+  if (product.season.includes(targetSeason)) {
+    return 1.0;
+  }
+  
+  // Partial matches for adjacent seasons
+  const seasonAdjacency: Record<Season, Season[]> = {
+    'spring': ['summer', 'winter'],
+    'summer': ['spring', 'autumn'],
+    'autumn': ['summer', 'winter'],
+    'winter': ['autumn', 'spring']
+  };
+  
+  const adjacentSeasons = seasonAdjacency[targetSeason] || [];
+  const hasAdjacentMatch = product.season.some(season => 
+    adjacentSeasons.includes(season as Season)
+  );
+  
+  return hasAdjacentMatch ? 0.7 : 0.3;
+}
+
+/**
+ * Calculate color harmony score between user preferences and product
+ */
+function calculateColorHarmonyScore(product: Product, userColorPrefs: string[]): number {
+  if (!userColorPrefs || userColorPrefs.length === 0) {
+    return 0.5; // Neutral score
+  }
+  
+  // Extract color information from product
+  const productColors = [
+    ...(product.styleTags || []).filter(tag => 
+      ['black', 'white', 'blue', 'red', 'green', 'yellow', 'purple', 'pink', 'brown', 'grey', 'beige'].includes(tag.toLowerCase())
+    ),
+    product.type?.toLowerCase().includes('black') ? 'black' : '',
+    product.type?.toLowerCase().includes('white') ? 'white' : '',
+    product.name?.toLowerCase().includes('zwart') ? 'black' : '',
+    product.name?.toLowerCase().includes('wit') ? 'white' : ''
+  ].filter(Boolean);
+  
+  if (productColors.length === 0) {
+    return 0.6; // Slightly positive for products without clear color data
+  }
+  
+  // Check for direct color matches
+  const colorMatches = userColorPrefs.some(userColor => 
+    productColors.some(productColor => 
+      productColor.toLowerCase().includes(userColor.toLowerCase()) ||
+      userColor.toLowerCase().includes(productColor.toLowerCase())
+    )
+  );
+  
+  return colorMatches ? 0.9 : 0.4;
+}
+
+/**
+ * Calculate fit score based on body profile and product type
+ */
+function calculateFitScore(product: Product, bodyProfile: any): number {
+  if (!bodyProfile || !bodyProfile.fit_recommendations) {
+    return 0.7; // Default good fit score
+  }
+  
+  const productCategory = getProductCategory(product);
+  const productType = product.type?.toLowerCase() || '';
+  
+  // Check if product type matches body shape recommendations
+  const recommendations = bodyProfile.fit_recommendations;
+  
+  // Check tops recommendations
+  if (productCategory === 'top' && recommendations.tops) {
+    const matchesTopRec = recommendations.tops.some((rec: string) =>
+      productType.includes(rec.toLowerCase()) ||
+      product.name?.toLowerCase().includes(rec.toLowerCase())
+    );
+    return matchesTopRec ? 0.95 : 0.6;
+  }
+  
+  // Check bottoms recommendations
+  if (productCategory === 'bottom' && recommendations.bottoms) {
+    const matchesBottomRec = recommendations.bottoms.some((rec: string) =>
+      productType.includes(rec.toLowerCase()) ||
+      product.name?.toLowerCase().includes(rec.toLowerCase())
+    );
+    return matchesBottomRec ? 0.95 : 0.6;
+  }
+  
+  // Check dress recommendations
+  if (productCategory === 'dress' && recommendations.dresses) {
+    const matchesDressRec = recommendations.dresses.some((rec: string) =>
+      productType.includes(rec.toLowerCase()) ||
+      product.name?.toLowerCase().includes(rec.toLowerCase())
+    );
+    return matchesDressRec ? 0.95 : 0.6;
+  }
+  
+  return 0.7; // Default score for other categories
+}
+
+/**
+ * Calculate enhanced product scores
+ */
+function calculateEnhancedProductScores(
+  product: Product, 
+  user: UserProfile,
+  targetSeason: Season,
+  userColorPrefs: string[],
+  bodyProfile: any
+): ProductScores {
+  // Calculate individual scores
+  const seasonScore = calculateSeasonScore(product, targetSeason);
+  const colorHarmonyScore = calculateColorHarmonyScore(product, userColorPrefs);
+  const fitScore = calculateFitScore(product, bodyProfile);
+  const styleScore = calculateMatchScore(product, user.stylePreferences) / 5; // Normalize to 0-1
+  
+  // Calculate weighted final score
+  const weights = {
+    season: 0.2,
+    color: 0.25,
+    fit: 0.3,
+    style: 0.25
+  };
+  
+  const finalMatchScore = 
+    (seasonScore * weights.season) +
+    (colorHarmonyScore * weights.color) +
+    (fitScore * weights.fit) +
+    (styleScore * weights.style);
+  
+  return {
+    seasonScore,
+    colorHarmonyScore,
+    fitScore,
+    styleScore,
+    finalMatchScore: Math.min(Math.max(finalMatchScore, 0), 1) // Clamp to 0-1
+  };
+}
+
+/**
  * Generates personalized recommendations for a user
  * 
  * @param user - The user profile to generate recommendations for
@@ -83,13 +241,24 @@ export async function generateRecommendations(
   const weather = options?.weather || getTypicalWeatherForSeason(currentSeason);
   console.log("Weather condition:", weather);
   
-  // Step 3: Get all available products from local data
+  // Step 3: Get all available products from enhanced sources
   const useZalandoProducts = options?.useZalandoProducts !== undefined ? options.useZalandoProducts : true;
   
     let allProducts: Product[] = [];
     
+    // Try to load from product feed first (10k+ products)
+    try {
+      const productFeedData = await loadProductFeed();
+      if (productFeedData && productFeedData.length > 0) {
+        console.log('[FitFi] Product feed geladen:', productFeedData.length);
+        allProducts = productFeedData;
+      }
+    } catch (error) {
+      console.warn('[FitFi] Product feed niet beschikbaar, terugvallen op andere bronnen');
+    }
+    
     // Try to get Supabase products if enabled
-    if (env.USE_SUPABASE) {
+    if (allProducts.length === 0 && env.USE_SUPABASE) {
       try {
         const supabaseProducts = await fetchProductsFromSupabase();
         if (supabaseProducts && supabaseProducts.length > 0) {
@@ -157,14 +326,43 @@ export async function generateRecommendations(
     const seasonalProducts = validProducts.filter(product => isProductInSeason(product, currentSeason));
     console.log("Products suitable for season:", seasonalProducts.length);
     
+    // Step 4.5: Get user color preferences and body profile for enhanced scoring
+    const userColorPrefs = extractColorPreferences(user);
+    const bodyProfile = await getUserBodyProfile(user.id);
+    
     // Step 5: Determine user's archetypes (primary and secondary)
     const { primaryArchetype, secondaryArchetype, mixFactor } = determineUserArchetypes(user);
     console.log(`Determined archetypes: ${primaryArchetype} (${Math.round((1-mixFactor)*100)}%) + ${secondaryArchetype} (${Math.round(mixFactor*100)}%)`);
     
-    // Step 6: Filter and sort products based on user preferences
+    // Step 6: Enhanced filtering and scoring
     // Use seasonal products if we have enough, otherwise fall back to all products
     const productsToUse = seasonalProducts.length >= 10 ? seasonalProducts : validProducts;
-    const sortedProducts = filterAndSortProducts(productsToUse, user, userFeedback);
+    
+    // Calculate enhanced scores for all products
+    const productsWithEnhancedScores = productsToUse.map(product => {
+      const scores = calculateEnhancedProductScores(
+        product, 
+        user, 
+        currentSeason, 
+        userColorPrefs, 
+        bodyProfile
+      );
+      
+      return {
+        ...product,
+        matchScore: scores.finalMatchScore,
+        seasonScore: scores.seasonScore,
+        colorHarmonyScore: scores.colorHarmonyScore,
+        fitScore: scores.fitScore,
+        styleScore: scores.styleScore
+      };
+    });
+    
+    // Sort by enhanced match score
+    const sortedProducts = productsWithEnhancedScores.sort((a, b) => 
+      (b.matchScore || 0) - (a.matchScore || 0)
+    );
+    
     console.log(`Filtered and sorted ${sortedProducts.length} products`);
     
     // Log product category distribution
@@ -225,6 +423,55 @@ export async function generateRecommendations(
     });
     
     return outfitsWithExplanations;
+}
+
+/**
+ * Extract color preferences from user profile
+ */
+function extractColorPreferences(user: UserProfile): string[] {
+  // This would be enhanced based on quiz answers about color preferences
+  // For now, derive from style preferences
+  const colorPrefs: string[] = [];
+  
+  if (user.stylePreferences.minimalist > 3) {
+    colorPrefs.push('neutral', 'white', 'black', 'grey');
+  }
+  if (user.stylePreferences.formal > 3) {
+    colorPrefs.push('black', 'navy', 'white', 'grey');
+  }
+  if (user.stylePreferences.casual > 3) {
+    colorPrefs.push('blue', 'white', 'beige');
+  }
+  if (user.stylePreferences.vintage > 3) {
+    colorPrefs.push('brown', 'beige', 'burgundy');
+  }
+  if (user.stylePreferences.sporty > 3) {
+    colorPrefs.push('black', 'white', 'grey');
+  }
+  
+  return Array.from(new Set(colorPrefs)); // Remove duplicates
+}
+
+/**
+ * Get user body profile from Supabase
+ */
+async function getUserBodyProfile(userId: string): Promise<any | null> {
+  try {
+    const { data, error } = await supabase
+      .from('user_onboarding_profiles')
+      .select('body_profile')
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data.body_profile;
+  } catch (error) {
+    console.warn('Could not load body profile:', error);
+    return null;
+  }
 }
 
 /**
