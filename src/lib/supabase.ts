@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import toast from 'react-hot-toast';
-import toast from 'react-hot-toast';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -353,35 +352,6 @@ supabaseClient.rest.request = async function(options: any) {
 // Intercept and enhance the functions client
 const originalInvoke = supabaseClient.functions.invoke;
 supabaseClient.functions.invoke = async function(functionName: string, options: any = {}) {
-  try {
-    return await originalInvoke.call(this, functionName, options);
-  } catch (error: any) {
-    // Log function invocation errors
-    await logSupabaseError(error, 'function_invoke', undefined, functionName);
-    
-    // Handle auth errors for functions
-    if (error.status === 401 || error.status === 403) {
-      if (typeof window !== 'undefined') {
-        toast.error('Sessie verlopen - probeer opnieuw in te loggen', {
-          id: 'auth-error-function',
-          duration: 5000
-        });
-      }
-    }
-    
-    throw error;
-  }
-};
-
-// Intercept and enhance the rest client
-const originalRequest = supabase.rest.request;
-supabase.rest.request = async function(options: any) {
-  return enhancedRequest(originalRequest, options, this);
-};
-
-// Intercept and enhance the functions client
-const originalInvoke = supabase.functions.invoke;
-supabase.functions.invoke = async function(functionName: string, options: any = {}) {
   try {
     return await originalInvoke.call(this, functionName, options);
   } catch (error: any) {
