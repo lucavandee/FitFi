@@ -8,7 +8,7 @@ import { NavigationServiceInitializer } from './components/NavigationServiceInit
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ScrollToTop } from './components/ScrollToTop';
 import Navbar from './components/layout/Navbar';
-import { NovaChat } from './components/ai/NovaChat';
+import NovaChat from './components/ai/NovaChat';
 // Footer moved to individual pages that need it
 
 // Pages
