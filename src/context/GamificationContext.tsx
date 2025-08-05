@@ -8,7 +8,7 @@ import {
   completeChallenge as completeDataRouterChallenge,
   getDailyChallengesData,
 } from "../services/DataRouter";
-import { fetchUserAchievements } from "../services/supabaseService";
+import { fetchUserAchievements, getGamificationSafe } from "../services/supabaseService";
 import toast from "react-hot-toast";
 import { trackEvent } from "../utils/analytics";
 
@@ -50,6 +50,7 @@ interface GamificationContextType {
   weeklyPoints: number;
   monthlyPoints: number;
   isLoading: boolean;
+  error: string | null;
 
   completeQuiz: () => Promise<void>;
   makePurchase: (amount?: number) => Promise<void>;
@@ -76,6 +77,7 @@ const GamificationContext = createContext<GamificationContextType | undefined>(u
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [availableChallenges, setAvailableChallenges] = useState<any[]>([]);
   const [availableWeeklyChallenges, setAvailableWeeklyChallenges] = useState<any[]>([]);
 
@@ -130,8 +132,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!user?.id) return;
 
     setIsLoading(true);
+    setError(null);
     try {
-      const data = await getGamificationData(user.id);
+      // Use safe gamification query
+      const data = await getGamificationSafe(user.id);
       
       // Handle auth errors gracefully
       if (!data) {
@@ -140,25 +144,33 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return;
       }
       
-      // Safe fetch with auth error handling
-      let dailyChallenges = {};
+      // Safe fetch challenges with auth error handling
+      let dailyChallenges = [];
       try {
         dailyChallenges = await getDailyChallengesData(user.id);
       } catch (challengeError) {
-        if (challengeError?.status === 401 || challengeError?.status === 403) {
+        if (challengeError?.message?.includes('permission denied') || 
+            challengeError?.message?.includes('401') || 
+            challengeError?.message?.includes('403')) {
           console.warn('[Gamification] Auth error loading challenges, using fallback');
-          dailyChallenges = {};
+          dailyChallenges = [];
         } else {
           throw challengeError;
         }
       }
       
-      const leaderboardRank = await getLeaderboardPosition();
+      // Safe leaderboard fetch
+      let leaderboardRank = 1;
+      try {
+        leaderboardRank = await getLeaderboardPosition();
+      } catch (leaderboardError) {
+        console.warn('[Gamification] Could not load leaderboard rank, using fallback');
+      }
 
       setGamificationState({
         ...data,
         completedChallenges: data.completedChallenges || [],
-        dailyChallengeStatus: dailyChallenges,
+        dailyChallengeStatus: Array.isArray(dailyChallenges) ? {} : dailyChallenges,
         leaderboardRank,
       });
 
@@ -175,16 +187,20 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (err) {
       console.error("[⚠️ Gamification] Error loading data:", err);
       
-      // Check for auth errors (401/403)
-      if (err?.status === 401 || err?.status === 403) {
+      // Check for auth errors (401/403) - show toast but don't sign out
+      if (err?.message?.includes('permission denied') || 
+          err?.message?.includes('401') || 
+          err?.message?.includes('403')) {
         console.warn('[Gamification] Auth error detected, showing toast and using fallback');
         toast.error('We konden je levels niet laden. Probeer opnieuw.');
+        setError('Auth error - using fallback data');
         resetGamificationState();
         return;
       }
       
       // For other errors, show fallback but don't spam user with toasts
       console.warn('[Gamification] Using fallback data due to error');
+      setError('Data loading error - using fallback');
       resetGamificationState();
     } finally {
       setIsLoading(false);
@@ -376,6 +392,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         availableChallenges,
         availableWeeklyChallenges,
         isLoading,
+        error,
         progressToNextLevel: getProgressToNextLevel(),
         completeQuiz,
         makePurchase,
