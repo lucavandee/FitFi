@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Send, Sparkles, Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { MessageCircle, Send, Sparkles, Heart, ThumbsUp, ThumbsDown, X, Minimize2 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { saveUserFeedback, processRealtimeFeedback } from '../../engine/recommendationEngine';
 import { generateNovaStyleTips } from '../../engine/explainOutfit';
@@ -11,6 +11,7 @@ interface NovaChatProps {
   currentOutfits?: Outfit[];
   onOutfitUpdate?: (outfits: Outfit[]) => void;
   context?: 'onboarding' | 'results' | 'general';
+  onClose?: () => void;
   className?: string;
 }
 
@@ -27,16 +28,14 @@ const NovaChat: React.FC<NovaChatProps> = ({
   currentOutfits = [],
   onOutfitUpdate,
   context = 'general',
+  onClose,
   className = ''
 }) => {
   const { user } = useUser();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [isOpen, setIsOpen] = useState(() => {
-    // Auto-open for first-time visitors
-    return !localStorage.getItem('novaSeen');
-  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Initialize with Nova's greeting
@@ -46,15 +45,40 @@ const NovaChat: React.FC<NovaChatProps> = ({
   }, [context]);
 
   useEffect(() => {
-    // Mark Nova as seen when chat opens
-    if (isOpen && !localStorage.getItem('novaSeen')) {
-      localStorage.setItem('novaSeen', 'true');
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Focus trap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && onClose) {
+        onClose();
+      }
+      
+      // Simple focus trap
+      if (e.key === 'Tab') {
+        const focusableElements = chatContainerRef.current?.querySelectorAll(
+          'button, input, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        
+        if (focusableElements && focusableElements.length > 0) {
+          const firstElement = focusableElements[0] as HTMLElement;
+          const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const initializeChat = () => {
     const greetings = {
@@ -266,105 +290,109 @@ const NovaChat: React.FC<NovaChatProps> = ({
   };
 
   return (
-    <div className={`${className}`}>
-      {/* Chat Toggle Button */}
-      <button
-        id="nova-ai-chat-toggle"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-70 w-14 h-14 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
-          isOpen ? 'scale-110' : 'hover:scale-110'
-        }`}
-        aria-label="Chat met Nova"
-      >
-        <MessageCircle className="h-7 w-7 text-white" />
-        {messages.length > 1 && !isOpen && (
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-            <span className="text-white text-xs font-bold">{messages.length - 1}</span>
+    <div 
+      ref={chatContainerRef}
+      className={`h-full flex flex-col bg-white dark:bg-gray-800 rounded-3xl overflow-hidden ${className}`}
+      role="dialog"
+      aria-labelledby="nova-chat-title"
+      aria-modal="true"
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 dark:from-[#89CFF0]/20 dark:to-blue-900/20 rounded-t-3xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 id="nova-chat-title" className="font-medium text-gray-900 dark:text-white">Nova AI</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Jouw persoonlijke stylist</p>
+            </div>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
+          
+          {/* Close button */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors"
+              aria-label="Sluit Nova chat"
+            >
+              <X size={16} className="text-gray-600 dark:text-gray-300" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+        {messages.map(renderMessage)}
+        
+        {/* Typing Indicator */}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-3">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              </div>
+            </div>
           </div>
         )}
-      </button>
+        
+        <div ref={messagesEndRef} />
+      </div>
 
-      {/* Chat Window */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-6 z-70 w-80 h-96 bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col animate-scale-in">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 rounded-t-3xl">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-medium text-gray-900">Nova AI</h3>
-                <p className="text-sm text-gray-600">Jouw persoonlijke stylist</p>
-              </div>
-              <div className="ml-auto">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          </div>
+      {/* Quick Actions */}
+      <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-3xl">
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const tip = generateNovaStyleTips(user || {} as any, context)[0];
+              const tipMessage: ChatMessage = {
+                id: `nova_tip_${Date.now()}`,
+                type: 'nova',
+                content: tip,
+                timestamp: Date.now()
+              };
+              setMessages(prev => [...prev, tipMessage]);
+            }}
+            className="text-xs border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white dark:border-[#89CFF0] dark:text-[#89CFF0]"
+          >
+            💡 Stijltip
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const helpMessage: ChatMessage = {
+                id: `nova_help_${Date.now()}`,
+                type: 'nova',
+                content: 'Ik kan je helpen met outfit-keuzes, stijladvies en het uitleggen van mijn aanbevelingen. Geef feedback op outfits zodat ik beter kan leren wat je leuk vindt!',
+                timestamp: Date.now()
+              };
+              setMessages(prev => [...prev, helpMessage]);
+            }}
+            className="text-xs border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+          >
+            ❓ Help
+          </Button>
+        </div>
+        
+        <div className="text-center">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            Nova leert van je feedback om betere aanbevelingen te doen
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map(renderMessage)}
-            
-            {/* Typing Indicator */}
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-2xl px-4 py-3">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Quick Actions */}
-          <div className="p-4 border-t border-gray-100">
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const tip = generateNovaStyleTips(user || {} as any, context)[0];
-                  const tipMessage: ChatMessage = {
-                    id: `nova_tip_${Date.now()}`,
-                    type: 'nova',
-                    content: tip,
-                    timestamp: Date.now()
-                  };
-                  setMessages(prev => [...prev, tipMessage]);
-                }}
-                className="text-xs border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
-              >
-                💡 Stijltip
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const helpMessage: ChatMessage = {
-                    id: `nova_help_${Date.now()}`,
-                    type: 'nova',
-                    content: 'Ik kan je helpen met outfit-keuzes, stijladvies en het uitleggen van mijn aanbevelingen. Geef feedback op outfits zodat ik beter kan leren wat je leuk vindt!',
-                    timestamp: Date.now()
-                  };
-                  setMessages(prev => [...prev, helpMessage]);
-                }}
-                className="text-xs border-gray-300 text-gray-600 hover:bg-gray-50"
-              >
-                ❓ Help
-              </Button>
-            </div>
-            
-            <div className="text-center">
-              <span className="text-xs text-gray-500">
-                Nova leert van je feedback om betere aanbevelingen te doen
-              </span>
+export default NovaChat;
             </div>
           </div>
         </div>
