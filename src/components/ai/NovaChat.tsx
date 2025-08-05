@@ -34,7 +34,7 @@ const NovaChat: React.FC<NovaChatProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const [isOpen, setIsOpen] = useState(() => {
     // Auto-open for first-time visitors
-    return !localStorage.getItem('fitfi-nova-seen');
+    return !localStorage.getItem('novaSeen');
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -47,8 +47,8 @@ const NovaChat: React.FC<NovaChatProps> = ({
 
   useEffect(() => {
     // Mark Nova as seen when chat opens
-    if (isOpen && !localStorage.getItem('fitfi-nova-seen')) {
-      localStorage.setItem('fitfi-nova-seen', 'true');
+    if (isOpen && !localStorage.getItem('novaSeen')) {
+      localStorage.setItem('novaSeen', 'true');
     }
   }, [isOpen]);
 
@@ -269,14 +269,14 @@ const NovaChat: React.FC<NovaChatProps> = ({
     <div className={`${className}`}>
       {/* Chat Toggle Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
         id="nova-ai-chat-toggle"
+        onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 z-70 w-14 h-14 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
           isOpen ? 'scale-110' : 'hover:scale-110'
         }`}
         aria-label="Chat met Nova"
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="h-7 w-7 text-white" />
         {messages.length > 1 && !isOpen && (
           <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
             <span className="text-white text-xs font-bold">{messages.length - 1}</span>
