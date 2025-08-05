@@ -4,8 +4,8 @@ import { Rocket, Crown, Users, ArrowRight, Wifi, WifiOff } from 'lucide-react';
 import Button from '../ui/Button';
 import { useUser } from '../../context/UserContext';
 import { supabase } from '../../lib/supabase';
-import { predictivePrefetcher } from '../../services/PredictivePrefetcher';
-import { realtimeCollaboration } from '../../services/RealtimeCollaboration';
+import predictivePrefetcher from '../../services/PredictivePrefetcher';
+import realtimeCollaboration from '../../services/RealtimeCollaboration';
 
 interface FoundersBlockTeaserProps {
   className?: string;
