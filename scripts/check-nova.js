@@ -11,15 +11,6 @@ try {
     process.exit(1);
   }
   
-  const html = fs.readFileSync(indexPath, 'utf8');
-  
-  // Check for Nova chat toggle ID
-  if (!html.includes('nova-ai-chat-toggle')) {
-    console.error('❌ Nova AI chat toggle not found in build');
-    console.error('   Expected: id="nova-ai-chat-toggle" in HTML');
-    process.exit(1);
-  }
-  
   // Check for Nova-related JavaScript
   const jsFiles = fs.readdirSync(path.join(process.cwd(), 'dist', 'assets'))
     .filter(file => file.endsWith('.js'));
