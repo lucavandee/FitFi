@@ -33,7 +33,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           <div className="flex items-center space-x-2">
             <span className="text-2xl">{currentLevelInfo.icon}</span>
             <div>
-              <div className="font-medium text-gray-900">{currentLevelInfo.name}</div>
+              <div className="font-medium text-gray-900">{currentLevelInfo.level_name}</div>
               <div className="text-sm text-gray-600">{points.toLocaleString()} punten</div>
             </div>
           </div>
@@ -41,7 +41,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             <div className="text-right">
               <div className="text-sm text-gray-600">Volgende level</div>
               <div className="text-xs text-gray-500">
-                {(nextLevelInfo.minPoints - points).toLocaleString()} punten te gaan
+                {(nextLevelInfo.min_xp - points).toLocaleString()} punten te gaan
               </div>
             </div>
           )}
@@ -71,8 +71,8 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             {currentLevelInfo.icon}
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">{currentLevelInfo.name}</h3>
-            <p className="text-gray-600">Level {currentLevelInfo.rank}</p>
+            <h3 className="text-xl font-bold text-gray-900">{currentLevelInfo.level_name}</h3>
+            <p className="text-gray-600">Level {currentLevelInfo.id}</p>
           </div>
         </div>
         
@@ -86,7 +86,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       {nextLevelInfo ? (
         <div className="mb-6">
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-600">Voortgang naar {nextLevelInfo.name}</span>
+            <span className="text-gray-600">Voortgang naar {nextLevelInfo.level_name}</span>
             <span className="font-medium text-gray-900">{progressToNextLevel}%</span>
           </div>
           
@@ -114,9 +114,9 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           </div>
           
           <div className="flex justify-between text-xs text-gray-500 mt-2">
-            <span>{currentLevelInfo.minPoints.toLocaleString()}</span>
-            <span>{(nextLevelInfo.minPoints - points).toLocaleString()} punten te gaan</span>
-            <span>{nextLevelInfo.minPoints.toLocaleString()}</span>
+            <span>{currentLevelInfo.min_xp.toLocaleString()}</span>
+            <span>{(nextLevelInfo.min_xp - points).toLocaleString()} punten te gaan</span>
+            <span>{nextLevelInfo.min_xp.toLocaleString()}</span>
           </div>
         </div>
       ) : (
@@ -151,7 +151,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
           <h4 className="font-medium text-gray-900 mb-3 flex items-center">
             <TrendingUp className="w-4 h-4 mr-2 text-gray-600" />
-            Unlock bij {nextLevelInfo.name}:
+            Unlock bij {nextLevelInfo.level_name}:
           </h4>
           <div className="space-y-2">
             {nextLevelPerks.slice(0, 3).map((perk, index) => (
