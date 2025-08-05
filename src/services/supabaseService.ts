@@ -233,18 +233,6 @@ export async function getDailyChallenges(userId: string) {
   });
 }
 
-export default {
-  fetchProductsFromSupabase,
-  getUserById,
-  getUserGamification,
-  updateUserGamification,
-  completeChallenge,
-  getDailyChallenges,
-  fetchUserAchievements,
-  getAchievements,
-  getGamificationSafe
-};
-
 /**
  * Safe achievements query with proper error handling
  */
@@ -270,6 +258,7 @@ export async function getAchievements(userId: string) {
 
     return data || [];
   });
+}
 
 /**
  * Safe gamification query with fallback
@@ -325,3 +314,15 @@ export async function fetchUserAchievements(userId: string) {
     return data || [];
   });
 }
+
+export default {
+  fetchProductsFromSupabase,
+  getUserById,
+  getUserGamification,
+  updateUserGamification,
+  completeChallenge,
+  getDailyChallenges,
+  fetchUserAchievements,
+  getAchievements,
+  getGamificationSafe
+};
