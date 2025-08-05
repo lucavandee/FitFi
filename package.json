@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --loader ts-node/esm playwright test",
+    "test": "npx playwright test",
     "build:check": "npm run build",
     "build:analyze": "npm run build && npx vite-bundle-analyzer dist",
     "build:size": "npm run build && du -sh dist/*",
