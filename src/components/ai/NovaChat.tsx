@@ -32,7 +32,10 @@ const NovaChat: React.FC<NovaChatProps> = ({
   const { user } = useUser();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => {
+    // Auto-open for first-time visitors
+    return !localStorage.getItem('fitfi-nova-seen');
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,6 +44,13 @@ const NovaChat: React.FC<NovaChatProps> = ({
       initializeChat();
     }
   }, [context]);
+
+  useEffect(() => {
+    // Mark Nova as seen when chat opens
+    if (isOpen && !localStorage.getItem('fitfi-nova-seen')) {
+      localStorage.setItem('fitfi-nova-seen', 'true');
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     scrollToBottom();
@@ -260,7 +270,8 @@ const NovaChat: React.FC<NovaChatProps> = ({
       {/* Chat Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
+        id="nova-ai-chat-toggle"
+        className={`fixed bottom-6 right-6 z-70 w-14 h-14 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
           isOpen ? 'scale-110' : 'hover:scale-110'
         }`}
         aria-label="Chat met Nova"
@@ -275,7 +286,7 @@ const NovaChat: React.FC<NovaChatProps> = ({
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 h-96 bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col animate-scale-in">
+        <div className="fixed bottom-24 right-6 z-70 w-80 h-96 bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col animate-scale-in">
           {/* Header */}
           <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 rounded-t-3xl">
             <div className="flex items-center space-x-3">
