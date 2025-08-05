@@ -8,7 +8,7 @@ import {
   completeChallenge as completeDataRouterChallenge,
   getDailyChallengesData,
 } from "../services/DataRouter";
-import { fetchUserAchievements, getGamificationSafe } from "../services/supabaseService";
+import { getAchievements, getGamificationSafe } from "../services/supabaseService";
 import toast from "react-hot-toast";
 import { trackEvent } from "../utils/analytics";
 
@@ -134,32 +134,32 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setIsLoading(true);
     setError(null);
     try {
-      // Use safe gamification query
+      // Safe gamification query - never throws
       const data = await getGamificationSafe(user.id);
       
-      // Handle auth errors gracefully
       if (!data) {
         console.warn('[Gamification] No data available, using fallback');
         resetGamificationState();
         return;
       }
       
-      // Safe fetch challenges with auth error handling
+      // Safe achievements query - user is never null here
+      const { data: achievements, error: achievementsError } = await getAchievements(user.id);
+      
+      if (achievementsError) {
+        console.error('Achievements error', achievementsError);
+        // Don't throw, don't sign out - just use empty array
+      }
+      
+      // Safe fetch challenges
       let dailyChallenges = [];
       try {
         dailyChallenges = await getDailyChallengesData(user.id);
       } catch (challengeError) {
-        if (challengeError?.message?.includes('permission denied') || 
-            challengeError?.message?.includes('401') || 
-            challengeError?.message?.includes('403')) {
-          console.warn('[Gamification] Auth error loading challenges, using fallback');
-          dailyChallenges = [];
-        } else {
-          throw challengeError;
-        }
+        console.warn('[Gamification] Challenge error, using fallback:', challengeError);
+        dailyChallenges = [];
       }
       
-      // Safe leaderboard fetch
       let leaderboardRank = 1;
       try {
         leaderboardRank = await getLeaderboardPosition();
@@ -169,6 +169,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       setGamificationState({
         ...data,
+        achievements: achievements || [],
         completedChallenges: data.completedChallenges || [],
         dailyChallengeStatus: Array.isArray(dailyChallenges) ? {} : dailyChallenges,
         leaderboardRank,
@@ -187,20 +188,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (err) {
       console.error("[⚠️ Gamification] Error loading data:", err);
       
-      // Check for auth errors (401/403) - show toast but don't sign out
-      if (err?.message?.includes('permission denied') || 
-          err?.message?.includes('401') || 
-          err?.message?.includes('403')) {
-        console.warn('[Gamification] Auth error detected, showing toast and using fallback');
-        toast.error('We konden je levels niet laden. Probeer opnieuw.');
-        setError('Auth error - using fallback data');
-        resetGamificationState();
-        return;
-      }
-      
-      // For other errors, show fallback but don't spam user with toasts
+      // For any error, show fallback but don't spam user with toasts
       console.warn('[Gamification] Using fallback data due to error');
-      setError('Data loading error - using fallback');
+      setError('We konden je levels niet laden. Probeer het later opnieuw.');
+      toast.error('We konden je levels niet laden. Probeer opnieuw.');
       resetGamificationState();
     } finally {
       setIsLoading(false);

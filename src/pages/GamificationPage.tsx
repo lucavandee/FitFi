@@ -40,13 +40,24 @@ const GamificationPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
         <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <Link 
+              to="/dashboard" 
+              className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
+            >
+              <ArrowLeft size={20} className="mr-2" />
+              Terug naar dashboard
+            </Link>
+          </div>
+          
           <div className="bg-white rounded-3xl shadow-card p-8 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Trophy className="w-8 h-8 text-red-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Gamification tijdelijk niet beschikbaar</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">We konden je levels niet laden</h2>
             <p className="text-gray-600 mb-6">
-              We konden je gamification data niet laden. Probeer het later opnieuw.
+              Probeer het later opnieuw.
             </p>
             <div className="flex justify-center space-x-4">
               <Button 
