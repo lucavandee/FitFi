@@ -77,29 +77,31 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
           setCurrentUserEntry(userEntry);
         } else {
           // Get user's position if not in top list
-          const { data: userRank } = await supabase
-            .rpc('get_user_leaderboard_rank', { 
-              user_uuid: user.id,
-              leaderboard_type: type 
-            });
-          
-          if (userRank) {
-        if (rankError) {
-          console.error('[Leaderboard] User rank error:', rankError);
-        } else if (userRank) {
-              user_id: user.id,
-              username: user.name || 'You',
-              points: userRank.points || 0,
-              level: userRank.level || 'beginner',
-              rank: userRank.rank || 999,
-              weekly_points: userRank.weekly_points || 0,
-              monthly_points: userRank.monthly_points || 0,
-              is_current_user: true
-            });
+          try {
+            const { data: userRank, error: rankError } = await supabase
+              .rpc('get_user_leaderboard_rank', { 
+                user_uuid: user.id,
+                leaderboard_type: type 
+              });
+            
+            if (rankError) {
+              console.error('[Leaderboard] User rank error:', rankError);
+            } else if (userRank) {
+              setCurrentUserEntry({
+                user_id: user.id,
+                username: user.name || 'You',
+                points: userRank.points || 0,
+                level: userRank.level || 'beginner',
+                rank: userRank.rank || 999,
+                weekly_points: userRank.weekly_points || 0,
+                monthly_points: userRank.monthly_points || 0,
+                is_current_user: true
+              });
+            }
+          } catch (rankError) {
+            console.error('[Leaderboard] User rank query failed:', rankError);
           }
         }
-      } catch (rankError) {
-        console.error('[Leaderboard] User rank query failed:', rankError);
       }
 
       // Track leaderboard view
@@ -207,7 +209,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
           <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
             <Trophy className="w-5 h-5 text-white" />
           </div>
-        const { data: userRank, error: rankError } = await supabase
+          <div>
             <h2 className="text-xl font-bold text-gray-900">Leaderboard</h2>
             <p className="text-gray-600 text-sm">{getTypeLabel()}</p>
           </div>
