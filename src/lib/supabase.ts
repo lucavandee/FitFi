@@ -44,7 +44,7 @@ async function logSupabaseError(
     };
 
     // Use the RPC function to log the error
-    await supabaseClient.rpc('log_supabase_error', {
+    await supabase.rpc('log_supabase_error', {
       error_code_param: error.code || error.status?.toString() || 'UNKNOWN',
       error_message_param: error.message || 'Unknown error',
       operation_type_param: operation,
@@ -176,3 +176,35 @@ export const TEST_USER_ID = 'test-user-123';
 
 // Feature flag for Supabase usage
 export const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  },
+  global: {
+    headers: {
+      'X-Session-ID': sessionId
+    }
+  }
+});
+
+// Initialize request interceptors
+let interceptorsInitialized = false;
+
+if (!interceptorsInitialized) {
+  // Wrap the original request method
+  const originalRequest = supabase.rest.request.bind(supabase.rest);
+  supabase.rest.request = async function(options: any) {
+    return enhancedRequest(originalRequest, options, supabase.rest);
+  };
+
+  // Wrap the functions invoke method
+  const originalInvoke = supabase.functions.invoke.bind(supabase.functions);
+  supabase.functions.invoke = async function(functionName: string, options: any = {}) {
+    return enhancedRequest(originalInvoke, [functionName, options], supabase.functions);
+  };
+
+  interceptorsInitialized = true;
+}
