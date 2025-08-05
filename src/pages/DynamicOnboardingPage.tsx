@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
-import DynamicOnboardingFlow from '../components/onboarding/DynamicOnboardingFlow';
+import EnhancedOnboardingFlow from '../components/onboarding/EnhancedOnboardingFlow';
 import { RealtimeProfile, OutfitPreview } from '../types/dynamicOnboarding';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import NovaChat from '../components/ai/NovaChat';
@@ -53,7 +53,7 @@ const DynamicOnboardingPage: React.FC = () => {
         <link rel="canonical" href="https://fitfi.app/dynamic-onboarding" />
       </Helmet>
 
-      <DynamicOnboardingFlow onComplete={handleOnboardingComplete} />
+      <EnhancedOnboardingFlow onComplete={handleOnboardingComplete} />
       
       {/* Nova Chat for Onboarding */}
       <NovaChat 

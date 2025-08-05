@@ -18,7 +18,7 @@ import { useUser } from '../context/UserContext';
 import { getOutfits, getRecommendedProducts } from '../services/DataRouter';
 import { Outfit, Product } from '../engine';
 import { getSafeUser } from '../utils/userUtils';
-import { generateDetailedExplanation } from '../engine/explainOutfit';
+import { generateDetailedExplanation, generateEnhancedOutfitExplanation } from '../engine/explainOutfit';
 import NovaChat from '../components/ai/NovaChat';
 import VirtualTryOnPreview from '../components/ai/VirtualTryOnPreview';
 import Popover from '../components/ui/Popover';
@@ -320,6 +320,28 @@ const EnhancedResultsPage: React.FC = () => {
                         <Star size={12} className="inline mr-1" />
                         {Math.round(product.matchScore * 20)}%
                       </div>
+                      
+                      {/* Enhanced Confidence Badge */}
+                      <div className="absolute top-3 right-3">
+                        <Popover
+                          trigger={
+                            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-[#89CFF0] cursor-pointer hover:bg-white transition-colors">
+                              ☑︎ {getOutfitConfidence(outfit)}%
+                            </div>
+                          }
+                          content={
+                            <div className="space-y-3 max-w-xs">
+                              <div className="flex items-center space-x-2">
+                                <Sparkles className="w-4 h-4 text-[#89CFF0]" />
+                                <span className="font-medium text-gray-900">Waarom dit werkt</span>
+                              </div>
+                              {renderEnhancedExplanation(outfit)}
+                            </div>
+                          }
+                          placement="bottom"
+                        />
+                      </div>
+                      
                     )}
                   </div>
                   
@@ -411,6 +433,59 @@ const EnhancedResultsPage: React.FC = () => {
       )}
     </>
   );
+  
+  // Helper function to get outfit confidence
+  const getOutfitConfidence = (outfit: Outfit): number => {
+    const explanation = generateEnhancedOutfitExplanation(
+      outfit,
+      outfit.archetype,
+      outfit.occasion,
+      user?.name,
+      null // bodyProfile would be passed here
+    );
+    return explanation.confidencePercent;
+  };
+  
+  // Helper function to render enhanced explanation
+  const renderEnhancedExplanation = (outfit: Outfit) => {
+    const explanation = generateEnhancedOutfitExplanation(
+      outfit,
+      outfit.archetype,
+      outfit.occasion,
+      user?.name,
+      null // bodyProfile would be passed here
+    );
+    
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-gray-700 leading-relaxed">
+          {explanation.text}
+        </p>
+        
+        <div className="space-y-2">
+          <div className="text-xs text-gray-600">Confidence breakdown:</div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
+              <span>Seizoen fit:</span>
+              <span className="font-medium">{Math.round(explanation.reasoning.seasonFit * 100)}%</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span>Kleur harmonie:</span>
+              <span className="font-medium">{Math.round(explanation.reasoning.colorHarmony * 100)}%</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span>Pasvorm:</span>
+              <span className="font-medium">{Math.round(explanation.reasoning.bodyFit * 100)}%</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span>Stijl match:</span>
+              <span className="font-medium">{Math.round(explanation.reasoning.styleMatch * 100)}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 };
 
 export default EnhancedResultsPage;

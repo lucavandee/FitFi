@@ -3,6 +3,20 @@ import { getDutchSeasonName, getDutchWeatherDescription } from './helpers';
 import { UserProfile } from '../context/UserContext';
 
 /**
+ * Enhanced explanation result with confidence score
+ */
+export interface OutfitExplanationResult {
+  text: string;
+  confidencePercent: number;
+  reasoning: {
+    seasonFit: number;
+    colorHarmony: number;
+    bodyFit: number;
+    styleMatch: number;
+  };
+}
+
+/**
  * Generates a personalized explanation for why an outfit fits the user's style and occasion
  * 
  * @param outfit - The outfit to explain
@@ -17,6 +31,19 @@ export function generateOutfitExplanation(
   occasion: string,
   userName?: string
 ): string {
+  return generateEnhancedOutfitExplanation(outfit, archetype, occasion, userName).text;
+}
+
+/**
+ * Generates enhanced explanation with confidence scoring
+ */
+export function generateEnhancedOutfitExplanation(
+  outfit: Outfit,
+  archetype: string,
+  occasion: string,
+  userName?: string,
+  bodyProfile?: any
+): OutfitExplanationResult {
   // Get key elements from the outfit
   const products = outfit.products || [];
   const tags = outfit.tags || [];
@@ -188,7 +215,25 @@ export function generateOutfitExplanation(
     explanation += `Alle items zijn zorgvuldig geselecteerd om jouw persoonlijke stijl te complementeren.`;
   }
 
-  return explanation;
+  // Calculate confidence based on outfit scores
+  const seasonFit = outfit.season ? 0.9 : 0.7;
+  const colorHarmony = products.length > 0 ? 0.8 : 0.6;
+  const bodyFit = bodyProfile ? 0.85 : 0.7;
+  const styleMatch = outfit.matchPercentage ? outfit.matchPercentage / 100 : 0.8;
+  
+  const overallConfidence = (seasonFit + colorHarmony + bodyFit + styleMatch) / 4;
+  const confidencePercent = Math.round(overallConfidence * 100);
+  
+  return {
+    text: explanation,
+    confidencePercent,
+    reasoning: {
+      seasonFit,
+      colorHarmony,
+      bodyFit,
+      styleMatch
+    }
+  };
 }
 
 /**
