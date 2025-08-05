@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Trophy, Star, Target, Users, TrendingUp, Gift } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useGamification } from '../../context/GamificationContext';
 import LevelProgress from './LevelProgress';
 import Leaderboard from './Leaderboard';
@@ -115,7 +116,11 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
                   </div>
                   <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
-          <Leaderboard type="all_time" limit={10} />
+                </div>
+              ))}
+            </div>
+
+            <Leaderboard type="all_time" limit={10} />
 
             {/* Level Progress */}
             <LevelProgress showPerks={true} />
