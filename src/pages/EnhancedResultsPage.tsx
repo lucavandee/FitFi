@@ -316,31 +316,35 @@ const EnhancedResultsPage: React.FC = () => {
                       className="w-full h-full object-cover"
                     />
                     {product.matchScore && (
-                      <div className="absolute top-2 left-2 bg-secondary text-primary px-2 py-1 rounded-full text-xs font-bold">
-                        <Star size={12} className="inline mr-1" />
-                        {Math.round(product.matchScore * 20)}%
-                      </div>
-                      
-                      {/* Enhanced Confidence Badge */}
-                      <div className="absolute top-3 right-3">
-                        <Popover
-                          trigger={
-                            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-[#89CFF0] cursor-pointer hover:bg-white transition-colors">
-                              ☑︎ {getOutfitConfidence(outfit)}%
-                            </div>
-                          }
-                          content={
-                            <div className="space-y-3 max-w-xs">
-                              <div className="flex items-center space-x-2">
-                                <Sparkles className="w-4 h-4 text-[#89CFF0]" />
-                                <span className="font-medium text-gray-900">Waarom dit werkt</span>
+                      <>
+                        <div className="absolute top-2 left-2 bg-secondary text-primary px-2 py-1 rounded-full text-xs font-bold">
+                          <Star size={12} className="inline mr-1" />
+                          {Math.round(product.matchScore * 20)}%
+                        </div>
+                        
+                        {/* Enhanced Confidence Badge */}
+                        <div className="absolute top-3 right-3">
+                          <Popover
+                            trigger={
+                              <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-[#89CFF0] cursor-pointer hover:bg-white transition-colors">
+                                ☑︎ {Math.round(product.matchScore * 20)}%
                               </div>
-                              {renderEnhancedExplanation(outfit)}
-                            </div>
-                          }
-                          placement="bottom"
-                        />
-                      </div>
+                            }
+                            content={
+                              <div className="space-y-3 max-w-xs">
+                                <div className="flex items-center space-x-2">
+                                  <Sparkles className="w-4 h-4 text-[#89CFF0]" />
+                                  <span className="font-medium text-gray-900">Waarom dit werkt</span>
+                                </div>
+                                <p className="text-sm text-gray-700">
+                                  Dit product past perfect bij jouw stijlprofiel en voorkeuren.
+                                </p>
+                              </div>
+                            }
+                            placement="bottom"
+                          />
+                        </div>
+                      </>
                       
                     )}
                   </div>
