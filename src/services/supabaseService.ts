@@ -1,25 +1,26 @@
 import { supabase } from '../lib/supabase';
 import { UserProfile } from '../context/UserContext';
+import { executeSupabaseOperation, SupabaseErrorContext } from '../utils/supabaseErrorHandler';
 
 // Quiz answer retrieval with proper error handling
 export const getQuizAnswer = async (userId: string, qId: string) => {
-  try {
-    const { data, error, status } = await supabase
+  return executeSupabaseOperation(
+    () => supabase
       .from('quiz_answers')
-      .select('*', { head: false })
+      .select('*')
       .eq('user_id', userId)
       .eq('question_id', qId)
-      .maybeSingle();
-
-    if (error) {
-      console.error('[🔴 Supabase]', status, error.message);
-      return null;               // veilige fallback -> voorkomt crash
+      .maybeSingle(),
+    {
+      operation: 'select',
+      tableName: 'quiz_answers',
+      userId
+    },
+    {
+      fallbackValue: null,
+      showToast: false // Don't show toast for quiz data loading
     }
-    return data;
-  } catch (error) {
-    console.error('[🔴 Supabase] Unexpected error:', error);
-    return null;
-  }
+  );
 };
 
 // Retry configuration
@@ -57,18 +58,20 @@ function isValidUUID(uuid: string): boolean {
  * Fetch products from Supabase
  */
 export async function fetchProductsFromSupabase() {
-  return executeWithRetry(async () => {
-    const { data, error } = await supabase
+  return executeSupabaseOperation(
+    () => supabase
       .from('products')
       .select('*')
-      .limit(50);
-
-    if (error) {
-      throw new Error(`Supabase products error: ${error.message}`);
+      .limit(50),
+    {
+      operation: 'select',
+      tableName: 'products'
+    },
+    {
+      fallbackValue: [],
+      showToast: false
     }
-
-    return data || [];
-  });
+  );
 }
 
 /**
@@ -79,36 +82,40 @@ export async function getUserById(userId: string): Promise<UserProfile | null> {
     throw new Error('Invalid user ID format');
   }
 
-  return executeWithRetry(async () => {
-    const { data, error } = await supabase
+  const data = await executeSupabaseOperation(
+    () => supabase
       .from('users')
       .select('*')
       .eq('id', userId)
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return null; // User not found
-      }
-      throw new Error(`Supabase user error: ${error.message}`);
+      .single(),
+    {
+      operation: 'select',
+      tableName: 'users',
+      userId
+    },
+    {
+      fallbackValue: null,
+      showToast: false
     }
+  );
 
-    return {
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      gender: data.gender,
-      stylePreferences: {
-        casual: 3,
-        formal: 3,
-        sporty: 3,
-        vintage: 3,
-        minimalist: 3
-      },
-      isPremium: data.is_premium || false,
-      savedRecommendations: []
-    };
-  });
+  if (!data) return null;
+
+  return {
+    id: data.id,
+    name: data.name,
+    email: data.email,
+    gender: data.gender,
+    stylePreferences: {
+      casual: 3,
+      formal: 3,
+      sporty: 3,
+      vintage: 3,
+      minimalist: 3
+    },
+    isPremium: data.is_premium || false,
+    savedRecommendations: []
+  };
 }
 
 /**
@@ -119,44 +126,55 @@ export async function getUserGamification(userId: string) {
     throw new Error('Invalid user ID format');
   }
 
-  return executeWithRetry(async () => {
-    const { data, error } = await supabase
+  let data = await executeSupabaseOperation(
+    () => supabase
       .from('user_gamification')
       .select('*')
       .eq('user_id', userId)
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // Create default gamification record
-        const defaultData = {
-          user_id: userId,
-          points: 0,
-          level: 'beginner',
-          badges: [],
-          streak: 0,
-          completed_challenges: [],
-          total_referrals: 0,
-          seasonal_event_progress: {}
-        };
-
-        const { data: newData, error: insertError } = await supabase
-          .from('user_gamification')
-          .insert([defaultData])
-          .select()
-          .single();
-
-        if (insertError) {
-          throw new Error(`Supabase gamification insert error: ${insertError.message}`);
-        }
-
-        return newData;
-      }
-      throw new Error(`Supabase gamification error: ${error.message}`);
+      .single(),
+    {
+      operation: 'select',
+      tableName: 'user_gamification',
+      userId
+    },
+    {
+      fallbackValue: null,
+      showToast: false
     }
+  );
 
-    return data;
-  });
+  // Create default record if not found
+  if (!data) {
+    const defaultData = {
+      user_id: userId,
+      points: 0,
+      level: 'beginner',
+      badges: [],
+      streak: 0,
+      completed_challenges: [],
+      total_referrals: 0,
+      seasonal_event_progress: {}
+    };
+
+    data = await executeSupabaseOperation(
+      () => supabase
+        .from('user_gamification')
+        .insert([defaultData])
+        .select()
+        .single(),
+      {
+        operation: 'insert',
+        tableName: 'user_gamification',
+        userId
+      },
+      {
+        fallbackValue: defaultData,
+        showToast: false
+      }
+    );
+  }
+
+  return data;
 }
 
 /**
