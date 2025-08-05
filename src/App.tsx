@@ -8,6 +8,7 @@ import { NavigationServiceInitializer } from './components/NavigationServiceInit
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ScrollToTop } from './components/ScrollToTop';
 import Navbar from './components/layout/Navbar';
+import { NovaChat } from './components/ai/NovaChat';
 // Footer moved to individual pages that need it
 
 // Pages
@@ -89,6 +90,7 @@ function App() {
                 <ScrollToTop />
                 <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
                   <Navbar />
+                  <NovaChat context="general" />
                   <React.Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
                     {/* Public Routes */}
