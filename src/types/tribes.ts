@@ -38,7 +38,7 @@ export interface TribePost {
   likes_count: number;
   comments_count: number;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   user_profile?: {
     full_name: string;
     avatar_url?: string;
@@ -49,7 +49,12 @@ export interface TribePost {
     image_url?: string;
     match_percentage: number;
   };
-  is_liked?: boolean;
+  is_liked_by_current_user?: boolean;
+  first_like_user_id?: string;
+  first_like_name?: string;
+  first_like_avatar?: string;
+  enrichments?: Record<string, any>;
+  isOptimistic?: boolean;
   recent_comments?: TribePostComment[];
 }
 
