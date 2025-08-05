@@ -176,5 +176,3 @@ export const TEST_USER_ID = 'test-user-123';
 
 // Feature flag for Supabase usage
 export const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true';
-
-export default supabase;
