@@ -248,7 +248,7 @@ export default {
 /**
  * Safe achievements query with proper error handling
  */
-export const getAchievements = async (userId: string) => {
+export async function getAchievements(userId: string) {
   if (!isValidUUID(userId)) {
     throw new Error('Invalid user ID format');
   }
@@ -270,7 +270,6 @@ export const getAchievements = async (userId: string) => {
 
     return data || [];
   });
-};
 
 /**
  * Safe gamification query with fallback
