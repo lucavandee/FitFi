@@ -239,5 +239,28 @@ export default {
   getUserGamification,
   updateUserGamification,
   completeChallenge,
-  getDailyChallenges
+  getDailyChallenges,
+  fetchUserAchievements
 };
+
+/**
+ * Fetch user achievements with proper error handling
+ */
+export async function fetchUserAchievements(userId: string) {
+  if (!isValidUUID(userId)) {
+    throw new Error('Invalid user ID format');
+  }
+
+  return executeWithRetry(async () => {
+    const { data, error } = await supabase
+      .from('quiz_achievements')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      throw new Error(`Supabase achievements error: ${error.message}`);
+    }
+
+    return data || [];
+  });
+}

@@ -8,6 +8,7 @@ import {
   completeChallenge as completeDataRouterChallenge,
   getDailyChallengesData,
 } from "../services/DataRouter";
+import { fetchUserAchievements } from "../services/supabaseService";
 import toast from "react-hot-toast";
 import { trackEvent } from "../utils/analytics";
 
@@ -139,11 +140,24 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return;
       }
       
-      const dailyChallenges = await getDailyChallengesData(user.id);
+      // Safe fetch with auth error handling
+      let dailyChallenges = {};
+      try {
+        dailyChallenges = await getDailyChallengesData(user.id);
+      } catch (challengeError) {
+        if (challengeError?.status === 401 || challengeError?.status === 403) {
+          console.warn('[Gamification] Auth error loading challenges, using fallback');
+          dailyChallenges = {};
+        } else {
+          throw challengeError;
+        }
+      }
+      
       const leaderboardRank = await getLeaderboardPosition();
 
       setGamificationState({
         ...data,
+        completedChallenges: data.completedChallenges || [],
         dailyChallengeStatus: dailyChallenges,
         leaderboardRank,
       });
@@ -152,18 +166,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const allChallenges = Array.isArray(gamificationConfig.challenges) ? gamificationConfig.challenges : [];
       
       setAvailableChallenges(
-        allChallenges.filter(ch => ch.type === 'daily' && !(data.completedChallenges || []).includes(ch.id))
+        allChallenges.filter(ch => ch.type === 'daily' && !((data.completedChallenges || []).includes(ch.id)))
       );
       
       setAvailableWeeklyChallenges(
-        allChallenges.filter(ch => ch.type === 'weekly' && !(data.completedChallenges || []).includes(ch.id))
+        allChallenges.filter(ch => ch.type === 'weekly' && !((data.completedChallenges || []).includes(ch.id)))
       );
     } catch (err) {
       console.error("[⚠️ Gamification] Error loading data:", err);
       
       // Check for auth errors (401/403)
-      if (err?.status === 401 || err?.status === 403 || err?.message?.includes('auth')) {
-        console.warn('[Gamification] Auth error detected, using fallback UI');
+      if (err?.status === 401 || err?.status === 403) {
+        console.warn('[Gamification] Auth error detected, showing toast and using fallback');
+        toast.error('We konden je levels niet laden. Probeer opnieuw.');
         resetGamificationState();
         return;
       }
