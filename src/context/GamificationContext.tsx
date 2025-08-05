@@ -131,6 +131,14 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setIsLoading(true);
     try {
       const data = await getGamificationData(user.id);
+      
+      // Handle auth errors gracefully
+      if (!data) {
+        console.warn('[Gamification] No data available, using fallback');
+        resetGamificationState();
+        return;
+      }
+      
       const dailyChallenges = await getDailyChallengesData(user.id);
       const leaderboardRank = await getLeaderboardPosition();
 
@@ -151,8 +159,18 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         allChallenges.filter(ch => ch.type === 'weekly' && !data.completedChallenges.includes(ch.id))
       );
     } catch (err) {
-      console.error("[⚠️ Gamification] Fout bij laden van data:", err);
-      toast.error("Kon gamificatiegegevens niet laden.");
+      console.error("[⚠️ Gamification] Error loading data:", err);
+      
+      // Check for auth errors (401/403)
+      if (err?.status === 401 || err?.status === 403 || err?.message?.includes('auth')) {
+        console.warn('[Gamification] Auth error detected, using fallback UI');
+        resetGamificationState();
+        return;
+      }
+      
+      // For other errors, show fallback but don't spam user with toasts
+      console.warn('[Gamification] Using fallback data due to error');
+      resetGamificationState();
     } finally {
       setIsLoading(false);
     }

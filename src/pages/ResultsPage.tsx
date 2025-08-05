@@ -4,14 +4,12 @@ import { ArrowLeft, Sparkles, Star, TrendingUp, Heart, Share2 } from 'lucide-rea
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
-import { useDashboardData } from '../hooks/useDashboardData';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import toast from 'react-hot-toast';
 
 const ResultsPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
   const { quizData, isLoading: quizLoading, isQuizCompleted, resetQuiz, isResetting } = useQuizAnswers();
-  const { data: dashboardData, isLoading: dashboardLoading, isError: dashboardError } = useDashboardData();
   const location = useLocation();
   const navigate = useNavigate();
   const [analysisComplete, setAnalysisComplete] = useState(false);
@@ -34,6 +32,22 @@ const ResultsPage: React.FC = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  const handleQuizRestart = async () => {
+    try {
+      const success = await resetQuiz();
+      
+      if (success) {
+        // Set flag to prevent redirect back to results
+        sessionStorage.setItem('quiz-restarted', 'true');
+        toast.success('Quiz opnieuw gestart!');
+        navigate('/quiz', { replace: true });
+      }
+    } catch (error) {
+      console.error('Quiz restart error:', error);
+      toast.error('Kan quiz niet resetten. Probeer opnieuw.');
+    }
+  };
 
   if (userLoading || quizLoading) {
     return <LoadingFallback fullScreen message="Resultaten laden..." />;
@@ -85,11 +99,11 @@ const ResultsPage: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <Link 
-            to={dashboardError ? "/" : "/dashboard"}
+            to="/dashboard"
             className="inline-flex items-center text-[#bfae9f] hover:text-[#a89a8c] transition-colors mb-6"
           >
             <ArrowLeft size={20} className="mr-2" />
-            {dashboardError ? "Terug naar home" : "Terug naar dashboard"}
+            Terug naar dashboard
           </Link>
           
           <div className="text-center">
@@ -215,18 +229,6 @@ const ResultsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Dashboard Error Notice */}
-        {dashboardError && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-8">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-              <span className="text-sm text-yellow-800">
-                Dashboard tijdelijk niet beschikbaar. Je stijlresultaten zijn wel beschikbaar.
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Next Steps */}
         <div className="bg-white rounded-3xl shadow-sm p-8 text-center">
           <h2 className="text-2xl font-medium text-gray-900 mb-4">
@@ -243,7 +245,7 @@ const ResultsPage: React.FC = () => {
               variant="primary"
               size="lg"
               icon={<TrendingUp size={20} />}
-              Bekijk Aanbevelingen
+              iconPosition="left"
               className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
             >
               Bekijk Outfits
@@ -320,24 +322,6 @@ function getStyleTags(answers: any): string[] {
     edgy: 'Gedurfd'
   };
 
-  const handleQuizRestart = async () => {
-    try {
-      const success = await resetQuiz();
-      
-      if (success) {
-        // Set flag to prevent redirect back to results
-        sessionStorage.setItem('quiz-restarted', 'true');
-        toast.success('Quiz opnieuw gestart!');
-        toast.success('Quiz opnieuw gestart!');
-        navigate('/quiz', { replace: true });
-      }
-    } catch (error) {
-      console.error('Quiz restart error:', error);
-      toast.error('Kan quiz niet resetten. Probeer opnieuw.');
-      toast.error('Kan quiz niet resetten. Probeer opnieuw.');
-    }
-  };
-  
   const tags = answers.stylePreferences.map((pref: string) => tagMap[pref] || pref);
   return [...tags, 'Veelzijdig', 'Authentiek'].slice(0, 4);
 }

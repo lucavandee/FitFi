@@ -107,7 +107,177 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
+        console.log('[UserContext] Auth state change:', event);
+        
+        switch (event) {
+          case 'SIGNED_IN':
+            if (!session?.user) break;
+            
+            // Ensure profile exists in database
+            await ensureUserProfileExists(session.user);
+            
+            const userProfile: UserProfile = {
+              id: session.user.id,
+              name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+              email: session.user.email || '',
+              role: session.user.user_metadata?.role || 'user',
+              stylePreferences: {
+                casual: 3,
+                formal: 3,
+                sporty: 3,
+                vintage: 3,
+                minimalist: 3
+              },
+              isPremium: false,
+              savedRecommendations: []
+            };
+            
+            setUser(userProfile);
+            setAuthEventPending(false);
+            break;
+            
+          case 'TOKEN_REFRESHED':
+            if (!session?.user) break;
+            
+            // Don't reset authEventPending for token refresh
+            const refreshedProfile: UserProfile = {
+              id: session.user.id,
+              name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+              email: session.user.email || '',
+              role: session.user.user_metadata?.role || 'user',
+              stylePreferences: {
+                casual: 3,
+                formal: 3,
+                sporty: 3,
+                vintage: 3,
+                minimalist: 3
+              },
+              isPremium: false,
+              savedRecommendations: []
+            };
+            
+            setUser(refreshedProfile);
+            break;
+            
+          case 'TOKEN_REFRESH_FAILED':
+            console.warn('[UserContext] Token refresh failed, signing out user');
+            setAuthEventPending(false);
+            setUser(null);
+            toast.error('Je sessie is verlopen, log opnieuw in.');
+            break;
+            
+          case 'SIGNED_OUT':
+            setUser(null);
+            setAuthEventPending(false);
+            break;
+            
+          default:
+            // Handle any other auth events
+            setIsLoading(false);
+            break;
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
+    try {
+      setAuthEventPending(true);
+      
+      // Add timeout to prevent hanging
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Auth timeout')), 60000)
+      );
+      
+      const { error } = await Promise.race([
+        supabase.auth.signInWithPassword({
+          email,
+          password
+        }),
+        timeout
+      ]) as any;
+
+      if (error) {
+        setAuthEventPending(false);
+        toast.error('E-mail of wachtwoord onjuist');
+        return { success: false };
+      }
+
+      toast.success('Welkom terug!');
+      return { success: true };
+    } catch (error: any) {
+      setAuthEventPending(false);
+      console.error('Login error:', error);
+      
+      if (error.message === 'Auth timeout') {
+        toast.error('Server reageert traag – probeer het opnieuw.');
+      } else {
+        toast.error('Er ging iets mis bij het inloggen');
+      }
+      return { success: false };
+    }
+  };
+
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
+    try {
+      setAuthEventPending(true);
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name
+          }
+        }
+      });
+
+      if (error) {
+        setAuthEventPending(false);
+        if (error.message.includes('User already registered')) {
+          toast.error('Dit e-mailadres is al geregistreerd');
+        } else {
+          toast.error('Registratie mislukt. Probeer het opnieuw.');
+        }
+        return { success: false };
+      }
+
+      if (data.user) {
+        toast.success('Account succesvol aangemaakt!');
+        // Don't reset authEventPending here - let onAuthStateChange handle it
+        return { success: true, redirectTo: '/onboarding' };
+      }
+
+      setAuthEventPending(false);
+      return { success: false };
+    } catch (error: any) {
+      setAuthEventPending(false);
+      console.error('Registration error:', error);
+      toast.error('Er ging iets mis bij het aanmaken van je account');
+      return { success: false };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      setAuthEventPending(true);
+      
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Uitgelogd');
+        // Don't manually set user to null - let onAuthStateChange handle it
+      }
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      toast.error('Er ging iets mis bij het uitloggen');
+    } finally {
+      setAuthEventPending(false);
+    }
+  };
           // Ensure profile exists in database
           await ensureUserProfileExists(session.user);
           
