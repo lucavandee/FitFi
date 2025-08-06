@@ -393,12 +393,3 @@ const NovaChat: React.FC<NovaChatProps> = ({
 };
 
 export default NovaChat;
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default NovaChat;
