@@ -6,28 +6,17 @@
 declare global {
   interface Window {
     dataLayer?: any[];
+    gtag?: (
+      command: string,
+      action: string,
+      params?: {
+        [key: string]: any;
+      }
+    ) => void;
   }
 }
 
-// Google Analytics
-interface Window {
-  gtag?: (
-    command: string,
-    action: string,
-    params?: {
-      [key: string]: any;
-    }
-  ) => void;
-  
-  // Analytics tracking functions
-  trackQuizStart?: (quizType: string) => void;
-  trackQuizProgress?: (currentStep: number, totalSteps: number, category: string) => void;
-  trackQuizComplete?: (timeInSeconds: number, totalSteps: number, userSegment: string) => void;
-  trackStylePreference?: (preferenceType: string, rating: number) => void;
-  trackPhotoUpload?: (purpose: string) => void;
-  trackLeadCapture?: (source: string, type: string) => void;
-  trackUserRegistration?: (method: string, userType: string) => void;
-}
+export {};
 
 // Supabase types
 interface SupabaseError {
