@@ -83,9 +83,9 @@ export const initializeAnalytics = (): void => {
  * Track page views
  */
 export const trackPageView = (page_path: string, page_title?: string): void => {
-  if (!window.gtag || !ANALYTICS_ENABLED) return;
+  if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
 
-  window.gtag('config', GA_TRACKING_ID, {
+  window.gtag('config', GA_TRACKING_ID as string, {
     page_path,
     page_title: page_title || document.title
   });
@@ -101,7 +101,7 @@ export const trackEvent = (
   value?: number,
   custom_parameters?: Record<string, any>
 ): void => {
-  if (!window.gtag || !ANALYTICS_ENABLED) return;
+  if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
 
   // Record with test marking
   recordEvent({
