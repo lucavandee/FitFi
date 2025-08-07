@@ -5,7 +5,7 @@ import { executeSupabaseOperation, SupabaseErrorContext } from '../utils/supabas
 // Quiz answer retrieval with proper error handling
 export const getQuizAnswer = async (userId: string, qId: string) => {
   return executeSupabaseOperation(
-    () => supabase
+    async () => await supabase
       .from('quiz_answers')
       .select('*')
       .eq('user_id', userId)
@@ -59,7 +59,7 @@ function isValidUUID(uuid: string): boolean {
  */
 export async function fetchProductsFromSupabase() {
   return executeSupabaseOperation(
-    () => supabase
+    async () => await supabase
       .from('products')
       .select('*')
       .limit(50),
@@ -83,7 +83,7 @@ export async function getUserById(userId: string): Promise<UserProfile | null> {
   }
 
   const data = await executeSupabaseOperation(
-    () => supabase
+    async () => await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
@@ -127,7 +127,7 @@ export async function getUserGamification(userId: string) {
   }
 
   let data = await executeSupabaseOperation(
-    () => supabase
+    async () => await supabase
       .from('user_gamification')
       .select('*')
       .eq('user_id', userId)
@@ -157,7 +157,7 @@ export async function getUserGamification(userId: string) {
     };
 
     data = await executeSupabaseOperation(
-      () => supabase
+      async () => await supabase
         .from('user_gamification')
         .insert([defaultData])
         .select()

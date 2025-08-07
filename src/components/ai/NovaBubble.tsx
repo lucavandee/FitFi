@@ -16,7 +16,6 @@ interface BubblePosition {
 }
 
 const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
-  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<BubblePosition>({ x: 24, y: 24 }); // Default: bottom-6 right-6
   const [isDragging, setIsDragging] = useState(false);

@@ -29,9 +29,9 @@ interface CacheItem<T> {
 interface FetchAttempt {
   source: DataSource;
   success: boolean;
-  error?: string;
+  error?: string | undefined;
   timestamp: string;
-  duration?: number;
+  duration?: number | undefined;
 }
 
 // Fetch diagnostics interface
