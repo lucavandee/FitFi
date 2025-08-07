@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import { resolve } from "path";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
@@ -12,6 +13,11 @@ export default defineConfig(({ mode }) => {
         jsxImportSource: "react",
       }),
     ],
+    resolve: {
+      alias: {
+        "@": resolve(__dirname, "./src"),
+      },
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

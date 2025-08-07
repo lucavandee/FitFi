@@ -1,59 +1,59 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { UserProvider } from './context/UserContext';
-import { ThemeProvider } from './context/ThemeContext';
-import { GamificationProvider } from './context/GamificationContext';
-import { OnboardingProvider } from './context/OnboardingContext';
-import { NavigationServiceInitializer } from './components/NavigationServiceInitializer';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { ScrollToTop } from './components/ScrollToTop';
-import Navbar from './components/layout/Navbar';
-import NovaBubble from './components/ai/NovaBubble';
+import { UserProvider } from '@/context/UserContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { GamificationProvider } from '@/context/GamificationContext';
+import { OnboardingProvider } from '@/context/OnboardingContext';
+import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ScrollToTop } from '@/components/ScrollToTop';
+import Navbar from '@/components/layout/Navbar';
+import NovaBubble from '@/components/ai/NovaBubble';
 // Footer moved to individual pages that need it
 
 // Pages
-import HomePage from './pages/HomePage';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import ProfilePage from './pages/ProfilePage';
-import AboutPage from './pages/AboutPage';
-import HowItWorksPage from './pages/HowItWorksPage';
-import PricingPage from './pages/PricingPage';
-import ContactPage from './pages/ContactPage';
-import FAQPage from './pages/FAQPage';
-import LegalPage from './pages/LegalPage';
-import SupportPage from './pages/SupportPage';
-import TermsPage from './pages/TermsPage';
-import GenderSelectPage from './pages/GenderSelectPage';
-import ProductPage from './pages/ProductPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import ThankYouPage from './pages/ThankYouPage';
+import HomePage from '@/pages/HomePage';
+import LandingPage from '@/pages/LandingPage';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
+import ProfilePage from '@/pages/ProfilePage';
+import AboutPage from '@/pages/AboutPage';
+import HowItWorksPage from '@/pages/HowItWorksPage';
+import PricingPage from '@/pages/PricingPage';
+import ContactPage from '@/pages/ContactPage';
+import FAQPage from '@/pages/FAQPage';
+import LegalPage from '@/pages/LegalPage';
+import SupportPage from '@/pages/SupportPage';
+import TermsPage from '@/pages/TermsPage';
+import GenderSelectPage from '@/pages/GenderSelectPage';
+import ProductPage from '@/pages/ProductPage';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
+import ThankYouPage from '@/pages/ThankYouPage';
 
 // Lazy load heavy pages for better performance
-const OnboardingPage = React.lazy(() => import('./pages/OnboardingPage'));
-const QuizPage = React.lazy(() => import('./pages/QuizPage'));
-const ResultsPage = React.lazy(() => import('./pages/ResultsPage'));
-const EnhancedResultsPage = React.lazy(() => import('./pages/EnhancedResultsPage'));
-const DynamicOnboardingPage = React.lazy(() => import('./pages/DynamicOnboardingPage'));
-const DynamicResultsPage = React.lazy(() => import('./pages/DynamicResultsPage'));
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
-const BlogIndexPage = React.lazy(() => import('./pages/BlogIndexPage'));
-const BlogPage = React.lazy(() => import('./pages/BlogPage'));
-const BlogDetailPage = React.lazy(() => import('./pages/BlogDetailPage'));
-const TribesPage = React.lazy(() => import('./pages/TribesPage'));
-const TribeDetailPage = React.lazy(() => import('./pages/TribeDetailPage'));
-const HelpCenterPage = React.lazy(() => import('./pages/HelpCenterPage'));
-const FeedbackPage = React.lazy(() => import('./pages/FeedbackPage'));
-const SuccessStoriesPage = React.lazy(() => import('./pages/SuccessStoriesPage'));
-const OutfitsPage = React.lazy(() => import('./pages/OutfitsPage'));
-const GamificationPage = React.lazy(() => import('./pages/GamificationPage'));
-const AnalyticsPage = React.lazy(() => import('./pages/AnalyticsPage'));
+const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
+const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
+const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
+const EnhancedResultsPage = React.lazy(() => import('@/pages/EnhancedResultsPage'));
+const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboardingPage'));
+const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
+const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
+const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
+const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
+const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
+const HelpCenterPage = React.lazy(() => import('@/pages/HelpCenterPage'));
+const FeedbackPage = React.lazy(() => import('@/pages/FeedbackPage'));
+const SuccessStoriesPage = React.lazy(() => import('@/pages/SuccessStoriesPage'));
+const OutfitsPage = React.lazy(() => import('@/pages/OutfitsPage'));
+const GamificationPage = React.lazy(() => import('@/pages/GamificationPage'));
+const AnalyticsPage = React.lazy(() => import('@/pages/AnalyticsPage'));
 
 // Auth
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 // Loading fallback component
 const PageLoadingFallback = () => (
