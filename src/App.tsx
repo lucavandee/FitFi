@@ -41,8 +41,6 @@ const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboarding
 const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
 const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
-const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
-const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
 const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
 const HelpCenterPage = React.lazy(() => import('@/pages/HelpCenterPage'));
