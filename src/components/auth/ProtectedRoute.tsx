@@ -1,7 +1,9 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import LoadingFallback from '../ui/LoadingFallback';
+import Button from '../ui/Button';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,12 +12,12 @@ interface ProtectedRouteProps {
   allowedRoles?: ('admin' | 'user')[];
 }
 
-export function ProtectedRoute({
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireAuth = true,
   redirectTo,
   allowedRoles
-}: ProtectedRouteProps) {
+}) => {
   const { user, isLoading, authEventPending } = useUser();
   const location = useLocation();
 
@@ -61,4 +63,4 @@ export function ProtectedRoute({
   }
 
   return <>{children}</>;
-}
+};
