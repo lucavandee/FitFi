@@ -1,270 +1,202 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '../../lib/supabase';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { UserProvider } from '@/context/UserContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { GamificationProvider } from '@/context/GamificationContext';
+import { OnboardingProvider } from '@/context/OnboardingContext';
+import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ScrollToTop } from '@/components/ScrollToTop';
+import Navbar from '@/components/layout/Navbar';
 
-interface ImageWithFallbackProps {
-  src: string;
-  alt: string;
-  className?: string;
-  fallbackSrc?: string;
-  onLoad?: () => void;
-  onError?: (originalSrc: string) => void;
-  loading?: 'lazy' | 'eager';
-  decoding?: 'async' | 'auto' | 'sync';
-  width?: number | string;
-  height?: number | string;
-  componentName?: string;
-  optimize?: boolean;
-  quality?: number;
-  context?: 'outfit' | 'product' | 'user_avatar';
-  productType?: string;
-  brand?: string;
-  autoGenerateAlt?: boolean;
+// Lazy load components for better performance
+const NovaBubble = React.lazy(() => import('@/components/ai/NovaBubble'));
+
+// Lazy load all pages for optimal code-splitting
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const LandingPage = React.lazy(() => import('@/pages/LandingPage'));
+const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('@/pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('@/pages/ResetPasswordPage'));
+const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
+const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
+const HowItWorksPage = React.lazy(() => import('@/pages/HowItWorksPage'));
+const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
+const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
+const FAQPage = React.lazy(() => import('@/pages/FAQPage'));
+const LegalPage = React.lazy(() => import('@/pages/Legal Page'));
+const SupportPage = React.lazy(() => import('@/pages/SupportPage'));
+const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
+const GenderSelectPage = React.lazy(() => import('@/pages/GenderSelectPage'));
+const ProductPage = React.lazy(() => import('@/pages/ProductPage'));
+const PrivacyPolicyPage = React.lazy(() => import('@/pages/PrivacyPolicyPage'));
+const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
+
+// Heavy pages already lazy loaded
+const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
+const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
+const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
+const EnhancedResultsPage = React.lazy(() => import('@/pages/EnhancedResultsPage'));
+const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboardingPage'));
+const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
+const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
+const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
+const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
+const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
+const HelpCenterPage = React.lazy(() => import('@/pages/HelpCenterPage'));
+const FeedbackPage = React.lazy(() => import('@/pages/FeedbackPage'));
+const SuccessStoriesPage = React.lazy(() => import('@/pages/SuccessStoriesPage'));
+const OutfitsPage = React.lazy(() => import('@/pages/OutfitsPage'));
+const GamificationPage = React.lazy(() => import('@/pages/GamificationPage'));
+const AnalyticsPage = React.lazy(() => import('@/pages/AnalyticsPage'));
+
+// Auth
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+
+// Loading fallback component
+const PageLoadingFallback = () => (
+  <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-600">Pagina laden...</p>
+    </div>
+  </div>
+);
+
+// NotFound component
+const NotFound: React.FC = () => (
+  <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+      <p className="text-gray-600 mb-6">Pagina niet gevonden</p>
+      <a href="/" className="text-[#bfae9f] hover:text-[#a89a8c] font-medium">
+        Terug naar home
+      </a>
+    </div>
+  </div>
+);
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <ThemeProvider>
+        <UserProvider>
+          <GamificationProvider>
+            <OnboardingProvider>
+              <Router>
+                <NavigationServiceInitializer />
+                <ScrollToTop />
+                <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+                  <Navbar />
+                  <React.Suspense fallback={null}>
+                    <NovaBubble />
+                  </React.Suspense>
+                  <React.Suspense fallback={<PageLoadingFallback />}>
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/over-ons" element={<AboutPage />} />
+                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                    <Route path="/prijzen" element={<PricingPage />} />
+                    <Route path="/blog" element={<BlogIndexPage />} />
+                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                    <Route path="/inloggen" element={<LoginPage />} />
+                    <Route path="/registreren" element={<RegisterPage />} />
+                    <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
+                    <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+                    <Route path="/juridisch" element={<LegalPage />} />
+                    <Route path="/ondersteuning" element={<SupportPage />} />
+                    <Route path="/help" element={<HelpCenterPage />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
+                    <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
+                    <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
+                    <Route path="/product/:id" element={<ProductPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/algemene-voorwaarden" element={<TermsPage />} />
+                    <Route path="/bedankt" element={<ThankYouPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    
+                    {/* Protected Routes */}
+                    <Route path="/onboarding" element={
+                      <ProtectedRoute>
+                        <OnboardingPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/quiz" element={
+                      <ProtectedRoute>
+                        <QuizPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/dynamic-onboarding" element={
+                      <ProtectedRoute>
+                        <DynamicOnboardingPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/results" element={
+                      <ProtectedRoute>
+                        <ResultsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/resultaten" element={<Navigate to="/results" replace />} />
+                    <Route path="/dynamic-results" element={
+                      <ProtectedRoute>
+                        <DynamicResultsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/enhanced-resultaten" element={
+                      <ProtectedRoute>
+                        <EnhancedResultsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/dashboard" element={
+                      <ProtectedRoute>
+                        <DashboardPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/outfits" element={
+                      <ProtectedRoute>
+                        <OutfitsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/gamification" element={
+                      <ProtectedRoute>
+                        <GamificationPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/analytics" element={
+                      <ProtectedRoute allowedRoles={['admin']}>
+                        <AnalyticsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/tribes" element={
+                      <ProtectedRoute>
+                        <TribesPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/tribes/:slug" element={
+                      <ProtectedRoute>
+                        <TribeDetailPage />
+                      </ProtectedRoute>
+                    } />
+                    
+                    {/* Fallback */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  </React.Suspense>
+                </div>
+              </Router>
+            </OnboardingProvider>
+          </GamificationProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
 }
 
-/**
- * A reusable image component with built-in fallback handling
- * 
- * This component will automatically handle image loading errors
- * and display a fallback image when the original source fails to load.
- * It also includes URL validation to prevent known problematic domains.
- */
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
-  src,
-  alt,
-  fallbackSrc = '/placeholder.png',
-  className = '',
-  onLoad,
-  onError,
-  loading = 'lazy',
-  decoding = 'async',
-  width,
-  height,
-  componentName = 'Unknown',
-  optimize = true,
-  quality = 80,
-  context = 'general',
-  productType,
-  brand,
-  autoGenerateAlt = true,
-  ...rest
-}) => {
-  const [imgSrc, setImgSrc] = useState<string>(src);
-  const [hasError, setHasError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [generatedAlt, setGeneratedAlt] = useState<string>(alt);
-  const retryCount = useRef<number>(0);
-  const MAX_RETRIES = 2;
-  
-  // Reset state when src changes
-  useEffect(() => {
-    // Reset state when src changes
-    setIsLoading(true);
-    setHasError(false);
-    setGeneratedAlt(alt);
-    // Apply optimization if enabled
-    const optimizedSrc = optimize ? optimizeImageUrl(src, { width: typeof width === 'number' ? width : undefined, height: typeof height === 'number' ? height : undefined, quality }) : src;
-    setImgSrc(optimizedSrc);
-    retryCount.current = 0;
-    
-    // Generate alt text if needed
-    if (autoGenerateAlt && (!alt || alt.trim() === '')) {
-      generateAltText();
-    }
-  }, [src, optimize, width, height, quality]);
-  
-  // Use fallback immediately if URL is invalid
-  useEffect(() => {
-    if (!isValidImageUrl(imgSrc)) {
-      if (import.meta.env.DEV) {
-        console.warn(`[${componentName ?? 'ImageWithFallback'}] Invalid image URL, using fallback: ${imgSrc}`);
-      }
-      setImgSrc(fallbackSrc);
-      setHasError(true);
-      setIsLoading(false);
-      if (onError) {
-        onError(src);
-      }
-      
-      // Track broken image
-      trackBrokenImage(src, componentName);
-    }
-  }, [imgSrc, fallbackSrc, onError, src, componentName]);
-  
-  const handleError = () => {
-    // Only update if we haven't already fallen back
-    if (imgSrc !== fallbackSrc) {
-      // Log the error for tracking purposes
-      if (import.meta.env.DEV) {
-        console.warn(`[${componentName ?? 'ImageWithFallback'}] Image failed to load: ${imgSrc}`);
-      }
-      
-      // Try to retry loading the image
-      if (retryCount.current < MAX_RETRIES) {
-        retryCount.current += 1;
-        
-        // Add cache-busting parameter to force reload
-        const cacheBuster = `?cb=${Date.now()}`;
-        const srcWithCacheBuster = src.includes('?') 
-          ? `${src}&cb=${Date.now()}` 
-          : `${src}${cacheBuster}`;
-        
-        if (import.meta.env.DEV) {
-          console.log(`[${componentName ?? 'ImageWithFallback'}] Retrying image load (${retryCount.current}/${MAX_RETRIES}): ${srcWithCacheBuster}`);
-        }
-        setImgSrc(srcWithCacheBuster);
-        return;
-      }
-      
-      // Call the optional onError callback with the original source
-      if (onError) {
-        onError(imgSrc);
-      }
-      
-      // Set error state to trigger fallback
-      setHasError(true);
-      setImgSrc(fallbackSrc);
-      
-      // Track broken image
-      trackBrokenImage(src, componentName);
-    } else if (imgSrc === fallbackSrc) {
-      // If even the fallback fails, log a critical error
-      console.error(`[${componentName ?? 'ImageWithFallback'}] Critical: Fallback image also failed to load: ${fallbackSrc}`);
-      
-      // Use an inline SVG as last resort
-      setImgSrc(`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%23f0f0f0'/%3E%3Cpath d='M30,50 L70,50 M50,30 L50,70' stroke='%23999' stroke-width='4'/%3E%3C/svg%3E`);
-    }
-  };
-
-  const generateAltText = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-alt-text', {
-        body: {
-          image_url: src,
-          context,
-          product_type: productType,
-          brand
-        }
-      });
-
-      if (!error && data?.alt_text) {
-        setGeneratedAlt(data.alt_text);
-      }
-    } catch (error) {
-      console.warn('Failed to generate alt text:', error);
-    }
-  };
-  
-  const handleLoad = () => {
-    setIsLoading(false);
-    if (onLoad) {
-      onLoad();
-    }
-  };
-
-
-  return (
-    <div className={`relative ${className}`}>
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 animate-pulse" aria-hidden="true">
-          <div className="w-8 h-8 border-2 border-gray-300 dark:border-gray-600 border-t-orange-500 rounded-full animate-spin"></div>
-        </div>
-      )}
-      <img
-        src={imgSrc}
-        alt={generatedAlt}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-        onError={handleError}
-        onLoad={handleLoad}
-        loading={loading}
-        decoding={decoding}
-        width={width}
-        height={height}
-        role={generatedAlt ? 'img' : 'presentation'}
-        {...rest}
-      />
-    </div>
-  );
-};
-
-// List of known problematic domains
-const PROBLEMATIC_DOMAINS = [
-  'debijenkorf.nl',
-  'massimo-dutti',
-  'bijenkorf',
-  'cdn.debijenkorf',
-  'media.s-bol.com'
-];
-
-// Validate if an image URL is likely to work
-const isValidImageUrl = (url: string): boolean => {
-  if (!url || typeof url !== 'string' || url.trim() === '') {
-    return false;
-  }
-  
-  // Pre-validate URL format with regex to prevent memory access errors
-  const ABSOLUTE_URL_REGEX = /^https?:\/\/[^\s/$.?#].[^\s]*$/i;
-  if (!ABSOLUTE_URL_REGEX.test(url.trim())) {
-    return false;
-  }
-  
-  // Check for known problematic domains
-  if (PROBLEMATIC_DOMAINS.some(domain => url.includes(domain))) {
-    return false;
-  }
-  
-  // Basic URL validation
-  try {
-    new URL(url);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-
-// Optimize image URL for better performance
-const optimizeImageUrl = (
-  url: string,
-  options: {
-    width?: number;
-    height?: number;
-    quality?: number;
-  } = {}
-): string => {
-  if (!isValidImageUrl(url)) {
-    return '/placeholder.png';
-  }
-  
-  const { width, height, quality = 80 } = options;
-  
-  // Optimize Pexels images
-  if (url.includes('pexels.com')) {
-    const params = new URLSearchParams();
-    params.append('auto', 'compress');
-    params.append('cs', 'tinysrgb');
-    if (width) params.append('w', width.toString());
-    if (height) params.append('h', height.toString());
-    params.append('dpr', '2');
-    
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}${params.toString()}`;
-  }
-  
-  return url;
-};
-
-// Track broken image for analytics
-const trackBrokenImage = (imageUrl: string, componentName: string): void => {
-  // In a real app, you would send this to your analytics service
-  console.warn(`[Analytics] Broken image tracked: ${imageUrl} in ${componentName ?? 'Unknown'}`);
-  
-  // Store broken image URL in localStorage for future reference
-  const brokenImagesKey = 'fitfi-broken-images';
-  const brokenImages = JSON.parse(localStorage.getItem(brokenImagesKey) || '[]');
-  
-  if (!brokenImages.includes(imageUrl)) {
-    brokenImages.push(imageUrl);
-    localStorage.setItem(brokenImagesKey, JSON.stringify(brokenImages));
-  }
-};
-
-export default ImageWithFallback;
+export default App;
