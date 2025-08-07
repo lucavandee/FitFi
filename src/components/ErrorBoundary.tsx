@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
     errorInfo: null
   };
 
-  public static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): Partial<State> {
     // Update state so the next render will show the fallback UI
     return { hasError: true, error, errorInfo: null };
   }
@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
     });
     
     // Track error in analytics (production only)
-    if (typeof window.gtag === 'function') {
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       window.gtag('event', 'error', {
         event_category: 'error',
         event_label: error.message,
@@ -81,7 +81,7 @@ export class ErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null
     });
-  }
+  };
 
   public render(): ReactNode {
     if (this.state.hasError) {
@@ -92,7 +92,7 @@ export class ErrorBoundary extends Component<Props, State> {
       
       return (
         <ErrorFallback
-          error={this.state.error!}
+          error={this.state.error as Error}
           resetErrorBoundary={this.handleReset}
           showDetails={process.env.NODE_ENV === 'development'}
         />
