@@ -1,235 +1,202 @@
-import React, { useState, Suspense, lazy } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { ArrowRight, Play, CheckCircle, Star, Users, Zap, Shield } from 'lucide-react';
-import Button from '../components/ui/Button';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { HOME_SECTIONS, MOBILE_FLAGS } from '../constants/homeFlags';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { UserProvider } from '@/context/UserContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { GamificationProvider } from '@/context/GamificationContext';
+import { OnboardingProvider } from '@/context/OnboardingContext';
+import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ScrollToTop } from '@/components/ScrollToTop';
+import Navbar from '@/components/layout/Navbar';
 
-// Import new components directly (not lazy loaded for better LCP)
-import Hero from '../components/home/Hero';
-import KPIBadges from '../components/home/KPIBadges';
-import HorizontalFlow from '../components/home/HorizontalFlow';
-import ScrollIndicator from '../components/home/ScrollIndicator';
-import BackToTopFAB from '../components/home/BackToTopFAB';
-import Features from '../components/home/Features';
-import Footer from '../components/layout/Footer';
+// Lazy load components for better performance
+const NovaBubble = React.lazy(() => import('@/components/ai/NovaBubble'));
 
-// Lazy load heavy components with better error handling
-const Testimonials = React.lazy(() => 
-  import('../components/home/Testimonials').catch(err => {
-    console.error('Failed to load Testimonials:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Testimonials tijdelijk niet beschikbaar</div> };
-  })
-);
+// Lazy load all pages for optimal code-splitting
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const LandingPage = React.lazy(() => import('@/pages/LandingPage'));
+const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('@/pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('@/pages/ResetPasswordPage'));
+const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
+const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
+const HowItWorksPage = React.lazy(() => import('@/pages/HowItWorksPage'));
+const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
+const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
+const FAQPage = React.lazy(() => import('@/pages/FAQPage'));
+const LegalPage = React.lazy(() => import('@/pages/Legal Page'));
+const SupportPage = React.lazy(() => import('@/pages/SupportPage'));
+const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
+const GenderSelectPage = React.lazy(() => import('@/pages/GenderSelectPage'));
+const ProductPage = React.lazy(() => import('@/pages/ProductPage'));
+const PrivacyPolicyPage = React.lazy(() => import('@/pages/PrivacyPolicyPage'));
+const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
 
-const StyleArchetypeSlider = React.lazy(() => 
-  import('../components/home/StyleArchetypeSlider').catch(err => {
-    console.error('Failed to load StyleArchetypeSlider:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Stijl slider tijdelijk niet beschikbaar</div> };
-  })
-);
+// Heavy pages already lazy loaded
+const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
+const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
+const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
+const EnhancedResultsPage = React.lazy(() => import('@/pages/EnhancedResultsPage'));
+const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboardingPage'));
+const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
+const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
+const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
+const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
+const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
+const HelpCenterPage = React.lazy(() => import('@/pages/HelpCenterPage'));
+const FeedbackPage = React.lazy(() => import('@/pages/FeedbackPage'));
+const SuccessStoriesPage = React.lazy(() => import('@/pages/SuccessStoriesPage'));
+const OutfitsPage = React.lazy(() => import('@/pages/OutfitsPage'));
+const GamificationPage = React.lazy(() => import('@/pages/GamificationPage'));
+const AnalyticsPage = React.lazy(() => import('@/pages/AnalyticsPage'));
 
-const PreviewCarousel = React.lazy(() => 
-  import('../components/home/PreviewCarousel').catch(err => {
-    console.error('Failed to load PreviewCarousel:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Preview tijdelijk niet beschikbaar</div> };
-  })
-);
+// Auth
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
-const FoundersBlockTeaser = React.lazy(() => 
-  import('../components/founders/FoundersBlockTeaser').catch(err => {
-    console.error('Failed to load FoundersBlockTeaser:', err);
-    return { default: () => <div>Founders Club niet beschikbaar</div> };
-  })
-);
-
-const UGCGallery = React.lazy(() => 
-  import('../components/landing/UGCGallery').catch(err => {
-    console.error('Failed to load UGCGallery:', err);
-    return { default: () => <div>Gebruikersverhalen niet beschikbaar</div> };
-  })
-);
-
-const ClosingCTA = React.lazy(() => 
-  import('../components/home/ClosingCTA').catch(err => {
-    console.error('Failed to load ClosingCTA:', err);
-    return { default: () => <div>CTA niet beschikbaar</div> };
-  })
-);
-
-const HomePage: React.FC = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: ''
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Track form submission
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'lead_capture', {
-        event_category: 'engagement',
-        event_label: 'homepage_form',
-        name: formData.name,
-        email: formData.email
-      });
-    }
-    
-    // Navigate to onboarding with pre-filled data
-    window.location.href = `/onboarding?name=${encodeURIComponent(formData.name)}&email=${encodeURIComponent(formData.email)}`;
-  };
-
-  const handleCTAClick = () => {
-    // Track conversion intent
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'begin_checkout', {
-        event_category: 'conversion',
-        event_label: 'ai_style_report_homepage',
-        value: 1
-      });
-    }
-    
-    // Navigate to onboarding
-    navigate('/onboarding');
-  };
-
-  return (
-    <div className="min-h-screen bg-white" data-page="homepage">
-      <Helmet>
-        <title>FitFi - Persoonlijke AI Stijladvies | Ontdek je perfecte look</title>
-        <meta name="description" content="Ontdek je perfecte stijl met AI-powered aanbevelingen. Persoonlijke outfit suggesties gebaseerd op jouw voorkeuren en lichaamsbouw." />
-        <meta property="og:title" content="FitFi - Persoonlijke AI Stijladvies" />
-        <meta property="og:description" content="Ontdek je perfecte stijl met AI-powered aanbevelingen." />
-        <link rel="canonical" href="https://fitfi.app/home" />
-      </Helmet>
-
-      {/* Hero Section - Critical above-the-fold content */}
-      {HOME_SECTIONS.HERO && (
-        <ErrorBoundary>
-          <section data-section="hero">
-            <Hero onCTAClick={handleCTAClick} />
-            
-            {/* KPI Badges - Mobile only, below hero CTA */}
-            {MOBILE_FLAGS.SHOW_KPI_BADGES_IN_HERO && (
-              <div className="md:hidden -mt-8 pb-8">
-                <KPIBadges />
-              </div>
-            )}
-          </section>
-        </ErrorBoundary>
-      )}
-
-      {/* Scroll Indicator - Mobile only */}
-      <div className="md:hidden">
-        <ScrollIndicator />
-      </div>
-
-      {/* How It Works - Horizontal Flow on Mobile */}
-      {HOME_SECTIONS.HOW_IT_WORKS && (
-        <ErrorBoundary>
-          <HorizontalFlow />
-        </ErrorBoundary>
-      )}
-
-      {/* Social Proof - Lazy loaded */}
-      {HOME_SECTIONS.SOCIAL_PROOF && (
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingFallback message="Testimonials laden..." />}>
-            <section data-section="testimonials">
-              <Testimonials />
-            </section>
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {/* Features - Product details */}
-      {HOME_SECTIONS.FEATURES && (
-        <ErrorBoundary>
-          <section data-section="features">
-            <Features />
-          </section>
-        </ErrorBoundary>
-      )}
-
-      {/* Preview Carousel - Lazy loaded for performance */}
-      {HOME_SECTIONS.PREVIEW_CAROUSEL && (
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
-            <section data-section="preview">
-              <PreviewCarousel />
-            </section>
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {/* Style Archetypes - Keep existing component */}
-      {HOME_SECTIONS.STYLE_ARCHETYPES && (
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingFallback message="Stijlen laden..." />}>
-            <section data-section="archetypes" className="hidden md:block">
-              <StyleArchetypeSlider />
-            </section>
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {/* Founders Club - Lazy loaded */}
-      {HOME_SECTIONS.FOUNDERS_CLUB && (
-        <ErrorBoundary>
-          <Suspense fallback={null}>
-            <section data-section="founders" className="hidden md:block">
-              <FoundersBlockTeaser />
-            </section>
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {/* UGC Gallery - Hidden on mobile */}
-      {HOME_SECTIONS.UGC_GALLERY && (
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingFallback message="Verhalen laden..." />}>
-            <section data-section="ugc" className="hidden md:block">
-              <UGCGallery />
-            </section>
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {/* Closing CTA - Lazy loaded */}
-      {HOME_SECTIONS.CLOSING_CTA && (
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
-            <section data-section="closingCta">
-              <ClosingCTA onCTAClick={handleCTAClick} />
-            </section>
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {/* Back to Top FAB */}
-      {MOBILE_FLAGS.SHOW_BACK_TO_TOP_FAB && <BackToTopFAB />}
-
-      {/* Footer */}
-      <ErrorBoundary>
-        <section data-section="footer">
-          <Footer />
-        </section>
-      </ErrorBoundary>
+// Loading fallback component
+const PageLoadingFallback = () => (
+  <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-600">Pagina laden...</p>
     </div>
-  );
-};
+  </div>
+);
 
-export default HomePage;
+// NotFound component
+const NotFound: React.FC = () => (
+  <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+      <p className="text-gray-600 mb-6">Pagina niet gevonden</p>
+      <a href="/" className="text-[#bfae9f] hover:text-[#a89a8c] font-medium">
+        Terug naar home
+      </a>
+    </div>
+  </div>
+);
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <ThemeProvider>
+        <UserProvider>
+          <GamificationProvider>
+            <OnboardingProvider>
+              <Router>
+                <NavigationServiceInitializer />
+                <ScrollToTop />
+                <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+                  <Navbar />
+                  <React.Suspense fallback={null}>
+                    <NovaBubble />
+                  </React.Suspense>
+                  <React.Suspense fallback={<PageLoadingFallback />}>
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/over-ons" element={<AboutPage />} />
+                    <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                    <Route path="/prijzen" element={<PricingPage />} />
+                    <Route path="/blog" element={<BlogIndexPage />} />
+                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                    <Route path="/inloggen" element={<LoginPage />} />
+                    <Route path="/registreren" element={<RegisterPage />} />
+                    <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
+                    <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+                    <Route path="/juridisch" element={<LegalPage />} />
+                    <Route path="/ondersteuning" element={<SupportPage />} />
+                    <Route path="/help" element={<HelpCenterPage />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
+                    <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
+                    <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
+                    <Route path="/product/:id" element={<ProductPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/algemene-voorwaarden" element={<TermsPage />} />
+                    <Route path="/bedankt" element={<ThankYouPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    
+                    {/* Protected Routes */}
+                    <Route path="/onboarding" element={
+                      <ProtectedRoute>
+                        <OnboardingPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/quiz" element={
+                      <ProtectedRoute>
+                        <QuizPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/dynamic-onboarding" element={
+                      <ProtectedRoute>
+                        <DynamicOnboardingPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/results" element={
+                      <ProtectedRoute>
+                        <ResultsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/resultaten" element={<Navigate to="/results" replace />} />
+                    <Route path="/dynamic-results" element={
+                      <ProtectedRoute>
+                        <DynamicResultsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/enhanced-resultaten" element={
+                      <ProtectedRoute>
+                        <EnhancedResultsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/dashboard" element={
+                      <ProtectedRoute>
+                        <DashboardPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/outfits" element={
+                      <ProtectedRoute>
+                        <OutfitsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/gamification" element={
+                      <ProtectedRoute>
+                        <GamificationPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/analytics" element={
+                      <ProtectedRoute allowedRoles={['admin']}>
+                        <AnalyticsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/tribes" element={
+                      <ProtectedRoute>
+                        <TribesPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/tribes/:slug" element={
+                      <ProtectedRoute>
+                        <TribeDetailPage />
+                      </ProtectedRoute>
+                    } />
+                    
+                    {/* Fallback */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  </React.Suspense>
+                </div>
+              </Router>
+            </OnboardingProvider>
+          </GamificationProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
+}
+
+export default App;
