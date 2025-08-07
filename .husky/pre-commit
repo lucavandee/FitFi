@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 # Check for Python headers in frontend code
@@ -9,3 +9,6 @@ if grep -RIlE '(#!/usr/bin/env python3|Robust Wehkamp Scraper)' src; then
 fi
 
 echo '✅ Geen Python headers gevonden in frontend code'
+
+# Run lint-staged
+npx lint-staged
