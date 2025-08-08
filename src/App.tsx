@@ -8,31 +8,32 @@ import { NavigationServiceInitializer } from '@/components/NavigationServiceInit
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
-import NovaBubble from '@/components/ai/NovaBubble';
-// Footer moved to individual pages that need it
 
-// Pages
-import HomePage from '@/pages/HomePage';
-import LandingPage from '@/pages/LandingPage';
-import LoginPage from '@/pages/LoginPage';
-import RegisterPage from '@/pages/RegisterPage';
-import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
-import ResetPasswordPage from '@/pages/ResetPasswordPage';
-import ProfilePage from '@/pages/ProfilePage';
-import AboutPage from '@/pages/AboutPage';
-import HowItWorksPage from '@/pages/HowItWorksPage';
-import PricingPage from '@/pages/PricingPage';
-import ContactPage from '@/pages/ContactPage';
-import FAQPage from '@/pages/FAQPage';
-import LegalPage from '@/pages/LegalPage';
-import SupportPage from '@/pages/SupportPage';
-import TermsPage from '@/pages/TermsPage';
-import GenderSelectPage from '@/pages/GenderSelectPage';
-import ProductPage from '@/pages/ProductPage';
-import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
-import ThankYouPage from '@/pages/ThankYouPage';
+// Lazy load components for better performance
+const NovaBubble = React.lazy(() => import('@/components/ai/NovaBubble'));
 
-// Lazy load heavy pages for better performance
+// Lazy load all pages for optimal code-splitting
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const LandingPage = React.lazy(() => import('@/pages/LandingPage'));
+const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('@/pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('@/pages/ResetPasswordPage'));
+const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
+const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
+const HowItWorksPage = React.lazy(() => import('@/pages/HowItWorksPage'));
+const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
+const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
+const FAQPage = React.lazy(() => import('@/pages/FAQPage'));
+const LegalPage = React.lazy(() => import('@/pages/Legal Page'));
+const SupportPage = React.lazy(() => import('@/pages/SupportPage'));
+const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
+const GenderSelectPage = React.lazy(() => import('@/pages/GenderSelectPage'));
+const ProductPage = React.lazy(() => import('@/pages/ProductPage'));
+const PrivacyPolicyPage = React.lazy(() => import('@/pages/PrivacyPolicyPage'));
+const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
+
+// Heavy pages already lazy loaded
 const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
 const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
 const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
@@ -40,7 +41,9 @@ const EnhancedResultsPage = React.lazy(() => import('@/pages/EnhancedResultsPage
 const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboardingPage'));
 const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
 const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
 const HelpCenterPage = React.lazy(() => import('@/pages/HelpCenterPage'));
@@ -88,7 +91,9 @@ function App() {
                 <ScrollToTop />
                 <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
                   <Navbar />
-                  <NovaBubble />
+                  <React.Suspense fallback={null}>
+                    <NovaBubble />
+                  </React.Suspense>
                   <React.Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
                     {/* Public Routes */}
@@ -98,6 +103,7 @@ function App() {
                     <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                     <Route path="/prijzen" element={<PricingPage />} />
                     <Route path="/blog" element={<BlogIndexPage />} />
+                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/inloggen" element={<LoginPage />} />
                     <Route path="/registreren" element={<RegisterPage />} />
                     <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
