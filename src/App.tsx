@@ -8,7 +8,7 @@ import { NavigationServiceInitializer } from '@/components/NavigationServiceInit
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
-
+const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
 // Lazy load components for better performance
 const NovaBubble = React.lazy(() => import('@/components/ai/NovaBubble'));
 
@@ -34,6 +34,7 @@ const PrivacyPolicyPage = React.lazy(() => import('@/pages/PrivacyPolicyPage'));
 const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
 
 // Heavy pages already lazy loaded
+// Heavy pages already lazy loaded
 const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
 const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
 const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
@@ -42,7 +43,9 @@ const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboarding
 const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
 const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
+const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
 const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
@@ -92,7 +95,9 @@ function App() {
                 <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
                   <Navbar />
                   <React.Suspense fallback={null}>
+                  <React.Suspense fallback={null}>
                     <NovaBubble />
+                  </React.Suspense>
                   </React.Suspense>
                   <React.Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
@@ -103,6 +108,7 @@ function App() {
                     <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                     <Route path="/prijzen" element={<PricingPage />} />
                     <Route path="/blog" element={<BlogIndexPage />} />
+                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/inloggen" element={<LoginPage />} />
                     <Route path="/registreren" element={<RegisterPage />} />
