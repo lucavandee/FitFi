@@ -39,6 +39,7 @@ const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
 // Heavy pages already lazy loaded
 // Heavy pages already lazy loaded
 // Heavy pages already lazy loaded
+// Heavy pages already lazy loaded
 const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
 const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
 const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
@@ -52,7 +53,9 @@ const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
+const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
@@ -118,6 +121,8 @@ function App() {
                   </React.Suspense>
                     <NovaBubble />
                   </React.Suspense>
+                    <NovaBubble />
+                  </React.Suspense>
                   </React.Suspense>
                   <React.Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
@@ -128,6 +133,7 @@ function App() {
                     <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                     <Route path="/prijzen" element={<PricingPage />} />
                     <Route path="/blog" element={<BlogIndexPage />} />
+                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/blog/:slug" element={<BlogDetailPage />} />
                     <Route path="/blog/:slug" element={<BlogDetailPage />} />
