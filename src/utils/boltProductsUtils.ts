@@ -75,7 +75,8 @@ export function generateMockBoltProducts(): BoltProduct[] {
     
     // Determine color
     const colors = ['beige', 'black', 'blue', 'white', 'gray', 'navy', 'green', 'red'];
-    const color = (product.color ?? colors[index % colors.length]) as string;
+    const p: any = product;
+    const color = (p.color ?? colors[index % colors.length]) as string;
     
     // Determine dominant color hex
     const colorHexMap: Record<string, string> = {
@@ -144,7 +145,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
       brand: product.brand || 'FitFi Brand',
       type: type as any,
       gender: gender,
-      color: product.color ?? '#CCCCCC',
+      color: (p.color ?? '#CCCCCC') as string,
       dominantColorHex: dominantColorHex,
       styleTags: styleTags,
       season: season as any,
