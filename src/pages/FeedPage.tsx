@@ -9,6 +9,7 @@ import { isDisliked, toggleSave, dislike, getSimilarOutfits } from '@/services/e
 import OutfitCard from '@/components/outfits/OutfitCard';
 import Button from '@/components/ui/Button';
 import { track } from '@/utils/analytics';
+import DataServiceDebug from '@/components/debug/DataServiceDebug';
 import toast from 'react-hot-toast';
 
 // RequireAuth mini-component for action buttons
@@ -318,6 +319,13 @@ export default function FeedPage() {
       
       {/* Intersection Observer Sentinel */}
       <div id="feed-sentinel" className="h-10" />
+      
+      {/* Debug Panel (Development Only) */}
+      {import.meta.env.DEV && (
+        <div className="mt-8">
+          <DataServiceDebug />
+        </div>
+      )}
       
       {visibleOutfits.length === 0 && !isLoading && (
         <div className="text-center py-12">
