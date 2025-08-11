@@ -22,6 +22,5 @@ export type BoltProduct = {
   source: 'zalando';
 };
 
-export default BoltProduct;
 
 export { BoltProduct }

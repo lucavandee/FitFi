@@ -15,7 +15,7 @@ import { loadProductFeed } from '../services/productFeedLoader';
 /**
  * Interface for user feedback on recommendations
  */
-export interface UserFeedback {
+interface UserFeedback {
   user_id: string;
   item_id: string;
   item_type: 'outfit' | 'product';
@@ -28,7 +28,7 @@ export interface UserFeedback {
 /**
  * Interface for realtime recommendation updates
  */
-export interface RealtimeRecommendation {
+interface RealtimeRecommendation {
   id: string;
   type: 'outfit' | 'product';
   confidence: number;
@@ -647,7 +647,7 @@ export async function processRealtimeFeedback(
 /**
  * Generate realtime recommendations based on current user interaction
  */
-export async function generateRealtimeRecommendations(
+async function generateRealtimeRecommendations(
   user: UserProfile,
   currentContext: {
     currentPage?: string;
@@ -953,7 +953,3 @@ export function getRecommendedProducts(
   })();
 }
 
-export default {
-  generateRecommendations,
-  getRecommendedProducts
-};

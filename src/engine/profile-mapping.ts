@@ -12,7 +12,7 @@ interface ArchetypeScoreResult {
 /**
  * Interface for profile analysis result
  */
-export interface ProfileAnalysisResult {
+interface ProfileAnalysisResult {
   dominantArchetype: string;
   secondaryArchetype: string;
   mixFactor: number; // 0-1 value indicating how much the secondary archetype influences (0 = pure dominant)
@@ -261,7 +261,7 @@ export function getStyleKeywords(archetype: string): string[] {
  * @param mixFactor - How much influence the secondary archetype has (0-1)
  * @returns Combined array of style keywords
  */
-export function getCombinedStyleKeywords(
+function getCombinedStyleKeywords(
   primaryArchetype: string,
   secondaryArchetype: string,
   mixFactor: number = 0.3
@@ -291,9 +291,3 @@ export function getCombinedStyleKeywords(
   return combinedKeywords;
 }
 
-export default {
-  analyzeUserProfile,
-  determineArchetypesFromAnswers,
-  getStyleKeywords,
-  getCombinedStyleKeywords
-};

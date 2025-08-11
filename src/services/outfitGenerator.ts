@@ -59,7 +59,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
  * @param count - Number of outfits to generate
  * @returns Array of generated outfits
  */
-export function generateOutfitsFromBoltProducts(
+function generateOutfitsFromBoltProducts(
   products: BoltProduct[],
   archetype: string,
   gender: 'male' | 'female' = 'female',

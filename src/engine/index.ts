@@ -27,26 +27,3 @@ import {
   getDutchWeatherDescription
 } from './helpers';
 
-export default {
-  calculateMatchScore,
-  calculateMatchPercentage,
-  filterAndSortProducts,
-  groupProductsByType,
-  getTopProductsByType,
-  generateOutfits,
-  generateOutfitTitle,
-  generateOutfitDescription,
-  generateOutfitExplanation,
-  analyzeUserProfile,
-  determineArchetypesFromAnswers,
-  getStyleKeywords,
-  generateRecommendations,
-  getRecommendedProducts,
-  getCurrentSeason,
-  getDutchSeasonName,
-  getProductCategory,
-  isProductInSeason,
-  isProductSuitableForWeather,
-  getTypicalWeatherForSeason,
-  getDutchWeatherDescription
-};

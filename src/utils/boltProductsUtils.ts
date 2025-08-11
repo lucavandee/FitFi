@@ -200,7 +200,7 @@ export function filterProductsByGender(products: BoltProduct[], gender: 'male' |
  * @param type - Type to filter by
  * @returns Filtered array of BoltProducts
  */
-export function filterProductsByType(products: BoltProduct[], type: string): BoltProduct[] {
+function filterProductsByType(products: BoltProduct[], type: string): BoltProduct[] {
   return products.filter(product => product.type === type);
 }
 
@@ -210,16 +210,9 @@ export function filterProductsByType(products: BoltProduct[], type: string): Bol
  * @param season - Season to filter by
  * @returns Filtered array of BoltProducts
  */
-export function filterProductsBySeason(products: BoltProduct[], season: string): BoltProduct[] {
+function filterProductsBySeason(products: BoltProduct[], season: string): BoltProduct[] {
   return products.filter(product => 
     product.season === season || product.season === 'all_season'
   );
 }
 
-export default {
-  getBoltProductsFromJSON,
-  generateMockBoltProducts,
-  filterProductsByGender,
-  filterProductsByType,
-  filterProductsBySeason
-};

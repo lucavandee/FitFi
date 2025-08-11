@@ -14,7 +14,7 @@ export interface SupabaseErrorContext {
   additionalContext?: Record<string, any>;
 }
 
-export interface ErrorHandlingOptions {
+interface ErrorHandlingOptions {
   showToast?: boolean;
   toastMessage?: string;
   logError?: boolean;
@@ -25,7 +25,7 @@ export interface ErrorHandlingOptions {
 /**
  * Enhanced error handler with context and user feedback
  */
-export async function handleSupabaseError(
+async function handleSupabaseError(
   error: any,
   context: SupabaseErrorContext,
   options: ErrorHandlingOptions = {}
@@ -152,7 +152,7 @@ export async function executeSupabaseOperation<T>(
 /**
  * Batch error handler for multiple operations
  */
-export async function handleBatchErrors(
+async function handleBatchErrors(
   errors: Array<{ error: any; context: SupabaseErrorContext }>,
   options: ErrorHandlingOptions = {}
 ): Promise<void> {
@@ -181,9 +181,3 @@ export async function handleBatchErrors(
   }
 }
 
-export default {
-  handleSupabaseError,
-  executeSupabaseOperation,
-  handleBatchErrors,
-  getUserFriendlyErrorMessage
-};

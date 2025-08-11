@@ -1,7 +1,7 @@
 import { Home, Info, HelpCircle, DollarSign, BookOpen, ShoppingBag, User, LogIn } from 'lucide-react';
 import { Users } from 'lucide-react';
 
-export interface NavLink {
+interface NavLink {
   label: string;
   href: string;
   external?: boolean;
@@ -32,4 +32,3 @@ if (import.meta.env.DEV) {
   }
 }
 
-export default NAV_ITEMS;

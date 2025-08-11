@@ -80,8 +80,3 @@ export const safeFetchWithFallback = async <T>(
 };
 
 // Optional: default export for grouped imports
-export default {
-  safeFetch,
-  fetchWithRetry,
-  safeFetchWithFallback,
-};

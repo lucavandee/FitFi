@@ -23,6 +23,3 @@ export function configureRouterFutureFlags() {
   }
 }
 
-export default {
-  configureRouterFutureFlags
-};

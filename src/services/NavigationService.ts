@@ -12,7 +12,7 @@ const debugLog = (message: string, data?: any) => {
     console.log(`[🔍 NavigationService] ${message}`, data || '');
   }
 };
-export interface NavigationOptions {
+interface NavigationOptions {
   delay?: number;
   showLoading?: boolean;
   loadingMessage?: string;
@@ -28,7 +28,7 @@ export interface NavigationOptions {
   };
 }
 
-export interface NavigationState {
+interface NavigationState {
   isNavigating: boolean;
   currentRoute: string | null;
   targetRoute: string | null;
@@ -359,8 +359,7 @@ class NavigationService {
 export const navigationService = new NavigationService();
 
 // Hook for using navigation service in components
-export const useNavigationService = () => {
+const useNavigationService = () => {
   return navigationService;
 };
 
-export default navigationService;
