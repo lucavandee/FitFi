@@ -80,18 +80,20 @@ function getSeverityLevel(error: any): string {
 
 // Check if error is retryable
 function isRetryableError(error: any): boolean {
+  const e = error as any;
+  
   // Network errors
-  if (error.name === 'TypeError' && error.message.includes('fetch')) {
+  if (e?.name === 'TypeError' && e?.message?.includes('fetch')) {
     return true;
   }
   
   // HTTP status codes
-  if (error.status && RETRY_CONFIG.retryableStatusCodes.includes(error.status)) {
+  if (e?.status && RETRY_CONFIG.retryableStatusCodes.includes(e.status)) {
     return true;
   }
   
   // Specific error codes
-  if (error.code && RETRY_CONFIG.retryableErrorCodes.includes(error.code)) {
+  if (e?.code && RETRY_CONFIG.retryableErrorCodes.includes(e.code)) {
     return true;
   }
   
@@ -130,7 +132,8 @@ async function enhancedRequest(originalRequest: Function, options: any, context:
       await logSupabaseError(error, operation, tableName, functionName, retryCount);
       
       // Handle specific error types
-      if (error.status === 401 || error.status === 403 || error.code === '42501') {
+      const e = error as any;
+      if (e?.status === 401 || e?.status === 403 || e?.code === '42501') {
         // Auth errors - show toast but don't retry or sign out
         if (typeof window !== 'undefined') {
           toast.error('Sessie verlopen - probeer opnieuw in te loggen', {
@@ -164,7 +167,7 @@ function extractTableName(url: string): string | undefined {
   if (!url) return undefined;
   
   const match = url.match(/\/rest\/v1\/([^?]+)/);
-  return match ? match[1].split('?')[0] : undefined;
+  return match && match[1] ? match[1].split('?')[0] : undefined;
 }
 
 // Extract function name from URL
@@ -172,7 +175,7 @@ function extractFunctionName(url: string): string | undefined {
   if (!url) return undefined;
   
   const match = url.match(/\/rest\/v1\/rpc\/([^?]+)/);
-  return match ? match[1] : undefined;
+  return match && match[1] ? match[1] : undefined;
 }
 
 // Test user ID for development
