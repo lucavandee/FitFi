@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { GamificationProvider } from '@/context/GamificationContext';
 import { OnboardingProvider } from '@/context/OnboardingContext';
 import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
-import { Error Boundary } from '@/components/ErrorBoundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
