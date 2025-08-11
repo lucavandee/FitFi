@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AppPortal from '../layout/AppPortal';
+import { lazyComponent } from '../../utils/lazy';
 
-// Hardened: accepteert zowel default als named export
-const NovaChatLazy = React.lazy(() =>
-  import('./NovaChat').then((mod: any) => ({ default: mod.default ?? mod.NovaChat }))
-);
+// Hardened lazy loading with proper error handling
+const NovaChatLazy = lazyComponent(() => import('./NovaChat'), 'default');
 
 interface NovaBubbleProps {
   className?: string;
