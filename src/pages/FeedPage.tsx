@@ -8,6 +8,40 @@ import OutfitCard from '@/components/outfits/OutfitCard';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 
+interface EmptyStateProps {
+  title: string;
+  ctaText: string;
+  to: string;
+}
+
+const EmptyState: React.FC<EmptyStateProps> = ({ title, ctaText, to }) => {
+  return (
+    <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
+      <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
+        <div className="w-16 h-16 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Sparkles className="w-8 h-8 text-[#89CFF0]" />
+        </div>
+        <h2 className="text-2xl font-light text-gray-900 mb-4">{title}</h2>
+        <p className="text-gray-600 mb-6 leading-relaxed">
+          Log in en voltooi je stijlquiz om gepersonaliseerde outfit aanbevelingen te zien.
+        </p>
+        <Button 
+          as={Link}
+          to={to}
+          variant="primary"
+          size="lg"
+          fullWidth
+          icon={<ArrowRight size={20} />}
+          iconPosition="right"
+          className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+        >
+          {ctaText}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 type FeedOutfit = Awaited<ReturnType<typeof getFeed>> extends (infer T)[] ? T : never;
 
 export default function FeedPage() {
@@ -99,59 +133,11 @@ export default function FeedPage() {
 
   // Show CTA if user not authenticated or quiz not completed
   if (!user || status !== 'authenticated') {
-    return (
-      <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <div className="w-16 h-16 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-8 h-8 text-[#89CFF0]" />
-          </div>
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Maak eerst je Style Report</h2>
-          <p className="text-gray-600 mb-6 leading-relaxed">
-            Log in en voltooi je stijlquiz om gepersonaliseerde outfit aanbevelingen te zien.
-          </p>
-          <Button 
-            as={Link}
-            to="/inloggen" 
-            variant="primary"
-            size="lg"
-            fullWidth
-            icon={<ArrowRight size={20} />}
-            iconPosition="right"
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-          >
-            Inloggen en starten
-          </Button>
-        </div>
-      </div>
-    );
+    return <EmptyState title="Maak eerst je Style Report" ctaText="Inloggen en starten" to="/inloggen" />;
   }
 
   if (!quizLoading && !isQuizCompleted()) {
-    return (
-      <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <div className="w-16 h-16 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-8 h-8 text-[#89CFF0]" />
-          </div>
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Voltooi eerst je Style Report</h2>
-          <p className="text-gray-600 mb-6 leading-relaxed">
-            Doe de stijlquiz om gepersonaliseerde outfit aanbevelingen te krijgen.
-          </p>
-          <Button 
-            as={Link}
-            to="/onboarding" 
-            variant="primary"
-            size="lg"
-            fullWidth
-            icon={<ArrowRight size={20} />}
-            iconPosition="right"
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-          >
-            Start Style Report
-          </Button>
-        </div>
-      </div>
-    );
+    return <EmptyState title="Voltooi eerst je Style Report" ctaText="Start Style Report" to="/onboarding" />;
   }
 
   // Show loading skeletons
