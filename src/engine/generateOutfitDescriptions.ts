@@ -203,17 +203,28 @@ export function generateOutfitDescription(
   }
   
   // Add season-specific addition if available
-  if (currentSeason && seasonAdditions[currentSeason]) {
-    const additions = seasonAdditions[currentSeason];
-    const randomAddition = additions[Math.floor(Math.random() * additions.length)];
-    
-    // Only add if not already mentioned
-    if (!description.includes(currentSeason) && !description.includes(getDutchSeasonName(currentSeason).toLowerCase())) {
-      description += randomAddition;
+  let desc = (description ?? '').trim();
+  const secondaryWords = (secondaryTitle ?? '').split(' ').filter(Boolean);
+
+  // Voeg optioneel een secundair woord subtiel toe
+  if (secondaryWords.length) {
+    const secondaryWord = secondaryWords[Math.floor(Math.random() * secondaryWords.length)];
+    if (secondaryWord && !desc.toLowerCase().includes(secondaryWord.toLowerCase())) {
+      desc = desc.replace('.', `, met een ${secondaryWord.toLowerCase()} twist.`);
     }
   }
-  
-  return description;
+
+  // Seizoensversterking + random toevoeging
+  if (!desc.includes(currentSeason) && !desc.toLowerCase().includes(getDutchSeasonName(currentSeason).toLowerCase())) {
+    const additions = [
+      `Perfect voor ${getDutchSeasonName(currentSeason)}.`,
+      `Ideaal in de ${getDutchSeasonName(currentSeason)} maanden.`,
+      `Gemaakt voor ${currentSeason}.`
+    ];
+    const randomAddition = additions[Math.floor(Math.random() * additions.length)];
+    if (randomAddition) desc += ` ${randomAddition}`;
+  }
+  return desc;
 }
 
 /**
