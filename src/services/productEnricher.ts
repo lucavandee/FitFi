@@ -545,16 +545,16 @@ function validateAndNormalizeImageUrl(imageUrl: string): string {
  * @param product - Raw Zalando product
  * @returns BoltProduct
  */
-function convertToBoltProduct(product: RawZalandoProduct): BoltProduct {
+function convertToBoltProduct(_product: RawZalandoProduct): BoltProduct {
   // Extract basic information
-  const title = product.title || product.name || 'Onbekend product';
-  const brand = product.brand || 'Onbekend merk';
-  const price = typeof product.price === 'number' ? product.price : parseFloat(String(product.price || '0'));
-  const image = product.image || product.imageUrl || '';
-  const gender = product.gender || 'female';
-  const rawColor = product.color || '';
-  const url = product.url || product.affiliateUrl || '#';
-  const category = product.category || '';
+  const title = _product.title || _product.name || 'Onbekend product';
+  const brand = _product.brand || 'Onbekend merk';
+  const price = typeof _product.price === 'number' ? _product.price : parseFloat(String(_product.price || '0'));
+  const image = _product.image || _product.imageUrl || '';
+  const gender = _product.gender || 'female';
+  const rawColor = _product.color || '';
+  const url = _product.url || _product.affiliateUrl || '#';
+  const category = _product.category || '';
   
   // Generate a unique ID
   const id = `bolt-${generateSlug(`${brand}-${title}`)}`;

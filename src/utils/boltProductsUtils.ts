@@ -199,8 +199,8 @@ export function filterProductsByGender(products: BoltProduct[], gender: 'male' |
  * @param type - Type to filter by
  * @returns Filtered array of BoltProducts
  */
-function _filterProductsByType(products: BoltProduct[], type: string): BoltProduct[] {
-  return products.filter(product => product.type === type);
+function _filterProductsByType(_products: BoltProduct[], _type: string): BoltProduct[] {
+  return _products.filter(product => product.type === _type);
 }
 
 /**
@@ -209,9 +209,9 @@ function _filterProductsByType(products: BoltProduct[], type: string): BoltProdu
  * @param season - Season to filter by
  * @returns Filtered array of BoltProducts
  */
-function _filterProductsBySeason(products: BoltProduct[], season: string): BoltProduct[] {
-  return products.filter(product => 
-    product.season === season || product.season === 'all_season'
+function _filterProductsBySeason(_products: BoltProduct[], _season: string): BoltProduct[] {
+  return _products.filter(product => 
+    product.season === _season || product.season === 'all_season'
   );
 }
 
