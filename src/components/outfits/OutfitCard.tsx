@@ -17,15 +17,17 @@ interface OutfitCardProps {
     tags?: string[];
   };
   allOutfits?: any[];
-  onInsertSimilar?: (items: any[]) => void;
-  onDismiss?: (id: string) => void;
+  onSave?: () => void;
+  onDislike?: () => void;
+  onMoreLikeThis?: () => void;
 }
 
 const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ 
   outfit, 
-  allOutfits = [], 
-  onInsertSimilar, 
-  onDismiss 
+  allOutfits = [],
+  onSave,
+  onDislike,
+  onMoreLikeThis
 }) => {
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
@@ -51,6 +53,9 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     toast.dismiss();
     toast.success(nowSaved ? 'Opgeslagen ✓' : 'Verwijderd uit opgeslagen');
     
+    // Call parent handler
+    onSave?.();
+    
     // Track save action
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'outfit_save', {
@@ -71,15 +76,8 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     
     setIsProcessing(prev => ({ ...prev, like: true }));
     
-    const similarItems = getSimilarOutfits(allOutfits, outfit, 3);
-    if (!similarItems.length) {
-      setIsProcessing(prev => ({ ...prev, like: false }));
-      toast('Geen vergelijkbare outfits gevonden');
-      return;
-    }
-    
-    onInsertSimilar?.(similarItems);
-    toast.success('Meer zoals dit toegevoegd aan je feed');
+    // Call parent handler
+    onMoreLikeThis?.();
     
     // Track positive feedback
     if (typeof window.gtag === 'function') {
@@ -101,10 +99,8 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     
     setIsProcessing(prev => ({ ...prev, dislike: true }));
     
-    dislike(outfit.id);
-    toast.dismiss();
-    toast('We tonen je hier minder van 👌');
-    onDismiss?.(outfit.id);
+    // Call parent handler
+    onDislike?.();
     
     // Track negative feedback
     if (typeof window.gtag === 'function') {
