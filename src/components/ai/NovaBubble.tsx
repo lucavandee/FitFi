@@ -203,7 +203,7 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
       {/* Nova Chat Window */}
       {isOpen && (
         <div 
-          className={`fixed z-[9998] w-80 h-96 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col animate-scale-in ${
+          className={`fixed z-[9998] w-80 h-96 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 animate-scale-in ${
             isDesktop ? '' : 'bottom-24 right-6'
           }`}
           style={isDesktop ? {
@@ -212,14 +212,14 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
           } : {}}
         >
           <Suspense fallback={
-            <div className="flex-1 flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
               <div className="w-8 h-8 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin"></div>
             </div>
           }>
             <ChatImpl 
               onClose={() => setIsOpen(false)}
               context="general"
-              className="h-full"
+              className="w-full h-full"
             />
           </Suspense>
         </div>
