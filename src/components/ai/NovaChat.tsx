@@ -185,6 +185,34 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     }
   };
 
+  const handleOutfitAction = (action: 'save' | 'more' | 'dislike', outfit: any) => {
+    // Track outfit interaction
+    trackEvent('nova_outfit_action', 'ai_interaction', action, 1, {
+      outfit_id: outfit.id,
+      outfit_title: outfit.title,
+      outfit_archetype: outfit.archetype,
+      context: context
+    });
+
+    switch (action) {
+      case 'save':
+        // Add to saved outfits (could integrate with engagement service)
+        console.log('Saving outfit:', outfit.id);
+        // You could call: toggleSave(outfit.id) from engagement service
+        break;
+      case 'more':
+        // Request more similar outfits
+        console.log('Requesting more like:', outfit.id);
+        setValue(`Meer outfits zoals ${outfit.title}`);
+        break;
+      case 'dislike':
+        // Hide this type of outfit
+        console.log('Disliking outfit:', outfit.id);
+        // You could call: dislike(outfit.id) from engagement service
+        break;
+    }
+  };
+
   const quickSuggestions = [
     'Zomerse outfit in beige',
     'Smart casual voor kantoor',
@@ -280,26 +308,55 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
               
               {/* Render outfit cards */}
               {(message as any).outfits && (
-                <div className="mt-3 space-y-2">
-                  {(message as any).outfits.slice(0, 2).map((outfit: any, i: number) => (
-                    <div key={i} className="bg-white/10 rounded-lg p-3 border border-white/20">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {(message as any).outfits.slice(0, 3).map((outfit: any, i: number) => (
+                    <div key={outfit.id || i} className="rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                      <div className="aspect-[4/3] bg-white/5 grid place-items-center text-white/50 text-sm overflow-hidden">
+                        {outfit.imageUrl ? (
                           <img 
-                            src={outfit.imageUrl || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&dpr=2'} 
-                            alt={outfit.title}
-                            className="w-full h-full object-cover"
+                            src={outfit.imageUrl} 
+                            alt={outfit.title || 'Outfit'} 
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
                           />
+                        ) : (
+                          <span>Geen afbeelding</span>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <div className="text-white font-medium text-sm mb-1 line-clamp-1">
+                          {outfit.title || 'Stijlvolle look'}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-sm truncate">{outfit.title}</h4>
-                          <p className="text-xs opacity-80 line-clamp-2">{outfit.description}</p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                              {outfit.matchPercentage}% match
-                            </span>
-                            <span className="text-xs opacity-60">{outfit.archetype}</span>
-                          </div>
+                        <div className="text-white/70 text-xs line-clamp-2 mb-2">
+                          {outfit.description || 'Geselecteerd op basis van jouw profiel'}
+                        </div>
+                        <div className="flex items-center justify-between text-xs mb-2">
+                          <span className="bg-white/20 px-2 py-0.5 rounded-full">
+                            {outfit.matchPercentage || 85}% match
+                          </span>
+                          <span className="text-white/60">{outfit.archetype || 'casual'}</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <button 
+                            onClick={() => handleOutfitAction('save', outfit)}
+                            className="flex-1 text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/15 transition-colors"
+                            title="Bewaar outfit"
+                          >
+                            Bewaar
+                          </button>
+                          <button 
+                            onClick={() => handleOutfitAction('more', outfit)}
+                            className="flex-1 text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/15 transition-colors"
+                            title="Meer zoals dit"
+                          >
+                            Meer
+                          </button>
+                          <button 
+                            onClick={() => handleOutfitAction('dislike', outfit)}
+                            className="flex-1 text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/15 transition-colors text-red-300"
+                            title="Niet mijn stijl"
+                          >
+                            Skip
+                          </button>
                         </div>
                       </div>
                     </div>
