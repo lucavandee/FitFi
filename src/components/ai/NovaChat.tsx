@@ -21,6 +21,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   const [value, setValue] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<'ready' | 'degraded' | 'error'>('ready');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -34,6 +35,21 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     inputRef.current?.focus();
   }, []);
 
+  // Initialize Nova agent with fail-safe
+  useEffect(() => {
+    try {
+      // Try to initialize Nova agent
+      if (import.meta.env.VITE_NOVA_ENABLED === 'true') {
+        import('@/ai/nova/load').catch(err => {
+          console.warn('[Nova] Agent loading failed:', err);
+          setStatus('degraded');
+        });
+      }
+    } catch (err) {
+      console.error('[Nova] Init failed:', err);
+      setStatus('degraded');
+    }
+  }, []);
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
     
@@ -41,6 +57,16 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     const text = value.trim();
     if (!text || sending) return;
 
+    // Check if Nova is in degraded state
+    if (status === 'degraded') {
+      const errorMessage: NovaMessage = { 
+        role: 'assistant', 
+        text: 'Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw of neem contact op voor hulp.', 
+        ts: Date.now() 
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      return;
+    }
     // Prevent double-clicking by setting sending immediately
     setSending(true);
     setError(null);
@@ -71,6 +97,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         reply = await agent.ask(text, { context });
       } catch (agentError) {
         console.warn('[Nova] Agent loading failed:', agentError);
+        setStatus('degraded');
         
         // Fallback response
         reply = {
@@ -114,6 +141,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
 
     } catch (err) {
       console.warn('[Nova] Chat error:', err);
+      setStatus('error');
       
       // Show user-friendly error message
       const errorMessage: NovaMessage = { 
@@ -165,8 +193,19 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     });
   };
 
+  // Show degraded state indicator
+  const getStatusIndicator = () => {
+    switch (status) {
+      case 'degraded':
+        return <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" title="Beperkte functionaliteit"></div>;
+      case 'error':
+        return <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Fout opgetreden"></div>;
+      default:
+        return <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Online"></div>;
+    }
+  };
   return (
-    <div className={`chat-container flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl ${className}`} style={{ height: '420px' }}>
+    <div className={`chat-container flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl pointer-events-auto ${className}`} style={{ height: '420px' }}>
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 dark:from-[#89CFF0]/20 dark:to-blue-900/20 rounded-t-3xl">
         <div className="flex items-center justify-between">
@@ -176,9 +215,11 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
             </div>
             <div>
               <h3 className="font-medium text-gray-900 dark:text-white">Nova AI</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Jouw persoonlijke stylist</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {status === 'degraded' ? 'Beperkte functionaliteit' : 'Jouw persoonlijke stylist'}
+              </p>
             </div>
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Online"></div>
+            {getStatusIndicator()}
           </div>
           
           {onClose && (
@@ -249,7 +290,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       </div>
 
       {/* Input Area */}
-      <div className="input-bar flex-shrink-0 p-4 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl" style={{ position: 'sticky', bottom: 0 }}>
+      <div className="nova-composer flex-shrink-0 p-4 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
         {/* Quick Suggestions - only show initially */}
         {messages.length <= 1 && (
           <div className="mb-3">
@@ -260,7 +301,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
                   key={suggestion}
                   onClick={() => handleQuickSuggestion(suggestion)}
                   className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full transition-colors"
-                  disabled={sending}
+                  disabled={sending || status === 'degraded'}
                 >
                   {suggestion}
                 </button>
@@ -270,21 +311,22 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         )}
         
         {/* Input Form */}
-        <form onSubmit={handleSend} className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <input
             ref={inputRef}
             value={value}
             onChange={e => setValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Bijv. 'Zomerse outfit in beige'"
-            className="flex-1 min-w-0 px-4 py-2 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors text-sm placeholder-gray-500 dark:placeholder-gray-400"
-            disabled={sending}
+            className="nova-input flex-1 min-w-0 px-4 py-2 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors text-sm placeholder-gray-500 dark:placeholder-gray-400"
+            disabled={sending || status === 'degraded'}
             maxLength={500}
           />
           <button
-            type="submit"
-            disabled={!value.trim() || sending}
-            className="flex-shrink-0 px-4 py-2 bg-[#89CFF0] hover:bg-[#89CFF0]/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#0D1B2A] rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2"
+            type="button"
+            onClick={handleSend}
+            disabled={!value.trim() || sending || status === 'degraded'}
+            className="nova-send flex-shrink-0 px-4 py-2 bg-[#89CFF0] hover:bg-[#89CFF0]/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#0D1B2A] rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2"
             aria-label="Verstuur bericht"
           >
             {sending ? (
@@ -293,11 +335,14 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
               <Send size={16} />
             )}
           </button>
-        </form>
+        </div>
         
         {/* Footer */}
         <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-          Nova leert van je feedback om betere aanbevelingen te doen
+          {status === 'degraded' 
+            ? 'Nova heeft beperkte functionaliteit - probeer het later opnieuw'
+            : 'Nova leert van je feedback om betere aanbevelingen te doen'
+          }
         </p>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X, Sparkles } from 'lucide-react';
-import AppPortal from '../layout/AppPortal';
 
 // Lazy load NovaChat with proper error handling
 const NovaChat = React.lazy(() => 
@@ -28,13 +27,6 @@ interface BubblePosition {
 }
 
 const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
-  // Check if Nova is enabled
-  const enabled = import.meta.env.VITE_NOVA_ENABLED === 'true';
-  
-  if (!enabled) {
-    return null;
-  }
-
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<BubblePosition>({ x: 24, y: 24 }); // Default: bottom-6 right-6
   const [isDragging, setIsDragging] = useState(false);
@@ -176,14 +168,14 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
   } : {};
 
   return (
-    <AppPortal target="#nova-root">
+    <>
       {/* Nova Chat Bubble */}
       <button
         ref={bubbleRef}
         id="nova-ai-chat-toggle"
         onClick={handleToggle}
         onMouseDown={handleMouseDown}
-        className={`fixed z-[9999] w-14 h-14 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
+        className={`fixed z-[9999] w-14 h-14 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center pointer-events-auto ${
           isOpen ? 'scale-110' : 'hover:scale-110'
         } ${isDragging ? 'scale-110 shadow-2xl' : ''} ${
           isDesktop ? '' : 'bottom-6 right-6'
@@ -216,7 +208,7 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
       {/* Nova Chat Window */}
       {isOpen && (
         <div 
-          className={`fixed z-[9998] w-80 h-96 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 animate-scale-in ${
+          className={`fixed z-[9998] w-80 h-96 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 animate-scale-in pointer-events-auto ${
             isDesktop ? '' : 'bottom-24 right-6'
           }`}
           style={isDesktop ? {
@@ -237,7 +229,7 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
           </Suspense>
         </div>
       )}
-    </AppPortal>
+    </>
   );
 };
 

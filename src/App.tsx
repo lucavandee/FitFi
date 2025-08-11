@@ -10,9 +10,19 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import AppPortal from '@/components/layout/AppPortal';
 
 // Lazy load components for better performance
-const NovaBubble = React.lazy(() => import('@/components/ai/NovaBubble'));
+const NovaBubble = React.lazy(() => 
+  import('@/components/ai/NovaBubble').then(m => ({ 
+    default: m.default ?? m.NovaBubble 
+  })).catch(err => {
+    console.error('Failed to load NovaBubble:', err);
+    return { 
+      default: () => null // Fail-safe fallback
+    };
+  })
+);
 
 //  Lazy load all pages for optimal code-splitting
 const HomePage = React.lazy(() => import('@/pages/HomePage'));
@@ -65,6 +75,8 @@ const queryClient = new QueryClient({
   },
 });
 
+// Nova feature flag
+const NOVA_ENABLED = (import.meta.env.VITE_NOVA_ENABLED ?? 'true') !== 'false';
 // NotFound component
 const NotFound: React.FC = () => (
   <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
@@ -91,9 +103,6 @@ function App() {
                   <ScrollToTop />
                   <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
                     <Navbar />
-                    <Suspense fallback={null}>
-                      <NovaBubble />
-                    </Suspense>
                     <Suspense fallback={<div className="p-8">Loading…</div>}>
                       <Routes>
                       
@@ -194,6 +203,15 @@ function App() {
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>
+                    
+                    {/* Nova AI Chat - Always mounted with fail-safe */}
+                    {NOVA_ENABLED && (
+                      <AppPortal id="nova-root">
+                        <Suspense fallback={null}>
+                          <NovaBubble />
+                        </Suspense>
+                      </AppPortal>
+                    )}
                   </div>
                 </Router>
               </OnboardingProvider>
