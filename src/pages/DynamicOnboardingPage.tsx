@@ -8,9 +8,6 @@ import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { saveOnboardingProgress, loadOnboardingProgress } from '../utils/progressPersistence';
 
-// ✅ Import lazy Nova Agent loader
-import { loadNovaAgent } from '@/ai/nova/load';
-
 const DynamicOnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading: userLoading } = useUser();
@@ -34,6 +31,15 @@ const DynamicOnboardingPage: React.FC = () => {
       saveOnboardingProgress(currentStep, completedSteps, data);
     }
   }, [data, currentStep]);
+
+  // Optional Nova agent loading
+  useEffect(() => {
+    if (import.meta.env.VITE_NOVA_ENABLED === 'true') {
+      import('@/ai/nova/load').catch(() => {
+        console.warn('[Nova] Agent loading failed in DynamicOnboarding');
+      });
+    }
+  }, []);
 
   const getCompletedSteps = (): string[] => {
     const steps: string[] = [];
@@ -81,13 +87,16 @@ const DynamicOnboardingPage: React.FC = () => {
       // Save profile to Nova memory
       // ✅ Lazy load Nova Agent
       try {
-        const agent = await loadNovaAgent();
-        if (agent?.memory) {
-          agent.memory.writeProfile({ 
-            ...data, 
-            userId: user.id, 
-            completedAt: new Date().toISOString() 
-          });
+        if (import.meta.env.VITE_NOVA_ENABLED === 'true') {
+          const { loadNovaAgent } = await import('@/ai/nova/load');
+          const agent = await loadNovaAgent();
+          if (agent?.memory) {
+            agent.memory.writeProfile({ 
+              ...data, 
+              userId: user.id, 
+              completedAt: new Date().toISOString() 
+            });
+          }
         }
       } catch (error) {
         console.warn('[Nova] Agent niet geladen voor profile save:', error);
