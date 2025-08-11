@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, MessageCircle } from 'lucide-react';
+import { Send, Sparkles, MessageCircle, X } from 'lucide-react';
 import { loadNovaAgent } from '@/ai/nova/load';
 import { trackEvent } from '@/utils/analytics';
-import Button from '../ui/Button';
 
 export type NovaMessage = { role: 'user' | 'assistant' | 'system'; text: string; ts: number };
 
@@ -174,6 +173,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
           {onClose && (
             <button
               onClick={onClose}
+              type="button"
               className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors"
               aria-label="Sluit Nova chat"
             >
@@ -276,14 +276,11 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
             className="flex-shrink-0 px-4 py-2 bg-[#89CFF0] hover:bg-[#89CFF0]/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#0D1B2A] rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2"
             aria-label="Verstuur bericht"
           >
-            <div className="flex items-center space-x-2">
-              {sending ? (
-                <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Send size={16} />
-              )}
-              <span className="text-sm">Stuur</span>
-            </div>
+            {sending ? (
+              <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Send size={16} />
+            )}
           </button>
         </form>
         

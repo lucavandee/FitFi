@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle, X, Sparkles } from 'lucide-react';
 import AppPortal from '../layout/AppPortal';
 import { lazyComponent } from '@/utils/lazy';
 
