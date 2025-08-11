@@ -3,6 +3,8 @@ import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations } from '../engine/recommendationEngine';
 import { generateMockGamification, generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
+import { generateMockOutfits } from '@/utils/mockOutfits';
+import { rankOutfits, ensureDiversity } from '@/engine/ranking';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { fetchProductsFromSupabase, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from './supabaseService';
 import boltService from './boltService';
@@ -947,3 +949,12 @@ const FEATURES = {
 const API_CONFIG = {
   cacheTTL: 300000 // 5 minutes in milliseconds
 };
+
+export async function getFeed(options: { userId?: string; count?: number; archetypes?: string[] }){
+  const count = Math.max(12, options?.count ?? 18);
+  const archetypes = options?.archetypes ?? ['casual_chic','urban','klassiek'];
+  const candidates = generateMockOutfits(count + 24);
+  const ranked = rankOutfits(candidates, { archetypes, season: 'summer' });
+  const diversified = ensureDiversity(ranked, 4).slice(0, count);
+  return diversified.map(x => x.outfit);
+}
