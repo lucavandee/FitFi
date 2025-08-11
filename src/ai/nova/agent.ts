@@ -36,15 +36,42 @@ export function detectIntent(input:string): NovaIntent {
 }
 
 export function extractEntities(input:string): NovaEntities {
-  const q=input.toLowerCase();
-  const colors=(q.match(/\b(zwart|wit|blauw|groen|rood|beige|grijs|bruin)\b/g)||[]);
-  const budgetMatch=q.match(/(?:onder|tot)\s*€?\s*(\d{2,4})/);
-  const occ=q.match(/\b(kantoor|werk|bruiloft|festival|casual|date|sport|winter|zomer)\b/);
-  const season=q.match(/\b(zomer|herfst|winter|lente)\b/);
+  const { findColorMatch, findOccasionMatch, findCategoryMatch, BUDGET_PATTERNS, SEASONS } = require('./nl-lexicon');
+  
+  const q = input.toLowerCase();
+  
+  // Enhanced color detection met synoniemen
+  const colors: string[] = [];
+  const colorMatch = findColorMatch(input);
+  if (colorMatch) colors.push(colorMatch);
+  
+  // Enhanced budget detection
+  let budgetMax: number | undefined;
+  for (const pattern of BUDGET_PATTERNS) {
+    const match = q.match(pattern);
+    if (match) {
+      budgetMax = Number(match[1]);
+      break;
+    }
+  }
+  
+  // Enhanced occasion detection
+  const occasion = findOccasionMatch(input);
+  
+  // Enhanced season detection
+  const seasonMatch = SEASONS.find(s => q.includes(s));
+  
+  // Enhanced category detection
+  const categories: string[] = [];
+  const categoryMatch = findCategoryMatch(input);
+  if (categoryMatch) categories.push(categoryMatch);
+  
   return {
-    colors: colors.length?Array.from(new Set(colors)):undefined,
-    budgetMax: budgetMatch?Number(budgetMatch[1]):undefined,
-    occasion: occ?.[0], season: season?.[0]
+    colors: colors.length ? colors : undefined,
+    budgetMax,
+    occasion,
+    season: seasonMatch,
+    categories: categories.length ? categories : undefined
   };
 }
 
