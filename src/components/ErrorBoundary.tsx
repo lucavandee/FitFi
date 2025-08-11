@@ -41,11 +41,10 @@ export class ErrorBoundary extends Component<Props, State> {
       this.props.onError(error, errorInfo);
     }
     
-    // Log error with additional context
+    // Log error without PII
     console.error('Uncaught error in component:', {
-      error,
+      error: error instanceof Error ? error.message : String(error),
       componentStack: errorInfo.componentStack,
-      userId: TEST_USER_ID,
       url: window.location.href,
       timestamp: new Date().toISOString()
     });
@@ -59,19 +58,19 @@ export class ErrorBoundary extends Component<Props, State> {
         non_interaction: true,
         error_type: error.name,
         error_message: error.message,
-        error_stack: error.stack,
         component_stack: errorInfo.componentStack,
         page_url: window.location.href,
-        user_id: TEST_USER_ID
+        session_id: `session_${Date.now()}`
       });
     }
     
-    // Initialize Sentry if available and capture error
-    // Sentry removed for optimization - using console.error instead
+    // Additional error context for debugging (no PII)
     console.error('Error captured by ErrorBoundary:', {
-      error: error.message,
+      errorType: error.name,
+      errorMessage: error.message,
       componentStack: errorInfo.componentStack,
-      userId: TEST_USER_ID
+      userAgent: navigator.userAgent,
+      viewport: `${window.innerWidth}x${window.innerHeight}`
     });
   }
 
