@@ -1,7 +1,4 @@
 // src/services/boltService.ts
-import { safeFetchWithFallback } from '../utils/fetchUtils';
-import dutchProducts from '../data/dutchProducts';
-import { BoltProduct } from '../types/BoltProduct';
 import { generateMockBoltProducts } from '../utils/boltProductsUtils';
 
 /**

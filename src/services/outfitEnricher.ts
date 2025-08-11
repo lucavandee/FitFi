@@ -1,7 +1,7 @@
 import { Outfit } from '../engine';
 import { BoltProduct } from '../types/BoltProduct';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
-import { calculateCategoryRatio } from '../engine/helpers';
+import { calculateCategoryRatio as calcRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
 
 /**
@@ -155,10 +155,13 @@ function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): 
       category: CATEGORY_MAPPING[p.type] || 'other'
     })),
     imageUrl: productsWithSafeImages.length > 0
-      ? getSafeImageUrl(productsWithSafeImages[0]!.imageUrl, productsWithSafeImages[0]!.type)
+      ? (() => {
+          const firstProduct = productsWithSafeImages[0];
+          return firstProduct ? getSafeImageUrl(firstProduct.imageUrl, firstProduct.type) : FALLBACK_IMAGES.default;
+        })()
       : FALLBACK_IMAGES.default,
     structure: productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'),
-    categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
+    categoryRatio: calcRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
   }
   
   // Generate explanation
@@ -219,7 +222,7 @@ function getSafeImageUrl(imageUrl: string, type: string): string {
  */
 function getFallbackImage(type: string): string {
   const category = CATEGORY_MAPPING[type] || 'default';
-  return FALLBACK_IMAGES[category as keyof typeof FALLBACK_IMAGES] || FALLBACK_IMAGES.default;
+  return (FALLBACK_IMAGES[category as keyof typeof FALLBACK_IMAGES] ?? FALLBACK_IMAGES.default) as string;
 }
 
 /**

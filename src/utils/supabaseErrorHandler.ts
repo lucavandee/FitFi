@@ -33,7 +33,7 @@ async function handleSupabaseError(
     showToast = true,
     toastMessage,
     logError = true,
-    retryable = false,
+    _retryable = false,
     fallbackValue = null
   } = options;
 
