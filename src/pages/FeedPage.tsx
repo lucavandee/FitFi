@@ -229,7 +229,7 @@ export default function FeedPage() {
           .filter(outfit => !dislikedOutfits.has(outfit.id))
           .map((outfit, i) => (
           <OutfitCard
-            key={`${outfit.id}-${i}`}
+            key={outfit.id}
             outfit={{
               ...outfit,
               currentSeasonLabel: outfit.currentSeasonLabel || 'Dit seizoen',

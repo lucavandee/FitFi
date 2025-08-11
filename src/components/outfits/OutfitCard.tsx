@@ -19,7 +19,7 @@ interface OutfitCardProps {
   onNotMyStyle: (outfit: any) => void;
 }
 
-export default function OutfitCard({ outfit, onSave, onMoreLikeThis, onNotMyStyle }: OutfitCardProps) {
+const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMoreLikeThis, onNotMyStyle }) => {
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
 
@@ -110,4 +110,3 @@ export default function OutfitCard({ outfit, onSave, onMoreLikeThis, onNotMyStyl
       </div>
     </article>
   );
-}
