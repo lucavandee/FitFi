@@ -108,3 +108,29 @@ export const trackEvent = (
     ...custom_parameters
   });
 };
+
+/**
+ * Simple tracking helper for feed actions
+ * Gracefully handles missing gtag
+ */
+export const track = (name: string, params?: Record<string, any>): void => {
+  if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
+  
+  try {
+    window.gtag('event', name, {
+      event_category: 'feed_interaction',
+      is_test: import.meta.env.DEV,
+      timestamp: Date.now(),
+      ...params
+    });
+    
+    if (import.meta.env.DEV) {
+      console.log(`[Analytics] Tracked: ${name}`, params);
+    }
+  } catch (error) {
+    // Silent fail - don't break user experience
+    if (import.meta.env.DEV) {
+      console.warn('[Analytics] Track failed:', error);
+    }
+  }
+};

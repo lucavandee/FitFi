@@ -3,6 +3,7 @@ import { ExternalLink, Heart } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
 import ImageWithFallback from './ui/ImageWithFallback';
 import Button from './ui/Button';
+import { track } from '../utils/analytics';
 
 interface ProductCardProps {
   id: string;
@@ -26,18 +27,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { saveOutfit } = useGamification();
 
   const handleSave = async () => {
+    // Track save action
+    track('add_to_favorites', { 
+      product_id: id,
+      product_title: title,
+      product_brand: brand,
+      product_price: price
+    });
+    
     await saveOutfit();
   };
 
   const handleClick = () => {
     // Track product click
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'product_click', {
-        event_category: 'ecommerce',
-        event_label: id,
-        value: price
-      });
-    }
+    track('product_click', {
+      product_id: id,
+      product_title: title,
+      product_brand: brand,
+      product_price: price,
+      event_category: 'ecommerce',
+      value: price
+    });
     
     // Open affiliate link
     window.open(deeplink, '_blank', 'noopener,noreferrer');

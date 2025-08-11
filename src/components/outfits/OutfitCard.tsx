@@ -5,6 +5,7 @@ import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { getSafeImageUrl } from '@/utils/image';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
+import { track } from '@/utils/analytics';
 
 // RequireAuth mini-component for action buttons
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -74,6 +75,14 @@ export default function OutfitCard({
     // Toggle saved state optimistically
     setSaved(prev => !prev);
     
+    // Track save action
+    track('add_to_favorites', { 
+      outfit_id: outfit.id,
+      outfit_title: outfit.title,
+      outfit_archetype: outfit.archetype,
+      action: saved ? 'remove' : 'add'
+    });
+    
     onSave?.();
     
     // Re-enable button after 200ms
@@ -87,6 +96,13 @@ export default function OutfitCard({
     
     setIsProcessing(prev => ({ ...prev, like: true }));
     
+    // Track similar request
+    track('request_similar', { 
+      outfit_id: outfit.id,
+      outfit_title: outfit.title,
+      outfit_archetype: outfit.archetype
+    });
+    
     onMoreLikeThis?.();
     
     // Re-enable button after 200ms
@@ -99,6 +115,13 @@ export default function OutfitCard({
     if (isProcessing.dislike) return;
     
     setIsProcessing(prev => ({ ...prev, dislike: true }));
+    
+    // Track dislike feedback
+    track('feedback_dislike', { 
+      outfit_id: outfit.id,
+      outfit_title: outfit.title,
+      outfit_archetype: outfit.archetype
+    });
     
     onDislike?.();
     
@@ -114,6 +137,13 @@ export default function OutfitCard({
     setIsProcessing(prev => ({ ...prev, explain: true }));
     
     try {
+      // Track explain request
+      track('request_explanation', { 
+        outfit_id: outfit.id,
+        outfit_title: outfit.title,
+        outfit_archetype: outfit.archetype
+      });
+      
       const result = await NovaTools.explain_outfit(
         { profile: null, history: [] }, 
         { outfit }
@@ -127,9 +157,22 @@ export default function OutfitCard({
         onExplain(explanationText);
       }
       
+      // Track successful explanation
+      track('explanation_generated', { 
+        outfit_id: outfit.id,
+        explanation_length: explanationText.length
+      });
+      
       toast.success('Nova heeft deze outfit uitgelegd!');
     } catch (error) {
       console.error('Error explaining outfit:', error);
+      
+      // Track explanation failure
+      track('explanation_failed', { 
+        outfit_id: outfit.id,
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
       toast.error('Kon uitleg niet genereren');
     } finally {
       setTimeout(() => {
