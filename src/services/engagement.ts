@@ -1,47 +1,57 @@
-// Lightweight local store (mock-friendly)
-type Store = { saved: Record<string, string[]>; disliked: Record<string, string[]> }; // userId -> ids[]
+// resilient, guest-friendly engagement store
+type EngagementStore = {
+  saved: Record<string, true>;
+  disliked: Record<string, true>;
+  similarClicks: Record<string, number>;
+};
+
 const KEY = 'fitfi.engagement.v1';
 
-function read(): Store { 
-  try { 
-    return JSON.parse(localStorage.getItem(KEY) || '{}'); 
-  } catch { 
-    return { saved:{}, disliked:{} }; 
-  } 
+function read(): EngagementStore {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return { saved: {}, disliked: {}, similarClicks: {} };
+    const parsed = JSON.parse(raw);
+    return {
+      saved: parsed?.saved ?? {},
+      disliked: parsed?.disliked ?? {},
+      similarClicks: parsed?.similarClicks ?? {}
+    };
+  } catch {
+    return { saved: {}, disliked: {}, similarClicks: {} };
+  }
 }
 
-function write(s: Store) { 
-  localStorage.setItem(KEY, JSON.stringify(s)); 
+function write(store: EngagementStore) {
+  try { localStorage.setItem(KEY, JSON.stringify(store)); } catch {}
 }
 
-function uid() { 
-  return localStorage.getItem('fitfi.uid') || 'anon'; 
+export function isSaved(id: string): boolean {
+  return !!read().saved[id];
 }
 
-export function isSaved(id: string, userId = uid()) { 
-  const s = read(); 
-  return (s.saved[userId] || []).includes(id); 
+export function isDisliked(id: string): boolean {
+  return !!read().disliked[id];
 }
 
-export function toggleSave(id: string, userId = uid()) {
-  const s = read(); 
-  s.saved[userId] = s.saved[userId] || [];
-  const idx = s.saved[userId].indexOf(id); 
-  idx >= 0 ? s.saved[userId].splice(idx,1) : s.saved[userId].push(id); 
+export function toggleSave(id: string): boolean {
+  const s = read();
+  if (s.saved[id]) delete s.saved[id];
+  else s.saved[id] = true;
   write(s);
-  return isSaved(id, userId);
+  return !!s.saved[id];
 }
 
-export function dislike(id: string, userId = uid()) {
-  const s = read(); 
-  s.disliked[userId] = s.disliked[userId] || [];
-  if (!s.disliked[userId].includes(id)) s.disliked[userId].push(id); 
+export function dislike(id: string): void {
+  const s = read();
+  s.disliked[id] = true;
   write(s);
 }
 
-export function isDisliked(id: string, userId = uid()) { 
-  const s = read(); 
-  return (s.disliked[userId] || []).includes(id); 
+export function undoDislike(id: string): void {
+  const s = read();
+  delete s.disliked[id];
+  write(s);
 }
 
 // Simple similarity on tags/archetype
