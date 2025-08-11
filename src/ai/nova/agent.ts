@@ -1,0 +1,126 @@
+export type NovaIntent =
+  | 'greet' | 'smalltalk' | 'style_advice' | 'outfit_request'
+  | 'product_search' | 'account' | 'help' | 'unknown';
+
+export type NovaEntities = {
+  occasion?: string; season?: string; colors?: string[];
+  budgetMax?: number; gender?: 'male'|'female'|'neutral';
+  categories?: string[]; archetypes?: string[];
+};
+
+export type NovaMessage = { role:'user'|'nova'|'tool'; content:string; ts:number };
+
+type ToolCtx = {
+  profile: any; // onboarding-profiel
+  history: NovaMessage[];
+};
+export type NovaToolResult = { type:string; payload:any };
+
+export const NovaMemory = {
+  readProfile(){ try{ return JSON.parse(localStorage.getItem('fitfi.profile')||'null'); }catch{return null;}},
+  writeProfile(p:any){ localStorage.setItem('fitfi.profile', JSON.stringify(p)); },
+  readHistory(){ try{ return JSON.parse(sessionStorage.getItem('nova.history')||'[]'); }catch{return [];} },
+  writeHistory(h:NovaMessage[]){ sessionStorage.setItem('nova.history', JSON.stringify(h.slice(-30))); }
+};
+
+// ── Intent + entities (very light, upgrade in Prompt 2)
+export function detectIntent(input:string): NovaIntent {
+  const q=input.toLowerCase();
+  if (/hallo|hey|hi|hoi/.test(q)) return 'greet';
+  if (/help|hulp|support|faq/.test(q)) return 'help';
+  if (/account|inloggen|logout|wachtwoord/.test(q)) return 'account';
+  if (/(outfit|look|setje)/.test(q)) return 'outfit_request';
+  if (/(broek|jurk|sneaker|shirt|jas)/.test(q)) return 'product_search';
+  if (/(stijl|advies|combineren|matchen)/.test(q)) return 'style_advice';
+  return 'unknown';
+}
+
+export function extractEntities(input:string): NovaEntities {
+  const q=input.toLowerCase();
+  const colors=(q.match(/\b(zwart|wit|blauw|groen|rood|beige|grijs|bruin)\b/g)||[]);
+  const budgetMatch=q.match(/(?:onder|tot)\s*€?\s*(\d{2,4})/);
+  const occ=q.match(/\b(kantoor|werk|bruiloft|festival|casual|date|sport|winter|zomer)\b/);
+  const season=q.match(/\b(zomer|herfst|winter|lente)\b/);
+  return {
+    colors: colors.length?Array.from(new Set(colors)):undefined,
+    budgetMax: budgetMatch?Number(budgetMatch[1]):undefined,
+    occasion: occ?.[0], season: season?.[0]
+  };
+}
+
+// ── Tool registry (mock-friendly; echte engine calls waar mogelijk)
+export const NovaTools = {
+  async generate_outfits(ctx:ToolCtx, args:NovaEntities):Promise<NovaToolResult>{
+    const { getCurrentSeason } = await import('@/engine/helpers');
+    const { generateRecommendations } = await import('@/engine/recommendationEngine');
+    const user = ctx.profile || { gender:'neutral', stylePreferences:{}, isPremium:false };
+    const opts:any = {
+      count: 3,
+      preferredOccasions: args.occasion?[args.occasion]:undefined,
+      preferredSeasons: [ (args.season as any) || getCurrentSeason() ],
+      realtime: false
+    };
+    const outfits = await generateRecommendations(user, opts);
+    return { type:'outfits', payload: outfits };
+  },
+  async explain_outfit(_:ToolCtx, { outfit }:any):Promise<NovaToolResult>{
+    const { generateOutfitExplanation } = await import('@/engine/explainOutfit');
+    return { type:'explanation', payload: generateOutfitExplanation(outfit) };
+  },
+  async search_products(_:ToolCtx, args:NovaEntities):Promise<NovaToolResult>{
+    const { getZalandoProducts } = await import('@/data/zalandoProductsAdapter');
+    const all = await getZalandoProducts();
+    const filtered=all.filter(p=>{
+      const okColor = !args.colors?.length || args.colors?.some(c=>p.name.toLowerCase().includes(c)||p.color?.toLowerCase()==c);
+      const okBudget = !args.budgetMax || p.price<=args.budgetMax;
+      return okColor && okBudget;
+    }).slice(0,12);
+    return { type:'products', payload: filtered };
+  },
+  async save(_:ToolCtx, { id }:{id:string}){ const { toggleSave } = await import('@/services/engagement'); return {type:'saved', payload: toggleSave(id)}; },
+  async dislike(_:ToolCtx, { id }:{id:string}){ const { dislike } = await import('@/services/engagement'); dislike(id); return {type:'disliked', payload:id}; },
+  async similar(_:ToolCtx, { base, all }:{base:any; all:any[]}){
+    const { getSimilarOutfits } = await import('@/services/engagement');
+    return { type:'outfits', payload: getSimilarOutfits(all, base, 3) };
+  },
+  async navigate(_:ToolCtx, { to }:{to:string}){ return { type:'navigate', payload: to }; }
+};
+
+// ── Planner: intent → tool(s) → response
+export async function planAndExecute(userText:string){
+  const profile = NovaMemory.readProfile();
+  const history = NovaMemory.readHistory();
+  const intent = detectIntent(userText);
+  const entities = extractEntities(userText);
+  const ctx:ToolCtx={ profile, history };
+
+  if (intent==='greet') return { reply: 'Hey! Waar heb je zin in vandaag—een outfitadvies, of iets specifieks zoeken?', cards:[] };
+  if (intent==='help') return { reply:'Je kunt me vragen om outfits voor een gelegenheid, kleur of budget. Probeer: "Outfit voor kantoor onder €120 in zwart."', cards:[] };
+  if (intent==='outfit_request' || intent==='style_advice'){
+    const r = await NovaTools.generate_outfits(ctx, entities);
+    return { reply: buildOutfitReply(entities), cards: r.payload, kind:'outfits' };
+  }
+  if (intent==='product_search'){
+    const r = await NovaTools.search_products(ctx, entities);
+    return { reply: buildProductReply(entities), cards: r.payload, kind:'products' };
+  }
+  return { reply: 'Ik kan outfits en producten voor je vinden. Noem een gelegenheid, kleur of budget 👍', cards:[] };
+}
+
+// ── Fallback copy generators (LLM-vrij)
+function buildOutfitReply(e:NovaEntities){
+  const bits = [
+    e.occasion ? `voor ${e.occasion}` : '',
+    e.colors?.length ? `in ${e.colors.join(' & ')}` : '',
+    e.budgetMax ? `onder €${e.budgetMax}` : ''
+  ].filter(Boolean).join(' ');
+  return `Hier zijn outfits ${bits || 'die bij je stijl passen'}. Zeg "meer zoals dit" of "leg uit" bij een kaart.`;
+}
+function buildProductReply(e:NovaEntities){
+  const bits = [
+    e.categories?.[0] ? e.categories[0] : 'items',
+    e.colors?.length ? `in ${e.colors[0]}` : '',
+    e.budgetMax ? `onder €${e.budgetMax}` : ''
+  ].filter(Boolean).join(' ');
+  return `Ik heb ${bits || 'suggesties'} voor je gevonden. Wil je filteren op gelegenheid of seizoen?`;
+}
