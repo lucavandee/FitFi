@@ -78,7 +78,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
               icon={<Heart size={14} />}
               className="text-gray-500 hover:text-red-500 p-1"
               aria-label="Bewaar product"
-            />
+            >
+              
+            </Button>
             <Button
               variant="primary"
               size="sm"

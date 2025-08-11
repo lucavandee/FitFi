@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { UserProvider } from '@/context/UserContext';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -40,7 +40,6 @@ const EnhancedResultsPage = React.lazy(() => import('@/pages/EnhancedResultsPage
 const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboardingPage'));
 const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
-const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
 const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
 const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
@@ -51,16 +50,6 @@ const SuccessStoriesPage = React.lazy(() => import('@/pages/SuccessStoriesPage')
 const OutfitsPage = React.lazy(() => import('@/pages/OutfitsPage'));
 const GamificationPage = React.lazy(() => import('@/pages/GamificationPage'));
 const AnalyticsPage =  React.lazy(() => import('@/pages/AnalyticsPage'));
-
-// Loading fallback component
-const PageLoadingFallback = () => (
-  <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 flex items-center justify-center">
-    <div className="text-center">
-      <div className="w-12 h-12 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-gray-600">Pagina laden...</p>
-    </div>
-  </div>
-);
 
 // NotFound component
 const NotFound: React.FC = () => (
