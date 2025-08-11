@@ -129,7 +129,7 @@ function App() {
                       } />
                       <Route path="/quiz" element={
                         <ProtectedRoute>
-                          <Quiz Page />
+                          <QuizPage />
                         </ProtectedRoute>
                       } />
                       <Route path="/dynamic-onboarding" element={
@@ -171,7 +171,6 @@ function App() {
                       <Route path="/analytics" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                           <AnalyticsPage />
-                        
                         </ProtectedRoute>
                       } />
                       <Route path="/tribes" element={
@@ -183,7 +182,6 @@ function App() {
                         <ProtectedRoute>
                           <TribeDetailPage />
                         </ProtectedRoute>
-                      
                       } />
                       
                       {/* Fallback */}
