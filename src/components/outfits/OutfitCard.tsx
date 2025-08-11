@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { getSafeImageUrl } from '@/utils/images';
+import { getSafeImageUrl } from '@/utils/image';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
 
@@ -129,19 +129,13 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
       aria-describedby={descId}
     >
       <div className="relative rounded-xl overflow-hidden mb-3">
-        {/* Aspect ratio alleen hier, zodat layout niet flikkert */}
-        <div className="w-full aspect-[4/5] md:aspect-[3/4]">
-          {/* Skeleton */}
-          <div className={`absolute inset-0 bg-gray-100 animate-pulse transition-opacity ${loaded ? 'opacity-0' : 'opacity-100'}`} />
-
-          {/* Afbeelding */}
-          <ImageWithFallback
-            src={getSafeImageUrl(outfit?.imageUrl)}
-            alt={outfit?.title || 'Outfit'}
-            loading="lazy"
-            decoding="async"
-            onLoad={() => setLoaded(true)}
-            className={`w-full h-full object-cover transition-opacity duration-300 hover:scale-105 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/5]">
+          <ImageWithFallback 
+            src={outfit.imageUrl} 
+            fallbackSrc="/images/outfit-fallback.jpg" 
+            alt={outfit.title || 'Outfit'} 
+            className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            componentName="OutfitCard"
           />
         </div>
       </div>
