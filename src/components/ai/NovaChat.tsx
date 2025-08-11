@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, MessageCircle, X } from 'lucide-react';
-import { loadNovaAgent } from '@/ai/nova/load';
 import { trackEvent } from '@/utils/analytics';
 
 export type NovaMessage = { role: 'user' | 'assistant' | 'system'; text: string; ts: number };
@@ -59,14 +58,26 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         message_type: 'user_input'
       });
 
-      // Load Nova agent with fallback
-      const agent = await loadNovaAgent();
-      if (!agent) {
-        throw new Error('Nova agent not available');
+      // Try to load Nova agent with fallback
+      let reply;
+      try {
+        const agentModule = await import('@/ai/nova/agent');
+        const agent = agentModule.default || agentModule.agent;
+        
+        if (!agent) {
+          throw new Error('Nova agent not found in module');
+        }
+        
+        reply = await agent.ask(text, { context });
+      } catch (agentError) {
+        console.warn('[Nova] Agent loading failed:', agentError);
+        
+        // Fallback response
+        reply = {
+          type: 'text',
+          message: 'Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw of neem contact op voor hulp.'
+        };
       }
-
-      // Get reply from agent
-      const reply = await agent.ask(text, { context });
 
       // Convert reply to plain text string
       let responseText: string;
@@ -155,7 +166,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   };
 
   return (
-    <div className={`flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl ${className}`}>
+    <div className={`chat-container flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl ${className}`} style={{ height: '420px' }}>
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 dark:from-[#89CFF0]/20 dark:to-blue-900/20 rounded-t-3xl">
         <div className="flex items-center justify-between">
@@ -238,7 +249,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       </div>
 
       {/* Input Area */}
-      <div className="flex-shrink-0 p-4 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
+      <div className="input-bar flex-shrink-0 p-4 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl" style={{ position: 'sticky', bottom: 0 }}>
         {/* Quick Suggestions - only show initially */}
         {messages.length <= 1 && (
           <div className="mb-3">

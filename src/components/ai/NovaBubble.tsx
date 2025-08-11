@@ -1,16 +1,22 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X, Sparkles } from 'lucide-react';
 import AppPortal from '../layout/AppPortal';
-import { lazyComponent } from '@/utils/lazy';
 
-// DEV fallback: static import for quicker feedback if lazy breaks
-import NovaChatSync from './NovaChat';
-
-// Hardened lazy loading with proper error handling
-const NovaChatLazy = lazyComponent(() => import('./NovaChat'));
-
-// Choose which one to render (helps during active development)
-const ChatImpl = import.meta.env.DEV ? NovaChatSync : NovaChatLazy;
+// Lazy load NovaChat with proper error handling
+const NovaChat = React.lazy(() => 
+  import('./NovaChat').then(m => ({ 
+    default: m.NovaChat || m.default 
+  })).catch(err => {
+    console.error('Failed to load NovaChat:', err);
+    return { 
+      default: () => (
+        <div className="h-full flex items-center justify-center text-gray-500">
+          Nova tijdelijk niet beschikbaar
+        </div>
+      )
+    };
+  })
+);
 
 interface NovaBubbleProps {
   className?: string;
@@ -22,6 +28,13 @@ interface BubblePosition {
 }
 
 const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
+  // Check if Nova is enabled
+  const enabled = import.meta.env.VITE_NOVA_ENABLED === 'true';
+  
+  if (!enabled) {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<BubblePosition>({ x: 24, y: 24 }); // Default: bottom-6 right-6
   const [isDragging, setIsDragging] = useState(false);
@@ -216,7 +229,7 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
               <div className="w-8 h-8 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin"></div>
             </div>
           }>
-            <ChatImpl 
+            <NovaChat 
               onClose={() => setIsOpen(false)}
               context="general"
               className="w-full h-full"
