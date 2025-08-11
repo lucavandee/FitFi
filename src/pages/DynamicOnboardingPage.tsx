@@ -8,6 +8,10 @@ import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { saveOnboardingProgress, loadOnboardingProgress } from '../utils/progressPersistence';
 
+// ✅ Lazy Nova Agent loading
+const loadNovaAgent = () =>
+  import('@/ai/nova/agent').then(m => m.default ?? m.agent);
+
 const DynamicOnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading: userLoading } = useUser();
@@ -76,8 +80,21 @@ const DynamicOnboardingPage: React.FC = () => {
       }
 
       // Save profile to Nova memory
-      const { NovaMemory } = await import('../../ai/nova/agent');
-      NovaMemory.writeProfile({ ...data, userId: user.id, completedAt: new Date().toISOString() });
+      // ✅ Lazy load Nova Agent
+      try {
+        const agent = await loadNovaAgent();
+        if (agent?.memory) {
+          agent.memory.writeProfile({ 
+            ...data, 
+            userId: user.id, 
+            completedAt: new Date().toISOString() 
+          });
+        }
+      } catch (error) {
+        console.warn('[Nova] Agent niet geladen voor profile save:', error);
+        // Continue without Nova - don't block user flow
+      }
+      
       // Navigate to enhanced results
       await navigationService.navigateToEnhancedResults(data, {
         loadingMessage: 'Enhanced aanbevelingen genereren...',
