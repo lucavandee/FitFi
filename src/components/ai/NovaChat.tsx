@@ -7,13 +7,13 @@ import ProductCard from '@/components/ProductCard';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
 
-export interface NovaChatProps {
+export type NovaChatProps = {
   onClose?: () => void;
   context?: string;
   className?: string;
-}
+};
 
-const NovaChat: React.FC<NovaChatProps> = ({ onClose, context = 'general', className = '' }) => {
+function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProps) {
   const [input, setInput] = React.useState('');
   const [messages, setMessages] = React.useState<NovaMessage[]>(NovaMemory.readHistory());
   const [cards, setCards] = React.useState<any[]>([]);
@@ -334,4 +334,6 @@ const NovaChat: React.FC<NovaChatProps> = ({ onClose, context = 'general', class
       </div>
     </div>
   );
-};
+}
+
+export default NovaChat;
