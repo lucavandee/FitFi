@@ -16,6 +16,10 @@ import ProgressMotivation from '../components/quiz/ProgressMotivation';
 import CompletionCelebration from '../components/quiz/CompletionCelebration';
 import toast from 'react-hot-toast';
 
+// ✅ Lazy Nova Agent loading
+const loadNovaAgent = () =>
+  import('@/ai/nova/agent').then(m => m.default ?? m.agent);
+
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading: userLoading } = useUser();
@@ -222,13 +226,21 @@ const QuizPage: React.FC = () => {
         trackConversion({ completionTime, achievementsEarned: earnedAchievements.length });
         
         // Save profile to Nova memory
-        const { NovaMemory } = await import('../ai/nova/agent');
-        NovaMemory.writeProfile({ 
-          answers: progress.answers, 
-          userId: user.id, 
-          completedAt: new Date().toISOString(),
-          completionTime 
-        });
+        // ✅ Lazy load Nova Agent
+        try {
+          const agent = await loadNovaAgent();
+          if (agent?.memory) {
+            agent.memory.writeProfile({ 
+              answers: progress.answers, 
+              userId: user.id, 
+              completedAt: new Date().toISOString(),
+              completionTime 
+            });
+          }
+        } catch (error) {
+          console.warn('[Nova] Agent niet geladen voor profile save:', error);
+          // Continue without Nova - don't block user flow
+        }
         
       } else {
         toast.error('Er ging iets mis bij het opslaan van je antwoorden. Probeer het opnieuw.');
