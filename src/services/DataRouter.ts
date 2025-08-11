@@ -7,13 +7,11 @@ import { generateMockUser, generateMockGamification, generateMockOutfits, genera
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { fetchProductsFromSupabase, getUserById, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from './supabaseService';
 import boltService from './boltService';
-import { TEST_USER_ID, USE_SUPABASE } from '../lib/supabase';
 import { enrichZalandoProducts } from './productEnricher';
 import { BoltProduct } from '../types/BoltProduct';
 import outfitGenerator from './outfitGenerator';
 import outfitEnricher from './outfitEnricher';
 import { getBoltProductsFromJSON, generateMockBoltProducts, filterProductsByGender } from '../utils/boltProductsUtils';
-import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
 
 // Data source type
 type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
@@ -91,7 +89,7 @@ checkEnvironmentVariables();
 /**
  * Clear the cache
  */
-function clearCache(): void {
+function _clearCache(): void {
   cache.clear();
   if (env.DEBUG_MODE) {
     console.log('[🧠 DataRouter] Cache cleared');
@@ -110,7 +108,7 @@ function getDataSource(): DataSource {
  * Get fetch diagnostics
  * @returns Fetch diagnostics
  */
-function getFetchDiagnostics(): FetchDiagnostics {
+function _getFetchDiagnostics(): FetchDiagnostics {
   return fetchDiagnostics;
 }
 
@@ -118,7 +116,7 @@ function getFetchDiagnostics(): FetchDiagnostics {
  * Get fetch diagnostics summary as a string
  * @returns Fetch diagnostics summary
  */
-function getFetchDiagnosticsSummary(): string {
+function _getFetchDiagnosticsSummary(): string {
   const { operation, timestamp, attempts, finalSource, cacheUsed, cacheAge } = fetchDiagnostics;
   
   let summary = `[🧠 DataRouter] ${operation} at ${new Date(timestamp).toLocaleTimeString()}\n`;
@@ -305,7 +303,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
  * @param options - Optional generation options
  * @returns Array of outfits
  */
-async function getOutfits(
+async function _getOutfits(
   user: UserProfile,
   options?: any
 ): Promise<Outfit[]> {
@@ -315,7 +313,12 @@ async function getOutfits(
     if (env.DEBUG_MODE) {
       console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
     }
-    const mockOutfits = generateMockOutfits(options?.count || 3);
+    const mockOutfits = generateMockOutfits(options?.count || 3).map(o => ({
+      ...o,
+      archetype: (o as any).archetype ?? 'casual_chic',
+      occasion: ((o as any).occasions?.[0]) ?? 'Casual',
+      products: (o as any).products ?? []
+    }));
     if (env.DEBUG_MODE) {
       console.log('[🔍 DataRouter] Returning mock outfits:', mockOutfits);
     }
@@ -328,7 +331,12 @@ async function getOutfits(
     if (env.DEBUG_MODE) {
       console.log('[🔧 DataRouter] Using fallback mock outfits due to invalid user');
     }
-    return generateMockOutfits(options?.count || 3);
+    return generateMockOutfits(options?.count || 3).map(o => ({
+      ...o,
+      archetype: (o as any).archetype ?? 'casual_chic',
+      occasion: ((o as any).occasions?.[0]) ?? 'Casual',
+      products: (o as any).products ?? []
+    }));
   }
   
   // Ensure options have defaults
@@ -874,7 +882,10 @@ async function getUserData(userId: string): Promise<UserProfile | null> {
     // Cache the result
     saveToCache(cacheKey, mockUser, 'local');
     
-    return mockUser;
+    return {
+      ...mockUser,
+      gender: (mockUser.gender === 'male' || mockUser.gender === 'female') ? mockUser.gender : 'female'
+    };
   } catch (error) {
     const localEndTime = Date.now();
     const localDuration = localEndTime - localStartTime;

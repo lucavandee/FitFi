@@ -23,4 +23,4 @@ export type BoltProduct = {
 };
 
 
-export { BoltProduct }
+export type { BoltProduct };

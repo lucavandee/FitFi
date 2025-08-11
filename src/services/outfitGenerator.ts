@@ -167,7 +167,7 @@ function filterProductsByArchetype(
  */
 function getFallbackImage(type: string): string {
   const category = CATEGORY_MAPPING[type] || 'default';
-  return FALLBACK_IMAGES[category] || FALLBACK_IMAGES.default;
+  return FALLBACK_IMAGES[category as keyof typeof FALLBACK_IMAGES] || FALLBACK_IMAGES.default;
 }
 
 /**
@@ -220,7 +220,7 @@ function createOutfit(
       
       // Select the best matching product
       const selectedProduct = sortedProducts[index % sortedProducts.length];
-      outfitProducts.push(selectedProduct);
+      if (selectedProduct) outfitProducts.push(selectedProduct);
       selectedTypes.push(type);
       
       // Only select one essential product

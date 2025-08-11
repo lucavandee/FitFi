@@ -311,7 +311,7 @@ function hasSavedProgress(): {
 /**
  * Get progress recovery options for user
  */
-function getRecoveryOptions(): {
+function _getRecoveryOptions(): {
   canRecover: boolean;
   options: Array<{
     type: 'quiz' | 'onboarding';

@@ -508,7 +508,7 @@ function estimateMaterial(type: string, brand: string): string {
   }
   
   // Return the global default
-  return MATERIAL_ESTIMATIONS['default']['default'];
+  return MATERIAL_ESTIMATIONS?.['default']?.['default'] ?? 'unknown';
 }
 
 /**

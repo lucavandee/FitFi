@@ -2,7 +2,6 @@ import { BoltProduct } from '../types/BoltProduct';
 import { isValidImageUrl } from './imageUtils';
 import dutchProducts from '../data/dutchProducts';
 import { safeFetchWithFallback } from './fetchUtils';
-import { safeFetchWithFallback } from './fetchUtils';
 
 /**
  * Utility functions for working with BoltProducts
@@ -88,7 +87,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
       'gray': '#808080'
     };
     
-    const dominantColorHex = colorHexMap[color] || '#CCCCCC';
+    const dominantColorHex = colorHexMap[color as keyof typeof colorHexMap] || '#CCCCCC';
     
     // Determine style tags
     const styleTags = product.styleTags || ['casual', 'minimal', 'versatile'];
@@ -102,7 +101,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
     };
     
     const season = product.season && product.season.length > 0 
-      ? (seasonMap[product.season[0]] || 'all_season')
+      ? (seasonMap[product.season[0] as keyof typeof seasonMap] || 'all_season')
       : 'all_season';
     
     // Determine archetype match
@@ -154,7 +153,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
       material: 'Mixed materials',
       price: product.price || 49.99,
       imageUrl: imageUrl,
-      affiliateUrl: product.url || `https://fitfi.app/product/${product.id}?ref=bolt`,
+      affiliateUrl: (product as any).url || `https://fitfi.app/product/${product.id}?ref=bolt`,
       source: 'zalando'
     };
   });
@@ -200,7 +199,7 @@ export function filterProductsByGender(products: BoltProduct[], gender: 'male' |
  * @param type - Type to filter by
  * @returns Filtered array of BoltProducts
  */
-function filterProductsByType(products: BoltProduct[], type: string): BoltProduct[] {
+function _filterProductsByType(products: BoltProduct[], type: string): BoltProduct[] {
   return products.filter(product => product.type === type);
 }
 
@@ -210,7 +209,7 @@ function filterProductsByType(products: BoltProduct[], type: string): BoltProduc
  * @param season - Season to filter by
  * @returns Filtered array of BoltProducts
  */
-function filterProductsBySeason(products: BoltProduct[], season: string): BoltProduct[] {
+function _filterProductsBySeason(products: BoltProduct[], season: string): BoltProduct[] {
   return products.filter(product => 
     product.season === season || product.season === 'all_season'
   );

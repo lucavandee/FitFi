@@ -73,7 +73,7 @@ export async function loadProductFeed(): Promise<Product[]> {
 /**
  * Load products with fallback chain
  */
-async function loadProductsWithFallback(): Promise<Product[]> {
+async function _loadProductsWithFallback(): Promise<Product[]> {
   // Try product feed first
   const feedProducts = await loadProductFeed();
   if (feedProducts.length > 0) {
