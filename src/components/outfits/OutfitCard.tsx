@@ -3,7 +3,6 @@ import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import RequireAuth from '@/components/auth/RequireAuth';
-import { getSafeImageUrl } from '@/utils/image';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
 import { track } from '@/utils/analytics';
