@@ -5,7 +5,9 @@ import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
-import { track } from '@/utils/analytics';
+import { track } from '@/utils/telemetry';
+import { useUser } from '@/context/UserContext';
+import { useSaveOutfit } from '@/hooks/useSaveOutfit';
 
 interface OutfitCardProps {
   outfit: {
@@ -32,6 +34,8 @@ export default function OutfitCard({
   onMoreLikeThis,
   onExplain
 }: OutfitCardProps) {
+  const { user } = useUser();
+  const saveOutfit = useSaveOutfit(user?.id);
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
   const [saved, setSaved] = useState<boolean>(isSaved(outfit.id));
@@ -51,27 +55,35 @@ export default function OutfitCard({
   });
 
   const handleSave = () => {
-    if (isProcessing.save) return;
+    if (isProcessing.save || saveOutfit.isPending) return;
     
-    setIsProcessing(prev => ({ ...prev, save: true }));
+    if (!user?.id) {
+      track('save_click_unauth', { outfit_id: outfit.id });
+      window.location.href = '/inloggen?returnTo=/feed';
+      return;
+    }
     
-    // Toggle saved state optimistically
-    setSaved(prev => !prev);
+    // Use optimistic save hook
+    saveOutfit.mutate({ 
+      outfit: outfit as any, 
+      userId: user.id, 
+      idempotencyKey: `${user.id}:${outfit.id}` 
+    });
     
     // Track save action
     track('add_to_favorites', { 
       outfit_id: outfit.id,
       outfit_title: outfit.title,
       outfit_archetype: outfit.archetype,
-      action: saved ? 'remove' : 'add'
+      action: 'add'
     });
     
-    onSave?.();
+    // Update local state optimistically
+    setSaved(true);
     
-    // Re-enable button after 200ms
-    setTimeout(() => {
-      setIsProcessing(prev => ({ ...prev, save: false }));
-    }, 200);
+    if (onSave) {
+      onSave();
+    }
   };
 
   const handleMoreLikeThis = () => {
@@ -247,20 +259,19 @@ export default function OutfitCard({
         <div className="mt-3 grid grid-cols-2 gap-2">
           <RequireAuth cta="Inloggen om te bewaren">
             <button 
-              aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"}
-              aria-pressed={saved}
-              aria-busy={isProcessing.save}
-              title={saved ? "Verwijder uit opgeslagen" : "Bewaar deze look"}
+              aria-label="Bewaar look"
+              aria-busy={saveOutfit.isPending}
+              title="Bewaar deze look"
               onClick={handleSave} 
-              disabled={isProcessing.save}
+              disabled={saveOutfit.isPending}
               className={`btn-secondary px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                saved 
+                saveOutfit.isSuccess || saved
                   ? 'border-[#89CFF0] bg-[#89CFF0] text-white focus:ring-[#89CFF0]' 
                   : 'border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white focus:ring-[#89CFF0]'
-              } ${isProcessing.save ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <Heart className={`w-3 h-3 inline mr-1 ${saved ? 'fill-current' : ''} ${isProcessing.save ? 'animate-pulse' : ''}`} />
-              Bewaar
+              <Heart className={`w-3 h-3 inline mr-1 ${saveOutfit.isSuccess || saved ? 'fill-current' : ''} ${saveOutfit.isPending ? 'animate-pulse' : ''}`} />
+              {saveOutfit.isSuccess ? 'Bewaard ✓' : saveOutfit.isPending ? 'Bewaren…' : 'Bewaar'}
             </button>
           </RequireAuth>
           
