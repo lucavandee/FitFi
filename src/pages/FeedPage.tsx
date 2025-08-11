@@ -4,7 +4,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { getFeed } from '@/services/DataRouter';
 import { useUser } from '@/context/UserContext';
 import { useQuizAnswers } from '@/hooks/useQuizAnswers';
-import { isDisliked, toggleSave, dislike } from '@/services/engagement';
+import { isDisliked, toggleSave, dislike, getSimilarOutfits } from '@/services/engagement';
 import OutfitCard from '@/components/outfits/OutfitCard';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
@@ -51,59 +51,69 @@ export default function FeedPage() {
   const [items, setItems] = useState<FeedOutfit[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [tick, setTick] = useState(0);
-  const [suggested, setSuggested] = useState<FeedOutfit[]>([]);
+  const [savedIds, setSavedIds] = React.useState<Set<string>>(new Set());
+  const [dislikedIds, setDislikedIds] = React.useState<Set<string>>(new Set());
   const sentinelRef = useRef<HTMLDivElement|null>(null);
   const busyRef = useRef(false);
 
-  // Filter visible outfits (exclude disliked)
+  // Filter visible outfits (exclude disliked) - memoized for performance
   const visibleOutfits = React.useMemo(
-    () => (items ?? []).filter(o => o?.id && !isDisliked(o.id)),
-    [items, tick]
+    () => (items ?? []).filter(o => o?.id && !dislikedIds.has(o.id)),
+    [items, dislikedIds]
   );
 
-  // Insert similar outfits at specific position
-  const insertSimilar = (index: number, similarOutfits: any[]) => {
-    setItems(currentItems => {
-      const before = currentItems.slice(0, index + 1);
-      const after = currentItems.slice(index + 1);
-      
-      // Deduplicate based on ID
-      const existingIds = new Set(currentItems.map(item => item.id));
-      const newItems = similarOutfits.filter(item => !existingIds.has(item.id));
-      
-      return [...before, ...newItems, ...after];
+  // Initialize saved/disliked state from localStorage
+  React.useEffect(() => {
+    const initialSaved = new Set<string>();
+    const initialDisliked = new Set<string>();
+    
+    // Read from localStorage to initialize state
+    items.forEach(item => {
+      if (item?.id) {
+        if (isDisliked(item.id)) {
+          initialDisliked.add(item.id);
+        }
+        // Note: isSaved would need to be implemented in engagement service
+      }
     });
-  };
-
-  // Dismiss outfit from feed
-  const dismissOutfit = (id: string) => {
-    setItems(currentItems => currentItems.filter(item => item.id !== id));
-  };
+    
+    setDislikedIds(initialDisliked);
+  }, [items]);
 
   // Action handlers
   const onSave = (id: string) => {
     const nowSaved = toggleSave(id);
+    setSavedIds(prev => {
+      const newSet = new Set(prev);
+      if (nowSaved) {
+        newSet.add(id);
+      } else {
+        newSet.delete(id);
+      }
+      return newSet;
+    });
     toast.success(nowSaved ? 'Bewaard' : 'Verwijderd uit bewaard');
-    // Force re-render
-    setTick((t: number) => t + 1);
   };
 
   const onDislike = (id: string) => {
     dislike(id);
+    setDislikedIds(prev => new Set(prev).add(id));
     toast('We laten minder van deze stijl zien');
-    // Recalculate list
-    setTick((t: number) => t + 1);
   };
 
   const onMoreLikeThis = (outfit: any) => {
-    // Simple client-side "similar" → filter on tags/archetype
-    const tags = new Set((outfit?.tags ?? []).map((t: string) => t.toLowerCase()));
-    const more = (items ?? []).filter(o =>
-      o.id !== outfit.id &&
-      o.tags?.some((t: string) => tags.has(String(t).toLowerCase()))
-    );
-    setSuggested(more.slice(0, 6));
+    // Get similar outfits and add them to the feed
+    const similarOutfits = getSimilarOutfits(items, outfit, 6);
+    
+    if (similarOutfits.length > 0) {
+      // Add similar outfits to the end of the current items
+      setItems(currentItems => {
+        const existingIds = new Set(currentItems.map(item => item.id));
+        const newItems = similarOutfits.filter(item => !existingIds.has(item.id));
+        return [...currentItems, ...newItems];
+      });
+    }
+    
     toast.success('Meer zoals dit toegevoegd aan je feed');
   };
 
@@ -195,29 +205,12 @@ export default function FeedPage() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visibleOutfits.map((outfit, index) => (
           <OutfitCard
-            key={outfit.id}
+            key={`outfit-${outfit.id}`}
             outfit={{
               ...outfit,
               currentSeasonLabel: outfit.currentSeasonLabel || 'Dit seizoen',
               dominantColorName: outfit.dominantColorName || undefined
             }}
-            allOutfits={items}
-            onSave={() => onSave(outfit.id)}
-            onDislike={() => onDislike(outfit.id)}
-            onMoreLikeThis={() => onMoreLikeThis(outfit)}
-          />
-        ))}
-        
-        {/* Suggested outfits from "More like this" */}
-        {suggested.map((outfit) => (
-          <OutfitCard
-            key={`suggested-${outfit.id}`}
-            outfit={{
-              ...outfit,
-              currentSeasonLabel: outfit.currentSeasonLabel || 'Vergelijkbaar',
-              dominantColorName: outfit.dominantColorName || undefined
-            }}
-            allOutfits={items}
             onSave={() => onSave(outfit.id)}
             onDislike={() => onDislike(outfit.id)}
             onMoreLikeThis={() => onMoreLikeThis(outfit)}
