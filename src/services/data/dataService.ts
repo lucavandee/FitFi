@@ -1,0 +1,517 @@
+import { DATA_CONFIG } from "@/config/dataConfig";
+import { buildAffiliateUrl } from "@/services/affiliateLinkBuilder";
+import type { BoltProduct, Outfit, FitFiUserProfile, DataResponse, CacheEntry, DataServiceConfig, DataError } from "./types";
+import { getLocalProducts, getLocalOutfits, getLocalUser } from "./localSource";
+import { getSbProducts, getSbOutfits, getSbUser } from "./supabaseSource";
+
+/**
+ * Enterprise Data Service Orchestrator
+ * Manages fallback chain, caching, affiliate mapping, and error handling
+ */
+class DataServiceOrchestrator {
+  private cache = new Map<string, CacheEntry<any>>();
+  private errors: DataError[] = [];
+  private config: DataServiceConfig = {
+    cacheTTL: 5 * 60 * 1000, // 5 minutes
+    maxCacheSize: 100,
+    enableFallbacks: true,
+    logErrors: true,
+    retryAttempts: 2,
+    retryDelay: 1000
+  };
+
+  /**
+   * Log error with context
+   */
+  private logError(
+    source: 'supabase' | 'local' | 'fallback',
+    operation: string,
+    error: string,
+    context?: Record<string, any>
+  ): void {
+    const errorEntry: DataError = {
+      source,
+      operation,
+      error,
+      timestamp: Date.now(),
+      context
+    };
+    
+    this.errors.push(errorEntry);
+    
+    // Keep only last 50 errors
+    if (this.errors.length > 50) {
+      this.errors = this.errors.slice(-50);
+    }
+    
+    if (this.config.logErrors) {
+      console.warn(`[DataService] ${source}/${operation}: ${error}`, context);
+    }
+  }
+
+  /**
+   * Get from cache if valid
+   */
+  private getFromCache<T>(key: string): T | null {
+    const cached = this.cache.get(key);
+    
+    if (cached && Date.now() - cached.timestamp < cached.ttl) {
+      return cached.data as T;
+    }
+    
+    // Remove expired cache
+    if (cached) {
+      this.cache.delete(key);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Save to cache
+   */
+  private saveToCache<T>(key: string, data: T, source: 'supabase' | 'local' | 'fallback'): void {
+    // Cleanup old entries if cache is full
+    if (this.cache.size >= this.config.maxCacheSize) {
+      const oldestKey = Array.from(this.cache.keys())[0];
+      this.cache.delete(oldestKey);
+    }
+
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      source,
+      ttl: this.config.cacheTTL
+    });
+  }
+
+  /**
+   * Map affiliate links to products
+   */
+  private mapAffiliate(p: BoltProduct): BoltProduct {
+    if (!p?.productUrl) return p;
+    
+    try {
+      const provider = (p.provider ?? "generic") as any;
+      const enhancedUrl = buildAffiliateUrl(p.productUrl, provider);
+      
+      return { 
+        ...p, 
+        productUrl: enhancedUrl,
+        // Add tracking metadata
+        affiliateProvider: provider,
+        trackingAdded: true
+      };
+    } catch (error) {
+      this.logError('affiliate', 'map_affiliate', `Failed to map affiliate for product ${p.id}`, { productId: p.id });
+      return p; // Return original product if affiliate mapping fails
+    }
+  }
+
+  /**
+   * Execute operation with retry logic
+   */
+  private async executeWithRetry<T>(
+    operation: () => Promise<T>,
+    operationName: string,
+    source: 'supabase' | 'local'
+  ): Promise<T> {
+    let lastError: Error;
+    
+    for (let attempt = 0; attempt <= this.config.retryAttempts; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
+        
+        if (attempt < this.config.retryAttempts) {
+          this.logError(source, operationName, `Attempt ${attempt + 1} failed, retrying...`, { error: lastError.message });
+          await new Promise(resolve => setTimeout(resolve, this.config.retryDelay * (attempt + 1)));
+        }
+      }
+    }
+    
+    throw lastError!;
+  }
+
+  /**
+   * Fetch products with fallback chain
+   */
+  async fetchProducts(filters?: {
+    gender?: "male" | "female" | "unisex";
+    category?: string;
+    limit?: number;
+  }): Promise<DataResponse<BoltProduct[]>> {
+    const cacheKey = `products_${JSON.stringify(filters || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<BoltProduct[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local', // Cache source is abstracted
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbProducts(filters),
+          'fetch_products',
+          'supabase'
+        );
+        
+        if (sb && sb.length > 0) {
+          const productsWithAffiliate = sb.map(this.mapAffiliate.bind(this));
+          this.saveToCache(cacheKey, productsWithAffiliate, 'supabase');
+          
+          return {
+            data: productsWithAffiliate,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_products', (error as Error).message, { filters });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalProducts(),
+        'fetch_products',
+        'local'
+      );
+      
+      const productsWithAffiliate = local.map(this.mapAffiliate.bind(this));
+      this.saveToCache(cacheKey, productsWithAffiliate, 'local');
+      
+      return {
+        data: productsWithAffiliate,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_products', (error as Error).message, { filters });
+      
+      // Final fallback to empty array
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Fetch outfits with fallback chain
+   */
+  async fetchOutfits(filters?: {
+    archetype?: string;
+    season?: "spring" | "summer" | "autumn" | "winter" | "all";
+    limit?: number;
+  }): Promise<DataResponse<Outfit[]>> {
+    const cacheKey = `outfits_${JSON.stringify(filters || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<Outfit[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbOutfits(filters),
+          'fetch_outfits',
+          'supabase'
+        );
+        
+        if (sb && sb.length > 0) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_outfits', (error as Error).message, { filters });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalOutfits(),
+        'fetch_outfits',
+        'local'
+      );
+      
+      this.saveToCache(cacheKey, local, 'local');
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_outfits', (error as Error).message, { filters });
+      
+      // Final fallback to empty array
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Fetch user with fallback chain
+   */
+  async fetchUser(userId?: string): Promise<DataResponse<FitFiUserProfile | null>> {
+    if (!userId) {
+      return {
+        data: null,
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now()
+      };
+    }
+
+    const cacheKey = `user_${userId}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<FitFiUserProfile>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbUser(userId),
+          'fetch_user',
+          'supabase'
+        );
+        
+        if (sb) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_user', (error as Error).message, { userId });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalUser(),
+        'fetch_user',
+        'local'
+      );
+      
+      this.saveToCache(cacheKey, local, 'local');
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_user', (error as Error).message, { userId });
+      
+      // Final fallback to null
+      return {
+        data: null,
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Clear cache
+   */
+  clearCache(): void {
+    this.cache.clear();
+    console.log('[DataService] Cache cleared');
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getCacheStats(): {
+    size: number;
+    entries: Array<{ key: string; source: string; age: number }>;
+  } {
+    const entries = Array.from(this.cache.entries()).map(([key, entry]) => ({
+      key,
+      source: entry.source,
+      age: Date.now() - entry.timestamp
+    }));
+
+    return {
+      size: this.cache.size,
+      entries
+    };
+  }
+
+  /**
+   * Get recent errors
+   */
+  getRecentErrors(): DataError[] {
+    return this.errors.slice(-20);
+  }
+
+  /**
+   * Update configuration
+   */
+  updateConfig(updates: Partial<DataServiceConfig>): void {
+    this.config = { ...this.config, ...updates };
+  }
+
+  /**
+   * Health check for all data sources
+   */
+  async healthCheck(): Promise<{
+    supabase: { healthy: boolean; responseTime?: number; error?: string };
+    local: { healthy: boolean; responseTime?: number; error?: string };
+  }> {
+    const results = {
+      supabase: { healthy: false, responseTime: 0, error: '' },
+      local: { healthy: false, responseTime: 0, error: '' }
+    };
+
+    // Check Supabase
+    if (DATA_CONFIG.USE_SUPABASE) {
+      const startTime = Date.now();
+      try {
+        await getSbProducts();
+        results.supabase = {
+          healthy: true,
+          responseTime: Date.now() - startTime
+        };
+      } catch (error) {
+        results.supabase = {
+          healthy: false,
+          responseTime: Date.now() - startTime,
+          error: (error as Error).message
+        };
+      }
+    }
+
+    // Check Local
+    const localStartTime = Date.now();
+    try {
+      await getLocalProducts();
+      results.local = {
+        healthy: true,
+        responseTime: Date.now() - localStartTime
+      };
+    } catch (error) {
+      results.local = {
+        healthy: false,
+        responseTime: Date.now() - localStartTime,
+        error: (error as Error).message
+      };
+    }
+
+    return results;
+  }
+}
+
+// Singleton instance
+const dataServiceOrchestrator = new DataServiceOrchestrator();
+
+// Export orchestrator methods
+export async function fetchProducts(filters?: {
+  gender?: "male" | "female" | "unisex";
+  category?: string;
+  limit?: number;
+}): Promise<DataResponse<BoltProduct[]>> {
+  return dataServiceOrchestrator.fetchProducts(filters);
+}
+
+export async function fetchOutfits(filters?: {
+  archetype?: string;
+  season?: "spring" | "summer" | "autumn" | "winter" | "all";
+  limit?: number;
+}): Promise<DataResponse<Outfit[]>> {
+  return dataServiceOrchestrator.fetchOutfits(filters);
+}
+
+export async function fetchUser(userId?: string): Promise<DataResponse<FitFiUserProfile | null>> {
+  return dataServiceOrchestrator.fetchUser(userId);
+}
+
+// Export utility methods
+export const clearCache = () => dataServiceOrchestrator.clearCache();
+export const getCacheStats = () => dataServiceOrchestrator.getCacheStats();
+export const getRecentErrors = () => dataServiceOrchestrator.getRecentErrors();
+export const healthCheck = () => dataServiceOrchestrator.healthCheck();
+export const updateConfig = (updates: Partial<DataServiceConfig>) => dataServiceOrchestrator.updateConfig(updates);
+
+// Map affiliate links to products
+function mapAffiliate(p: BoltProduct): BoltProduct {
+  if (!p?.productUrl) return p;
+  
+  try {
+    const provider = (p.provider ?? "generic") as any;
+    const enhancedUrl = buildAffiliateUrl(p.productUrl, provider);
+    
+    return { 
+      ...p, 
+      productUrl: enhancedUrl,
+      // Add tracking metadata
+      affiliateProvider: provider,
+      trackingAdded: true,
+      enhancedAt: Date.now()
+    };
+  } catch (error) {
+    console.warn(`[DataService] Failed to map affiliate for product ${p.id}:`, error);
+    return p; // Return original product if affiliate mapping fails
+  }
+}
+
+// Export singleton for direct access
+export { dataServiceOrchestrator as dataService };
