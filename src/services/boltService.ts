@@ -1,5 +1,5 @@
 // src/services/boltService.ts
-import { safeFetchWithFallback, fetchWithRetry } from '../utils/fetchUtils';
+import { safeFetchWithFallback } from '../utils/fetchUtils';
 import dutchProducts from '../data/dutchProducts';
 import { BoltProduct } from '../types/BoltProduct';
 import { generateMockBoltProducts } from '../utils/boltProductsUtils';
@@ -9,7 +9,8 @@ import { generateMockBoltProducts } from '../utils/boltProductsUtils';
  */
 const mapEndpointToFilename = (cleanEndpoint?: string): string => {
   const safe = cleanEndpoint ?? '';
-  return safe.includes('/') ? safe.split('/')[0] : safe;
+  const first = safe.includes('/') ? (safe.split('/')[0] ?? '') : safe;
+  return first;
 };
 
 // Fallback: products getransformeerd naar BoltProduct structuur

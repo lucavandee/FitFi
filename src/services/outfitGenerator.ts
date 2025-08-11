@@ -2,7 +2,7 @@ import { BoltProduct } from '../types/BoltProduct';
 import { Outfit } from '../engine';
 import { generateOutfitTitle, generateOutfitDescription } from '../engine/generateOutfitDescriptions';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
-import { getCurrentSeason } from '../engine/helpers';
+import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
 
 /**

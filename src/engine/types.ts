@@ -130,17 +130,6 @@ interface ArchetypeScoreResult {
 }
 
 /**
- * Outfit structure blueprint for each archetype
- */
-interface OutfitStructureBlueprint {
-  requiredCategories: ProductCategory[];
-  optionalCategories: ProductCategory[];
-  minItems: number;
-  maxItems: number;
-  description: string;
-}
-
-/**
  * Extended user profile with season and weather preferences
  */
 export interface ExtendedUserProfile extends UserProfile {

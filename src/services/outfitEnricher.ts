@@ -1,6 +1,7 @@
 import { Outfit } from '../engine';
 import { BoltProduct } from '../types/BoltProduct';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
+import { calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
 
 /**
