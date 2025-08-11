@@ -3,6 +3,9 @@ import { Send, Sparkles, MessageCircle, X } from 'lucide-react';
 import { routeMessage, type NovaReply, type NovaContext } from '@/ai/nova/router';
 import { useUser } from '@/context/UserContext';
 import { trackEvent } from '@/utils/analytics';
+import { routeMessage, type NovaReply, type NovaContext } from '@/ai/nova/router';
+import { useUser } from '@/context/UserContext';
+import { trackEvent } from '@/utils/analytics';
 
 export type NovaMessage = { role: 'user' | 'assistant' | 'system'; text: string; ts: number };
 
@@ -13,6 +16,7 @@ export type NovaChatProps = {
 };
 
 function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProps) {
+  const { user } = useUser();
   const [messages, setMessages] = useState<NovaMessage[]>([
     { 
       role: 'assistant', 
@@ -25,6 +29,8 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<'ready' | 'degraded' | 'error'>('ready');
   const [showOutfitSkeletons, setShowOutfitSkeletons] = useState(false);
+  const lastIntentRef = useRef<any>(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastIntentRef = useRef<any>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useUser();
@@ -40,6 +46,35 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Replay pending query after login
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    try {
+      const pending = localStorage.getItem('nova_pending_query');
+      if (pending) {
+        localStorage.removeItem('nova_pending_query');
+        setValue(pending);
+        setTimeout(() => handleSend(), 500); // Small delay for better UX
+        trackEvent('nova_replay_query', 'ai_interaction', 'pending_query_replay', 1, {
+          query_length: pending.length,
+          context: context
+        });
+      }
+    } catch (error) {
+      console.warn('[Nova] Could not replay pending query:', error);
+    }
+  }, [user?.id]);
 
   // Cleanup debounce on unmount
   useEffect(() => {
@@ -109,54 +144,27 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       lastIntentRef.current = { text, reply };
 
       // Handle different reply types
-      switch (reply.type) {
-        case 'gate':
-          setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            text: reply.text, 
-            ts: Date.now(),
-            isGate: true
-          }]);
-          break;
-          
-        case 'smalltalk':
-        case 'capabilities':
-          setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            text: reply.text, 
-            ts: Date.now() 
-          }]);
-          break;
-          
-        case 'clarify':
-          setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            text: reply.text, 
-            ts: Date.now(),
-            options: reply.options
-          }]);
-          break;
-          
-        case 'outfits':
-          // Show skeletons briefly for better UX
-          setShowOutfitSkeletons(true);
-          
-          // Small delay to show loading state
-          await new Promise(resolve => setTimeout(resolve, 300));
-          setShowOutfitSkeletons(false);
-          
-          // Format outfits as rich content
-          const outfitText = `${reply.text}\n\n${reply.outfits.map((outfit, i) => 
-            `${i + 1}. **${outfit.title}** (${outfit.matchPercentage}% match)\n   ${outfit.description}`
-          ).join('\n\n')}`;
-          
-          setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            text: outfitText, 
-            ts: Date.now(),
-            outfits: reply.outfits
-          }]);
-          break;
+      if (reply.type === 'gate') {
+        // Add gate message with CTA
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          text: reply.text, 
+          ts: Date.now(),
+          isGate: true
+        }]);
+        
+        // Track gate interaction
+        trackEvent('nova_gate_shown', 'ai_interaction', 'authentication_gate', 1, {
+          user_query: text,
+          context: context
+        });
+      } else {
+        // Regular text response
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          text: reply.text, 
+          ts: Date.now() 
+        }]);
       }
 
       trackEvent('nova_response_generated', 'ai_interaction', 'assistant_response', 1, {
@@ -250,6 +258,24 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       });
     }, 200);
   };
+  
+  const handleQuickSuggestion = (suggestion: string) => {
+    // Debounce to prevent double-taps
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      setValue(suggestion);
+      inputRef.current?.focus();
+      
+      // Track quick suggestion usage
+      trackEvent('nova_quick_suggestion', 'ai_interaction', 'suggestion_clicked', 1, {
+        suggestion_text: suggestion,
+        context: context
+      });
+    }, 200);
+  };
   const quickSuggestions = [
     'Zomerse outfit in beige',
     'Smart casual voor kantoor',
@@ -313,6 +339,42 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
                 ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700'
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
             }`}>
+              {/* Gate Message with CTA */}
+              {(message as any).isGate ? (
+                <div>
+                  <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed mb-4">
+                    {message.text}
+                  </div>
+                  
+                  {/* CTA Button */}
+                  <a
+                    href="/inloggen?returnTo=/feed"
+                    onClick={() => trackEvent('nova_gate_cta_click', 'conversion', 'authentication_gate', 1, {
+                      context: context,
+                      user_query: lastIntentRef.current?.text
+                    })}
+                    className="inline-flex items-center px-4 py-2 bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-xl font-medium transition-colors"
+                  >
+                    Log in of maak account
+                  </a>
+                  
+                  {/* Preview Teaser */}
+                  <div className="mt-4 p-3 bg-white/10 rounded-xl border border-white/20">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Preview van wat je krijgt:</div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
+                          <span className="text-xs text-gray-500">Outfit {i}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                  {message.text}
+                </div>
+              )}
               <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
                 {message.text}
               </div>
