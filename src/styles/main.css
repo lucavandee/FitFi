@@ -27,6 +27,38 @@ div[id] {
   overflow: hidden;
 }
 
+/* Nova Chat Styling */
+.nova-composer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.nova-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.nova-send {
+  flex: 0 0 auto;
+}
+
+.nova-bubble {
+  max-width: 360px;
+  width: min(92vw, 360px);
+}
+
+/* Portal pointer events fix */
+#nova-root {
+  pointer-events: none;
+}
+
+#nova-root > * {
+  pointer-events: auto;
+}
+
 /* Quiz animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
