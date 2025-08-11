@@ -1,83 +1,75 @@
-import React, { useMemo, useState } from "react";
-import { isValidImageUrl, getFallbackImage } from "@/utils/imageUtils";
-import { curatedImage } from "../../assets/curatedImages";
+import React, { useState, useMemo } from 'react';
+import { getSafeImageUrl, getFallbackImageForCategory } from '@/utils/imageUtils';
 
-type ImageWithFallbackProps = {
-  src?: string | null;
-  alt?: string;
+type Props = { 
+  src?: string; 
+  alt: string; 
+  category?: string; 
   className?: string;
-  width?: number;
-  height?: number;
-  fallbackSrc?: string;
-  fallbackKey?: string; // For curated fallback selection
   onClick?: React.ImgHTMLAttributes<HTMLImageElement>["onClick"];
   style?: React.CSSProperties;
   componentName?: string;
   onError?: (originalSrc: string) => void;
   fallback?: string;
+  width?: number;
+  height?: number;
+  fallbackSrc?: string;
+  fallbackKey?: string;
 };
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
-  src,
-  alt = "Outfit afbeelding",
+const ImageWithFallback: React.FC<Props> = ({ 
+  src, 
+  alt, 
+  category, 
   className,
-  width,
-  height,
-  fallbackSrc,
-  fallback,
-  fallbackKey,
   onClick,
   style,
   componentName,
   onError,
+  fallback,
+  width,
+  height,
+  fallbackSrc,
+  fallbackKey
 }) => {
-  const computedFallback = useMemo(
-    () => {
-      if (fallback) return fallback;
-      if (fallbackSrc) return fallbackSrc;
-      
-      // Use curated image if fallbackKey is provided
-      if (fallbackKey) {
-        try {
-          // Parse fallbackKey format: "archetype-season" or use defaults
-          const [archetype = 'casual_chic', season = 'herfst'] = fallbackKey.split('-');
-          return curatedImage(archetype, season);
-        } catch (error) {
-          console.warn('Failed to get curated image, using generic fallback:', error);
-        }
-      }
-      
-      return getFallbackImage(width ?? 600, height ?? 800);
-    },
-    [fallback, fallbackSrc, fallbackKey, width, height]
-  );
+  const initial = useMemo(() => {
+    // Priority order: fallback prop > fallbackSrc > getSafeImageUrl > category fallback
+    if (fallback) return fallback;
+    if (fallbackSrc) return fallbackSrc;
+    return getSafeImageUrl(src, category);
+  }, [src, category, fallback, fallbackSrc]);
+  
+  const [current, setCurrent] = useState(initial);
+  const [hasErrored, setHasErrored] = useState(false);
 
-  const [currentSrc, setCurrentSrc] = useState<string>(
-    isValidImageUrl(src) ? (src as string) : computedFallback
-  );
-
-  const handleError: React.ReactEventHandler<HTMLImageElement> = () => {
-    if (currentSrc !== computedFallback) {
+  const handleError = () => {
+    if (!hasErrored) {
+      setHasErrored(true);
       if (onError && src) {
         onError(src);
       }
-      setCurrentSrc(computedFallback);
+      setCurrent(getFallbackImageForCategory(category));
     }
   };
 
+  // Add Unsplash optimization if URL is from Unsplash
+  const optimizedSrc = current.includes('images.unsplash.com') && !current.includes('?')
+    ? `${current}?auto=format&fit=crop&w=960&q=75`
+    : current;
+
   return (
     <img
-      src={currentSrc}
+      src={optimizedSrc}
       alt={alt}
-      width={width}
-      height={height}
-      className={className}
       loading="lazy"
       decoding="async"
       fetchPriority="low"
       onError={handleError}
+      srcSet={`${optimizedSrc} 1x, ${optimizedSrc} 2x`}
+      sizes="(max-width: 640px) 100vw, 512px"
       onClick={onClick}
       style={style}
+      className={className}
     />
   );
 };
