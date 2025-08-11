@@ -351,14 +351,16 @@ class AdvancedAnalytics {
         .limit(100);
 
       // Calculate predictive scores
-      const churnProbability = this.calculateChurnProbability(behaviorData, funnelData);
-      const purchaseProbability = this.calculatePurchaseProbability(behaviorData, funnelData);
-      const engagementScore = this.calculateEngagementScore(behaviorData);
-      const styleConfidence = this.calculateStyleConfidence(behaviorData);
-      const predictedLTV = this.calculatePredictedLTV(behaviorData, funnelData);
+      const safeBehaviorData = behaviorData ?? [];
+      const safeFunnelData = funnelData ?? [];
+      const churnProbability = this.calculateChurnProbability(safeBehaviorData, safeFunnelData);
+      const purchaseProbability = this.calculatePurchaseProbability(safeBehaviorData, safeFunnelData);
+      const engagementScore = this.calculateEngagementScore(safeBehaviorData);
+      const styleConfidence = this.calculateStyleConfidence(safeBehaviorData);
+      const predictedLTV = this.calculatePredictedLTV(safeBehaviorData, safeFunnelData);
 
       const model: PredictiveModel = {
-        user_id: this.userId,
+        user_id: this.userId || '',
         churn_probability: churnProbability,
         purchase_probability: purchaseProbability,
         engagement_score: engagementScore,
@@ -744,7 +746,7 @@ class AdvancedAnalytics {
       // Save session recording
       const sessionRecording: SessionRecording = {
         id: this.sessionId,
-        user_id: this.userId,
+        user_id: this.userId || '',
         session_id: this.sessionId,
         page_url: this.currentPage,
         duration: Date.now() - this.sessionStartTime,
@@ -841,7 +843,7 @@ class AdvancedAnalytics {
 export const advancedAnalytics = new AdvancedAnalytics();
 
 // Hook for React components
-const useAdvancedAnalytics = () => {
+const _useAdvancedAnalytics = () => {
   return advancedAnalytics;
 };
 

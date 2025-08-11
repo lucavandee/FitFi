@@ -319,7 +319,7 @@ const getGamificationSafe = async (userId: string) => {
 /**
  * Fetch user achievements with proper error handling
  */
-async function fetchUserAchievements(userId: string) {
+async function _fetchUserAchievements(userId: string) {
   if (!isValidUUID(userId)) {
     throw new Error('Invalid user ID format');
   }
