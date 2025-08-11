@@ -50,6 +50,7 @@ const SuccessStoriesPage = React.lazy(() => import('@/pages/SuccessStoriesPage')
 const OutfitsPage = React.lazy(() => import('@/pages/OutfitsPage'));
 const GamificationPage = React.lazy(() => import('@/pages/GamificationPage'));
 const AnalyticsPage =  React.lazy(() => import('@/pages/AnalyticsPage'));
+const FeedPage = React.lazy(() => import('@/pages/FeedPage'));
 
 // NotFound component
 const NotFound: React.FC = () => (
@@ -160,6 +161,11 @@ function App() {
                       <Route path="/analytics" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                           <AnalyticsPage />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/feed" element={
+                        <ProtectedRoute>
+                          <FeedPage />
                         </ProtectedRoute>
                       } />
                       <Route path="/tribes" element={
