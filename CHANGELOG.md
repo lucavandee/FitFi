@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.6.1] - 2025-01-28
+
+### Data Service Layer (no scrapers)
+- Added config-driven data layer with Supabase priority and local JSON fallback
+- Introduced Affiliate Link Builder with UTM support for all product links
+- Added typed hooks: useProducts, useOutfits, useFitFiUser for unified data access
+- Non-breaking refactor: components now consume unified hooks with same data format
+- Enhanced error handling with graceful degradation to local JSON files
+- Added comprehensive caching layer with TTL and automatic cleanup
+- Implemented source tracking (Supabase/local/fallback) for debugging
+- Added health monitoring and cache statistics for production observability
+
+### Configuration
+- Added VITE_USE_SUPABASE environment variable (defaults to false)
+- Enhanced .env.example with data service configuration options
+- Zero-error guarantee: app loads with local JSON when Supabase unavailable
+
 ## [1.6.0] - 2025-01-28
 
 ### Added
