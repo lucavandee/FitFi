@@ -110,5 +110,10 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMo
       </div>
     </article>
   );
-}
-)
+});
+
+// Named export for backwards compatibility
+export { OutfitCard };
+
+// Default export for standard imports
+export default OutfitCard;
