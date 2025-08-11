@@ -1,12 +1,9 @@
 import { Product, Outfit, Season, ProductCategory, OutfitGenerationOptions, Weather, CategoryRatio, VariationLevel } from './types';
-import { calculateMatchScore } from './calculateMatchScore';
 import { generateOutfitTitle, generateOutfitDescription } from './generateOutfitDescriptions';
 import { generateOutfitExplanation } from './explainOutfit';
 import { 
   getCurrentSeason, 
-  isProductInSeason, 
   getProductCategory, 
-  isProductCategory,
   isProductSuitableForWeather,
   getTypicalWeatherForSeason
 } from './helpers';
@@ -33,7 +30,13 @@ const OPTIONAL_CATEGORIES = [
  */
 const SUBSTITUTE_CATEGORIES: Record<ProductCategory, ProductCategory[]> = {
   [ProductCategory.DRESS]: [ProductCategory.TOP, ProductCategory.BOTTOM],
-  [ProductCategory.JUMPSUIT]: [ProductCategory.TOP, ProductCategory.BOTTOM]
+  [ProductCategory.JUMPSUIT]: [ProductCategory.TOP, ProductCategory.BOTTOM],
+  [ProductCategory.TOP]: [],
+  [ProductCategory.BOTTOM]: [],
+  [ProductCategory.FOOTWEAR]: [],
+  [ProductCategory.ACCESSORY]: [],
+  [ProductCategory.OUTERWEAR]: [],
+  [ProductCategory.OTHER]: []
 };
 
 /**
@@ -252,18 +255,20 @@ function generateOutfits(
   }
 
   // Get current season or use preferred season if specified
-  const currentSeason = preferredSeasons && preferredSeasons.length > 0 
+  const currentSeason: Season = (preferredSeasons && preferredSeasons.length > 0 
     ? preferredSeasons[0] 
-    : getCurrentSeason();
+    : getCurrentSeason()) as Season;
   
   console.log("Active season:", currentSeason);
   
   // Determine weather if not specified
-  const activeWeather = weather || getTypicalWeatherForSeason(currentSeason);
+  const activeWeather = weather ?? getTypicalWeatherForSeason(currentSeason);
   console.log("Active weather:", activeWeather);
   
   // Filter products by season
-  const seasonalProducts = products.filter(product => isProductInSeason(product, currentSeason));
+  const seasonalProducts = products.filter(product => 
+    !product.season || product.season.includes(currentSeason)
+  );
   console.log("Products suitable for season:", seasonalProducts.length);
   
   // Further filter by weather if specified
@@ -311,11 +316,11 @@ function generateOutfits(
   
   // Generate one outfit per occasion, up to the requested count
   const outfits: Outfit[] = [];
-  let attemptsPerOccasion: Record<string, number> = {};
+  const attemptsPerOccasion: Record<string, number> = {};
   
   for (let i = 0; i < Math.min(count, occasions.length); i++) {
-    const occasion = occasions[i];
-    attemptsPerOccasion[occasion] = 0;
+    const occ = occasions[i] ?? 'casual';
+    attemptsPerOccasion[occ] = attemptsPerOccasion[occ] ?? 0;
     
     let outfit: Outfit | null = null;
     let attempts = 0;
@@ -323,12 +328,12 @@ function generateOutfits(
     // Try to generate a unique outfit for this occasion
     while (!outfit && attempts < maxAttempts) {
       attempts++;
-      attemptsPerOccasion[occasion]++;
+      attemptsPerOccasion[occ]++;
       
       const generatedOutfit = generateOutfitForOccasion(
         primaryArchetype, 
         productsToUse, 
-        occasion, 
+        occ, 
         currentSeason,
         activeWeather,
         secondaryArchetype,
@@ -342,14 +347,14 @@ function generateOutfits(
       if (generatedOutfit && !excludeIds.includes(generatedOutfit.id)) {
         outfit = generatedOutfit;
       } else if (generatedOutfit) {
-        console.log(`Outfit ${generatedOutfit.id} already shown, trying again (attempt ${attempts}/${maxAttempts})`);
+        console.log(`Outfit already shown, trying again (attempt ${attempts}/${maxAttempts})`);
       }
     }
     
     if (outfit) {
       outfits.push(outfit);
     } else {
-      console.warn(`Failed to generate unique outfit for occasion ${occasion} after ${attempts} attempts`);
+      console.warn(`Failed to generate unique outfit for occasion ${occ} after ${attempts} attempts`);
     }
   }
 
@@ -814,7 +819,9 @@ function selectProductForCategory(
   // Log the top product's scores
   if (scoredProducts.length > 0) {
     const top = scoredProducts[0];
-    console.log(`Selected ${category} product: ${top.product.name} - Primary score: ${top.primaryScore.toFixed(2)}, Secondary score: ${top.secondaryScore.toFixed(2)}, Combined: ${top.combinedScore.toFixed(2)}`);
+    if (top) {
+      console.log(`Selected ${category} product: ${top.product.name} - Primary ${top.primaryScore.toFixed(2)} - Secondary ${top.secondaryScore.toFixed(2)} - Combined ${top.combinedScore.toFixed(2)}`);
+    }
   }
   
   // Return the product with the highest combined score
@@ -905,17 +912,18 @@ function generateTags(
   const secondaryCount = totalArchetypeTags - primaryCount;
   
   // Combine tags from archetypes, occasion, and season
-  const combinedTags = [
+  const rawTags = [
     ...primaryTags.slice(0, primaryCount),
     ...secondaryTags
       .filter(tag => !primaryTags.includes(tag)) // Ensure uniqueness
       .slice(0, secondaryCount),
-    ...(occasionTags[occasion] || []),
-    ...(seasonTags[season] || []),
+    ...(occasionTags[occasion] ?? []),
+    ...(seasonTags[season] ?? []),
     completenessTags[Math.floor(Math.random() * completenessTags.length)]
   ];
   
-  // Remove duplicates and return
+  // Filter strings and remove duplicates
+  const combinedTags = rawTags.filter((t): t is string => typeof t === 'string');
   return Array.from(new Set(combinedTags));
 }
 

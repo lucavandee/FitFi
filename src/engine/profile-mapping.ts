@@ -1,4 +1,5 @@
 import { StylePreferences } from './types';
+// @ts-expect-error typed via ambient d.ts
 import { DUTCH_ARCHETYPES, mapAnswersToArchetype } from '../config/profile-mapping.js';
 
 /**
