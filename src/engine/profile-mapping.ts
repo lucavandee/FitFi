@@ -32,17 +32,30 @@ export function analyzeUserProfile(stylePreferences: StylePreferences): ProfileA
   // Sort by score (highest first)
   archetypeScores.sort((a, b) => b.score - a.score);
   
+  // Default profile for when no scores are available
+  const defaultProfile: ProfileAnalysisResult = {
+    dominantArchetype: 'casual_chic',
+    secondaryArchetype: 'klassiek',
+    mixFactor: 0.3,
+    archetypeScores: []
+  };
+  
+  // Guard against empty or undefined scores
+  if (!archetypeScores?.length) {
+    return defaultProfile;
+  }
+  
   // Get dominant and secondary archetypes
-  const dominantArchetype = archetypeScores[0]?.archetype || 'casual_chic';
-  const secondaryArchetype = archetypeScores[1]?.archetype || 'klassiek';
+  const dominantArchetype = archetypeScores[0]?.archetype ?? 'casual_chic';
+  const secondaryArchetype = archetypeScores[1]?.archetype ?? 'klassiek';
   
   // Calculate mix factor (how much the secondary influences)
   // If dominant score is much higher, mix factor is low
   // If scores are close, mix factor is high
   let mixFactor = 0;
   if (archetypeScores.length >= 2) {
-    const dominantScore = archetypeScores[0].score;
-    const secondaryScore = archetypeScores[1].score;
+    const dominantScore = archetypeScores[0]?.score ?? 0;
+    const secondaryScore = archetypeScores[1]?.score ?? 0;
     
     if (dominantScore > 0) {
       mixFactor = Math.min(secondaryScore / dominantScore, 1);
@@ -212,9 +225,10 @@ function determineSecondaryArchetype(answers: Record<string, any>, primaryArchet
     }
   }
   
-  // If we have occasion preferences, use those to influence secondary
-  if (answers.occasion && Array.isArray(answers.occasion)) {
-    // Map occasions to archetypes
+    const structureItems = structure.filter((item): item is string => typeof item === 'string');
+    const structureDescription = structureItems
+      .map(category => structureDescriptions[category] || 'item')
+      .join(', ');
     const occasionMapping: Record<string, string> = {
       'work': 'klassiek',
       'formal': 'luxury',
