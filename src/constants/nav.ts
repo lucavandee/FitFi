@@ -1,5 +1,5 @@
 import { Home, Info, HelpCircle, DollarSign, BookOpen, ShoppingBag, User, LogIn } from 'lucide-react';
-import { Users } from 'lucide-react';
+import { Users, Rss } from 'lucide-react';
 
 interface NavLink {
   label: string;
@@ -18,6 +18,7 @@ export const NAV_ITEMS: NavLink[] = [
   { label: 'Aanbevelingen', href: '/results', icon: ShoppingBag },
   { label: 'Outfits', href: '/outfits', icon: ShoppingBag },
   { label: 'Tribes', href: '/tribes', icon: Users },
+  { label: 'Feed', href: '/feed', icon: Rss },
   { label: 'Blog', href: '/blog', icon: BookOpen },
   { label: 'Inloggen', href: '/inloggen', icon: LogIn },
   { label: 'Dashboard', href: '/dashboard', icon: User }
