@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
-import FullPageSpinner from '@/components/ui/FullPageSpinner';
 
 type Props = {
   children: React.ReactNode;
@@ -9,20 +8,23 @@ type Props = {
   allowedRoles?: string[];
 };
 
-const ProtectedRoute: React.FC<Props> = ({ children, redirectTo = '/login', allowedRoles }) => {
-  const { status, user } = useUser();
+export function ProtectedRoute({ children, redirectTo = '/login', allowedRoles }: Props) {
+  const { user, status } = useUser();
   const location = useLocation();
 
   if (status === 'loading') {
-    return <FullPageSpinner label="Authenticatie controleren…" delayMs={250} />;
+    return <div className="min-h-[50vh] grid place-items-center text-sm opacity-70">Authenticatie controleren…</div>;
   }
-  if (status === 'unauthenticated') {
+
+  if (status === 'unauthenticated' || !user) {
     return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
+
   if (allowedRoles && !allowedRoles.includes(user?.role ?? '')) {
     return <Navigate to="/" replace />;
   }
+
   return <>{children}</>;
-};
+}
 
 export default ProtectedRoute;
