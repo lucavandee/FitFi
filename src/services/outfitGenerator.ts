@@ -5,6 +5,7 @@ import { colorLabel } from '../utils/color';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
 import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
 import { getSafeImageUrl } from '../utils/image';
+import { getSafeImageUrl } from '../utils/image';
 import { curatedImage } from '../assets/curatedImages';
 
 /**
@@ -330,7 +331,7 @@ function createOutfit(
   ];
   
   // Get outfit image - use product image or curated image
-  const imageUrl = firstProduct?.imageUrl || curatedImage(archetype as any, season as any);
+  const imageUrl = getSafeImageUrl(firstProduct?.imageUrl) || curatedImage(archetype as any, season as any);
   
   // Count fallback images
   let fallbackImageCount = 0;
