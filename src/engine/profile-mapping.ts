@@ -225,10 +225,8 @@ function determineSecondaryArchetype(answers: Record<string, any>, primaryArchet
     }
   }
   
-    const structureItems = structure.filter((item): item is string => typeof item === 'string');
-    const structureDescription = structureItems
-      .map(category => structureDescriptions[category] || 'item')
-      .join(', ');
+  // Check occasion preferences
+  if (answers.occasion && Array.isArray(answers.occasion)) {
     const occasionMapping: Record<string, string> = {
       'work': 'klassiek',
       'formal': 'luxury',
