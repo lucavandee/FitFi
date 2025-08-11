@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/Seo';
 import { Check, Star, ArrowRight, Sparkles, Crown, Zap } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -79,14 +80,13 @@ const PricingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F6F6F6]">
-      <Helmet>
-        <title>Prijzen - Kies je FitFi abonnement | FitFi</title>
-        <meta name="description" content="Kies het FitFi abonnement dat bij je past. Basic gratis, Premium €29/maand, Pro €79/jaar. 14 dagen gratis proberen." />
-        <meta property="og:title" content="Prijzen - Kies je FitFi abonnement" />
-        <meta property="og:description" content="Basic gratis, Premium €29/maand, Pro €79/jaar. 14 dagen gratis proberen." />
-        <meta property="og:image" content="https://fitfi.app/og-pricing.jpg" />
-        <link rel="canonical" href="https://fitfi.app/prijzen" />
-      </Helmet>
+      <Seo 
+        title="Prijzen - Kies je FitFi abonnement"
+        description="Kies het FitFi abonnement dat bij je past. Basic gratis, Premium €29/maand, Pro €79/jaar. 14 dagen gratis proberen."
+        canonical="https://fitfi.app/prijzen"
+        image="https://fitfi.app/og-pricing.jpg"
+        keywords="FitFi prijzen, abonnement kosten, premium styling, gratis stijladvies, fashion subscription"
+      />
 
       <section className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
         

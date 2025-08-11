@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/Seo';
 import { 
   Search, 
   Calendar, 
@@ -80,14 +81,14 @@ const BlogIndexPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F6F6F6]">
-      <Helmet>
-        <title>Blog - Styling Tips & Mode Trends | FitFi</title>
-        <meta name="description" content="Ontdek de laatste styling tips, mode trends en persoonlijke groei-inzichten op de FitFi blog. Van psychologie tot praktische stijladvies." />
-        <meta property="og:title" content="Blog - Styling Tips & Mode Trends" />
-        <meta property="og:description" content="Styling tips, mode trends en persoonlijke groei-inzichten op de FitFi blog." />
-        <meta property="og:image" content="https://fitfi.app/og-blog.jpg" />
-        <link rel="canonical" href="https://fitfi.app/blog" />
-      </Helmet>
+      <Seo 
+        title="Blog - Styling Tips & Mode Trends"
+        description="Ontdek de laatste styling tips, mode trends en persoonlijke groei-inzichten op de FitFi blog. Van psychologie tot praktische stijladvies."
+        canonical="https://fitfi.app/blog"
+        image="https://fitfi.app/og-blog.jpg"
+        keywords="styling tips, mode trends, fashion blog, stijl advies, persoonlijke groei, mode psychologie"
+        type="website"
+      />
 
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Hero Section */}
