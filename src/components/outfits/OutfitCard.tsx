@@ -110,3 +110,5 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMo
       </div>
     </article>
   );
+}
+)
