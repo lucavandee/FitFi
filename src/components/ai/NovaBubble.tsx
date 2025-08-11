@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AppPortal from '../layout/AppPortal';
-import { lazyComponent } from '../../utils/lazy';
+import { lazyComponent } from '@/utils/lazy';
+
+// DEV fallback: static import for quicker feedback if lazy breaks
+import NovaChatSync from './NovaChat';
 
 // Hardened lazy loading with proper error handling
-const NovaChatLazy = lazyComponent(() => import('./NovaChat'), 'default');
+const NovaChatLazy = lazyComponent(() => import('./NovaChat'));
+
+// Choose which one to render (helps during active development)
+const ChatImpl = import.meta.env.DEV ? NovaChatSync : NovaChatLazy;
 
 interface NovaBubbleProps {
   className?: string;
@@ -210,7 +216,7 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
               <div className="w-8 h-8 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin"></div>
             </div>
           }>
-            <NovaChatLazy 
+            <ChatImpl 
               onClose={() => setIsOpen(false)}
               context="general"
               className="h-full"
