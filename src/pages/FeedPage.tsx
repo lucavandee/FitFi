@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import Seo from '@/components/Seo';
 import { useOutfits } from '@/hooks/useOutfits';
 import { useUser } from '@/context/UserContext';
 import { useQuizAnswers } from '@/hooks/useQuizAnswers';
@@ -231,6 +232,13 @@ export default function FeedPage() {
   }
 
   return (
+    <>
+      <Seo 
+        title="Style Feed - Gepersonaliseerde Outfit Aanbevelingen"
+        description="Ontdek jouw perfecte outfits met AI-powered aanbevelingen. Gepersonaliseerde style feed gebaseerd op jouw unieke stijlprofiel."
+        canonical="https://fitfi.app/feed"
+        keywords="outfit aanbevelingen, style feed, AI fashion, gepersonaliseerde mode, outfit inspiratie"
+      />
     <div className="container mx-auto p-4">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-light text-[#0D1B2A] mb-2">Jouw Style Feed</h1>
@@ -323,5 +331,6 @@ export default function FeedPage() {
         </div>
       )}
     </div>
+    </>
   );
 }
