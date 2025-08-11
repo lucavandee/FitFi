@@ -9,7 +9,7 @@ const ANALYTICS_ENABLED = import.meta.env.VITE_ENABLE_ANALYTICS === 'true';
 /**
  * Record event with test data marking
  */
-export const recordEvent = (
+const recordEvent = (
   eventData: any,
   isTest: boolean = import.meta.env.DEV
 ): void => {
@@ -82,7 +82,7 @@ export const initializeAnalytics = (): void => {
 /**
  * Track page views
  */
-export const trackPageView = (page_path: string, page_title?: string): void => {
+const trackPageView = (page_path: string, page_title?: string): void => {
   if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
 
   window.gtag('config', GA_TRACKING_ID as string, {
@@ -124,7 +124,7 @@ export const trackEvent = (
 /**
  * Track quiz completion
  */
-export const trackQuizComplete = (
+const trackQuizComplete = (
   duration: number,
   archetype: string,
   gender: string
@@ -139,7 +139,7 @@ export const trackQuizComplete = (
 /**
  * Track outfit view
  */
-export const trackOutfitView = (
+const trackOutfitView = (
   outfit_id: string,
   archetype: string,
   match_percentage: number
@@ -153,7 +153,7 @@ export const trackOutfitView = (
 /**
  * Track product click
  */
-export const trackProductClick = (
+const trackProductClick = (
   product_id: string,
   product_name: string,
   price: number,
@@ -171,7 +171,7 @@ export const trackProductClick = (
 /**
  * Track user registration
  */
-export const trackUserRegistration = (method: string): void => {
+const trackUserRegistration = (method: string): void => {
   trackEvent('sign_up', 'user', method, undefined, {
     method
   });
@@ -180,7 +180,7 @@ export const trackUserRegistration = (method: string): void => {
 /**
  * Track conversion events
  */
-export const trackConversion = (
+const trackConversion = (
   conversion_type: 'premium_upgrade' | 'quiz_complete' | 'outfit_save',
   value?: number
 ): void => {
@@ -192,7 +192,7 @@ export const trackConversion = (
 /**
  * Track funnel step completion
  */
-export const trackFunnelStep = (
+const trackFunnelStep = (
   funnelType: string,
   stepId: string,
   stepOrder: number,
@@ -209,7 +209,7 @@ export const trackFunnelStep = (
 /**
  * Track heatmap interaction
  */
-export const trackHeatmapInteraction = (
+const trackHeatmapInteraction = (
   interactionType: 'click' | 'hover' | 'scroll',
   element: string,
   coordinates?: { x: number; y: number },
@@ -226,7 +226,7 @@ export const trackHeatmapInteraction = (
 /**
  * Track predictive model insights
  */
-export const trackPredictiveInsight = (
+const trackPredictiveInsight = (
   insightType: string,
   confidence: number,
   action: string,
@@ -240,16 +240,3 @@ export const trackPredictiveInsight = (
   });
 };
 
-export default {
-  initializeAnalytics,
-  trackPageView,
-  trackEvent,
-  trackQuizComplete,
-  trackOutfitView,
-  trackProductClick,
-  trackUserRegistration,
-  trackConversion,
-  trackFunnelStep,
-  trackHeatmapInteraction,
-  trackPredictiveInsight
-};

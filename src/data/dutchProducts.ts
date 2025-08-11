@@ -267,26 +267,26 @@ const dutchProducts = [
 ];
 
 // Helper function to get products by category
-export const getProductsByCategory = (category: string) => {
+const getProductsByCategory = (category: string) => {
   return dutchProducts.filter(product => product.category === category || product.type === category);
 };
 
 // Helper function to get products by style tags
-export const getProductsByStyle = (style: string) => {
+const getProductsByStyle = (style: string) => {
   return dutchProducts.filter(product => 
     product.styleTags && product.styleTags.includes(style)
   );
 };
 
 // Helper function to get products by season
-export const getProductsBySeason = (season: string) => {
+const getProductsBySeason = (season: string) => {
   return dutchProducts.filter(product => 
     product.season && product.season.includes(season)
   );
 };
 
 // Helper function to get products suitable for weather
-export const getProductsByWeather = (weather: string) => {
+const getProductsByWeather = (weather: string) => {
   // Map weather conditions to seasons
   const weatherToSeasons: Record<string, string[]> = {
     'cold': ['winter', 'autumn'],

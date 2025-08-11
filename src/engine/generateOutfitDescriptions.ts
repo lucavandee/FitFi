@@ -215,7 +215,7 @@ export function generateOutfitDescription(
  * @param mixFactor - How much influence the secondary archetype has (0-1)
  * @returns Generated explanation
  */
-export function generateExplanation(
+function generateExplanation(
   primaryArchetype: string, 
   occasion: string, 
   products: Product[],
@@ -324,8 +324,3 @@ function getArchetypeAdjective(archetype: string): string {
   return adjectiveMap[archetype] || archetype;
 }
 
-export default {
-  generateOutfitTitle,
-  generateOutfitDescription,
-  generateExplanation
-};

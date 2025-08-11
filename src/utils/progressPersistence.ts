@@ -3,7 +3,7 @@
  * Saves and restores quiz progress to prevent data loss
  */
 
-export interface QuizProgress {
+interface QuizProgress {
   currentStep: number;
   totalSteps: number;
   answers: Record<string, any>;
@@ -13,7 +13,7 @@ export interface QuizProgress {
   version: string;
 }
 
-export interface OnboardingProgress {
+interface OnboardingProgress {
   currentStep: string;
   completedSteps: string[];
   data: Record<string, any>;
@@ -60,7 +60,7 @@ function isDataValid(timestamp: number): boolean {
 /**
  * Save quiz progress
  */
-export function saveQuizProgress(
+function saveQuizProgress(
   currentStep: number,
   totalSteps: number,
   answers: Record<string, any>
@@ -97,7 +97,7 @@ export function saveQuizProgress(
 /**
  * Load quiz progress
  */
-export function loadQuizProgress(): QuizProgress | null {
+function loadQuizProgress(): QuizProgress | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.QUIZ_PROGRESS);
     if (!stored) return null;
@@ -142,7 +142,7 @@ export function loadQuizProgress(): QuizProgress | null {
 /**
  * Clear quiz progress
  */
-export function clearQuizProgress(): void {
+function clearQuizProgress(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
     console.log('[📱 ProgressPersistence] Quiz progress cleared');
@@ -243,7 +243,7 @@ export function loadOnboardingProgress(): OnboardingProgress | null {
 /**
  * Check if onboarding context has valid data to prevent overwriting
  */
-export function shouldLoadSavedProgress(currentContextData: any): boolean {
+function shouldLoadSavedProgress(currentContextData: any): boolean {
   // Only load saved progress if context is empty or has minimal data
   const hasValidContextData = currentContextData && (
     currentContextData.gender || 
@@ -257,7 +257,7 @@ export function shouldLoadSavedProgress(currentContextData: any): boolean {
 /**
  * Clear onboarding progress
  */
-export function clearOnboardingProgress(): void {
+function clearOnboardingProgress(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.ONBOARDING_PROGRESS);
     console.log('[📱 ProgressPersistence] Onboarding progress cleared');
@@ -269,7 +269,7 @@ export function clearOnboardingProgress(): void {
 /**
  * Check if user has any saved progress
  */
-export function hasSavedProgress(): {
+function hasSavedProgress(): {
   hasQuizProgress: boolean;
   hasOnboardingProgress: boolean;
   mostRecentType: 'quiz' | 'onboarding' | null;
@@ -311,7 +311,7 @@ export function hasSavedProgress(): {
 /**
  * Get progress recovery options for user
  */
-export function getRecoveryOptions(): {
+function getRecoveryOptions(): {
   canRecover: boolean;
   options: Array<{
     type: 'quiz' | 'onboarding';
@@ -378,14 +378,3 @@ export function setupAutoSave(): void {
   }, 30000);
 }
 
-export default {
-  saveQuizProgress,
-  loadQuizProgress,
-  clearQuizProgress,
-  saveOnboardingProgress,
-  loadOnboardingProgress,
-  clearOnboardingProgress,
-  hasSavedProgress,
-  getRecoveryOptions,
-  setupAutoSave
-};

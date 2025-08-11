@@ -5,7 +5,7 @@
 /**
  * Preload critical resources
  */
-export const preloadCriticalResources = (): void => {
+const preloadCriticalResources = (): void => {
   // Preload critical fonts
   const fontPreloads = [
     'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
@@ -38,7 +38,7 @@ export const preloadCriticalResources = (): void => {
 /**
  * Lazy load non-critical resources
  */
-export const lazyLoadResources = (): void => {
+const lazyLoadResources = (): void => {
   // Lazy load analytics
   if (typeof window !== 'undefined' && import.meta.env.VITE_GTAG_ID) {
     setTimeout(() => {
@@ -53,7 +53,7 @@ export const lazyLoadResources = (): void => {
 /**
  * Optimize bundle loading with prefetch hints
  */
-export const addPrefetchHints = (): void => {
+const addPrefetchHints = (): void => {
   const prefetchRoutes = [
     '/onboarding',
     '/quiz',
@@ -72,7 +72,7 @@ export const addPrefetchHints = (): void => {
 /**
  * Monitor Core Web Vitals
  */
-export const monitorWebVitals = (): void => {
+const monitorWebVitals = (): void => {
   if (typeof window === 'undefined') return;
 
   // Monitor LCP (Largest Contentful Paint)
@@ -130,7 +130,7 @@ export const monitorWebVitals = (): void => {
 /**
  * Optimize images with Intersection Observer
  */
-export const setupImageLazyLoading = (): void => {
+const setupImageLazyLoading = (): void => {
   if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
 
   const imageObserver = new IntersectionObserver((entries) => {
@@ -180,11 +180,3 @@ export const initializePerformanceOptimizations = (): void => {
   });
 };
 
-export default {
-  preloadCriticalResources,
-  lazyLoadResources,
-  addPrefetchHints,
-  monitorWebVitals,
-  setupImageLazyLoading,
-  initializePerformanceOptimizations
-};

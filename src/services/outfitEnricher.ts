@@ -45,7 +45,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
  * @param products - Array of BoltProducts to use
  * @returns Enriched outfit
  */
-export function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): Outfit {
+function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): Outfit {
   // Filter products by gender based on outfit archetype
   // For simplicity, we'll assume female for all outfits
   const genderProducts = products.filter(product => product.gender === 'female');

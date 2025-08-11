@@ -68,6 +68,6 @@ export const getEarnedAchievements = (answers: any, metadata: any = {}): Achieve
   return achievements.filter(achievement => achievement.condition(answers, metadata));
 };
 
-export const getAchievementById = (id: string): Achievement | undefined => {
+const getAchievementById = (id: string): Achievement | undefined => {
   return achievements.find(achievement => achievement.id === id);
 };
