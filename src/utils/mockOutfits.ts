@@ -1,5 +1,5 @@
 import dutchProducts from '@/data/dutchProducts';
-import { getSafeImageUrl } from '@/utils/image';
+import { getSafeImageUrl } from './image';
 
 type Product = {
   id: string; name: string; imageUrl: string; brand?: string;

@@ -1,43 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
-  fallbackSrc?: string;
+  ratio?: number;    // bijv. 4/5
+  fallback?: string; // '/img/placeholders/outfit.webp'
   componentName?: string;
 };
 
-const FALLBACK_DATA_URI =
-  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="100%" height="100%" fill="%23f4f4f5"/><circle cx="200" cy="280" r="40" fill="%2394a3b8"/><text x="200" y="350" text-anchor="middle" fill="%2394a3b8" font-family="Arial" font-size="16">Geen afbeelding</text></svg>';
-
 export default function ImageWithFallback({
-  src,
-  alt,
-  fallbackSrc = '/images/outfit-fallback.jpg',
+  src, 
+  alt, 
+  ratio = 4/5, 
+  fallback = '/images/outfit-fallback.jpg', 
   componentName,
   onError,
   className = '',
   ...rest
 }: Props) {
-  const [currentSrc, setCurrentSrc] = React.useState<string>('');
-  const [hasErrored, setHasErrored] = React.useState(false);
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [retryCount, setRetryCount] = React.useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 1; // Single retry only
 
-  // Initialize source
-  React.useEffect(() => {
-    const initialSrc = getSafeImageUrl(src);
-    if (initialSrc) {
-      setCurrentSrc(initialSrc);
-      setHasErrored(false);
-      setIsLoaded(false);
-      setRetryCount(0);
-    } else {
-      // Invalid URL from start
-      setCurrentSrc(FALLBACK_DATA_URI);
-      setHasErrored(true);
-      setIsLoaded(true);
-    }
-  }, [src]);
+  // Determine which source to use
+  const getSafeSrc = () => {
+    if (!src || error) return fallback;
+    return src;
+  };
+
+  const safeSrc = getSafeSrc();
 
   const handleError = (event: React.SyntheticEvent<HTMLImageElement>) => {
     const target = event.currentTarget;
@@ -54,60 +44,59 @@ export default function ImageWithFallback({
     
     // Prevent infinite retry loops
     if (retryCount >= maxRetries) {
-      console.warn(`[ImageWithFallback] Max retries reached for ${failedSrc}, using data URI`);
-      setCurrentSrc(FALLBACK_DATA_URI);
-      setHasErrored(true);
-      setIsLoaded(true);
+      console.warn(`[ImageWithFallback] Max retries reached for ${failedSrc}`);
+      setError(true);
+      setLoaded(true);
       return;
     }
     
-    // Try fallback image once
-    if (retryCount === 0 && fallbackSrc && fallbackSrc !== failedSrc) {
-      const safeFallback = getSafeImageUrl(fallbackSrc);
-      if (safeFallback) {
-        console.log(`[ImageWithFallback] Trying fallback: ${safeFallback}`);
-        setCurrentSrc(safeFallback);
-        setRetryCount(1);
-        return;
-      }
+    // Try fallback once
+    if (retryCount === 0 && fallback && fallback !== failedSrc) {
+      console.log(`[ImageWithFallback] Trying fallback: ${fallback}`);
+      setRetryCount(1);
+      return;
     }
     
-    // Final fallback to data URI
-    setCurrentSrc(FALLBACK_DATA_URI);
-    setHasErrored(true);
-    setIsLoaded(true);
+    // Final fallback
+    setError(true);
+    setLoaded(true);
   };
 
   const handleLoad = () => {
-    setIsLoaded(true);
-    setHasErrored(false);
+    setLoaded(true);
+    setError(false);
   };
 
   return (
-    <img
-      src={currentSrc}
-      alt={alt}
-      onError={handleError}
-      onLoad={handleLoad}
-      className={`transition-opacity duration-300 ${
-        isLoaded ? 'opacity-100' : 'opacity-0'
-      } ${className}`}
-      {...rest}
-    />
+    <div 
+      className="relative overflow-hidden rounded-xl bg-neutral-100" 
+      style={{ aspectRatio: ratio }}
+    >
+      {/* Loading skeleton */}
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-gray-200" />
+      )}
+      
+      {/* Image */}
+      <img
+        src={safeSrc}
+        alt={alt || 'Outfit'}
+        loading="lazy"
+        decoding="async"
+        onLoad={handleLoad}
+        onError={handleError}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+          loaded ? 'opacity-100' : 'opacity-0'
+        } ${className}`}
+        {...rest}
+      />
+      
+      {/* Fallback text for broken images */}
+      {(!src || error) && loaded && (
+        <div className="absolute inset-0 grid place-items-center text-sm text-gray-500 bg-gray-100">
+          Geen afbeelding
+        </div>
+      )}
+    </div>
   );
-}
-
-// Helper function to validate and normalize image URLs
-function getSafeImageUrl(url?: string): string | undefined {
-  if (!url || typeof url !== 'string') return undefined;
-  
-  const trimmed = url.trim();
-  if (!trimmed) return undefined;
-  
-  // Must be valid HTTP/HTTPS URL or relative path
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
-    return trimmed;
-  }
-  
-  return undefined;
 }
