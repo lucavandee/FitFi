@@ -11,6 +11,7 @@ import { fetchProductsFromSupabase } from '../services/supabaseService';
 import { supabase } from '../lib/supabase';
 import { generateNovaExplanation } from './explainOutfit';
 import { loadProductFeed } from '../services/productFeedLoader';
+import { scoreProductForPersona } from './persona';
 
 /**
  * Interface for user feedback on recommendations
@@ -938,18 +939,19 @@ export async function getRecommendedProducts(
     
     console.log(`[FitFi] Using ${validProducts.length} products with valid images for recommendations`);
     
-    // Filter products by season
-    const seasonalProducts = validProducts.filter(product => 
-      !product.season || product.season.includes(activeSeason)
-    );
-    console.log("Products suitable for season:", seasonalProducts.length);
+    // Apply persona scoring and diversity
+    const personaId = (user as any)?.archetype || 'casual_chic';
+    const scored = validProducts.map(p => ({ p, score: scoreProductForPersona(p, personaId) }));
     
-    // Use seasonal products if we have enough, otherwise fall back to all products
-    const productsToUse = seasonalProducts.length >= count ? seasonalProducts : validProducts;
+    // Diversiteit: penaliseer herhaling per category/brand
+    const seen = new Map<string,number>();
+    scored.forEach(x => {
+      const key = (x.p.category||'other') + '|' + (x.p.brand||'');
+      const penalty = (seen.get(key)||0)*12;
+      x.score = Math.max(0, x.score - penalty);
+      seen.set(key, (seen.get(key)||0)+1);
+    });
     
-    // Filter and sort products based on user preferences
-    const sortedProducts = filterAndSortProducts(productsToUse, user);
-    
-    // Get top products by type to ensure diversity
-    return getTopProductsByType(sortedProducts, Math.ceil(count / 3));
+    const top = scored.sort((a,b)=>b.score-a.score).map(x=>x.p);
+    return top.slice(0, count ?? 12);
 }
