@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X } from 'lucide-react';
-import { useUser } from '../../context/UserContext';
 import AppPortal from '../layout/AppPortal';
 
 // Lazy load NovaChat for performance
@@ -19,7 +18,6 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<BubblePosition>({ x: 24, y: 24 }); // Default: bottom-6 right-6
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [unreadCount, setUnreadCount] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
   const bubbleRef = useRef<HTMLButtonElement>(null);
@@ -87,10 +85,6 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
       };
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
     }
   };
 
