@@ -97,7 +97,7 @@ const RegisterPage: React.FC = () => {
         }
         
         // Redirect to onboarding
-        navigate(result.redirectTo || '/onboarding', { replace: true });
+        navigate(result.redirectTo || '/feed', { replace: true });
       } else {
         setErrors({ general: 'Registratie mislukt. Controleer je gegevens en probeer opnieuw.' });
       }

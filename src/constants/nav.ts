@@ -12,13 +12,13 @@ interface NavLink {
 
 export const NAV_ITEMS: NavLink[] = [
   { label: 'Home', href: '/', icon: Home },
+  { label: 'Feed', href: '/feed', icon: Rss },
   { label: 'Waarom FitFi', href: '/over-ons', icon: Info },
   { label: 'Hoe het werkt', href: '/hoe-het-werkt', icon: HelpCircle },
   { label: 'Prijzen', href: '/prijzen', icon: DollarSign },
   { label: 'Aanbevelingen', href: '/results', icon: ShoppingBag },
   { label: 'Outfits', href: '/outfits', icon: ShoppingBag },
   { label: 'Tribes', href: '/tribes', icon: Users },
-  { label: 'Feed', href: '/feed', icon: Rss },
   { label: 'Blog', href: '/blog', icon: BookOpen },
   { label: 'Inloggen', href: '/inloggen', icon: LogIn },
   { label: 'Dashboard', href: '/dashboard', icon: User }

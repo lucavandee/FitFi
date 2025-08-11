@@ -247,7 +247,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         toast.success('Account succesvol aangemaakt!');
         // Don't reset authEventPending here - let onAuthStateChange handle it
-        return { success: true, redirectTo: '/onboarding' };
+        return { success: true, redirectTo: '/feed' };
       }
 
       setAuthEventPending(false);
