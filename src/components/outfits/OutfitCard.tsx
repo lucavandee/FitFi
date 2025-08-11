@@ -53,39 +53,28 @@ export default function OutfitCard({ outfit, onSave, onMoreLikeThis, onNotMyStyl
           )}
         </div>
         
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onSave(outfit)}
-            icon={<Heart size={14} />}
-            iconPosition="left"
-            className="flex-1 border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white text-xs"
+        <div className="mt-3 flex gap-2">
+          <button 
+            aria-label="Bewaar look" 
+            onClick={() => onSave(outfit)} 
+            className="flex-1 px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white rounded-xl text-xs font-medium transition-colors"
           >
             Bewaar
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onMoreLikeThis(outfit)}
-            icon={<ThumbsUp size={14} />}
-            iconPosition="left"
-            className="flex-1 border-green-300 text-green-600 hover:bg-green-50 text-xs"
+          </button>
+          <button 
+            aria-label="Meer zoals dit" 
+            onClick={() => onMoreLikeThis(outfit)} 
+            className="flex-1 px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors"
           >
             Meer zoals dit
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNotMyStyle(outfit)}
-            icon={<ThumbsDown size={14} />}
-            iconPosition="left"
-            className="flex-1 border-red-300 text-red-600 hover:bg-red-50 text-xs"
+          </button>
+          <button 
+            aria-label="Niet mijn stijl" 
+            onClick={() => onNotMyStyle(outfit)} 
+            className="flex-1 px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors"
           >
             Niet mijn stijl
-          </Button>
+          </button>
         </div>
       </div>
     </article>

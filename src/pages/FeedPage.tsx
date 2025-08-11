@@ -52,6 +52,8 @@ export default function FeedPage() {
   const [page, setPage] = useState(0);
   const [savedOutfits, setSavedOutfits] = useState<Set<string>>(new Set());
   const [dislikedOutfits, setDislikedOutfits] = useState<Set<string>>(new Set());
+  const [categoryWeights, setCategoryWeights] = useState<Map<string, number>>(new Map());
+  const [brandWeights, setBrandWeights] = useState<Map<string, number>>(new Map());
   const sentinelRef = useRef<HTMLDivElement|null>(null);
   const busyRef = useRef(false);
 
@@ -104,6 +106,37 @@ export default function FeedPage() {
   };
 
   const handleMoreLikeThis = (outfit: FeedOutfit) => {
+    // Extract category and brand from outfit for weighting
+    const category = outfit.archetype || 'casual_chic';
+    const brand = 'fitfi'; // Mock brand since outfit doesn't have direct brand
+    
+    // Increase weights for this category/brand
+    setCategoryWeights(prev => {
+      const newWeights = new Map(prev);
+      newWeights.set(category, (newWeights.get(category) || 0) + 1);
+      return newWeights;
+    });
+    
+    setBrandWeights(prev => {
+      const newWeights = new Map(prev);
+      newWeights.set(brand, (newWeights.get(brand) || 0) + 1);
+      return newWeights;
+    });
+    
+    // Log feedback to localStorage
+    const feedback = {
+      type: 'more_like_this',
+      outfit_id: outfit.id,
+      archetype: outfit.archetype,
+      timestamp: Date.now(),
+      category,
+      brand
+    };
+    
+    const existingFeedback = JSON.parse(localStorage.getItem('fitfi_feedback') || '[]');
+    existingFeedback.push(feedback);
+    localStorage.setItem('fitfi_feedback', JSON.stringify(existingFeedback));
+    
     toast.success('We zoeken meer outfits zoals deze voor je!');
     
     // Track positive feedback
@@ -117,6 +150,19 @@ export default function FeedPage() {
   };
 
   const handleNotMyStyle = (outfit: FeedOutfit) => {
+    // Log negative feedback to localStorage
+    const feedback = {
+      type: 'not_my_style',
+      outfit_id: outfit.id,
+      archetype: outfit.archetype,
+      timestamp: Date.now()
+    };
+    
+    const existingFeedback = JSON.parse(localStorage.getItem('fitfi_feedback') || '[]');
+    existingFeedback.push(feedback);
+    localStorage.setItem('fitfi_feedback', JSON.stringify(existingFeedback));
+    
+    // Remove from current feed
     setDislikedOutfits(prev => new Set([...prev, outfit.id]));
     setItems(prev => prev.filter(item => item.id !== outfit.id));
     toast.success('Outfit verwijderd uit je feed');
