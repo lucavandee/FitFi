@@ -327,8 +327,6 @@ export async function getRecommendedProducts(
         const score = product.archetypeMatch[primaryArchetype] || 0;
         return score >= 0.3; // Lower threshold to ensure we have enough products
       });
-            (safeUser.stylePreferences?.casual || 0) > (safeUser.stylePreferences?.formal || 0) ? 'casual_chic' : 'klassiek',
-            safeUser.gender === 'male' ? 'male' : 'female',
       
       // Convert to Product format
       const products = archetypeFiltered.map(p => ({
