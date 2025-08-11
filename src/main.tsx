@@ -4,12 +4,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from '@/App.tsx';
 import { configureRouterFutureFlags } from '@/utils/routerUtils';
 import { initializeSentry } from '@/utils/sentryConfig';
-import { initializeAnalytics } from '@/utils/analytics';
 import { advancedAnalytics } from '@/services/AdvancedAnalytics';
 import { initializePerformanceOptimizations } from '@/utils/performanceUtils';
 import '@/styles/main.css';
-import { setupAutoSave } from '@/utils/progressPersistence';
-import { processReferralOnLoad } from '@/utils/referralUtils';
 
 // Configure React Router future flags to suppress warnings
 configureRouterFutureFlags();

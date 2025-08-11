@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BarChart3, Brain, MousePointer } from 'lucide-react';
+import { ArrowLeft, BarChart3 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
 import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard';

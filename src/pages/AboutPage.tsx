@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowRight, Users, Zap, Heart, Shield, CheckCircle } from 'lucide-react';
+import { ArrowRight, Users, Heart, Shield, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
