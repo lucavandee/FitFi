@@ -1,3 +1,4 @@
+import type { CategoryRatio, Season } from './types';
 import { Product, Season, ProductCategory, Weather } from './types';
 
 /**
@@ -49,15 +50,11 @@ export function getDutchSeasonName(season: Season): string {
  * @param currentSeason - The current season
  * @returns The next season
  */
-function getNextSeason(currentSeason: Season): Season {
-  const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
-  const currentIndex = seasons.indexOf(currentSeason);
-  
-  if (currentIndex === -1) {
-    return 'spring'; // Default to spring if invalid season
-  }
-  
-  const nextIndex = (currentIndex + 1) % seasons.length;
+export function getNextSeason(currentSeason: Season): Season {
+  const seasons: Season[] = ['spring','summer','autumn','winter'];
+  const idx = seasons.indexOf(currentSeason);
+  const safeIdx = idx >= 0 ? idx : 0;
+  const nextIndex = (safeIdx + 1) % seasons.length;
   return seasons[nextIndex];
 }
 
