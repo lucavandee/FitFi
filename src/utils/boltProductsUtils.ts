@@ -1,7 +1,6 @@
 import { BoltProduct } from '../types/BoltProduct';
 import { isValidImageUrl } from './imageUtils';
 import dutchProducts from '../data/dutchProducts';
-import { safeFetchWithFallback } from './fetchUtils';
 
 /**
  * Utility functions for working with BoltProducts
@@ -76,7 +75,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
     
     // Determine color
     const colors = ['beige', 'black', 'blue', 'white', 'gray', 'navy', 'green', 'red'];
-    const color = colors[index % colors.length];
+    const color = (product.color ?? colors[index % colors.length]) as string;
     
     // Determine dominant color hex
     const colorHexMap: Record<string, string> = {
@@ -87,7 +86,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
       'gray': '#808080'
     };
     
-    const dominantColorHex = colorHexMap[color as keyof typeof colorHexMap] || '#CCCCCC';
+    const dominantColorHex = colorHexMap[color as keyof typeof colorHexMap] ?? '#CCCCCC';
     
     // Determine style tags
     const styleTags = product.styleTags || ['casual', 'minimal', 'versatile'];
@@ -145,7 +144,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
       brand: product.brand || 'FitFi Brand',
       type: type as any,
       gender: gender,
-      color: color,
+      color: product.color ?? '#CCCCCC',
       dominantColorHex: dominantColorHex,
       styleTags: styleTags,
       season: season as any,

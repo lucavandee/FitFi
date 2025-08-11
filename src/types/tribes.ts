@@ -58,13 +58,6 @@ export interface TribePost {
   recent_comments?: TribePostComment[];
 }
 
-interface TribePostLike {
-  id: string;
-  post_id: string;
-  user_id: string;
-  created_at: string;
-}
-
 export interface TribePostComment {
   id: string;
   post_id: string;
