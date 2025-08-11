@@ -30,7 +30,7 @@ export class TribesService {
    */
   static async isStyleTribesEnabled(): Promise<boolean> {
     const flag = await this.getFeatureFlag('style_tribes');
-    return !!(flag?.enabled && (flag?.percentage ?? 0) >= 100);
+    return Boolean(flag?.enabled && (flag?.percentage ?? 0) >= 100);
   }
 
   /**

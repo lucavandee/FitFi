@@ -220,6 +220,62 @@ export function isProductCategory(product: Product, category: ProductCategory): 
 }
 
 /**
+ * Category mapping for product types
+ */
+const CATEGORY_MAPPING: Record<string, keyof CategoryRatio> = {
+  'top': 'top',
+  'shirt': 'top',
+  'blouse': 'top',
+  'trui': 'top',
+  'sweater': 'top',
+  'hoodie': 'top',
+  'vest': 'top',
+  'broek': 'bottom',
+  'jeans': 'bottom',
+  'rok': 'bottom',
+  'short': 'bottom',
+  'legging': 'bottom',
+  'joggingbroek': 'bottom',
+  'schoenen': 'footwear',
+  'sneaker': 'footwear',
+  'jas': 'outerwear',
+  'tas': 'accessory',
+  'accessoire': 'accessory',
+  'jurk': 'dress',
+  'jumpsuit': 'jumpsuit'
+};
+
+/**
+ * Calculate category ratio for an outfit
+ */
+export function calculateCategoryRatio(types: string[]): CategoryRatio {
+  const ratio: CategoryRatio = {
+    top: 0,
+    bottom: 0,
+    footwear: 0,
+    accessory: 0,
+    outerwear: 0,
+    dress: 0,
+    jumpsuit: 0,
+    other: 0
+  };
+  
+  // Count categories
+  types.forEach(type => {
+    const key = CATEGORY_MAPPING[type] ?? 'other';
+    ratio[key] = (ratio[key] ?? 0) + 1;
+  });
+  
+  // Convert to percentages
+  const total = types.length || 1; // Prevent division by zero
+  (Object.keys(ratio) as (keyof CategoryRatio)[]).forEach(key => {
+    ratio[key] = Math.round(((ratio[key] ?? 0) / total) * 100);
+  });
+  
+  return ratio;
+}
+
+/**
  * Gets weather description in Dutch
  * 
  * @param weather - The weather condition

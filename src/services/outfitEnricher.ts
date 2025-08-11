@@ -154,12 +154,11 @@ function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): 
       category: CATEGORY_MAPPING[p.type] || 'other'
     })),
     imageUrl: productsWithSafeImages.length > 0
-      ? getSafeImageUrl(productsWithSafeImages[0].imageUrl, productsWithSafeImages[0].type)
+      ? getSafeImageUrl(productsWithSafeImages[0]!.imageUrl, productsWithSafeImages[0]!.type)
       : FALLBACK_IMAGES.default,
     structure: productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'),
     categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
-    completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
-  };
+  }
   
   // Generate explanation
   const explanation = generateOutfitExplanation(
