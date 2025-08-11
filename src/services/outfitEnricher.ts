@@ -1,7 +1,7 @@
 import { Outfit } from '../engine';
 import { BoltProduct } from '../types/BoltProduct';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
-import { calculateCategoryRatio as calcRatio } from '../engine/helpers';
+import { calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
 
 /**
@@ -154,14 +154,12 @@ function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): 
       retailer: 'Zalando',
       category: CATEGORY_MAPPING[p.type] || 'other'
     })),
-    imageUrl: productsWithSafeImages.length > 0
-      ? (() => {
-          const firstProduct = productsWithSafeImages[0];
-          return firstProduct ? getSafeImageUrl(firstProduct.imageUrl, firstProduct.type) : FALLBACK_IMAGES.default;
-        })()
-      : FALLBACK_IMAGES.default,
+    imageUrl: (() => {
+      const firstProduct = productsWithSafeImages[0];
+      return getSafeImageUrl(firstProduct?.imageUrl, firstProduct?.type) ?? FALLBACK_IMAGES.default;
+    })(),
     structure: productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'),
-    categoryRatio: calcRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
+    categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
   }
   
   // Generate explanation
