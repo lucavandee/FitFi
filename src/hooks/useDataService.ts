@@ -24,12 +24,12 @@ export function useDataService(): UseDataServiceResult {
   const [recentErrors, setRecentErrors] = useState<any[]>([]);
 
   const refreshStats = () => {
-    setCacheStats(dataService.getCacheStats());
-    setRecentErrors(dataService.getRecentErrors());
+    setCacheStats(getCacheStats());
+    setRecentErrors(getRecentErrors());
   };
 
   const clearCache = () => {
-    dataService.clearCache();
+    clearCache();
     refreshStats();
   };
 

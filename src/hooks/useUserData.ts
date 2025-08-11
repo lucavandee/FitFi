@@ -31,7 +31,7 @@ export function useUserData(userId?: string): UseUserDataResult {
       setIsLoading(true);
       setError(null);
 
-      const response = await dataService.getUser(userId);
+      const response = await fetchUser(userId);
 
       setUserData(response.data);
       setSource(response.source);

@@ -18,8 +18,8 @@ const DataServiceDebug: React.FC<DataServiceDebugProps> = ({ className = '' }) =
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const refreshStats = () => {
-    setCacheStats(dataService.getCacheStats());
-    setErrors(dataService.getRecentErrors());
+    setCacheStats(getCacheStats());
+    setErrors(getRecentErrors());
   };
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const DataServiceDebug: React.FC<DataServiceDebugProps> = ({ className = '' }) =
   }, []);
 
   const handleClearCache = () => {
-    dataService.clearCache();
+    clearCache();
     refreshStats();
   };
 
