@@ -151,9 +151,9 @@ export function generateMockBoltProducts(): BoltProduct[] {
       season: season as any,
       archetypeMatch: archetypeMatch,
       material: 'Mixed materials',
-      price: product.price || 49.99,
+      price: product.price ?? 49.99,
       imageUrl: imageUrl,
-      affiliateUrl: (product as any).url || `https://fitfi.app/product/${product.id}?ref=bolt`,
+      affiliateUrl: (product as any).url ?? `https://fitfi.app/product/${product.id}?ref=bolt`,
       source: 'zalando'
     };
   });
