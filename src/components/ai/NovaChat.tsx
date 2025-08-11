@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, MessageCircle, X } from 'lucide-react';
+import { routeMessage, type NovaReply } from '@/ai/nova/router';
+import { useUser } from '@/context/UserContext';
 import { trackEvent } from '@/utils/analytics';
 
 export type NovaMessage = { role: 'user' | 'assistant' | 'system'; text: string; ts: number };
@@ -22,6 +24,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<'ready' | 'degraded' | 'error'>('ready');
+  const { user } = useUser();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -67,7 +70,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       setMessages(prev => [...prev, errorMessage]);
       return;
     }
-    // Prevent double-clicking by setting sending immediately
+    
     setSending(true);
     setError(null);
 
@@ -84,58 +87,65 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         message_type: 'user_input'
       });
 
-      // Try to load Nova agent with fallback
-      let reply;
-      try {
-        const agentModule = await import('@/ai/nova/agent');
-        const agent = agentModule.default || agentModule.agent;
-        
-        if (!agent) {
-          throw new Error('Nova agent not found in module');
-        }
-        
-        reply = await agent.ask(text, { context });
-      } catch (agentError) {
-        console.warn('[Nova] Agent loading failed:', agentError);
-        setStatus('degraded');
-        
-        // Fallback response
-        reply = {
-          type: 'text',
-          message: 'Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw of neem contact op voor hulp.'
-        };
+      // Use smart router for deterministic responses
+      const reply: NovaReply = await Promise.resolve(routeMessage(text, {
+        userId: user?.id,
+        gender: user?.gender ?? 'female',
+        profile: user ? {
+          id: user.id,
+          name: user.name || 'User',
+          email: user.email || '',
+          gender: user.gender || 'female',
+          stylePreferences: {
+            casual: 3,
+            formal: 3,
+            sporty: 3,
+            vintage: 3,
+            minimalist: 3
+          },
+          isPremium: false,
+          savedRecommendations: []
+        } : null
+      }));
+
+      // Handle different reply types
+      switch (reply.type) {
+        case 'smalltalk':
+        case 'capabilities':
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            text: reply.text, 
+            ts: Date.now() 
+          }]);
+          break;
+          
+        case 'clarify':
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            text: reply.text, 
+            ts: Date.now(),
+            options: reply.options
+          }]);
+          break;
+          
+        case 'outfits':
+          // Format outfits as rich content
+          const outfitText = `${reply.text}\n\n${reply.outfits.map((outfit, i) => 
+            `${i + 1}. **${outfit.title}** (${outfit.matchPercentage}% match)\n   ${outfit.description}`
+          ).join('\n\n')}`;
+          
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            text: outfitText, 
+            ts: Date.now(),
+            outfits: reply.outfits
+          }]);
+          break;
       }
 
-      // Convert reply to plain text string
-      let responseText: string;
-      
-      if (reply?.type === 'text') {
-        responseText = reply.message;
-      } else if (reply?.type === 'tips') {
-        // Format tips as readable text
-        responseText = `**${reply.title}**\n\n${reply.bullets.map(b => `• ${b}`).join('\n')}`;
-      } else if (reply?.type === 'outfits') {
-        // Format outfits as text list
-        responseText = `**${reply.title}**\n\n${reply.items.map(item => 
-          `• **${item.name}** - ${item.description}${item.price ? ` (€${item.price})` : ''}`
-        ).join('\n')}`;
-      } else {
-        // Fallback for unknown reply types
-        responseText = 'Ik heb je vraag ontvangen. Kun je iets specifieker zijn?';
-      }
-
-      // Add assistant response
-      const assistantMessage: NovaMessage = { 
-        role: 'assistant', 
-        text: responseText, 
-        ts: Date.now() 
-      };
-      setMessages(prev => [...prev, assistantMessage]);
-
-      // Track successful response
       trackEvent('nova_response_generated', 'ai_interaction', 'assistant_response', 1, {
-        response_type: reply?.type || 'unknown',
-        response_length: responseText.length,
+        response_type: reply.type,
+        response_length: reply.text.length,
         context: context
       });
 
@@ -249,9 +259,54 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
                 ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700'
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
             }`}>
-              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+              <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
                 {message.text}
-              </pre>
+              </div>
+              
+              {/* Render clarification options */}
+              {(message as any).options && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(message as any).options.map((option: string, i: number) => (
+                    <button
+                      key={i}
+                      onClick={() => handleQuickSuggestion(option)}
+                      className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs transition-colors"
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              )}
+              
+              {/* Render outfit cards */}
+              {(message as any).outfits && (
+                <div className="mt-3 space-y-2">
+                  {(message as any).outfits.slice(0, 2).map((outfit: any, i: number) => (
+                    <div key={i} className="bg-white/10 rounded-lg p-3 border border-white/20">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                          <img 
+                            src={outfit.imageUrl || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&dpr=2'} 
+                            alt={outfit.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm truncate">{outfit.title}</h4>
+                          <p className="text-xs opacity-80 line-clamp-2">{outfit.description}</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                              {outfit.matchPercentage}% match
+                            </span>
+                            <span className="text-xs opacity-60">{outfit.archetype}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               <div className="text-xs opacity-70 mt-1">
                 {new Date(message.ts).toLocaleTimeString('nl-NL', { 
                   hour: '2-digit', 
