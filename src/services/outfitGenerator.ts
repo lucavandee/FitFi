@@ -2,7 +2,7 @@ import { BoltProduct } from '../types/BoltProduct';
 import { Outfit } from '../engine';
 import { generateOutfitTitle, generateOutfitDescription } from '../engine/generateOutfitDescriptions';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
-import { getCurrentSeason, calculateCategoryRatio as calcRatio } from '../engine/helpers';
+import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
 
 /**
@@ -344,10 +344,7 @@ function createOutfit(
   
   // Validate and get safe image URL for the outfit
   const firstProduct = outfitProducts[0];
-  const outfitImageUrl = getSafeImageUrl(
-    firstProduct.imageUrl,
-    firstProduct.type
-  );
+  const heroImage = getSafeImageUrl(firstProduct?.imageUrl, firstProduct?.type) ?? FALLBACK_IMAGES.default;
   
   // Count fallback images
   let fallbackImageCount = 0;
@@ -385,14 +382,14 @@ function createOutfit(
       styleTags: p.styleTags,
       affiliateUrl: p.affiliateUrl
     })),
-    imageUrl: outfitImageUrl, // Use safe image URL
+    imageUrl: heroImage, // Use safe image URL
     tags: Array.from(new Set(tags)), // Remove duplicates
     matchPercentage,
     explanation: '', // Will be generated later
     season: season as any,
     structure,
     weather: season === 'winter' ? 'cold' : season === 'summer' ? 'warm' : 'mild',
-    categoryRatio: calcRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
+    categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
     completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
   };
   
