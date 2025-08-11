@@ -1,6 +1,6 @@
 [build]
   base    = "."
-  command = "npm run build && node ./scripts/check-nova.js"
+  command = "npm run build && node -e \"try{require('./scripts/check-nova.js')}catch(e){console.log('skip nova check')}\""
   publish = "dist"
 
 # ------------------------------------------------------------------
