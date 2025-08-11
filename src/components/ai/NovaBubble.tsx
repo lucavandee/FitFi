@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import AppPortal from '../layout/AppPortal';
 
-// Lazy load NovaChat for performance
-const NovaChat = React.lazy(() => import('./NovaChat'));
+// Hardened: accepteert zowel default als named export
+const NovaChatLazy = React.lazy(() =>
+  import('./NovaChat').then((mod: any) => ({ default: mod.default ?? mod.NovaChat }))
+);
 
 interface NovaBubbleProps {
   className?: string;
@@ -209,7 +211,7 @@ const NovaBubble: React.FC<NovaBubbleProps> = ({ className = '' }) => {
               <div className="w-8 h-8 border-4 border-[#89CFF0] border-t-transparent rounded-full animate-spin"></div>
             </div>
           }>
-            <NovaChat 
+            <NovaChatLazy 
               onClose={() => setIsOpen(false)}
               context="general"
               className="h-full"
