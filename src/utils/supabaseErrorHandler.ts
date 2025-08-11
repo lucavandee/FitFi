@@ -17,7 +17,7 @@ interface ErrorHandlingOptions {
   showToast?: boolean;
   toastMessage?: string;
   logError?: boolean;
-  retryable?: boolean;
+  _retryable?: boolean;
   fallbackValue?: any;
 }
 
