@@ -146,14 +146,15 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
       aria-describedby={descId}
     >
       <div className="relative rounded-xl overflow-hidden mb-3">
-        <ImageWithFallback 
-          src={outfit.imageUrl} 
-          ratio={4/5}
-          fallback="/images/outfit-fallback.jpg"
-          alt={outfit.title || 'Outfit'} 
-          className="hover:scale-105 transition-transform duration-300"
-          componentName="OutfitCard"
-        />
+        <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/5]">
+          <ImageWithFallback 
+            src={outfit.imageUrl} 
+            fallbackSrc="/images/outfit-fallback.jpg" 
+            alt={outfit.title || 'Outfit'} 
+            className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            componentName="OutfitCard"
+          />
+        </div>
       </div>
       
       <div className="space-y-3">
