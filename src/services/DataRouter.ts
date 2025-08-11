@@ -883,7 +883,7 @@ async function getUserData(userId: string): Promise<UserProfile | null> {
     
     return {
       ...mockUser,
-      gender: (mockUser.gender === 'male' || mockUser.gender === 'female') ? mockUser.gender : 'female'
+      gender: (mockUser.gender === 'male' || mockUser.gender === 'female') ? mockUser.gender : 'female' as const
     };
   } catch (error) {
     const localEndTime = Date.now();

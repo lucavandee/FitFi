@@ -29,7 +29,7 @@ function getReferralCookie(): string | null {
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
     if (name === 'ref_code') {
-      return value ?? null;
+      return value || null;
     }
   }
   
