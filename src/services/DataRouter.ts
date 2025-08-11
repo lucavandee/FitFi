@@ -1,4 +1,3 @@
-
 import { env } from '../utils/env';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
@@ -991,4 +990,3 @@ const FEATURES = {
 const API_CONFIG = {
   cacheTTL: 300000 // 5 minutes in milliseconds
 };
-
