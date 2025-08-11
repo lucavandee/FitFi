@@ -172,12 +172,13 @@ function getFromCache<T>(key: string): { data: T; source: DataSource; age: numbe
   }
   
   return null;
-}
+      outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).filter((item): item is string => typeof item === 'string').join(', ')
 
 /**
  * Save data to cache
  * @param key - Cache key
- * @param data - Data to cache
+      const structureItems = outfit.structure.filter((item): item is string => typeof item === 'string');
+      console.log(`Outfit ${index + 1} structure:`, structureItems.join(', '));
  * @param source - Data source
  */
 function saveToCache<T>(key: string, data: T, source: DataSource): void {
