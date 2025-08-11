@@ -6,7 +6,6 @@
 import { supabase } from '../lib/supabase';
 import { trackEvent } from '../utils/analytics';
 import { 
-  FunnelStep, 
   FunnelAnalytics, 
   HeatmapData, 
   SessionRecording, 
@@ -52,7 +51,7 @@ class AdvancedAnalytics {
 
   constructor(userId?: string) {
     this.sessionId = this.generateSessionId();
-    this.userId = userId;
+    this.userId = userId ?? '';
     this.sessionStartTime = Date.now();
     this.currentPage = window.location.pathname;
     
@@ -195,7 +194,7 @@ class AdvancedAnalytics {
         viewport_size: `${window.innerWidth}x${window.innerHeight}`,
         device_type: this.getDeviceType(),
         timestamp: Date.now(),
-        user_id: this.userId,
+        user_id: this.userId ?? '',
         session_id: this.sessionId
       });
     }
@@ -847,9 +846,4 @@ class AdvancedAnalytics {
 
 // Singleton instance
 export const advancedAnalytics = new AdvancedAnalytics();
-
-// Hook for React components
-const _useAdvancedAnalytics = () => {
-  return advancedAnalytics;
-};
 
