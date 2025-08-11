@@ -141,7 +141,14 @@ function buildOutfitReply(e:NovaEntities){
     e.colors?.length ? `in ${e.colors.join(' & ')}` : '',
     e.budgetMax ? `onder €${e.budgetMax}` : ''
   ].filter(Boolean).join(' ');
-  return `Hier zijn outfits ${bits || 'die bij je stijl passen'}. Zeg "meer zoals dit" of "leg uit" bij een kaart.`;
+  
+  const variants = [
+    `Perfect! Ik heb outfits ${bits || 'die bij je stijl passen'} gevonden. Deze combinaties zijn zorgvuldig geselecteerd op basis van jouw profiel. Wil je een van deze outfits opslaan of meer vergelijkbare opties zien?`,
+    `Hier zijn ${bits ? `stijlvolle looks ${bits}` : 'outfits die perfect bij je passen'}! Ik heb rekening gehouden met jouw voorkeuren en de huidige trends. Klik op "Leg uit" voor meer details of "Meer zoals dit" voor variaties.`,
+    `Geweldig! Deze outfits ${bits || 'matchen jouw stijl'} zijn speciaal voor jou samengesteld. Ze combineren functionaliteit met jouw persoonlijke smaak. Bewaar je favorieten of vraag om uitleg bij elke look!`
+  ];
+  
+  return variants[Math.floor(Math.random() * variants.length)];
 }
 function buildProductReply(e:NovaEntities){
   const bits = [
@@ -149,5 +156,12 @@ function buildProductReply(e:NovaEntities){
     e.colors?.length ? `in ${e.colors[0]}` : '',
     e.budgetMax ? `onder €${e.budgetMax}` : ''
   ].filter(Boolean).join(' ');
-  return `Ik heb ${bits || 'suggesties'} voor je gevonden. Wil je filteren op gelegenheid of seizoen?`;
+  
+  const variants = [
+    `Mooi! Ik heb ${bits || 'geweldige items'} voor je geselecteerd. Deze producten passen perfect bij jouw stijl en budget. Wil je ze bewaren of zoeken naar specifieke gelegenheden?`,
+    `Check deze ${bits || 'stijlvolle pieces'} uit! Ze zijn handpicked op basis van jouw voorkeuren. Klik op een product om meer details te zien of vraag me om te filteren op seizoen of gelegenheid.`,
+    `Hier zijn ${bits || 'toffe items'} die bij je passen! Ik heb ze geselecteerd omdat ze matchen met jouw profiel. Bewaar je favorieten of laat me weten als je iets specifieks zoekt!`
+  ];
+  
+  return variants[Math.floor(Math.random() * variants.length)];
 }
