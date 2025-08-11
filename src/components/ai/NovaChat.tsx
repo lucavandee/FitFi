@@ -264,7 +264,6 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     'Formele outfit voor event'
   ];
 
-  const handleQuickSuggestion = (suggestion: string) => {
   // Show degraded state indicator
   const getStatusIndicator = () => {
     switch (status) {
@@ -518,14 +517,6 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
             }
           </p>
         </div>
-        
-        {/* Footer */}
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-          {status === 'degraded' 
-            ? 'Nova heeft beperkte functionaliteit - probeer het later opnieuw'
-            : 'Nova leert van je feedback om betere aanbevelingen te doen'
-          }
-        </p>
       </div>
     </div>
   );
