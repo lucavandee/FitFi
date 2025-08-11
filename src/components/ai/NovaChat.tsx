@@ -7,7 +7,7 @@ import ProductCard from '@/components/ProductCard';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
 
-interface NovaChatProps {
+export interface NovaChatProps {
   onClose?: () => void;
   context?: string;
   className?: string;
