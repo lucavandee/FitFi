@@ -3,41 +3,44 @@ import { createPortal } from 'react-dom';
 
 interface AppPortalProps {
   children: React.ReactNode;
-  target?: string;
+  id?: string;
   className?: string;
 }
 
 /**
- * Portal component for rendering content outside the normal component tree
- * Useful for modals, tooltips, and floating elements that need to escape z-index stacking
+ * Robust portal component that creates target element if it doesn't exist
+ * Prevents null target errors and ensures consistent portal behavior
  */
 const AppPortal: React.FC<AppPortalProps> = ({ 
   children, 
-  target = '#nova-root',
+  id = 'app-portal',
   className = ''
 }) => {
-  // Get or create the target element
-  const getTargetElement = (): HTMLElement => {
-    let element = document.querySelector(target) as HTMLElement;
+  const [targetElement, setTargetElement] = React.useState<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    // Get or create the target element
+    let element = document.getElementById(id);
     
     if (!element) {
       // Create the target element if it doesn't exist
       element = document.createElement('div');
-      element.id = target.replace('#', '');
+      element.id = id;
       element.className = className;
       document.body.appendChild(element);
     }
     
-    return element;
-  };
+    setTargetElement(element);
+    
+    // Don't remove element on unmount to prevent flickering
+    // The element will be reused for subsequent portal renders
+  }, [id, className]);
 
-  // Only render on client side
-  if (typeof window === 'undefined') {
+  // Only render portal when target element is available
+  if (!targetElement) {
     return null;
   }
 
-  const targetElement = getTargetElement();
-  
   return createPortal(children, targetElement);
 };
 
