@@ -1,21 +1,41 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MessageCircle, X, Sparkles } from 'lucide-react';
 
-// Lazy load NovaChat with proper error handling
-const NovaChat = React.lazy(() => 
-  import('./NovaChat').then(m => ({ 
-    default: m.NovaChat || m.default 
-  })).catch(err => {
+// Robust lazy loading with multiple fallback strategies
+const NovaChat = React.lazy(async () => {
+  try {
+    const mod = await import('./NovaChat');
+    const component = mod.default ?? mod.NovaChat;
+    
+    if (!component) {
+      throw new Error('NovaChat component not found in module');
+    }
+    
+    return { default: component };
+  } catch (err) {
     console.error('Failed to load NovaChat:', err);
+    
+    // Return robust fallback component
     return { 
       default: () => (
-        <div className="h-full flex items-center justify-center text-gray-500">
-          Nova tijdelijk niet beschikbaar
+        <div className="h-full flex items-center justify-center text-gray-500 p-4">
+          <div className="text-center">
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Sparkles className="w-4 h-4 text-gray-400" />
+            </div>
+            <p className="text-sm">Nova tijdelijk niet beschikbaar</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="text-xs text-blue-500 hover:text-blue-600 mt-1"
+            >
+              Probeer opnieuw
+            </button>
+          </div>
         </div>
       )
     };
-  })
-);
+  }
+});
 
 interface NovaBubbleProps {
   className?: string;
