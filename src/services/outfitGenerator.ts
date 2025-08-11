@@ -2,7 +2,7 @@ import { BoltProduct } from '../types/BoltProduct';
 import { Outfit } from '../engine';
 import { generateOutfitTitle, generateOutfitDescription } from '../engine/generateOutfitDescriptions';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
-import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
+import { getCurrentSeason, calculateCategoryRatio as calcRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
 
 /**
@@ -392,7 +392,7 @@ function createOutfit(
     season: season as any,
     structure,
     weather: season === 'winter' ? 'cold' : season === 'summer' ? 'warm' : 'mild',
-    categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
+    categoryRatio: calcRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
     completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
   };
   

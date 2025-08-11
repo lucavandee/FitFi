@@ -243,7 +243,7 @@ export function loadOnboardingProgress(): OnboardingProgress | null {
 /**
  * Check if onboarding context has valid data to prevent overwriting
  */
-function shouldLoadSavedProgress(currentContextData: any): boolean {
+function _shouldLoadSavedProgress(currentContextData: any): boolean {
   // Only load saved progress if context is empty or has minimal data
   const hasValidContextData = currentContextData && (
     currentContextData.gender || 
