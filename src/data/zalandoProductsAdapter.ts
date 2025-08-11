@@ -58,7 +58,7 @@ function convertZalandoProducts(zalandoProducts: any[]): Product[] {
       category: product.category,
       styleTags: product.tags || ['casual'],
       description: product.description || `${product.name} van ${product.brand || 'Zalando'}`,
-      price: price,
+      price: Number(product.price ?? 0),
       brand: product.brand,
       affiliateUrl: product.affiliateUrl,
       season: product.seasons || ['spring', 'summer', 'autumn', 'winter']
