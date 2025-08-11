@@ -21,6 +21,3 @@ export type BoltProduct = {
   affiliateUrl: string;
   source: 'zalando';
 };
-
-
-export type { BoltProduct };

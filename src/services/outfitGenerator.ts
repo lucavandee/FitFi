@@ -429,16 +429,16 @@ function calculateCategoryRatio(categories: string[]): Record<string, number> {
   // Count categories
   categories.forEach(category => {
     if (ratio[category] !== undefined) {
-      ratio[category] = (ratio[category] ?? 0) + 1;
+      ratio[category] = (ratio[category] || 0) + 1;
     } else {
-      ratio.other = (ratio.other ?? 0) + 1;
+      ratio.other = (ratio.other || 0) + 1;
     }
   });
   
   // Convert to percentages
   const total = categories.length;
   Object.keys(ratio).forEach(key => {
-    ratio[key] = Math.round(((ratio[key] ?? 0) / total) * 100);
+    ratio[key] = Math.round(((ratio[key] || 0) / total) * 100);
   });
   
   return ratio;

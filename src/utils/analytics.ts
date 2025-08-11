@@ -62,10 +62,10 @@ export const initializeAnalytics = (): void => {
   // Initialize gtag
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag(...args: any[]) {
-    window.dataLayer?.push(args);
+    window.dataLayer?.push(arguments);
   };
   
-  window.gtag('js', new Date() as any);
+  (window.gtag ?? ((..._args: any[]) => {}))('js', new Date() as any);
   window.gtag('config', GA_TRACKING_ID, {
     page_title: 'FitFi - AI Style Recommendations',
     send_page_view: true,
