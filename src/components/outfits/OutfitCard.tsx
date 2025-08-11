@@ -37,11 +37,21 @@ export default function OutfitCard({ outfit, onSave, onMoreLikeThis, onNotMyStyl
           <p className="mt-1 text-sm text-gray-600 leading-relaxed">{outfit.description}</p>
         </div>
         
-        <OutfitReasons 
-          match={outfit.matchPercentage || 78} 
-          season={outfit.currentSeasonLabel || 'Dit seizoen'} 
-          color={outfit.dominantColorName} 
-        />
+        <div className="mt-2 flex flex-wrap gap-2">
+          <span className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white">
+            Match {Math.round(outfit.matchPercentage || 75)}%
+          </span>
+          {outfit.currentSeasonLabel && (
+            <span className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white">
+              {outfit.currentSeasonLabel}
+            </span>
+          )}
+          {outfit.dominantColorName && (
+            <span className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white">
+              {outfit.dominantColorName}
+            </span>
+          )}
+        </div>
         
         <div className="flex gap-2">
           <Button
