@@ -86,11 +86,14 @@ export function generateOutfitTitle(
  */
 export function generateOutfitDescription(
   primaryArchetype: string, 
-  occasion: string, 
+  _occasion: string, 
   products: Product[],
   secondaryArchetype?: string,
   mixFactor: number = 0.3
 ): string {
+  // Defensive defaults
+  const safeDescription = '';
+  
   // Get product types for the description
   const productTypes = products.map(p => p.type).filter(Boolean);
   
@@ -181,11 +184,14 @@ export function generateOutfitDescription(
       const secondaryWords = secondaryDescription.split(' ').filter(word => 
         word.length > 4 && !productList.includes(word) && !description.includes(word)
       );
-      
-      if (secondaryWords.length > 0) {
+        const safeSecondaryDescription = secondaryDescription ?? '';
+        const secondaryWords = safeSecondaryDescription.split(' ').filter(word => 
+          word.length > 4 && !productList.includes(word) && !safeDescription.includes(word)
         const secondaryWord = secondaryWords[Math.floor(Math.random() * secondaryWords.length)];
         
-        // Add secondary influence to the description
+          let desc = description;
+          desc = desc.replace('.', `, met een ${secondaryWord.toLowerCase()} twist.`);
+          description = desc;
         description = description.replace('.', `, met een ${secondaryWord.toLowerCase()} twist.`);
       }
     }
