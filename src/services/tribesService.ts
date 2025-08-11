@@ -362,4 +362,3 @@ export class TribesService {
   }
 }
 
-export default TribesService;

@@ -1,7 +1,7 @@
 import type { Product } from "../engine/types";
 import { isValidImageUrl } from "../utils/imageUtils";
 
-export async function fetchZalandoProducts(): Promise<Product[]> {
+async function fetchZalandoProducts(): Promise<Product[]> {
   try {
     const url = `${import.meta.env.BASE_URL}data/zalandoProducts.json`;
     console.log(`[ZalandoAdapter] Fetching from: ${url}`);
@@ -103,6 +103,3 @@ export async function getZalandoProducts(): Promise<Product[]> {
   }
 }
 
-export default {
-  getZalandoProducts
-};

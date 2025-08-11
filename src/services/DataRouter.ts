@@ -16,7 +16,7 @@ import { getBoltProductsFromJSON, generateMockBoltProducts, filterProductsByGend
 import { safeFetch, safeFetchWithFallback } from '../utils/fetchUtils';
 
 // Data source type
-export type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
+type DataSource = 'supabase' | 'bolt' | 'zalando' | 'local';
 
 // Cache interface
 interface CacheItem<T> {
@@ -91,7 +91,7 @@ checkEnvironmentVariables();
 /**
  * Clear the cache
  */
-export function clearCache(): void {
+function clearCache(): void {
   cache.clear();
   if (env.DEBUG_MODE) {
     console.log('[🧠 DataRouter] Cache cleared');
@@ -102,7 +102,7 @@ export function clearCache(): void {
  * Get the current data source
  * @returns Current data source
  */
-export function getDataSource(): DataSource {
+function getDataSource(): DataSource {
   return currentDataSource;
 }
 
@@ -110,7 +110,7 @@ export function getDataSource(): DataSource {
  * Get fetch diagnostics
  * @returns Fetch diagnostics
  */
-export function getFetchDiagnostics(): FetchDiagnostics {
+function getFetchDiagnostics(): FetchDiagnostics {
   return fetchDiagnostics;
 }
 
@@ -118,7 +118,7 @@ export function getFetchDiagnostics(): FetchDiagnostics {
  * Get fetch diagnostics summary as a string
  * @returns Fetch diagnostics summary
  */
-export function getFetchDiagnosticsSummary(): string {
+function getFetchDiagnosticsSummary(): string {
   const { operation, timestamp, attempts, finalSource, cacheUsed, cacheAge } = fetchDiagnostics;
   
   let summary = `[🧠 DataRouter] ${operation} at ${new Date(timestamp).toLocaleTimeString()}\n`;
@@ -305,7 +305,7 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
  * @param options - Optional generation options
  * @returns Array of outfits
  */
-export async function getOutfits(
+async function getOutfits(
   user: UserProfile,
   options?: any
 ): Promise<Outfit[]> {
@@ -767,7 +767,7 @@ export async function getRecommendedProducts(
  * @param userId - User ID
  * @returns User profile or null if not found
  */
-export async function getUserData(userId: string): Promise<UserProfile | null> {
+async function getUserData(userId: string): Promise<UserProfile | null> {
   // Reset diagnostics
   resetDiagnostics('getUserData');
   
@@ -896,7 +896,7 @@ export async function getUserData(userId: string): Promise<UserProfile | null> {
  * @param userId - User ID
  * @returns Gamification data or null if not found
  */
-export async function getGamificationData(userId: string): Promise<any | null> {
+async function getGamificationData(userId: string): Promise<any | null> {
   // Reset diagnostics
   resetDiagnostics('getGamificationData');
   
@@ -1026,7 +1026,7 @@ export async function getGamificationData(userId: string): Promise<any | null> {
  * @param updates - Gamification data updates
  * @returns Updated gamification data or null if update failed
  */
-export async function updateGamificationData(userId: string, updates: any): Promise<any | null> {
+async function updateGamificationData(userId: string, updates: any): Promise<any | null> {
   // Reset diagnostics
   resetDiagnostics('updateGamificationData');
   
@@ -1155,7 +1155,7 @@ export async function updateGamificationData(userId: string, updates: any): Prom
  * @param challengeId - Challenge ID
  * @returns Whether the challenge was completed successfully
  */
-export async function completeChallenge(userId: string, challengeId: string): Promise<boolean> {
+async function completeChallenge(userId: string, challengeId: string): Promise<boolean> {
   // Reset diagnostics
   resetDiagnostics('completeChallenge');
   
@@ -1274,7 +1274,7 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
  * @param userId - User ID
  * @returns Array of daily challenges
  */
-export async function getDailyChallengesData(userId: string): Promise<any[]> {
+async function getDailyChallengesData(userId: string): Promise<any[]> {
   // Reset diagnostics
   resetDiagnostics('getDailyChallengesData');
   
@@ -1439,7 +1439,7 @@ export async function getDailyChallengesData(userId: string): Promise<any[]> {
  * @param products - Raw Zalando products
  * @returns Array of BoltProducts
  */
-export async function convertZalandoToBoltProducts(products: any[]): Promise<any[]> {
+async function convertZalandoToBoltProducts(products: any[]): Promise<any[]> {
   // Reset diagnostics
   resetDiagnostics('convertZalandoToBoltProducts');
   
@@ -1479,7 +1479,7 @@ export async function convertZalandoToBoltProducts(products: any[]): Promise<any
  * Get BoltProducts
  * @returns Array of BoltProducts
  */
-export async function getBoltProducts(): Promise<BoltProduct[]> {
+async function getBoltProducts(): Promise<BoltProduct[]> {
   return loadBoltProducts();
 }
 
@@ -1493,18 +1493,3 @@ const API_CONFIG = {
   cacheTTL: 300000 // 5 minutes in milliseconds
 };
 
-export default {
-  getOutfits,
-  getRecommendedProducts,
-  getUserData,
-  getGamificationData,
-  updateGamificationData,
-  completeChallenge,
-  getDailyChallengesData,
-  convertZalandoToBoltProducts,
-  getBoltProducts,
-  getDataSource,
-  getFetchDiagnostics,
-  getFetchDiagnosticsSummary,
-  clearCache
-};

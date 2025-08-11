@@ -5,7 +5,7 @@ import { UserProfile } from '../context/UserContext';
 /**
  * Enhanced explanation result with confidence score
  */
-export interface OutfitExplanationResult {
+interface OutfitExplanationResult {
   text: string;
   confidencePercent: number;
   reasoning: {
@@ -37,7 +37,7 @@ export function generateOutfitExplanation(
 /**
  * Generates enhanced explanation with confidence scoring
  */
-export function generateEnhancedOutfitExplanation(
+function generateEnhancedOutfitExplanation(
   outfit: Outfit,
   archetype: string,
   occasion: string,
@@ -336,7 +336,7 @@ export async function generateNovaExplanation(
 /**
  * Generate detailed explanation for why an outfit was recommended
  */
-export async function generateDetailedExplanation(
+async function generateDetailedExplanation(
   outfitId: string, 
   user: UserProfile, 
   outfit?: Outfit,
@@ -460,4 +460,3 @@ function getBalanceDescription(ratio: CategoryRatio): string {
   }
 }
 
-export default generateOutfitExplanation;

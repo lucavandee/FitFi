@@ -35,4 +35,3 @@ export function calculateMatchPercentage(score: number, maxPossibleScore: number
   return Math.min(Math.max(percentage, 0), 100);
 }
 
-export default calculateMatchScore;

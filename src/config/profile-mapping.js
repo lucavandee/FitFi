@@ -107,12 +107,12 @@ export const mapAnswersToArchetype = (answers) => {
 };
 
 // Get archetype by ID
-export const getArchetypeById = (id) => {
+const getArchetypeById = (id) => {
   return DUTCH_ARCHETYPES[id] || DUTCH_ARCHETYPES.casual_chic;
 };
 
 // Get all archetype options for dropdowns
-export const getArchetypeOptions = () => {
+const getArchetypeOptions = () => {
   return Object.values(DUTCH_ARCHETYPES).map(archetype => ({
     value: archetype.id,
     label: archetype.displayName,
@@ -122,13 +122,12 @@ export const getArchetypeOptions = () => {
 };
 
 // Get archetype display name
-export const getArchetypeDisplayName = (id) => {
+const getArchetypeDisplayName = (id) => {
   return DUTCH_ARCHETYPES[id]?.displayName || 'Onbekend';
 };
 
 // Check if archetype exists
-export const isValidArchetype = (id) => {
+const isValidArchetype = (id) => {
   return Object.keys(DUTCH_ARCHETYPES).includes(id);
 };
 
-export default DUTCH_ARCHETYPES;

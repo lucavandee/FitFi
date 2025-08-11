@@ -142,7 +142,7 @@ const mockData: Record<string, any> = {
 /**
  * Fetch data from local JSON files in /public/data/bolt/
  */
-export const fetchFromBolt = async <T>(endpoint: string, retries: number = 1): Promise<T | null> => {
+const fetchFromBolt = async <T>(endpoint: string, retries: number = 1): Promise<T | null> => {
   const filename = mapEndpointToFilename(endpoint);
   const url = `${import.meta.env.BASE_URL}data/bolt/${filename}.json`;
   const fallback = mockData[filename] ?? null;
@@ -172,7 +172,7 @@ export const fetchFromBolt = async <T>(endpoint: string, retries: number = 1): P
 /**
  * Data service functies
  */
-export const fetchChallenges = async () => {
+const fetchChallenges = async () => {
   try {
     const challenges = await fetchFromBolt("challenges");
     if (!challenges || (Array.isArray(challenges) && challenges.length === 0)) {
@@ -186,7 +186,7 @@ export const fetchChallenges = async () => {
   }
 };
 
-export const completeChallenge = async (userId: string, challengeId: string) => {
+const completeChallenge = async (userId: string, challengeId: string) => {
   console.log(`[✅ MOCK] Challenge completed: ${challengeId} for user ${userId}`);
   return {
     success: true,
@@ -197,7 +197,7 @@ export const completeChallenge = async (userId: string, challengeId: string) => 
   };
 };
 
-export const fetchGamification = async () => {
+const fetchGamification = async () => {
   try {
     const gamification = await fetchFromBolt("gamification");
     if (!gamification) {
@@ -211,7 +211,7 @@ export const fetchGamification = async () => {
   }
 };
 
-export const updateGamification = async (userId: string, updates: any) => {
+const updateGamification = async (userId: string, updates: any) => {
   console.log(`[✅ MOCK] Gamification updated for user ${userId}`, updates);
   return {
     success: true,
@@ -222,7 +222,7 @@ export const updateGamification = async (userId: string, updates: any) => {
   };
 };
 
-export const fetchUser = async () => {
+const fetchUser = async () => {
   try {
     const user = await fetchFromBolt("user");
     if (!user) {
@@ -236,7 +236,7 @@ export const fetchUser = async () => {
   }
 };
 
-export const fetchProducts = async () => {
+const fetchProducts = async () => {
   try {
     const products = await fetchFromBolt("products", 2);
     if (!products || (Array.isArray(products) && products.length === 0)) {
@@ -250,7 +250,7 @@ export const fetchProducts = async () => {
   }
 };
 
-export const fetchOutfits = async () => {
+const fetchOutfits = async () => {
   try {
     const outfits = await fetchFromBolt("outfits", 2);
     if (!outfits || (Array.isArray(outfits) && outfits.length === 0)) {
@@ -268,7 +268,7 @@ export const fetchOutfits = async () => {
  * Check if all required environment variables are available
  * @returns Whether all required environment variables are available
  */
-export const checkEnvironmentVariables = (): boolean => {
+const checkEnvironmentVariables = (): boolean => {
   const requiredVars = [
     'VITE_SUPABASE_URL',
     'VITE_SUPABASE_ANON_KEY',

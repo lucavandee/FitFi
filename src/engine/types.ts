@@ -124,7 +124,7 @@ export interface UserArchetypeProfile {
 /**
  * Archetype score result interface
  */
-export interface ArchetypeScoreResult {
+interface ArchetypeScoreResult {
   archetype: string;
   score: number;
 }
@@ -132,7 +132,7 @@ export interface ArchetypeScoreResult {
 /**
  * Outfit structure blueprint for each archetype
  */
-export interface OutfitStructureBlueprint {
+interface OutfitStructureBlueprint {
   requiredCategories: ProductCategory[];
   optionalCategories: ProductCategory[];
   minItems: number;

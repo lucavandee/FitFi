@@ -49,7 +49,7 @@ export function getDutchSeasonName(season: Season): string {
  * @param currentSeason - The current season
  * @returns The next season
  */
-export function getNextSeason(currentSeason: Season): Season {
+function getNextSeason(currentSeason: Season): Season {
   const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
   const currentIndex = seasons.indexOf(currentSeason);
   
@@ -130,7 +130,7 @@ export function getTypicalWeatherForSeason(season: Season): Weather {
  * @param type - The product type or category string
  * @returns The standardized product category
  */
-export function mapProductTypeToCategory(type: string | undefined): ProductCategory {
+function mapProductTypeToCategory(type: string | undefined): ProductCategory {
   if (!type) return ProductCategory.OTHER;
   
   const lowerType = type.toLowerCase();
@@ -239,15 +239,3 @@ export function getDutchWeatherDescription(weather: Weather): string {
   return weatherDescriptions[weather] || weather;
 }
 
-export default {
-  getCurrentSeason,
-  getDutchSeasonName,
-  getNextSeason,
-  isProductInSeason,
-  isProductSuitableForWeather,
-  getTypicalWeatherForSeason,
-  mapProductTypeToCategory,
-  getProductCategory,
-  isProductCategory,
-  getDutchWeatherDescription
-};

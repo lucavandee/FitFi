@@ -9,7 +9,7 @@ const HEADER_HEIGHT = 72; // 4.5rem in pixels
  * @param sectionId - ID of the target section
  * @param offset - Additional offset in pixels (default: HEADER_HEIGHT)
  */
-export function scrollToSection(sectionId: string, offset: number = HEADER_HEIGHT): void {
+function scrollToSection(sectionId: string, offset: number = HEADER_HEIGHT): void {
   const element = document.getElementById(sectionId);
   
   if (!element) {
@@ -29,7 +29,7 @@ export function scrollToSection(sectionId: string, offset: number = HEADER_HEIGH
 /**
  * Scroll to top of page smoothly
  */
-export function scrollToTop(): void {
+function scrollToTop(): void {
   window.scrollTo({
     top: 0,
     behavior: 'smooth'
@@ -57,7 +57,7 @@ export function scrollToHash(href: string): void {
  * @param threshold - Percentage of element that should be visible (0-1)
  * @returns boolean indicating if element is in viewport
  */
-export function isElementInViewport(element: Element, threshold: number = 0.1): boolean {
+function isElementInViewport(element: Element, threshold: number = 0.1): boolean {
   const rect = element.getBoundingClientRect();
   const elementHeight = rect.bottom - rect.top;
   const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
@@ -69,7 +69,7 @@ export function isElementInViewport(element: Element, threshold: number = 0.1): 
  * Add scroll margin top to sections for proper anchor scrolling
  * This should be called on page load to add the necessary CSS
  */
-export function addScrollMarginToSections(): void {
+function addScrollMarginToSections(): void {
   const sections = document.querySelectorAll('section[id], div[id]');
   
   sections.forEach(section => {
@@ -84,7 +84,7 @@ export function addScrollMarginToSections(): void {
  * @param targetId - ID of target element
  * @param shouldFocus - Whether to focus the target element after scrolling
  */
-export function accessibleScrollTo(targetId: string, shouldFocus: boolean = false): void {
+function accessibleScrollTo(targetId: string, shouldFocus: boolean = false): void {
   scrollToSection(targetId);
   
   if (shouldFocus) {
@@ -101,12 +101,3 @@ export function accessibleScrollTo(targetId: string, shouldFocus: boolean = fals
   }
 }
 
-export default {
-  scrollToSection,
-  scrollToTop,
-  isElementInViewport,
-  addScrollMarginToSections,
-  accessibleScrollTo,
-  scrollToHash,
-  HEADER_HEIGHT
-};

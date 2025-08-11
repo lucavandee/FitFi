@@ -211,7 +211,7 @@ const variationSettings: Record<VariationLevel, {
  * @param options - Additional options for outfit generation
  * @returns Array of generated outfits
  */
-export function generateOutfits(
+function generateOutfits(
   primaryArchetype: string, 
   products: Product[], 
   count: number = 3,

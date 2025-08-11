@@ -254,7 +254,7 @@ export async function getDailyChallenges(userId: string) {
 /**
  * Safe achievements query with proper error handling
  */
-export async function getAchievements(userId: string) {
+async function getAchievements(userId: string) {
   if (!isValidUUID(userId)) {
     console.warn('[Supabase] Invalid user ID format for achievements');
     return [];
@@ -286,7 +286,7 @@ export async function getAchievements(userId: string) {
 /**
  * Safe gamification query with fallback
  */
-export const getGamificationSafe = async (userId: string) => {
+const getGamificationSafe = async (userId: string) => {
   if (!isValidUUID(userId)) {
     return null;
   }
@@ -319,7 +319,7 @@ export const getGamificationSafe = async (userId: string) => {
 /**
  * Fetch user achievements with proper error handling
  */
-export async function fetchUserAchievements(userId: string) {
+async function fetchUserAchievements(userId: string) {
   if (!isValidUUID(userId)) {
     throw new Error('Invalid user ID format');
   }
@@ -338,14 +338,3 @@ export async function fetchUserAchievements(userId: string) {
   });
 }
 
-export default {
-  fetchProductsFromSupabase,
-  getUserById,
-  getUserGamification,
-  updateUserGamification,
-  completeChallenge,
-  getDailyChallenges,
-  fetchUserAchievements,
-  getAchievements,
-  getGamificationSafe
-};

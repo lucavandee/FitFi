@@ -5,7 +5,7 @@
 /**
  * Get referral code from URL parameters
  */
-export function getReferralCodeFromUrl(): string | null {
+function getReferralCodeFromUrl(): string | null {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('ref');
 }
@@ -13,7 +13,7 @@ export function getReferralCodeFromUrl(): string | null {
 /**
  * Set referral code in cookie
  */
-export function setReferralCookie(code: string): void {
+function setReferralCookie(code: string): void {
   const expires = new Date();
   expires.setDate(expires.getDate() + 30); // 30 days
   
@@ -23,7 +23,7 @@ export function setReferralCookie(code: string): void {
 /**
  * Get referral code from cookie
  */
-export function getReferralCookie(): string | null {
+function getReferralCookie(): string | null {
   const cookies = document.cookie.split(';');
   
   for (const cookie of cookies) {
@@ -39,7 +39,7 @@ export function getReferralCookie(): string | null {
 /**
  * Clear referral cookie
  */
-export function clearReferralCookie(): void {
+function clearReferralCookie(): void {
   document.cookie = 'ref_code=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
 
@@ -69,16 +69,8 @@ export function processReferralOnLoad(): void {
 /**
  * Generate referral URL
  */
-export function generateReferralUrl(code: string): string {
+function generateReferralUrl(code: string): string {
   const baseUrl = window.location.origin;
   return `${baseUrl}?ref=${code}`;
 }
 
-export default {
-  getReferralCodeFromUrl,
-  setReferralCookie,
-  getReferralCookie,
-  clearReferralCookie,
-  processReferralOnLoad,
-  generateReferralUrl
-};

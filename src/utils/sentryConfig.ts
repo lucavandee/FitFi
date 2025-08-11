@@ -12,6 +12,3 @@ export function initializeSentry() {
   }
 }
 
-export default {
-  initializeSentry
-};

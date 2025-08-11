@@ -68,7 +68,7 @@ export function groupProductsByType(products: Product[]): Record<string, Product
  * @param products - Array of products to group
  * @returns Object with product categories as keys and arrays of products as values
  */
-export function groupProductsByCategory(products: Product[]): Record<ProductCategory, Product[]> {
+function groupProductsByCategory(products: Product[]): Record<ProductCategory, Product[]> {
   const result: Record<ProductCategory, Product[]> = {} as Record<ProductCategory, Product[]>;
   
   // Initialize empty arrays for each category
@@ -114,7 +114,7 @@ export function getTopProductsByType(products: Product[], count: number = 2): Pr
  * @param count - Number of products to get per category
  * @returns Array of top products from each category
  */
-export function getTopProductsByCategory(products: Product[], count: number = 2): Product[] {
+function getTopProductsByCategory(products: Product[], count: number = 2): Product[] {
   const groupedProducts = groupProductsByCategory(products);
   const result: Product[] = [];
 
@@ -131,4 +131,3 @@ export function getTopProductsByCategory(products: Product[], count: number = 2)
   return result;
 }
 
-export default filterAndSortProducts;

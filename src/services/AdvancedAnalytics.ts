@@ -17,7 +17,7 @@ import {
   DeviceInfo
 } from '../types/analytics';
 
-export class AdvancedAnalytics {
+class AdvancedAnalytics {
   private sessionId: string;
   private userId?: string;
   private sessionStartTime: number;
@@ -841,8 +841,7 @@ export class AdvancedAnalytics {
 export const advancedAnalytics = new AdvancedAnalytics();
 
 // Hook for React components
-export const useAdvancedAnalytics = () => {
+const useAdvancedAnalytics = () => {
   return advancedAnalytics;
 };
 
-export default AdvancedAnalytics;

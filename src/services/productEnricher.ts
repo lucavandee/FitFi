@@ -545,7 +545,7 @@ function validateAndNormalizeImageUrl(imageUrl: string): string {
  * @param product - Raw Zalando product
  * @returns BoltProduct
  */
-export function convertToBoltProduct(product: RawZalandoProduct): BoltProduct {
+function convertToBoltProduct(product: RawZalandoProduct): BoltProduct {
   // Extract basic information
   const title = product.title || product.name || 'Onbekend product';
   const brand = product.brand || 'Onbekend merk';
@@ -608,7 +608,7 @@ export function convertToBoltProduct(product: RawZalandoProduct): BoltProduct {
  * @param products - Array of raw Zalando products
  * @returns Array of BoltProducts
  */
-export function convertToBoltProducts(products: RawZalandoProduct[]): BoltProduct[] {
+function convertToBoltProducts(products: RawZalandoProduct[]): BoltProduct[] {
   return products.map(convertToBoltProduct);
 }
 
@@ -617,7 +617,7 @@ export function convertToBoltProducts(products: RawZalandoProduct[]): BoltProduc
  * @param product - Raw Zalando product
  * @returns Enriched BoltProduct
  */
-export function enrichZalandoProduct(product: any): BoltProduct {
+function enrichZalandoProduct(product: any): BoltProduct {
   return convertToBoltProduct(product);
 }
 
@@ -630,9 +630,3 @@ export function enrichZalandoProducts(products: any[]): BoltProduct[] {
   return products.map(enrichZalandoProduct);
 }
 
-export default {
-  convertToBoltProduct,
-  convertToBoltProducts,
-  enrichZalandoProduct,
-  enrichZalandoProducts
-};

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
  * Clean OnboardingContext for route-driven flow
  * No auto-populate, no navigation logic, just data management
  */
-export interface OnboardingData {
+interface OnboardingData {
   gender?: 'man' | 'vrouw';
   name?: string;
   archetypes?: string[];
