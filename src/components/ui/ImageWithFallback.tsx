@@ -14,6 +14,7 @@ type ImageWithFallbackProps = {
   style?: React.CSSProperties;
   componentName?: string;
   onError?: (originalSrc: string) => void;
+  fallback?: string;
 };
 
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
@@ -23,6 +24,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   width,
   height,
   fallbackSrc,
+  fallback,
   fallbackKey,
   onClick,
   style,
@@ -31,6 +33,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
 }) => {
   const computedFallback = useMemo(
     () => {
+      if (fallback) return fallback;
       if (fallbackSrc) return fallbackSrc;
       
       // Use curated image if fallbackKey is provided
@@ -46,7 +49,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       
       return getFallbackImage(width ?? 600, height ?? 800);
     },
-    [fallbackSrc, fallbackKey, width, height]
+    [fallback, fallbackSrc, fallbackKey, width, height]
   );
 
   const [currentSrc, setCurrentSrc] = useState<string>(
@@ -54,11 +57,11 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   );
 
   const handleError: React.ReactEventHandler<HTMLImageElement> = () => {
-    if (currentSrc !== curatedImage('casual_chic', 'lente')) {
+    if (currentSrc !== computedFallback) {
       if (onError && src) {
         onError(src);
       }
-      setCurrentSrc(curatedImage('casual_chic', 'lente'));
+      setCurrentSrc(computedFallback);
     }
   };
 
@@ -71,6 +74,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       className={className}
       loading="lazy"
       decoding="async"
+      fetchPriority="low"
       onError={handleError}
       onClick={onClick}
       style={style}
