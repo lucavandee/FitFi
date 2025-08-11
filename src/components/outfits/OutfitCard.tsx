@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { getSafeImageUrl } from '@/utils/images';
 import { isSaved } from '../../services/engagement';
 
 interface OutfitCardProps {
@@ -91,7 +92,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     >
       <div className="w-full h-72 mb-3">
         <ImageWithFallback
-          src={outfit?.imageUrl}
+          src={getSafeImageUrl(outfit?.imageUrl)}
           alt={outfit?.title || 'Outfit'}
           containerClassName="w-full h-72 hover:scale-105 transition-transform duration-300"
           className="w-full h-72"

@@ -1,5 +1,5 @@
 import { BoltProduct } from '../types/BoltProduct';
-import { isValidImageUrl } from './imageUtils';
+import { getSafeImageUrl, isValidImageUrl } from './images';
 import dutchProducts from '../data/dutchProducts';
 
 /**
@@ -134,9 +134,7 @@ export function generateMockBoltProducts(): BoltProduct[] {
     }
     
     // Ensure image URL is valid
-    const imageUrl = isValidImageUrl(product.imageUrl) ? 
-      product.imageUrl : 
-      getFallbackImageForType(type as any);
+    const imageUrl = getSafeImageUrl(product.imageUrl) || getFallbackImageForType(type as any);
     
     // Create BoltProduct
     return {

@@ -4,7 +4,7 @@ import { titleFor, descFor } from '../engine/copy';
 import { colorLabel } from '../utils/color';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
 import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
-import { isValidImageUrl } from '../utils/imageUtils';
+import { getSafeImageUrl, sanitizeImageUrl } from '../utils/images';
 import { curatedImage } from '../assets/curatedImages';
 
 /**
@@ -335,7 +335,7 @@ function createOutfit(
   // Count fallback images
   let fallbackImageCount = 0;
   const productsWithSafeImages = outfitProducts.map(p => {
-    const safeImageUrl = getSafeImageUrl(p.imageUrl, p.type);
+    const safeImageUrl = sanitizeImageUrl(p.imageUrl, p.type);
     if (safeImageUrl !== p.imageUrl) {
       fallbackImageCount++;
     }
@@ -363,13 +363,13 @@ function createOutfit(
       name: p.title,
       brand: p.brand,
       price: p.price,
-      imageUrl: p.imageUrl,
+      imageUrl: sanitizeImageUrl(p.imageUrl, p.type),
       type: p.type,
       category: CATEGORY_MAPPING[p.type] || 'other',
       styleTags: p.styleTags,
       affiliateUrl: p.affiliateUrl
     })),
-    imageUrl,
+    imageUrl: getSafeImageUrl(imageUrl) || curatedImage(archetype as any, season as any),
     tags: Array.from(new Set(tags)), // Remove duplicates
     matchPercentage,
     explanation: '', // Will be generated later
