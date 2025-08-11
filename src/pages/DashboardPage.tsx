@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -13,9 +13,9 @@ import toast from 'react-hot-toast';
 
 const DashboardContent: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isLoading, logout } = useUser();
+  const { user, isLoading } = useUser();
   const { resetQuiz, isResetting } = useQuizAnswers();
-  const { data, isLoading: dashboardLoading, error } = useDashboard();
+  const { data, isLoading: dashboardLoading } = useDashboard();
 
   if (isLoading) {
     return <LoadingFallback fullScreen message="Dashboard laden..." />;
@@ -97,7 +97,7 @@ const DashboardContent: React.FC = () => {
           {data?.referrals && (
             <FoundersCard 
               referrals={data.referrals}
-              shareLink={data.shareLink}
+              shareLink={data.shareLink ?? ''}
             />
           )}
 

@@ -7,7 +7,6 @@ import {
   Clock, 
   ArrowRight, 
   HelpCircle,
-  Search,
   FileText,
   Video,
   BookOpen
