@@ -1,5 +1,5 @@
 import type { CategoryRatio, Season } from './types';
-import { Product, Season, ProductCategory, Weather } from './types';
+import { Product, ProductCategory, Weather } from './types';
 
 /**
  * Determines the current season based on the current date
