@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
   // Get redirect path from location state
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname || '/feed';
 
   // Handle successful login redirect
   useEffect(() => {
