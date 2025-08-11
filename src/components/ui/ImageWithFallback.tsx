@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { isValidImageUrl, getFallbackImage } from "@/utils/imageUtils";
-import { curatedImage } from "@/assets/curatedImages";
+import { curatedImage } from "../../assets/curatedImages";
 
 type ImageWithFallbackProps = {
   src?: string | null;
-  alt: string;
+  alt?: string;
   className?: string;
   width?: number;
   height?: number;
@@ -18,7 +18,7 @@ type ImageWithFallbackProps = {
 
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   src,
-  alt = 'Outfit afbeelding',
+  alt = "Outfit afbeelding",
   className,
   width,
   height,
@@ -38,7 +38,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
         try {
           // Parse fallbackKey format: "archetype-season" or use defaults
           const [archetype = 'casual_chic', season = 'herfst'] = fallbackKey.split('-');
-          return curatedImage(archetype as any, season as any);
+          return curatedImage(archetype, season);
         } catch (error) {
           console.warn('Failed to get curated image, using generic fallback:', error);
         }
