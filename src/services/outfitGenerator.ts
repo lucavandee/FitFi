@@ -1,11 +1,10 @@
 import { BoltProduct } from '../types/BoltProduct';
 import { Outfit } from '../engine';
-import { generateOutfitTitle, generateOutfitDescription } from '../engine/generateOutfitDescriptions';
+import { outfitTitle, outfitDesc } from '../engine/copy';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
 import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
-import { getCuratedImage } from '../assets/curatedImages';
-import { titleFrom, descriptionFrom } from '../engine/generateOutfitDescriptions';
+import { curatedImage } from '../assets/curatedImages';
 
 /**
  * Essential product types for a complete outfit
@@ -303,15 +302,15 @@ function createOutfit(
   // Generate outfit ID
   const outfitId = `bolt-outfit-${archetype}-${index}`;
   
-  // Generate outfit title using new titleFrom function
+  // Generate outfit title using copy utilities
   const firstProduct = productsWithSafeImages[0];
-  const title = titleFrom(archetype, firstProduct?.name || firstProduct?.category, season as Season);
+  const title = outfitTitle(archetype, firstProduct?.name || firstProduct?.category, season);
   
-  // Generate outfit description using new descriptionFrom function
-  const description = descriptionFrom({
-    products: productsWithSafeImages,
+  // Generate outfit description using copy utilities
+  const description = outfitDesc({
+    products: productsWithSafeImages.map(p => ({ name: p.title, category: p.type })),
     archetype,
-    season: season as Season,
+    season: season,
     occasion
   });
   
@@ -328,8 +327,8 @@ function createOutfit(
     occasion.toLowerCase()
   ];
   
-  // Get outfit image - use product image or curated fallback
-  const imageUrl = firstProduct?.imageUrl || getCuratedImage(archetype as any, season as any, outfitId);
+  // Get outfit image - use product image or curated image
+  const imageUrl = firstProduct?.imageUrl || curatedImage(archetype as any, season as any);
   
   // Count fallback images
   let fallbackImageCount = 0;
@@ -379,7 +378,7 @@ function createOutfit(
     completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
   };
   
-  // Generate explanation using the new description
+  // Use the generated description as explanation
   outfit.explanation = description;
   
   return outfit;
