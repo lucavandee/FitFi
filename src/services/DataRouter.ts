@@ -1,4 +1,3 @@
-
 import { env } from '../utils/env';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
@@ -172,14 +171,12 @@ function getFromCache<T>(key: string): { data: T; source: DataSource; age: numbe
   }
   
   return null;
-      outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).filter((item): item is string => typeof item === 'string').join(', ')
 }
 
 /**
  * Save data to cache
  * @param key - Cache key
-      const structureItems = outfit.structure.filter((item): item is string => typeof item === 'string');
-      console.log(`Outfit ${index + 1} structure:`, structureItems.join(', '));
+ * @param data - Data to cache
  * @param source - Data source
  */
 function saveToCache<T>(key: string, data: T, source: DataSource): void {
@@ -950,4 +947,3 @@ const FEATURES = {
 const API_CONFIG = {
   cacheTTL: 300000 // 5 minutes in milliseconds
 };
-
