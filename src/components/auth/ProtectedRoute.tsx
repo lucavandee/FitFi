@@ -8,16 +8,17 @@ type Props = {
   allowedRoles?: string[];
 };
 
-export function ProtectedRoute({ children, redirectTo = '/login', allowedRoles }: Props) {
+export function ProtectedRoute({ children, redirectTo = '/inloggen', allowedRoles }: Props) {
   const { user, status } = useUser();
   const location = useLocation();
+  const returnTo = `${location.pathname}${location.search}`;
 
   if (status === 'loading') {
-    return <div className="min-h-[50vh] grid place-items-center text-sm opacity-70">Authenticatie controleren…</div>;
+    return <div className="p-6 text-sm text-gray-600">Even geduld…</div>;
   }
 
   if (status === 'unauthenticated' || !user) {
-    return <Navigate to={redirectTo} replace state={{ from: location }} />;
+    return <Navigate to={`${redirectTo}?returnTo=${encodeURIComponent(returnTo)}`} replace state={{ from: location }} />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user?.role ?? '')) {
