@@ -3,7 +3,7 @@ import { env } from '../utils/env';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateRecommendations } from '../engine/recommendationEngine';
-import { generateMockUser, generateMockGamification, generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
+import { generateMockGamification, generateMockOutfits, generateMockProducts } from '../utils/mockDataUtils';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { fetchProductsFromSupabase, getUserGamification, updateUserGamification, completeChallenge as completeSupabaseChallenge, getDailyChallenges } from './supabaseService';
 import boltService from './boltService';
@@ -86,58 +86,11 @@ Fallback-data zal worden gebruikt voor ontbrekende functionaliteit.
 checkEnvironmentVariables();
 
 /**
- * Clear the cache
- */
-function _clearCache(): void {
-  cache.clear();
-  if (env.DEBUG_MODE) {
-    console.log('[🧠 DataRouter] Cache cleared');
-  }
-}
-
-/**
  * Get the current data source
  * @returns Current data source
  */
 function getDataSource(): DataSource {
   return currentDataSource;
-}
-
-/**
- * Get fetch diagnostics
- * @returns Fetch diagnostics
- */
-function _getFetchDiagnostics(): FetchDiagnostics {
-  return fetchDiagnostics;
-}
-
-/**
- * Get fetch diagnostics summary as a string
- * @returns Fetch diagnostics summary
- */
-function _getFetchDiagnosticsSummary(): string {
-  const { operation, timestamp, attempts, finalSource, cacheUsed, cacheAge } = fetchDiagnostics;
-  
-  let summary = `[🧠 DataRouter] ${operation} at ${new Date(timestamp).toLocaleTimeString()}\n`;
-  
-  if (cacheUsed) {
-    summary += `→ Using cached data (${Math.round((cacheAge || 0) / 1000)}s old)\n`;
-  } else {
-    attempts.forEach(attempt => {
-      summary += `→ Tried ${attempt.source}: ${attempt.success ? '✅' : '❌'}`;
-      if (attempt.error) {
-        summary += ` (${attempt.error})`;
-      }
-      if (attempt.duration !== undefined) {
-        summary += ` [${attempt.duration}ms]`;
-      }
-      summary += '\n';
-    });
-    
-    summary += `→ Using source: ${finalSource}\n`;
-  }
-  
-  return summary;
 }
 
 /**
@@ -297,347 +250,6 @@ async function loadBoltProducts(): Promise<BoltProduct[]> {
   }
 }
 /**
- * Get outfits for a user
- * @param user - User profile
- * @param options - Optional generation options
- * @returns Array of outfits
- */
-async function _getOutfits(
-  user: UserProfile,
-  options?: any
-): Promise<Outfit[]> {
-  console.log('[🔍 DataRouter] getOutfits called with user:', user.id, 'options:', options);
-  
-  if (env.USE_MOCK_DATA) {
-    if (env.DEBUG_MODE) {
-      console.log("⚠️ Using mock outfits via USE_MOCK_DATA");
-    }
-    const mockOutfits = generateMockOutfits(options?.count || 3).map(o => ({
-      ...o,
-      archetype: (o as any).archetype ?? 'casual_chic',
-      occasion: ((o as any).occasions?.[0]) ?? 'Casual',
-      products: (o as any).products ?? []
-    }));
-    if (env.DEBUG_MODE) {
-      console.log('[🔍 DataRouter] Returning mock outfits:', mockOutfits);
-    }
-    return mockOutfits;
-  }
-  
-  // Validate user input
-  if (!user || !user.id) {
-    console.error('[❌ DataRouter] Invalid user provided to getOutfits:', user);
-    if (env.DEBUG_MODE) {
-      console.log('[🔧 DataRouter] Using fallback mock outfits due to invalid user');
-    }
-    return generateMockOutfits(options?.count || 3).map(o => ({
-      ...o,
-      archetype: (o as any).archetype ?? 'casual_chic',
-      occasion: ((o as any).occasions?.[0]) ?? 'Casual',
-      products: (o as any).products ?? []
-    }));
-  }
-  
-  // Ensure options have defaults
-  const safeOptions = {
-    ...options,
-    preferredSeasons: options?.preferredSeasons || ['autumn'],
-    preferredOccasions: options?.preferredOccasions || ['Casual'],
-    count: options?.count || 3
-  };
-  
-  // Reset diagnostics
-  resetDiagnostics('getOutfits');
-  
-  // Generate cache key
-  const cacheKey = `outfits-${user.id}-${JSON.stringify(safeOptions)}`;
-  
-  // Check cache first if caching is enabled
-  if (FEATURES.caching) {
-    const cached = getFromCache<Outfit[]>(cacheKey);
-    if (cached) {
-      return cached.data;
-    }
-  }
-  
-  // Start timing
-  const startTime = Date.now();
-  
-  // Try Supabase first if enabled
-  if (env.USE_SUPABASE) {
-    try {
-      // Fetch products from Supabase
-      const supabaseProducts = await fetchProductsFromSupabase();
-      
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      if (supabaseProducts && supabaseProducts.length > 0) {
-        // Convert to Product format
-        const products = supabaseProducts.map(p => ({
-          id: p.id,
-          name: p.name,
-          imageUrl: p.image_url || p.imageUrl,
-          type: p.type || p.category,
-          category: p.category,
-          styleTags: p.tags || ['casual'],
-          description: p.description || `${p.name} van ${p.brand || 'onbekend merk'}`,
-          price: typeof p.price === 'number' ? p.price : parseFloat(p.price || '0'),
-          brand: p.brand,
-          affiliateUrl: p.url || p.affiliate_url,
-          season: ['spring', 'summer', 'autumn', 'winter'] // Default all seasons
-        }));
-        
-        // Generate outfits
-        const outfits = await generateRecommendations(user, {
-          ...safeOptions,
-          useZalandoProducts: false
-        });
-        
-        // Add attempt to diagnostics
-        addAttempt('supabase', true, undefined, duration);
-        setFinalSource('supabase');
-        
-        // Cache the result
-        saveToCache(cacheKey, outfits, 'supabase');
-        
-        return outfits;
-      }
-      
-      // Add failed attempt to diagnostics
-      addAttempt('supabase', false, 'No products found', duration);
-    } catch (error) {
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
-      
-      console.error('[🧠 DataRouter] Supabase error:', error);
-    }
-  }
-  
-  // Try Bolt API if enabled
-  if (env.USE_BOLT) {
-    const boltStartTime = Date.now();
-    
-    try {
-      // Fetch outfits from boltService (with fallback)
-      console.log('[🧠 DataRouter] Attempting to fetch outfits from boltService');
-      const boltOutfits = await boltService.fetchOutfits();
-      
-      const boltEndTime = Date.now();
-      const boltDuration = boltEndTime - boltStartTime;
-      
-      if (boltOutfits && Array.isArray(boltOutfits) && boltOutfits.length > 0) {
-        // Add attempt to diagnostics
-        addAttempt('bolt', true, undefined, boltDuration);
-        setFinalSource('bolt');
-
-        // Log outfits for debugging
-        if (env.DEBUG_MODE) {
-          console.log(`[🧠 DataRouter] getOutfits() returning ${boltOutfits.length} outfits from Bolt API`);
-        }
-        if (env.DEBUG_MODE && boltOutfits.length > 0) {
-          console.log(`[🧠 DataRouter] First outfit:`, {
-            id: boltOutfits[0].id,
-            title: boltOutfits[0].title,
-            ...safeOptions,
-            matchPercentage: boltOutfits[0].matchPercentage
-          });
-        }
-
-        // Cache the result
-        saveToCache(cacheKey, boltOutfits, 'bolt');
-        
-        return boltOutfits;
-      }
-      
-      // Add failed attempt to diagnostics
-      addAttempt('bolt', false, 'No outfits found', boltDuration);
-    } catch (error) {
-      const boltEndTime = Date.now();
-      const boltDuration = boltEndTime - boltStartTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
-      
-      console.error('[🧠 DataRouter] Bolt API error:', error);
-    }
-  }
-  
-  // Try Zalando if Supabase and Bolt failed
-  if (env.USE_ZALANDO) {
-    const zalandoStartTime = Date.now();
-    
-    try {
-      // Try to load BoltProducts from JSON file
-      console.log('[🧠 DataRouter] Attempting to load BoltProducts for Zalando fallback');
-      const boltProducts = await loadBoltProducts();
-      
-      if (boltProducts && boltProducts.length > 0) {
-        if (env.DEBUG_MODE) {
-          console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts to generate outfits`);
-        }
-        
-        try {
-          // Generate outfits from BoltProducts
-          const outfits = outfitGenerator.generateOutfitsFromBoltProducts(
-            boltProducts.slice(0, 20), // Limit to 20 products for performance
-            (user.stylePreferences?.casual || 0) > (user.stylePreferences?.formal || 0) ? 'casual_chic' : 'klassiek',
-            user.gender === 'male' ? 'male' : 'female',
-            3 // Generate at least 3 outfits
-          );
-          
-          if (outfits && outfits.length > 0) {
-            const zalandoEndTime = Date.now();
-            const zalandoDuration = zalandoEndTime - zalandoStartTime;
-            
-            // Add attempt to diagnostics
-            addAttempt('zalando', true, undefined, zalandoDuration);
-            setFinalSource('zalando');
-            
-            // Log outfits for debugging
-            if (env.DEBUG_MODE) {
-              console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from Zalando`);
-            }
-            
-            // Cache the result
-            saveToCache(cacheKey, outfits, 'zalando');
-            
-            return outfits;
-          }
-        } catch (outfitError) {
-          console.error('[🧠 DataRouter] Error generating outfits from BoltProducts:', outfitError);
-        }
-      }
-      
-      // If BoltProducts failed, try using Zalando products directly
-      console.log('[🧠 DataRouter] Attempting to load Zalando products');
-      const zalandoProducts = await getZalandoProducts();
-      
-      if (zalandoProducts && zalandoProducts.length > 0) {
-        // Generate outfits
-        const outfits = await generateRecommendations(user, {
-          ...options,
-          useZalandoProducts: true
-        });
-        
-        // Try to enrich outfits with BoltProducts
-        const enrichedOutfits = outfits.map(outfit => {
-          try {
-            return outfitEnricher.enrichOutfitWithBoltProducts(outfit, boltProducts);
-          } catch (error) {
-            console.error('[🧠 DataRouter] Error enriching outfit:', error);
-            return outfit;
-          }
-        });
-        
-        const zalandoEndTime = Date.now();
-        const zalandoDuration = zalandoEndTime - zalandoStartTime;
-        
-        // Add attempt to diagnostics
-        addAttempt('zalando', true, undefined, zalandoDuration);
-        setFinalSource('zalando');
-
-        // Log outfits for debugging
-        if (env.DEBUG_MODE) {
-          console.log(`[🧠 DataRouter] getOutfits() returning ${enrichedOutfits.length} enriched outfits from Zalando`);
-        }
-
-        // Cache the result
-        saveToCache(cacheKey, enrichedOutfits, 'zalando');
-        
-        return enrichedOutfits;
-      }
-      
-      // Add failed attempt to diagnostics
-      const zalandoEndTime = Date.now();
-      const zalandoDuration = zalandoEndTime - zalandoStartTime;
-      addAttempt('zalando', false, 'No products found', zalandoDuration);
-    } catch (error) {
-      const zalandoEndTime = Date.now();
-      const zalandoDuration = zalandoEndTime - zalandoStartTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('zalando', false, error instanceof Error ? error.message : 'Unknown error', zalandoDuration);
-      
-      console.error('[🧠 DataRouter] Zalando error:', error);
-    }
-  }
-  
-  // Fallback to local data
-  const localStartTime = Date.now();
-  console.log('[🧠 DataRouter] Using local fallback for outfits');
-  
-  try {
-    // Generate outfits from local data
-    let outfits;
-    
-    // First try to get outfits directly from boltService
-    console.log('[🧠 DataRouter] Attempting to get outfits from boltService (final attempt)');
-    const boltOutfits = await boltService.fetchOutfits();
-    
-    if (boltOutfits && Array.isArray(boltOutfits) && boltOutfits.length > 0) {
-      outfits = boltOutfits;
-      if (env.DEBUG_MODE) {
-        console.log(`[🧠 DataRouter] Got ${boltOutfits.length} outfits from boltService`);
-      }
-    } else {
-      // If that fails, generate outfits from local data
-      if (env.DEBUG_MODE) {
-        console.log('[🧠 DataRouter] Generating mock outfits from fallback data');
-      }
-      outfits = generateMockOutfits(3);
-      
-      // If still no outfits, use mock outfits
-      if (!outfits || outfits.length === 0) {
-        if (env.DEBUG_MODE) {
-          console.log('[🧠 DataRouter] No outfits generated, using hardcoded mock outfits');
-        }
-        outfits = generateMockOutfits(3);
-      }
-    }
-    
-    const localEndTime = Date.now();
-    const localDuration = localEndTime - localStartTime;
-    
-    // Add attempt to diagnostics
-    addAttempt('local', true, undefined, localDuration);
-    setFinalSource('local');
-    
-    // Log outfits for debugging
-    if (env.DEBUG_MODE) {
-      console.log(`[🧠 DataRouter] getOutfits() returning ${outfits.length} outfits from local data`);
-    }
-    if (env.DEBUG_MODE && outfits.length > 0) {
-      console.log(`[🧠 DataRouter] First outfit:`, {
-        id: outfits[0].id,
-        title: outfits[0].title,
-        products: outfits[0].products?.length || 0,
-        matchPercentage: outfits[0].matchPercentage
-      });
-    }
-
-    // Cache the result
-    saveToCache(cacheKey, outfits, 'local');
-    
-    return outfits;
-  } catch (error) {
-    const localEndTime = Date.now();
-    const localDuration = localEndTime - localStartTime;
-    
-    // Add failed attempt to diagnostics
-    addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
-    
-    console.error('[🧠 DataRouter] Local data error:', error);
-    
-    // Return empty array as last resort
-    return [];
-  }
-}
-
-/**
  * Gets recommended products for a user
  * @param userId - User ID
  * @param count - Number of products to recommend
@@ -645,19 +257,19 @@ async function _getOutfits(
  * @returns Array of recommended products
  */
 export async function getRecommendedProducts(
-  user?: UserProfile, 
+  user?: UserProfile,
   count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
-  const safeUser = user ?? { 
-    id: 'anon', 
-    name: 'Guest', 
-    email: '', 
-    gender: 'female' as const, 
-    stylePreferences: { casual: 0, formal: 0, sporty: 0, vintage: 0, minimalist: 0 }, 
-    isPremium: false, 
-    savedRecommendations: [] 
-  };
+  const safeUser = user ?? {
+    id: 'anon',
+    name: 'Guest',
+    email: '',
+    gender: 'female' as const,
+    stylePreferences: { casual: 0, formal: 0, sporty: 0, vintage: 0, minimalist: 0 },
+    isPremium: false,
+    savedRecommendations: []
+  } as UserProfile;
   console.log('[🔍 DataRouter] getRecommendedProducts called with user:', safeUser.id, 'count:', count, 'season:', season);
   
   if (env.USE_MOCK_DATA) {
@@ -674,7 +286,7 @@ export async function getRecommendedProducts(
   resetDiagnostics('getRecommendedProducts');
   
   // Generate cache key
-  const cacheKey = `products-${user.id}-${count}-${season || 'all'}`;
+  const cacheKey = `products-${safeUser.id}-${count}-${season || 'all'}`;
   
   // Check cache first if caching is enabled
   if (FEATURES.caching) {
@@ -715,8 +327,8 @@ export async function getRecommendedProducts(
         const score = product.archetypeMatch[primaryArchetype] || 0;
         return score >= 0.3; // Lower threshold to ensure we have enough products
       });
-      
-      console.log(`[🧠 DataRouter] Filtered to ${archetypeFiltered.length} products matching archetype preferences`);
+            (safeUser.stylePreferences?.casual || 0) > (safeUser.stylePreferences?.formal || 0) ? 'casual_chic' : 'klassiek',
+            safeUser.gender === 'male' ? 'male' : 'female',
       
       // Convert to Product format
       const products = archetypeFiltered.map(p => ({
@@ -775,138 +387,6 @@ export async function getRecommendedProducts(
     
     console.log(`[🧠 DataRouter] Returning ${mockProducts.length} fallback mock products after error`);
     return mockProducts;
-  }
-}
-
-/**
- * Get user data
- * @param userId - User ID
- * @returns User profile or null if not found
- */
-async function getUserData(userId: string): Promise<UserProfile | null> {
-  // Reset diagnostics
-  resetDiagnostics('getUserData');
-  
-  // Generate cache key
-  const cacheKey = `user-${userId}`;
-  
-  // Check cache first if caching is enabled
-  if (FEATURES.caching) {
-    const cached = getFromCache<UserProfile>(cacheKey);
-    if (cached) {
-      return cached.data;
-    }
-  }
-  
-  // Start timing
-  const startTime = Date.now();
-  
-  // Try Supabase first if enabled
-  if (env.USE_SUPABASE) {
-    try {
-      // Fetch user from Supabase
-      const user = await getUserById(userId);
-      
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      if (user) {
-        // Add attempt to diagnostics
-        addAttempt('supabase', true, undefined, duration);
-        setFinalSource('supabase');
-        
-        // Cache the result
-        saveToCache(cacheKey, user, 'supabase');
-        
-        return user;
-      }
-      
-      // Add failed attempt to diagnostics
-      addAttempt('supabase', false, 'User not found', duration);
-    } catch (error) {
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('supabase', false, error instanceof Error ? error.message : 'Unknown error', duration);
-      
-      if (env.DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Supabase error:', error);
-      }
-    }
-  }
-  
-  // Try Bolt API if enabled
-  if (env.USE_BOLT) {
-    const boltStartTime = Date.now();
-    
-    try {
-      // Fetch user from local JSON
-      const user = await boltService.fetchUser();
-      
-      const boltEndTime = Date.now();
-      const boltDuration = boltEndTime - boltStartTime;
-      
-      if (user) {
-        // Add attempt to diagnostics
-        addAttempt('bolt', true, undefined, boltDuration);
-        setFinalSource('bolt');
-        
-        // Cache the result
-        saveToCache(cacheKey, user, 'bolt');
-        
-        return user;
-      }
-      
-      // Add failed attempt to diagnostics
-      addAttempt('bolt', false, 'User not found', boltDuration);
-    } catch (error) {
-      const boltEndTime = Date.now();
-      const boltDuration = boltEndTime - boltStartTime;
-      
-      // Add failed attempt to diagnostics
-      addAttempt('bolt', false, error instanceof Error ? error.message : 'Unknown error', boltDuration);
-      
-      if (env.DEBUG_MODE) {
-        console.error('[🧠 DataRouter] Bolt API error:', error);
-      }
-    }
-  }
-  
-  // Fallback to local data
-  const localStartTime = Date.now();
-  
-  try {
-    // Generate mock user
-    const mockUser = generateMockUser(userId);
-    
-    const localEndTime = Date.now();
-    const localDuration = localEndTime - localStartTime;
-    
-    // Add attempt to diagnostics
-    addAttempt('local', true, undefined, localDuration);
-    setFinalSource('local');
-    
-    // Cache the result
-    saveToCache(cacheKey, mockUser, 'local');
-    
-    return {
-      ...mockUser,
-      gender: (mockUser.gender === 'male' || mockUser.gender === 'female') ? mockUser.gender : 'female' as const
-    };
-  } catch (error) {
-    const localEndTime = Date.now();
-    const localDuration = localEndTime - localStartTime;
-    
-    // Add failed attempt to diagnostics
-    addAttempt('local', false, error instanceof Error ? error.message : 'Unknown error', localDuration);
-    
-    if (env.DEBUG_MODE) {
-      console.error('[🧠 DataRouter] Local data error:', error);
-    }
-    
-    // Return null as last resort
-    return null;
   }
 }
 
@@ -1094,21 +574,21 @@ async function updateGamificationData(userId: string, updates: any): Promise<any
     
     try {
       // Update gamification data (mock)
-      const updatedData = await boltService.updateGamification(userId, updates);
+      const response = await boltService.updateGamification(userId, updates);
       
       const boltEndTime = Date.now();
       const boltDuration = boltEndTime - boltStartTime;
       
-      if (updatedData && updatedData.success) {
+      if (response && response.success) {
         // Add attempt to diagnostics
         addAttempt('bolt', true, undefined, boltDuration);
         setFinalSource('bolt');
         
         // Update cache
         const cacheKey = `gamification-${userId}`;
-        saveToCache(cacheKey, updatedData.data || updatedData, 'bolt');
+        saveToCache(cacheKey, response as any, 'bolt');
         
-        return updatedData.data || updatedData;
+        return response as any;
       }
       
       // Add failed attempt to diagnostics
