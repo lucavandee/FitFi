@@ -173,6 +173,7 @@ function getFromCache<T>(key: string): { data: T; source: DataSource; age: numbe
   
   return null;
       outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).filter((item): item is string => typeof item === 'string').join(', ')
+}
 
 /**
  * Save data to cache
