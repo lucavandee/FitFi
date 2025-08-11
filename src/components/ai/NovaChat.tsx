@@ -293,14 +293,14 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       <div className="flex-shrink-0 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
         {/* Quick Suggestions - only show initially */}
         {messages.length <= 1 && (
-          <div className="px-4 pt-4 pb-2">
+          <div className="px-4 pt-4 pb-2 overflow-x-auto scrollbar-hide">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Probeer bijvoorbeeld:</p>
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 min-w-max">
               {quickSuggestions.map(suggestion => (
                 <button
                   key={suggestion}
                   onClick={() => handleQuickSuggestion(suggestion)}
-                  className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full transition-colors whitespace-nowrap flex-shrink-0"
+                  className="shrink-0 rounded-full px-3 py-1.5 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
                   disabled={sending || status === 'degraded'}
                 >
                   {suggestion}
