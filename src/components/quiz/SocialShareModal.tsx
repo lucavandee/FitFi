@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Instagram, Twitter, Facebook, Link, Download } from 'lucide-react';
+import { X, Instagram, Twitter, Facebook, Link2, Download } from 'lucide-react';
 import { SocialShareData } from '../../types/achievements';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
@@ -150,7 +150,7 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
               variant="outline"
               fullWidth
               onClick={() => handleShare('copy')}
-              icon={<Link size={20} />}
+              icon={<Link2 size={20} />}
               iconPosition="left"
               className="border-gray-300 text-gray-600 hover:bg-gray-50"
             >
