@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
-import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 
 const ResetPasswordPage: React.FC = () => {

@@ -4,8 +4,6 @@ import { ArrowLeft, Loader, Heart, Share2, Filter } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/ui/Button';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { getRecommendedProducts } from '../services/DataRouter';
 
 const OutfitsPage: React.FC = () => {

@@ -10,10 +10,7 @@ const OnboardingPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
   const { isQuizCompleted, isLoading: quizLoading } = useQuizAnswers();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   
-  // Get user ID from URL params if available
-  const userIdFromUrl = searchParams.get('user');
 
   // Redirect to results if quiz already completed
   useEffect(() => {

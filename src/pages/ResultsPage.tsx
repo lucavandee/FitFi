@@ -13,9 +13,6 @@ const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [analysisComplete, setAnalysisComplete] = useState(false);
-  
-  // Get any data passed from quiz/onboarding
-  const onboardingQuizData = location.state?.quizData;
 
   // Redirect to quiz if not completed
   useEffect(() => {

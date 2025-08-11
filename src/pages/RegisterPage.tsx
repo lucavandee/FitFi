@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
-import toast from 'react-hot-toast';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();

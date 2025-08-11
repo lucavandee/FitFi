@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Search, 
-  User, 
-  CreditCard, 
-  ShoppingBag, 
-  Shirt, 
-  Settings, 
-  Camera, 
-  Shield, 
-  HelpCircle,
+  User,
+  CreditCard,
+  ShoppingBag,
+  Shirt,
+  Camera,
+  Shield,
   ChevronRight,
   ArrowRight
 } from 'lucide-react';
