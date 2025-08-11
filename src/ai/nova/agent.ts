@@ -115,22 +115,55 @@ export const NovaTools = {
 
 // ── Planner: intent → tool(s) → response
 export async function planAndExecute(userText:string){
+  const { trackEvent } = await import('@/utils/analytics');
+  
   const profile = NovaMemory.readProfile();
   const history = NovaMemory.readHistory();
   const intent = detectIntent(userText);
   const entities = extractEntities(userText);
   const ctx:ToolCtx={ profile, history };
+  
+  // Track intent detection
+  trackEvent('nova_intent', 'ai_interaction', intent, 1, {
+    user_text_length: userText.length,
+    entities_found: Object.keys(entities).length,
+    has_profile: !!profile
+  });
 
   if (intent==='greet') return { reply: 'Hey! Waar heb je zin in vandaag—een outfitadvies, of iets specifieks zoeken?', cards:[] };
   if (intent==='help') return { reply:'Je kunt me vragen om outfits voor een gelegenheid, kleur of budget. Probeer: "Outfit voor kantoor onder €120 in zwart."', cards:[] };
   if (intent==='outfit_request' || intent==='style_advice'){
     const r = await NovaTools.generate_outfits(ctx, entities);
+    
+    // Track outfit generation
+    trackEvent('nova_tool', 'ai_interaction', 'generate_outfits', (r.payload || []).length, {
+      occasion: entities.occasion,
+      colors: entities.colors?.join(','),
+      budget_max: entities.budgetMax,
+      season: entities.season
+    });
+    
     return { reply: buildOutfitReply(entities), cards: r.payload, kind:'outfits' };
   }
   if (intent==='product_search'){
     const r = await NovaTools.search_products(ctx, entities);
+    
+    // Track product search
+    trackEvent('nova_tool', 'ai_interaction', 'search_products', (r.payload || []).length, {
+      categories: entities.categories?.join(','),
+      colors: entities.colors?.join(','),
+      budget_max: entities.budgetMax
+    });
+    
     return { reply: buildProductReply(entities), cards: r.payload, kind:'products' };
   }
+  
+  // Track unknown intent
+  trackEvent('nova_intent', 'ai_interaction', 'unknown', 1, {
+    user_text: userText.slice(0, 50), // First 50 chars for debugging
+    entities_found: Object.keys(entities).length
+  });
+  
   return { reply: 'Ik kan outfits en producten voor je vinden. Noem een gelegenheid, kleur of budget 👍', cards:[] };
 }
 

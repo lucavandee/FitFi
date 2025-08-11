@@ -1,6 +1,7 @@
 import React from 'react';
 import { Send, Sparkles, MessageCircle } from 'lucide-react';
 import { planAndExecute, NovaMemory, NovaMessage } from '@/ai/nova/agent';
+import { trackEvent } from '@/utils/analytics';
 import OutfitCard from '@/components/outfits/OutfitCard';
 import ProductCard from '@/components/ProductCard';
 import Button from '../ui/Button';
@@ -120,9 +121,22 @@ const NovaChat: React.FC<NovaChatProps> = ({ onClose, context = 'general', class
 
   const handleQuickSuggestion = (suggestion: string) => {
     setInput(suggestion);
+    
+    // Track quick suggestion usage
+    trackEvent('nova_quick_suggestion_click', 'ai_interaction', 'suggestion_used', 1, {
+      suggestion_text: suggestion.slice(0, 50),
+      suggestion_index: quickSuggestions.indexOf(suggestion)
+    });
   };
 
   const handleOutfitAction = (action: string, outfit: any) => {
+    // Track outfit actions
+    trackEvent('nova_outfit_action', 'ai_interaction', action, 1, {
+      outfit_id: outfit.id,
+      outfit_archetype: outfit.archetype,
+      outfit_match_percentage: outfit.matchPercentage
+    });
+    
     switch (action) {
       case 'save':
         toast.success('Outfit bewaard!');
@@ -140,6 +154,13 @@ const NovaChat: React.FC<NovaChatProps> = ({ onClose, context = 'general', class
   };
 
   const handleExplainInChat = (explanation: string, outfit: any) => {
+    // Track explanation requests
+    trackEvent('nova_explanation_generated', 'ai_interaction', 'outfit_explained', 1, {
+      outfit_id: outfit.id,
+      explanation_length: explanation.length,
+      outfit_archetype: outfit.archetype
+    });
+    
     // Add explanation to chat
     const explanationMessage: NovaMessage = {
       role: 'nova',
