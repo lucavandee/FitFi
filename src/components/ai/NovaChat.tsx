@@ -16,7 +16,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   const [messages, setMessages] = useState<NovaMessage[]>([
     { 
       role: 'assistant', 
-      text: 'Hey! Ik ben Nova, jouw AI-stylist. Waar kan ik je mee helpen?', 
+      text: 'Hey! Ik ben Nova, jouw AI-stylist. Vertel me je gelegenheid (kantoor, weekend, event), gewenste stijl (casual / smart casual / formeel) en optioneel kleuren. Voorbeeld: "smart casual zwart voor kantoor – zomer".', 
       ts: Date.now() 
     }
   ]);
