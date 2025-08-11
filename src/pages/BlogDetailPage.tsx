@@ -54,13 +54,13 @@ const BlogDetailPage: React.FC = () => {
         
         // Extract excerpt from first paragraph
         const excerptMatch = content.match(/\n\n([^#\n]+)/);
-        const excerpt = excerptMatch ? excerptMatch[1].substring(0, 160) + '...' : '';
+        const excerpt = excerptMatch?.[1] ? excerptMatch[1].substring(0, 160) + '...' : '';
         
         setPost({
-          title,
-          author: authorMatch ? authorMatch[1] : 'FitFi Team',
-          date: dateMatch ? dateMatch[1] : '15 december 2024',
-          readTime: readTimeMatch ? readTimeMatch[1] : '5 min',
+          title: title ?? 'FitFi blog',
+          author: authorMatch?.[1] ?? 'FitFi Team',
+          date: dateMatch?.[1] ?? '15 december 2024',
+          readTime: readTimeMatch?.[1] ?? '5 min',
           content: content,
           imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2',
           excerpt
@@ -94,7 +94,7 @@ const BlogDetailPage: React.FC = () => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: post?.title,
+        title: post?.title ?? 'FitFi blog',
         url: window.location.href
       });
     } else {

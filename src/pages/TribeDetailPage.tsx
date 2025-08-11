@@ -1,22 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { 
   ArrowLeft, 
   Users, 
-  Plus, 
-  Heart, 
-  MessageCircle, 
-  Send, 
-  MoreHorizontal,
-  Star,
   Crown,
   UserPlus,
   UserMinus
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { TribesService } from '../services/tribesService';
-import { Tribe, TribePost, CreatePostData } from '../types/tribes';
+import { Tribe } from '../types/tribes';
 import Button from '../components/ui/Button';
 import PostComposer from '../components/tribes/PostComposer';
 import TribeFeed from '../components/tribes/TribeFeed';
@@ -91,7 +85,8 @@ const TribeDetailPage: React.FC = () => {
         setTribe(prev => prev ? { 
           ...prev, 
           is_member: false, 
-          member_count: prev.member_count - 1 
+          user_role: 'member' as const,
+          member_count: Math.max(0, (prev.member_count ?? 0) - 1)
         } : null);
       }
     } catch (error) {
