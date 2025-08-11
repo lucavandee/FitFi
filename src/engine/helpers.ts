@@ -262,14 +262,14 @@ export function calculateCategoryRatio(types: string[]): CategoryRatio {
   
   // Count categories
   types.forEach(type => {
-    const key = CATEGORY_MAPPING[type] ?? 'other';
-    ratio[key] = (ratio[key] ?? 0) + 1;
+    const key = (CATEGORY_MAPPING[type] ?? 'other') as keyof CategoryRatio;
+    ratio[key] = (ratio[key] || 0) + 1;
   });
   
   // Convert to percentages
-  const total = types.length || 1; // Prevent division by zero
+  const total = types.length || 1;
   (Object.keys(ratio) as (keyof CategoryRatio)[]).forEach(key => {
-    ratio[key] = Math.round(((ratio[key] ?? 0) / total) * 100);
+    ratio[key] = Math.round(((ratio[key] || 0) / total) * 100);
   });
   
   return ratio;
