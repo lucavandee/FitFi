@@ -3,7 +3,6 @@
  * Provides centralized error handling and user-friendly error messages
  */
 
-import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 export interface SupabaseErrorContext {
