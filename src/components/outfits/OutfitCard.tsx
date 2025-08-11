@@ -30,8 +30,22 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
   const [saved, setSaved] = useState<boolean>(isSaved(outfit.id));
+  const [isProcessing, setIsProcessing] = useState<{
+    save: boolean;
+    like: boolean;
+    dislike: boolean;
+  }>({
+    save: false,
+    like: false,
+    dislike: false
+  });
 
   const handleSave = () => {
+    if (isProcessing.save) return;
+    
+    setIsProcessing(prev => ({ ...prev, save: true }));
+    
+    // Optimistic UI update
     const nowSaved = toggleSave(outfit.id);
     setSaved(nowSaved);
     toast.dismiss();
@@ -45,11 +59,21 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
         outfit_id: outfit.id
       });
     }
+    
+    // Re-enable button after 200ms
+    setTimeout(() => {
+      setIsProcessing(prev => ({ ...prev, save: false }));
+    }, 200);
   };
 
   const handleMoreLikeThis = () => {
+    if (isProcessing.like) return;
+    
+    setIsProcessing(prev => ({ ...prev, like: true }));
+    
     const similarItems = getSimilarOutfits(allOutfits, outfit, 3);
     if (!similarItems.length) {
+      setIsProcessing(prev => ({ ...prev, like: false }));
       toast('Geen vergelijkbare outfits gevonden');
       return;
     }
@@ -65,9 +89,18 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
         outfit_id: outfit.id
       });
     }
+    
+    // Re-enable button after 200ms
+    setTimeout(() => {
+      setIsProcessing(prev => ({ ...prev, like: false }));
+    }, 200);
   };
 
   const handleDislike = () => {
+    if (isProcessing.dislike) return;
+    
+    setIsProcessing(prev => ({ ...prev, dislike: true }));
+    
     dislike(outfit.id);
     toast.dismiss();
     toast('We tonen je hier minder van 👌');
@@ -81,6 +114,11 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
         outfit_id: outfit.id
       });
     }
+    
+    // Re-enable button after 200ms
+    setTimeout(() => {
+      setIsProcessing(prev => ({ ...prev, dislike: false }));
+    }, 200);
   };
 
   return (
@@ -95,8 +133,9 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
           src={outfit.imageUrl}
           alt={outfit.title}
           category="outfit"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           componentName="OutfitCard"
+          style={{ objectFit: 'cover' }}
         />
       </div>
       
@@ -116,9 +155,9 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
           </p>
         </div>
         
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-2 flex flex-wrap gap-2 text-sm text-gray-500">
           <span 
-            className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white"
+            className="rounded-full border border-gray-200 px-2 py-0.5 bg-white"
             role="status"
             aria-label={`Match percentage: ${Math.round(outfit.matchPercentage || 75)} procent`}
           >
@@ -126,7 +165,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
           </span>
           {outfit.currentSeasonLabel && (
             <span 
-              className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white"
+              className="rounded-full border border-gray-200 px-2 py-0.5 bg-white"
               role="status"
               aria-label={`Seizoen: ${outfit.currentSeasonLabel}`}
             >
@@ -135,7 +174,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
           )}
           {outfit.dominantColorName && (
             <span 
-              className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white"
+              className="rounded-full border border-gray-200 px-2 py-0.5 bg-white"
               role="status"
               aria-label={`Dominante kleur: ${outfit.dominantColorName}`}
             >
@@ -146,33 +185,47 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
         
         <div className="mt-3 flex gap-2">
           <button 
-            aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"} 
+            aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"}
+            aria-pressed={saved}
+            aria-busy={isProcessing.save}
+            title={saved ? "Verwijder uit opgeslagen" : "Bewaar deze look"}
             onClick={handleSave} 
+            disabled={isProcessing.save}
             className={`flex-1 px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
               saved 
                 ? 'border-[#89CFF0] bg-[#89CFF0] text-white focus:ring-[#89CFF0]' 
                 : 'border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white focus:ring-[#89CFF0]'
-            }`}
+            } ${isProcessing.save ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <Heart className={`w-3 h-3 inline mr-1 ${saved ? 'fill-current' : ''}`} />
+            <Heart className={`w-3 h-3 inline mr-1 ${saved ? 'fill-current' : ''} ${isProcessing.save ? 'animate-pulse' : ''}`} />
             {saved ? 'Opgeslagen' : 'Bewaar'}
           </button>
           
           <button 
-            aria-label="Meer zoals dit" 
+            aria-label="Meer zoals dit"
+            aria-busy={isProcessing.like}
+            title="Voeg vergelijkbare outfits toe aan je feed"
             onClick={handleMoreLikeThis} 
-            className="flex-1 px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            disabled={isProcessing.like}
+            className={`flex-1 px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+              isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            <ThumbsUp className="w-3 h-3 inline mr-1" />
+            <ThumbsUp className={`w-3 h-3 inline mr-1 ${isProcessing.like ? 'animate-pulse' : ''}`} />
             Meer zoals dit
           </button>
           
           <button 
-            aria-label="Niet mijn stijl" 
+            aria-label="Niet mijn stijl"
+            aria-busy={isProcessing.dislike}
+            title="Verberg dit type outfit uit je feed"
             onClick={handleDislike} 
-            className="flex-1 px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            disabled={isProcessing.dislike}
+            className={`flex-1 px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+              isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            <ThumbsDown className="w-3 h-3 inline mr-1" />
+            <ThumbsDown className={`w-3 h-3 inline mr-1 ${isProcessing.dislike ? 'animate-pulse' : ''}`} />
             Niet mijn stijl
           </button>
         </div>

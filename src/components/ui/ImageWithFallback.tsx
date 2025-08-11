@@ -68,7 +68,7 @@ const ImageWithFallback: React.FC<Props> = ({
       srcSet={`${optimizedSrc} 1x, ${optimizedSrc} 2x`}
       sizes="(max-width: 640px) 100vw, 512px"
       onClick={onClick}
-      style={style}
+      style={{ objectFit: 'cover', ...style }}
       className={className}
     />
   );
