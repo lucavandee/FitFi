@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
-import OutfitReasons from './OutfitReasons';
+import toast from 'react-hot-toast';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import Button from '../ui/Button';
+import { toggleSave, isSaved, dislike, getSimilarOutfits } from '../../services/engagement';
 
 interface OutfitCardProps {
   outfit: {
@@ -13,15 +13,75 @@ interface OutfitCardProps {
     matchPercentage?: number;
     currentSeasonLabel?: string;
     dominantColorName?: string;
+    archetype?: string;
+    tags?: string[];
   };
-  onSave: (outfit: any) => void;
-  onMoreLikeThis: (outfit: any) => void;
-  onNotMyStyle: (outfit: any) => void;
+  allOutfits?: any[];
+  onInsertSimilar?: (items: any[]) => void;
+  onDismiss?: (id: string) => void;
 }
 
-const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMoreLikeThis, onNotMyStyle }) => {
+const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ 
+  outfit, 
+  allOutfits = [], 
+  onInsertSimilar, 
+  onDismiss 
+}) => {
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
+  const [saved, setSaved] = useState<boolean>(isSaved(outfit.id));
+
+  const handleSave = () => {
+    const nowSaved = toggleSave(outfit.id);
+    setSaved(nowSaved);
+    toast.dismiss();
+    toast.success(nowSaved ? 'Opgeslagen ✓' : 'Verwijderd uit opgeslagen');
+    
+    // Track save action
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'outfit_save', {
+        event_category: 'engagement',
+        event_label: outfit.archetype,
+        outfit_id: outfit.id
+      });
+    }
+  };
+
+  const handleMoreLikeThis = () => {
+    const similarItems = getSimilarOutfits(allOutfits, outfit, 3);
+    if (!similarItems.length) {
+      toast('Geen vergelijkbare outfits gevonden');
+      return;
+    }
+    
+    onInsertSimilar?.(similarItems);
+    toast.success('Meer zoals dit toegevoegd aan je feed');
+    
+    // Track positive feedback
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'outfit_like', {
+        event_category: 'feedback',
+        event_label: outfit.archetype,
+        outfit_id: outfit.id
+      });
+    }
+  };
+
+  const handleDislike = () => {
+    dislike(outfit.id);
+    toast.dismiss();
+    toast('We tonen je hier minder van 👌');
+    onDismiss?.(outfit.id);
+    
+    // Track negative feedback
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'outfit_dislike', {
+        event_category: 'feedback',
+        event_label: outfit.archetype,
+        outfit_id: outfit.id
+      });
+    }
+  };
 
   return (
     <article 
@@ -34,9 +94,9 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMo
         <ImageWithFallback 
           src={outfit.imageUrl}
           alt={outfit.title}
+          category="outfit"
           className="w-full h-full object-cover"
-          tabIndex={0}
-          role="img"
+          componentName="OutfitCard"
         />
       </div>
       
@@ -86,24 +146,33 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMo
         
         <div className="mt-3 flex gap-2">
           <button 
-            aria-label="Bewaar look" 
-            onClick={() => onSave(outfit)} 
-            className="flex-1 px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2"
+            aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"} 
+            onClick={handleSave} 
+            className={`flex-1 px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              saved 
+                ? 'border-[#89CFF0] bg-[#89CFF0] text-white focus:ring-[#89CFF0]' 
+                : 'border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white focus:ring-[#89CFF0]'
+            }`}
           >
-            Bewaar
+            <Heart className={`w-3 h-3 inline mr-1 ${saved ? 'fill-current' : ''}`} />
+            {saved ? 'Opgeslagen' : 'Bewaar'}
           </button>
+          
           <button 
             aria-label="Meer zoals dit" 
-            onClick={() => onMoreLikeThis(outfit)} 
+            onClick={handleMoreLikeThis} 
             className="flex-1 px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
+            <ThumbsUp className="w-3 h-3 inline mr-1" />
             Meer zoals dit
           </button>
+          
           <button 
             aria-label="Niet mijn stijl" 
-            onClick={() => onNotMyStyle(outfit)} 
+            onClick={handleDislike} 
             className="flex-1 px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           >
+            <ThumbsDown className="w-3 h-3 inline mr-1" />
             Niet mijn stijl
           </button>
         </div>
@@ -112,8 +181,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ outfit, onSave, onMo
   );
 });
 
-// Named export for backwards compatibility
-export { OutfitCard };
+OutfitCard.displayName = 'OutfitCard';
 
-// Default export for standard imports
+export { OutfitCard };
 export default OutfitCard;
