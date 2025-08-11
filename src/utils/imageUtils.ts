@@ -30,3 +30,4 @@ export function getSafeImageUrl(url?: string, category?: string) {
   // Fix common bad urls (data shape differences)
   const clean = url.replace(/^http:\/\//, 'https://').trim();
   return clean || getFallbackImageForCategory(category);
+}
