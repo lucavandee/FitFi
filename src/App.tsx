@@ -113,11 +113,7 @@ function App() {
                       {/* Protected Routes */}
                       <Route
                         path="/feed"
-                        element={
-                          <ProtectedRoute>
-                            <FeedPage />
-                          </ProtectedRoute>
-                        }
+                        element={<FeedPage />}
                       />
                       <Route path="/onboarding" element={
                         <ProtectedRoute>

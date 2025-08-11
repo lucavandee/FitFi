@@ -6,6 +6,23 @@ import { getSafeImageUrl } from '@/utils/image';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
 
+// RequireAuth mini-component for action buttons
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { useUser } = require('../../context/UserContext');
+  const { user } = useUser();
+  if (!user) {
+    return (
+      <button 
+        className="btn-outline px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white rounded-xl text-xs font-medium transition-colors"
+        onClick={() => window.location.href = '/inloggen?returnTo=/feed'}
+      >
+        Inloggen
+      </button>
+    );
+  }
+  return <>{children}</>;
+}
+
 interface OutfitCardProps {
   outfit: {
     id: string;
@@ -202,64 +219,72 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
         )}
         
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <button 
-            aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"}
-            aria-pressed={saved}
-            aria-busy={isProcessing.save}
-            title={saved ? "Verwijder uit opgeslagen" : "Bewaar deze look"}
-            onClick={handleSave} 
-            disabled={isProcessing.save}
-            className={`btn-secondary px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              saved 
-                ? 'border-[#89CFF0] bg-[#89CFF0] text-white focus:ring-[#89CFF0]' 
-                : 'border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white focus:ring-[#89CFF0]'
-            } ${isProcessing.save ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            <Heart className={`w-3 h-3 inline mr-1 ${saved ? 'fill-current' : ''} ${isProcessing.save ? 'animate-pulse' : ''}`} />
-            Bewaar
-          </button>
+          <RequireAuth>
+            <button 
+              aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"}
+              aria-pressed={saved}
+              aria-busy={isProcessing.save}
+              title={saved ? "Verwijder uit opgeslagen" : "Bewaar deze look"}
+              onClick={handleSave} 
+              disabled={isProcessing.save}
+              className={`btn-secondary px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                saved 
+                  ? 'border-[#89CFF0] bg-[#89CFF0] text-white focus:ring-[#89CFF0]' 
+                  : 'border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white focus:ring-[#89CFF0]'
+              } ${isProcessing.save ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Heart className={`w-3 h-3 inline mr-1 ${saved ? 'fill-current' : ''} ${isProcessing.save ? 'animate-pulse' : ''}`} />
+              Bewaar
+            </button>
+          </RequireAuth>
           
-          <button 
-            aria-label="Meer zoals dit"
-            aria-busy={isProcessing.like}
-            title="Voeg vergelijkbare outfits toe aan je feed"
-            onClick={handleMoreLikeThis} 
-            disabled={isProcessing.like}
-            className={`btn-secondary px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
-              isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            <ThumbsUp className={`w-3 h-3 inline mr-1 ${isProcessing.like ? 'animate-pulse' : ''}`} />
-            Meer zoals dit
-          </button>
+          <RequireAuth>
+            <button 
+              aria-label="Meer zoals dit"
+              aria-busy={isProcessing.like}
+              title="Voeg vergelijkbare outfits toe aan je feed"
+              onClick={handleMoreLikeThis} 
+              disabled={isProcessing.like}
+              className={`btn-secondary px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+                isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              <ThumbsUp className={`w-3 h-3 inline mr-1 ${isProcessing.like ? 'animate-pulse' : ''}`} />
+              Meer zoals dit
+            </button>
+          </RequireAuth>
           
-          <button 
-            aria-label="Niet mijn stijl"
-            aria-busy={isProcessing.dislike}
-            title="Verberg dit type outfit uit je feed"
-            onClick={handleDislike} 
-            disabled={isProcessing.dislike}
-            className={`btn-ghost text-muted-foreground px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
-              isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            <ThumbsDown className={`w-3 h-3 inline mr-1 ${isProcessing.dislike ? 'animate-pulse' : ''}`} />
-            Niet mijn stijl
-          </button>
+          <RequireAuth>
+            <button 
+              aria-label="Niet mijn stijl"
+              aria-busy={isProcessing.dislike}
+              title="Verberg dit type outfit uit je feed"
+              onClick={handleDislike} 
+              disabled={isProcessing.dislike}
+              className={`btn-ghost text-muted-foreground px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+                isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              <ThumbsDown className={`w-3 h-3 inline mr-1 ${isProcessing.dislike ? 'animate-pulse' : ''}`} />
+              Niet mijn stijl
+            </button>
+          </RequireAuth>
           
-          <button 
-            aria-label="Laat Nova dit outfit uitleggen"
-            aria-busy={isProcessing.explain}
-            title="Krijg Nova's uitleg waarom dit outfit bij je past"
-            onClick={handleExplain} 
-            disabled={isProcessing.explain}
-            className={`btn-secondary px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0]/10 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 ${
-              isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            <MessageCircle className={`w-3 h-3 inline mr-1 ${isProcessing.explain ? 'animate-pulse' : ''}`} />
-            {showExplanation ? 'Verberg uitleg' : 'Leg uit'}
-          </button>
+          <RequireAuth>
+            <button 
+              aria-label="Laat Nova dit outfit uitleggen"
+              aria-busy={isProcessing.explain}
+              title="Krijg Nova's uitleg waarom dit outfit bij je past"
+              onClick={handleExplain} 
+              disabled={isProcessing.explain}
+              className={`btn-secondary px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0]/10 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 ${
+                isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              <MessageCircle className={`w-3 h-3 inline mr-1 ${isProcessing.explain ? 'animate-pulse' : ''}`} />
+              {showExplanation ? 'Verberg uitleg' : 'Leg uit'}
+            </button>
+          </RequireAuth>
         </div>
       </div>
     </article>
