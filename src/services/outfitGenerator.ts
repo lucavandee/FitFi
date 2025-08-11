@@ -1,6 +1,7 @@
 import { BoltProduct } from '../types/BoltProduct';
 import { Outfit } from '../engine';
-import { outfitTitle, outfitDesc } from '../engine/copy';
+import { titleFor, descFor } from '../engine/copy';
+import { colorLabel } from '../utils/color';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
 import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
@@ -304,14 +305,15 @@ function createOutfit(
   
   // Generate outfit title using copy utilities
   const firstProduct = productsWithSafeImages[0];
-  const title = outfitTitle(archetype, firstProduct?.name || firstProduct?.category, season);
+  const title = titleFor({ archetype, key: firstProduct?.name || firstProduct?.category, season: currentSeason });
   
   // Generate outfit description using copy utilities
-  const description = outfitDesc({
-    products: productsWithSafeImages.map(p => ({ name: p.title, category: p.type })),
+  const description = descFor({
     archetype,
-    season: season,
-    occasion
+    products: productsWithSafeImages.map(p => ({ name: p.title, category: p.type })),
+    season: currentSeason,
+    occasion,
+    secondary: secondaryArchetype
   });
   
   // Map product types to categories for structure
@@ -375,7 +377,8 @@ function createOutfit(
     structure,
     weather: season === 'winter' ? 'cold' : season === 'summer' ? 'warm' : 'mild',
     categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
-    completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
+    completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
+    dominantColorName: colorLabel(firstProduct?.color)
   };
   
   // Use the generated description as explanation
