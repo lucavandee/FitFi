@@ -61,8 +61,8 @@ export const initializeAnalytics = (): void => {
 
   // Initialize gtag
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: any[]) {
-    window.dataLayer?.push(arguments);
+  window.gtag = function gtag(..._args: any[]) {
+    (window.dataLayer = window.dataLayer || []).push(arguments);
   };
   
   (window.gtag ?? ((..._args: any[]) => {}))('js', new Date() as any);
@@ -77,18 +77,6 @@ export const initializeAnalytics = (): void => {
   if (import.meta.env.DEV) {
     console.log('[Analytics] Google Analytics initialized with ID:', GA_TRACKING_ID);
   }
-};
-
-/**
- * Track page views
- */
-const trackPageView = (page_path: string, page_title?: string): void => {
-  if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
-
-  window.gtag('config', GA_TRACKING_ID as string, {
-    page_path,
-    page_title: page_title || document.title
-  });
 };
 
 /**
@@ -120,123 +108,3 @@ export const trackEvent = (
     ...custom_parameters
   });
 };
-
-/**
- * Track quiz completion
- */
-const trackQuizComplete = (
-  duration: number,
-  archetype: string,
-  gender: string
-): void => {
-  trackEvent('quiz_complete', 'engagement', 'style_quiz', duration, {
-    archetype,
-    gender,
-    quiz_duration: duration
-  });
-};
-
-/**
- * Track outfit view
- */
-const trackOutfitView = (
-  outfit_id: string,
-  archetype: string,
-  match_percentage: number
-): void => {
-  trackEvent('outfit_view', 'engagement', outfit_id, match_percentage, {
-    archetype,
-    match_percentage
-  });
-};
-
-/**
- * Track product click
- */
-const trackProductClick = (
-  product_id: string,
-  product_name: string,
-  price: number,
-  retailer: string
-): void => {
-  trackEvent('product_click', 'ecommerce', product_id, price, {
-    item_id: product_id,
-    item_name: product_name,
-    price,
-    currency: 'EUR',
-    retailer
-  });
-};
-
-/**
- * Track user registration
- */
-const trackUserRegistration = (method: string): void => {
-  trackEvent('sign_up', 'user', method, undefined, {
-    method
-  });
-};
-
-/**
- * Track conversion events
- */
-const trackConversion = (
-  conversion_type: 'premium_upgrade' | 'quiz_complete' | 'outfit_save',
-  value?: number
-): void => {
-  trackEvent('conversion', 'business', conversion_type, value, {
-    conversion_type
-  });
-};
-
-/**
- * Track funnel step completion
- */
-const trackFunnelStep = (
-  funnelType: string,
-  stepId: string,
-  stepOrder: number,
-  metadata: Record<string, any> = {}
-): void => {
-  trackEvent('funnel_step', 'funnel', `${funnelType}_${stepId}`, stepOrder, {
-    funnel_type: funnelType,
-    step_id: stepId,
-    step_order: stepOrder,
-    ...metadata
-  });
-};
-
-/**
- * Track heatmap interaction
- */
-const trackHeatmapInteraction = (
-  interactionType: 'click' | 'hover' | 'scroll',
-  element: string,
-  coordinates?: { x: number; y: number },
-  metadata: Record<string, any> = {}
-): void => {
-  trackEvent('heatmap_interaction', 'ux', `${interactionType}_${element}`, 1, {
-    interaction_type: interactionType,
-    element,
-    coordinates,
-    ...metadata
-  });
-};
-
-/**
- * Track predictive model insights
- */
-const trackPredictiveInsight = (
-  insightType: string,
-  confidence: number,
-  action: string,
-  metadata: Record<string, any> = {}
-): void => {
-  trackEvent('predictive_insight', 'ai', insightType, Math.round(confidence * 100), {
-    insight_type: insightType,
-    confidence,
-    recommended_action: action,
-    ...metadata
-  });
-};
-

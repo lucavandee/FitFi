@@ -309,51 +309,6 @@ function hasSavedProgress(): {
 }
 
 /**
- * Get progress recovery options for user
- */
-function _getRecoveryOptions(): {
-  canRecover: boolean;
-  options: Array<{
-    type: 'quiz' | 'onboarding';
-    label: string;
-    description: string;
-    progress: QuizProgress | OnboardingProgress;
-    ageMinutes: number;
-  }>;
-} {
-  const quizProgress = loadQuizProgress();
-  const onboardingProgress = loadOnboardingProgress();
-  const options: any[] = [];
-  
-  if (quizProgress) {
-    const ageMinutes = Math.round((Date.now() - quizProgress.timestamp) / 60000);
-    options.push({
-      type: 'quiz',
-      label: `Quiz hervatten (stap ${quizProgress.currentStep}/${quizProgress.totalSteps})`,
-      description: `Opgeslagen ${ageMinutes} minuten geleden`,
-      progress: quizProgress,
-      ageMinutes
-    });
-  }
-  
-  if (onboardingProgress) {
-    const ageMinutes = Math.round((Date.now() - onboardingProgress.timestamp) / 60000);
-    options.push({
-      type: 'onboarding',
-      label: `Onboarding hervatten (${onboardingProgress.currentStep})`,
-      description: `Opgeslagen ${ageMinutes} minuten geleden`,
-      progress: onboardingProgress,
-      ageMinutes
-    });
-  }
-  
-  return {
-    canRecover: options.length > 0,
-    options
-  };
-}
-
-/**
  * Auto-save progress on page unload
  */
 export function setupAutoSave(): void {
