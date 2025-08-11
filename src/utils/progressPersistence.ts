@@ -53,14 +53,14 @@ function getSessionId(): string {
 /**
  * Check if stored data is still valid
  */
-function isDataValid(timestamp: number): boolean {
+function _isDataValid(timestamp: number): boolean {
   return Date.now() - timestamp < MAX_AGE;
 }
 
 /**
- * Save quiz progress
+ * Save quiz progress (internal)
  */
-function saveQuizProgress(
+function _saveQuizProgress(
   currentStep: number,
   totalSteps: number,
   answers: Record<string, any>
@@ -95,9 +95,9 @@ function saveQuizProgress(
 }
 
 /**
- * Load quiz progress
+ * Load quiz progress (internal)
  */
-function loadQuizProgress(): QuizProgress | null {
+function _loadQuizProgress(): QuizProgress | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.QUIZ_PROGRESS);
     if (!stored) return null;
@@ -105,16 +105,16 @@ function loadQuizProgress(): QuizProgress | null {
     const progress: QuizProgress = JSON.parse(stored);
     
     // Validate data
-    if (!isDataValid(progress.timestamp)) {
+    if (!_isDataValid(progress.timestamp)) {
       console.log('[📱 ProgressPersistence] Quiz progress expired, clearing');
-      clearQuizProgress();
+      _clearQuizProgress();
       return null;
     }
     
     // Version check
     if (progress.version !== CURRENT_VERSION) {
       console.log('[📱 ProgressPersistence] Quiz progress version mismatch, clearing');
-      clearQuizProgress();
+      _clearQuizProgress();
       return null;
     }
     
@@ -134,15 +134,15 @@ function loadQuizProgress(): QuizProgress | null {
     return progress;
   } catch (error) {
     console.error('[❌ ProgressPersistence] Failed to load quiz progress:', error);
-    clearQuizProgress();
+    _clearQuizProgress();
     return null;
   }
 }
 
 /**
- * Clear quiz progress
+ * Clear quiz progress (internal)
  */
-function clearQuizProgress(): void {
+function _clearQuizProgress(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
     console.log('[📱 ProgressPersistence] Quiz progress cleared');
@@ -206,16 +206,16 @@ export function loadOnboardingProgress(): OnboardingProgress | null {
     const progress: OnboardingProgress = JSON.parse(stored);
     
     // Validate data
-    if (!isDataValid(progress.timestamp)) {
+    if (!_isDataValid(progress.timestamp)) {
       console.log('[📱 ProgressPersistence] Onboarding progress expired, clearing');
-      clearOnboardingProgress();
+      _clearOnboardingProgress();
       return null;
     }
     
     // Version check
     if (progress.version !== CURRENT_VERSION) {
       console.log('[📱 ProgressPersistence] Onboarding progress version mismatch, clearing');
-      clearOnboardingProgress();
+      _clearOnboardingProgress();
       return null;
     }
     
@@ -235,7 +235,7 @@ export function loadOnboardingProgress(): OnboardingProgress | null {
     return progress;
   } catch (error) {
     console.error('[❌ ProgressPersistence] Failed to load onboarding progress:', error);
-    clearOnboardingProgress();
+    _clearOnboardingProgress();
     return null;
   }
 }
@@ -255,9 +255,9 @@ function shouldLoadSavedProgress(currentContextData: any): boolean {
   return !hasValidContextData;
 }
 /**
- * Clear onboarding progress
+ * Clear onboarding progress (internal)
  */
-function clearOnboardingProgress(): void {
+function _clearOnboardingProgress(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.ONBOARDING_PROGRESS);
     console.log('[📱 ProgressPersistence] Onboarding progress cleared');
@@ -267,15 +267,15 @@ function clearOnboardingProgress(): void {
 }
 
 /**
- * Check if user has any saved progress
+ * Check if user has any saved progress (internal)
  */
-function hasSavedProgress(): {
+function _hasSavedProgress(): {
   hasQuizProgress: boolean;
   hasOnboardingProgress: boolean;
   mostRecentType: 'quiz' | 'onboarding' | null;
   mostRecentTimestamp: number | null;
 } {
-  const quizProgress = loadQuizProgress();
+  const quizProgress = _loadQuizProgress();
   const onboardingProgress = loadOnboardingProgress();
   
   const hasQuizProgress = !!quizProgress;
