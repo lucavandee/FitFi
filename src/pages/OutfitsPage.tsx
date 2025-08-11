@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Loader, Share2, Filter } from 'lucide-react';
+import Seo from '@/components/Seo';
 import { useUser } from '../context/UserContext';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/ui/Button';
@@ -43,6 +44,13 @@ const OutfitsPage: React.FC = () => {
   }
 
   return (
+    <>
+      <Seo 
+        title="Jouw Outfits - Gepersonaliseerde Aanbevelingen"
+        description="Bekijk jouw gepersonaliseerde outfit aanbevelingen. AI-geselecteerde kleding die perfect bij jouw stijl en persoonlijkheid past."
+        canonical="https://fitfi.app/outfits"
+        keywords="outfit aanbevelingen, gepersonaliseerde mode, AI styling, fashion recommendations, stijl advies"
+      />
     <div className="min-h-screen bg-[#F6F6F6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -140,6 +148,7 @@ const OutfitsPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

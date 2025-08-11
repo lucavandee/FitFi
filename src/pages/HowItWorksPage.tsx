@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/Seo';
 import { ArrowRight, MessageSquare, Brain, Users, ShoppingBag, Trophy, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
@@ -54,14 +55,13 @@ const HowItWorksPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F6F6F6]">
-      <Helmet>
-        <title>Zo werkt FitFi - AI-stijladvies, community & rewards | FitFi</title>
-        <meta name="description" content="Ontdek hoe FitFi werkt: AI-stijlquiz → recommendation engine → community & rewards. 95% nauwkeurige outfit aanbevelingen in 3 stappen." />
-        <meta property="og:title" content="Zo werkt FitFi - AI-stijladvies, community & rewards" />
-        <meta property="og:description" content="AI-stijlquiz → recommendation engine → community & rewards. 95% nauwkeurige outfit aanbevelingen." />
-        <meta property="og:image" content="https://fitfi.app/og-how-it-works.jpg" />
-        <link rel="canonical" href="https://fitfi.app/hoe-het-werkt" />
-      </Helmet>
+      <Seo 
+        title="Zo werkt FitFi - AI-stijladvies, community & rewards"
+        description="Ontdek hoe FitFi werkt: AI-stijlquiz → recommendation engine → community & rewards. 95% nauwkeurige outfit aanbevelingen in 3 stappen."
+        canonical="https://fitfi.app/hoe-het-werkt"
+        image="https://fitfi.app/og-how-it-works.jpg"
+        keywords="hoe werkt FitFi, AI stijladvies, recommendation engine, style community, fashion rewards"
+      />
 
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         

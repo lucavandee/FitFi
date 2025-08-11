@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 
@@ -8,6 +9,13 @@ const HomePage: React.FC = () => {
   const { user } = useUser();
 
   return (
+    <>
+      <Seo 
+        title="FitFi - AI-Powered Personal Styling Platform"
+        description="Ontdek jouw perfecte stijl met AI-powered personal styling. Gepersonaliseerde outfit aanbevelingen, stijlquiz en fashion advies."
+        canonical="https://fitfi.app/home"
+        keywords="AI personal stylist, outfit aanbevelingen, stijl quiz, fashion advies, Nederlandse mode platform"
+      />
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
       <div className="text-center max-w-2xl mx-auto p-8">
         <div className="w-20 h-20 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">
@@ -76,6 +84,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
