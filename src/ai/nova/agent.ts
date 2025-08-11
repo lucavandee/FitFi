@@ -16,6 +16,16 @@ type ToolCtx = {
 };
 export type NovaToolResult = { type:string; payload:any };
 
+// Nova Agent interface
+export type NovaAgent = {
+  greet(name: string): Promise<string>;
+  planAndExecute(userText: string): Promise<any>;
+  detectIntent(input: string): NovaIntent;
+  extractEntities(input: string): NovaEntities;
+  memory: typeof NovaMemory;
+  tools: typeof NovaTools;
+};
+
 export const NovaMemory = {
   readProfile(){ try{ return JSON.parse(localStorage.getItem('fitfi.profile')||'null'); }catch{return null;}},
   writeProfile(p:any){ localStorage.setItem('fitfi.profile', JSON.stringify(p)); },
@@ -198,3 +208,39 @@ function buildProductReply(e:NovaEntities){
   
   return variants[Math.floor(Math.random() * variants.length)];
 }
+
+// ── Nova Agent Implementation
+const agent: NovaAgent = {
+  async greet(name: string) {
+    const profile = NovaMemory.readProfile();
+    let greeting = `Hoi ${name}! Ik ben Nova 👋`;
+    
+    if (profile?.answers?.stylePreferences) {
+      const topPref = profile.answers.stylePreferences[0];
+      greeting += ` Ik zie dat je van ${topPref} stijl houdt!`;
+    }
+    
+    return greeting;
+  },
+  
+  async planAndExecute(userText: string) {
+    return planAndExecute(userText);
+  },
+  
+  detectIntent(input: string) {
+    return detectIntent(input);
+  },
+  
+  extractEntities(input: string) {
+    return extractEntities(input);
+  },
+  
+  memory: NovaMemory,
+  tools: NovaTools
+};
+
+// Default export voor import agent from './agent'
+export default agent;
+
+// Named export voor import { agent } from './agent'
+export { agent };
