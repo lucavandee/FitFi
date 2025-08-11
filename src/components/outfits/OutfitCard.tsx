@@ -31,6 +31,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
   const [saved, setSaved] = useState<boolean>(isSaved(outfit.id));
+  const [loaded, setLoaded] = React.useState(false);
   const [isProcessing, setIsProcessing] = useState<{
     save: boolean;
     like: boolean;
@@ -90,13 +91,22 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
       aria-labelledby={titleId}
       aria-describedby={descId}
     >
-      <div className="w-full h-72 mb-3">
-        <ImageWithFallback
-          src={getSafeImageUrl(outfit?.imageUrl)}
-          alt={outfit?.title || 'Outfit'}
-          containerClassName="w-full h-72 hover:scale-105 transition-transform duration-300"
-          className="w-full h-72"
-        />
+      <div className="relative rounded-xl overflow-hidden mb-3">
+        {/* Aspect ratio alleen hier, zodat layout niet flikkert */}
+        <div className="w-full aspect-[4/5] md:aspect-[3/4]">
+          {/* Skeleton */}
+          <div className={`absolute inset-0 bg-gray-100 animate-pulse transition-opacity ${loaded ? 'opacity-0' : 'opacity-100'}`} />
+
+          {/* Afbeelding */}
+          <ImageWithFallback
+            src={getSafeImageUrl(outfit?.imageUrl)}
+            alt={outfit?.title || 'Outfit'}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setLoaded(true)}
+            className={`w-full h-full object-cover transition-opacity duration-300 hover:scale-105 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          />
+        </div>
       </div>
       
       <div className="space-y-3">
