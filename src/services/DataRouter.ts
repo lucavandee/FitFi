@@ -1,3 +1,4 @@
+
 import { env } from '../utils/env';
 import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
@@ -933,47 +934,6 @@ async function getDailyChallengesData(userId: string): Promise<any[]> {
 }
 
 /**
- * Convert raw Zalando products to BoltProducts
- * @param products - Raw Zalando products
- * @returns Array of BoltProducts
- */
-async function convertZalandoToBoltProducts(products: any[]): Promise<any[]> {
-  // Reset diagnostics
-  resetDiagnostics('convertZalandoToBoltProducts');
-  
-  // Generate cache key
-  const cacheKey = `zalando-to-bolt-${JSON.stringify(products.map(p => p.id))}`;
-  
-  // Check cache first if caching is enabled
-  if (FEATURES.caching) {
-    const cached = getFromCache<any[]>(cacheKey);
-    if (cached) {
-      return cached.data;
-    }
-  }
-  
-  try {
-    // Convert products using productEnricher
-    const boltProducts = enrichZalandoProducts(products);
-    
-    // Set data source
-    setFinalSource('zalando');
-    
-    // Cache the result
-    saveToCache(cacheKey, boltProducts, 'zalando');
-    
-    return boltProducts;
-  } catch (error) {
-    if (env.DEBUG_MODE) {
-      console.error('[🧠 DataRouter] Error converting Zalando products:', error);
-    }
-    
-    // Return original products as fallback
-    return products;
-  }
-}
-
-/**
  * Get BoltProducts
  * @returns Array of BoltProducts
  */
@@ -990,3 +950,4 @@ const FEATURES = {
 const API_CONFIG = {
   cacheTTL: 300000 // 5 minutes in milliseconds
 };
+
