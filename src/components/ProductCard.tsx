@@ -25,7 +25,7 @@ const HowItWorksPage = React.lazy(() => import('@/pages/HowItWorksPage'));
 const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
 const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
 const FAQPage = React.lazy(() => import('@/pages/FAQPage'));
-const LegalPage = React.lazy(() => import('@/pages/Legal Page'));
+const LegalPage = React.lazy(() => import('@/pages/LegalPage'));
 const SupportPage = React.lazy(() => import('@/pages/SupportPage'));
 const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
 const GenderSelectPage = React.lazy(() => import('@/pages/GenderSelectPage'));
