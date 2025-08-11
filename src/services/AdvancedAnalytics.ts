@@ -391,7 +391,7 @@ class AdvancedAnalytics {
     let score = 0.5; // Base probability
 
     // Recent activity factor
-    const recentActivity = behaviorData.filter(b => 
+    const recentActivity = (behaviorData ?? []).filter(b => 
       Date.now() - new Date(b.created_at).getTime() < 7 * 24 * 60 * 60 * 1000 // Last 7 days
     );
     
@@ -402,8 +402,8 @@ class AdvancedAnalytics {
     }
 
     // Funnel completion factor
-    const completedFunnels = funnelData.filter(f => f.completed).length;
-    const totalFunnelSteps = funnelData.length;
+    const completedFunnels = (funnelData ?? []).filter(f => f.completed).length;
+    const totalFunnelSteps = (funnelData ?? []).length;
     
     if (totalFunnelSteps > 0) {
       const completionRate = completedFunnels / totalFunnelSteps;
@@ -417,20 +417,23 @@ class AdvancedAnalytics {
     let score = 0.3; // Base probability
 
     // Product interaction factor
-    const productInteractions = funnelData.filter(f => 
+    const productInteractions = (funnelData ?? []).filter(f => 
       f.step_id === 'product_click' || f.step_id === 'external_redirect'
     );
     
     score += Math.min(productInteractions.length * 0.1, 0.4);
 
     // Quiz completion factor
-    const quizCompletions = funnelData.filter(f => f.step_id === 'quiz_complete');
+    const quizCompletions = (funnelData ?? []).filter(f => f.step_id === 'quiz_complete');
     if (quizCompletions.length > 0) {
       score += 0.2;
     }
 
     // Engagement depth factor
-    const avgSessionTime = behaviorData.reduce((sum, b) => sum + (b.time_spent || 0), 0) / behaviorData.length;
+    const safeBehaviorData = behaviorData ?? [];
+    const avgSessionTime = safeBehaviorData.length > 0 
+      ? safeBehaviorData.reduce((sum, b) => sum + (b.time_spent || 0), 0) / safeBehaviorData.length
+      : 0;
     if (avgSessionTime > 300000) { // 5 minutes
       score += 0.15;
     }
@@ -439,11 +442,12 @@ class AdvancedAnalytics {
   }
 
   private calculateEngagementScore(behaviorData: any[]): number {
-    if (behaviorData.length === 0) return 0.3;
+    const safeBehaviorData = behaviorData ?? [];
+    if (safeBehaviorData.length === 0) return 0.3;
 
     // Calculate based on interaction patterns
-    const avgConfidence = behaviorData.reduce((sum, b) => sum + (b.confidence_score || 0.5), 0) / behaviorData.length;
-    const avgHesitation = behaviorData.reduce((sum, b) => sum + (b.hesitation_time || 1000), 0) / behaviorData.length;
+    const avgConfidence = safeBehaviorData.reduce((sum, b) => sum + (b.confidence_score || 0.5), 0) / safeBehaviorData.length;
+    const avgHesitation = safeBehaviorData.reduce((sum, b) => sum + (b.hesitation_time || 1000), 0) / safeBehaviorData.length;
     
     // Lower hesitation = higher engagement
     const hesitationScore = Math.max(0, 1 - (avgHesitation / 5000)); // Normalize to 0-1
@@ -453,7 +457,7 @@ class AdvancedAnalytics {
 
   private calculateStyleConfidence(behaviorData: any[]): number {
     // Calculate based on quiz completion and interaction patterns
-    const quizInteractions = behaviorData.filter(b => b.action_type === 'quiz_interaction');
+    const quizInteractions = (behaviorData ?? []).filter(b => b.action_type === 'quiz_interaction');
     
     if (quizInteractions.length === 0) return 0.5;
 
@@ -463,8 +467,10 @@ class AdvancedAnalytics {
 
   private calculatePredictedLTV(behaviorData: any[], funnelData: any[]): number {
     // Simple LTV prediction based on engagement and completion patterns
-    const engagementScore = this.calculateEngagementScore(behaviorData);
-    const purchaseProbability = this.calculatePurchaseProbability(behaviorData, funnelData);
+    const safeBehaviorData = behaviorData ?? [];
+    const safeFunnelData = funnelData ?? [];
+    const engagementScore = this.calculateEngagementScore(safeBehaviorData);
+    const purchaseProbability = this.calculatePurchaseProbability(safeBehaviorData, safeFunnelData);
     
     // Base LTV calculation
     const baseLTV = 50; // €50 base
@@ -746,13 +752,13 @@ class AdvancedAnalytics {
       // Save session recording
       const sessionRecording: SessionRecording = {
         id: this.sessionId,
-        user_id: this.userId || '',
+        user_id: this.userId ?? '',
         session_id: this.sessionId,
         page_url: this.currentPage,
         duration: Date.now() - this.sessionStartTime,
         events: this.sessionEvents,
         device_info: this.getDeviceInfo(),
-        conversion_events: this.sessionEvents.filter(e => e.type === 'click' && e.metadata?.conversion).map(e => e.element),
+        conversion_events: this.sessionEvents.filter(e => e.type === 'click' && e.metadata?.conversion).map(e => e.element ?? ''),
         exit_intent: this.detectExitIntent(),
         rage_clicks: this.sessionEvents.filter(e => e.type === 'click').length > 20 ? 1 : 0,
         dead_clicks: this.detectDeadClicks(),
