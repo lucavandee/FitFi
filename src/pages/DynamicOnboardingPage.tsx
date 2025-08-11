@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, User, Palette, Calendar, MapPin } from 'lucide-react';
 import { useOnboarding } from '../context/OnboardingContext';
 import { useUser } from '../context/UserContext';

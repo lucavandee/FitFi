@@ -10,7 +10,6 @@ import toast from 'react-hot-toast';
 const ResultsPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
   const { quizData, isLoading: quizLoading, isQuizCompleted, resetQuiz, isResetting } = useQuizAnswers();
-  const location = useLocation();
   const navigate = useNavigate();
   const [analysisComplete, setAnalysisComplete] = useState(false);
 
