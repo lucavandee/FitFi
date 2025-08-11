@@ -24,6 +24,9 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<'ready' | 'degraded' | 'error'>('ready');
+  const [showOutfitSkeletons, setShowOutfitSkeletons] = useState(false);
+  const lastIntentRef = useRef<any>(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useUser();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -36,6 +39,15 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   // Focus input on mount
   useEffect(() => {
     inputRef.current?.focus();
+  }, []);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Initialize Nova agent with fail-safe
@@ -73,6 +85,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     
     setSending(true);
     setError(null);
+    setShowOutfitSkeletons(false);
 
     // Add user message immediately for better UX
     const userMessage: NovaMessage = { role: 'user', text, ts: Date.now() };
@@ -108,6 +121,9 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         } : null
       }));
 
+      // Store last intent for refinement
+      lastIntentRef.current = { text, reply };
+
       // Handle different reply types
       switch (reply.type) {
         case 'smalltalk':
@@ -129,6 +145,13 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
           break;
           
         case 'outfits':
+          // Show skeletons briefly for better UX
+          setShowOutfitSkeletons(true);
+          
+          // Small delay to show loading state
+          await new Promise(resolve => setTimeout(resolve, 300));
+          setShowOutfitSkeletons(false);
+          
           // Format outfits as rich content
           const outfitText = `${reply.text}\n\n${reply.outfits.map((outfit, i) => 
             `${i + 1}. **${outfit.title}** (${outfit.matchPercentage}% match)\n   ${outfit.description}`
@@ -203,6 +226,10 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       case 'more':
         // Request more similar outfits
         console.log('Requesting more like:', outfit.id);
+        // Use last intent for refinement
+        if (lastIntentRef.current) {
+          setValue(`Meer outfits zoals ${outfit.title}`);
+        }
         setValue(`Meer outfits zoals ${outfit.title}`);
         break;
       case 'dislike':
@@ -213,6 +240,23 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     }
   };
 
+  const handleQuickSuggestion = (suggestion: string) => {
+    // Debounce to prevent double-taps
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      setValue(suggestion);
+      inputRef.current?.focus();
+      
+      // Track quick suggestion usage
+      trackEvent('nova_quick_suggestion', 'ai_interaction', 'suggestion_clicked', 1, {
+        suggestion_text: suggestion,
+        context: context
+      });
+    }, 200);
+  };
   const quickSuggestions = [
     'Zomerse outfit in beige',
     'Smart casual voor kantoor',
@@ -221,16 +265,6 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   ];
 
   const handleQuickSuggestion = (suggestion: string) => {
-    setValue(suggestion);
-    inputRef.current?.focus();
-    
-    // Track quick suggestion usage
-    trackEvent('nova_quick_suggestion', 'ai_interaction', 'suggestion_clicked', 1, {
-      suggestion_text: suggestion,
-      context: context
-    });
-  };
-
   // Show degraded state indicator
   const getStatusIndicator = () => {
     switch (status) {
@@ -382,6 +416,33 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
                 <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                 <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Outfit Loading Skeletons */}
+        {showOutfitSkeletons && (
+          <div className="flex justify-start">
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-3 max-w-[85%]">
+              <div className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                Outfits genereren...
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-600 animate-pulse">
+                    <div className="aspect-[4/3] bg-gray-300 dark:bg-gray-500"></div>
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 bg-gray-300 dark:bg-gray-500 rounded w-3/4"></div>
+                      <div className="h-2 bg-gray-300 dark:bg-gray-500 rounded w-1/2"></div>
+                      <div className="flex gap-1">
+                        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded flex-1"></div>
+                        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded flex-1"></div>
+                        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded flex-1"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
