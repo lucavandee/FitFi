@@ -1,6 +1,6 @@
-import { UserProfile, Product, Outfit, Season, ProductCategory, UserArchetypeProfile, OutfitGenerationOptions, Weather, ExtendedUserProfile, VariationLevel } from './types';
+import { UserProfile, Product, Outfit, Season, Weather, VariationLevel } from './types';
 import { filterAndSortProducts, getTopProductsByType } from './filterAndSortProducts';
-import { analyzeUserProfile, determineArchetypesFromAnswers, getStyleKeywords } from './profile-mapping';
+import { analyzeUserProfile, determineArchetypesFromAnswers } from './profile-mapping';
 import generateOutfits from './generateOutfits';
 import dutchProducts from '../data/dutchProducts';
 import { getCurrentSeason, isProductInSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
@@ -186,7 +186,7 @@ function calculateEnhancedProductScores(
   const seasonScore = calculateSeasonScore(product, targetSeason);
   const colorHarmonyScore = calculateColorHarmonyScore(product, userColorPrefs);
   const fitScore = calculateFitScore(product, bodyProfile);
-  const styleScore = calculateMatchScore(product, user.stylePreferences) / 5; // Normalize to 0-1
+  const styleScore = calculateFitScore(product, user as any) / 5; // Normalize to 0-1
   
   // Calculate weighted final score
   const weights = {
@@ -231,9 +231,9 @@ export async function generateRecommendations(
   
   // Step 1: Get current season or preferred season
   const preferredSeasons = options?.preferredSeasons;
-  const currentSeason = preferredSeasons && preferredSeasons.length > 0 
+  const currentSeason = (preferredSeasons && preferredSeasons.length > 0 
     ? preferredSeasons[0] 
-    : getCurrentSeason();
+    : getCurrentSeason()) ?? 'spring';
   
   console.log("Active season:", currentSeason);
   
@@ -370,7 +370,7 @@ export async function generateRecommendations(
     
     // Step 7: Generate outfits with options
     const count = options?.count || 3;
-    const excludeIds = options?.excludeIds || [];
+    const excludeIds = options?.excludeIds ?? [];
     const preferredOccasions = options?.preferredOccasions;
     const variationLevel = options?.variationLevel || 'medium';
     const enforceCompletion = options?.enforceCompletion !== undefined ? options.enforceCompletion : true;
@@ -386,7 +386,7 @@ export async function generateRecommendations(
       {
         excludeIds,
         preferredOccasions,
-        preferredSeasons: preferredSeasons || [currentSeason],
+        preferredSeasons: preferredSeasons ?? [currentSeason],
         weather,
         maxAttempts: 10,
         variationLevel,
@@ -859,16 +859,14 @@ function getComfortLevel(preferences: Record<string, number>): number {
  * @param useZalandoProducts - Whether to use Zalando products
  * @returns Array of recommended products
  */
-export function getRecommendedProducts(
+export async function getRecommendedProducts(
   user: UserProfile, 
   count: number = 9, 
   season?: Season,
   useZalandoProducts: boolean = true
-): Product[] {
-  // Use an async IIFE to handle the async product loading
-  return (async () => {
+): Promise<Product[]> {
     // Get current season or use specified season
-    const activeSeason = season || getCurrentSeason();
+    const activeSeason = (season ?? getCurrentSeason()) ?? 'spring';
     console.log("Active season for product recommendations:", activeSeason);
     
     // Get all available products
@@ -950,6 +948,5 @@ export function getRecommendedProducts(
     
     // Get top products by type to ensure diversity
     return getTopProductsByType(sortedProducts, Math.ceil(count / 3));
-  })();
 }
 
