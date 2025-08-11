@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { isSaved } from '../../services/engagement';
 
 interface OutfitCardProps {
@@ -89,15 +89,12 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
       aria-labelledby={titleId}
       aria-describedby={descId}
     >
-      <div className="aspect-[3/4] overflow-hidden rounded-xl mb-3">
-        <img
-          src={outfit.imageUrl}
-          alt={outfit.title}
-          onError={(e) => { 
-            (e.currentTarget as HTMLImageElement).src = '/images/placeholders/outfit-fallback.jpg'; 
-          }}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          style={{ objectFit: 'cover' }}
+      <div className="w-full h-72 mb-3">
+        <ImageWithFallback
+          src={outfit?.imageUrl}
+          alt={outfit?.title || 'Outfit'}
+          containerClassName="w-full h-72 hover:scale-105 transition-transform duration-300"
+          className="w-full h-72"
         />
       </div>
       
