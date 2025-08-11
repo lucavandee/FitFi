@@ -8,7 +8,7 @@ export const achievements: Achievement[] = [
     icon: '🔍',
     type: 'style_explorer',
     rarity: 'common',
-    condition: (answers) => !!answers && Object.keys(answers).length >= 5
+    condition: (_answers) => !!_answers && Object.keys(_answers).length >= 5
   },
   {
     id: 'color_master',
@@ -17,7 +17,7 @@ export const achievements: Achievement[] = [
     icon: '🎨',
     type: 'color_master',
     rarity: 'rare',
-    condition: (answers) => answers?.baseColors && ['neutral', 'jewel'].includes(answers.baseColors)
+    condition: (_answers) => _answers?.baseColors && ['neutral', 'jewel'].includes(_answers.baseColors)
   },
   {
     id: 'speed_demon',
@@ -26,7 +26,7 @@ export const achievements: Achievement[] = [
     icon: '⚡',
     type: 'completion_speed',
     rarity: 'epic',
-    condition: (answers, metadata) => metadata?.completionTime && metadata.completionTime < 120000
+    condition: (_answers, metadata) => metadata?.completionTime && metadata.completionTime < 120000
   },
   {
     id: 'perfectionist',
@@ -35,10 +35,10 @@ export const achievements: Achievement[] = [
     icon: '💎',
     type: 'perfectionist',
     rarity: 'legendary',
-    condition: (answers) => {
-      return answers?.stylePreferences?.length >= 3 && 
-             answers?.occasions?.length >= 4 &&
-             answers?.budgetRange >= 100;
+    condition: (_answers) => {
+      return _answers?.stylePreferences?.length >= 3 && 
+             _answers?.occasions?.length >= 4 &&
+             _answers?.budgetRange >= 100;
     }
   },
   {
@@ -48,7 +48,7 @@ export const achievements: Achievement[] = [
     icon: '🦋',
     type: 'social_sharer',
     rarity: 'rare',
-    condition: (answers, metadata) => metadata?.shared === true
+    condition: (_answers, metadata) => metadata?.shared === true
   },
   {
     id: 'trendsetter',
@@ -57,15 +57,15 @@ export const achievements: Achievement[] = [
     icon: '✨',
     type: 'style_explorer',
     rarity: 'epic',
-    condition: (answers) => {
-      const styles = answers?.stylePreferences || [];
+    condition: (_answers) => {
+      const styles = _answers?.stylePreferences || [];
       return styles.includes('edgy') && styles.includes('romantic');
     }
   }
 ];
 
-export const getEarnedAchievements = (answers: any, metadata: any = {}): Achievement[] => {
-  return achievements.filter(achievement => achievement.condition(answers, metadata));
+export const getEarnedAchievements = (_answers: any, metadata: any = {}): Achievement[] => {
+  return achievements.filter(achievement => achievement.condition(_answers, metadata));
 };
 
 const getAchievementById = (id: string): Achievement | undefined => {
