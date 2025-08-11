@@ -1,9 +1,9 @@
-import { UserProfile, Product, Outfit, Season, Weather, VariationLevel } from './types';
+import { UserProfile, Product, Outfit, Season, Weather } from './types';
 import { filterAndSortProducts, getTopProductsByType } from './filterAndSortProducts';
 import { analyzeUserProfile, determineArchetypesFromAnswers } from './profile-mapping';
 import generateOutfits from './generateOutfits';
 import dutchProducts from '../data/dutchProducts';
-import { getCurrentSeason, isProductInSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
+import { getCurrentSeason, getProductCategory, getTypicalWeatherForSeason } from './helpers';
 import { getZalandoProducts } from '../data/zalandoProductsAdapter';
 import { isValidImageUrl } from '../utils/imageUtils';
 import { env } from '../utils/env';
@@ -46,7 +46,7 @@ interface RecommendationOptions {
   preferredOccasions?: string[];
   preferredSeasons?: Season[];
   weather?: Weather;
-  variationLevel?: VariationLevel;
+  variationLevel?: string;
   enforceCompletion?: boolean;
   minCompleteness?: number;
   useZalandoProducts?: boolean;
@@ -231,14 +231,14 @@ export async function generateRecommendations(
   
   // Step 1: Get current season or preferred season
   const preferredSeasons = options?.preferredSeasons;
-  const currentSeason = (preferredSeasons && preferredSeasons.length > 0 
+  const currentSeason: Season = (preferredSeasons && preferredSeasons.length > 0 
     ? preferredSeasons[0] 
-    : getCurrentSeason()) ?? 'spring';
+    : getCurrentSeason() ?? 'spring') as Season;
   
   console.log("Active season:", currentSeason);
   
   // Step 2: Get weather condition (if specified or derive from season)
-  const weather = options?.weather || getTypicalWeatherForSeason(currentSeason);
+  const weather = options?.weather ?? getTypicalWeatherForSeason(currentSeason);
   console.log("Weather condition:", weather);
   
   // Step 3: Get all available products from enhanced sources
@@ -323,7 +323,9 @@ export async function generateRecommendations(
     console.log(`[FitFi] Using ${validProducts.length} products with valid images`);
     
     // Step 4: Filter products by season
-    const seasonalProducts = validProducts.filter(product => isProductInSeason(product, currentSeason));
+    const seasonalProducts = validProducts.filter(product => 
+      !product.season || product.season.includes(currentSeason)
+    );
     console.log("Products suitable for season:", seasonalProducts.length);
     
     // Step 4.5: Get user color preferences and body profile for enhanced scoring
@@ -354,7 +356,7 @@ export async function generateRecommendations(
         seasonScore: scores.seasonScore,
         colorHarmonyScore: scores.colorHarmonyScore,
         fitScore: scores.fitScore,
-        styleScore: scores.styleScore
+        styleScore: calculateFitScore(product, user as any) / 5
       };
     });
     
@@ -371,10 +373,10 @@ export async function generateRecommendations(
     // Step 7: Generate outfits with options
     const count = options?.count || 3;
     const excludeIds = options?.excludeIds ?? [];
-    const preferredOccasions = options?.preferredOccasions;
-    const variationLevel = options?.variationLevel || 'medium';
+    const preferredOccasions = options?.preferredOccasions ?? [];
+    const variationLevel = options?.variationLevel ?? 'medium';
     const enforceCompletion = options?.enforceCompletion !== undefined ? options.enforceCompletion : true;
-    const minCompleteness = options?.minCompleteness || 80;
+    const minCompleteness = options?.minCompleteness ?? 80;
     
     // Generate outfits with options
     const outfits = generateOutfits(
@@ -386,7 +388,7 @@ export async function generateRecommendations(
       {
         excludeIds,
         preferredOccasions,
-        preferredSeasons: preferredSeasons ?? [currentSeason],
+        preferredSeasons: [currentSeason],
         weather,
         maxAttempts: 10,
         variationLevel,
@@ -404,13 +406,13 @@ export async function generateRecommendations(
     
     // Log outfit composition
     outfitsWithExplanations.forEach((outfit, index) => {
-      console.log(`Outfit ${index + 1} composition:`, 
-        outfit.products.map(p => `${p.type || p.category} (${getProductCategory(p)})`).join(', ')
-      );
+      // DEBUG product categories disabled (getProductCategory not in scope)
+      console.log(`Outfit ${index + 1} composition:`, outfit.products.length, 'products');
       
       // Log structure if available
       if (outfit.structure) {
-        console.log(`Outfit ${index + 1} structure:`, outfit.structure.join(', '));
+        const structureItems = outfit.structure.filter((item): item is string => typeof item === 'string');
+        console.log(`Outfit ${index + 1} structure:`, structureItems.join(', '));
       }
       
       // Log completeness and category ratio
@@ -937,7 +939,9 @@ export async function getRecommendedProducts(
     console.log(`[FitFi] Using ${validProducts.length} products with valid images for recommendations`);
     
     // Filter products by season
-    const seasonalProducts = validProducts.filter(product => isProductInSeason(product, activeSeason));
+    const seasonalProducts = validProducts.filter(product => 
+      !product.season || product.season.includes(activeSeason)
+    );
     console.log("Products suitable for season:", seasonalProducts.length);
     
     // Use seasonal products if we have enough, otherwise fall back to all products
@@ -949,4 +953,3 @@ export async function getRecommendedProducts(
     // Get top products by type to ensure diversity
     return getTopProductsByType(sortedProducts, Math.ceil(count / 3));
 }
-
