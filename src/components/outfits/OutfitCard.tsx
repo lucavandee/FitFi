@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
+import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { getSafeImageUrl } from '@/utils/images';

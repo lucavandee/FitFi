@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Share2, MoreHorizontal, Send } from 'lucide-react';
+import { MessageCircle, Share2, MoreHorizontal, Send, X } from 'lucide-react';
 import { TribePost, TribePostComment } from '../../types/tribes';
 import { useUser } from '../../context/UserContext';
 import { supabase } from '../../lib/supabase';
