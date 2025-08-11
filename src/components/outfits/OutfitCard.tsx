@@ -24,6 +24,10 @@ export default function OutfitCard({ outfit, onSave, onMoreLikeThis, onNotMyStyl
     <article className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="aspect-[3/4] overflow-hidden rounded-xl mb-3">
         <ImageWithFallback 
+          src={outfit.imageUrl}
+          alt={outfit.title}
+          className="w-full h-full object-cover"
+        />
         <div className="mt-2 flex flex-wrap gap-2">
           <span className="rounded-full border border-gray-200 px-2 py-0.5 text-sm bg-white">
             Match {Math.round(outfit.matchPercentage || 75)}%
@@ -85,3 +89,8 @@ export default function OutfitCard({ outfit, onSave, onMoreLikeThis, onNotMyStyl
           >
             Niet mijn stijl
           </button>
+        </div>
+      </div>
+    </article>
+  );
+}
