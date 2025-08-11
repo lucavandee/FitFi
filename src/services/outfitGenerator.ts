@@ -4,6 +4,8 @@ import { generateOutfitTitle, generateOutfitDescription } from '../engine/genera
 import { generateOutfitExplanation } from '../engine/explainOutfit';
 import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
 import { isValidImageUrl } from '../utils/imageUtils';
+import { getCuratedImage } from '../assets/curatedImages';
+import { titleFrom, descriptionFrom } from '../engine/generateOutfitDescriptions';
 
 /**
  * Essential product types for a complete outfit
@@ -301,33 +303,17 @@ function createOutfit(
   // Generate outfit ID
   const outfitId = `bolt-outfit-${archetype}-${index}`;
   
-  // Generate outfit title
-  const title = generateOutfitTitle(
-    archetype,
-    occasion,
-    outfitProducts.map(p => ({
-      id: p.id,
-      name: p.title,
-      brand: p.brand,
-      price: p.price,
-      type: p.type,
-      category: CATEGORY_MAPPING[p.type] || 'other'
-    }))
-  );
+  // Generate outfit title using new titleFrom function
+  const firstProduct = productsWithSafeImages[0];
+  const title = titleFrom(archetype, firstProduct?.name || firstProduct?.category, season as Season);
   
-  // Generate outfit description
-  const description = generateOutfitDescription(
+  // Generate outfit description using new descriptionFrom function
+  const description = descriptionFrom({
+    products: productsWithSafeImages,
     archetype,
-    occasion,
-    outfitProducts.map(p => ({
-      id: p.id,
-      name: p.title,
-      brand: p.brand,
-      price: p.price,
-      type: p.type,
-      category: CATEGORY_MAPPING[p.type] || 'other'
-    }))
-  );
+    season: season as Season,
+    occasion
+  });
   
   // Map product types to categories for structure
   const structure = outfitProducts.map(p => CATEGORY_MAPPING[p.type] || 'other');
@@ -342,9 +328,8 @@ function createOutfit(
     occasion.toLowerCase()
   ];
   
-  // Validate and get safe image URL for the outfit
-  const firstProduct = outfitProducts[0];
-  const heroImage = getSafeImageUrl(firstProduct?.imageUrl, firstProduct?.type) ?? FALLBACK_IMAGES.default;
+  // Get outfit image - use product image or curated fallback
+  const imageUrl = firstProduct?.imageUrl || getCuratedImage(archetype as any, season as any, outfitId);
   
   // Count fallback images
   let fallbackImageCount = 0;
@@ -370,6 +355,7 @@ function createOutfit(
     title,
     description,
     archetype,
+    secondaryArchetype: secondaryArchetype ?? '',
     occasion,
     products: productsWithSafeImages.map(p => ({
       id: p.id,
@@ -382,7 +368,7 @@ function createOutfit(
       styleTags: p.styleTags,
       affiliateUrl: p.affiliateUrl
     })),
-    imageUrl: heroImage, // Use safe image URL
+    imageUrl,
     tags: Array.from(new Set(tags)), // Remove duplicates
     matchPercentage,
     explanation: '', // Will be generated later
@@ -393,15 +379,8 @@ function createOutfit(
     completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
   };
   
-  // Generate explanation
-  const explanation = generateOutfitExplanation(
-    outfit,
-    archetype,
-    occasion
-  );
-  
-  // Add explanation to outfit
-  outfit.explanation = explanation;
+  // Generate explanation using the new description
+  outfit.explanation = description;
   
   return outfit;
 }
