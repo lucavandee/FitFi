@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, MessageCircle, X } from 'lucide-react';
-import { routeMessage, type NovaReply } from '@/ai/nova/router';
+import { routeMessage, type NovaReply, type NovaContext } from '@/ai/nova/router';
 import { useUser } from '@/context/UserContext';
 import { trackEvent } from '@/utils/analytics';
 
@@ -102,23 +102,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
 
       // Use smart router for deterministic responses
       const reply: NovaReply = await Promise.resolve(routeMessage(text, {
-        userId: user?.id,
-        gender: user?.gender ?? 'female',
-        profile: user ? {
-          id: user.id,
-          name: user.name || 'User',
-          email: user.email || '',
-          gender: user.gender || 'female',
-          stylePreferences: {
-            casual: 3,
-            formal: 3,
-            sporty: 3,
-            vintage: 3,
-            minimalist: 3
-          },
-          isPremium: false,
-          savedRecommendations: []
-        } : null
+        userId: user?.id
       }));
 
       // Store last intent for refinement
@@ -126,6 +110,15 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
 
       // Handle different reply types
       switch (reply.type) {
+        case 'gate':
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            text: reply.text, 
+            ts: Date.now(),
+            isGate: true
+          }]);
+          break;
+          
         case 'smalltalk':
         case 'capabilities':
           setMessages(prev => [...prev, { 
