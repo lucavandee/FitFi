@@ -111,7 +111,7 @@ export default function FeedPage() {
     }, { rootMargin: '600px 0px' });
     io.observe(el);
     return () => io.disconnect();
-}
+  }, [canAccessFeed]);
 
   // Show CTA if user not authenticated or quiz not completed
   if (!user || status !== 'authenticated') {
