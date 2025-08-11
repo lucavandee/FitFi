@@ -17,14 +17,14 @@ const SUGGESTIONS = [
 ];
 export type NovaChatProps = {
   onClose?: () => void;
-  context?: string;
+  // Single source of truth
   className?: string;
 };
 
 function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProps) {
   const { user } = useUser();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [input, setInput] = useState('');
   const lastIntentRef = useRef<string | null>(null);
   const debounceTimeoutRef = useRef<number | undefined>(undefined);
 
@@ -45,7 +45,7 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     const pending = localStorage.getItem('nova_pending_query');
     if (pending) {
       localStorage.removeItem('nova_pending_query');
-      handleSend(pending);
+      handleSend(undefined, pending);
       track('nova_replay_query');
     }
   }, [user?.id]);
@@ -55,13 +55,14 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
   }, []);
 
   const handleSend = useCallback(
-    (raw?: string) => {
-      const text = (raw ?? inputRef.current?.value ?? '').trim();
+    (e?: React.FormEvent, raw?: string) => {
+      if (e) e.preventDefault();
+      const text = (raw ?? input).trim();
       if (!text) return;
 
       // user message
       push({ role: 'user', type: 'text', text });
-      if (inputRef.current) inputRef.current.value = '';
+      setInput('');
 
       // eenvoudige debouncer voor snelle, herhaalde input
       if (debounceTimeoutRef.current) {
@@ -78,34 +79,38 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         }
       }, 50);
     },
-    [push, user?.id]
+    [push, user?.id, input]
   );
 
   const handleQuickSuggestion = useCallback(
     (suggestion: string) => {
       track('nova_quick_suggestion_click', { suggestion });
-      handleSend(suggestion);
+      setInput(suggestion);
+      // direct versturen
+      handleSend(undefined, suggestion);
     },
     [handleSend]
   );
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Suggesties */}
-      <div className="flex flex-wrap gap-2">
-        {SUGGESTIONS.map((s) => (
-          <button
-            key={s}
-            className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 text-sm"
-            onClick={() => handleQuickSuggestion(s)}
-          >
-            {s}
-          </button>
-        ))}
+    <div className="h-full flex flex-col">
+      {/* Suggesties (horizontaal scroll; blijft binnen container) */}
+      <div className="shrink-0 px-3 pt-3 pb-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-2">
+          {SUGGESTIONS.map((s) => (
+            <button
+              key={s}
+              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 text-sm whitespace-nowrap"
+              onClick={() => handleQuickSuggestion(s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Berichten */}
-      <div className="flex-1 min-h-[220px] max-h-[42vh] overflow-y-auto pr-2">
+      {/* Berichten (neemt alle resterende hoogte; scrolt) */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-3" aria-live="polite">
         {messages.map((m, i) => (
           <div key={i} className={m.role === 'user' ? 'text-right my-2' : 'text-left my-2'}>
             {m.type === 'gate' ? (
@@ -129,19 +134,22 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         ))}
       </div>
 
-      {/* Input */}
-      <div className="flex gap-2">
+      {/* Input (altijd binnen kaart; geen overlap) */}
+      <form
+        onSubmit={(e) => handleSend(e)}
+        className="shrink-0 px-3 py-3 bg-white/5 border-t border-white/10 flex gap-2 items-center"
+      >
         <input
-          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           type="text"
           placeholder="Bijv. 'Zomerse outfit in beige'"
           className="flex-1 px-3 py-2 rounded-lg bg-white/10 outline-none"
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <button onClick={() => handleSend()} className="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600">
+        <button type="submit" className="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600">
           Stuur
         </button>
-      </div>
+      </form>
     </div>
   );
 }
