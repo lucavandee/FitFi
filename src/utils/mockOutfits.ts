@@ -1,4 +1,5 @@
 import dutchProducts from '@/data/dutchProducts';
+import { getSafeImageUrl } from '@/utils/image';
 
 type Product = {
   id: string; name: string; imageUrl: string; brand?: string;
@@ -27,7 +28,9 @@ function pick<T>(arr: T[], n: number): T[] {
 }
 
 function toOutfit(products: Product[], index: number): SimpleOutfit {
-  const image = products[0]?.imageUrl || `https://picsum.photos/seed/fitfi-${index}/640/800`;
+  const firstProductImage = getSafeImageUrl(products[0]?.imageUrl);
+  const image = firstProductImage || '/images/outfit-fallback.jpg';
+  
   return {
     id: `mock-outfit-${index}-${products[0]?.id ?? Math.random().toString(36).slice(2)}`,
     title: `Stijlvolle look #${index+1}`,

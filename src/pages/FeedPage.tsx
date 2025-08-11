@@ -51,16 +51,27 @@ export default function FeedPage() {
   const [items, setItems] = useState<FeedOutfit[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(9); // Start with 9 items
   const [savedIds, setSavedIds] = React.useState<Set<string>>(new Set());
   const [dislikedIds, setDislikedIds] = React.useState<Set<string>>(new Set());
   const sentinelRef = useRef<HTMLDivElement|null>(null);
   const busyRef = useRef(false);
+  
+  const PAGE_SIZE = 9;
 
   // Filter visible outfits (exclude disliked) - memoized for performance
   const visibleOutfits = React.useMemo(
     () => (items ?? []).filter(o => o?.id && !dislikedIds.has(o.id)),
     [items, dislikedIds]
   );
+  
+  // Paginated outfits for performance
+  const paginatedOutfits = React.useMemo(
+    () => visibleOutfits.slice(0, visibleCount),
+    [visibleOutfits, visibleCount]
+  );
+  
+  const hasMoreToShow = visibleCount < visibleOutfits.length;
 
   // Initialize saved/disliked state from localStorage
   React.useEffect(() => {
@@ -123,7 +134,7 @@ export default function FeedPage() {
   useEffect(() => {
     if (canAccessFeed) {
       (async () => {
-        const data = await getFeed({ count: 18 });
+        const data = await getFeed({ count: 36 }); // Load more data but show paginated
         setItems(data);
         setLoading(false);
       })();
@@ -150,6 +161,10 @@ export default function FeedPage() {
     io.observe(el);
     return () => io.disconnect();
   }, [canAccessFeed]);
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => prev + PAGE_SIZE);
+  };
 
   // Show CTA if user not authenticated or quiz not completed
   if (!user || status !== 'authenticated') {
@@ -203,7 +218,7 @@ export default function FeedPage() {
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {visibleOutfits.map((outfit, index) => (
+        {paginatedOutfits.map((outfit, index) => (
           <OutfitCard
             key={`outfit-${outfit.id}`}
             outfit={{
@@ -218,7 +233,20 @@ export default function FeedPage() {
         ))}
       </div>
       
-      {visibleOutfits.length === 0 && !loading && (
+      {/* Load More Button */}
+      {hasMoreToShow && !loading && (
+        <div className="text-center py-8">
+          <Button 
+            onClick={handleLoadMore}
+            variant="outline"
+            className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+          >
+            Meer laden ({visibleOutfits.length - visibleCount} outfits)
+          </Button>
+        </div>
+      )}
+      
+      {paginatedOutfits.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Sparkles className="w-8 h-8 text-gray-400" />

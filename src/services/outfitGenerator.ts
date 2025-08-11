@@ -4,7 +4,7 @@ import { titleFor, descFor } from '../engine/copy';
 import { colorLabel } from '../utils/color';
 import { generateOutfitExplanation } from '../engine/explainOutfit';
 import { getCurrentSeason, calculateCategoryRatio } from '../engine/helpers';
-import { getSafeImageUrl, sanitizeImageUrl } from '../utils/images';
+import { getSafeImageUrl } from '../utils/image';
 import { curatedImage } from '../assets/curatedImages';
 
 /**
@@ -335,7 +335,7 @@ function createOutfit(
   // Count fallback images
   let fallbackImageCount = 0;
   const productsWithSafeImages = outfitProducts.map(p => {
-    const safeImageUrl = sanitizeImageUrl(p.imageUrl, p.type);
+    const safeImageUrl = getSafeImageUrl(p.imageUrl) || getFallbackImageForType(p.type);
     if (safeImageUrl !== p.imageUrl) {
       fallbackImageCount++;
     }
@@ -363,13 +363,13 @@ function createOutfit(
       name: p.title,
       brand: p.brand,
       price: p.price,
-      imageUrl: sanitizeImageUrl(p.imageUrl, p.type),
+      imageUrl: getSafeImageUrl(p.imageUrl) || getFallbackImageForType(p.type),
       type: p.type,
       category: CATEGORY_MAPPING[p.type] || 'other',
       styleTags: p.styleTags,
       affiliateUrl: p.affiliateUrl
     })),
-    imageUrl: getSafeImageUrl(imageUrl) || curatedImage(archetype as any, season as any),
+    imageUrl: getSafeImageUrl(imageUrl) || '/images/outfit-fallback.jpg',
     tags: Array.from(new Set(tags)), // Remove duplicates
     matchPercentage,
     explanation: '', // Will be generated later
@@ -385,6 +385,28 @@ function createOutfit(
   outfit.explanation = description;
   
   return outfit;
+}
+
+/**
+ * Get fallback image URL for a product type
+ */
+function getFallbackImageForType(type: string): string {
+  const fallbackImages: Record<string, string> = {
+    'top': '/images/fallbacks/top.jpg',
+    'shirt': '/images/fallbacks/top.jpg',
+    'blouse': '/images/fallbacks/top.jpg',
+    'trui': '/images/fallbacks/top.jpg',
+    'broek': '/images/fallbacks/bottom.jpg',
+    'jeans': '/images/fallbacks/bottom.jpg',
+    'rok': '/images/fallbacks/bottom.jpg',
+    'schoenen': '/images/fallbacks/footwear.jpg',
+    'sneaker': '/images/fallbacks/footwear.jpg',
+    'jas': '/images/fallbacks/outerwear.jpg',
+    'tas': '/images/fallbacks/accessory.jpg',
+    'accessoire': '/images/fallbacks/accessory.jpg'
+  };
+  
+  return fallbackImages[type] || '/images/fallbacks/default.jpg';
 }
 
 /**
