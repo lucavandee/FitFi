@@ -8,7 +8,7 @@ import { NavigationServiceInitializer } from '@/components/NavigationServiceInit
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 // Lazy load components for better performance
 const NovaBubble = React.lazy(() => import('@/components/ai/NovaBubble'));
@@ -86,19 +86,19 @@ function App() {
                       {/* Public Routes */}
                       <Route path="/" element={<LandingPage />} />
                       <Route path="/home" element={<HomePage />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/inloggen" element={<LoginPage />} />
+                      <Route path="/registreren" element={<RegisterPage />} />
+                      <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
+                      <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
                       <Route path="/over-ons" element={<AboutPage />} />
                       <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                       <Route path="/prijzen"  element={<PricingPage />} />
                       <Route path="/blog" element={<BlogIndexPage />} />
                       <Route path="/blog/:slug" element={<BlogDetailPage />} />
-                      <Route path="/inloggen" element={<LoginPage />} />
-                      <Route path="/registreren" element={<RegisterPage />} />
-                      <Route path="/wachtwoord-verg eten" element={<ForgotPasswordPage />} />
-                      <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
                       <Route path="/contact" element={<ContactPage />} />
                       <Route path="/veelgestelde-vragen" element={<FAQPage />} />
                       <Route path="/juridisch" element={<LegalPage />} />
-                
                       <Route path="/ondersteuning" element={<SupportPage />} />
                       <Route path="/help" element={<HelpCenterPage />} />
                       <Route path="/feedback" element={<FeedbackPage />} />
@@ -108,10 +108,17 @@ function App() {
                       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                       <Route path="/algemene-voorwaarden" element={<TermsPage />} />
                       <Route path="/bedankt" element={<ThankYouPage />} />
-                      
                       <Route path="/profile" element={<ProfilePage />} />
                       
                       {/* Protected Routes */}
+                      <Route
+                        path="/feed"
+                        element={
+                          <ProtectedRoute>
+                            <FeedPage />
+                          </ProtectedRoute>
+                        }
+                      />
                       <Route path="/onboarding" element={
                         <ProtectedRoute>
                           <OnboardingPage />
@@ -159,13 +166,8 @@ function App() {
                         </ProtectedRoute>
                       } />
                       <Route path="/analytics" element={
-                        <ProtectedRoute allowedRoles={['admin']}>
+                        <ProtectedRoute allowedRoles={['admin']} redirectTo="/login">
                           <AnalyticsPage />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/feed" element={
-                        <ProtectedRoute>
-                          <FeedPage />
                         </ProtectedRoute>
                       } />
                       <Route path="/tribes" element={
