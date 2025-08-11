@@ -109,6 +109,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       async (event, session) => {
         console.log('[UserContext] Auth state change:', event);
         
+        if ((event as any) === 'TOKEN_REFRESH_FAILED') {
+          console.warn('[Auth] Token refresh failed');
+          // Kies gewenste fallback: forceer signout of toon melding:
+          // await supabase.auth.signOut();
+          return;
+        }
+        
         switch (event) {
           case 'SIGNED_IN':
             if (!session?.user) break;
@@ -157,13 +164,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             };
             
             setUser(refreshedProfile);
-            break;
-            
-          case 'TOKEN_REFRESH_FAILED':
-            console.warn('[UserContext] Token refresh failed, signing out user');
-            setAuthEventPending(false);
-            setAuthEventPending(false);
-            toast.error('Je sessie is verlopen, log opnieuw in.');
             break;
             
           case 'SIGNED_OUT':
