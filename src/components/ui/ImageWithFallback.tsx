@@ -2,7 +2,6 @@ import React from 'react';
 
 type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
   fallbackSrc?: string;
-  containerClassName?: string;
 };
 
 const FALLBACK_DATA_URI =
@@ -11,20 +10,16 @@ const FALLBACK_DATA_URI =
 export default function ImageWithFallback({
   src,
   alt,
-  className,
-  containerClassName,
   fallbackSrc = '/images/placeholders/outfit-fallback.jpg',
   ...rest
 }: Props) {
   const initial = (src && src.trim()) ? src : (fallbackSrc || FALLBACK_DATA_URI);
   const [current, setCurrent] = React.useState(initial);
-  const [loaded, setLoaded] = React.useState(false);
   const [errored, setErrored] = React.useState(false);
 
   React.useEffect(() => {
     const next = (src && src.trim()) ? src : (fallbackSrc || FALLBACK_DATA_URI);
     setCurrent(next);
-    setLoaded(false);
     setErrored(false);
   }, [src, fallbackSrc]);
 
@@ -33,25 +28,16 @@ export default function ImageWithFallback({
       setErrored(true);
       setCurrent(fallbackSrc || FALLBACK_DATA_URI);
     } else if (current !== FALLBACK_DATA_URI) {
-      // stop infinite loops als fallback zelf faalt
-      setCurrent(FALLBACK_DATA_URI);
+      setCurrent(FALLBACK_DATA_URI); // voorkom eindeloze loops
     }
   };
 
   return (
-    <div className={`relative overflow-hidden rounded-xl bg-gray-100 ${containerClassName ?? ''}`}>
-      {/* skeleton: blijft zichtbaar tot de echte image loaded is */}
-      <div className={`absolute inset-0 animate-pulse bg-gray-100 transition-opacity ${loaded ? 'opacity-0' : 'opacity-100'}`} />
-      <img
-        src={current}
-        alt={alt}
-        loading="lazy"
-        decoding="async"
-        onLoad={() => setLoaded(true)}
-        onError={onError}
-        className={`block w-full h-full object-cover transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'} ${className ?? ''}`}
-        {...rest}
-      />
-    </div>
+    <img
+      src={current}
+      alt={alt}
+      onError={onError}
+      {...rest}
+    />
   );
 }
