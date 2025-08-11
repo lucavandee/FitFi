@@ -1,66 +1,28 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { useUser } from '../../context/UserContext';
-import LoadingFallback from '../ui/LoadingFallback';
-import Button from '../ui/Button';
+import { useUser } from '@/context/UserContext';
+import FullPageSpinner from '@/components/ui/FullPageSpinner';
 
-interface ProtectedRouteProps {
+type Props = {
   children: React.ReactNode;
-  requireAuth?: boolean;
   redirectTo?: string;
-  allowedRoles?: ('admin' | 'user')[];
-}
+  allowedRoles?: string[];
+};
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  requireAuth = true,
-  redirectTo,
-  allowedRoles
-}) => {
-  const { user, isLoading, authEventPending } = useUser();
+const ProtectedRoute: React.FC<Props> = ({ children, redirectTo = '/login', allowedRoles }) => {
+  const { status, user } = useUser();
   const location = useLocation();
 
-  // Show loading while checking authentication
-  if (isLoading || authEventPending) {
-    return <LoadingFallback fullScreen message="Authenticatie controleren..." />;
+  if (status === 'loading') {
+    return <FullPageSpinner label="Authenticatie controleren…" delayMs={250} />;
   }
-
-  // If authentication is required but user is not logged in
-  if (requireAuth && !user) {
-    return (
-      <Navigate 
-        to={redirectTo || '/inloggen'} 
-        state={{ from: location }} 
-        replace 
-      />
-    );
+  if (status === 'unauthenticated') {
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
-
-  // Check role-based access
-  if (requireAuth && user && allowedRoles && !allowedRoles.includes(user.role || 'user')) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Toegang geweigerd</h2>
-          <p className="text-gray-600 mb-6">Je hebt geen toegang tot deze pagina.</p>
-          <Button as={Link} to="/dashboard" variant="primary" fullWidth>
-            Terug naar dashboard
-          </Button>
-        </div>
-      </div>
-    );
+  if (allowedRoles && !allowedRoles.includes(user?.role ?? '')) {
+    return <Navigate to="/" replace />;
   }
-
-  // If user is logged in but shouldn't be (e.g., login page when already logged in)
-  if (!requireAuth && user) {
-    return (
-      <Navigate 
-        to={redirectTo || '/dashboard'} 
-        replace 
-      />
-    );
-  }
-
   return <>{children}</>;
 };
+
+export default ProtectedRoute;
