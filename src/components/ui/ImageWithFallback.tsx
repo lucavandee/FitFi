@@ -1,17 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { isValidImageUrl, getFallbackImage } from "@/utils/imageUtils";
-import { getCuratedImage } from "@/assets/curatedImages";
+import { curatedImage } from "@/assets/curatedImages";
 
 type ImageWithFallbackProps = {
   src?: string | null;
-  alt?: string;
+  alt: string;
   className?: string;
   width?: number;
   height?: number;
   fallbackSrc?: string;
   fallbackKey?: string; // For curated fallback selection
-  loading?: "eager" | "lazy";
-  decoding?: "sync" | "async" | "auto";
   onClick?: React.ImgHTMLAttributes<HTMLImageElement>["onClick"];
   style?: React.CSSProperties;
   componentName?: string;
@@ -26,8 +24,6 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   height,
   fallbackSrc,
   fallbackKey,
-  loading = "lazy",
-  decoding = "async",
   onClick,
   style,
   componentName,
@@ -42,7 +38,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
         try {
           // Parse fallbackKey format: "archetype-season" or use defaults
           const [archetype = 'casual_chic', season = 'herfst'] = fallbackKey.split('-');
-          return getCuratedImage(archetype as any, season as any, fallbackKey);
+          return curatedImage(archetype as any, season as any);
         } catch (error) {
           console.warn('Failed to get curated image, using generic fallback:', error);
         }
@@ -58,11 +54,11 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   );
 
   const handleError: React.ReactEventHandler<HTMLImageElement> = () => {
-    if (currentSrc !== computedFallback) {
+    if (currentSrc !== curatedImage('casual_chic', 'lente')) {
       if (onError && src) {
         onError(src);
       }
-      setCurrentSrc(computedFallback);
+      setCurrentSrc(curatedImage('casual_chic', 'lente'));
     }
   };
 
@@ -73,8 +69,8 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       width={width}
       height={height}
       className={className}
-      loading={loading}
-      decoding={decoding}
+      loading="lazy"
+      decoding="async"
       onError={handleError}
       onClick={onClick}
       style={style}
