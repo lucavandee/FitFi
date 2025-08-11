@@ -28,23 +28,6 @@ div[id] {
 }
 
 /* Nova Chat Styling */
-.nova-composer {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 1rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.nova-input {
-  flex: 1;
-  min-width: 0;
-}
-
-.nova-send {
-  flex: 0 0 auto;
-}
-
 .nova-bubble {
   max-width: 360px;
   width: min(92vw, 360px);
@@ -57,6 +40,16 @@ div[id] {
 
 #nova-root > * {
   pointer-events: auto;
+}
+
+/* Horizontal scrolling for suggestion chips */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Quiz animations */
