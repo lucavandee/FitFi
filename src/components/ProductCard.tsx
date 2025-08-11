@@ -50,7 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     });
     
     // Open affiliate link
-    window.open(deeplink, '_blank', 'noopener,noreferrer');
+    window.open(deeplink || '#', '_blank', 'noopener,noreferrer');
   };
 
   return (

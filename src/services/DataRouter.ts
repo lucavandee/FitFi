@@ -3,9 +3,7 @@ import { UserProfile } from '../context/UserContext';
 import { Outfit, Product, Season } from '../engine';
 import { generateMockOutfits } from '@/utils/mockOutfits';
 import { rankOutfits, ensureDiversity } from '@/engine/ranking';
-import { dataService } from './DataService';
-import { useProducts } from '@/hooks/useProducts';
-import { useOutfitsData } from '@/hooks/useOutfitsData';
+import { fetchProducts } from '@/services/data/dataService';
 import { generateMockProducts } from '../utils/mockDataUtils';
 
 /**
@@ -35,7 +33,7 @@ export async function getRecommendedProducts(
   
   try {
     // Use new data service
-    const response = await dataService.getProducts({
+    const response = await fetchProducts({
       gender: user?.gender === 'male' ? 'male' : 'female',
       limit: count
     });

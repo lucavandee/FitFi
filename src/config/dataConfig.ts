@@ -1,6 +1,6 @@
 // src/config/dataConfig.ts
 export const DATA_CONFIG = {
-  USE_SUPABASE: false, // toggle
+  USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true',
   SUPABASE: {
     url: import.meta.env.VITE_SUPABASE_URL ?? "",
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY ?? "",

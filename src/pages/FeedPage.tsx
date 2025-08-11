@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Seo from '@/components/Seo';
 import { useOutfits } from '@/hooks/useOutfits';
+import { useProducts } from '@/hooks/useProducts';
 import { useUser } from '@/context/UserContext';
 import { useQuizAnswers } from '@/hooks/useQuizAnswers';
 import { isDisliked, toggleSave, dislike, getSimilarOutfits } from '@/services/engagement';

@@ -41,7 +41,7 @@ export function useOutfitsData(options: UseOutfitsOptions = {}): UseOutfitsResul
       setIsLoading(true);
       setError(null);
 
-      const response = await dataService.getOutfits({
+      const response = await fetchOutfits({
         archetype,
         occasion,
         limit
