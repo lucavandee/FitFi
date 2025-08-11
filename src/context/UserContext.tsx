@@ -188,7 +188,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Add timeout to prevent hanging
       const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Auth timeout')), 60000)
+        setTimeout(() => reject(new Error('Auth timeout')), 120000)
       );
       
       const { error } = await Promise.race([
