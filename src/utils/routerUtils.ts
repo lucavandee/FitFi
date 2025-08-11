@@ -15,7 +15,7 @@ export function configureRouterFutureFlags() {
   // Set future flags to suppress warnings
   // This is a temporary solution until we upgrade to React Router v7
   if (typeof window !== 'undefined') {
-    window.REACT_ROUTER_FUTURE = {
+    (window as any).REACT_ROUTER_FUTURE = {
       v7_relativeSplatPath: true,
       v7_normalizeFormMethod: true,
       v7_prependBasename: true

@@ -8,7 +8,7 @@ import { generateMockBoltProducts } from '../utils/boltProductsUtils';
  * Maps API endpoints to JSON filenames
  */
 const mapEndpointToFilename = (endpoint: string): string => {
-  const cleanEndpoint = endpoint.replace(/^\//, '');
+  const cleanEndpoint = (endpoint ?? '').replace(/^\//, '');
   return cleanEndpoint.includes('/') ? cleanEndpoint.split('/')[0] : cleanEndpoint;
 };
 

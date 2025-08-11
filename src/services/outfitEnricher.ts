@@ -94,7 +94,7 @@ function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): 
       
       // Select the best matching product
       const selectedProduct = sortedProducts[0];
-      selectedProducts.push(selectedProduct);
+      if (selectedProduct) selectedProducts.push(selectedProduct);
     }
   }
   
@@ -110,7 +110,7 @@ function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): 
     // Add products until we have at least 3
     for (let i = 0; selectedProducts.length < 3 && i < sortedProducts.length; i++) {
       const product = sortedProducts[i];
-      if (!selectedProducts.some(p => p.id === product.id)) {
+      if (product && !selectedProducts.some(p => p.id === product.id)) {
         selectedProducts.push(product);
       }
     }
@@ -153,7 +153,9 @@ function enrichOutfitWithBoltProducts(outfit: Outfit, products: BoltProduct[]): 
       retailer: 'Zalando',
       category: CATEGORY_MAPPING[p.type] || 'other'
     })),
-    imageUrl: getSafeImageUrl(productsWithSafeImages[0].imageUrl, productsWithSafeImages[0].type), // Use first product's image as outfit image
+    imageUrl: productsWithSafeImages.length > 0
+      ? getSafeImageUrl(productsWithSafeImages[0].imageUrl, productsWithSafeImages[0].type)
+      : FALLBACK_IMAGES.default,
     structure: productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'),
     categoryRatio: calculateCategoryRatio(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other')),
     completeness: calculateCompleteness(productsWithSafeImages.map(p => CATEGORY_MAPPING[p.type] || 'other'))
@@ -217,7 +219,7 @@ function getSafeImageUrl(imageUrl: string, type: string): string {
  */
 function getFallbackImage(type: string): string {
   const category = CATEGORY_MAPPING[type] || 'default';
-  return FALLBACK_IMAGES[category] || FALLBACK_IMAGES.default;
+  return FALLBACK_IMAGES[category as keyof typeof FALLBACK_IMAGES] || FALLBACK_IMAGES.default;
 }
 
 /**
@@ -240,16 +242,16 @@ function calculateCategoryRatio(categories: string[]): Record<string, number> {
   // Count categories
   categories.forEach(category => {
     if (ratio[category] !== undefined) {
-      ratio[category]++;
+      ratio[category] = (ratio[category] ?? 0) + 1;
     } else {
-      ratio.other++;
+      ratio.other = (ratio.other ?? 0) + 1;
     }
   });
   
   // Convert to percentages
   const total = categories.length;
   Object.keys(ratio).forEach(key => {
-    ratio[key] = Math.round((ratio[key] / total) * 100);
+    ratio[key] = Math.round(((ratio[key] ?? 0) / total) * 100);
   });
   
   return ratio;
