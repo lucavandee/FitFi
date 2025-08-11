@@ -2,42 +2,112 @@ import React from 'react';
 
 type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
   fallbackSrc?: string;
+  componentName?: string;
 };
 
 const FALLBACK_DATA_URI =
-  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="%23f4f4f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2394949a" font-family="Arial" font-size="28">Geen afbeelding</text></svg>';
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="100%" height="100%" fill="%23f4f4f5"/><circle cx="200" cy="280" r="40" fill="%2394a3b8"/><text x="200" y="350" text-anchor="middle" fill="%2394a3b8" font-family="Arial" font-size="16">Geen afbeelding</text></svg>';
 
 export default function ImageWithFallback({
   src,
   alt,
-  fallbackSrc = '/images/placeholders/outfit-fallback.jpg',
+  fallbackSrc = '/images/outfit-fallback.jpg',
+  componentName,
+  onError,
+  className = '',
   ...rest
 }: Props) {
-  const initial = (src && src.trim()) ? src : (fallbackSrc || FALLBACK_DATA_URI);
-  const [current, setCurrent] = React.useState(initial);
-  const [errored, setErrored] = React.useState(false);
+  const [currentSrc, setCurrentSrc] = React.useState<string>('');
+  const [hasErrored, setHasErrored] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [retryCount, setRetryCount] = React.useState(0);
+  const maxRetries = 1; // Single retry only
 
+  // Initialize source
   React.useEffect(() => {
-    const next = (src && src.trim()) ? src : (fallbackSrc || FALLBACK_DATA_URI);
-    setCurrent(next);
-    setErrored(false);
-  }, [src, fallbackSrc]);
-
-  const onError = () => {
-    if (!errored) {
-      setErrored(true);
-      setCurrent(fallbackSrc || FALLBACK_DATA_URI);
-    } else if (current !== FALLBACK_DATA_URI) {
-      setCurrent(FALLBACK_DATA_URI); // voorkom eindeloze loops
+    const initialSrc = getSafeImageUrl(src);
+    if (initialSrc) {
+      setCurrentSrc(initialSrc);
+      setHasErrored(false);
+      setIsLoaded(false);
+      setRetryCount(0);
+    } else {
+      // Invalid URL from start
+      setCurrentSrc(FALLBACK_DATA_URI);
+      setHasErrored(true);
+      setIsLoaded(true);
     }
+  }, [src]);
+
+  const handleError = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = event.currentTarget;
+    const failedSrc = target.src;
+    
+    if (componentName) {
+      console.warn(`[${componentName}] Image failed to load: ${failedSrc}`);
+    }
+    
+    // Call original onError if provided
+    if (onError) {
+      onError(event);
+    }
+    
+    // Prevent infinite retry loops
+    if (retryCount >= maxRetries) {
+      console.warn(`[ImageWithFallback] Max retries reached for ${failedSrc}, using data URI`);
+      setCurrentSrc(FALLBACK_DATA_URI);
+      setHasErrored(true);
+      setIsLoaded(true);
+      return;
+    }
+    
+    // Try fallback image once
+    if (retryCount === 0 && fallbackSrc && fallbackSrc !== failedSrc) {
+      const safeFallback = getSafeImageUrl(fallbackSrc);
+      if (safeFallback) {
+        console.log(`[ImageWithFallback] Trying fallback: ${safeFallback}`);
+        setCurrentSrc(safeFallback);
+        setRetryCount(1);
+        return;
+      }
+    }
+    
+    // Final fallback to data URI
+    setCurrentSrc(FALLBACK_DATA_URI);
+    setHasErrored(true);
+    setIsLoaded(true);
+  };
+
+  const handleLoad = () => {
+    setIsLoaded(true);
+    setHasErrored(false);
   };
 
   return (
     <img
-      src={current}
+      src={currentSrc}
       alt={alt}
-      onError={onError}
+      onError={handleError}
+      onLoad={handleLoad}
+      className={`transition-opacity duration-300 ${
+        isLoaded ? 'opacity-100' : 'opacity-0'
+      } ${className}`}
       {...rest}
     />
   );
+}
+
+// Helper function to validate and normalize image URLs
+function getSafeImageUrl(url?: string): string | undefined {
+  if (!url || typeof url !== 'string') return undefined;
+  
+  const trimmed = url.trim();
+  if (!trimmed) return undefined;
+  
+  // Must be valid HTTP/HTTPS URL or relative path
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
+    return trimmed;
+  }
+  
+  return undefined;
 }
