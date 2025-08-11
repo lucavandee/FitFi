@@ -1,6 +1,8 @@
 import { Product, Season } from './types';
 import { getDutchSeasonName } from './helpers';
 
+const safe = (s?: string) => s ?? '';
+
 /**
  * Generates dynamic outfit titles based on archetypes, occasion, and products
  * 
@@ -91,8 +93,8 @@ export function generateOutfitDescription(
   secondaryArchetype?: string,
   mixFactor: number = 0.3
 ): string {
-  // Defensive defaults
-  const safeDescription = '';
+  let desc = safe(description).trim();
+  const activeSeason = currentSeason ?? getCurrentSeason();
   
   // Get product types for the description
   const productTypes = products.map(p => p.type).filter(Boolean);
@@ -110,7 +112,6 @@ export function generateOutfitDescription(
   
   // Get current season from the first product that has it
   const productWithSeason = products.find(p => p.season && p.season.length > 0);
-  const currentSeason = productWithSeason?.season?.[0] as Season | undefined;
   
   // Generate description based on primary archetype, occasion, and season
   const archetypeDescriptions: Record<string, string[]> = {
@@ -172,7 +173,7 @@ export function generateOutfitDescription(
   
   // Select a random description from primary archetype
   const primaryDescriptions = archetypeDescriptions[primaryArchetype] || [`Stijlvolle combinatie van ${productList}.`];
-  let description = primaryDescriptions[Math.floor(Math.random() * primaryDescriptions.length)];
+  desc = primaryDescriptions[Math.floor(Math.random() * primaryDescriptions.length)];
   
   // If we have a secondary archetype with significant influence, incorporate it
   if (secondaryArchetype && secondaryArchetype !== primaryArchetype && mixFactor >= 0.2) {
@@ -181,49 +182,31 @@ export function generateOutfitDescription(
     if (secondaryDescriptions.length > 0) {
       // Extract style adjectives from secondary description
       const secondaryDescription = secondaryDescriptions[Math.floor(Math.random() * secondaryDescriptions.length)];
-      const secondaryWords = secondaryDescription.split(' ').filter(word => 
-        word.length > 4 && !productList.includes(word) && !description.includes(word)
+      const secondaryWords = safe(secondaryDescription).split(' ').filter(word => 
+        word.length > 4 && !productList.includes(word) && !desc.includes(word)
       );
       
       if (secondaryWords.length > 0) {
-        const safeSecondaryDescription = secondaryDescription ?? '';
-        const secondaryWords = safeSecondaryDescription.split(' ').filter(word => 
-          word.length > 4 && !productList.includes(word) && !safeDescription.includes(word)
-        );
         const secondaryWord = secondaryWords[Math.floor(Math.random() * secondaryWords.length)];
         
         if (secondaryWord) {
-          let desc = description;
           desc = desc.replace('.', `, met een ${secondaryWord.toLowerCase()} twist.`);
-          description = desc;
         }
-        description = description.replace('.', `, met een ${secondaryWord.toLowerCase()} twist.`);
       }
     }
   }
   
   // Add season-specific addition if available
-  let desc = (description ?? '').trim();
-  const secondaryWords = (secondaryTitle ?? '').split(' ').filter(Boolean);
-
-  // Voeg optioneel een secundair woord subtiel toe
-  if (secondaryWords.length) {
-    const secondaryWord = secondaryWords[Math.floor(Math.random() * secondaryWords.length)];
-    if (secondaryWord && !desc.toLowerCase().includes(secondaryWord.toLowerCase())) {
-      desc = desc.replace('.', `, met een ${secondaryWord.toLowerCase()} twist.`);
-    }
-  }
-
-  // Seizoensversterking + random toevoeging
-  if (!desc.includes(currentSeason) && !desc.toLowerCase().includes(getDutchSeasonName(currentSeason).toLowerCase())) {
+  if (!desc.includes(activeSeason) && !desc.toLowerCase().includes(getDutchSeasonName(activeSeason).toLowerCase())) {
     const additions = [
-      `Perfect voor ${getDutchSeasonName(currentSeason)}.`,
-      `Ideaal in de ${getDutchSeasonName(currentSeason)} maanden.`,
-      `Gemaakt voor ${currentSeason}.`
+      `Perfect voor ${getDutchSeasonName(activeSeason)}.`,
+      `Ideaal in de ${getDutchSeasonName(activeSeason)} maanden.`,
+      `Gemaakt voor ${activeSeason}.`
     ];
     const randomAddition = additions[Math.floor(Math.random() * additions.length)];
     if (randomAddition) desc += ` ${randomAddition}`;
   }
+  
   return desc;
 }
 
