@@ -1,11 +1,14 @@
 import React from 'react';
 import { Send, Sparkles, MessageCircle } from 'lucide-react';
-import { planAndExecute, NovaMemory, NovaMessage } from '@/ai/nova/agent';
+import { NovaMemory } from '@/ai/nova/agent';
+import { loadNovaAgent, safeNovaExecution } from '@/ai/nova/load';
 import { trackEvent } from '@/utils/analytics';
 import OutfitCard from '@/components/outfits/OutfitCard';
 import ProductCard from '@/components/ProductCard';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
+
+export type NovaMessage = { role: 'user' | 'nova' | 'tool'; content: string; ts: number };
 
 export type NovaChatProps = {
   onClose?: () => void;
@@ -84,32 +87,56 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
     setThinking(true);
     setInput(''); // Clear input immediately for better UX
     
-    try {
-      const res = await planAndExecute(input);
-      
-      if (res.kind) setKind(res.kind as any);
-      setCards(res.cards || []);
-      
-      const botMsg: NovaMessage = { role: 'nova', content: res.reply, ts: Date.now() };
-      const finalMessages = [...newMessages, botMsg];
-      setMessages(finalMessages);
-      NovaMemory.writeHistory(finalMessages);
-    } catch (e) {
-      console.error('Nova error:', e);
-      toast.error('Er ging iets mis. Probeer het nog eens.');
-      
-      // Add error message to chat
-      const errorMsg: NovaMessage = {
-        role: 'nova',
-        content: 'Sorry, er ging iets mis. Probeer het nog eens of stel een andere vraag.',
-        ts: Date.now()
-      };
-      const errorMessages = [...newMessages, errorMsg];
-      setMessages(errorMessages);
-      NovaMemory.writeHistory(errorMessages);
-    } finally {
-      setThinking(false);
-    }
+    // Use safe Nova execution with fallback
+    const result = await safeNovaExecution(
+      async (agent) => {
+        const reply = await agent.ask(input, { profile: NovaMemory.readProfile() });
+        
+        if (reply.type === 'tips') {
+          return {
+            reply: `**${reply.title}**\n\n${reply.bullets.map(b => `• ${b}`).join('\n')}`,
+            cards: [],
+            kind: undefined
+          };
+        }
+        
+        if (reply.type === 'outfits') {
+          return {
+            reply: reply.title,
+            cards: reply.items.map((item, index) => ({
+              id: `nova-outfit-${index}`,
+              title: item.name,
+              description: item.description,
+              price: item.price,
+              imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
+              archetype: 'casual_chic',
+              matchPercentage: 85 + Math.floor(Math.random() * 10)
+            })),
+            kind: 'outfits'
+          };
+        }
+        
+        return {
+          reply: reply.message,
+          cards: [],
+          kind: undefined
+        };
+      },
+      {
+        reply: 'Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw.',
+        cards: [],
+        kind: undefined
+      }
+    );
+    
+    if (result.kind) setKind(result.kind as any);
+    setCards(result.cards || []);
+    
+    const botMsg: NovaMessage = { role: 'nova', content: result.reply, ts: Date.now() };
+    const finalMessages = [...newMessages, botMsg];
+    setMessages(finalMessages);
+    NovaMemory.writeHistory(finalMessages);
+    setThinking(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
