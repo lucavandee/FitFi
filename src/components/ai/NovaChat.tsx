@@ -1,14 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Send, Sparkles, MessageCircle, X } from 'lucide-react';
 import { routeMessage, type NovaReply, type NovaContext } from '@/ai/nova/router';
 import { useUser } from '@/context/UserContext';
 import { trackEvent } from '@/utils/analytics';
-import { routeMessage, type NovaReply, type NovaContext } from '@/ai/nova/router';
-import { useUser } from '@/context/UserContext';
-import { trackEvent } from '@/utils/analytics';
+import { track } from '@/utils/telemetry';
 
-export type NovaMessage = { role: 'user' | 'assistant' | 'system'; text: string; ts: number };
+type ChatMsg =
+  | { role: 'assistant' | 'user'; type: 'text'; text: string }
+  | { role: 'assistant'; type: 'gate'; text: string };
 
+const SUGGESTIONS = [
+  'Zomerse outfit in beige',
+  'Smart casual voor kantoor',
+  'Weekend look met sneakers',
+  'Formele outfit voor event',
+];
 export type NovaChatProps = {
   onClose?: () => void;
   context?: string;
@@ -17,561 +23,124 @@ export type NovaChatProps = {
 
 function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProps) {
   const { user } = useUser();
-  const [messages, setMessages] = useState<NovaMessage[]>([
-    { 
-      role: 'assistant', 
-      text: 'Hey! Ik ben Nova, jouw AI-stylist. Vertel me je gelegenheid (kantoor, weekend, event), gewenste stijl (casual / smart casual / formeel) en optioneel kleuren. Voorbeeld: "smart casual zwart voor kantoor – zomer".', 
-      ts: Date.now() 
-    }
-  ]);
-  const [value, setValue] = useState('');
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<'ready' | 'degraded' | 'error'>('ready');
-  const [showOutfitSkeletons, setShowOutfitSkeletons] = useState(false);
-  const lastIntentRef = useRef<any>(null);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastIntentRef = useRef<any>(null);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { user } = useUser();
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const lastIntentRef = useRef<string | null>(null);
+  const debounceTimeoutRef = useRef<number | undefined>(undefined);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Welkomstbericht (eenmalig)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
+    setMessages([
+      {
+        role: 'assistant',
+        type: 'text',
+        text: 'Hey! Ik ben Nova, jouw AI-stylist. Waar kan ik je mee helpen?',
+      },
+    ]);
   }, []);
 
-  // Cleanup debounce on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Replay pending query after login
+  // Pending vraag na login automatisch opnieuw sturen
   useEffect(() => {
     if (!user?.id) return;
-    
-    try {
-      const pending = localStorage.getItem('nova_pending_query');
-      if (pending) {
-        localStorage.removeItem('nova_pending_query');
-        setValue(pending);
-        setTimeout(() => handleSend(), 500); // Small delay for better UX
-        trackEvent('nova_replay_query', 'ai_interaction', 'pending_query_replay', 1, {
-          query_length: pending.length,
-          context: context
-        });
-      }
-    } catch (error) {
-      console.warn('[Nova] Could not replay pending query:', error);
+    const pending = localStorage.getItem('nova_pending_query');
+    if (pending) {
+      localStorage.removeItem('nova_pending_query');
+      handleSend(pending);
+      track('nova_replay_query');
     }
   }, [user?.id]);
 
-  // Cleanup debounce on unmount
-  useEffect(() => {
-    return () => {
+  const push = useCallback((m: ChatMsg) => {
+    setMessages((prev) => [...prev, m]);
+  }, []);
+
+  const handleSend = useCallback(
+    (raw?: string) => {
+      const text = (raw ?? inputRef.current?.value ?? '').trim();
+      if (!text) return;
+
+      // user message
+      push({ role: 'user', type: 'text', text });
+      if (inputRef.current) inputRef.current.value = '';
+
+      // eenvoudige debouncer voor snelle, herhaalde input
       if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
+        window.clearTimeout(debounceTimeoutRef.current);
       }
-    };
-  }, []);
-
-  // Initialize Nova agent with fail-safe
-  useEffect(() => {
-    try {
-      // Try to initialize Nova agent
-      if (import.meta.env.VITE_NOVA_ENABLED === 'true') {
-        import('@/ai/nova/load').catch(err => {
-          console.warn('[Nova] Agent loading failed:', err);
-          setStatus('degraded');
-        });
-      }
-    } catch (err) {
-      console.error('[Nova] Init failed:', err);
-      setStatus('degraded');
-    }
-  }, []);
-  const handleSend = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    
-    // Trim input and validate
-    const text = value.trim();
-    if (!text || sending) return;
-
-    // Check if Nova is in degraded state
-    if (status === 'degraded') {
-      const errorMessage: NovaMessage = { 
-        role: 'assistant', 
-        text: 'Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw of neem contact op voor hulp.', 
-        ts: Date.now() 
-      };
-      setMessages(prev => [...prev, errorMessage]);
-      return;
-    }
-    
-    setSending(true);
-    setError(null);
-    setShowOutfitSkeletons(false);
-
-    // Add user message immediately for better UX
-    const userMessage: NovaMessage = { role: 'user', text, ts: Date.now() };
-    setMessages(prev => [...prev, userMessage]);
-    setValue(''); // Clear input immediately
-
-    try {
-      // Track user message
-      trackEvent('nova_message_sent', 'ai_interaction', 'user_message', 1, {
-        message_length: text.length,
-        context: context,
-        message_type: 'user_input'
-      });
-
-      // Use smart router for deterministic responses
-      const reply: NovaReply = await Promise.resolve(routeMessage(text, {
-        userId: user?.id
-      }));
-
-      // Store last intent for refinement
-      lastIntentRef.current = { text, reply };
-
-      // Handle different reply types
-      if (reply.type === 'gate') {
-        // Add gate message with CTA
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          text: reply.text, 
-          ts: Date.now(),
-          isGate: true
-        }]);
-        
-        // Track gate interaction
-        trackEvent('nova_gate_shown', 'ai_interaction', 'authentication_gate', 1, {
-          user_query: text,
-          context: context
-        });
-      } else {
-        // Regular text response
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          text: reply.text, 
-          ts: Date.now() 
-        }]);
-      }
-
-      trackEvent('nova_response_generated', 'ai_interaction', 'assistant_response', 1, {
-        response_type: reply.type,
-        response_length: reply.text.length,
-        context: context
-      });
-
-    } catch (err) {
-      console.warn('[Nova] Chat error:', err);
-      setStatus('error');
-      
-      // Show user-friendly error message
-      const errorMessage: NovaMessage = { 
-        role: 'assistant', 
-        text: 'Sorry, er ging iets mis. Probeer het nog eens of stel je vraag net anders. 🤖', 
-        ts: Date.now() 
-      };
-      setMessages(prev => [...prev, errorMessage]);
-      
-      // Set error state for debugging
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      
-      // Track error
-      trackEvent('nova_error', 'ai_interaction', 'chat_error', 1, {
-        error_message: err instanceof Error ? err.message : 'Unknown error',
-        context: context,
-        user_input: text
-      });
-      
-    } finally {
-      setSending(false);
-      // Re-focus input for better UX
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const handleOutfitAction = (action: 'save' | 'more' | 'dislike', outfit: any) => {
-    // Track outfit interaction
-    trackEvent('nova_outfit_action', 'ai_interaction', action, 1, {
-      outfit_id: outfit.id,
-      outfit_title: outfit.title,
-      outfit_archetype: outfit.archetype,
-      context: context
-    });
-
-    switch (action) {
-      case 'save':
-        // Add to saved outfits (could integrate with engagement service)
-        console.log('Saving outfit:', outfit.id);
-        // You could call: toggleSave(outfit.id) from engagement service
-        break;
-      case 'more':
-        // Request more similar outfits
-        console.log('Requesting more like:', outfit.id);
-        // Use last intent for refinement
-        if (lastIntentRef.current) {
-          setValue(`Meer outfits zoals ${outfit.title}`);
+      debounceTimeoutRef.current = window.setTimeout(() => {
+        const reply = routeMessage(text, { userId: user?.id });
+        lastIntentRef.current = text;
+        if (reply.type === 'gate') {
+          push({ role: 'assistant', type: 'gate', text: reply.text });
+          track('nova_gate_view');
+        } else {
+          push({ role: 'assistant', type: 'text', text: reply.text });
         }
-        setValue(`Meer outfits zoals ${outfit.title}`);
-        break;
-      case 'dislike':
-        // Hide this type of outfit
-        console.log('Disliking outfit:', outfit.id);
-        // You could call: dislike(outfit.id) from engagement service
-        break;
-    }
-  };
+      }, 50);
+    },
+    [push, user?.id]
+  );
 
-  const handleQuickSuggestion = (suggestion: string) => {
-    // Debounce to prevent double-taps
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-    
-    debounceTimeoutRef.current = setTimeout(() => {
-      setValue(suggestion);
-      inputRef.current?.focus();
-      
-      // Track quick suggestion usage
-      trackEvent('nova_quick_suggestion', 'ai_interaction', 'suggestion_clicked', 1, {
-        suggestion_text: suggestion,
-        context: context
-      });
-    }, 200);
-  };
-  
-  const handleQuickSuggestion = (suggestion: string) => {
-    // Debounce to prevent double-taps
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-    
-    debounceTimeoutRef.current = setTimeout(() => {
-      setValue(suggestion);
-      inputRef.current?.focus();
-      
-      // Track quick suggestion usage
-      trackEvent('nova_quick_suggestion', 'ai_interaction', 'suggestion_clicked', 1, {
-        suggestion_text: suggestion,
-        context: context
-      });
-    }, 200);
-  };
-  const quickSuggestions = [
-    'Zomerse outfit in beige',
-    'Smart casual voor kantoor',
-    'Weekend look met sneakers',
-    'Formele outfit voor event'
-  ];
+  const handleQuickSuggestion = useCallback(
+    (suggestion: string) => {
+      track('nova_quick_suggestion_click', { suggestion });
+      handleSend(suggestion);
+    },
+    [handleSend]
+  );
 
-  // Show degraded state indicator
-  const getStatusIndicator = () => {
-    switch (status) {
-      case 'degraded':
-        return <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" title="Beperkte functionaliteit"></div>;
-      case 'error':
-        return <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Fout opgetreden"></div>;
-      default:
-        return <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Online"></div>;
-    }
-  };
   return (
-    <div className={`chat-container flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl pointer-events-auto ${className}`} style={{ height: '420px' }}>
-      {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 dark:from-[#89CFF0]/20 dark:to-blue-900/20 rounded-t-3xl">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-900 dark:text-white">Nova AI</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {status === 'degraded' ? 'Beperkte functionaliteit' : 'Jouw persoonlijke stylist'}
-              </p>
-            </div>
-            {getStatusIndicator()}
-          </div>
-          
-          {onClose && (
-            <button
-              onClick={onClose}
-              type="button"
-              className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors"
-              aria-label="Sluit Nova chat"
-            >
-              <X size={16} className="text-gray-600 dark:text-gray-300" />
-            </button>
-          )}
-        </div>
+    <div className="flex flex-col gap-3">
+      {/* Suggesties */}
+      <div className="flex flex-wrap gap-2">
+        {SUGGESTIONS.map((s) => (
+          <button
+            key={s}
+            className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 text-sm"
+            onClick={() => handleQuickSuggestion(s)}
+          >
+            {s}
+          </button>
+        ))}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <div 
-            key={index} 
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
-              message.role === 'user'
-                ? 'bg-[#89CFF0] text-white'
-                : message.role === 'system'
-                ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-            }`}>
-              {/* Gate Message with CTA */}
-              {(message as any).isGate ? (
-                <div>
-                  <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed mb-4">
-                    {message.text}
-                  </div>
-                  
-                  {/* CTA Button */}
-                  <a
-                    href="/inloggen?returnTo=/feed"
-                    onClick={() => trackEvent('nova_gate_cta_click', 'conversion', 'authentication_gate', 1, {
-                      context: context,
-                      user_query: lastIntentRef.current?.text
-                    })}
-                    className="inline-flex items-center px-4 py-2 bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-xl font-medium transition-colors"
-                  >
-                    Log in of maak account
-                  </a>
-                  
-                  {/* Preview Teaser */}
-                  <div className="mt-4 p-3 bg-white/10 rounded-xl border border-white/20">
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Preview van wat je krijgt:</div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
-                          <span className="text-xs text-gray-500">Outfit {i}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+      {/* Berichten */}
+      <div className="flex-1 min-h-[220px] max-h-[42vh] overflow-y-auto pr-2">
+        {messages.map((m, i) => (
+          <div key={i} className={m.role === 'user' ? 'text-right my-2' : 'text-left my-2'}>
+            {m.type === 'gate' ? (
+              <div className="inline-block max-w-[92%] px-4 py-3 rounded-xl bg-white/10">
+                <p className="mb-3">{m.text}</p>
+                <a
+                  href="/inloggen?returnTo=/feed"
+                  onClick={() => track('nova_sign_in_click')}
+                  className="inline-flex px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600"
+                >
+                  Log in of maak account
+                </a>
+                <div className="mt-3 aspect-[4/3] w-64 rounded-lg bg-white/5 grid place-items-center text-white/40">
+                  Voorbeeld outfit (blur)
                 </div>
-              ) : (
-                <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                  {message.text}
-                </div>
-              )}
-              <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                {message.text}
               </div>
-              
-              {/* Render clarification options */}
-              {(message as any).options && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {(message as any).options.map((option: string, i: number) => (
-                    <button
-                      key={i}
-                      onClick={() => handleQuickSuggestion(option)}
-                      className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs transition-colors"
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              )}
-              
-              {/* Render outfit cards */}
-              {(message as any).outfits && (
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {(message as any).outfits.slice(0, 3).map((outfit: any, i: number) => (
-                    <div key={outfit.id || i} className="rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                      <div className="aspect-[4/3] bg-white/5 grid place-items-center text-white/50 text-sm overflow-hidden">
-                        {outfit.imageUrl ? (
-                          <img 
-                            src={outfit.imageUrl} 
-                            alt={outfit.title || 'Outfit'} 
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
-                          />
-                        ) : (
-                          <span>Geen afbeelding</span>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <div className="text-white font-medium text-sm mb-1 line-clamp-1">
-                          {outfit.title || 'Stijlvolle look'}
-                        </div>
-                        <div className="text-white/70 text-xs line-clamp-2 mb-2">
-                          {outfit.description || 'Geselecteerd op basis van jouw profiel'}
-                        </div>
-                        <div className="flex items-center justify-between text-xs mb-2">
-                          <span className="bg-white/20 px-2 py-0.5 rounded-full">
-                            {outfit.matchPercentage || 85}% match
-                          </span>
-                          <span className="text-white/60">{outfit.archetype || 'casual'}</span>
-                        </div>
-                        <div className="flex gap-1">
-                          <button 
-                            onClick={() => handleOutfitAction('save', outfit)}
-                            className="flex-1 text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/15 transition-colors"
-                            title="Bewaar outfit"
-                          >
-                            Bewaar
-                          </button>
-                          <button 
-                            onClick={() => handleOutfitAction('more', outfit)}
-                            className="flex-1 text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/15 transition-colors"
-                            title="Meer zoals dit"
-                          >
-                            Meer
-                          </button>
-                          <button 
-                            onClick={() => handleOutfitAction('dislike', outfit)}
-                            className="flex-1 text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/15 transition-colors text-red-300"
-                            title="Niet mijn stijl"
-                          >
-                            Skip
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <div className="text-xs opacity-70 mt-1">
-                {new Date(message.ts).toLocaleTimeString('nl-NL', { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
-                })}
-              </div>
-            </div>
+            ) : (
+              <div className="inline-block max-w-[92%] px-3 py-2 rounded-lg bg-white/10">{m.text}</div>
+            )}
           </div>
         ))}
-        
-        {/* Thinking indicator */}
-        {sending && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-3">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Outfit Loading Skeletons */}
-        {showOutfitSkeletons && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-3 max-w-[85%]">
-              <div className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                Outfits genereren...
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-600 animate-pulse">
-                    <div className="aspect-[4/3] bg-gray-300 dark:bg-gray-500"></div>
-                    <div className="p-3 space-y-2">
-                      <div className="h-3 bg-gray-300 dark:bg-gray-500 rounded w-3/4"></div>
-                      <div className="h-2 bg-gray-300 dark:bg-gray-500 rounded w-1/2"></div>
-                      <div className="flex gap-1">
-                        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded flex-1"></div>
-                        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded flex-1"></div>
-                        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded flex-1"></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Error display */}
-        {error && (
-          <div className="flex justify-start">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-2xl px-4 py-3 max-w-[85%]">
-              <p className="text-sm text-red-700 dark:text-red-300">
-                <strong>Debug info:</strong> {error}
-              </p>
-            </div>
-          </div>
-        )}
-        
-        <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="flex-shrink-0 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
-        {/* Quick Suggestions - only show initially */}
-        {messages.length <= 1 && (
-          <div className="px-4 pt-4 pb-2 overflow-x-auto scrollbar-hide">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Probeer bijvoorbeeld:</p>
-            <div className="flex gap-2 min-w-max">
-              {quickSuggestions.map(suggestion => (
-                <button
-                  key={suggestion}
-                  onClick={() => handleQuickSuggestion(suggestion)}
-                  className="shrink-0 rounded-full px-3 py-1.5 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
-                  disabled={sending || status === 'degraded'}
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* Input Form */}
-        <div className="px-4 pb-4">
-          <div className="relative">
-            <input
-              ref={inputRef}
-              value={value}
-              onChange={e => setValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Bijv. 'Zomerse outfit in beige'"
-              className="w-full h-12 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 pl-4 pr-12 outline-none border border-gray-200 dark:border-gray-600 focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/20 transition-all"
-              disabled={sending || status === 'degraded'}
-              maxLength={500}
-              aria-label="Bericht aan Nova"
-            />
-            <button
-              type="button"
-              onClick={handleSend}
-              disabled={!value.trim() || sending || status === 'degraded'}
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 rounded-lg bg-[#89CFF0] hover:bg-[#89CFF0]/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#0D1B2A] grid place-items-center focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 transition-colors"
-              aria-label="Verstuur bericht"
-            >
-              {sending ? (
-                <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Send size={16} />
-              )}
-            </button>
-          </div>
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-            {status === 'degraded' 
-              ? 'Nova heeft beperkte functionaliteit - probeer het later opnieuw'
-              : 'Nova leert van je feedback om betere aanbevelingen te doen'
-            }
-          </p>
-        </div>
+      {/* Input */}
+      <div className="flex gap-2">
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Bijv. 'Zomerse outfit in beige'"
+          className="flex-1 px-3 py-2 rounded-lg bg-white/10 outline-none"
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+        />
+        <button onClick={() => handleSend()} className="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600">
+          Stuur
+        </button>
       </div>
     </div>
   );
