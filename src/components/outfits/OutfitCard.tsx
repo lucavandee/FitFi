@@ -2,27 +2,11 @@ import React, { useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import RequireAuth from '@/components/auth/RequireAuth';
 import { getSafeImageUrl } from '@/utils/image';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
 import { track } from '@/utils/analytics';
-
-// RequireAuth mini-component for action buttons
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { useUser } = require('../../context/UserContext');
-  const { user } = useUser();
-  if (!user) {
-    return (
-      <button 
-        className="btn-outline px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white rounded-xl text-xs font-medium transition-colors"
-        onClick={() => window.location.href = '/inloggen?returnTo=/feed'}
-      >
-        Inloggen
-      </button>
-    );
-  }
-  return <>{children}</>;
-}
 
 interface OutfitCardProps {
   outfit: {
@@ -262,7 +246,7 @@ export default function OutfitCard({
         )}
         
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <RequireAuth>
+          <RequireAuth cta="Inloggen om te bewaren">
             <button 
               aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"}
               aria-pressed={saved}
@@ -281,7 +265,7 @@ export default function OutfitCard({
             </button>
           </RequireAuth>
           
-          <RequireAuth>
+          <RequireAuth cta="Inloggen voor meer looks">
             <button 
               aria-label="Meer zoals dit"
               aria-busy={isProcessing.like}
@@ -297,7 +281,7 @@ export default function OutfitCard({
             </button>
           </RequireAuth>
           
-          <RequireAuth>
+          <RequireAuth cta="Inloggen voor feedback">
             <button 
               aria-label="Niet mijn stijl"
               aria-busy={isProcessing.dislike}
@@ -313,7 +297,7 @@ export default function OutfitCard({
             </button>
           </RequireAuth>
           
-          <RequireAuth>
+          <RequireAuth cta="Inloggen voor uitleg">
             <button 
               aria-label="Laat Nova dit outfit uitleggen"
               aria-busy={isProcessing.explain}
