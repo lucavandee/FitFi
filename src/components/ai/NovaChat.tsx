@@ -290,17 +290,17 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
       </div>
 
       {/* Input Area */}
-      <div className="nova-composer flex-shrink-0 p-4 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
+      <div className="flex-shrink-0 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
         {/* Quick Suggestions - only show initially */}
         {messages.length <= 1 && (
-          <div className="mb-3">
+          <div className="px-4 pt-4 pb-2">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Probeer bijvoorbeeld:</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
               {quickSuggestions.map(suggestion => (
                 <button
                   key={suggestion}
                   onClick={() => handleQuickSuggestion(suggestion)}
-                  className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full transition-colors"
+                  className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full transition-colors whitespace-nowrap flex-shrink-0"
                   disabled={sending || status === 'degraded'}
                 >
                   {suggestion}
@@ -311,30 +311,39 @@ function NovaChat({ onClose, context = 'general', className = '' }: NovaChatProp
         )}
         
         {/* Input Form */}
-        <div className="flex items-center space-x-2">
-          <input
-            ref={inputRef}
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Bijv. 'Zomerse outfit in beige'"
-            className="nova-input flex-1 min-w-0 px-4 py-2 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors text-sm placeholder-gray-500 dark:placeholder-gray-400"
-            disabled={sending || status === 'degraded'}
-            maxLength={500}
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={!value.trim() || sending || status === 'degraded'}
-            className="nova-send flex-shrink-0 px-4 py-2 bg-[#89CFF0] hover:bg-[#89CFF0]/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#0D1B2A] rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2"
-            aria-label="Verstuur bericht"
-          >
-            {sending ? (
-              <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Send size={16} />
-            )}
-          </button>
+        <div className="px-4 pb-4">
+          <div className="relative">
+            <input
+              ref={inputRef}
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Bijv. 'Zomerse outfit in beige'"
+              className="w-full h-12 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 pl-4 pr-12 outline-none border border-gray-200 dark:border-gray-600 focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/20 transition-all"
+              disabled={sending || status === 'degraded'}
+              maxLength={500}
+              aria-label="Bericht aan Nova"
+            />
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={!value.trim() || sending || status === 'degraded'}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 rounded-lg bg-[#89CFF0] hover:bg-[#89CFF0]/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#0D1B2A] grid place-items-center focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 transition-colors"
+              aria-label="Verstuur bericht"
+            >
+              {sending ? (
+                <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Send size={16} />
+              )}
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+            {status === 'degraded' 
+              ? 'Nova heeft beperkte functionaliteit - probeer het later opnieuw'
+              : 'Nova leert van je feedback om betere aanbevelingen te doen'
+            }
+          </p>
         </div>
         
         {/* Footer */}
