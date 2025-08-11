@@ -140,7 +140,7 @@ function App() {
                       <Route path="/results" element={
                         <ProtectedRoute>
                           <ResultsPage />
-                        </Prot ectedRoute>
+                        </ProtectedRoute>
                       } />
                       <Route path="/resultaten" element={<Navigate to="/results" replace />} />
                       <Route path="/dynamic-results" element={
