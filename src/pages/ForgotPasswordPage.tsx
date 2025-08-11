@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
-import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 
 const ForgotPasswordPage: React.FC = () => {

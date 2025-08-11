@@ -645,11 +645,20 @@ async function _getOutfits(
  * @returns Array of recommended products
  */
 export async function getRecommendedProducts(
-  user: UserProfile, 
+  user?: UserProfile, 
   count: number = 9, 
   season?: Season
 ): Promise<Product[]> {
-  console.log('[🔍 DataRouter] getRecommendedProducts called with user:', user.id, 'count:', count, 'season:', season);
+  const safeUser = user ?? { 
+    id: 'anon', 
+    name: 'Guest', 
+    email: '', 
+    gender: 'female' as const, 
+    stylePreferences: { casual: 0, formal: 0, sporty: 0, vintage: 0, minimalist: 0 }, 
+    isPremium: false, 
+    savedRecommendations: [] 
+  };
+  console.log('[🔍 DataRouter] getRecommendedProducts called with user:', safeUser.id, 'count:', count, 'season:', season);
   
   if (env.USE_MOCK_DATA) {
     if (env.DEBUG_MODE) {
@@ -685,20 +694,20 @@ export async function getRecommendedProducts(
       console.log(`[🧠 DataRouter] Using ${boltProducts.length} BoltProducts for recommendations`);
       
       // Filter by gender
-      const genderFiltered = filterProductsByGender(boltProducts, user.gender === 'male' ? 'male' : 'female');
-      console.log(`[🧠 DataRouter] Filtered to ${genderFiltered.length} products matching gender: ${user.gender}`);
+      const genderFiltered = filterProductsByGender(boltProducts, safeUser.gender === 'male' ? 'male' : 'female');
+      console.log(`[🧠 DataRouter] Filtered to ${genderFiltered.length} products matching gender: ${safeUser.gender}`);
       
       // Filter by archetype match
       const archetypeFiltered = genderFiltered.filter(product => {
         // Determine primary archetype based on user preferences
         let primaryArchetype = 'casual_chic';
-        if (user.stylePreferences.formal > user.stylePreferences.casual) {
+        if (safeUser.stylePreferences.formal > safeUser.stylePreferences.casual) {
           primaryArchetype = 'klassiek';
-        } else if (user.stylePreferences.sporty > user.stylePreferences.casual) {
+        } else if (safeUser.stylePreferences.sporty > safeUser.stylePreferences.casual) {
           primaryArchetype = 'streetstyle';
-        } else if (user.stylePreferences.vintage > user.stylePreferences.casual) {
+        } else if (safeUser.stylePreferences.vintage > safeUser.stylePreferences.casual) {
           primaryArchetype = 'retro';
-        } else if (user.stylePreferences.minimalist > user.stylePreferences.casual) {
+        } else if (safeUser.stylePreferences.minimalist > safeUser.stylePreferences.casual) {
           primaryArchetype = 'urban';
         }
         
