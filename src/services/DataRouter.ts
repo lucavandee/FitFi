@@ -950,11 +950,30 @@ const API_CONFIG = {
   cacheTTL: 300000 // 5 minutes in milliseconds
 };
 
-export async function getFeed(options: { userId?: string; count?: number; archetypes?: string[] }){
+/**
+ * Get feed with pagination support
+ * @param options - Feed options including offset and limit
+ * @returns Array of feed outfits
+ */
+export async function getFeed(options: { 
+  userId?: string; 
+  count?: number; 
+  archetypes?: string[];
+  offset?: number;
+}): Promise<any[]> {
   const count = Math.max(12, options?.count ?? 18);
+  const offset = options?.offset ?? 0;
   const archetypes = options?.archetypes ?? ['casual_chic','urban','klassiek'];
-  const candidates = generateMockOutfits(count + 24);
-  const ranked = rankOutfits(candidates, { archetypes, season: 'summer' });
-  const diversified = ensureDiversity(ranked, 4).slice(0, count);
-  return diversified.map(x => x.outfit);
+  
+  // Generate more candidates to support pagination
+  const totalCandidates = generateMockOutfits(count * 5); // Generate 5x more for pagination
+  const ranked = rankOutfits(totalCandidates, { archetypes, season: 'summer' });
+  const diversified = ensureDiversity(ranked, 4);
+  
+  // Apply pagination
+  const paginatedResults = diversified
+    .slice(offset, offset + count)
+    .map(x => x.outfit);
+  
+  return paginatedResults;
 }
