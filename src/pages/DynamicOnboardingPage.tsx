@@ -10,9 +10,8 @@ import { saveOnboardingProgress, loadOnboardingProgress } from '../utils/progres
 
 const DynamicOnboardingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const { user, isLoading: userLoading } = useUser();
-  const { data, updateAnswers, resetData } = useOnboarding();
+  const { data, updateAnswers } = useOnboarding();
   const [currentStep, setCurrentStep] = useState<'gender_name' | 'archetype' | 'season' | 'occasion' | 'preferences' | 'complete'>('gender_name');
   const [isSubmitting, setIsSubmitting] = useState(false);
 

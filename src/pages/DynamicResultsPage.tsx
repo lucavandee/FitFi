@@ -8,7 +8,6 @@ import LoadingFallback from '../components/ui/LoadingFallback';
 const DynamicResultsPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
   const location = useLocation();
-  const navigate = useNavigate();
   const [analysisComplete, setAnalysisComplete] = useState(false);
   
   // Get dynamic onboarding data from location state

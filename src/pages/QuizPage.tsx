@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading: userLoading } = useUser();
-  const { submitQuizAnswers, isQuizCompleted, isLoading: quizLoading, resetQuiz } = useQuizAnswers();
+  const { submitQuizAnswers, isQuizCompleted, isLoading: quizLoading } = useQuizAnswers();
   const { checkAndAwardAchievements } = useAchievements();
   
   // A/B Testing for celebration animations
