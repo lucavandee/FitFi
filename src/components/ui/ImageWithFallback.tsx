@@ -1,73 +1,62 @@
-import React, { useState, useMemo } from 'react';
-import { getSafeImageUrl, getFallbackImageForCategory } from '@/utils/imageUtils';
+import React from 'react';
+import { getFallbackImageForCategory } from '@/utils/imageUtils';
 
-type Props = { 
-  src?: string; 
-  alt: string; 
-  category?: string; 
-  className?: string;
-  onClick?: React.ImgHTMLAttributes<HTMLImageElement>["onClick"];
-  style?: React.CSSProperties;
+interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src?: string;
+  alt: string;
+  category?: string;
   componentName?: string;
   onError?: (originalSrc: string) => void;
-  fallback?: string;
-  width?: number;
-  height?: number;
-  fallbackSrc?: string;
-  fallbackKey?: string;
-};
+}
 
-const ImageWithFallback: React.FC<Props> = ({ 
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ 
   src, 
   alt, 
-  category, 
-  className,
-  onClick,
-  style,
+  category,
   componentName,
   onError,
-  fallback,
-  width,
-  height,
-  fallbackSrc,
-  fallbackKey
+  style,
+  className,
+  ...rest 
 }) => {
-  const initial = useMemo(() => {
-    // Priority order: fallback prop > fallbackSrc > getSafeImageUrl > category fallback
-    if (fallback) return fallback;
-    if (fallbackSrc) return fallbackSrc;
-    return getSafeImageUrl(src, category);
-  }, [src, category, fallback, fallbackSrc]);
-  
-  const [current, setCurrent] = useState(initial);
-  const [hasErrored, setHasErrored] = useState(false);
+  const [currentSrc, setCurrentSrc] = React.useState(src || '');
+  const [hasErrored, setHasErrored] = React.useState(false);
 
   const handleError = () => {
     if (!hasErrored) {
       setHasErrored(true);
+      
+      // Call onError callback if provided
       if (onError && src) {
         onError(src);
       }
-      setCurrent(getFallbackImageForCategory(category));
+      
+      // Set fallback image
+      const fallbackUrl = getFallbackImageForCategory(category);
+      setCurrentSrc(fallbackUrl);
+      
+      if (componentName) {
+        console.warn(`[${componentName}] Image failed, using fallback: ${src} → ${fallbackUrl}`);
+      }
     }
   };
 
-  // Add Unsplash optimization if URL is from Unsplash
-  const optimizedSrc = current.includes('images.unsplash.com') && !current.includes('?')
-    ? `${current}?auto=format&fit=crop&w=960&q=75`
-    : current;
+  // Reset error state when src changes
+  React.useEffect(() => {
+    if (src !== currentSrc && !hasErrored) {
+      setCurrentSrc(src || '');
+      setHasErrored(false);
+    }
+  }, [src]);
 
   return (
     <img
-      src={optimizedSrc}
+      {...rest}
+      src={currentSrc}
       alt={alt}
       loading="lazy"
       decoding="async"
-      fetchPriority="low"
       onError={handleError}
-      srcSet={`${optimizedSrc} 1x, ${optimizedSrc} 2x`}
-      sizes="(max-width: 640px) 100vw, 512px"
-      onClick={onClick}
       style={{ objectFit: 'cover', ...style }}
       className={className}
     />
