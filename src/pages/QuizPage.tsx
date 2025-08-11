@@ -221,6 +221,15 @@ const QuizPage: React.FC = () => {
         // Track A/B test conversion
         trackConversion({ completionTime, achievementsEarned: earnedAchievements.length });
         
+        // Save profile to Nova memory
+        const { NovaMemory } = await import('../ai/nova/agent');
+        NovaMemory.writeProfile({ 
+          answers: progress.answers, 
+          userId: user.id, 
+          completedAt: new Date().toISOString(),
+          completionTime 
+        });
+        
       } else {
         toast.error('Er ging iets mis bij het opslaan van je antwoorden. Probeer het opnieuw.');
       }

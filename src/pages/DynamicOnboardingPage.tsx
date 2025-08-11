@@ -75,6 +75,9 @@ const DynamicOnboardingPage: React.FC = () => {
         });
       }
 
+      // Save profile to Nova memory
+      const { NovaMemory } = await import('../../ai/nova/agent');
+      NovaMemory.writeProfile({ ...data, userId: user.id, completedAt: new Date().toISOString() });
       // Navigate to enhanced results
       await navigationService.navigateToEnhancedResults(data, {
         loadingMessage: 'Enhanced aanbevelingen genereren...',

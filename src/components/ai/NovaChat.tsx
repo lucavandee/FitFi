@@ -20,6 +20,40 @@ const NovaChat: React.FC<NovaChatProps> = ({ onClose, context = 'general', class
   const [thinking, setThinking] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
+  // Load profile and show personalized greeting
+  React.useEffect(() => {
+    const profile = NovaMemory.readProfile();
+    
+    if (profile && messages.length === 1) {
+      // Generate personalized greeting based on profile
+      let personalizedGreeting = 'Hey! Ik zie dat je je stijlprofiel hebt voltooid. ';
+      
+      if (profile.answers?.stylePreferences) {
+        const topPrefs = profile.answers.stylePreferences.slice(0, 2);
+        personalizedGreeting += `Ik hou rekening met jouw voorkeur voor ${topPrefs.join(' & ')}. `;
+      }
+      
+      if (profile.answers?.baseColors) {
+        personalizedGreeting += `En ik weet dat je van ${profile.answers.baseColors} kleuren houdt. `;
+      }
+      
+      if (profile.archetypes?.length > 0) {
+        personalizedGreeting += `Perfect voor jouw ${profile.archetypes[0].replace('_', ' ')} stijl! `;
+      }
+      
+      personalizedGreeting += 'Waar kan ik je mee helpen?';
+      
+      const personalizedMsg: NovaMessage = {
+        role: 'nova',
+        content: personalizedGreeting,
+        ts: Date.now()
+      };
+      
+      setMessages([personalizedMsg]);
+      NovaMemory.writeHistory([personalizedMsg]);
+    }
+  }, []);
+
   // Auto-scroll to bottom
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
