@@ -68,7 +68,12 @@ const TribeDetailPage: React.FC = () => {
       const success = await TribesService.joinTribe(tribe.id, user.id);
       if (success) {
         toast.success(`Je bent toegetreden tot ${tribe.name}!`);
-        setTribe(prev => prev ? { ...prev, is_member: true, user_role: 'member', member_count: prev.member_count + 1 } : null);
+        setTribe(prev => prev ? { 
+          ...prev, 
+          is_member: true, 
+          user_role: 'member' as const, 
+          member_count: prev.member_count + 1 
+        } : null);
       }
     } catch (error) {
       console.error('Error joining tribe:', error);
@@ -83,7 +88,11 @@ const TribeDetailPage: React.FC = () => {
       const success = await TribesService.leaveTribe(tribe.id, user.id);
       if (success) {
         toast.success(`Je hebt ${tribe.name} verlaten`);
-        setTribe(prev => prev ? { ...prev, is_member: false, user_role: undefined, member_count: prev.member_count - 1 } : null);
+        setTribe(prev => prev ? { 
+          ...prev, 
+          is_member: false, 
+          member_count: prev.member_count - 1 
+        } : null);
       }
     } catch (error) {
       console.error('Error leaving tribe:', error);

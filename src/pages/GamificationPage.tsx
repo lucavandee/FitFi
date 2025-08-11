@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, Star, Target } from 'lucide-react';
+import { ArrowLeft, Trophy } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../context/GamificationContext';

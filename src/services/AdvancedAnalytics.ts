@@ -752,7 +752,7 @@ class AdvancedAnalytics {
       // Save session recording
       const sessionRecording: SessionRecording = {
         id: this.sessionId,
-        user_id: this.userId ?? '',
+        user_id: this.userId || '',
         session_id: this.sessionId,
         page_url: this.currentPage,
         duration: Date.now() - this.sessionStartTime,
