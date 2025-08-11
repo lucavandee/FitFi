@@ -8,10 +8,11 @@ import toast from 'react-hot-toast';
 
 interface NovaChatProps {
   onClose?: () => void;
+  context?: string;
   className?: string;
 }
 
-const NovaChat: React.FC<NovaChatProps> = ({ onClose, className = '' }) => {
+const NovaChat: React.FC<NovaChatProps> = ({ onClose, context = 'general', className = '' }) => {
   const [input, setInput] = React.useState('');
   const [messages, setMessages] = React.useState<NovaMessage[]>(NovaMemory.readHistory());
   const [cards, setCards] = React.useState<any[]>([]);
@@ -101,20 +102,20 @@ const NovaChat: React.FC<NovaChatProps> = ({ onClose, className = '' }) => {
         toast.success('Meer zoals dit toegevoegd!');
         // Could trigger new outfit generation
         break;
-      case 'explain':
-        // Add explanation to chat
-        const explanation: NovaMessage = {
-          role: 'nova',
-          content: `Deze ${outfit.title} past bij je omdat: ${outfit.explanation || 'het perfect aansluit bij jouw stijlvoorkeuren en de gelegenheid.'}`,
-          ts: Date.now()
-        };
-        const newMessages = [...messages, explanation];
-        setMessages(newMessages);
-        NovaMemory.writeHistory(newMessages);
-        break;
     }
   };
 
+  const handleExplainInChat = (explanation: string, outfit: any) => {
+    // Add explanation to chat
+    const explanationMessage: NovaMessage = {
+      role: 'nova',
+      content: `💡 **${outfit.title}** - ${explanation}`,
+      ts: Date.now()
+    };
+    const newMessages = [...messages, explanationMessage];
+    setMessages(newMessages);
+    NovaMemory.writeHistory(newMessages);
+  };
   const quickSuggestions = [
     'Outfit voor kantoor onder €120 in zwart',
     'Casual weekend look met sneakers',
@@ -199,17 +200,8 @@ const NovaChat: React.FC<NovaChatProps> = ({ onClose, className = '' }) => {
                     onSave={() => handleOutfitAction('save', outfit)}
                     onDislike={() => handleOutfitAction('dislike', outfit)}
                     onMoreLikeThis={() => handleOutfitAction('more_like_this', outfit)}
+                    onExplain={(explanation) => handleExplainInChat(explanation, outfit)}
                   />
-                  
-                  {/* Extra Nova Actions */}
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      onClick={() => handleOutfitAction('explain', outfit)}
-                      className="flex-1 px-3 py-1 text-xs bg-[#89CFF0]/10 text-[#89CFF0] rounded-lg hover:bg-[#89CFF0]/20 transition-colors"
-                    >
-                      💡 Leg uit
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>
