@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { isValidImageUrl, getFallbackImage } from "@/utils/imageUtils";
+import { getCuratedImage } from "@/assets/curatedImages";
 
 type ImageWithFallbackProps = {
   src?: string | null;
-  alt: string;
+  alt?: string;
   className?: string;
   width?: number;
   height?: number;
   fallbackSrc?: string;
+  fallbackKey?: string; // For curated fallback selection
   loading?: "eager" | "lazy";
   decoding?: "sync" | "async" | "auto";
   onClick?: React.ImgHTMLAttributes<HTMLImageElement>["onClick"];
@@ -18,11 +20,12 @@ type ImageWithFallbackProps = {
 
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   src,
-  alt,
+  alt = 'Outfit afbeelding',
   className,
   width,
   height,
   fallbackSrc,
+  fallbackKey,
   loading = "lazy",
   decoding = "async",
   onClick,
@@ -31,8 +34,23 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   onError,
 }) => {
   const computedFallback = useMemo(
-    () => fallbackSrc || getFallbackImage(width ?? 600, height ?? 800),
-    [fallbackSrc, width, height]
+    () => {
+      if (fallbackSrc) return fallbackSrc;
+      
+      // Use curated image if fallbackKey is provided
+      if (fallbackKey) {
+        try {
+          // Parse fallbackKey format: "archetype-season" or use defaults
+          const [archetype = 'casual_chic', season = 'herfst'] = fallbackKey.split('-');
+          return getCuratedImage(archetype as any, season as any, fallbackKey);
+        } catch (error) {
+          console.warn('Failed to get curated image, using generic fallback:', error);
+        }
+      }
+      
+      return getFallbackImage(width ?? 600, height ?? 800);
+    },
+    [fallbackSrc, fallbackKey, width, height]
   );
 
   const [currentSrc, setCurrentSrc] = useState<string>(
