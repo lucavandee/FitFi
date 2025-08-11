@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { getFeed } from '@/services/DataRouter';
 import { useUser } from '@/context/UserContext';
 import { useQuizAnswers } from '@/hooks/useQuizAnswers';
+import { isDisliked } from '@/services/engagement';
 import OutfitCard from '@/components/outfits/OutfitCard';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
@@ -50,12 +51,33 @@ export default function FeedPage() {
   const [items, setItems] = useState<FeedOutfit[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [savedOutfits, setSavedOutfits] = useState<Set<string>>(new Set());
-  const [dislikedOutfits, setDislikedOutfits] = useState<Set<string>>(new Set());
-  const [categoryWeights, setCategoryWeights] = useState<Map<string, number>>(new Map());
-  const [brandWeights, setBrandWeights] = useState<Map<string, number>>(new Map());
   const sentinelRef = useRef<HTMLDivElement|null>(null);
   const busyRef = useRef(false);
+
+  // Filter visible outfits (exclude disliked)
+  const visibleOutfits = React.useMemo(() => 
+    items.filter(outfit => !isDisliked(outfit.id)), 
+    [items]
+  );
+
+  // Insert similar outfits at specific position
+  const insertSimilar = (index: number, similarOutfits: any[]) => {
+    setItems(currentItems => {
+      const before = currentItems.slice(0, index + 1);
+      const after = currentItems.slice(index + 1);
+      
+      // Deduplicate based on ID
+      const existingIds = new Set(currentItems.map(item => item.id));
+      const newItems = similarOutfits.filter(item => !existingIds.has(item.id));
+      
+      return [...before, ...newItems, ...after];
+    });
+  };
+
+  // Dismiss outfit from feed
+  const dismissOutfit = (id: string) => {
+    setItems(currentItems => currentItems.filter(item => item.id !== id));
+  };
 
   // Check if user can access feed
   const canAccessFeed = user && status === 'authenticated' && !quizLoading && isQuizCompleted();
@@ -89,93 +111,7 @@ export default function FeedPage() {
     }, { rootMargin: '600px 0px' });
     io.observe(el);
     return () => io.disconnect();
-  }, [canAccessFeed]);
-
-  const handleSave = (outfit: FeedOutfit) => {
-    setSavedOutfits(prev => new Set([...prev, outfit.id]));
-    toast.success('Outfit opgeslagen!');
-    
-    // Track save action
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'outfit_save', {
-        event_category: 'engagement',
-        event_label: outfit.archetype,
-        outfit_id: outfit.id
-      });
-    }
-  };
-
-  const handleMoreLikeThis = (outfit: FeedOutfit) => {
-    // Extract category and brand from outfit for weighting
-    const category = outfit.archetype || 'casual_chic';
-    const brand = 'fitfi'; // Mock brand since outfit doesn't have direct brand
-    
-    // Increase weights for this category/brand
-    setCategoryWeights(prev => {
-      const newWeights = new Map(prev);
-      newWeights.set(category, (newWeights.get(category) || 0) + 1);
-      return newWeights;
-    });
-    
-    setBrandWeights(prev => {
-      const newWeights = new Map(prev);
-      newWeights.set(brand, (newWeights.get(brand) || 0) + 1);
-      return newWeights;
-    });
-    
-    // Log feedback to localStorage
-    const feedback = {
-      type: 'more_like_this',
-      outfit_id: outfit.id,
-      archetype: outfit.archetype,
-      timestamp: Date.now(),
-      category,
-      brand
-    };
-    
-    const existingFeedback = JSON.parse(localStorage.getItem('fitfi_feedback') || '[]');
-    existingFeedback.push(feedback);
-    localStorage.setItem('fitfi_feedback', JSON.stringify(existingFeedback));
-    
-    toast.success('We zoeken meer outfits zoals deze voor je!');
-    
-    // Track positive feedback
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'outfit_like', {
-        event_category: 'feedback',
-        event_label: outfit.archetype,
-        outfit_id: outfit.id
-      });
-    }
-  };
-
-  const handleNotMyStyle = (outfit: FeedOutfit) => {
-    // Log negative feedback to localStorage
-    const feedback = {
-      type: 'not_my_style',
-      outfit_id: outfit.id,
-      archetype: outfit.archetype,
-      timestamp: Date.now()
-    };
-    
-    const existingFeedback = JSON.parse(localStorage.getItem('fitfi_feedback') || '[]');
-    existingFeedback.push(feedback);
-    localStorage.setItem('fitfi_feedback', JSON.stringify(existingFeedback));
-    
-    // Remove from current feed
-    setDislikedOutfits(prev => new Set([...prev, outfit.id]));
-    setItems(prev => prev.filter(item => item.id !== outfit.id));
-    toast.success('Outfit verwijderd uit je feed');
-    
-    // Track negative feedback
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'outfit_dislike', {
-        event_category: 'feedback',
-        event_label: outfit.archetype,
-        outfit_id: outfit.id
-      });
-    }
-  };
+}
 
   // Show CTA if user not authenticated or quiz not completed
   if (!user || status !== 'authenticated') {
@@ -225,9 +161,7 @@ export default function FeedPage() {
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {items
-          .filter(outfit => !dislikedOutfits.has(outfit.id))
-          .map((outfit, i) => (
+        {visibleOutfits.map((outfit, index) => (
           <OutfitCard
             key={outfit.id}
             outfit={{
@@ -235,14 +169,14 @@ export default function FeedPage() {
               currentSeasonLabel: outfit.currentSeasonLabel || 'Dit seizoen',
               dominantColorName: outfit.dominantColorName || undefined
             }}
-            onSave={handleSave}
-            onMoreLikeThis={handleMoreLikeThis}
-            onNotMyStyle={handleNotMyStyle}
+            allOutfits={items}
+            onInsertSimilar={(similarItems) => insertSimilar(index, similarItems)}
+            onDismiss={dismissOutfit}
           />
         ))}
       </div>
       
-      {items.filter(outfit => !dislikedOutfits.has(outfit.id)).length === 0 && !loading && (
+      {visibleOutfits.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Sparkles className="w-8 h-8 text-gray-400" />
