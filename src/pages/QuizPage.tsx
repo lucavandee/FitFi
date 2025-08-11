@@ -16,9 +16,8 @@ import ProgressMotivation from '../components/quiz/ProgressMotivation';
 import CompletionCelebration from '../components/quiz/CompletionCelebration';
 import toast from 'react-hot-toast';
 
-// ✅ Lazy Nova Agent loading
-const loadNovaAgent = () =>
-  import('@/ai/nova/agent').then(m => m.default ?? m.agent);
+// ✅ Import lazy Nova Agent loader
+import { loadNovaAgent } from '@/ai/nova/load';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();

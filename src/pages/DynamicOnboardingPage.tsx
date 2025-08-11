@@ -8,9 +8,8 @@ import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { saveOnboardingProgress, loadOnboardingProgress } from '../utils/progressPersistence';
 
-// ✅ Lazy Nova Agent loading
-const loadNovaAgent = () =>
-  import('@/ai/nova/agent').then(m => m.default ?? m.agent);
+// ✅ Import lazy Nova Agent loader
+import { loadNovaAgent } from '@/ai/nova/load';
 
 const DynamicOnboardingPage: React.FC = () => {
   const navigate = useNavigate();

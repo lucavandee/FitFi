@@ -1,216 +1,181 @@
-export type NovaIntent =
-  | 'greet' | 'smalltalk' | 'style_advice' | 'outfit_request'
-  | 'product_search' | 'account' | 'help' | 'unknown';
+export type NovaReply =
+  | { type: 'text'; message: string }
+  | { type: 'tips'; title: string; bullets: string[] }
+  | { type: 'outfits'; title: string; items: Array<{ name: string; description: string; price?: number }> };
 
-export type NovaEntities = {
-  occasion?: string; season?: string; colors?: string[];
-  budgetMax?: number; gender?: 'male'|'female'|'neutral';
-  categories?: string[]; archetypes?: string[];
-};
-
-export type NovaMessage = { role:'user'|'nova'|'tool'; content:string; ts:number };
-
-type ToolCtx = {
-  profile: any; // onboarding-profiel
-  history: NovaMessage[];
-};
-export type NovaToolResult = { type:string; payload:any };
-
-// Nova Agent interface
 export type NovaAgent = {
+  ask(input: string, ctx?: Record<string, unknown>): Promise<NovaReply>;
   greet(name: string): Promise<string>;
-  planAndExecute(userText: string): Promise<any>;
-  detectIntent(input: string): NovaIntent;
-  extractEntities(input: string): NovaEntities;
   memory: typeof NovaMemory;
   tools: typeof NovaTools;
 };
 
+// Simple memory interface for future expansion
 export const NovaMemory = {
-  readProfile(){ try{ return JSON.parse(localStorage.getItem('fitfi.profile')||'null'); }catch{return null;}},
-  writeProfile(p:any){ localStorage.setItem('fitfi.profile', JSON.stringify(p)); },
-  readHistory(){ try{ return JSON.parse(sessionStorage.getItem('nova.history')||'[]'); }catch{return [];} },
-  writeHistory(h:NovaMessage[]){ sessionStorage.setItem('nova.history', JSON.stringify(h.slice(-30))); }
-};
-
-// ── Intent + entities (very light, upgrade in Prompt 2)
-export function detectIntent(input:string): NovaIntent {
-  const q=input.toLowerCase();
-  if (/hallo|hey|hi|hoi/.test(q)) return 'greet';
-  if (/help|hulp|support|faq/.test(q)) return 'help';
-  if (/account|inloggen|logout|wachtwoord/.test(q)) return 'account';
-  if (/(outfit|look|setje)/.test(q)) return 'outfit_request';
-  if (/(broek|jurk|sneaker|shirt|jas)/.test(q)) return 'product_search';
-  if (/(stijl|advies|combineren|matchen)/.test(q)) return 'style_advice';
-  return 'unknown';
-}
-
-export function extractEntities(input:string): NovaEntities {
-  const { findColorMatch, findOccasionMatch, findCategoryMatch, BUDGET_PATTERNS, SEASONS } = require('./nl-lexicon');
-  
-  const q = input.toLowerCase();
-  
-  // Enhanced color detection met synoniemen
-  const colors: string[] = [];
-  const colorMatch = findColorMatch(input);
-  if (colorMatch) colors.push(colorMatch);
-  
-  // Enhanced budget detection
-  let budgetMax: number | undefined;
-  for (const pattern of BUDGET_PATTERNS) {
-    const match = q.match(pattern);
-    if (match) {
-      budgetMax = Number(match[1]);
-      break;
+  readProfile() { 
+    try { 
+      return JSON.parse(localStorage.getItem('fitfi.profile') || 'null'); 
+    } catch { 
+      return null; 
     }
+  },
+  writeProfile(p: any) { 
+    localStorage.setItem('fitfi.profile', JSON.stringify(p)); 
+  },
+  readHistory() { 
+    try { 
+      return JSON.parse(sessionStorage.getItem('nova.history') || '[]'); 
+    } catch { 
+      return []; 
+    } 
+  },
+  writeHistory(h: any[]) { 
+    sessionStorage.setItem('nova.history', JSON.stringify(h.slice(-30))); 
   }
-  
-  // Enhanced occasion detection
-  const occasion = findOccasionMatch(input);
-  
-  // Enhanced season detection
-  const seasonMatch = SEASONS.find(s => q.includes(s));
-  
-  // Enhanced category detection
-  const categories: string[] = [];
-  const categoryMatch = findCategoryMatch(input);
-  if (categoryMatch) categories.push(categoryMatch);
-  
-  return {
-    colors: colors.length ? colors : undefined,
-    budgetMax,
-    occasion,
-    season: seasonMatch,
-    categories: categories.length ? categories : undefined
-  };
-}
-
-// ── Tool registry (mock-friendly; echte engine calls waar mogelijk)
-export const NovaTools = {
-  async generate_outfits(ctx:ToolCtx, args:NovaEntities):Promise<NovaToolResult>{
-    const { getCurrentSeason } = await import('@/engine/helpers');
-    const { generateRecommendations } = await import('@/engine/recommendationEngine');
-    const user = ctx.profile || { gender:'neutral', stylePreferences:{}, isPremium:false };
-    const opts:any = {
-      count: 3,
-      preferredOccasions: args.occasion?[args.occasion]:undefined,
-      preferredSeasons: [ (args.season as any) || getCurrentSeason() ],
-      realtime: false
-    };
-    const outfits = await generateRecommendations(user, opts);
-    return { type:'outfits', payload: outfits };
-  },
-  async explain_outfit(_:ToolCtx, { outfit }:any):Promise<NovaToolResult>{
-    const { generateOutfitExplanation } = await import('@/engine/explainOutfit');
-    return { type:'explanation', payload: generateOutfitExplanation(outfit) };
-  },
-  async search_products(_:ToolCtx, args:NovaEntities):Promise<NovaToolResult>{
-    const { getZalandoProducts } = await import('@/data/zalandoProductsAdapter');
-    const all = await getZalandoProducts();
-    const filtered=all.filter(p=>{
-      const okColor = !args.colors?.length || args.colors?.some(c=>p.name.toLowerCase().includes(c)||p.color?.toLowerCase()==c);
-      const okBudget = !args.budgetMax || p.price<=args.budgetMax;
-      return okColor && okBudget;
-    }).slice(0,12);
-    return { type:'products', payload: filtered };
-  },
-  async save(_:ToolCtx, { id }:{id:string}){ const { toggleSave } = await import('@/services/engagement'); return {type:'saved', payload: toggleSave(id)}; },
-  async dislike(_:ToolCtx, { id }:{id:string}){ const { dislike } = await import('@/services/engagement'); dislike(id); return {type:'disliked', payload:id}; },
-  async similar(_:ToolCtx, { base, all }:{base:any; all:any[]}){
-    const { getSimilarOutfits } = await import('@/services/engagement');
-    return { type:'outfits', payload: getSimilarOutfits(all, base, 3) };
-  },
-  async navigate(_:ToolCtx, { to }:{to:string}){ return { type:'navigate', payload: to }; }
 };
 
-// ── Planner: intent → tool(s) → response
-export async function planAndExecute(userText:string){
-  const { trackEvent } = await import('@/utils/analytics');
-  
-  const profile = NovaMemory.readProfile();
-  const history = NovaMemory.readHistory();
-  const intent = detectIntent(userText);
-  const entities = extractEntities(userText);
-  const ctx:ToolCtx={ profile, history };
-  
-  // Track intent detection
-  trackEvent('nova_intent', 'ai_interaction', intent, 1, {
-    user_text_length: userText.length,
-    entities_found: Object.keys(entities).length,
-    has_profile: !!profile
-  });
-
-  if (intent==='greet') return { reply: 'Hey! Waar heb je zin in vandaag—een outfitadvies, of iets specifieks zoeken?', cards:[] };
-  if (intent==='help') return { reply:'Je kunt me vragen om outfits voor een gelegenheid, kleur of budget. Probeer: "Outfit voor kantoor onder €120 in zwart."', cards:[] };
-  if (intent==='outfit_request' || intent==='style_advice'){
-    const r = await NovaTools.generate_outfits(ctx, entities);
+// Mock tools for future expansion
+export const NovaTools = {
+  async searchOutfits(query: string): Promise<Array<{ name: string; description: string; price?: number }>> {
+    // Mock outfit suggestions based on query
+    const mockOutfits = [
+      { name: 'Casual Chic Look', description: 'Beige linnen broek + wit katoenen shirt', price: 89.99 },
+      { name: 'Smart Casual Ensemble', description: 'Navy blazer + beige chino + witte sneakers', price: 159.99 },
+      { name: 'Weekend Comfort', description: 'Oversized trui + mom jeans + canvas sneakers', price: 79.99 }
+    ];
     
-    // Track outfit generation
-    trackEvent('nova_tool', 'ai_interaction', 'generate_outfits', (r.payload || []).length, {
-      occasion: entities.occasion,
-      colors: entities.colors?.join(','),
-      budget_max: entities.budgetMax,
-      season: entities.season
-    });
+    // Simple filtering based on query
+    if (query.includes('zomer') || query.includes('summer')) {
+      return mockOutfits.filter(outfit => 
+        outfit.description.includes('linnen') || 
+        outfit.description.includes('katoen') ||
+        outfit.description.includes('licht')
+      );
+    }
     
-    return { reply: buildOutfitReply(entities), cards: r.payload, kind:'outfits' };
+    if (query.includes('werk') || query.includes('business')) {
+      return mockOutfits.filter(outfit => 
+        outfit.description.includes('blazer') || 
+        outfit.description.includes('smart')
+      );
+    }
+    
+    return mockOutfits.slice(0, 2);
   }
-  if (intent==='product_search'){
-    const r = await NovaTools.search_products(ctx, entities);
-    
-    // Track product search
-    trackEvent('nova_tool', 'ai_interaction', 'search_products', (r.payload || []).length, {
-      categories: entities.categories?.join(','),
-      colors: entities.colors?.join(','),
-      budget_max: entities.budgetMax
-    });
-    
-    return { reply: buildProductReply(entities), cards: r.payload, kind:'products' };
-  }
-  
-  // Track unknown intent
-  trackEvent('nova_intent', 'ai_interaction', 'unknown', 1, {
-    user_text: userText.slice(0, 50), // First 50 chars for debugging
-    entities_found: Object.keys(entities).length
-  });
-  
-  return { reply: 'Ik kan outfits en producten voor je vinden. Noem een gelegenheid, kleur of budget 👍', cards:[] };
-}
+};
 
-// ── Fallback copy generators (LLM-vrij)
-function buildOutfitReply(e:NovaEntities){
-  const bits = [
-    e.occasion ? `voor ${e.occasion}` : '',
-    e.colors?.length ? `in ${e.colors.join(' & ')}` : '',
-    e.budgetMax ? `onder €${e.budgetMax}` : ''
-  ].filter(Boolean).join(' ');
-  
-  const variants = [
-    `Perfect! Ik heb outfits ${bits || 'die bij je stijl passen'} gevonden. Deze combinaties zijn zorgvuldig geselecteerd op basis van jouw profiel. Wil je een van deze outfits opslaan of meer vergelijkbare opties zien?`,
-    `Hier zijn ${bits ? `stijlvolle looks ${bits}` : 'outfits die perfect bij je passen'}! Ik heb rekening gehouden met jouw voorkeuren en de huidige trends. Klik op "Leg uit" voor meer details of "Meer zoals dit" voor variaties.`,
-    `Geweldig! Deze outfits ${bits || 'matchen jouw stijl'} zijn speciaal voor jou samengesteld. Ze combineren functionaliteit met jouw persoonlijke smaak. Bewaar je favorieten of vraag om uitleg bij elke look!`
-  ];
-  
-  return variants[Math.floor(Math.random() * variants.length)];
-}
-function buildProductReply(e:NovaEntities){
-  const bits = [
-    e.categories?.[0] ? e.categories[0] : 'items',
-    e.colors?.length ? `in ${e.colors[0]}` : '',
-    e.budgetMax ? `onder €${e.budgetMax}` : ''
-  ].filter(Boolean).join(' ');
-  
-  const variants = [
-    `Mooi! Ik heb ${bits || 'geweldige items'} voor je geselecteerd. Deze producten passen perfect bij jouw stijl en budget. Wil je ze bewaren of zoeken naar specifieke gelegenheden?`,
-    `Check deze ${bits || 'stijlvolle pieces'} uit! Ze zijn handpicked op basis van jouw voorkeuren. Klik op een product om meer details te zien of vraag me om te filteren op seizoen of gelegenheid.`,
-    `Hier zijn ${bits || 'toffe items'} die bij je passen! Ik heb ze geselecteerd omdat ze matchen met jouw profiel. Bewaar je favorieten of laat me weten als je iets specifieks zoekt!`
-  ];
-  
-  return variants[Math.floor(Math.random() * variants.length)];
-}
-
-// ── Nova Agent Implementation
 const agent: NovaAgent = {
+  async ask(input: string, ctx?: Record<string, unknown>) {
+    const q = String(input || '').toLowerCase().trim();
+
+    if (!q) {
+      return { 
+        type: 'text', 
+        message: 'Vertel me kort wat je zoekt (bijv. "zomerse outfit in beige").' 
+      };
+    }
+
+    // Enhanced routing met meer context awareness
+    if (q.includes('zomer') || q.includes('zomerse') || q.includes('summer')) {
+      if (q.includes('beige') || q.includes('nude') || q.includes('camel')) {
+        return {
+          type: 'tips',
+          title: 'Zomerse outfit in beige – Nova\'s suggesties',
+          bullets: [
+            'Lichte linnen broek in warm beige + wit katoenen T-shirt',
+            'Beige overshirt of dun vest voor koelere avonden',
+            'Witte canvas sneakers of suède loafers in cognac',
+            'Accessoires: dun leren riem en zonnebril (bruin/amber)',
+            'Tip: Laag-op-laag in verschillende beige tinten voor depth'
+          ],
+        };
+      }
+      
+      return {
+        type: 'tips',
+        title: 'Zomerse outfit inspiratie',
+        bullets: [
+          'Lichte, ademende stoffen zoals linnen en katoen',
+          'Neutrale kleuren: wit, beige, lichtblauw, zacht groen',
+          'Comfortabele schoenen: canvas sneakers of sandalen',
+          'Minimale accessoires voor een clean look'
+        ],
+      };
+    }
+
+    if (q.includes('werk') || q.includes('kantoor') || q.includes('business')) {
+      const outfits = await NovaTools.searchOutfits(q);
+      return {
+        type: 'outfits',
+        title: 'Smart business outfits voor jou',
+        items: outfits
+      };
+    }
+
+    if (q.includes('outfit') || q.includes('look') || q.includes('combinatie')) {
+      // Check for specific occasions
+      if (q.includes('date') || q.includes('romantisch')) {
+        return {
+          type: 'tips',
+          title: 'Date night outfit tips',
+          bullets: [
+            'Kies iets waarin je je zelfverzekerd voelt',
+            'Voeg één statement piece toe (bijv. mooie oorbellen)',
+            'Comfortabele schoenen waar je op kunt lopen',
+            'Kleur die je huid laat stralen'
+          ],
+        };
+      }
+      
+      if (q.includes('weekend') || q.includes('casual')) {
+        return {
+          type: 'tips',
+          title: 'Weekend casual styling',
+          bullets: [
+            'High-waist jeans + oversized trui of shirt',
+            'Sneakers of comfortabele boots',
+            'Denim jacket of cardigan als laag',
+            'Crossbody tas voor hands-free comfort'
+          ],
+        };
+      }
+      
+      return {
+        type: 'text',
+        message: 'Top! Wil je casual, smart casual of formeel? Noem evt. kleur(en) en gelegenheid, dan maak ik het concreet.',
+      };
+    }
+
+    if (q.includes('kleur') || q.includes('color')) {
+      return {
+        type: 'tips',
+        title: 'Kleur combinatie tips',
+        bullets: [
+          'Neutrale basis: zwart, wit, grijs, navy, beige',
+          'Accent kleuren: één felle kleur per outfit',
+          'Monochroom: verschillende tinten van dezelfde kleur',
+          'Complementair: kleuren tegenover elkaar op kleurenwiel'
+        ],
+      };
+    }
+
+    if (q.includes('help') || q.includes('hulp')) {
+      return {
+        type: 'text',
+        message: 'Ik kan je helpen met outfit ideeën! Probeer: "outfit voor kantoor", "zomerse look", "date night styling", of "kleur combinaties".',
+      };
+    }
+
+    // Fallback met context awareness
+    const profile = ctx?.profile || NovaMemory.readProfile();
+    const userName = profile?.name || 'daar';
+    
+    return {
+      type: 'text',
+      message: `Hoi ${userName}! Ik kan outfits en styling tips voor je vinden. Noem een gelegenheid, seizoen of kleur en ik help je verder 👍`,
+    };
+  },
+
   async greet(name: string) {
     const profile = NovaMemory.readProfile();
     let greeting = `Hoi ${name}! Ik ben Nova 👋`;
@@ -220,27 +185,13 @@ const agent: NovaAgent = {
       greeting += ` Ik zie dat je van ${topPref} stijl houdt!`;
     }
     
+    greeting += ' Waar kan ik je mee helpen?';
     return greeting;
   },
-  
-  async planAndExecute(userText: string) {
-    return planAndExecute(userText);
-  },
-  
-  detectIntent(input: string) {
-    return detectIntent(input);
-  },
-  
-  extractEntities(input: string) {
-    return extractEntities(input);
-  },
-  
+
   memory: NovaMemory,
   tools: NovaTools
 };
 
-// Default export voor import agent from './agent'
 export default agent;
-
-// Named export voor import { agent } from './agent'
 export { agent };
