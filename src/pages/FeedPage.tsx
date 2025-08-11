@@ -8,6 +8,7 @@ import { useQuizAnswers } from '@/hooks/useQuizAnswers';
 import { isDisliked, toggleSave, dislike, getSimilarOutfits } from '@/services/engagement';
 import OutfitCard from '@/components/outfits/OutfitCard';
 import Button from '@/components/ui/Button';
+import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
 
 // RequireAuth mini-component for action buttons
@@ -138,6 +139,14 @@ export default function FeedPage() {
       }
       return newSet;
     });
+    
+    // Track save action
+    track('add_to_favorites', { 
+      outfit_id: id,
+      action: nowSaved ? 'add' : 'remove',
+      user_id: user.id
+    });
+    
     toast.success(nowSaved ? 'Bewaard' : 'Verwijderd uit bewaard');
   };
 
@@ -149,6 +158,13 @@ export default function FeedPage() {
     
     dislike(id);
     setDislikedIds(prev => new Set(prev).add(id));
+    
+    // Track dislike feedback
+    track('feedback_dislike', { 
+      outfit_id: id,
+      user_id: user.id
+    });
+    
     toast('We laten minder van deze stijl zien');
   };
 
@@ -166,6 +182,14 @@ export default function FeedPage() {
       // In a real implementation, we'd add these to the query cache
       console.log('Similar outfits found:', similarOutfits.length);
     }
+    
+    // Track similar request
+    track('request_similar', { 
+      outfit_id: outfit.id,
+      outfit_archetype: outfit.archetype,
+      similar_found: similarOutfits.length,
+      user_id: user.id
+    });
     
     toast.success('Meer zoals dit toegevoegd aan je feed');
   };
