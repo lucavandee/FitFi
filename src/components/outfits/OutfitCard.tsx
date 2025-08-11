@@ -41,30 +41,19 @@ interface OutfitCardProps {
   onExplain?: (explanation: string) => void;
 }
 
-const OutfitCard: React.FC<OutfitCardProps> = React.memo(({ 
+export default function OutfitCard({ 
   outfit, 
   onSave,
   onDislike,
   onMoreLikeThis,
   onExplain
-}) => {
+}: OutfitCardProps) {
   const titleId = `title-${outfit.id}`;
   const descId = `desc-${outfit.id}`;
   const [saved, setSaved] = useState<boolean>(isSaved(outfit.id));
   const [loaded, setLoaded] = React.useState(false);
   const [explanation, setExplanation] = useState<string>('');
   const [showExplanation, setShowExplanation] = useState(false);
-  const [isProcessing, setIsProcessing] = useState<{
-    save: boolean;
-    like: boolean;
-    dislike: boolean;
-    explain: boolean;
-  }>({
-    save: false,
-    like: false,
-    dislike: false,
-    explain: false
-  });
   const [isProcessing, setIsProcessing] = useState<{
     save: boolean;
     like: boolean;
@@ -83,20 +72,9 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     setIsProcessing(prev => ({ ...prev, save: true }));
     
     // Toggle saved state optimistically
-    if (isProcessing.save) return;
-    
-    setIsProcessing(prev => ({ ...prev, save: true }));
-    
-    // Toggle saved state optimistically
     setSaved(prev => !prev);
     
-    
     onSave?.();
-    
-    // Re-enable button after 200ms
-    setTimeout(() => {
-      setIsProcessing(prev => ({ ...prev, save: false }));
-    }, 200);
     
     // Re-enable button after 200ms
     setTimeout(() => {
@@ -109,16 +87,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     
     setIsProcessing(prev => ({ ...prev, like: true }));
     
-    if (isProcessing.like) return;
-    
-    setIsProcessing(prev => ({ ...prev, like: true }));
-    
     onMoreLikeThis?.();
-    
-    // Re-enable button after 200ms
-    setTimeout(() => {
-      setIsProcessing(prev => ({ ...prev, like: false }));
-    }, 200);
     
     // Re-enable button after 200ms
     setTimeout(() => {
@@ -131,16 +100,7 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     
     setIsProcessing(prev => ({ ...prev, dislike: true }));
     
-    if (isProcessing.dislike) return;
-    
-    setIsProcessing(prev => ({ ...prev, dislike: true }));
-    
     onDislike?.();
-    
-    // Re-enable button after 200ms
-    setTimeout(() => {
-      setIsProcessing(prev => ({ ...prev, dislike: false }));
-    }, 200);
     
     // Re-enable button after 200ms
     setTimeout(() => {
@@ -149,10 +109,6 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
   };
 
   const handleExplain = async () => {
-    if (isProcessing.explain) return;
-    
-    setIsProcessing(prev => ({ ...prev, explain: true }));
-    
     if (isProcessing.explain) return;
     
     setIsProcessing(prev => ({ ...prev, explain: true }));
@@ -175,10 +131,6 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
     } catch (error) {
       console.error('Error explaining outfit:', error);
       toast.error('Kon uitleg niet genereren');
-    } finally {
-      setTimeout(() => {
-        setIsProcessing(prev => ({ ...prev, explain: false }));
-      }, 200);
     } finally {
       setTimeout(() => {
         setIsProcessing(prev => ({ ...prev, explain: false }));
@@ -272,10 +224,8 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
               aria-label={saved ? "Verwijder uit opgeslagen" : "Bewaar look"}
               aria-pressed={saved}
               aria-busy={isProcessing.save}
-              aria-busy={isProcessing.save}
               title={saved ? "Verwijder uit opgeslagen" : "Bewaar deze look"}
               onClick={handleSave} 
-              disabled={isProcessing.save}
               disabled={isProcessing.save}
               className={`btn-secondary px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 saved 
@@ -292,10 +242,8 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
             <button 
               aria-label="Meer zoals dit"
               aria-busy={isProcessing.like}
-              aria-busy={isProcessing.like}
               title="Voeg vergelijkbare outfits toe aan je feed"
               onClick={handleMoreLikeThis} 
-              disabled={isProcessing.like}
               disabled={isProcessing.like}
               className={`btn-secondary px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
@@ -310,10 +258,8 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
             <button 
               aria-label="Niet mijn stijl"
               aria-busy={isProcessing.dislike}
-              aria-busy={isProcessing.dislike}
               title="Verberg dit type outfit uit je feed"
               onClick={handleDislike} 
-              disabled={isProcessing.dislike}
               disabled={isProcessing.dislike}
               className={`btn-ghost text-muted-foreground px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
                 isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
@@ -328,10 +274,8 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
             <button 
               aria-label="Laat Nova dit outfit uitleggen"
               aria-busy={isProcessing.explain}
-              aria-busy={isProcessing.explain}
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain} 
-              disabled={isProcessing.explain}
               disabled={isProcessing.explain}
               className={`btn-secondary px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0]/10 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
@@ -345,9 +289,4 @@ const OutfitCard: React.FC<OutfitCardProps> = React.memo(({
       </div>
     </article>
   );
-});
-
-OutfitCard.displayName = 'OutfitCard';
-
-export { OutfitCard };
-export default OutfitCard;
+}
