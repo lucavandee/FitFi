@@ -90,10 +90,6 @@ const ContactPage: React.FC = () => {
         
         // Try Supabase first
         const { error } = await sb.rpc('submit_contact', {
-          throw new Error('Supabase not available');
-        }
-        
-        const { error } = await sb.rpc('submit_contact', {
           contact_name: formData.name,
           contact_email: formData.email,
           contact_subject: formData.subject,
