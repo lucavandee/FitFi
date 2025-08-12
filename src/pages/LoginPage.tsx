@@ -81,12 +81,6 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setErrors({});
 
-    if (!sb) {
-      const { error } = await sb.auth.signInWithPassword({
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const { error } = await sb.auth.signInWithPassword({
         email: formData.email,
