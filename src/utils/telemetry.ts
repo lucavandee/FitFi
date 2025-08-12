@@ -4,95 +4,22 @@
  * Import { track } from '@/utils/analytics' instead.
  */
 
-import { useMemo, useCallback } from 'react';
-
-type Variant = 'control' | 'v1' | 'v2';
-
-/** Superlichte, dependency-loze hash (djb2-variant) */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
-
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  /** Veilig tracken: gebruikt gtag als die bestaat, anders console.debug */
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      try {
-        const payload = {
-          label,
-          test_name: testName,
-          variant,
-          user_id: userId ?? 'guest',
-          ...extra,
-        };
-        // voorkom crashes zonder gtag
-        // @ts-ignore
-        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-          // @ts-ignore
-          window.gtag('event', 'cta_click', payload);
-        } else {
-          // eslint-disable-next-line no-console
-          console.debug('[ab/cta_click]', payload);
-        }
-      } catch {
-        /* no-op */
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  /** Exposure is bewust no-op in safe mode (later optioneel via API/Supabase) */
-  const markExposure = useCallback(() => {
-    try {
-      const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'ab_exposure', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/exposure]', payload);
-      }
-    } catch {
-      /* no-op */
-    }
-  }, [testName, userId, variant]);
-
-  return { variant, trackClick, markExposure };
-}
-
-export type TelemetryProps = Record<string, unknown>;
+// Re-export from analytics.ts for backward compatibility
+export { track, trackEvent, trackPageView, trackException, trackInteraction, trackConversion, trackTiming } from '@/utils/analytics';
 
 /**
  * @deprecated Use track from analytics.ts instead
  */
-export function track(event: string, props: TelemetryProps = {}) {
+export function trackLegacy(event: string, props: Record<string, unknown> = {}) {
   console.warn('[Telemetry] DEPRECATED: Use track from @/utils/analytics instead');
   
-  try {
-    // Google Analytics (indien aanwezig)
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', event, props);
-      return;
-    }
-  } catch {}
-  // Fallback: console (geen throw)
-  if (typeof console !== 'undefined') console.log('[telemetry]', event, props);
+  // Import and use the new track function
+  import('@/utils/analytics').then(({ track }) => {
+    track(event, props);
+  }).catch(() => {
+    // Fallback: console (geen throw)
+    if (typeof console !== 'undefined') console.log('[telemetry]', event, props);
+  });
 }
 
-// Re-export from analytics for migration compatibility
-export { track as analyticsTrack } from '@/utils/analytics';
+export type TelemetryProps = Record<string, unknown>;
