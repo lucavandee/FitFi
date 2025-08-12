@@ -1,34 +1,13 @@
 // src/services/data/supabaseSource.ts
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabaseClient";
 import { DATA_CONFIG } from "@/config/dataConfig";
 import type { BoltProduct, Outfit, FitFiUserProfile, TribeMember, TribePost, Tribe } from "./types";
 
 /**
- * Safe Supabase client creation with environment validation
+ * Get Supabase client from singleton
  */
 function getClient() {
-  const { url, anonKey } = DATA_CONFIG.SUPABASE;
-  if (!url || !anonKey) {
-    console.warn('[SupabaseSource] Missing credentials, client not available');
-    return null;
-  }
-  
-  try {
-    return createClient(url, anonKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      },
-      global: {
-        headers: {
-          'X-Client-Info': 'fitfi-data-service'
-        }
-      }
-    });
-  } catch (error) {
-    console.error('[SupabaseSource] Client creation failed:', error);
-    return null;
-  }
+  return supabase();
 }
 
 /**
