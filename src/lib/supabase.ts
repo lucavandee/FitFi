@@ -1,37 +1,80 @@
-import { createClient } from '@supabase/supabase-js';
+import { useMemo, useCallback } from 'react';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+interface ABTestingOptions {
+  testName: string;
+  variants: Array<{ name: string; weight: number }>;
+}
 
-let supabaseClient: ReturnType<typeof createClient> | null = null;
-
-export function getSupabase() {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return null;
-  }
+export function useABTesting(options: ABTestingOptions) {
+  const variant = useABVariant(options.testName);
   
-  if (!supabaseClient) {
-    supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-  }
+  const trackConversion = (data?: any) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'ab_conversion', {
+        test_name: options.testName,
+        variant,
+        ...data
+      });
+    }
+  };
   
-  return supabaseClient;
+  return { variant, trackConversion };
 }
 
-export function requireSupabase() {
-  const client = getSupabase();
-  if (!client) {
-    throw new Error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+export type Variant = 'control' | 'v1' | 'v2';
+
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
   }
-  return client;
+  return hash >>> 0; // forceer positief
 }
 
-export function isSupabaseEnabled(): boolean {
-  return !!(supabaseUrl && supabaseAnonKey);
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
 }
 
-// Named export for compatibility
-export const supabase = getSupabase();
+/**
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ */
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
 
-// Default export for legacy imports
-const supabaseApi = { getSupabase, requireSupabase, isSupabaseEnabled, supabase };
-export default supabaseApi;
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
+
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
+
+  return { variant, trackClick, markExposure };
+}
