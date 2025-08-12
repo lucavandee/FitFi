@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { TribeChallenge } from "@/services/data/types";
-import { ImageWithFallback } from "@/components/common/ImageWithFallback";
+import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { Send, Image, Link, X, Trophy, Clock, Users, Star } from 'lucide-react';
 import Button from "../ui/Button";
 

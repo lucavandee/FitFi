@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageWithFallback } from "@/components/common/ImageWithFallback";
+import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import type { TribeChallengeSubmission } from "@/services/data/types";
 import { ExternalLink, Trophy, Star, Crown, Clock, User } from 'lucide-react';
 

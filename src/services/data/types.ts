@@ -1,19 +1,12 @@
-import { useMemo, useCallback } from 'react';
+/**
+ * Data service types for FitFi
+ */
 
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+export interface DataResponse<T> {
+  data: T;
+  source: 'supabase' | 'local' | 'fallback';
+  cached: boolean;
+  errors?: string[];
 }
 
 export interface BoltProduct {
@@ -35,44 +28,176 @@ export interface BoltProduct {
   tags?: string[]; // seizoens/archetype tags (toekomst)
 }
 
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+export interface ImageVariant {
+  url: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+}
 
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
+export interface Outfit {
+  id: string;
+  name: string;
+  description?: string;
+  image?: string;
+  tags?: string[];
+  archetype?: string;
+  season?: string;
+  occasions?: string[];
+  priceMin?: number;
+  priceMax?: number;
+  items?: OutfitItem[];
+  matchPercentage?: number;
+}
 
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
-    }
-  }, [testName, userId, variant]);
+export interface OutfitItem {
+  id: string;
+  name: string;
+  brand?: string;
+  price?: number;
+  imageUrl?: string;
+  affiliateUrl?: string;
+  category?: string;
+}
 
-  return { variant, trackClick, markExposure };
+export interface FitFiUserProfile {
+  id: string;
+  name?: string;
+  email?: string;
+  gender?: 'male' | 'female';
+  archetypes?: string[];
+  preferences?: {
+    casual: number;
+    formal: number;
+    sporty: number;
+    vintage: number;
+    minimalist: number;
+  };
+  isPremium?: boolean;
+  savedRecommendations?: string[];
+}
+
+export interface Tribe {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  cover_img?: string;
+  member_count: number;
+  created_by?: string;
+  created_at: string;
+  updated_at?: string;
+  is_member?: boolean;
+  user_role?: 'member' | 'moderator' | 'owner' | null;
+  archetype?: string;
+  activity_level?: 'low' | 'medium' | 'high' | 'very_high';
+  featured?: boolean;
+  tags?: string[];
+  rules?: string[];
+  recent_posts?: TribePost[];
+}
+
+export interface TribePost {
+  id: string;
+  tribe_id: string;
+  user_id: string;
+  content: string;
+  image_url?: string;
+  outfit_id?: string;
+  likes_count: number;
+  comments_count: number;
+  created_at: string;
+  authorName?: string;
+  authorId: string;
+  likes?: number;
+  commentsCount?: number;
+}
+
+export interface TribeMember {
+  id: string;
+  tribe_id: string;
+  user_id: string;
+  role: 'member' | 'moderator' | 'owner';
+  joined_at: string;
+  user_profile?: {
+    full_name?: string;
+    avatar_url?: string;
+  };
+}
+
+export interface TribeChallenge {
+  id: string;
+  tribeId: string;
+  title: string;
+  description?: string;
+  image?: string;
+  rules?: string[];
+  rewardPoints?: number;
+  winnerRewardPoints?: number;
+  startAt?: string;
+  endAt?: string;
+  status: "draft" | "open" | "closed" | "archived";
+  tags?: string[];
+  difficulty?: "easy" | "medium" | "hard";
+  createdAt: string;
+  createdBy?: string;
+}
+
+export interface TribeChallengeSubmission {
+  id: string;
+  tribeId: string;
+  challengeId: string;
+  userId: string;
+  userName?: string;
+  content?: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  score?: number;
+  isWinner: boolean;
+  submissionType?: 'text' | 'image' | 'link' | 'combo';
+  createdAt: string;
+}
+
+export interface TribeRanking {
+  tribeId: string;
+  points: number;
+  rank: number;
+  updatedAt: string;
+}
+
+// Dashboard types
+export interface UserStats {
+  user_id: string;
+  level: number;
+  xp: number;
+  posts?: number;
+  submissions?: number;
+  wins?: number;
+  invites?: number;
+  last_active?: string;
+  updated_at?: string;
+}
+
+export interface UserStreak {
+  user_id: string;
+  current_streak: number;
+  longest_streak?: number;
+  last_check_date: string;
+}
+
+export interface Referral {
+  id: string;
+  inviter_id: string;
+  invitee_email?: string | null;
+  status: "pending" | "joined" | "converted";
+  created_at: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  title: string;
+  body?: string;
+  link?: string;
+  read?: boolean;
+  created_at: string;
 }
