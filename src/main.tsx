@@ -1,80 +1,80 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { HelmetProvider } from 'react-helmet-async';
-import App from '@/App.tsx';
-import { configureRouterFutureFlags } from '@/utils/routerUtils';
-import { initializeSentry } from '@/utils/sentryConfig';
-import { advancedAnalytics } from '@/services/AdvancedAnalytics';
-import { initializePerformanceOptimizations } from '@/utils/performanceUtils';
-import { startHealthMonitoring } from '@/lib/supabaseHealth';
-import '@/styles/main.css';
+import { useMemo, useCallback } from 'react';
 
-// Configure React Router future flags to suppress warnings
-configureRouterFutureFlags();
-
-// Initialize Sentry
-initializeSentry();
-
-// Initialize performance optimizations
-initializePerformanceOptimizations();
-
-// Initialize Supabase health monitoring
-if (typeof window !== 'undefined') {
-  // Start health monitoring after initial load
-  window.addEventListener('load', () => {
-    try {
-      startHealthMonitoring(60000); // Check every minute
-    } catch (error) {
-      console.warn('Health monitoring initialization failed:', error);
-    }
-  });
+interface ABTestingOptions {
+  testName: string;
+  variants: Array<{ name: string; weight: number }>;
 }
 
-// Initialize Advanced Analytics
-if (typeof window !== 'undefined') {
-  // Start advanced analytics tracking
-  window.addEventListener('load', () => {
-    try {
-      // Initialize with user ID if available
-      const userId = localStorage.getItem('supabase.auth.token') ? 'user' : undefined;
-      // Advanced analytics is already initialized in the constructor
-    } catch (error) {
-      console.warn('Analytics initialization failed:', error);
-    }
-  });
+export function useABTesting(options: ABTestingOptions) {
+  const variant = useABVariant(options.testName);
   
-  // Save analytics data before page unload
-  window.addEventListener('beforeunload', () => {
-    advancedAnalytics.stopTracking();
-  });
+  const trackConversion = (data?: any) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'ab_conversion', {
+        test_name: options.testName,
+        variant,
+        ...data
+      });
+    }
+  };
+  
+  return { variant, trackConversion };
 }
 
-// Global error handler for chunk loading failures
-window.addEventListener('error', (event) => {
-  if (event.message && event.message.includes('Loading chunk')) {
-    console.error('Chunk loading failed:', event);
-    // Optionally reload the page or show a user-friendly message
-    if (confirm('Er is een probleem opgetreden bij het laden van de applicatie. Wilt u de pagina vernieuwen?')) {
-      window.location.reload();
+export type Variant = 'control' | 'v1' | 'v2';
+
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  }
+  return hash >>> 0; // forceer positief
+}
+
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+}
+
+/**
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ */
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
+
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
+
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
     }
-  }
-});
+  }, [testName, userId, variant]);
 
-// Handle unhandled promise rejections
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
-  
-  // Check if it's a chunk loading error
-  if (event.reason && event.reason.message && event.reason.message.includes('Loading chunk')) {
-    event.preventDefault();
-    console.error('Chunk loading promise rejection handled');
-  }
-});
-
-createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
-  </React.StrictMode>
-);
+  return { variant, trackClick, markExposure };
+}
