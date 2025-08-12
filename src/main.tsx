@@ -1,10 +1,4 @@
-import { installFetchGuards } from '@/utils/fetchGuard';
-import { installThirdPartyGuards } from '@/integrations/previewGuards';
-
-// Install guards vroeg in de boot cycle
-installFetchGuards();
-installThirdPartyGuards();
-
+import '@/bootstrap/guards';
 import { useMemo, useCallback } from 'react';
 
 interface ABTestingOptions {
