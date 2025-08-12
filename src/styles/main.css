@@ -2,7 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens als CSS-variabelen (optioneel) */
+:root {
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 6px 24px rgba(13,27,42,0.06);
+  --shadow-xl: 0 20px 40px rgba(13,27,42,0.12);
+}
+
 @layer base {
   html { scroll-behavior: smooth; }
   body { @apply bg-gray-50 text-gray-900 antialiased; }
+  h1, h2, h3, h4 { @apply font-semibold text-gray-900; }
+}
+
+@layer components {
+  .card { @apply bg-white rounded-2xl shadow-soft; }
+  .card-title { @apply text-base font-semibold; }
+  .card-subtle { @apply text-sm text-gray-600; }
+
+  .btn-primary { @apply inline-flex items-center justify-center px-4 py-2 rounded-full bg-midnight text-white transition; }
+  .btn-primary:hover { @apply opacity-90; }
+
+  .btn-secondary { @apply inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 bg-white transition; }
+  .btn-secondary:hover { @apply bg-gray-100; }
 }
