@@ -1,14 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { fetchReferralsByInviter, type ReferralRow } from "@/services/dashboard/referralsService";
 import { useUser } from "@/context/UserContext";
-
-type ReferralRow = {
-  id: string;
-  inviter_id: string;
-  invitee_email?: string | null;
-  status: "pending" | "joined" | "converted";
-  created_at: string;
-};
 
 export const FoundersBlock: React.FC = () => {
   const { user } = useUser();
@@ -30,39 +22,16 @@ export const FoundersBlock: React.FC = () => {
       setLoading(true);
       setErrMsg(null);
 
-      const sb = supabase();
-      if (!sb || !userId) {
+      if (!userId) {
         // Geen ingelogde user of geen client → toon 0 en stop zonder error
         if (alive) { setRefCount(0); setLoading(false); }
         return;
       }
 
       try {
-        // ✅ JUISTE MANIER: destructure op het RESULTAAT van de query
-        const { data: referralData, error: referralError } = await sb
-          .from("referrals")
-          .select("id,status,created_at")
-          .eq("inviter_id", userId);
-
-        if (referralError) throw referralError;
-
-        const count = (referralData as ReferralRow[] | null)?.length ?? 0;
+        const referralData = await fetchReferralsByInviter(userId);
+        const count = referralData.length;
         if (alive) setRefCount(count);
-
-        // Eventueel: stats bijwerken (andere variabelenaam gebruiken)
-        const { error: statsUpdateErr } = await sb
-          .from("user_stats")
-          .upsert({
-            user_id: userId,
-            invites: count,
-            updated_at: new Date().toISOString(),
-            last_active: new Date().toISOString(),
-          });
-
-        if (statsUpdateErr) {
-          // Niet blokkerend, maar loggen
-          console.warn("[FoundersBlock] user_stats upsert warning:", statsUpdateErr.message);
-        }
       } catch (e: any) {
         console.error("[FoundersBlock] load referrals failed:", e?.message ?? e);
         if (alive) setErrMsg("Kon je referrals niet laden.");

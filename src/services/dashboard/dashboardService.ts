@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { DATA_CONFIG } from "@/config/dataConfig";
-import type { UserStats, UserStreak, Referral, NotificationItem } from "@/services/data/types";
+import { fetchReferralsByInviter } from "./referralsService";
 import type { UserStats, UserStreak, Referral, NotificationItem } from "@/services/data/types";
 
 const T = {
@@ -59,10 +59,19 @@ export async function touchDailyStreak(userId: string): Promise<UserStreak> {
 }
 
 export async function fetchReferrals(inviterId: string): Promise<Referral[]> {
-  const sb = supabase(); if (!sb) return [];
-  const { data, error } = await sb.from(T.referrals).select("*").eq("inviter_id", inviterId).order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as Referral[];
+  try {
+    const referralData = await fetchReferralsByInviter(inviterId);
+    return referralData.map(r => ({
+      id: r.id,
+      inviter_id: r.inviter_id || r.inviterId || inviterId,
+      invitee_email: null,
+      status: (r.status as "pending" | "joined" | "converted") || "pending",
+      created_at: r.created_at || new Date().toISOString()
+    }));
+  } catch (error) {
+    console.warn('[DashboardService] fetchReferrals failed:', error);
+    return [];
+  }
 }
 
 export async function fetchNotifications(userId: string): Promise<NotificationItem[]> {
