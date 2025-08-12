@@ -22,6 +22,7 @@ const TribesPage: React.FC = () => {
     loading: isLoading, 
     error, 
     source,
+    cached,
     refetch 
   } = useTribes({
     featured: undefined,
@@ -65,7 +66,6 @@ const TribesPage: React.FC = () => {
               Terug naar Dashboard
             </Button>
           </div>
-          </Button>
         </div>
       </div>
     );
@@ -152,6 +152,7 @@ const TribesPage: React.FC = () => {
                 </span>
               </div>
             )}
+
             {/* Create Tribe CTA */}
             {user && (
               <Button
