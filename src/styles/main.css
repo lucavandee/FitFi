@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens als CSS-variabelen */
+/* Design tokens als CSS-variabelen (let op puntkomma's aan het eind van elke regel) */
 :root {
   --color-midnight: #0D1B2A;
   --color-turquoise: #89CFF0;
@@ -13,41 +13,20 @@
 
 /* Basis typografie en body */
 @layer base {
-  html { 
-    scroll-behavior: smooth; 
-  }
-  
-  body {
-    @apply bg-gray-50 text-gray-900 antialiased;
-  }
-
-  h1, h2, h3, h4 { 
-    @apply font-semibold text-gray-900; 
-  }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-gray-50 text-gray-900 antialiased; }
+  h1, h2, h3, h4 { @apply font-semibold text-gray-900; }
 }
 
-/* Herbruikbare component-stijlen */
+/* Herbruikbare component-stijlen (géén nesting) */
 @layer components {
-  .card {
-    @apply bg-white rounded-2xl shadow-soft;
-  }
-  
-  .btn-primary {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-full bg-midnight text-white hover:opacity-90 transition;
-  }
-  
-  .btn-secondary {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition;
-  }
-}
+  .card { @apply bg-white rounded-2xl shadow; }
+  .card-title { @apply text-base font-semibold; }
+  .card-subtle { @apply text-sm text-gray-600; }
 
-/* Optionele nesting voorbeelden (nu geldig dankzij postcss-nesting) */
-.card {
-  & .card-title { 
-    @apply text-base font-semibold; 
-  }
-  
-  & .card-subtle { 
-    @apply text-sm text-gray-600; 
-  }
+  .btn-primary { @apply inline-flex items-center justify-center px-4 py-2 rounded-full bg-midnight text-white transition; }
+  .btn-primary:hover { @apply opacity-90; }
+
+  .btn-secondary { @apply inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 bg-white transition; }
+  .btn-secondary:hover { @apply bg-gray-100; }
 }
