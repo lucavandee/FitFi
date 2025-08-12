@@ -1,82 +1,92 @@
-// @ts-nocheck
-import { useMemo, useCallback } from 'react';
-import { getSupabase } from '../lib/supabase';
+import { event as gaEvent, pageview as gaPageview, exception as gaException } from '@/utils/analytics';
 
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
-}
+type Params = Record<string, any>;
 
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
-  
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
-      });
-    }
-  };
-  
-  return { variant, trackConversion };
-}
+export class AdvancedAnalytics {
+  private enabled: boolean;
+  private userId: string | null = null;
+  private context: Params = {};
+  private queue: Array<{ name: string; params: Params }> = [];
+  private flushTimer: number | null = null;
 
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  constructor(enabled = true) {
+    this.enabled = enabled;
   }
-  return hash >>> 0; // forceer positief
-}
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
+  /** Zet tracking aan (no-op als al aan) */
+  startTracking() {
+    this.enabled = true;
+  }
 
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+  /** Zet tracking uit (events worden genegeerd) */
+  stopTracking() {
+    this.enabled = false;
+  }
 
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
+  /** Koppel een (anonieme) gebruiker voor consistente payloads */
+  identify(userId?: string | null) {
+    this.userId = userId ?? null;
+  }
 
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+  /** Voeg globale context toe (samengevoegd met event-params) */
+  setContext(ctx: Params) {
+    this.context = { ...this.context, ...ctx };
+  }
+
+  /** Track een custom event (stuurt naar gtag als beschikbaar) */
+  track(name: string, params: Params = {}) {
+    if (!this.enabled) return;
+    const payload = { user_id: this.userId ?? 'guest', ...this.context, ...params };
+    try {
+      gaEvent(name, payload);
+    } catch {
+      // queue voor eventuele future server-side sync (nu niet gebruikt)
+      this.queue.push({ name, params: payload });
     }
-  }, [testName, userId, variant]);
+  }
 
-  return { variant, trackClick, markExposure };
+  /** Alias voor track */
+  trackEvent(name: string, params: Params = {}) {
+    this.track(name, params);
+  }
+
+  /** Pageview helper */
+  page(path: string, params: Params = {}) {
+    if (!this.enabled) return;
+    try {
+      gaPageview(path, { user_id: this.userId ?? 'guest', ...params });
+    } catch {
+      /* no-op */
+    }
+  }
+
+  /** Error helper */
+  error(description: string, fatal = false) {
+    if (!this.enabled) return;
+    try {
+      gaException(description, fatal);
+    } catch {
+      /* no-op */
+    }
+  }
+
+  /** (Voor later) verstuur gebufferde events naar backend */
+  flush() {
+    this.queue = [];
+    if (this.flushTimer) {
+      // @ts-ignore
+      clearTimeout(this.flushTimer);
+      this.flushTimer = null;
+    }
+  }
 }
+
+// Feature-flag (optioneel): zet uit met VITE_ADVANCED_ANALYTICS=false
+const ADV_ENABLED =
+  (import.meta.env.VITE_ADVANCED_ANALYTICS ?? 'true').toString().toLowerCase() !== 'false';
+
+/** ▶ Named export die elders verwacht wordt */
+export const advancedAnalytics = new AdvancedAnalytics(ADV_ENABLED);
+
+/** ▶ Default export tbv. `import analytics from ...` */
+export default advancedAnalytics;
