@@ -1,132 +1,80 @@
-[build]
-  base    = "."
-  command = "npm run build && node -e \"try{require('./scripts/check-nova.js')}catch(e){console.log('skip nova check')}\""
-  publish = "dist"
+import { useMemo, useCallback } from 'react';
 
-# ------------------------------------------------------------------
-# Forceer alles van het oude Netlify-subdomein naar het hoofddomein
-# ------------------------------------------------------------------
-[[redirects]]
-  from   = "https://dapper-sunflower-9949c9.netlify.app/*"
-  to     = "https://fitfi.ai/:splat"
-  status = 301
-  force  = true
+interface ABTestingOptions {
+  testName: string;
+  variants: Array<{ name: string; weight: number }>;
+}
 
-[functions]
-  directory = "netlify-functions"
-  node_bundler = "esbuild"
+export function useABTesting(options: ABTestingOptions) {
+  const variant = useABVariant(options.testName);
+  
+  const trackConversion = (data?: any) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'ab_conversion', {
+        test_name: options.testName,
+        variant,
+        ...data
+      });
+    }
+  };
+  
+  return { variant, trackConversion };
+}
 
-[[redirects]]
-  # ✅ SPA fallback zodat je geen witte schermen krijgt op bijv. /results of /onboarding/gender-name
-  from   = "/*"
-  to     = "/index.html"
-  status = 200
-  # Exclude JS, CSS, and other assets from SPA fallback
-  conditions = {Role = ["admin"], Country = ["!US"]}
-  force = false
+export type Variant = 'control' | 'v1' | 'v2';
 
-# Prevent serving HTML for JS/CSS assets
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
-  force = true
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  }
+  return hash >>> 0; // forceer positief
+}
 
-[[redirects]]
-  from = "/*.js"
-  to = "/:splat.js"
-  status = 200
-  force = true
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+}
 
-[[redirects]]
-  from = "/*.css"
-  to = "/:splat.css"
-  status = 200
-  force = true
+/**
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ */
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
 
-[[redirects]]
-  from = "/*.map"
-  to = "/:splat.map"
-  status = 200
-  force = true
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
 
-[[redirects]]
-  # ✅ API routes to Netlify functions
-  from   = "/api/*"
-  to     = "/.netlify/functions/:splat"
-  status = 200
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
 
-[[headers]]
-  # ✅ Correct MIME types for JS and CSS files
-  for = "/*.js"
-  [headers.values]
-    Content-Type = "application/javascript; charset=utf-8"
-
-[[headers]]
-  for = "/*.mjs"
-  [headers.values]
-    Content-Type = "application/javascript; charset=utf-8"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Content-Type = "text/css; charset=utf-8"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  # ✅ Assets folder MIME types
-  for = "/assets/*.js"
-  [headers.values]
-    Content-Type = "application/javascript; charset=utf-8"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/assets/*.css"
-  [headers.values]
-    Content-Type = "text/css; charset=utf-8"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  # ✅ JavaScript files caching
-  for = "/*.js"
-  [headers.values]
-    Content-Type = "application/javascript; charset=utf-8"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  # ✅ Image assets caching
-  for = "/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Content-Type = "image/*"
-
-[[headers]]
-  # ✅ Pexels images optimization
-  for = "https://images.pexels.com/*"
-  [headers.values]
-    Cache-Control = "public, max-age=86400"
-
-[[headers]]
-  # ✅ Veiligheidsheaders voor bescherming tegen XSS, clickjacking, etc.
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-
-[build.environment]
-  # ✅ Environment variables voor je Vite-frontend
-  VITE_SUPABASE_URL = "https://wojexzgjyhijuxzperhq.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NTM2NDAsImV4cCI6MjA2NjQyOTY0MH0.nLozOsn1drQPvRuSWRl_gLsh0_EvgtjidiUxpdUnhg0"
-  # ✅ Quiz environment variables
-  VITE_QUIZ_ENABLED = "true"
-  VITE_QUIZ_FALLBACK = "true"
-  VITE_BOLT_API_URL = "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--3001--96435430.local-credentialless.webcontainer-api.io/api"
-  VITE_BOLT_API_KEY = "fitfi_9xY72jKfA2vTqEoN83mLpZcW"
-  VITE_USE_MOCK_DATA = "true"
-  VITE_USE_SUPABASE = "false"
-  VITE_USE_BOLT = "true"
-  VITE_USE_ZALANDO = "true"
-  VITE_DEBUG_MODE = "false"
-  VITE_GTAG_ID = "G-D1PPLR2L3R"
+  return { variant, trackClick, markExposure };
+}
