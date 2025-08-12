@@ -963,7 +963,8 @@ class DataServiceOrchestrator {
         await getSbProducts();
         results.supabase = {
           healthy: true,
-          responseTime: Date.now() - startTime
+          responseTime: Date.now() - startTime,
+          error: ''
         };
       } catch (error) {
         results.supabase = {
