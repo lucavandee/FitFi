@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Share2, MoreHorizontal, Send, X } from 'lucide-react';
-import { TribePost, TribePostComment } from '../../types/tribes';
+import type { TribePost, TribePostComment } from '../../services/data/types';
 import { useUser } from '../../context/UserContext';
-import { supabase } from '../../lib/supabase';
 import ImageWithFallback from '../ui/ImageWithFallback';
 import Button from '../ui/Button';
 import LikeButton from './LikeButton';
@@ -35,34 +34,28 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdate, className = '' }) =
     try {
       setIsCommenting(true);
       
-      const { data: comment, error } = await supabase
-        .from('tribe_post_comments')
-        .insert({
-          post_id: post.id,
-          user_id: user.id,
-          content: newComment.trim()
-        })
-        .select(`
-          *,
-          user_profile:profiles!tribe_post_comments_user_id_fkey(full_name, avatar_url)
-        `)
-        .single();
-
-      if (error) {
-        throw error;
-      }
+      // Mock comment functionality for now
+      const mockComment: TribePostComment = {
+        id: `comment_${Date.now()}`,
+        post_id: post.id,
+        user_id: user.id,
+        content: newComment.trim(),
+        created_at: new Date().toISOString(),
+        user_profile: {
+          full_name: user.name || 'Anonymous',
+          avatar_url: undefined
+        }
+      };
       
-      if (comment) {
-        const updatedPost = {
-          ...post,
-          comments_count: post.comments_count + 1,
-          recent_comments: [comment, ...(post.recent_comments || [])].slice(0, 3)
-        };
-        
-        onUpdate(updatedPost);
-        setNewComment('');
-        toast.success('Comment toegevoegd!');
-      }
+      const updatedPost = {
+        ...post,
+        comments_count: (post.comments_count || 0) + 1,
+        recent_comments: [mockComment, ...(post.recent_comments || [])].slice(0, 3)
+      };
+      
+      onUpdate(updatedPost);
+      setNewComment('');
+      toast.success('Comment toegevoegd!');
     } catch (error) {
       console.error('Error adding comment:', error);
       toast.error('Kon comment niet toevoegen');

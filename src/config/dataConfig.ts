@@ -8,12 +8,18 @@ export const DATA_CONFIG = {
       products: "products",
       outfits: "outfits",
       users: "users",
+      tribes: "tribes",
+      tribe_members: "tribe_members",
+      tribe_posts: "tribe_posts",
+      tribe_post_likes: "tribe_post_likes",
+      tribe_post_comments: "tribe_post_comments",
     },
   },
   LOCAL_JSON: {
     products: "/data/bolt/products.json",
     outfits: "/data/bolt/outfits.json",
     user: "/data/bolt/user.json",
+    tribes: "/data/bolt/tribes.json",
   },
   AFFILIATE: {
     defaultUtm: {

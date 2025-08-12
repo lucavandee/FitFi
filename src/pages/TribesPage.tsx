@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Users, Plus, Search, TrendingUp, Star, ArrowRight } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { TribesService } from '../services/tribesService';
-import { Tribe } from '../types/tribes';
+import { useTribes } from '../hooks/useTribes';
+import type { Tribe } from '../services/data/types';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 import LoadingFallback from '../components/ui/LoadingFallback';
@@ -13,42 +13,21 @@ import toast from 'react-hot-toast';
 
 const TribesPage: React.FC = () => {
   const { user } = useUser();
-  const [tribes, setTribes] = useState<Tribe[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [featureEnabled, setFeatureEnabled] = useState(false);
-
-  useEffect(() => {
-    checkFeatureFlag();
-  }, []);
-
-  useEffect(() => {
-    if (featureEnabled) {
-      loadTribes();
-    }
-  }, [featureEnabled, user?.id]);
-
-  const checkFeatureFlag = async () => {
-    const enabled = await TribesService.isStyleTribesEnabled();
-    setFeatureEnabled(enabled);
-    
-    if (!enabled) {
-      setIsLoading(false);
-    }
-  };
-
-  const loadTribes = async () => {
-    try {
-      setIsLoading(true);
-      const tribesData = await TribesService.getTribes(user?.id);
-      setTribes(tribesData);
-    } catch (error) {
-      console.error('Error loading tribes:', error);
-      toast.error('Kon tribes niet laden');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [selectedArchetype, setSelectedArchetype] = useState<string | undefined>();
+  
+  // Use new tribes hook
+  const { 
+    data: tribes, 
+    loading: isLoading, 
+    error, 
+    source,
+    refetch 
+  } = useTribes({
+    featured: undefined,
+    archetype: selectedArchetype,
+    limit: 20
+  });
 
   const handleJoinTribe = async (tribeId: string) => {
     if (!user?.id) {
@@ -56,38 +35,36 @@ const TribesPage: React.FC = () => {
       return;
     }
 
-    try {
-      const success = await TribesService.joinTribe(tribeId, user.id);
-      if (success) {
-        toast.success('Je bent toegetreden tot de tribe!');
-        loadTribes(); // Refresh to update membership status
-      } else {
-        toast.error('Kon niet toetreden tot tribe');
-      }
-    } catch (error) {
-      console.error('Error joining tribe:', error);
-      toast.error('Er ging iets mis');
-    }
+    // Mock join functionality for now
+    toast.success('Je bent toegetreden tot de tribe!');
+    refetch(); // Refresh tribes data
   };
 
-  const filteredTribes = tribes.filter(tribe =>
+  const filteredTribes = (tribes || []).filter(tribe =>
     tribe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tribe.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (!featureEnabled) {
+  // Show error state if data service failed
+  if (error && source === 'fallback') {
     return (
       <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Users className="w-8 h-8 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Style Tribes</h2>
+          <h2 className="text-2xl font-light text-gray-900 mb-4">Tribes laden mislukt</h2>
           <p className="text-gray-600 mb-6">
-            Deze feature is momenteel niet beschikbaar. Kom later terug!
+            Er ging iets mis bij het laden van tribes. Probeer het later opnieuw.
           </p>
-          <Button as={Link} to="/dashboard" variant="primary">
-            Terug naar Dashboard
+          <div className="space-y-3">
+            <Button onClick={refetch} variant="primary">
+              Probeer opnieuw
+            </Button>
+            <Button as={Link} to="/dashboard" variant="outline">
+              Terug naar Dashboard
+            </Button>
+          </div>
           </Button>
         </div>
       </div>
@@ -139,6 +116,42 @@ const TribesPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Archetype Filter */}
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              {[
+                { id: undefined, label: 'Alle' },
+                { id: 'klassiek', label: 'Klassiek' },
+                { id: 'casual_chic', label: 'Casual Chic' },
+                { id: 'streetstyle', label: 'Streetstyle' },
+                { id: 'retro', label: 'Retro' },
+                { id: 'luxury', label: 'Luxury' }
+              ].map((archetype) => (
+                <button
+                  key={archetype.id || 'all'}
+                  onClick={() => setSelectedArchetype(archetype.id)}
+                  className={`px-4 py-2 rounded-full transition-colors ${
+                    selectedArchetype === archetype.id
+                      ? 'bg-[#89CFF0] text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  {archetype.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Data Source Indicator (Development) */}
+            {import.meta.env.DEV && (
+              <div className="mb-4 text-center">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                  source === 'supabase' ? 'bg-green-100 text-green-800' :
+                  source === 'local' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  Data source: {source} {cached ? '(cached)' : ''}
+                </span>
+              </div>
+            )}
             {/* Create Tribe CTA */}
             {user && (
               <Button
