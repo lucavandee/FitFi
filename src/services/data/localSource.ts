@@ -147,7 +147,7 @@ export async function getLocalUser(): Promise<FitFiUserProfile> {
  * Get tribes from local JSON
  * @returns Array of Tribes
  */
-export async function getLocalTribes(): Promise<Tribe[]> {
+export async function getLocalTribes(): Promise<any[]> {
   try {
     const tribes = await getJSON<Tribe[]>(DATA_CONFIG.LOCAL_JSON.tribes);
     
