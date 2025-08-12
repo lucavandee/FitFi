@@ -412,6 +412,43 @@ export interface PaginatedResponse<T> {
   cached: boolean;
 }
 
+export interface UserStats {
+  user_id: string;
+  level: number;
+  xp: number;
+  posts: number;
+  submissions: number;
+  wins: number;
+  invites: number;
+  last_active?: string;
+  updated_at?: string;
+}
+
+export interface UserStreak {
+  user_id: string;
+  current_streak: number;
+  longest_streak: number;
+  last_check_date: string;
+}
+
+export interface Referral {
+  id: string;
+  inviter_id: string;
+  invitee_email?: string | null;
+  status: "pending" | "joined" | "converted";
+  created_at: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  user_id: string;
+  title: string;
+  body?: string;
+  link?: string;
+  read: boolean;
+  created_at: string;
+}
+
 /**
  * Search query interface
  */
