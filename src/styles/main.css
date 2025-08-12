@@ -1,63 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Variables for consistent header height */
+/* Design tokens als CSS-variabelen */
 :root {
-  --header-height: 4.5rem;
+  --color-midnight: #0D1B2A;
+  --color-turquoise: #89CFF0;
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 6px 24px rgba(13,27,42,0.06);
+  --shadow-xl: 0 20px 40px rgba(13,27,42,0.12);
 }
 
-/* Scroll margin for sections to account for sticky header */
-section[id],
-div[id] {
-  scroll-margin-top: var(--header-height);
+/* Basis typografie en body */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+
+  h1,h2,h3,h4 { @apply font-semibold text-gray-900; }
 }
 
-/* CTA Button Global Styling */
-.cta-btn {
-  @apply inline-flex items-center justify-center px-6 py-4 font-semibold
-         rounded-2xl border-2 border-brandPurple
-         bg-white text-brandPurple hover:bg-purple-50
-         focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
+/* Herbruikbare component-stijlen */
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow-soft;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-full bg-midnight text-white hover:opacity-90 transition;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition;
+  }
 }
 
-/* Mobile menu focus trap */
-.mobile-menu-open {
-  overflow: hidden;
-}
-
-/* Nova Chat Styling */
-.nova-bubble {
-  max-width: 360px;
-  width: min(92vw, 360px);
-}
-
-/* Portal pointer events fix */
-#nova-root {
-  pointer-events: none;
-}
-
-#nova-root > * {
-  pointer-events: auto;
-}
-
-/* Horizontal scrolling for suggestion chips */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Quiz animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+/* Optionele nesting voorbeelden (nu geldig dankzij postcss-nesting) */
+.card {
+  .card-title { @apply text-base font-semibold; }
+  .card-subtle { @apply text-sm text-gray-600; }
 }
