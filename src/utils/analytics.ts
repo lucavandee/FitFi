@@ -1,136 +1,272 @@
-/**
- * Google Analytics utility functions for FitFi
- */
+import { useState, useEffect } from 'react';
+import { getSupabase } from '../lib/supabase';
+import { useUser } from '../context/UserContext';
+import { ABTestVariant } from '../types/achievements';
 
-// Get the Google Analytics ID from environment variables
-const GA_TRACKING_ID = import.meta.env.VITE_GTAG_ID;
-const ANALYTICS_ENABLED = import.meta.env.VITE_ENABLE_ANALYTICS === 'true';
-
-/**
- * Record event with test data marking
- */
-const recordEvent = (
-  eventData: any,
-  isTest: boolean = import.meta.env.DEV
-): void => {
-  // Mark test data
-  const markedData = {
-    ...eventData,
-    is_test: isTest,
-    environment: import.meta.env.VITE_ENVIRONMENT || 'development'
-  };
-  
-  // Log in development
-  if (import.meta.env.DEV) {
-    console.log('[Analytics] Event recorded:', markedData);
-  }
-  
-  // In production, this would save to Supabase with is_test flag
-  // For now, just track in Google Analytics
-  if (typeof window.gtag === 'function') {
-    window.gtag('event', 'custom_event', {
-      ...markedData,
-      non_interaction: isTest
-    });
-  }
-};
+interface ABTestConfig {
+  testName: string;
+  variants: Array<{
+    name: string;
+    weight: number;
+  }>;
+}
 
 /**
- * Initialize Google Analytics
+ * Deterministic A/B testing hook that works with or without Supabase
+ * Uses stable hash-based variant assignment as fallback
  */
-export const initializeAnalytics = (): void => {
-  if (!GA_TRACKING_ID) {
-    if (import.meta.env.DEV) {
-      console.warn('[Analytics] Google Analytics not configured');
+export function useABTesting(testConfig: ABTestConfig) {
+  const { user } = useUser();
+  const [variant, setVariant] = useState<string>('control');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    assignVariant();
+  }, [user?.id, testConfig.testName]);
+
+  const assignVariant = async () => {
+    const userId = user?.id || 'guest';
+    const sb = getSupabase();
+
+    // Try Supabase first if available
+    if (sb && user?.id) {
+      try {
+        // Check if user already has a variant assigned
+        const { data: existingVariant } = await sb
+          .from('ab_test_variants')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('test_name', testConfig.testName)
+          .single();
+
+        if (existingVariant) {
+          setVariant(existingVariant.variant);
+          setIsLoading(false);
+          return;
+        }
+
+        // Assign new variant based on weights
+        const assignedVariant = selectVariantByWeight(testConfig.variants);
+
+        // Store in database
+        const { error } = await sb
+          .from('ab_test_variants')
+          .insert({
+            user_id: user.id,
+            test_name: testConfig.testName,
+            variant: assignedVariant
+          });
+
+        if (!error) {
+          setVariant(assignedVariant);
+          setIsLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.warn('[ABTesting] Supabase failed, using deterministic fallback:', error);
+      }
     }
-    return;
-  }
-  
-  if (!ANALYTICS_ENABLED) {
-    if (import.meta.env.DEV) {
-      console.warn('[Analytics] Google Analytics disabled');
-    }
-    return;
-  }
 
-  // Load gtag script
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
-  document.head.appendChild(script);
-
-  // Initialize gtag
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(..._args: any[]) {
-    (window.dataLayer = window.dataLayer || []).push(arguments);
-  };
-  
-  (window.gtag ?? ((..._args: any[]) => {}))('js', new Date() as any);
-  window.gtag('config', GA_TRACKING_ID, {
-    page_title: 'FitFi - AI Style Recommendations',
-    send_page_view: true,
-    custom_map: {
-      'custom_parameter_1': 'user_style_preference'
-    }
-  });
-
-  if (import.meta.env.DEV) {
-    console.log('[Analytics] Google Analytics initialized with ID:', GA_TRACKING_ID);
-  }
-};
-
-/**
- * Track custom events
- */
-export const trackEvent = (
-  action: string,
-  category: string,
-  label?: string,
-  value?: number,
-  custom_parameters?: Record<string, any>
-): void => {
-  if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
-
-  // Record with test marking
-  recordEvent({
-    action,
-    category,
-    label,
-    value,
-    ...custom_parameters
-  });
-
-  window.gtag('event', action, {
-    event_category: category,
-    event_label: label,
-    value: value,
-    is_test: import.meta.env.DEV,
-    ...custom_parameters
-  });
-};
-
-/**
- * Simple tracking helper for feed actions
- * Gracefully handles missing gtag
- */
-export const track = (name: string, params?: Record<string, any>): void => {
-  if (typeof window === 'undefined' || !window.gtag || !ANALYTICS_ENABLED) return;
-  
-  try {
-    window.gtag('event', name, {
-      event_category: 'feed_interaction',
-      is_test: import.meta.env.DEV,
-      timestamp: Date.now(),
-      ...params
-    });
+    // Fallback: deterministic hash-based assignment
+    const deterministicVariant = getDeterministicVariant(userId, testConfig.testName, testConfig.variants);
+    setVariant(deterministicVariant);
+    setIsLoading(false);
     
-    if (import.meta.env.DEV) {
-      console.log(`[Analytics] Tracked: ${name}`, params);
+    console.log(`[ABTesting] Using deterministic variant for ${testConfig.testName}: ${deterministicVariant}`);
+  };
+
+  const trackConversion = async (conversionData: Record<string, any> = {}) => {
+    const sb = getSupabase();
+    
+    // Track in Supabase if available
+    if (sb && user?.id) {
+      try {
+        await sb
+          .from('ab_test_variants')
+          .update({
+            converted: true,
+            conversion_data: conversionData
+          })
+          .eq('user_id', user.id)
+          .eq('test_name', testConfig.testName);
+      } catch (error) {
+        console.warn('[ABTesting] Conversion tracking failed:', error);
+      }
     }
-  } catch (error) {
-    // Silent fail - don't break user experience
-    if (import.meta.env.DEV) {
-      console.warn('[Analytics] Track failed:', error);
+
+    // Always track in analytics
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'ab_test_conversion', {
+        event_category: 'ab_testing',
+        event_label: `${testConfig.testName}_${variant}`,
+        variant: variant,
+        test_name: testConfig.testName,
+        user_id: user?.id || 'guest',
+        ...conversionData
+      });
+    }
+  };
+
+  return {
+    variant,
+    isLoading,
+    trackConversion
+  };
+}
+
+/**
+ * Simple A/B variant hook for quick testing
+ * @param testName - Name of the test
+ * @param variants - Array of variant names (default: ['control', 'variant_a'])
+ * @returns Current variant for the user
+ */
+export function useABVariant(
+  testName: string, 
+  variants: string[] = ['control', 'variant_a']
+): string {
+  const { user } = useUser();
+  const [variant, setVariant] = useState<string>('control');
+
+  useEffect(() => {
+    const userId = user?.id || 'guest';
+    const deterministicVariant = getDeterministicVariant(
+      userId, 
+      testName, 
+      variants.map(name => ({ name, weight: 1 })) // Equal weights
+    );
+    setVariant(deterministicVariant);
+  }, [user?.id, testName, variants.join(',')]);
+
+  return variant;
+}
+
+/**
+ * Get deterministic variant based on stable hash
+ * @param userId - User ID or 'guest'
+ * @param testName - Test name for salt
+ * @param variants - Available variants with weights
+ * @returns Assigned variant name
+ */
+function getDeterministicVariant(
+  userId: string,
+  testName: string,
+  variants: Array<{ name: string; weight: number }>
+): string {
+  // Create stable hash from userId + testName
+  const hashInput = `${userId}_${testName}`;
+  const hash = simpleHash(hashInput);
+  
+  // Use weighted selection
+  const totalWeight = variants.reduce((sum, v) => sum + v.weight, 0);
+  const normalizedHash = (hash % 1000) / 1000; // Normalize to 0-1
+  const targetWeight = normalizedHash * totalWeight;
+  
+  let currentWeight = 0;
+  for (const variant of variants) {
+    currentWeight += variant.weight;
+    if (targetWeight <= currentWeight) {
+      return variant.name;
     }
   }
-};
+  
+  // Fallback to first variant
+  return variants[0]?.name || 'control';
+}
+
+/**
+ * Simple hash function for deterministic variant assignment
+ * @param str - String to hash
+ * @returns Positive integer hash
+ */
+function simpleHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Check if user already has a variant assigned
+      const { data: existingVariant } = await sb
+        .from('ab_test_variants')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('test_name', testConfig.testName)
+        .single();
+
+      if (existingVariant) {
+        setVariant(existingVariant.variant);
+        setIsLoading(false);
+        return;
+      }
+
+      // Assign new variant based on weights
+      const assignedVariant = selectVariantByWeight(testConfig.variants);
+
+      // Store in database
+      const { error } = await sb
+        .from('ab_test_variants')
+        .insert({
+          user_id: user.id,
+          test_name: testConfig.testName,
+          variant: assignedVariant
+        });
+
+      if (!error) {
+        setVariant(assignedVariant);
+      }
+    } catch (error) {
+      console.error('A/B testing error:', error);
+      setVariant('control'); // Fallback to control
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const trackConversion = async (conversionData: Record<string, any> = {}) => {
+    if (!user?.id) return;
+
+    try {
+      await supabase
+        .from('ab_test_variants')
+        .update({
+          converted: true,
+          conversion_data: conversionData
+        })
+        .eq('user_id', user.id)
+        .eq('test_name', testConfig.testName);
+
+      // Track in analytics
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'ab_test_conversion', {
+          event_category: 'ab_testing',
+          event_label: `${testConfig.testName}_${variant}`,
+          custom_parameter_1: variant
+        });
+      }
+    } catch (error) {
+      console.error('A/B test conversion tracking error:', error);
+    }
+  };
+
+  return {
+    variant,
+    isLoading,
+    trackConversion
+  };
+}
+
+function selectVariantByWeight(variants: Array<{ name: string; weight: number }>): string {
+  const totalWeight = variants.reduce((sum, v) => sum + v.weight, 0);
+  const random = Math.random() * totalWeight;
+  
+  let currentWeight = 0;
+  for (const variant of variants) {
+    currentWeight += variant.weight;
+    if (random <= currentWeight) {
+      return variant.name;
+    }
+  }
+  
+  return variants[0]?.name || 'control';
+}
