@@ -8,17 +8,22 @@ import {
   UserPlus,
   UserMinus,
   Trophy,
-  Target
+  Target,
+  Plus,
+  Settings
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useTribeBySlug, useTribes } from '../hooks/useTribes';
-import { useTribeChallenges, useChallengeSubmissions, useCreateChallengeSubmission } from '../hooks/useTribeChallenges';
+import { useTribeChallenges, useChallengeSubmissions, useCreateChallengeSubmission, useCreateTribeChallenge } from '../hooks/useTribeChallenges';
+import { useIsAdmin } from '../hooks/useIsAdmin';
 import { JoinButton } from '../components/tribes/JoinButton';
 import { PostComposer } from '../components/tribes/PostComposer';
 import { PostsList } from '../components/tribes/PostsList';
 import { ChallengeCard } from '../components/Tribes/ChallengeCard';
 import { ChallengeDetail } from '../components/Tribes/ChallengeDetail';
 import { SubmissionsList } from '../components/Tribes/SubmissionsList';
+import { ChallengeAdminForm } from '../components/Tribes/ChallengeAdminForm';
+import { createTribeChallenge, updateTribeChallengeStatus } from '../services/data/tribeChallengesService';
 import { useFitFiUser } from '../hooks/useFitFiUser';
 import type { Tribe, TribeChallenge } from '../services/data/types';
 import Button from '../components/ui/Button';
@@ -68,18 +73,62 @@ const ChallengeSection: React.FC<{ challenge: TribeChallenge; userId?: string }>
     </div>
   );
 };
+
+// Admin Challenge Status Controls
+const AdminChallengeControls: React.FC<{ challenge: TribeChallenge; onUpdate: () => void }> = ({ challenge, onUpdate }) => {
+  const [updating, setUpdating] = useState(false);
+
+  const handleStatusUpdate = async (newStatus: "draft" | "open" | "closed" | "archived") => {
+    setUpdating(true);
+    try {
+      await updateTribeChallengeStatus(challenge.id, newStatus);
+      toast.success(`Challenge status gewijzigd naar ${newStatus}`);
+      onUpdate();
+    } catch (error) {
+      console.error('Status update failed:', error);
+      toast.error('Status wijziging mislukt');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center space-x-2 mb-4">
+      <span className="text-sm text-gray-600">Admin:</span>
+      <div className="flex space-x-1">
+        {['draft', 'open', 'closed', 'archived'].map((status) => (
+          <button
+            key={status}
+            onClick={() => handleStatusUpdate(status as any)}
+            disabled={updating || challenge.status === status}
+            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+              challenge.status === status
+                ? 'bg-[#89CFF0] text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
 const TribeDetailPage: React.FC = () => {
   const { slug, tribeId } = useParams<{ slug?: string; tribeId?: string }>();
   const { user, status } = useUser();
   const navigate = useNavigate();
   const { data: fitFiUser } = useFitFiUser(user?.id);
   const { data: tribes } = useTribes();
+  const { isAdmin } = useIsAdmin();
   
   // Challenges state
   const { data: challenges, loading: challengesLoading } = useTribeChallenges(
     tribes?.find(t => t.slug === slug || t.id === tribeId)?.id
   );
+  const createChallenge = useCreateTribeChallenge();
   const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
+  const [showAdminForm, setShowAdminForm] = useState(false);
   const activeChallenge = useMemo<TribeChallenge | null>(
     () => challenges?.find(c => c.id === activeChallengeId) ?? null,
     [challenges, activeChallengeId]
@@ -107,6 +156,19 @@ const TribeDetailPage: React.FC = () => {
     }
   }, [tribesLoading, tribe, navigate]);
 
+  const handleCreateChallenge = async (challengeData: Omit<TribeChallenge, 'id' | 'createdAt'>) => {
+    try {
+      await createChallenge.mutateAsync(challengeData);
+      setShowAdminForm(false);
+    } catch (error) {
+      // Error handling is done in the hook
+    }
+  };
+
+  const handleChallengeUpdate = () => {
+    // Refresh challenges data
+    // React Query will automatically refetch
+  };
   if (tribesLoading) {
     return <LoadingFallback fullScreen message="Tribe laden..." />;
   }
@@ -196,12 +258,39 @@ const TribeDetailPage: React.FC = () => {
                 </div>
               </div>
               
+              {/* Admin Controls */}
+              {isAdmin && (
+                <div className="flex items-center space-x-2">
+                  <Button
+                    onClick={() => setShowAdminForm(!showAdminForm)}
+                    variant="outline"
+                    size="sm"
+                    icon={<Plus size={16} />}
+                    iconPosition="left"
+                    className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                  >
+                    {showAdminForm ? 'Annuleren' : 'Nieuwe Challenge'}
+                  </Button>
+                </div>
+              )}
+              
               {challenges && challenges.length > 0 && (
                 <div className="text-sm text-gray-600">
                   {challenges.filter(c => c.status === 'open').length} actieve challenges
                 </div>
               )}
             </div>
+
+            {/* Admin Form */}
+            {isAdmin && showAdminForm && (
+              <div className="mb-8">
+                <ChallengeAdminForm
+                  tribeId={tribe.id}
+                  onCreate={handleCreateChallenge}
+                  onCancel={() => setShowAdminForm(false)}
+                />
+              </div>
+            )}
 
             {challengesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -238,8 +327,22 @@ const TribeDetailPage: React.FC = () => {
                   Nog geen challenges
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Deze tribe heeft nog geen actieve challenges. Check later terug!
+                  {isAdmin 
+                    ? 'Maak de eerste challenge voor deze tribe!'
+                    : 'Deze tribe heeft nog geen actieve challenges. Check later terug!'
+                  }
                 </p>
+                {isAdmin && (
+                  <Button
+                    onClick={() => setShowAdminForm(true)}
+                    variant="primary"
+                    icon={<Plus size={20} />}
+                    iconPosition="left"
+                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                  >
+                    Maak eerste challenge
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -251,14 +354,24 @@ const TribeDetailPage: React.FC = () => {
             <div className="mt-8">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-medium text-gray-900">Challenge Details</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setActiveChallengeId(null)}
-                  className="text-gray-600 hover:bg-gray-100"
-                >
-                  Sluiten
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Admin Status Controls */}
+                  {isAdmin && (
+                    <AdminChallengeControls 
+                      challenge={activeChallenge} 
+                      onUpdate={handleChallengeUpdate}
+                    />
+                  )}
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveChallengeId(null)}
+                    className="text-gray-600 hover:bg-gray-100"
+                  >
+                    Sluiten
+                  </Button>
+                </div>
               </div>
               
               <ChallengeSection challenge={activeChallenge} userId={user?.id} />
