@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens als CSS-variabelen (let op puntkomma's aan het eind van elke regel) */
 :root {
   --color-midnight: #0D1B2A;
   --color-turquoise: #89CFF0;
@@ -11,14 +10,12 @@
   --shadow-xl: 0 20px 40px rgba(13,27,42,0.12);
 }
 
-/* Basis typografie en body */
 @layer base {
   html { scroll-behavior: smooth; }
   body { @apply bg-gray-50 text-gray-900 antialiased; }
   h1, h2, h3, h4 { @apply font-semibold text-gray-900; }
 }
 
-/* Herbruikbare component-stijlen (géén nesting) */
 @layer components {
   .card { @apply bg-white rounded-2xl shadow; }
   .card-title { @apply text-base font-semibold; }
