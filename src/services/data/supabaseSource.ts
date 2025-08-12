@@ -14,7 +14,11 @@ const BASE_DELAY = Number(import.meta.env.VITE_SUPABASE_RETRY_BASE_MS || 400);
  * Get Supabase client from singleton
  */
 function getClient() {
-  return supabase();
+  const client = supabase();
+  if (!client) {
+    console.warn("[SupabaseSource] Client not available - check environment variables");
+  }
+  return client;
 }
 
 /**

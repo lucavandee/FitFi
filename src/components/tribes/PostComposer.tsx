@@ -19,7 +19,7 @@ export const PostComposer: React.FC<Props> = ({
   className = '',
   placeholder = "Deel iets met je tribe..."
 }) => {
-  const { user } = useUser();
+  const { user, status } = useUser();
   const actualUserId = userId || user?.id;
   const { addPost } = useTribePosts(tribeId);
   const [content, setContent] = useState("");
@@ -30,8 +30,9 @@ export const PostComposer: React.FC<Props> = ({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     
-    if (!actualUserId) {
+    if (!actualUserId || status !== 'authenticated') {
       toast.error("Log in om te posten");
+      window.location.href = `/inloggen?returnTo=${encodeURIComponent(window.location.pathname)}`;
       return;
     }
     
@@ -71,7 +72,7 @@ export const PostComposer: React.FC<Props> = ({
     }
   };
 
-  const canSubmit = (content.trim() || imageUrl.trim()) && user?.id && !busy;
+  const canSubmit = (content.trim() || imageUrl.trim()) && status === 'authenticated' && !busy;
 
   return (
     <div className={`bg-white rounded-3xl shadow-sm p-6 ${className}`}>
@@ -93,7 +94,7 @@ export const PostComposer: React.FC<Props> = ({
               onChange={(e) => setContent(e.target.value)}
               rows={3}
               maxLength={500}
-              disabled={busy || !user?.id}
+              disabled={busy || status !== 'authenticated'}
             />
             
             {/* Image Input */}
@@ -182,7 +183,7 @@ export const PostComposer: React.FC<Props> = ({
       </form>
       
       {/* Login CTA for guests */}
-      {!user?.id && (
+      {status !== 'authenticated' && (
         <div className="mt-4 p-4 bg-[#89CFF0]/10 rounded-2xl text-center">
           <p className="text-sm text-gray-700 mb-3">
             Log in om posts te delen met de tribe

@@ -23,7 +23,7 @@ import toast from 'react-hot-toast';
 
 const TribeDetailPage: React.FC = () => {
   const { slug, tribeId } = useParams<{ slug?: string; tribeId?: string }>();
-  const { user } = useUser();
+  const { user, status } = useUser();
   const navigate = useNavigate();
   const { data: fitFiUser } = useFitFiUser(user?.id);
   const { data: tribes } = useTribes();
