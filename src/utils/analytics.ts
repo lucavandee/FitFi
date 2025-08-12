@@ -1,59 +1,62 @@
-import { useMemo, useCallback } from 'react';
+// Analytics utilities for FitFi
+// Provides safe wrappers around gtag for tracking events
 
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+declare global {
+  interface Window {
+    gtag?: (command: string, targetId: string, config?: any) => void;
   }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
 }
 
 /**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ * Track a page view
  */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
-    }
-  }, [testName, userId, variant]);
-
-  return { variant, trackClick, markExposure };
+export function pageview(url: string) {
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('config', 'GA_MEASUREMENT_ID', {
+      page_path: url,
+    });
+  } else {
+    console.debug('[analytics/pageview]', url);
+  }
 }
+
+/**
+ * Track a custom event
+ */
+export function event(name: string, params: Record<string, any> = {}) {
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('event', name, params);
+  } else {
+    console.debug('[analytics/event]', name, params);
+  }
+}
+
+/**
+ * Track an exception
+ */
+export function exception(description: string, fatal = false) {
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('event', 'exception', {
+      description,
+      fatal,
+    });
+  } else {
+    console.debug('[analytics/exception]', description, fatal);
+  }
+}
+
+/**
+ * Alias for event function
+ */
+export const track = event;
+
+/**
+ * Another alias for event function (for AdvancedAnalytics compatibility)
+ */
+export function trackEvent(name: string, params: Record<string, any> = {}) {
+  return event(name, params);
+}
+
+// Default export
+const analytics = { pageview, event, exception, track, trackEvent };
+export default analytics;
