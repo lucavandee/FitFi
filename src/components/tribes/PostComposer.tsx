@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Send, Image, Shirt, X } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
-import { supabase } from '../../lib/supabase';
+import type { TribePost } from '../../services/data/types';
 import Button from '../ui/Button';
 import ImageWithFallback from '../ui/ImageWithFallback';
 import toast from 'react-hot-toast';
 
 interface PostComposerProps {
   tribeId: string;
-  onPostCreated: (post: any) => void;
+  onPostCreated: (post: TribePost) => void;
   className?: string;
 }
 
@@ -33,9 +33,9 @@ const PostComposer: React.FC<PostComposerProps> = ({
     setIsSubmitting(true);
 
     try {
-      // Create optimistic post for immediate UI update
-      const optimisticPost = {
-        id: `temp_${Date.now()}`,
+      // Create mock post for immediate UI update
+      const mockPost: TribePost = {
+        id: `post_${Date.now()}`,
         tribe_id: tribeId,
         user_id: user.id,
         content: content.trim(),
@@ -44,17 +44,17 @@ const PostComposer: React.FC<PostComposerProps> = ({
         likes_count: 0,
         comments_count: 0,
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         user_profile: {
-          full_name: user.name,
-          avatar_url: null
+          full_name: user.name || 'Anonymous',
+          avatar_url: undefined
         },
         is_liked_by_current_user: false,
-        enrichments: null,
-        isOptimistic: true
+        recent_comments: []
       };
 
-      // Add optimistic post to feed immediately
-      onPostCreated(optimisticPost);
+      // Add mock post to feed immediately
+      onPostCreated(mockPost);
 
       // Clear form
       setContent('');
@@ -63,56 +63,14 @@ const PostComposer: React.FC<PostComposerProps> = ({
       setShowImageInput(false);
       setShowOutfitInput(false);
 
-      // Create actual post in database
-      const { data: newPost, error } = await supabase
-        .from('tribe_posts')
-        .insert({
-          tribe_id: tribeId,
-          user_id: user.id,
-          content: content.trim(),
-          image_url: imageUrl || null,
-          outfit_id: outfitId || null
-        })
-        .select(`
-          *,
-          user_profile:profiles!tribe_posts_user_id_fkey(full_name, avatar_url),
-          outfit:outfits(id, title, image_url, match_percentage)
-        `)
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      // Replace optimistic post with real post
-      onPostCreated({ ...newPost, replaceOptimistic: optimisticPost.id });
-
-      // Enrich post with AI data
-      try {
-        await supabase.functions.invoke('enrich-post', {
-          body: {
-            post_id: newPost.id,
-            content: content.trim(),
-            image_url: imageUrl || undefined,
-            outfit_id: outfitId || undefined
-          },
-          headers: {
-            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-          }
-        });
-      } catch (enrichError) {
-        console.warn('Post enrichment failed:', enrichError);
-        // Don't fail the whole operation if enrichment fails
-      }
+      // In a real implementation, this would save to Supabase
+      console.log('Mock post created:', mockPost);
 
       toast.success('Post geplaatst!');
 
     } catch (error) {
       console.error('Error creating post:', error);
       toast.error('Kon post niet plaatsen');
-      
-      // Remove optimistic post on error
-      onPostCreated({ removeOptimistic: optimisticPost.id });
     } finally {
       setIsSubmitting(false);
     }

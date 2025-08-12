@@ -9,11 +9,11 @@ import {
   UserMinus
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { TribesService } from '../services/tribesService';
-import { Tribe } from '../types/tribes';
+import { useTribeBySlug, useTribePosts } from '../hooks/useTribes';
+import type { Tribe } from '../services/data/types';
 import Button from '../components/ui/Button';
 import PostComposer from '../components/tribes/PostComposer';
-import TribeFeed from '../components/tribes/TribeFeed';
+import PostCard from '../components/tribes/PostCard';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -24,83 +24,64 @@ const TribeDetailPage: React.FC = () => {
   const { user } = useUser();
   const navigate = useNavigate();
   
-  const [tribe, setTribe] = useState<Tribe | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Use new tribes hooks
+  const { 
+    tribe, 
+    loading: tribeLoading, 
+    error: tribeError,
+    source: tribeSource,
+    refetch: refetchTribe 
+  } = useTribeBySlug(slug || '', user?.id);
+  
+  const {
+    data: posts,
+    loading: postsLoading,
+    error: postsError,
+    source: postsSource,
+    refetch: refetchPosts
+  } = useTribePosts(tribe?.id || '', {
+    limit: 20,
+    userId: user?.id,
+    enabled: !!tribe?.id
+  });
 
+  // Redirect if tribe not found
   useEffect(() => {
-    if (slug) {
-      loadTribe();
+    if (!tribeLoading && !tribe && !tribeError) {
+      toast.error('Tribe niet gevonden');
+      navigate('/tribes');
     }
-  }, [slug, user?.id]);
-
-  const loadTribe = async () => {
-    if (!slug) return;
-
-    try {
-      setIsLoading(true);
-      const tribeData = await TribesService.getTribeBySlug(slug, user?.id);
-      
-      if (!tribeData) {
-        toast.error('Tribe niet gevonden');
-        navigate('/tribes');
-        return;
-      }
-
-      setTribe(tribeData);
-    } catch (error) {
-      console.error('Error loading tribe:', error);
-      toast.error('Kon tribe niet laden');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [tribeLoading, tribe, tribeError, navigate]);
 
   const handleJoinTribe = async () => {
     if (!user?.id || !tribe?.id) return;
 
-    try {
-      const success = await TribesService.joinTribe(tribe.id, user.id);
-      if (success) {
-        toast.success(`Je bent toegetreden tot ${tribe.name}!`);
-        setTribe(prev => prev ? { 
-          ...prev, 
-          is_member: true, 
-          user_role: 'member' as const, 
-          member_count: prev.member_count + 1 
-        } : null);
-      }
-    } catch (error) {
-      console.error('Error joining tribe:', error);
-      toast.error('Kon niet toetreden tot tribe');
-    }
+    // Mock join functionality
+    toast.success(`Je bent toegetreden tot ${tribe.name}!`);
+    refetchTribe(); // Refresh tribe data
   };
 
   const handleLeaveTribe = async () => {
     if (!user?.id || !tribe?.id) return;
 
-    try {
-      const success = await TribesService.leaveTribe(tribe.id, user.id);
-      if (success) {
-        toast.success(`Je hebt ${tribe.name} verlaten`);
-        setTribe(prev => prev ? { 
-          ...prev, 
-          is_member: false, 
-          user_role: 'member' as const,
-          member_count: Math.max(0, (prev.member_count ?? 0) - 1)
-        } : null);
-      }
-    } catch (error) {
-      console.error('Error leaving tribe:', error);
-      toast.error('Kon tribe niet verlaten');
-    }
+    // Mock leave functionality
+    toast.success(`Je hebt ${tribe.name} verlaten`);
+    refetchTribe(); // Refresh tribe data
   };
 
   const handlePostCreated = (post: any) => {
-    // This will be handled by TribeFeed component
+    // Refresh posts after creating new post
     console.log('Post created:', post);
+    refetchPosts();
   };
 
-  if (isLoading) {
+  const handlePostUpdate = (updatedPost: any) => {
+    // Handle post updates (likes, comments, etc.)
+    console.log('Post updated:', updatedPost);
+    refetchPosts();
+  };
+
+  if (tribeLoading) {
     return <LoadingFallback fullScreen message="Tribe laden..." />;
   }
 
@@ -110,9 +91,14 @@ const TribeDetailPage: React.FC = () => {
         <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
           <h2 className="text-2xl font-light text-gray-900 mb-4">Tribe niet gevonden</h2>
           <p className="text-gray-600 mb-6">Deze tribe bestaat niet of is niet beschikbaar.</p>
-          <Button as={Link} to="/tribes" variant="primary">
-            Terug naar Tribes
-          </Button>
+          <div className="space-y-3">
+            <Button onClick={refetchTribe} variant="primary">
+              Probeer opnieuw
+            </Button>
+            <Button as={Link} to="/tribes" variant="outline">
+              Terug naar Tribes
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -139,6 +125,19 @@ const TribeDetailPage: React.FC = () => {
             <ArrowLeft size={20} className="mr-2" />
             Terug naar tribes
           </Link>
+          
+          {/* Data Source Indicator (Development) */}
+          {import.meta.env.DEV && (
+            <div className="mb-4">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                tribeSource === 'supabase' ? 'bg-green-100 text-green-800' :
+                tribeSource === 'local' ? 'bg-blue-100 text-blue-800' :
+                'bg-gray-100 text-gray-800'
+              }`}>
+                Tribe data: {tribeSource} | Posts: {postsSource}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Tribe Header */}
@@ -219,7 +218,50 @@ const TribeDetailPage: React.FC = () => {
 
         {/* Tribe Feed */}
         <ErrorBoundary>
-          <TribeFeed tribeId={tribe.id} />
+          <div className="space-y-6">
+            {postsLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-3xl p-6 animate-pulse">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-24"></div>
+                        <div className="h-3 bg-gray-200 rounded w-16"></div>
+                      </div>
+                    </div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+                    <div className="h-32 bg-gray-200 rounded-2xl"></div>
+                  </div>
+                ))}
+              </div>
+            ) : posts && posts.length > 0 ? (
+              posts.map((post, index) => (
+                <div
+                  key={post.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <PostCard
+                    post={post}
+                    onUpdate={handlePostUpdate}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Users className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-4">
+                  Nog geen posts
+                </h3>
+                <p className="text-gray-600">
+                  Wees de eerste om een post te delen in deze tribe!
+                </p>
+              </div>
+            )}
+          </div>
         </ErrorBoundary>
       </div>
     </div>

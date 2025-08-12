@@ -1,8 +1,8 @@
 import { DATA_CONFIG } from "@/config/dataConfig";
 import { buildAffiliateUrl } from "@/services/affiliateLinkBuilder";
-import type { BoltProduct, Outfit, FitFiUserProfile, DataResponse, CacheEntry, DataServiceConfig, DataError } from "./types";
-import { getLocalProducts, getLocalOutfits, getLocalUser } from "./localSource";
-import { getSbProducts, getSbOutfits, getSbUser } from "./supabaseSource";
+import type { BoltProduct, Outfit, FitFiUserProfile, Tribe, TribePost, DataResponse, CacheEntry, DataServiceConfig, DataError } from "./types";
+import { getLocalProducts, getLocalOutfits, getLocalUser, getLocalTribes } from "./localSource";
+import { getSbProducts, getSbOutfits, getSbUser, getSbTribes, getSbTribeBySlug, getSbTribePosts } from "./supabaseSource";
 
 /**
  * Enterprise Data Service Orchestrator
@@ -370,6 +370,245 @@ class DataServiceOrchestrator {
   }
 
   /**
+   * Fetch tribes with fallback chain
+   */
+  async fetchTribes(filters?: {
+    featured?: boolean;
+    archetype?: string;
+    limit?: number;
+  }): Promise<DataResponse<Tribe[]>> {
+    const cacheKey = `tribes_${JSON.stringify(filters || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<Tribe[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbTribes(filters),
+          'fetch_tribes',
+          'supabase'
+        );
+        
+        if (sb && sb.length > 0) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_tribes', (error as Error).message, { filters });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalTribes(),
+        'fetch_tribes',
+        'local'
+      );
+      
+      this.saveToCache(cacheKey, local, 'local');
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_tribes', (error as Error).message, { filters });
+      
+      // Final fallback to empty array
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Fetch tribe by slug with fallback chain
+   */
+  async fetchTribeBySlug(slug: string, userId?: string): Promise<DataResponse<Tribe | null>> {
+    const cacheKey = `tribe_${slug}_${userId || 'anon'}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<Tribe>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbTribeBySlug(slug, userId),
+          'fetch_tribe_by_slug',
+          'supabase'
+        );
+        
+        if (sb) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_tribe_by_slug', (error as Error).message, { slug, userId });
+      }
+    }
+
+    // Fallback to local tribes
+    try {
+      const localTribes = await this.executeWithRetry(
+        () => getLocalTribes(),
+        'fetch_tribe_by_slug',
+        'local'
+      );
+      
+      const tribe = localTribes.find(t => t.slug === slug);
+      
+      if (tribe) {
+        this.saveToCache(cacheKey, tribe, 'local');
+        
+        return {
+          data: tribe,
+          source: 'local',
+          cached: false,
+          timestamp: Date.now()
+        };
+      }
+      
+      return {
+        data: null,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_tribe_by_slug', (error as Error).message, { slug, userId });
+      
+      return {
+        data: null,
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Fetch tribe posts with fallback chain
+   */
+  async fetchTribePosts(
+    tribeId: string,
+    options?: {
+      limit?: number;
+      offset?: number;
+      userId?: string;
+    }
+  ): Promise<DataResponse<TribePost[]>> {
+    const cacheKey = `tribe_posts_${tribeId}_${JSON.stringify(options || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<TribePost[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbTribePosts(tribeId, options),
+          'fetch_tribe_posts',
+          'supabase'
+        );
+        
+        if (sb && sb.length >= 0) { // Allow empty arrays
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_tribe_posts', (error as Error).message, { tribeId, options });
+      }
+    }
+
+    // Fallback to local tribe data (get recent_posts from tribe)
+    try {
+      const localTribes = await this.executeWithRetry(
+        () => getLocalTribes(),
+        'fetch_tribe_posts',
+        'local'
+      );
+      
+      const tribe = localTribes.find(t => t.id === tribeId);
+      const posts = tribe?.recent_posts || [];
+      
+      this.saveToCache(cacheKey, posts, 'local');
+      
+      return {
+        data: posts,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_tribe_posts', (error as Error).message, { tribeId, options });
+      
+      // Final fallback to empty array
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+  /**
    * Clear cache
    */
   clearCache(): void {
@@ -482,6 +721,29 @@ export async function fetchOutfits(filters?: {
 
 export async function fetchUser(userId?: string): Promise<DataResponse<FitFiUserProfile | null>> {
   return dataServiceOrchestrator.fetchUser(userId);
+}
+
+export async function fetchTribes(filters?: {
+  featured?: boolean;
+  archetype?: string;
+  limit?: number;
+}): Promise<DataResponse<Tribe[]>> {
+  return dataServiceOrchestrator.fetchTribes(filters);
+}
+
+export async function fetchTribeBySlug(slug: string, userId?: string): Promise<DataResponse<Tribe | null>> {
+  return dataServiceOrchestrator.fetchTribeBySlug(slug, userId);
+}
+
+export async function fetchTribePosts(
+  tribeId: string,
+  options?: {
+    limit?: number;
+    offset?: number;
+    userId?: string;
+  }
+): Promise<DataResponse<TribePost[]>> {
+  return dataServiceOrchestrator.fetchTribePosts(tribeId, options);
 }
 
 // Export utility methods

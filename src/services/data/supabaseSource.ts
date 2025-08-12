@@ -269,6 +269,180 @@ export function getSupabaseInfo(): {
 }
 
 /**
+ * Get tribes from Supabase with enhanced error handling
+ */
+export async function getSbTribes(filters?: {
+  featured?: boolean;
+  archetype?: string;
+  limit?: number;
+}): Promise<Tribe[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    let query = sb.from(DATA_CONFIG.SUPABASE.tables.tribes).select("*");
+    
+    // Apply filters if provided
+    if (filters?.featured !== undefined) {
+      query = query.eq('featured', filters.featured);
+    }
+    if (filters?.archetype) {
+      query = query.eq('archetype', filters.archetype);
+    }
+    if (filters?.limit) {
+      query = query.limit(filters.limit);
+    }
+    
+    // Order by member count and activity
+    query = query.order('member_count', { ascending: false });
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      handleSupabaseError(error, 'select', 'tribes');
+    }
+    
+    // Validate and transform data
+    const tribes = (data ?? []) as any[];
+    const validTribes = tribes.filter(tribe => 
+      tribe && 
+      typeof tribe === 'object' && 
+      tribe.id && 
+      tribe.name &&
+      tribe.slug
+    );
+    
+    if (validTribes.length !== tribes.length) {
+      console.warn(`[SupabaseSource] Filtered out ${tribes.length - validTribes.length} invalid tribes`);
+    }
+    
+    console.log(`[SupabaseSource] Loaded ${validTribes.length} tribes`);
+    return validTribes as Tribe[];
+  } catch (error) {
+    console.error('[SupabaseSource] Tribes fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get tribe by slug from Supabase
+ */
+export async function getSbTribeBySlug(slug: string, userId?: string): Promise<Tribe | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    const { data: tribe, error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribes)
+      .select("*")
+      .eq('slug', slug)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        console.log(`[SupabaseSource] Tribe ${slug} not found`);
+        return null;
+      }
+      handleSupabaseError(error, 'select', 'tribes');
+    }
+    
+    if (!tribe) return null;
+
+    // Check user membership if userId provided
+    if (userId && isValidUUID(userId)) {
+      try {
+        const { data: membership } = await sb
+          .from(DATA_CONFIG.SUPABASE.tables.tribe_members)
+          .select('role')
+          .eq('tribe_id', tribe.id)
+          .eq('user_id', userId)
+          .single();
+
+        return {
+          ...tribe,
+          is_member: !!membership,
+          user_role: membership?.role
+        } as Tribe;
+      } catch (membershipError) {
+        console.warn('[SupabaseSource] Could not check membership:', membershipError);
+        return tribe as Tribe;
+      }
+    }
+
+    return tribe as Tribe;
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe by slug fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get tribe posts from Supabase
+ */
+export async function getSbTribePosts(
+  tribeId: string,
+  options?: {
+    limit?: number;
+    offset?: number;
+    userId?: string;
+  }
+): Promise<TribePost[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    const { limit = 10, offset = 0, userId } = options || {};
+    
+    let query = sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribe_posts)
+      .select(`
+        *,
+        user_profile:profiles!tribe_posts_user_id_fkey(full_name, avatar_url),
+        outfit:outfits(id, title, image_url, match_percentage)
+      `)
+      .eq('tribe_id', tribeId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    const { data: posts, error } = await query;
+
+    if (error) {
+      handleSupabaseError(error, 'select', 'tribe_posts');
+    }
+
+    if (!posts) return [];
+
+    // Get user likes if userId provided
+    if (userId && isValidUUID(userId)) {
+      try {
+        const postIds = posts.map(p => p.id);
+        const { data: likes } = await sb
+          .from(DATA_CONFIG.SUPABASE.tables.tribe_post_likes)
+          .select('post_id')
+          .eq('user_id', userId)
+          .in('post_id', postIds);
+
+        const likedPostIds = new Set(likes?.map(l => l.post_id) || []);
+
+        // Enrich posts with like status
+        return posts.map(post => ({
+          ...post,
+          is_liked_by_current_user: likedPostIds.has(post.id)
+        })) as TribePost[];
+      } catch (likesError) {
+        console.warn('[SupabaseSource] Could not load likes:', likesError);
+        return posts as TribePost[];
+      }
+    }
+
+    return posts as TribePost[];
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe posts fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
  * Clear local cache (for development)
  */
 export function clearSupabaseCache(): void {
