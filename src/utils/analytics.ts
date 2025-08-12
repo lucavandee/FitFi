@@ -1,82 +1,76 @@
-import { useMemo, useCallback } from 'react';
+/**
+ * Analytics utilities for FitFi
+ * Provides safe, fail-safe analytics tracking
+ */
 
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
-}
-
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
-  
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
+/**
+ * Track a pageview
+ */
+export function pageview(url: string, params: Record<string, any> = {}) {
+  try {
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('config', import.meta.env.VITE_GTAG_ID || 'GA_MEASUREMENT_ID', {
+        page_path: url,
+        ...params
       });
     }
-  };
-  
-  return { variant, trackConversion };
-}
-
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  } catch (error) {
+    console.debug('[Analytics] Pageview failed:', error);
   }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
 }
 
 /**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ * Track an event
  */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
+export function event(name: string, params: Record<string, any> = {}) {
+  try {
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+      window.gtag('event', name, params);
     }
-  }, [testName, userId, variant]);
+  } catch (error) {
+    console.debug('[Analytics] Event failed:', error);
+  }
+}
 
-  return { variant, trackClick, markExposure };
+/**
+ * Track an exception
+ */
+export function exception(description: string, fatal: boolean = false) {
+  try {
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'exception', {
+        description,
+        fatal
+      });
+    }
+  } catch (error) {
+    console.debug('[Analytics] Exception failed:', error);
+  }
+}
+
+/**
+ * Generic track function (alias for event)
+ */
+export function track(name: string, params: Record<string, any> = {}) {
+  return event(name, params);
+}
+
+/**
+ * Track event with category and label (legacy format)
+ */
+export function trackEvent(
+  action: string,
+  category: string = 'general',
+  label?: string,
+  value?: number,
+  params: Record<string, any> = {}
+) {
+  return event(action, {
+    event_category: category,
+    event_label: label,
+    value,
+    ...params
+  });
 }
 
 // Default export
