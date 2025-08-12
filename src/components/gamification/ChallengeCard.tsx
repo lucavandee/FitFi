@@ -1,70 +1,143 @@
-import { useMemo, useCallback } from 'react';
+import React from 'react';
+import { Trophy, Clock, Star, Target } from 'lucide-react';
+import { track } from '../../utils/analytics';
+import Button from '../ui/Button';
 
-type Variant = 'control' | 'v1' | 'v2';
-
-/** Superlichte, dependency-loze hash (djb2-variant) */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
+interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  type: 'daily' | 'weekly' | 'special';
+  points: number;
+  icon: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  completed: boolean;
+  deadline?: string;
+  progress?: number;
+  maxProgress?: number;
 }
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+interface ChallengeCardProps {
+  challenge: Challenge;
+  onComplete: (challengeId: string) => void;
+  className?: string;
 }
 
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+const ChallengeCard: React.FC<ChallengeCardProps> = ({
+  challenge,
+  onComplete,
+  className = ''
+}) => {
+  const handleComplete = () => {
+    // Track challenge attempt
+    track('challenge_attempted', {
+      event_category: 'gamification',
+      event_label: challenge.id,
+      challenge_type: challenge.type,
+      challenge_difficulty: challenge.difficulty,
+      challenge_points: challenge.points
+    });
+    
+    onComplete(challenge.id);
+  };
 
-  /** Veilig tracken: gebruikt gtag als die bestaat, anders console.debug */
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      try {
-        const payload = {
-          label,
-          test_name: testName,
-          variant,
-          user_id: userId ?? 'guest',
-          ...extra,
-        };
-        // voorkom crashes zonder gtag
-        // @ts-ignore
-        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-          // @ts-ignore
-          window.gtag('event', 'cta_click', payload);
-        } else {
-          // eslint-disable-next-line no-console
-          console.debug('[ab/cta_click]', payload);
-        }
-      } catch {
-        /* no-op */
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  /** Exposure is bewust no-op in safe mode (later optioneel via API/Supabase) */
-  const markExposure = useCallback(() => {
-    try {
-      const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'ab_exposure', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/exposure]', payload);
-      }
-    } catch {
-      /* no-op */
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'easy': return 'text-green-600 bg-green-50 border-green-200';
+      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'hard': return 'text-red-600 bg-red-50 border-red-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
     }
-  }, [testName, userId, variant]);
+  };
 
-  return { variant, trackClick, markExposure };
-}
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'daily': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'weekly': return 'text-purple-600 bg-purple-50 border-purple-200';
+      case 'special': return 'text-orange-600 bg-orange-50 border-orange-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
+
+  return (
+    <div className={`bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${className}`}>
+      {/* Challenge Header */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center space-x-3">
+          <div className="text-3xl">{challenge.icon}</div>
+          <div>
+            <h3 className="font-medium text-gray-900 leading-tight">{challenge.title}</h3>
+            <div className="flex items-center space-x-2 mt-1">
+              <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(challenge.type)}`}>
+                {challenge.type}
+              </span>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(challenge.difficulty)}`}>
+                {challenge.difficulty}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="text-right">
+          <div className="text-lg font-bold text-[#89CFF0]">+{challenge.points}</div>
+          <div className="text-xs text-gray-500">punten</div>
+        </div>
+      </div>
+
+      {/* Challenge Description */}
+      <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+        {challenge.description}
+      </p>
+
+      {/* Progress Bar (if applicable) */}
+      {challenge.progress !== undefined && challenge.maxProgress && (
+        <div className="mb-4">
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-gray-600">Voortgang</span>
+            <span className="font-medium">{challenge.progress}/{challenge.maxProgress}</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-[#89CFF0] h-2 rounded-full transition-all duration-300"
+              style={{ width: `${(challenge.progress / challenge.maxProgress) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Deadline */}
+      {challenge.deadline && !challenge.completed && (
+        <div className="flex items-center space-x-2 text-xs text-gray-500 mb-4">
+          <Clock size={12} />
+          <span>
+            Eindigt: {new Date(challenge.deadline).toLocaleDateString('nl-NL', {
+              day: 'numeric',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </span>
+        </div>
+      )}
+
+      {/* Action Button */}
+      <Button
+        variant={challenge.completed ? 'outline' : 'primary'}
+        size="sm"
+        fullWidth
+        disabled={challenge.completed}
+        onClick={handleComplete}
+        className={challenge.completed 
+          ? 'border-green-300 text-green-600 bg-green-50' 
+          : 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]'
+        }
+        icon={challenge.completed ? <Star size={16} className="fill-current" /> : <Target size={16} />}
+        iconPosition="left"
+      >
+        {challenge.completed ? 'Voltooid!' : 'Start Challenge'}
+      </Button>
+    </div>
+  );
+};
+
+export default ChallengeCard;
