@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     base: '/',
     resolve: {
+      dedupe: ['react', 'react-dom', 'react-helmet-async'],
       alias: [
         { find: '@', replacement: path.resolve(__dirname, 'src') },
         // Shim AppSignal/Chameleon (alle varianten)
