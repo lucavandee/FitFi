@@ -54,7 +54,12 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
       if (referralData?.referral_code) {
         setReferralCode(referralData.referral_code);
       } else {
-        // Generate new referral code if none exists
+         if (!supabase) {
+           console.error('Supabase client not available');
+           return;
+         }
+         
+         const { error: updateError } = await supabase
         const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
         
         const { error: updateError } = await supabase
