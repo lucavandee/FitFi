@@ -1,7 +1,14 @@
 // src/services/data/supabaseSource.ts
 import { supabase } from "@/lib/supabaseClient";
+import { withTimeout } from "@/lib/net/withTimeout";
+import { withRetry } from "@/lib/net/withRetry";
 import { DATA_CONFIG } from "@/config/dataConfig";
 import type { BoltProduct, Outfit, FitFiUserProfile, TribeMember, TribePost, Tribe } from "./types";
+
+// Configuration from environment
+const TIMEOUT_MS = Number(import.meta.env.VITE_SUPABASE_HEALTHCHECK_TIMEOUT_MS || 3500);
+const MAX_ATTEMPTS = Number(import.meta.env.VITE_SUPABASE_RETRY_MAX_ATTEMPTS || 3);
+const BASE_DELAY = Number(import.meta.env.VITE_SUPABASE_RETRY_BASE_MS || 400);
 
 /**
  * Get Supabase client from singleton
@@ -35,6 +42,26 @@ function handleSupabaseError(error: any, operation: string, table?: string): nev
 }
 
 /**
+ * Execute Supabase operation with timeout and retry
+ */
+async function executeSupabaseOperation<T>(
+  operation: () => Promise<T>,
+  operationName: string
+): Promise<T> {
+  const runner = async () => {
+    const sb = getClient();
+    if (!sb) throw new Error('Supabase client not available');
+    return await operation();
+  };
+  
+  return await withTimeout(
+    withRetry(runner, MAX_ATTEMPTS, BASE_DELAY),
+    TIMEOUT_MS,
+    operationName
+  );
+}
+
+/**
  * Get products from Supabase with enhanced error handling
  */
 export async function getSbProducts(filters?: {
@@ -46,20 +73,22 @@ export async function getSbProducts(filters?: {
   if (!sb) return null;
   
   try {
-    let query = sb.from(DATA_CONFIG.SUPABASE.tables.products).select("*");
-    
-    // Apply filters if provided
-    if (filters?.gender) {
-      query = query.eq('gender', filters.gender);
-    }
-    if (filters?.category) {
-      query = query.eq('category', filters.category);
-    }
-    if (filters?.limit) {
-      query = query.limit(filters.limit);
-    }
-    
-    const { data, error } = await query;
+    const { data, error } = await executeSupabaseOperation(async () => {
+      let query = sb.from(DATA_CONFIG.SUPABASE.tables.products).select("*");
+      
+      // Apply filters if provided
+      if (filters?.gender) {
+        query = query.eq('gender', filters.gender);
+      }
+      if (filters?.category) {
+        query = query.eq('category', filters.category);
+      }
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
+      
+      return await query;
+    }, 'fetch_products');
     
     if (error) {
       handleSupabaseError(error, 'select', 'products');
@@ -98,20 +127,22 @@ export async function getSbOutfits(filters?: {
   if (!sb) return null;
   
   try {
-    let query = sb.from(DATA_CONFIG.SUPABASE.tables.outfits).select("*");
-    
-    // Apply filters if provided
-    if (filters?.archetype) {
-      query = query.contains('archetypes', [filters.archetype]);
-    }
-    if (filters?.season) {
-      query = query.eq('season', filters.season);
-    }
-    if (filters?.limit) {
-      query = query.limit(filters.limit);
-    }
-    
-    const { data, error } = await query;
+    const { data, error } = await executeSupabaseOperation(async () => {
+      let query = sb.from(DATA_CONFIG.SUPABASE.tables.outfits).select("*");
+      
+      // Apply filters if provided
+      if (filters?.archetype) {
+        query = query.contains('archetypes', [filters.archetype]);
+      }
+      if (filters?.season) {
+        query = query.eq('season', filters.season);
+      }
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
+      
+      return await query;
+    }, 'fetch_outfits');
     
     if (error) {
       handleSupabaseError(error, 'select', 'outfits');

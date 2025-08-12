@@ -4,6 +4,8 @@
  */
 
 import { supabase } from '@/lib/supabaseClient';
+import { withTimeout } from '@/lib/net/withTimeout';
+import { withRetry } from '@/lib/net/withRetry';
 import { DATA_CONFIG } from '@/config/dataConfig';
 import type { TribeMember, TribePost, Tribe } from '@/services/data/types';
 import { 
@@ -16,22 +18,49 @@ import {
   lt_togglePostLike 
 } from '@/services/data/localTribeStore';
 
+// Configuration from environment
+const TIMEOUT_MS = Number(import.meta.env.VITE_SUPABASE_HEALTHCHECK_TIMEOUT_MS || 3500);
+const MAX_ATTEMPTS = Number(import.meta.env.VITE_SUPABASE_RETRY_MAX_ATTEMPTS || 3);
+const BASE_DELAY = Number(import.meta.env.VITE_SUPABASE_RETRY_BASE_MS || 400);
+
+/**
+ * Execute Supabase operation with timeout and retry for tribes
+ */
+async function executeTribesOperation<T>(
+  operation: () => Promise<T>,
+  operationName: string
+): Promise<T> {
+  const runner = async () => {
+    const sb = supabase();
+    if (!sb) throw new Error('Supabase client not available');
+    return await operation();
+  };
+  
+  return await withTimeout(
+    withRetry(runner, MAX_ATTEMPTS, BASE_DELAY),
+    TIMEOUT_MS,
+    operationName
+  );
+}
+
 /**
  * Get tribe members with fallback to localStorage
  */
 export async function getTribeMembers(tribeId: string): Promise<TribeMember[]> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const client = supabase();
-      if (!client) throw new Error('Supabase client not available');
-      
-      const { data, error } = await client
-        .from('tribe_members')
-        .select(`
-          *,
-          user_profile:profiles!tribe_members_user_id_fkey(full_name, avatar_url)
-        `)
-        .eq('tribe_id', tribeId);
+      const { data, error } = await executeTribesOperation(async () => {
+        const client = supabase();
+        if (!client) throw new Error('Supabase client not available');
+        
+        return await client
+          .from('tribe_members')
+          .select(`
+            *,
+            user_profile:profiles!tribe_members_user_id_fkey(full_name, avatar_url)
+          `)
+          .eq('tribe_id', tribeId);
+      }, 'get_tribe_members');
 
       if (error) throw error;
       
@@ -59,15 +88,20 @@ export async function getTribeMembers(tribeId: string): Promise<TribeMember[]> {
 export async function joinTribe(tribeId: string, userId: string): Promise<TribeMember> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { data, error } = await supabase
-        .from('tribe_members')
-        .insert({
-          tribe_id: tribeId,
-          user_id: userId,
-          role: 'member'
-        })
-        .select()
-        .single();
+      const { data, error } = await executeTribesOperation(async () => {
+        const sb = supabase();
+        if (!sb) throw new Error('Supabase client not available');
+        
+        return await sb
+          .from('tribe_members')
+          .insert({
+            tribe_id: tribeId,
+            user_id: userId,
+            role: 'member'
+          })
+          .select()
+          .single();
+      }, 'join_tribe');
 
       if (error) {
         // Handle duplicate membership gracefully
@@ -121,11 +155,16 @@ export async function joinTribe(tribeId: string, userId: string): Promise<TribeM
 export async function leaveTribe(tribeId: string, userId: string): Promise<void> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { error } = await supabase
-        .from('tribe_members')
-        .delete()
-        .eq('tribe_id', tribeId)
-        .eq('user_id', userId);
+      const { error } = await executeTribesOperation(async () => {
+        const sb = supabase();
+        if (!sb) throw new Error('Supabase client not available');
+        
+        return await sb
+          .from('tribe_members')
+          .delete()
+          .eq('tribe_id', tribeId)
+          .eq('user_id', userId);
+      }, 'leave_tribe');
 
       if (error) throw error;
       return;
