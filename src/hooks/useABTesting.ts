@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { useUser } from '../context/UserContext';
 import { ABTestVariant } from '../types/achievements';
+
+// Get singleton client
+const sb = supabase();
 
 interface ABTestConfig {
   testName: string;
@@ -28,9 +31,16 @@ export function useABTesting(testConfig: ABTestConfig) {
   const assignVariant = async () => {
     if (!user?.id) return;
 
+    if (!sb) {
+      console.warn('[ABTesting] Supabase not available, using control variant');
+      setVariant('control');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       // Check if user already has a variant assigned
-      const { data: existingVariant } = await supabase
+      const { data: existingVariant } = await sb
         .from('ab_test_variants')
         .select('*')
         .eq('user_id', user.id)
@@ -47,7 +57,7 @@ export function useABTesting(testConfig: ABTestConfig) {
       const assignedVariant = selectVariantByWeight(testConfig.variants);
 
       // Store in database
-      const { error } = await supabase
+      const { error } = await sb
         .from('ab_test_variants')
         .insert({
           user_id: user.id,
