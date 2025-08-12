@@ -88,12 +88,6 @@ const ResetPasswordPage: React.FC = () => {
     setIsLoading(true);
     setErrors({});
 
-    if (!sb) {
-      const { error } = await sb.auth.updateUser({
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const { error } = await sb.auth.updateUser({
         password: formData.password
