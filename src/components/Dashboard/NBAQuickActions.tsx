@@ -40,13 +40,13 @@ export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActio
         }
         
         return (
-          <Link
+          <a
             key={a.id}
-            to={route}
+            href={disabled ? undefined : route}
             onClick={() => handleActionClick(a)}
-            className={`rounded-2xl border border-purple-300/60 transition p-4 bg-white ${
+            className={`block rounded-2xl border border-purple-300/60 transition-all p-4 bg-white ${
               disabled 
-                ? "opacity-50 cursor-not-allowed" 
+                ? "opacity-50 cursor-not-allowed pointer-events-none" 
                 : "hover:shadow-md hover:transform hover:scale-105"
             }`}
             title={disabled ? "Geen open challenge gevonden" : undefined}
@@ -58,7 +58,7 @@ export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActio
             <div className={`mt-3 font-medium ${disabled ? "text-gray-400" : "text-[#6b21a8]"}`}>
               {a.cta} →
             </div>
-          </Link>
+          </a>
         );
       })}
     </div>
