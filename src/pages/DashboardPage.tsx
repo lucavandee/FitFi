@@ -33,7 +33,6 @@ import toast from 'react-hot-toast';
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const queryClient = useQueryClient();
   const { user, isLoading: userLoading } = useUser();
   const { resetQuiz, isResetting } = useQuizAnswers();
   const abVariant = useABVariant('dashboard_cta');
