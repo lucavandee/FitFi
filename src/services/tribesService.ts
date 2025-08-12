@@ -1,13 +1,18 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { Tribe, TribePost, TribeMember, CreateTribeData, CreatePostData, TribePostComment, FeatureFlag } from '../types/tribes';
+
+// Get singleton client
+const sb = supabase();
 
 export class TribesService {
   /**
    * Get feature flag status
    */
   static async getFeatureFlag(flagName: string): Promise<FeatureFlag | null> {
+    if (!sb) return null;
+    
     try {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('remote_flags')
         .select('*')
         .eq('flag_name', flagName)
@@ -37,8 +42,10 @@ export class TribesService {
    * Get all tribes with membership info
    */
   static async getTribes(userId?: string): Promise<Tribe[]> {
+    if (!sb) return [];
+    
     try {
-      let query = supabase
+      let query = sb
         .from('tribes')
         .select('*')
         .order('member_count', { ascending: false });
@@ -50,7 +57,7 @@ export class TribesService {
       if (!userId) return tribes || [];
 
       // Get user memberships
-      const { data: memberships } = await supabase
+      const { data: memberships } = await sb
         .from('tribe_members')
         .select('tribe_id, role')
         .eq('user_id', userId);
@@ -76,8 +83,10 @@ export class TribesService {
    * Get tribe by slug
    */
   static async getTribeBySlug(slug: string, userId?: string): Promise<Tribe | null> {
+    if (!sb) return null;
+    
     try {
-      const { data: tribe, error } = await supabase
+      const { data: tribe, error } = await sb
         .from('tribes')
         .select('*')
         .eq('slug', slug)
@@ -88,7 +97,7 @@ export class TribesService {
       if (!userId) return tribe;
 
       // Check user membership
-      const { data: membership } = await supabase
+      const { data: membership } = await sb
         .from('tribe_members')
         .select('role')
         .eq('tribe_id', tribe.id)
@@ -110,8 +119,10 @@ export class TribesService {
    * Create a new tribe
    */
   static async createTribe(tribeData: CreateTribeData, userId: string): Promise<Tribe | null> {
+    if (!sb) return null;
+    
     try {
-      const { data: tribe, error } = await supabase
+      const { data: tribe, error } = await sb
         .from('tribes')
         .insert({
           ...tribeData,
@@ -123,7 +134,7 @@ export class TribesService {
       if (error) throw error;
 
       // Auto-join creator as owner
-      await supabase
+      await sb
         .from('tribe_members')
         .insert({
           tribe_id: tribe.id,
@@ -142,8 +153,10 @@ export class TribesService {
    * Join a tribe
    */
   static async joinTribe(tribeId: string, userId: string): Promise<boolean> {
+    if (!sb) return false;
+    
     try {
-      const { error } = await supabase
+      const { error } = await sb
         .from('tribe_members')
         .insert({
           tribe_id: tribeId,
@@ -163,8 +176,10 @@ export class TribesService {
    * Leave a tribe
    */
   static async leaveTribe(tribeId: string, userId: string): Promise<boolean> {
+    if (!sb) return false;
+    
     try {
-      const { error } = await supabase
+      const { error } = await sb
         .from('tribe_members')
         .delete()
         .eq('tribe_id', tribeId)
@@ -187,10 +202,12 @@ export class TribesService {
     limit: number = 10,
     userId?: string
   ): Promise<TribePost[]> {
+    if (!sb) return [];
+    
     try {
       const offset = page * limit;
 
-      const { data: posts, error } = await supabase
+      const { data: posts, error } = await sb
         .from('tribe_posts')
         .select(`
           *,
@@ -207,7 +224,7 @@ export class TribesService {
 
       // Get user likes for these posts
       const postIds = (posts || []).map(p => p.id);
-      const { data: likes } = await supabase
+      const { data: likes } = await sb
         .from('tribe_post_likes')
         .select('post_id')
         .eq('user_id', userId)
@@ -216,7 +233,7 @@ export class TribesService {
       const likedPostIds = new Set(likes?.map(l => l.post_id) || []);
 
       // Get recent comments for each post
-      const { data: comments } = await supabase
+      const { data: comments } = await sb
         .from('tribe_post_comments')
         .select(`
           *,
@@ -251,8 +268,10 @@ export class TribesService {
    * Create a new post
    */
   static async createPost(postData: CreatePostData, userId: string): Promise<TribePost | null> {
+    if (!sb) return null;
+    
     try {
-      const { data: post, error } = await supabase
+      const { data: post, error } = await sb
         .from('tribe_posts')
         .insert({
           ...postData,
@@ -277,9 +296,11 @@ export class TribesService {
    * Like/unlike a post
    */
   static async togglePostLike(postId: string, userId: string): Promise<boolean> {
+    if (!sb) return false;
+    
     try {
       // Check if already liked
-      const { data: existingLike } = await supabase
+      const { data: existingLike } = await sb
         .from('tribe_post_likes')
         .select('id')
         .eq('post_id', postId)
@@ -288,7 +309,7 @@ export class TribesService {
 
       if (existingLike) {
         // Unlike
-        const { error } = await supabase
+        const { error } = await sb
           .from('tribe_post_likes')
           .delete()
           .eq('id', existingLike.id);
@@ -297,7 +318,7 @@ export class TribesService {
         return false; // Unliked
       } else {
         // Like
-        const { error } = await supabase
+        const { error } = await sb
           .from('tribe_post_likes')
           .insert({
             post_id: postId,
@@ -317,8 +338,10 @@ export class TribesService {
    * Add comment to post
    */
   static async addComment(postId: string, content: string, userId: string): Promise<TribePostComment | null> {
+    if (!sb) return null;
+    
     try {
-      const { data: comment, error } = await supabase
+      const { data: comment, error } = await sb
         .from('tribe_post_comments')
         .insert({
           post_id: postId,
@@ -343,8 +366,10 @@ export class TribesService {
    * Get tribe members
    */
   static async getTribeMembers(tribeId: string): Promise<TribeMember[]> {
+    if (!sb) return [];
+    
     try {
-      const { data: members, error } = await supabase
+      const { data: members, error } = await sb
         .from('tribe_members')
         .select(`
           *,

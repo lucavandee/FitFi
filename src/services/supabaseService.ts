@@ -1,11 +1,16 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { UserProfile } from '../context/UserContext';
 import { executeSupabaseOperation, SupabaseErrorContext } from '../utils/supabaseErrorHandler';
 
+// Get singleton client
+const sb = supabase();
+
 // Quiz answer retrieval with proper error handling
 export const getQuizAnswer = async (userId: string, qId: string) => {
+  if (!sb) throw new Error('Supabase not available');
+  
   return executeSupabaseOperation(
-    async () => await supabase
+    async () => await sb
       .from('quiz_answers')
       .select('*')
       .eq('user_id', userId)
@@ -58,8 +63,10 @@ function isValidUUID(uuid: string): boolean {
  * Fetch products from Supabase
  */
 export async function fetchProductsFromSupabase() {
+  if (!sb) throw new Error('Supabase not available');
+  
   return executeSupabaseOperation(
-    async () => await supabase
+    async () => await sb
       .from('products')
       .select('*')
       .limit(50),
@@ -82,8 +89,10 @@ export async function getUserById(userId: string): Promise<UserProfile | null> {
     throw new Error('Invalid user ID format');
   }
 
+  if (!sb) throw new Error('Supabase not available');
+
   const data = await executeSupabaseOperation(
-    async () => await supabase
+    async () => await sb
       .from('users')
       .select('*')
       .eq('id', userId)
@@ -126,8 +135,10 @@ export async function getUserGamification(userId: string) {
     throw new Error('Invalid user ID format');
   }
 
+  if (!sb) throw new Error('Supabase not available');
+
   let data = await executeSupabaseOperation(
-    async () => await supabase
+    async () => await sb
       .from('user_gamification')
       .select('*')
       .eq('user_id', userId)
@@ -157,7 +168,7 @@ export async function getUserGamification(userId: string) {
     };
 
     data = await executeSupabaseOperation(
-      async () => await supabase
+      async () => await sb
         .from('user_gamification')
         .insert([defaultData])
         .select()
@@ -185,8 +196,10 @@ export async function updateUserGamification(userId: string, updates: any) {
     throw new Error('Invalid user ID format');
   }
 
+  if (!sb) throw new Error('Supabase not available');
+
   return executeWithRetry(async () => {
-    const { data, error } = await supabase
+    const { data, error } = await sb
       .from('user_gamification')
       .update({
         ...updates,
@@ -212,8 +225,10 @@ export async function completeChallenge(userId: string, challengeId: string): Pr
     throw new Error('Invalid user ID format');
   }
 
+  if (!sb) throw new Error('Supabase not available');
+
   return executeWithRetry(async () => {
-    const { error } = await supabase
+    const { error } = await sb
       .from('daily_challenges')
       .upsert({
         user_id: userId,
@@ -237,8 +252,10 @@ export async function getDailyChallenges(userId: string) {
     throw new Error('Invalid user ID format');
   }
 
+  if (!sb) throw new Error('Supabase not available');
+
   return executeWithRetry(async () => {
-    const { data, error } = await supabase
+    const { data, error } = await sb
       .from('daily_challenges')
       .select('*')
       .eq('user_id', userId);
@@ -260,8 +277,13 @@ async function getAchievements(userId: string) {
     return [];
   }
 
+  if (!sb) {
+    console.warn('[Supabase] Client not available for achievements');
+    return [];
+  }
+
   try {
-    const { data, error } = await supabase
+    const { data, error } = await sb
       .from('quiz_achievements')
       .select('id, achievement_id, achievement_type, earned_at, metadata')
       .eq('user_id', userId);

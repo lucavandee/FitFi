@@ -30,9 +30,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let active = true;
 
+    const sb = supabase();
+    if (!sb) {
+      setStatus('unauthenticated');
+      return;
+    }
+
     // 1) Initial snapshot
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await sb.auth.getSession();
       if (!active) return;
       const session = data?.session ?? null;
       if (session?.user) {
@@ -45,7 +51,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     })();
 
     // 2) Live updates
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = sb.auth.onAuthStateChange((_event, session) => {
       if (!active) return;
       if (session?.user) {
         setUser({ id: session.user.id, email: session.user.email ?? undefined, role: (session.user as any).role ?? null });

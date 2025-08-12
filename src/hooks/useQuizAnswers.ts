@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { useUser } from '../context/UserContext';
 import { QuizAnswers, QuizSubmission } from '../types/quiz';
 import { quizService } from '../services/quizService';
+
+// Get singleton client
+const sb = supabase();
 
 export function useQuizAnswers() {
   const { user } = useUser();
@@ -72,13 +75,18 @@ export function useQuizAnswers() {
       return false;
     }
 
+    if (!sb) {
+      setError('Supabase not available');
+      return false;
+    }
+
     setIsResetting(true);
     setError(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke('reset-quiz', {
+      const { data, error } = await sb.functions.invoke('reset-quiz', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          Authorization: `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`
         }
       });
 

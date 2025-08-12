@@ -1,7 +1,10 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { QuizAnswers, QuizSubmission } from '../types/quiz';
 import { quizSteps } from '../data/quizSteps';
 import { getQuizAnswer } from './supabaseService';
+
+// Get singleton client
+const sb = supabase();
 
 // Fallback quiz data
 const mockQuizData = {
@@ -49,7 +52,12 @@ export class QuizService {
         return true;
       }
 
-      const { error } = await supabase
+      if (!sb) {
+        console.warn('[QuizService] Supabase client not available, simulating success');
+        return true;
+      }
+
+      const { error } = await sb
         .from('quiz_answers')
         .upsert({
           user_id: userId,
