@@ -57,7 +57,3 @@ export function useABVariant(testName: string, userId?: string | null) {
 
   return { variant, trackClick, markExposure };
 }
-
-export function trackEvent(name: string, params: Record<string, any> = {}) {
-  return event(name, params);
-}
