@@ -2,22 +2,40 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
+import { useUserStats, useUserStreak, useTouchStreak, useReferrals, useNotifications } from '../hooks/useDashboard';
+import { NovaInsightCard } from '../components/Dashboard/NovaInsightCard';
+import { GamificationPanel } from '../components/Dashboard/GamificationPanel';
+import { NBAQuickActions } from '../components/Dashboard/NBAQuickActions';
+import { ReferralCard } from '../components/Dashboard/ReferralCard';
+import { NotificationsMini } from '../components/Dashboard/NotificationsMini';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
-import DashboardHeader from '../components/dashboard/DashboardHeader';
-import FoundersCard from '../components/dashboard/FoundersCard';
-import QuickActions from '../components/dashboard/QuickActions';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { track } from '../utils/analytics';
 import toast from 'react-hot-toast';
 
-const DashboardContent: React.FC = () => {
+const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useUser();
+  const { user, isLoading: userLoading } = useUser();
   const { resetQuiz, isResetting } = useQuizAnswers();
-  const { data, isLoading: dashboardLoading } = useDashboard();
+  const userId = user?.id;
 
-  if (isLoading) {
+  // Dashboard data hooks
+  const { data: stats, isLoading: statsLoading } = useUserStats(userId);
+  const { data: streak, isLoading: streakLoading } = useUserStreak(userId);
+  const touchStreak = useTouchStreak();
+  const { data: refs, isLoading: refsLoading } = useReferrals(userId);
+  const { data: notes, isLoading: notesLoading } = useNotifications(userId);
+
+  // Touch daily streak on mount
+  React.useEffect(() => {
+    if (userId && !streakLoading) {
+      touchStreak.mutate(userId);
+    }
+  }, [userId, streakLoading]);
+
+  if (userLoading) {
     return <LoadingFallback fullScreen message="Dashboard laden..." />;
   }
 
@@ -49,74 +67,149 @@ const DashboardContent: React.FC = () => {
     }
   };
 
-  if (dashboardLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Skeleton Header */}
-          <div className="bg-white rounded-3xl shadow-card p-6 mb-6 animate-pulse">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
-              <div className="space-y-2">
-                <div className="h-6 bg-gray-200 rounded w-48"></div>
-                <div className="h-4 bg-gray-200 rounded w-32"></div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Skeleton Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-3xl shadow-card p-6 animate-pulse">
-              <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
-              <div className="h-32 bg-gray-200 rounded-2xl"></div>
-            </div>
-            <div className="bg-white rounded-3xl shadow-card p-6 animate-pulse">
-              <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
-              <div className="space-y-3">
-                <div className="h-12 bg-gray-200 rounded-xl"></div>
-                <div className="h-12 bg-gray-200 rounded-xl"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Compute NBA context
+  const nbaContext = {
+    hasQuiz: true, // TODO: derive from quiz completion status
+    hasTribe: true, // TODO: derive from tribe membership
+    hasPost: (stats?.posts ?? 0) > 0,
+    hasSubmission: (stats?.submissions ?? 0) > 0,
+    referrals: refs?.length ?? 0,
+    streak: streak?.current_streak ?? 0,
+    level: stats?.level ?? 1,
+  };
+
+  const inviteUrl = `${window.location.origin}/?ref=${userId ?? "guest"}`;
+  
+  // Nova insight (TODO: replace with real AI-generated insight)
+  const novaInsight = `Deze week scoor je met warme lagen in navy & camel. Combineer een knit met een lichte overcoat en voeg suede loafers toe voor +style.`;
+
+  const isLoading = statsLoading || streakLoading || refsLoading || notesLoading;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Dashboard Header */}
-        {data?.profile && (
-          <DashboardHeader profile={data.profile} />
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Welcome Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-light text-gray-900 mb-2">
+            Welkom terug, {user.name}!
+          </h1>
+          <p className="text-gray-600">
+            Klaar voor je volgende stijl-avontuur?
+          </p>
+        </div>
+
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="space-y-6">
+            {/* Skeleton Nova Card */}
+            <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
+            
+            {/* Skeleton Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="md:col-span-2 bg-gray-200 rounded-2xl h-32 animate-pulse"></div>
+              <div className="bg-gray-200 rounded-2xl h-32 animate-pulse"></div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
+              <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
+              <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Nova Daily Insight */}
+            <ErrorBoundary>
+              <NovaInsightCard text={novaInsight} />
+            </ErrorBoundary>
+
+            {/* Main Dashboard Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* NBA Quick Actions */}
+              <div className="md:col-span-2">
+                <ErrorBoundary>
+                  <NBAQuickActions ctx={nbaContext} />
+                </ErrorBoundary>
+              </div>
+              
+              {/* Gamification Panel */}
+              <ErrorBoundary>
+                <GamificationPanel 
+                  level={stats?.level ?? 1} 
+                  xp={stats?.xp ?? 0} 
+                  streak={streak?.current_streak ?? 0} 
+                />
+              </ErrorBoundary>
+            </div>
+
+            {/* Secondary Dashboard Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Referral Card */}
+              <ErrorBoundary>
+                <ReferralCard 
+                  codeUrl={inviteUrl} 
+                  count={refs?.length ?? 0} 
+                  goal={3}
+                />
+              </ErrorBoundary>
+              
+              {/* Notifications Mini */}
+              <ErrorBoundary>
+                <NotificationsMini items={notes ?? []} />
+              </ErrorBoundary>
+              
+              {/* Future: Challenges Snapshot */}
+              <div className="bg-white rounded-2xl p-4 shadow flex items-center justify-center text-gray-400">
+                <div className="text-center">
+                  <div className="text-sm">Challenges Snapshot</div>
+                  <div className="text-xs mt-1">Coming Soon</div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Founders Club Card */}
-          {data?.referrals && (
-            <FoundersCard 
-              referrals={data.referrals}
-              shareLink={data.shareLink ?? ''}
-            />
-          )}
-
-          {/* Quick Actions */}
-          <QuickActions 
-            onRestartQuiz={handleQuizRestart}
-            isResetting={isResetting}
-          />
+        {/* Legacy Actions (Fallback) */}
+        <div className="bg-white rounded-3xl shadow-sm p-6">
+          <h3 className="font-medium text-gray-900 mb-4">Snelle acties</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button
+              as={Link}
+              to="/results"
+              variant="primary"
+              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] p-4 h-auto flex-col items-start text-left"
+              onClick={() => track('dashboard_action_click', { action: 'view_results' })}
+            >
+              <span className="font-semibold mb-1">Bekijk Resultaten</span>
+              <span className="text-sm opacity-90">Je gepersonaliseerde outfit aanbevelingen</span>
+            </Button>
+            
+            <Button
+              as={Link}
+              to="/outfits"
+              variant="outline"
+              className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white p-4 h-auto flex-col items-start text-left"
+              onClick={() => track('dashboard_action_click', { action: 'browse_outfits' })}
+            >
+              <span className="font-semibold mb-1">Ontdek Outfits</span>
+              <span className="text-sm opacity-90">Browse door alle outfit aanbevelingen</span>
+            </Button>
+            
+            <Button
+              onClick={handleQuizRestart}
+              variant="outline"
+              disabled={isResetting}
+              className="border-gray-300 text-gray-600 hover:bg-gray-50 p-4 h-auto flex-col items-start text-left"
+            >
+              <span className="font-semibold mb-1">
+                {isResetting ? 'Quiz resetten...' : 'Quiz Opnieuw'}
+              </span>
+              <span className="text-sm opacity-90">Herstart je stijlanalyse</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
-
-const DashboardPage: React.FC = () => {
-  return (
-    <DashboardProvider>
-      <DashboardContent />
-    </DashboardProvider>
   );
 };
 
