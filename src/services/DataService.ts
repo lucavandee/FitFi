@@ -1,21 +1,13 @@
-// Re-export from new data service orchestrator
-export { 
-  fetchProducts as getProducts,
-  fetchOutfits as getOutfits, 
-  fetchUser as getUser,
-  clearCache,
-  getCacheStats,
-  getRecentErrors,
-  healthCheck,
-  dataService
+// Herexporteer consistente API uit de lowercase module
+export * from './data/dataService';
+import {
+  fetchProducts, fetchOutfits, fetchUser,
+  clearCache, getCacheStats, getRecentErrors, healthCheck
 } from './data/dataService';
 
-// Legacy compatibility
 export const dataService = {
-  getProducts: fetchProducts,
-  getOutfits: fetchOutfits,
-  getUser: fetchUser,
-  clearCache,
-  getCacheStats,
-  getRecentErrors
+  fetchProducts, fetchOutfits, fetchUser,
+  clearCache, getCacheStats, getRecentErrors, healthCheck
 };
+
+export default dataService;
