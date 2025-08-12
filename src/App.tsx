@@ -15,7 +15,7 @@ import AppPortal from '@/components/layout/AppPortal';
 // Lazy load components for better performance
 const NovaBubble = React.lazy(() => 
   import('@/components/ai/NovaBubble').then(m => ({ 
-    default: m.default ?? m.NovaBubble 
+    default: m.default
   })).catch(err => {
     console.error('Failed to load NovaBubble:', err);
     return { 
