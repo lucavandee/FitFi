@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
-import { useUserStats, useUserStreak, useTouchStreak, useReferrals, useNotifications } from '../hooks/useDashboard';
-import { NovaInsightCard } from '../components/Dashboard/NovaInsightCard';
-import { GamificationPanel } from '../components/Dashboard/GamificationPanel';
-import { NBAQuickActions } from '../components/Dashboard/NBAQuickActions';
-import { ReferralCard } from '../components/Dashboard/ReferralCard';
-import { NotificationsMini } from '../components/Dashboard/NotificationsMini';
+import { useUserStats, useUserStreak, useTouchStreak, useReferrals, useNotifications } from '@/hooks/useDashboard';
+import { NovaInsightCard } from '@/components/Dashboard/NovaInsightCard';
+import { GamificationPanel } from '@/components/Dashboard/GamificationPanel';
+import { NBAQuickActions } from '@/components/Dashboard/NBAQuickActions';
+import { ReferralCard } from '@/components/Dashboard/ReferralCard';
+import { NotificationsMini } from '@/components/Dashboard/NotificationsMini';
+import { navigationService } from '@/services/navigation/NavigationService';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -22,18 +23,16 @@ const DashboardPage: React.FC = () => {
   const userId = user?.id;
 
   // Dashboard data hooks
-  const { data: stats, isLoading: statsLoading } = useUserStats(userId);
-  const { data: streak, isLoading: streakLoading } = useUserStreak(userId);
-  const touchStreak = useTouchStreak();
-  const { data: refs, isLoading: refsLoading } = useReferrals(userId);
-  const { data: notes, isLoading: notesLoading } = useNotifications(userId);
+  const { data: stats } = useUserStats(userId);
+  const { data: streak } = useUserStreak(userId);
+  const touch = useTouchStreak();
+  const { data: refs } = useReferrals(userId);
+  const { data: notes } = useNotifications(userId);
 
-  // Touch daily streak on mount
-  React.useEffect(() => {
-    if (userId && !streakLoading) {
-      touchStreak.mutate(userId);
-    }
-  }, [userId, streakLoading]);
+  // Auto-touch daily streak on mount
+  React.useEffect(() => { 
+    if (userId) touch.mutate(userId); 
+  }, [userId]);
 
   if (userLoading) {
     return <LoadingFallback fullScreen message="Dashboard laden..." />;
@@ -67,10 +66,10 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // Compute NBA context
-  const nbaContext = {
-    hasQuiz: true, // TODO: derive from quiz completion status
-    hasTribe: true, // TODO: derive from tribe membership
+  // Compute NBA context with real data
+  const ctx = {
+    hasQuiz: true,             // TODO: uit profiel/answers afleiden
+    hasTribe: true,            // TODO: derive from tribe membership
     hasPost: (stats?.posts ?? 0) > 0,
     hasSubmission: (stats?.submissions ?? 0) > 0,
     referrals: refs?.length ?? 0,
@@ -78,12 +77,10 @@ const DashboardPage: React.FC = () => {
     level: stats?.level ?? 1,
   };
 
-  const inviteUrl = `${window.location.origin}/?ref=${userId ?? "guest"}`;
+  const inviteUrl = `${location.origin}/?ref=${userId ?? "guest"}`;
   
   // Nova insight (TODO: replace with real AI-generated insight)
-  const novaInsight = `Deze week scoor je met warme lagen in navy & camel. Combineer een knit met een lichte overcoat en voeg suede loafers toe voor +style.`;
-
-  const isLoading = statsLoading || streakLoading || refsLoading || notesLoading;
+  const insight = `Deze week scoor je met warme lagen in navy & camel. Combineer een knit met een lichte overcoat en voeg suede loafer toe voor +style.`; // TODO: vervangen door Nova AI
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">
@@ -98,76 +95,54 @@ const DashboardPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Loading State */}
-        {isLoading ? (
-          <div className="space-y-6">
-            {/* Skeleton Nova Card */}
-            <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
-            
-            {/* Skeleton Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2 bg-gray-200 rounded-2xl h-32 animate-pulse"></div>
-              <div className="bg-gray-200 rounded-2xl h-32 animate-pulse"></div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
-              <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
-              <div className="bg-gray-200 rounded-2xl h-24 animate-pulse"></div>
+        {/* Nova Daily Insight */}
+        <ErrorBoundary>
+          <NovaInsightCard text={insight} />
+        </ErrorBoundary>
+
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* NBA Quick Actions */}
+          <div className="md:col-span-2">
+            <ErrorBoundary>
+              <NBAQuickActions ctx={ctx} />
+            </ErrorBoundary>
+          </div>
+          
+          {/* Gamification Panel */}
+          <ErrorBoundary>
+            <GamificationPanel 
+              level={stats?.level ?? 1} 
+              xp={stats?.xp ?? 0} 
+              streak={streak?.current_streak ?? 0} 
+            />
+          </ErrorBoundary>
+        </div>
+
+        {/* Secondary Dashboard Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Referral Card */}
+          <ErrorBoundary>
+            <ReferralCard 
+              codeUrl={inviteUrl} 
+              count={refs?.length ?? 0} 
+              goal={3}
+            />
+          </ErrorBoundary>
+          
+          {/* Notifications Mini */}
+          <ErrorBoundary>
+            <NotificationsMini items={notes ?? []} />
+          </ErrorBoundary>
+          
+          {/* Future: Challenges Snapshot */}
+          <div className="bg-white rounded-2xl p-4 shadow flex items-center justify-center text-gray-400">
+            <div className="text-center">
+              <div className="text-sm">Challenges Snapshot</div>
+              <div className="text-xs mt-1">Coming Soon</div>
             </div>
           </div>
-        ) : (
-          <>
-            {/* Nova Daily Insight */}
-            <ErrorBoundary>
-              <NovaInsightCard text={novaInsight} />
-            </ErrorBoundary>
-
-            {/* Main Dashboard Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* NBA Quick Actions */}
-              <div className="md:col-span-2">
-                <ErrorBoundary>
-                  <NBAQuickActions ctx={nbaContext} />
-                </ErrorBoundary>
-              </div>
-              
-              {/* Gamification Panel */}
-              <ErrorBoundary>
-                <GamificationPanel 
-                  level={stats?.level ?? 1} 
-                  xp={stats?.xp ?? 0} 
-                  streak={streak?.current_streak ?? 0} 
-                />
-              </ErrorBoundary>
-            </div>
-
-            {/* Secondary Dashboard Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Referral Card */}
-              <ErrorBoundary>
-                <ReferralCard 
-                  codeUrl={inviteUrl} 
-                  count={refs?.length ?? 0} 
-                  goal={3}
-                />
-              </ErrorBoundary>
-              
-              {/* Notifications Mini */}
-              <ErrorBoundary>
-                <NotificationsMini items={notes ?? []} />
-              </ErrorBoundary>
-              
-              {/* Future: Challenges Snapshot */}
-              <div className="bg-white rounded-2xl p-4 shadow flex items-center justify-center text-gray-400">
-                <div className="text-center">
-                  <div className="text-sm">Challenges Snapshot</div>
-                  <div className="text-xs mt-1">Coming Soon</div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+        </div>
 
         {/* Legacy Actions (Fallback) */}
         <div className="bg-white rounded-3xl shadow-sm p-6">
