@@ -6,6 +6,7 @@ import { configureRouterFutureFlags } from '@/utils/routerUtils';
 import { initializeSentry } from '@/utils/sentryConfig';
 import { advancedAnalytics } from '@/services/AdvancedAnalytics';
 import { initializePerformanceOptimizations } from '@/utils/performanceUtils';
+import { startHealthMonitoring } from '@/lib/supabaseHealth';
 import '@/styles/main.css';
 
 // Configure React Router future flags to suppress warnings
@@ -16,6 +17,18 @@ initializeSentry();
 
 // Initialize performance optimizations
 initializePerformanceOptimizations();
+
+// Initialize Supabase health monitoring
+if (typeof window !== 'undefined') {
+  // Start health monitoring after initial load
+  window.addEventListener('load', () => {
+    try {
+      startHealthMonitoring(60000); // Check every minute
+    } catch (error) {
+      console.warn('Health monitoring initialization failed:', error);
+    }
+  });
+}
 
 // Initialize Advanced Analytics
 if (typeof window !== 'undefined') {
