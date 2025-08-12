@@ -147,7 +147,7 @@ const TribesPage: React.FC = () => {
             )}
 
             {/* Create Tribe CTA */}
-            {user && (
+            {status === 'authenticated' && (
               <Button
                 as={Link}
                 to="/tribes/create"
