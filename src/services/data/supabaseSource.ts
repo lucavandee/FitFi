@@ -906,7 +906,9 @@ export async function getSbTribeRankings(
     }
     
     const data = await executeSupabaseOperationSafe(
-      async () => await query,
+      async () => {
+        return await query;
+      },
       'get_tribe_rankings',
       'tribe_rankings'
     );

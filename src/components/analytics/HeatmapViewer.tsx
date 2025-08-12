@@ -21,6 +21,11 @@ const HeatmapViewer: React.FC<HeatmapViewerProps> = ({ pageUrl, className = '' }
     try {
       setIsLoading(true);
       
+      if (!supabase) {
+        console.error('Supabase client not available');
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('heatmap_data')
         .select('*')
