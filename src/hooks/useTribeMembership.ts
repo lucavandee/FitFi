@@ -22,6 +22,8 @@ export function useTribeMembership(tribeId: string, userId?: string) {
 
   async function onJoin() {
     if (!userId) throw new Error("Niet ingelogd");
+    
+    // Optimistic update
     const optimistic = { 
       id: `temp_${Date.now()}`,
       tribe_id: tribeId, 
@@ -30,13 +32,20 @@ export function useTribeMembership(tribeId: string, userId?: string) {
       joined_at: new Date().toISOString() 
     };
     setMembers(prev => prev.some(m => m.user_id === userId) ? prev : [optimistic, ...prev]);
+    
     try {
       await joinTribe(tribeId, userId);
-      // Refresh members list to get real data
-      const updatedMembers = await getTribeMembers(tribeId);
-      setMembers(updatedMembers);
+      
+      // Only refresh if we're still mounted and the operation succeeded
+      try {
+        const updatedMembers = await getTribeMembers(tribeId);
+        setMembers(updatedMembers);
+      } catch (refreshError) {
+        console.warn('[TribeMembership] Could not refresh after join, keeping optimistic state');
+        // Keep optimistic state if refresh fails
+      }
     } catch (e) {
-      // revert
+      // Revert optimistic update on error
       setMembers(prev => prev.filter(m => m.user_id !== userId));
       throw e;
     }
@@ -44,15 +53,27 @@ export function useTribeMembership(tribeId: string, userId?: string) {
 
   async function onLeave() {
     if (!userId) throw new Error("Niet ingelogd");
+    
+    // Store previous state for rollback
     const prev = members;
+    
+    // Optimistic update
     setMembers(prev.filter(m => m.user_id !== userId));
+    
     try {
       await leaveTribe(tribeId, userId);
-      // Refresh members list to get real data
-      const updatedMembers = await getTribeMembers(tribeId);
-      setMembers(updatedMembers);
+      
+      // Only refresh if we're still mounted and the operation succeeded
+      try {
+        const updatedMembers = await getTribeMembers(tribeId);
+        setMembers(updatedMembers);
+      } catch (refreshError) {
+        console.warn('[TribeMembership] Could not refresh after leave, keeping optimistic state');
+        // Keep optimistic state if refresh fails
+      }
     } catch (e) {
-      setMembers(prev); // revert
+      // Revert optimistic update on error
+      setMembers(prev);
       throw e;
     }
   }
