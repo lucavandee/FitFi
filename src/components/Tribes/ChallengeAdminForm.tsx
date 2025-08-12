@@ -221,6 +221,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
                     icon={<X size={14} />}
                     className="text-red-600 hover:bg-red-50"
                   >
+                    <></>
                   </Button>
                 )}
               </div>

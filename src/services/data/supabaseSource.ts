@@ -823,7 +823,7 @@ export async function getSbChallengeSubmissions(
     }
     
     const data = await executeSupabaseOperationSafe(
-      () => query,
+      async () => await query,
       'get_challenge_submissions',
       'tribe_challenge_submissions'
     );
