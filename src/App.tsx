@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import CrashGate from '@/components/system/CrashGate';
+import { lazyAny } from '@/utils/lazyPage';
 import { UserProvider } from '@/context/UserContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { GamificationProvider } from '@/context/GamificationContext';
@@ -12,56 +14,48 @@ import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
 
-// Lazy load components for better performance
-const NovaBubble = React.lazy(() => 
-  import('@/components/ai/NovaBubble').then(m => ({ 
-    default: m.default
-  })).catch(err => {
-    console.error('Failed to load NovaBubble:', err);
-    return { 
-      default: () => null // Fail-safe fallback
-    };
-  })
-);
+// Lazy load components with lazyAny for better error handling
+const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
 
-//  Lazy load all pages for optimal code-splitting
-const HomePage = React.lazy(() => import('@/pages/HomePage'));
-const LandingPage = React.lazy(() => import('@/pages/LandingPage'));
-const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
-const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
-const ForgotPasswordPage = React.lazy(() => import('@/pages/ForgotPasswordPage'));
-const ResetPasswordPage = React.lazy(() => import('@/pages/ResetPasswordPage'));
-const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
-const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
-const HowItWorksPage = React.lazy(() => import('@/pages/HowItWorksPage'));
-const PricingPage =  React.lazy(() => import('@/pages/PricingPage'));
-const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
-const FAQPage = React.lazy(() => import('@/pages/FAQPage'));
-const LegalPage = React.lazy(() => import('@/pages/LegalPage'));
-const SupportPage = React.lazy(() => import('@/pages/SupportPage'));
-const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
-const GenderSelectPage = React.lazy(() => import('@/pages/GenderSelectPage'));
-const ProductPage = React.lazy(() => import('@/pages/ProductPage'));
-const PrivacyPolicyPage = React.lazy(() => import('@/pages/PrivacyPolicyPage'));
-const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
-const OnboardingPage = React.lazy(() => import('@/pages/OnboardingPage'));
-const QuizPage = React.lazy(() => import('@/pages/QuizPage'));
-const ResultsPage = React.lazy(() => import('@/pages/ResultsPage'));
-const EnhancedResultsPage = React.lazy(() => import('@/pages/EnhancedResultsPage'));
-const DynamicOnboardingPage = React.lazy(() => import('@/pages/DynamicOnboardingPage'));
-const DynamicResultsPage = React.lazy(() => import('@/pages/DynamicResultsPage'));
-const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
-const BlogIndexPage = React.lazy(() => import('@/pages/BlogIndexPage'));
-const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
-const TribesPage = React.lazy(() => import('@/pages/TribesPage'));
-const TribeDetailPage = React.lazy(() => import('@/pages/TribeDetailPage'));
-const HelpCenterPage = React.lazy(() => import('@/pages/HelpCenterPage'));
-const FeedbackPage = React.lazy(() => import('@/pages/FeedbackPage'));
-const SuccessStoriesPage = React.lazy(() => import('@/pages/SuccessStoriesPage'));
-const OutfitsPage = React.lazy(() => import('@/pages/OutfitsPage'));
-const GamificationPage = React.lazy(() => import('@/pages/GamificationPage'));
-const AnalyticsPage =  React.lazy(() => import('@/pages/AnalyticsPage'));
-const FeedPage = React.lazy(() => import('@/pages/FeedPage'));
+// Lazy load all pages with lazyAny for optimal code-splitting
+const HomePage = lazyAny(() => import('@/pages/HomePage'));
+const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
+const LoginPage = lazyAny(() => import('@/pages/LoginPage'));
+const RegisterPage = lazyAny(() => import('@/pages/RegisterPage'));
+const ForgotPasswordPage = lazyAny(() => import('@/pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazyAny(() => import('@/pages/ResetPasswordPage'));
+const ProfilePage = lazyAny(() => import('@/pages/ProfilePage'));
+const AboutPage = lazyAny(() => import('@/pages/AboutPage'));
+const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
+const PricingPage = lazyAny(() => import('@/pages/PricingPage'));
+const ContactPage = lazyAny(() => import('@/pages/ContactPage'));
+const FAQPage = lazyAny(() => import('@/pages/FAQPage'));
+const LegalPage = lazyAny(() => import('@/pages/LegalPage'));
+const SupportPage = lazyAny(() => import('@/pages/SupportPage'));
+const TermsPage = lazyAny(() => import('@/pages/TermsPage'));
+const GenderSelectPage = lazyAny(() => import('@/pages/GenderSelectPage'));
+const ProductPage = lazyAny(() => import('@/pages/ProductPage'));
+const PrivacyPolicyPage = lazyAny(() => import('@/pages/PrivacyPolicyPage'));
+const ThankYouPage = lazyAny(() => import('@/pages/ThankYouPage'));
+const OnboardingPage = lazyAny(() => import('@/pages/OnboardingPage'));
+const QuizPage = lazyAny(() => import('@/pages/QuizPage'));
+const ResultsPage = lazyAny(() => import('@/pages/ResultsPage'));
+const EnhancedResultsPage = lazyAny(() => import('@/pages/EnhancedResultsPage'));
+const DynamicOnboardingPage = lazyAny(() => import('@/pages/DynamicOnboardingPage'));
+const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
+const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
+const BlogIndexPage = lazyAny(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = lazyAny(() => import('@/pages/BlogDetailPage'));
+const TribesPage = lazyAny(() => import('@/pages/TribesPage'));
+const TribeDetailPage = lazyAny(() => import('@/pages/TribeDetailPage'));
+const HelpCenterPage = lazyAny(() => import('@/pages/HelpCenterPage'));
+const FeedbackPage = lazyAny(() => import('@/pages/FeedbackPage'));
+const SuccessStoriesPage = lazyAny(() => import('@/pages/SuccessStoriesPage'));
+const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
+const GamificationPage = lazyAny(() => import('@/pages/GamificationPage'));
+const AnalyticsPage = lazyAny(() => import('@/pages/AnalyticsPage'));
+const FeedPage = lazyAny(() => import('@/pages/FeedPage'));
+const HealthCheckPage = lazyAny(() => import('@/pages/HealthCheckPage'));
 
 // Create a client
 const queryClient = new QueryClient({
@@ -92,7 +86,7 @@ const NotFound: React.FC = () => (
 
 function App() {
   return (
-    <ErrorBoundary>
+    <CrashGate>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <UserProvider>
@@ -203,6 +197,9 @@ function App() {
                             <TribeDetailPage />
                           </ProtectedRoute>
                         } />
+                        
+                        {/* Health Check Route */}
+                        <Route path="__health" element={<HealthCheckPage />} />
                       
                         {/* Fallback */}
                         <Route path="*" element={<NotFound />} />
@@ -224,7 +221,7 @@ function App() {
           </UserProvider>
         </ThemeProvider>
       </QueryClientProvider>
-    </ErrorBoundary>
+    </CrashGate>
   );
 }
 
