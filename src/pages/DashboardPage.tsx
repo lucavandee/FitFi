@@ -9,6 +9,7 @@ import { GamificationPanel } from '@/components/Dashboard/GamificationPanel';
 import { NBAQuickActions } from '@/components/Dashboard/NBAQuickActions';
 import { ReferralCard } from '@/components/Dashboard/ReferralCard';
 import { NotificationsMini } from '@/components/Dashboard/NotificationsMini';
+import { ChallengeSnapshot } from '@/components/Dashboard/ChallengeSnapshot';
 import { navigationService } from '@/services/navigation/NavigationService';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
@@ -135,13 +136,10 @@ const DashboardPage: React.FC = () => {
             <NotificationsMini items={notes ?? []} />
           </ErrorBoundary>
           
-          {/* Future: Challenges Snapshot */}
-          <div className="bg-white rounded-2xl p-4 shadow flex items-center justify-center text-gray-400">
-            <div className="text-center">
-              <div className="text-sm">Challenges Snapshot</div>
-              <div className="text-xs mt-1">Coming Soon</div>
-            </div>
-          </div>
+          {/* Challenges Snapshot */}
+          <ErrorBoundary>
+            <ChallengeSnapshot />
+          </ErrorBoundary>
         </div>
 
         {/* Legacy Actions (Fallback) */}
