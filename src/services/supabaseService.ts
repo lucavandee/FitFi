@@ -21,6 +21,47 @@ export function useABTesting(options: ABTestingOptions) {
   return { variant, trackConversion };
 }
 
+import { getSupabase } from '@/lib/supabase';
+
+// Basic shape; pas desgewenst aan aan je bestaande types
+export type QuizAnswer = any;
+
+/**
+ * Haal één quiz-antwoord op voor een user+step.
+ * - Supabase: selecteert uit 'quiz_answers' met velden user_id, step_id, answer, updated_at
+ * - Fallback: leest localStorage key `quiz:${userId}:${stepId}`
+ */
+export async function getQuizAnswer(userId: string, stepId: string): Promise<QuizAnswer | null> {
+  try {
+    const sb = getSupabase();
+    if (!sb) {
+      // Fallback (client only)
+      if (typeof window !== 'undefined') {
+        const raw = window.localStorage.getItem(`quiz:${userId}:${stepId}`);
+        return raw ? JSON.parse(raw) : null;
+      }
+      return null;
+    }
+
+    const { data, error } = await sb
+      .from('quiz_answers')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('question_id', stepId)
+      .maybeSingle();
+
+    if (error) {
+      // Log zacht en val terug op null
+      console.debug('[quiz:getQuizAnswer] supabase error', error);
+      return null;
+    }
+    return data ?? null;
+  } catch (e) {
+    console.debug('[quiz:getQuizAnswer] exception', e);
+    return null;
+  }
+}
+
 export type Variant = 'control' | 'v1' | 'v2';
 
 /** Dependency-loze hash (djb2-variant), deterministisch en snel */

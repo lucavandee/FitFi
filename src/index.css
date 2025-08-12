@@ -1,7 +1,10 @@
+/* imports moeten als eerste komen */
+@import './styles/components/pricing.css';
+
+/* tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import './styles/components/pricing.css';
 
 @layer utilities {
   /* Alias utilities voor leesbaarheid/consistentie */
