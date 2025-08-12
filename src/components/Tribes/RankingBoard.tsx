@@ -1,5 +1,6 @@
 import React from "react";
 import { useTribeRanking } from "@/hooks/useTribeChallenges";
+import { Trophy, Crown, Medal, TrendingUp, Users, Star, Calendar } from 'lucide-react';
 import { Trophy, Crown, Medal, TrendingUp, Users, Star } from 'lucide-react';
 import LoadingFallback from "../ui/LoadingFallback";
 

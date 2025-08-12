@@ -11,7 +11,7 @@ const FALLBACK_DATA_URI =
 export default function ImageWithFallback({
   src,
   alt,
-  fallbackSrc = '/images/outfit-fallback.jpg',
+  fallbackSrc = 'https://images.pexels.com/photos/428340/pexels-photo-428340.jpeg?auto=compress&cs=tinysrgb&w=1200',
   componentName,
   onError,
   className = '',
