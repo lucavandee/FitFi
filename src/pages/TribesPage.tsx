@@ -252,6 +252,7 @@ const TribesPage: React.FC = () => {
                       >
                         <JoinButton 
                           tribeId={tribe.id}
+                          userId={user.id}
                           size="sm"
                           variant="outline"
                           className="border-none bg-transparent text-inherit hover:bg-transparent"

@@ -8,16 +8,19 @@ import toast from "react-hot-toast";
 
 type Props = {
   tribeId: string;
+  userId?: string;
   className?: string;
   placeholder?: string;
 };
 
 export const PostComposer: React.FC<Props> = ({ 
   tribeId, 
+  userId,
   className = '',
   placeholder = "Deel iets met je tribe..."
 }) => {
   const { user } = useUser();
+  const actualUserId = userId || user?.id;
   const { addPost } = useTribePosts(tribeId);
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -27,7 +30,7 @@ export const PostComposer: React.FC<Props> = ({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     
-    if (!user?.id) {
+    if (!actualUserId) {
       toast.error("Log in om te posten");
       return;
     }
@@ -40,11 +43,10 @@ export const PostComposer: React.FC<Props> = ({
     setBusy(true);
     try {
       await addPost({
-        tribeId,
-        authorId: user.id,
-        authorName: user.name ?? "Member",
+        tribe_id: tribeId,
+        user_id: actualUserId,
         content: content.trim(),
-        imageUrl: imageUrl.trim() || undefined,
+        image_url: imageUrl.trim() || undefined,
       });
       
       // Reset form

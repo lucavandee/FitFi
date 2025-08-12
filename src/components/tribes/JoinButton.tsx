@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 type Props = { 
   tribeId: string; 
+  userId?: string;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'outline' | 'ghost';
@@ -14,16 +15,18 @@ type Props = {
 
 export const JoinButton: React.FC<Props> = ({ 
   tribeId, 
+  userId,
   className = '',
   size = 'md',
   variant = 'primary'
 }) => {
   const { user } = useUser();
-  const { isMember, onJoin, onLeave, loading } = useTribeMembership(tribeId, user?.id);
+  const actualUserId = userId || user?.id;
+  const { isMember, onJoin, onLeave, loading } = useTribeMembership(tribeId, actualUserId);
   const [busy, setBusy] = useState(false);
 
   const handleClick = async () => {
-    if (!user?.id) {
+    if (!actualUserId) {
       toast.error("Log in om mee te doen met tribes", {
         id: 'tribe-login-required',
         duration: 3000
