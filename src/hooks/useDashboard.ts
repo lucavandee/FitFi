@@ -1,5 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchUserStats, upsertUserStats, fetchUserStreak, touchDailyStreak, fetchReferrals, fetchNotifications, addXp } from "@/services/dashboard/dashboardService";
+import { 
+  fetchUserStats, 
+  upsertUserStats, 
+  fetchUserStreak, 
+  touchDailyStreak, 
+  fetchReferrals, 
+  fetchNotifications, 
+  addXp 
+} from "@/services/dashboard/dashboardService";
 
 export const useUserStats = (userId?: string) =>
   useQuery({ queryKey: ["userStats", userId], queryFn: () => fetchUserStats(userId!), enabled: !!userId });

@@ -3,6 +3,7 @@ import { computeNextActions } from "@/services/nba/nextBestActions";
 import { routeTo } from "@/services/navigation/NavigationService";
 import { useUser } from "@/context/UserContext";
 import { useBestChallenge } from "@/hooks/useBestChallenge";
+import { Link } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
 export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActions>[0] }> = ({ ctx }) => {

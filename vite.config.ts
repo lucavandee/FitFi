@@ -17,12 +17,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    target: 'es2020',
     rollupOptions: {
+      external: [],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          ui: ['lucide-react']
+          ui: ['lucide-react'],
+          query: ['@tanstack/react-query']
         }
       }
     }
