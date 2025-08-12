@@ -5,27 +5,31 @@
 
 @layer base {
   body {
-    @apply bg-primary text-body font-sans;
+    @apply bg-surface-light text-gray-900 font-body antialiased;
+  }
+  
+  h1, h2, h3, h4 {
+    @apply font-heading;
   }
   
   h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+    @apply text-5xl lg:text-6xl font-extrabold text-midnight;
   }
   
   h2 {
-    @apply text-4xl font-semibold text-secondary;
+    @apply text-4xl font-semibold text-midnight;
   }
   
   h3 {
-    @apply text-3xl font-semibold text-secondary;
+    @apply text-3xl font-semibold text-midnight;
   }
   
   p, span, li {
-    @apply text-base leading-relaxed text-body;
+    @apply text-base leading-relaxed text-gray-700;
   }
   
   a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+    @apply text-turquoise hover:underline focus-visible:ring-2 focus-visible:ring-turquoise;
   }
 }
 
@@ -35,39 +39,39 @@
   }
   
   .btn-primary {
-    @apply bg-secondary text-primary py-4 px-8 rounded-full font-medium text-lg shadow-lg hover:bg-secondary/90 focus:outline-none focus:ring-4 focus:ring-secondary/50 transition-all;
+    @apply bg-turquoise text-midnight py-4 px-8 rounded-2xl font-medium text-lg shadow-soft hover:bg-turquoise/90 focus:outline-none focus:ring-4 focus:ring-turquoise/50 transition-all;
   }
   
   .btn-secondary {
-    @apply bg-primary text-secondary border border-secondary py-3 px-6 rounded-full font-medium hover:bg-primary-light hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+    @apply bg-surface text-turquoise border border-turquoise py-3 px-6 rounded-2xl font-medium hover:bg-surface-light hover:text-midnight focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
   }
   
   .btn-ghost {
-    @apply bg-transparent text-body py-3 px-6 rounded-full border border-primary-light hover:bg-primary-light hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+    @apply bg-transparent text-gray-700 py-3 px-6 rounded-2xl border border-gray-200 hover:bg-surface-light hover:text-turquoise focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
   }
   
   .btn-danger {
-    @apply bg-red-600 text-white py-3 px-6 rounded-full font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
+    @apply bg-red-600 text-white py-3 px-6 rounded-2xl font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all;
   }
   
   .quiz-button {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+    @apply bg-turquoise text-midnight py-3 px-6 rounded-2xl font-medium hover:bg-turquoise/90 focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
   }
   
   .dashboard-card {
-    @apply bg-accent text-text-dark p-6 rounded-2xl shadow-lg space-y-6 transition-shadow hover:shadow-xl;
+    @apply bg-surface text-gray-900 p-6 rounded-2xl shadow-soft space-y-6 transition-shadow hover:shadow-xl;
   }
   
   .tab-inactive {
-    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-full transition-all;
+    @apply bg-gray-200 text-gray-600 py-3 px-6 rounded-2xl transition-all;
   }
   
   .tab-active {
-    @apply bg-secondary text-primary py-3 px-6 rounded-full font-medium transition-all;
+    @apply bg-turquoise text-midnight py-3 px-6 rounded-2xl font-medium transition-all;
   }
   
   .text-heading {
-    @apply text-4xl font-semibold text-secondary leading-tight mb-6;
+    @apply text-4xl font-semibold text-midnight leading-tight mb-6;
   }
   
   .text-body {
@@ -83,7 +87,7 @@
   }
   
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-turquoise focus:ring-offset-2;
   }
   
   /* Custom slider styling */
@@ -125,19 +129,19 @@
   }
   
   .stijlscan-container {
-    @apply bg-accent text-text-dark p-8 rounded-2xl mb-6;
+    @apply bg-surface text-gray-900 p-8 rounded-2xl mb-6;
   }
   
   .stijlscan-option {
-    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-secondary transition-all;
+    @apply bg-white text-gray-600 border border-gray-200 p-6 rounded-2xl mb-6 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-turquoise transition-all;
   }
   
   .progress-bar-track {
-    @apply w-full bg-primary-light rounded-full h-2;
+    @apply w-full bg-gray-200 rounded-full h-2;
   }
   
   .progress-bar-fill {
-    @apply bg-secondary h-2 rounded-full transition-all;
+    @apply bg-turquoise h-2 rounded-full transition-all;
   }
   
   .loading-skeleton {
@@ -151,37 +155,37 @@
   }
   
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Lato', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    @apply bg-primary text-body;
+    @apply bg-surface-light text-gray-900;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-family: 'Montserrat', system-ui, sans-serif;
     font-weight: 600;
     line-height: 1.2;
   }
   
   h1 {
-    @apply text-5xl lg:text-6xl font-extrabold text-secondary;
+    @apply text-5xl lg:text-6xl font-extrabold text-midnight;
   }
   
   h2 {
-    @apply text-4xl font-semibold text-secondary;
+    @apply text-4xl font-semibold text-midnight;
   }
   
   h3 {
-    @apply text-3xl font-semibold text-secondary;
+    @apply text-3xl font-semibold text-midnight;
   }
   
   p, span, li {
-    @apply text-base leading-relaxed text-body;
+    @apply text-base leading-relaxed text-gray-700;
   }
   
   a {
-    @apply text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary;
+    @apply text-turquoise hover:underline focus-visible:ring-2 focus-visible:ring-turquoise;
   }
 }
 
