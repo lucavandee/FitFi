@@ -25,11 +25,11 @@ const DashboardPage: React.FC = () => {
 
   // Dashboard data hooks
   const { data: stats } = useUserStats(userId);
-  const { data: streak } = useUserStreak(userId);
+  const { data: streak, isLoading: streakLoading } = useUserStreak(userId);
   const touch = useTouchStreak();
   const addXpMutation = useAddXp();
   const { data: refs } = useReferrals(userId);
-  const { data: notes } = useNotifications(userId);
+  const { data: notes, isLoading: notesLoading } = useNotifications(userId);
 
   // Auto-touch daily streak on mount
   React.useEffect(() => { 
@@ -131,7 +131,7 @@ const DashboardPage: React.FC = () => {
 
         {/* Nova Daily Insight */}
         <ErrorBoundary>
-          <NovaInsightCard text={insight} />
+          <NovaInsightCard text={insight} loading={false} />
         </ErrorBoundary>
 
         {/* Main Dashboard Grid */}
@@ -146,9 +146,10 @@ const DashboardPage: React.FC = () => {
           {/* Gamification Panel */}
           <ErrorBoundary>
             <GamificationPanel 
-              level={stats?.level ?? 1} 
-              xp={stats?.xp ?? 0} 
-              streak={streak?.current_streak ?? 0} 
+              level={stats?.level} 
+              xp={stats?.xp} 
+              streak={streak?.current_streak} 
+              loading={!stats || streakLoading}
             />
           </ErrorBoundary>
         </div>
@@ -166,7 +167,7 @@ const DashboardPage: React.FC = () => {
           
           {/* Notifications Mini */}
           <ErrorBoundary>
-            <NotificationsMini items={notes ?? []} />
+            <NotificationsMini items={notes} loading={notesLoading} />
           </ErrorBoundary>
           
           {/* Challenges Snapshot */}
