@@ -40,3 +40,7 @@ export const DATA_CONFIG = {
 } as const;
 
 export type DataConfig = typeof DATA_CONFIG;
+
+// Named export for consistency
+export { DATA_CONFIG };
+export default DATA_CONFIG;
