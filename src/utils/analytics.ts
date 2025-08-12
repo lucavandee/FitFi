@@ -58,29 +58,6 @@ export function useABVariant(testName: string, userId?: string | null) {
   return { variant, trackClick, markExposure };
 }
 
-type Params = Record<string, any>;
-
-function gtagExists(): boolean {
-  return typeof window !== 'undefined' && typeof (window as any).gtag === 'function';
+export function trackEvent(name: string, params: Record<string, any> = {}) {
+  return event(name, params);
 }
-
-export function pageview(path: string, params: Params = {}) {
-  try { if (gtagExists()) (window as any).gtag('event', 'page_view', { page_path: path, ...params }); } catch {}
-}
-
-export function event(name: string, params: Params = {}) {
-  try {
-    if (gtagExists()) (window as any).gtag('event', name, params);
-    else if (typeof console !== 'undefined') console.debug('[analytics:event]', name, params);
-  } catch {}
-}
-
-export function exception(description: string, fatal = false) {
-  try { if (gtagExists()) (window as any).gtag('event', 'exception', { description, fatal }); } catch {}
-}
-
-export const track = trackEvent;
-
-/* ▼ Nieuw: default export voor legacy imports */
-const analytics = { pageview, event, exception, track };
-export default analytics;
