@@ -26,9 +26,28 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
         });
       }
       
-      alert("Invite gedeeld/gekopieerd!");
+      // Enhanced feedback with custom toast
+      const el = document.createElement("div");
+      el.textContent = "Invite link gedeeld/gekopieerd ✅";
+      el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-50 animate-fade-in";
+      document.body.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translate(-50%, 10px)";
+        setTimeout(() => el.remove(), 300);
+      }, 1600);
     } catch (error) {
       console.warn('Share failed:', error);
+      // Error feedback
+      const el = document.createElement("div");
+      el.textContent = "Share mislukt, probeer opnieuw";
+      el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-600 text-white text-sm px-3 py-2 rounded-full z-50 animate-fade-in";
+      document.body.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translate(-50%, 10px)";
+        setTimeout(() => el.remove(), 300);
+      }, 1600);
     }
   }
   
