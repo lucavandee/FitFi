@@ -12,15 +12,52 @@ const RETRY_CONFIG = {
 // Session ID for error tracking
 let sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-// Get singleton client
-const supabase = getSupabaseClient();
+/**
+ * Check if Supabase is enabled and configured
+ */
+export function isSupabaseEnabled(): boolean {
+  const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true';
+  const hasUrl = !!import.meta.env.VITE_SUPABASE_URL;
+  const hasKey = !!import.meta.env.VITE_SUPABASE_ANON_KEY;
+  
+  return useSupabase && hasUrl && hasKey;
+}
 
-if (!supabase) {
-  console.error('Missing Supabase environment variables. Please check your .env file.');
-  // Don't throw in production to prevent app crashes
-  if (import.meta.env.DEV) {
-    throw new Error('Missing Supabase environment variables');
+/**
+ * Get Supabase client (lazy, optional)
+ * Returns null if Supabase is disabled or not configured
+ */
+export function getSupabase() {
+  if (!isSupabaseEnabled()) {
+    return null;
   }
+  
+  try {
+    return getSupabaseClient();
+  } catch (error) {
+    console.warn('[Supabase] Client initialization failed:', error);
+    return null;
+  }
+}
+
+/**
+ * Require Supabase client (throws descriptive error if not available)
+ * Use this only when Supabase is absolutely required
+ */
+export function requireSupabase() {
+  const client = getSupabase();
+  
+  if (!client) {
+    const reason = !import.meta.env.VITE_USE_SUPABASE 
+      ? 'Supabase is uitgeschakeld via VITE_USE_SUPABASE=false'
+      : !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY
+        ? 'Supabase credentials ontbreken (VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY)'
+        : 'Supabase client kon niet worden geïnitialiseerd';
+    
+    throw new Error(`Supabase vereist maar niet beschikbaar: ${reason}`);
+  }
+  
+  return client;
 }
 
 // Error logging function
@@ -37,6 +74,9 @@ async function logSupabaseError(
       return;
     }
 
+    const sb = getSupabase();
+    if (!sb) return; // Can't log if Supabase not available
+
     const errorDetails = {
       operation,
       tableName,
@@ -48,7 +88,7 @@ async function logSupabaseError(
     };
 
     // Use the RPC function to log the error
-    await supabase?.rpc('log_supabase_error', {
+    await sb.rpc('log_supabase_error', {
       error_code_param: error.code || error.status?.toString() || 'UNKNOWN',
       error_message_param: error.message || 'Unknown error',
       operation_type_param: operation,
@@ -182,7 +222,7 @@ function extractFunctionName(url: string): string | undefined {
 export const TEST_USER_ID = 'test-user-123';
 
 // Feature flag for Supabase usage
-export const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true';
+export const USE_SUPABASE = isSupabaseEnabled();
 
-// Export singleton client
-export { supabase };
+// Legacy export for backward compatibility
+export { getSupabase as supabase };
