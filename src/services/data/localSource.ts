@@ -178,6 +178,40 @@ export async function getLocalTribes(): Promise<Tribe[]> {
 }
 
 /**
+ * Get tribes from local JSON
+ * @returns Array of Tribes
+ */
+export async function getLocalTribes(): Promise<Tribe[]> {
+  try {
+    const tribes = await getJSON<Tribe[]>(DATA_CONFIG.LOCAL_JSON.tribes);
+    
+    // Validate array
+    if (!Array.isArray(tribes)) {
+      console.warn('[LocalSource] Tribes data is not an array, returning empty array');
+      return [];
+    }
+    
+    // Filter out invalid tribes
+    const validTribes = tribes.filter(tribe => 
+      tribe && 
+      typeof tribe === 'object' && 
+      tribe.id && 
+      tribe.name &&
+      tribe.slug
+    );
+    
+    if (validTribes.length !== tribes.length) {
+      console.warn(`[LocalSource] Filtered out ${tribes.length - validTribes.length} invalid tribes`);
+    }
+    
+    return validTribes;
+  } catch (error) {
+    console.error('[LocalSource] Error loading tribes:', error);
+    return [];
+  }
+}
+
+/**
  * Get default user profile as fallback
  * @returns Default user profile
  */
