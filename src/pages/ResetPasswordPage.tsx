@@ -10,6 +10,7 @@ const sb = supabase();
 const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const sb = supabase();
   
   const [formData, setFormData] = useState({
     password: '',
@@ -79,12 +80,16 @@ const ResetPasswordPage: React.FC = () => {
       return;
     }
 
+    if (!sb) {
+      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      return;
+    }
 
     setIsLoading(true);
     setErrors({});
 
     if (!sb) {
-      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      const { error } = await sb.auth.updateUser({
       setIsLoading(false);
       return;
     }

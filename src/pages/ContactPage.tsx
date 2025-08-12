@@ -19,6 +19,7 @@ const sb = supabase();
 
 const ContactPage: React.FC = () => {
   const navigate = useNavigate();
+  const sb = supabase();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -83,8 +84,12 @@ const ContactPage: React.FC = () => {
 
     try {
       try {
-        // Try Supabase first
         if (!sb) {
+          throw new Error('Supabase niet beschikbaar');
+        }
+        
+        // Try Supabase first
+        const { error } = await sb.rpc('submit_contact', {
           throw new Error('Supabase not available');
         }
         

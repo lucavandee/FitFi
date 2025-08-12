@@ -4,14 +4,12 @@ import { Mail, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabaseClient';
 
-// Get singleton client
-const sb = supabase();
-
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
+  const sb = supabase();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,14 +24,13 @@ const ForgotPasswordPage: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-    setError('');
-
     if (!sb) {
       setError('Supabase niet beschikbaar. Probeer het later opnieuw.');
-      setIsLoading(false);
       return;
     }
+
+    setIsLoading(true);
+    setError('');
 
     try {
       const { error } = await sb.auth.resetPasswordForEmail(email, {
