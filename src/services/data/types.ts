@@ -1,552 +1,78 @@
-// src/services/data/types.ts
-export type ChallengeDifficulty = "easy" | "medium" | "hard";
-export type SubmissionType = "text" | "image" | "link" | "combo";
+import { useMemo, useCallback } from 'react';
 
-export interface ImageVariant {
-  url: string;
-  alt?: string;
+export type Variant = 'control' | 'v1' | 'v2';
+
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  }
+  return hash >>> 0; // forceer positief
+}
+
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
 }
 
 export interface BoltProduct {
   id: string;
   title: string;
   brand?: string;
+  imageUrl?: string;
+  type?: string;
+  styleTags?: string[];
+  affiliateUrl?: string;
+  season?: string;
+  provider?: string;
   gender?: "male" | "female" | "unisex";
   category: string;
   price?: number;
   currency?: string;
   images?: ImageVariant[];
   productUrl?: string;
-  provider?: "amazon" | "zalando" | "generic";
   tags?: string[]; // seizoens/archetype tags (toekomst)
 }
 
-export type OutfitRole = "top" | "bottom" | "footwear" | "accessory" | "outerwear";
-
-export interface OutfitItemRef {
-  productId: string;
-  role: OutfitRole;
-}
-
-export interface Outfit {
-  id: string;
-  name: string;
-  items: OutfitItemRef[];
-  season?: "spring" | "summer" | "autumn" | "winter" | "all";
-  archetypes?: string[];
-  score?: number; // match score
-  explanation?: string; // AI-uitleg
-}
-
-export interface FitFiUserProfile {
-  id: string;
-  name?: string;
-  email?: string;
-  gender?: "male" | "female" | "unisex";
-  archetypes?: string[];
-  preferences?: Record<string, unknown>;
-}
-
 /**
- * Data source response wrapper
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
  */
-export interface DataResponse<T> {
-  data: T;
-  source: 'supabase' | 'local' | 'fallback';
-  cached: boolean;
-  timestamp: number;
-  errors?: string[];
-}
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
 
-/**
- * Cache entry interface
- */
-export interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-  source: 'supabase' | 'local' | 'fallback';
-  ttl: number;
-}
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
 
-/**
- * Data service configuration
- */
-export interface DataServiceConfig {
-  cacheTTL: number;
-  maxCacheSize: number;
-  enableFallbacks: boolean;
-  logErrors: boolean;
-  retryAttempts: number;
-  retryDelay: number;
-}
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
 
-/**
- * Error context for debugging
- */
-export interface DataError {
-  source: 'supabase' | 'local' | 'fallback';
-  operation: string;
-  error: string;
-  timestamp: number;
-  context?: Record<string, any>;
-}
-
-/**
- * Query filters for data fetching
- */
-export interface ProductFilters {
-  gender?: "male" | "female" | "unisex";
-  category?: string;
-  archetype?: string;
-  priceRange?: [number, number];
-  tags?: string[];
-  season?: "spring" | "summer" | "autumn" | "winter" | "all";
-  limit?: number;
-  offset?: number;
-}
-
-export interface OutfitFilters {
-  archetype?: string;
-  season?: "spring" | "summer" | "autumn" | "winter" | "all";
-  occasion?: string;
-  minScore?: number;
-  limit?: number;
-  offset?: number;
-}
-
-export interface UserFilters {
-  gender?: "male" | "female" | "unisex";
-  isPremium?: boolean;
-  hasCompletedQuiz?: boolean;
-  limit?: number;
-  offset?: number;
-}
-
-/**
- * Affiliate link configuration
- */
-export interface AffiliateConfig {
-  provider: "amazon" | "zalando" | "generic";
-  trackingId?: string;
-  customParams?: Record<string, string>;
-  campaignOverride?: string;
-}
-
-/**
- * Enhanced product with affiliate data
- */
-export interface EnhancedBoltProduct extends BoltProduct {
-  affiliateUrl?: string;
-  originalUrl?: string;
-  affiliateProvider?: "amazon" | "zalando" | "generic";
-  trackingParams?: Record<string, string>;
-}
-
-/**
- * Data service statistics
- */
-export interface DataServiceStats {
-  cacheHits: number;
-  cacheMisses: number;
-  supabaseQueries: number;
-  localFileLoads: number;
-  fallbackUsage: number;
-  errorCount: number;
-  averageResponseTime: number;
-  lastUpdated: number;
-}
-
-/**
- * Tribe interface for community features
-
-// Challenge and submission types
-export type ChallengeDifficulty = "easy" | "medium" | "hard";
-export type SubmissionType = "text" | "image" | "link" | "combo";
-
-export type ChallengeStatus = "draft" | "open" | "closed" | "archived";
-
-export interface TribeChallenge {
-  id: string;
-  tribeId: string;
-  title: string;
-  description?: string;
-  image?: string;
-  rules?: string[];
-  rewardPoints?: number;     // punten voor deelname
-  winnerRewardPoints?: number; // extra punten winnaar
-  startAt?: string;          // ISO
-  endAt?: string;            // ISO
-  status: ChallengeStatus;
-  tags?: string[];           // b.v. ["smart-casual","summer"]
-  createdAt?: string;
-  createdBy?: string;        // admin userId
-  difficulty?: ChallengeDifficulty;   // ✅ nieuw
-}
-
-export interface TribeChallengeSubmission {
-  id: string;
-  tribeId: string;
-  challengeId: string;
-  userId: string;
-  userName?: string;
-  content?: string;   // caption/omschrijving
-  imageUrl?: string;  // outfit foto/link
-  linkUrl?: string;   // optioneel externe link
-  score?: number;     // door moderators of AI
-  isWinner?: boolean;
-  createdAt: string;  // ISO
-  submissionType?: SubmissionType;    // ✅ nieuw
-}
-
-export interface TribeRanking {
-  tribeId: string;
-  points: number;
-  rank?: number;
-  updatedAt?: string;
-}
- */
-export interface Tribe {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  cover_img?: string;
-  member_count: number;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-  is_member?: boolean;
-  user_role?: 'member' | 'moderator' | 'owner';
-  archetype?: string;
-  activity_level?: 'low' | 'medium' | 'high' | 'very_high';
-  featured?: boolean;
-  tags?: string[];
-  rules?: string[];
-  recent_posts?: TribePost[];
-}
-
-/**
- * Tribe post interface
- */
-export interface TribePost {
-  id: string;
-  tribe_id?: string;
-  user_id?: string;
-  user_name?: string;
-  content: string;
-  image_url?: string;
-  outfit_id?: string;
-  likes_count: number;
-  comments_count?: number;
-  created_at: string;
-  updated_at?: string;
-  user_profile?: {
-    full_name: string;
-    avatar_url?: string;
-  };
-  outfit?: {
-    id: string;
-    title: string;
-    image_url?: string;
-    match_percentage: number;
-  };
-  is_liked_by_current_user?: boolean;
-  recent_comments?: TribePostComment[];
-}
-
-/**
- * Tribe post comment interface
- */
-export interface TribePostComment {
-  id: string;
-  post_id: string;
-  user_id: string;
-  content: string;
-  created_at: string;
-  user_profile?: {
-    full_name: string;
-    avatar_url?: string;
-  };
-}
-
-/**
- * Tribe member interface
- */
-export interface TribeMember {
-  id: string;
-  tribe_id: string;
-  user_id: string;
-  role: 'member' | 'moderator' | 'owner';
-  joined_at: string;
-  user_profile?: {
-    full_name: string;
-    avatar_url?: string;
-  };
-}
-
-/**
- * Create tribe data interface
- */
-export interface CreateTribeData {
-  name: string;
-  slug: string;
-  description: string;
-  cover_img?: string;
-  archetype?: string;
-  tags?: string[];
-  rules?: string[];
-}
-
-/**
- * Create post data interface
- */
-export interface CreatePostData {
-  tribe_id: string;
-  content: string;
-  image_url?: string;
-  outfit_id?: string;
-}
-
-/**
- * Challenge status types
- */
-export type ChallengeStatus = "draft" | "open" | "closed" | "archived";
-
-/**
- * Tribe challenge interface
- */
-export interface TribeChallenge {
-  id: string;
-  tribeId: string;
-  title: string;
-  description?: string;
-  image?: string;
-  rules?: string[];
-  rewardPoints?: number;     // punten voor deelname
-  winnerRewardPoints?: number; // extra punten winnaar
-  startAt?: string;          // ISO
-  endAt?: string;            // ISO
-  status: ChallengeStatus;
-  tags?: string[];           // b.v. ["smart-casual","summer"]
-  createdAt?: string;
-  createdBy?: string;        // admin userId
-  difficulty?: ChallengeDifficulty;   // ✅ nieuw
-}
-
-/**
- * Tribe challenge submission interface
- */
-export interface TribeChallengeSubmission {
-  id: string;
-  tribeId: string;
-  challengeId: string;
-  userId: string;
-  userName?: string;
-  content?: string;   // caption/omschrijving
-  imageUrl?: string;  // outfit foto/link
-  linkUrl?: string;   // optioneel externe link
-  score?: number;     // door moderators of AI
-  isWinner?: boolean;
-  createdAt: string;  // ISO
-  submissionType?: SubmissionType;    // ✅ nieuw
-}
-
-/**
- * Tribe ranking interface
- */
-export interface TribeRanking {
-  tribeId: string;
-  points: number;
-  rank?: number;
-  updatedAt?: string;
-}
-
-/**
- * Tribe role type for membership management
- */
-export type TribeRole = "member" | "admin" | "owner";
-
-/**
- * Tribe member interface for membership tracking
- */
-export interface TribeMember {
-  tribeId: string;
-  userId: string;
-  role?: TribeRole;
-  joinedAt: string; // ISO
-}
-
-/**
- * Tribe post interface for community content
- */
-export interface TribePost {
-  id: string;
-  tribeId: string;
-  authorId: string;
-  authorName?: string;
-  content: string;
-  imageUrl?: string;
-  createdAt: string; // ISO
-  likes?: number;
-  commentsCount?: number;
-}
-
-/**
- * Pagination metadata
- */
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-}
-
-/**
- * Paginated response
- */
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: PaginationMeta;
-  source: 'supabase' | 'local' | 'fallback';
-  cached: boolean;
-}
-
-export interface UserStats {
-  user_id: string;
-  level: number;
-  xp: number;
-  posts: number;
-  submissions: number;
-  wins: number;
-  invites: number;
-  last_active?: string;
-  updated_at?: string;
-}
-
-export interface UserStreak {
-  user_id: string;
-  current_streak: number;
-  longest_streak: number;
-  last_check_date: string;
-}
-
-export interface Referral {
-  id: string;
-  inviter_id: string;
-  invitee_email?: string | null;
-  status: "pending" | "joined" | "converted";
-  created_at: string;
-}
-
-export interface NotificationItem {
-  id: string;
-  user_id: string;
-  title: string;
-  body?: string;
-  link?: string;
-  read: boolean;
-  created_at: string;
-}
-
-/**
- * Search query interface
- */
-export interface SearchQuery {
-  term: string;
-  filters?: ProductFilters | OutfitFilters | UserFilters;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  fuzzy?: boolean;
-}
-
-/**
- * Search result interface
- */
-export interface SearchResult<T> {
-  items: T[];
-  total: number;
-  query: SearchQuery;
-  suggestions?: string[];
-  facets?: Record<string, Array<{ value: string; count: number }>>;
-}
-
-/**
- * Data validation result
- */
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-  sanitized?: any;
-}
-
-/**
- * Batch operation result
- */
-export interface BatchResult<T> {
-  successful: T[];
-  failed: Array<{ item: any; error: string }>;
-  total: number;
-  successRate: number;
-}
-
-/**
- * Health check result
- */
-export interface HealthCheck {
-  service: string;
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  responseTime: number;
-  lastChecked: number;
-  details?: Record<string, any>;
-}
-
-/**
- * Data sync status
- */
-export interface SyncStatus {
-  lastSync: number;
-  nextSync: number;
-  inProgress: boolean;
-  errors: string[];
-  itemsProcessed: number;
-  totalItems: number;
-}
-
-export interface UserStats {
-  user_id: string;
-  level: number;
-  xp: number;
-  posts: number;
-  submissions: number;
-  wins: number;
-  invites: number;
-  last_active?: string;
-  updated_at?: string;
-}
-
-export interface UserStreak {
-  user_id: string;
-  current_streak: number;
-  longest_streak: number;
-  last_check_date: string;
-}
-
-export interface Referral {
-  id: string;
-  inviter_id: string;
-  invitee_email?: string | null;
-  status: "pending" | "joined" | "converted";
-  created_at: string;
-}
-
-export interface NotificationItem {
-  id: string;
-  user_id: string;
-  title: string;
-  body?: string;
-  link?: string;
-  read: boolean;
-  created_at: string;
+  return { variant, trackClick, markExposure };
 }
