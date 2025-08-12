@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate, useMemo } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { 
   ArrowLeft, 
@@ -118,6 +118,7 @@ const TribeDetailPage: React.FC = () => {
           {/* Join Button Integration */}
           <JoinButton 
             tribeId={tribe.id} 
+            userId={user?.id}
             className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
             size="lg"
             variant="primary"
@@ -136,7 +137,6 @@ const TribeDetailPage: React.FC = () => {
         {/* Posts Feed Integration */}
         <PostsList 
           tribeId={tribe.id} 
-          userId={user?.id}
           userId={user?.id}
           showComposer={false}
         />
