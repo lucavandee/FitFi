@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext';
 import { useTribes } from '../hooks/useTribes';
 import { useFitFiUser } from '../hooks/useFitFiUser';
 import { JoinButton } from '../components/tribes/JoinButton';
+import { RankingBoard } from '../components/Tribes/RankingBoard';
 import type { Tribe } from '../services/data/types';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
@@ -160,6 +161,24 @@ const TribesPage: React.FC = () => {
               </Button>
             )}
           </div>
+        </ErrorBoundary>
+
+        {/* Tribe Ranking Section */}
+        <ErrorBoundary>
+          <section className="mb-16">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-medium text-gray-900 mb-4">
+                Tribe Leaderboard
+              </h2>
+              <p className="text-gray-600">
+                De meest actieve en succesvolle tribes van deze maand
+              </p>
+            </div>
+            
+            <div className="max-w-4xl mx-auto">
+              <RankingBoard />
+            </div>
+          </section>
         </ErrorBoundary>
 
         {/* Tribes Grid */}
