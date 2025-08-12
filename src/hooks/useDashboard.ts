@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchUserStats, upsertUserStats, fetchUserStreak, touchDailyStreak, fetchReferrals, fetchNotifications } from "@/services/dashboard/dashboardService";
+import { fetchUserStats, upsertUserStats, fetchUserStreak, touchDailyStreak, fetchReferrals, fetchNotifications, addXp } from "@/services/dashboard/dashboardService";
 
 export const useUserStats = (userId?: string) =>
   useQuery({ queryKey: ["userStats", userId], queryFn: () => fetchUserStats(userId!), enabled: !!userId });
@@ -11,6 +11,18 @@ export const useTouchStreak = () => {
     onSuccess: (_d, userId) => {
       qc.invalidateQueries({ queryKey: ["userStreak", userId] });
       qc.invalidateQueries({ queryKey: ["userStats", userId] });
+    }
+  });
+};
+
+export const useAddXp = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, amount, reason }: { userId: string; amount: number; reason?: string }) => 
+      addXp(userId, amount, reason),
+    onSuccess: (_data, { userId }) => {
+      qc.invalidateQueries({ queryKey: ["userStats", userId] });
+      qc.invalidateQueries({ queryKey: ["userStreak", userId] });
     }
   });
 };

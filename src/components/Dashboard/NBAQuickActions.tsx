@@ -1,9 +1,14 @@
 import React from "react";
 import { computeNextActions } from "@/services/nba/nextBestActions";
-import { navigationService } from "@/services/navigation/NavigationService";
+import { routeTo } from "@/services/navigation/NavigationService";
+import { useUser } from "@/context/UserContext";
+import { useBestChallenge } from "@/hooks/useBestChallenge";
 import { Link } from "react-router-dom";
 
 export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActions>[0] }> = ({ ctx }) => {
+  const { user } = useUser();
+  const { best } = useBestChallenge(user?.id);
+
   const items = computeNextActions(ctx);
   
   const handleActionClick = (action: any) => {
@@ -20,19 +25,42 @@ export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActio
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {items.map(a => (
-        <Link 
-          key={a.id} 
-          to={a.route} 
-          onClick={() => handleActionClick(a)}
-          className="rounded-2xl border border-purple-300/60 hover:shadow-md transition p-4 bg-white hover:transform hover:scale-105"
-        >
-          <div className="text-sm text-gray-500 mb-1">{a.badge ?? ""}</div>
-          <div className="font-semibold">{a.title}</div>
-          {a.subtitle && <div className="text-sm text-gray-600 mt-1">{a.subtitle}</div>}
-          <div className="mt-3 text-[#6b21a8] font-medium">{a.cta} →</div>
-        </Link>
-      ))}
+      {items.map(a => {
+        // State-aware route mapping
+        let route = a.route;
+        let disabled = false;
+        
+        if (a.id === "challenge") {
+          route = best?.challengeId ? routeTo("challenge", best) : routeTo("tribe", {});
+          disabled = !best?.challengeId;
+        } else if (a.id === "post") {
+          route = routeTo("feedCompose");
+        } else if (a.id === "invite") {
+          route = routeTo("referral");
+        }
+        
+        return (
+          <Link
+            key={a.id}
+            to={route}
+            onClick={() => handleActionClick(a)}
+            className={`rounded-2xl border border-purple-300/60 transition p-4 bg-white ${
+              disabled 
+                ? "opacity-50 cursor-not-allowed" 
+                : "hover:shadow-md hover:transform hover:scale-105"
+            }`}
+            title={disabled ? "Geen open challenge gevonden" : undefined}
+            aria-disabled={disabled}
+          >
+            <div className="text-sm text-gray-500 mb-1">{a.badge ?? ""}</div>
+            <div className="font-semibold">{a.title}</div>
+            {a.subtitle && <div className="text-sm text-gray-600 mt-1">{a.subtitle}</div>}
+            <div className={`mt-3 font-medium ${disabled ? "text-gray-400" : "text-[#6b21a8]"}`}>
+              {a.cta} →
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 };

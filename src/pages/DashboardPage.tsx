@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
-import { useUserStats, useUserStreak, useTouchStreak, useReferrals, useNotifications } from '@/hooks/useDashboard';
+import { useUserStats, useUserStreak, useTouchStreak, useReferrals, useNotifications, useAddXp } from '@/hooks/useDashboard';
 import { NovaInsightCard } from '@/components/Dashboard/NovaInsightCard';
 import { GamificationPanel } from '@/components/Dashboard/GamificationPanel';
 import { NBAQuickActions } from '@/components/Dashboard/NBAQuickActions';
@@ -27,6 +27,7 @@ const DashboardPage: React.FC = () => {
   const { data: stats } = useUserStats(userId);
   const { data: streak } = useUserStreak(userId);
   const touch = useTouchStreak();
+  const addXpMutation = useAddXp();
   const { data: refs } = useReferrals(userId);
   const { data: notes } = useNotifications(userId);
 
@@ -34,6 +35,38 @@ const DashboardPage: React.FC = () => {
   React.useEffect(() => { 
     if (userId) touch.mutate(userId); 
   }, [userId]);
+
+  // Claim Daily XP function
+  const handleClaimDaily = async () => {
+    if (!user?.id) return;
+    
+    try {
+      // Touch streak first
+      await touch.mutateAsync(user.id);
+      
+      // Add XP reward
+      await addXpMutation.mutateAsync({
+        userId: user.id,
+        amount: 5,
+        reason: "daily_streak"
+      });
+      
+      // Track daily claim
+      track('daily_claim', {
+        user_id: user.id,
+        xp_earned: 5,
+        current_streak: streak?.current_streak || 0
+      });
+      
+      toast.success("Daily claim ontvangen: +5 XP 🔥", {
+        duration: 3000,
+        icon: '🔥'
+      });
+    } catch (error) {
+      console.error('Daily claim failed:', error);
+      toast.error("Claimen mislukt, probeer later opnieuw.");
+    }
+  };
 
   if (userLoading) {
     return <LoadingFallback fullScreen message="Dashboard laden..." />;
