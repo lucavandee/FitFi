@@ -154,6 +154,111 @@ export interface DataServiceStats {
 }
 
 /**
+ * Tribe interface for community features
+ */
+export interface Tribe {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  cover_img?: string;
+  member_count: number;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  is_member?: boolean;
+  user_role?: 'member' | 'moderator' | 'owner';
+  archetype?: string;
+  activity_level?: 'low' | 'medium' | 'high' | 'very_high';
+  featured?: boolean;
+  tags?: string[];
+  rules?: string[];
+  recent_posts?: TribePost[];
+}
+
+/**
+ * Tribe post interface
+ */
+export interface TribePost {
+  id: string;
+  tribe_id?: string;
+  user_id?: string;
+  user_name?: string;
+  content: string;
+  image_url?: string;
+  outfit_id?: string;
+  likes_count: number;
+  comments_count?: number;
+  created_at: string;
+  updated_at?: string;
+  user_profile?: {
+    full_name: string;
+    avatar_url?: string;
+  };
+  outfit?: {
+    id: string;
+    title: string;
+    image_url?: string;
+    match_percentage: number;
+  };
+  is_liked_by_current_user?: boolean;
+  recent_comments?: TribePostComment[];
+}
+
+/**
+ * Tribe post comment interface
+ */
+export interface TribePostComment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  user_profile?: {
+    full_name: string;
+    avatar_url?: string;
+  };
+}
+
+/**
+ * Tribe member interface
+ */
+export interface TribeMember {
+  id: string;
+  tribe_id: string;
+  user_id: string;
+  role: 'member' | 'moderator' | 'owner';
+  joined_at: string;
+  user_profile?: {
+    full_name: string;
+    avatar_url?: string;
+  };
+}
+
+/**
+ * Create tribe data interface
+ */
+export interface CreateTribeData {
+  name: string;
+  slug: string;
+  description: string;
+  cover_img?: string;
+  archetype?: string;
+  tags?: string[];
+  rules?: string[];
+}
+
+/**
+ * Create post data interface
+ */
+export interface CreatePostData {
+  tribe_id: string;
+  content: string;
+  image_url?: string;
+  outfit_id?: string;
+}
+
+/**
  * Pagination metadata
  */
 export interface PaginationMeta {
