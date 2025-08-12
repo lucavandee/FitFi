@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { fetchReferralsByInviter, type ReferralRow } from "@/services/dashboard/referralsService";
+import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 
 export const FoundersBlock: React.FC = () => {
@@ -29,9 +30,20 @@ export const FoundersBlock: React.FC = () => {
       }
 
       try {
-        const referralData = await fetchReferralsByInviter(userId);
-        const count = referralData.length;
+        const rows = await fetchReferralsByInviter(userId);
+        const count = rows.length;
         if (alive) setRefCount(count);
+
+        const { error: statsUpdateErr } = await supabase
+          .from("user_stats")
+          .upsert({
+            user_id: userId,
+            invites: count,
+            updated_at: new Date().toISOString(),
+            last_active: new Date().toISOString(),
+          });
+
+        if (statsUpdateErr) console.warn("[FoundersBlock] user_stats upsert warning:", statsUpdateErr.message);
       } catch (e: any) {
         console.error("[FoundersBlock] load referrals failed:", e?.message ?? e);
         if (alive) setErrMsg("Kon je referrals niet laden.");
