@@ -13,12 +13,17 @@
 
 /* Basis typografie en body */
 @layer base {
-  html { scroll-behavior: smooth; }
+  html { 
+    scroll-behavior: smooth; 
+  }
+  
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
   }
 
-  h1,h2,h3,h4 { @apply font-semibold text-gray-900; }
+  h1, h2, h3, h4 { 
+    @apply font-semibold text-gray-900; 
+  }
 }
 
 /* Herbruikbare component-stijlen */
@@ -26,9 +31,11 @@
   .card {
     @apply bg-white rounded-2xl shadow-soft;
   }
+  
   .btn-primary {
     @apply inline-flex items-center justify-center px-4 py-2 rounded-full bg-midnight text-white hover:opacity-90 transition;
   }
+  
   .btn-secondary {
     @apply inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition;
   }
@@ -36,6 +43,11 @@
 
 /* Optionele nesting voorbeelden (nu geldig dankzij postcss-nesting) */
 .card {
-  .card-title { @apply text-base font-semibold; }
-  .card-subtle { @apply text-sm text-gray-600; }
+  & .card-title { 
+    @apply text-base font-semibold; 
+  }
+  
+  & .card-subtle { 
+    @apply text-sm text-gray-600; 
+  }
 }
