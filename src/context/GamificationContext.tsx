@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useUser } from "./UserContext";
 import { env } from "../utils/env";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../lib/supabaseClient";
 import toast from "react-hot-toast";
 import { trackEvent } from "../utils/analytics";
+
+// Get singleton client
+const sb = supabase();
 
 interface Level {
   id: number;
@@ -110,8 +113,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [user]);
 
   const loadLevels = async () => {
+    if (!sb) return;
+    
     try {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('levels')
         .select('*')
         .order('min_xp', { ascending: true });
@@ -153,7 +158,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       await loadLevels();
 
       // Load user points
-      const { data: pointsData, error: pointsError } = await supabase
+      const { data: pointsData, error: pointsError } = await sb
         .from('user_points')
         .select('*')
         .eq('user_id', user.id)
@@ -165,7 +170,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       // Create user points record if doesn't exist
       if (!pointsData) {
-        const { error: insertError } = await supabase
+        const { error: insertError } = await sb
           .from('user_points')
           .insert({
             user_id: user.id,
@@ -204,7 +209,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
 
       // Load user badges
-      const { data: badgesData, error: badgesError } = await supabase
+      const { data: badgesData, error: badgesError } = await sb
         .from('user_badges')
         .select('*')
         .eq('user_id', user.id);
@@ -278,7 +283,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       // Get leaderboard rank
       try {
-        const { data: rankData, error: rankError } = await supabase
+        const { data: rankData, error: rankError } = await sb
           .rpc('get_user_leaderboard_rank', {
             user_uuid: user.id,
             leaderboard_type: 'all_time'
@@ -306,15 +311,20 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const awardPoints = async (actionType: string, points?: number, metadata?: Record<string, any>) => {
     if (!user?.id) return;
 
+    if (!sb) {
+      toast.error('Kan punten niet toekennen - geen verbinding');
+      return;
+    }
+
     try {
-      const { data, error } = await supabase.functions.invoke('calculate-points', {
+      const { data, error } = await sb.functions.invoke('calculate-points', {
         body: {
           action_type: actionType,
           points,
           metadata
         },
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          Authorization: `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`
         }
       });
 
@@ -348,14 +358,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const completeChallenge = async (challengeId: string) => {
     if (!user?.id) return;
 
+    if (!sb) {
+      toast.error('Kan challenge niet voltooien - geen verbinding');
+      return;
+    }
+
     try {
-      const { data, error } = await supabase.functions.invoke('submit-challenge', {
+      const { data, error } = await sb.functions.invoke('submit-challenge', {
         body: {
           challenge_id: challengeId,
           challenge_type: 'daily'
         },
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          Authorization: `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`
         }
       });
 
@@ -386,14 +401,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const completeWeeklyChallenge = async (challengeId: string) => {
     if (!user?.id) return;
 
+    if (!sb) {
+      toast.error('Kan weekly challenge niet voltooien - geen verbinding');
+      return;
+    }
+
     try {
-      const { data, error } = await supabase.functions.invoke('submit-challenge', {
+      const { data, error } = await sb.functions.invoke('submit-challenge', {
         body: {
           challenge_id: challengeId,
           challenge_type: 'weekly'
         },
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          Authorization: `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`
         }
       });
 
