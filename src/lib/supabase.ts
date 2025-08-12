@@ -38,3 +38,6 @@ export function requireSupabase(): SupabaseClient {
   }
   return sb;
 }
+
+// Backward compatibility export voor bestaande imports
+export const supabase = getSupabase();
