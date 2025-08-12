@@ -17,6 +17,7 @@ export function useTribePosts(tribeId: string) {
   }, [tribeId]);
 
   async function addPost(input: Omit<TribePost, "id" | "created_at" | "likes_count" | "comments_count">) {
+    // Create optimistic post
     const optimistic = {
       id: crypto.randomUUID(),
       created_at: new Date().toISOString(),
@@ -25,17 +26,27 @@ export function useTribePosts(tribeId: string) {
       ...input,
     } as TribePost;
 
+    // Optimistic update - add to top of list
     setPosts(prev => prev ? [optimistic, ...prev] : [optimistic]);
+    
     try {
       const saved = await createTribePost(input);
+      
+      // Replace optimistic post with real data
       setPosts(prev => prev?.map(p => (p.id === optimistic.id ? saved : p)) ?? [saved]);
       
-      // Refresh posts list to ensure consistency
-      const updatedPosts = await getTribePosts(tribeId);
-      setPosts(updatedPosts);
+      // Optional: Refresh posts list to ensure consistency (only if needed)
+      try {
+        const updatedPosts = await getTribePosts(tribeId);
+        setPosts(updatedPosts);
+      } catch (refreshError) {
+        console.warn('[TribePosts] Could not refresh after post creation, keeping optimistic state');
+        // Keep optimistic state if refresh fails
+      }
       
       return saved;
     } catch (e) {
+      // Remove optimistic post on error
       setPosts(prev => prev?.filter(p => p.id !== optimistic.id) ?? null);
       throw e;
     }

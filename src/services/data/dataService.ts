@@ -409,6 +409,18 @@ class DataServiceOrchestrator {
             timestamp: Date.now()
           };
         }
+        
+        // If Supabase returns empty array, still cache it
+        if (sb && sb.length === 0) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
       } catch (error) {
         this.logError('supabase', 'fetch_tribes', (error as Error).message, { filters });
       }
