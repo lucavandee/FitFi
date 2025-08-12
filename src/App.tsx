@@ -198,6 +198,11 @@ function App() {
                             <TribeDetailPage />
                           </ProtectedRoute>
                         } />
+                        <Route path="/tribes/id/:tribeId" element={
+                          <ProtectedRoute>
+                            <TribeDetailPage />
+                          </ProtectedRoute>
+                        } />
                       
                         {/* Fallback */}
                         <Route path="*" element={<NotFound />} />
