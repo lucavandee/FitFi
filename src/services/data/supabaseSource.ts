@@ -62,6 +62,48 @@ async function executeSupabaseOperation<T>(
 }
 
 /**
+ * Execute Supabase operation with timeout and retry for tribes
+ */
+async function executeTribesOperation<T>(
+  operation: () => Promise<T>,
+  operationName: string
+): Promise<T> {
+  const runner = async () => {
+    const sb = supabase();
+    if (!sb) throw new Error('Supabase client not available');
+    return await operation();
+  };
+  
+  return await withTimeout(
+    withRetry(runner, MAX_ATTEMPTS, BASE_DELAY),
+    TIMEOUT_MS,
+    operationName
+  );
+}
+
+/**
+ * Execute Supabase operation with enhanced error handling
+ */
+async function executeSupabaseOperationSafe<T>(
+  operation: () => Promise<{ data: T; error: any }>,
+  operationName: string,
+  tableName?: string
+): Promise<T> {
+  try {
+    const result = await executeTribesOperation(operation, operationName);
+    
+    if (result.error) {
+      handleSupabaseError(result.error, operationName, tableName);
+    }
+    
+    return result.data;
+  } catch (error) {
+    console.error(`[SupabaseSource] ${operationName} failed:`, error);
+    throw error;
+  }
+}
+
+/**
  * Get products from Supabase with enhanced error handling
  */
 export async function getSbProducts(filters?: {
@@ -464,20 +506,27 @@ export async function sb_getTribeMembers(tribeId: string): Promise<TribeMember[]
   if (!sb) return null;
   
   try {
-    const { data, error } = await sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribeMembers)
-      .select("*")
-      .eq("tribeId", tribeId)
-      .order("joinedAt", { ascending: false });
+    const data = await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_members')
+        .select(`
+          *,
+          user_profile:profiles!tribe_members_user_id_fkey(full_name, avatar_url)
+        `)
+        .eq('tribe_id', tribeId);
+    }, 'get_tribe_members', 'tribe_members');
     
-    if (error) {
-      handleSupabaseError(error, 'select', 'tribe_members');
-    }
-    
-    console.log(`[SupabaseSource] Loaded ${(data ?? []).length} tribe members for ${tribeId}`);
-    return (data ?? []) as TribeMember[];
+    // Convert to our TribeMember format
+    return (data || []).map((member: any) => ({
+      id: member.id,
+      tribe_id: member.tribe_id,
+      user_id: member.user_id,
+      role: member.role,
+      joined_at: member.joined_at,
+      user_profile: member.user_profile
+    }));
   } catch (error) {
-    console.error('[SupabaseSource] Tribe members fetch failed:', error);
+    console.warn('[SupabaseSource] Tribe members failed:', error);
     throw error;
   }
 }
@@ -496,31 +545,25 @@ export async function sb_joinTribe(tribeId: string, userId: string): Promise<Tri
   }
   
   try {
-    const payload: TribeMember = { 
-      tribeId, 
-      userId, 
-      role: "member", 
-      joinedAt: new Date().toISOString() 
-    };
-    
-    const { data, error } = await sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribeMembers)
-      .insert(payload)
-      .select("*")
-      .single();
-    
-    if (error) {
-      // Handle duplicate membership gracefully
-      if (error.code === '23505') {
-        console.log(`[SupabaseSource] User ${userId} already member of tribe ${tribeId}`);
-        return null;
-      }
-      handleSupabaseError(error, 'insert', 'tribe_members');
-    }
-    
-    console.log(`[SupabaseSource] User ${userId} joined tribe ${tribeId}`);
-    return data as TribeMember;
+    const data = await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_members')
+        .insert({
+          tribe_id: tribeId,
+          user_id: userId,
+          role: 'member'
+        })
+        .select()
+        .single();
+    }, 'join_tribe', 'tribe_members');
+
+    return data;
   } catch (error) {
+    // Handle duplicate membership gracefully
+    if ((error as any)?.code === '23505') {
+      console.log('[SupabaseSource] User already member');
+      throw new Error('Already a member');
+    }
     console.error('[SupabaseSource] Tribe join failed:', error);
     throw error;
   }
@@ -540,15 +583,13 @@ export async function sb_leaveTribe(tribeId: string, userId: string): Promise<vo
   }
   
   try {
-    const { error } = await sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribeMembers)
-      .delete()
-      .eq("tribeId", tribeId)
-      .eq("userId", userId);
-    
-    if (error) {
-      handleSupabaseError(error, 'delete', 'tribe_members');
-    }
+    await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_members')
+        .delete()
+        .eq('tribe_id', tribeId)
+        .eq('user_id', userId);
+    }, 'leave_tribe', 'tribe_members');
     
     console.log(`[SupabaseSource] User ${userId} left tribe ${tribeId}`);
   } catch (error) {
@@ -572,28 +613,30 @@ export async function sb_getTribePosts(tribeId: string, options?: {
   if (!sb) return null;
   
   try {
-    let query = sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
-      .select("*")
-      .eq("tribeId", tribeId)
-      .order("createdAt", { ascending: false });
+    const data = await executeSupabaseOperationSafe(async () => {
+      let query = sb
+        .from('tribe_posts')
+        .select(`
+          *,
+          user_profile:profiles!tribe_posts_user_id_fkey(full_name, avatar_url),
+          outfit:outfits(id, title, image_url, match_percentage)
+        `)
+        .eq('tribe_id', tribeId)
+        .order('created_at', { ascending: false });
+      
+      // Apply pagination if provided
+      if (options?.limit) {
+        query = query.limit(options.limit);
+      }
+      if (options?.offset) {
+        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+      }
+      
+      return await query;
+    }, 'get_tribe_posts', 'tribe_posts');
     
-    // Apply pagination if provided
-    if (options?.limit) {
-      query = query.limit(options.limit);
-    }
-    if (options?.offset) {
-      query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
-    }
-    
-    const { data, error } = await query;
-    
-    if (error) {
-      handleSupabaseError(error, 'select', 'tribe_posts');
-    }
-    
-    console.log(`[SupabaseSource] Loaded ${(data ?? []).length} tribe posts for ${tribeId}`);
-    return (data ?? []) as TribePost[];
+    console.log(`[SupabaseSource] Loaded ${(data || []).length} tribe posts for ${tribeId}`);
+    return (data || []) as TribePost[];
   } catch (error) {
     console.error('[SupabaseSource] Tribe posts fetch failed:', error);
     throw error;
@@ -608,31 +651,31 @@ export async function sb_createTribePost(post: Omit<TribePost, 'id' | 'createdAt
   if (!sb) return null;
   
   // Validate user ID format
-  if (!isValidUUID(post.authorId)) {
-    console.warn('[SupabaseSource] Invalid author ID format for post:', post.authorId);
+  if (!isValidUUID(post.user_id || '')) {
+    console.warn('[SupabaseSource] Invalid user ID format for post:', post.user_id);
     return null;
   }
   
   try {
-    const payload: TribePost = {
-      ...post,
-      id: `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date().toISOString(),
-      likes: 0,
-      commentsCount: 0
-    };
+    const data = await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_posts')
+        .insert({
+          tribe_id: post.tribe_id,
+          user_id: post.user_id,
+          content: post.content,
+          image_url: post.image_url,
+          outfit_id: post.outfit_id
+        })
+        .select(`
+          *,
+          user_profile:profiles!tribe_posts_user_id_fkey(full_name, avatar_url),
+          outfit:outfits(id, title, image_url, match_percentage)
+        `)
+        .single();
+    }, 'create_tribe_post', 'tribe_posts');
     
-    const { data, error } = await sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
-      .insert(payload)
-      .select("*")
-      .single();
-    
-    if (error) {
-      handleSupabaseError(error, 'insert', 'tribe_posts');
-    }
-    
-    console.log(`[SupabaseSource] Created tribe post: ${data?.id}`);
+    console.log(`[SupabaseSource] Created tribe post: ${data.id}`);
     return data as TribePost;
   } catch (error) {
     console.error('[SupabaseSource] Tribe post creation failed:', error);
@@ -645,22 +688,20 @@ export async function sb_createTribePost(post: Omit<TribePost, 'id' | 'createdAt
  */
 export async function sb_updateTribePost(
   postId: string, 
-  updates: Partial<Pick<TribePost, 'likes' | 'commentsCount'>>
+  updates: Partial<Pick<TribePost, 'likes_count' | 'comments_count'>>
 ): Promise<TribePost | null> {
   const sb = getClient();
   if (!sb) return null;
   
   try {
-    const { data, error } = await sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
-      .update(updates)
-      .eq("id", postId)
-      .select("*")
-      .single();
-    
-    if (error) {
-      handleSupabaseError(error, 'update', 'tribe_posts');
-    }
+    const data = await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_posts')
+        .update(updates)
+        .eq('id', postId)
+        .select('*')
+        .single();
+    }, 'update_tribe_post', 'tribe_posts');
     
     console.log(`[SupabaseSource] Updated tribe post: ${postId}`);
     return data as TribePost;
@@ -684,15 +725,13 @@ export async function sb_deleteTribePost(postId: string, authorId: string): Prom
   }
   
   try {
-    const { error } = await sb
-      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
-      .delete()
-      .eq("id", postId)
-      .eq("authorId", authorId); // Only author can delete their own posts
-    
-    if (error) {
-      handleSupabaseError(error, 'delete', 'tribe_posts');
-    }
+    await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_posts')
+        .delete()
+        .eq('id', postId)
+        .eq('user_id', authorId); // Only author can delete their own posts
+    }, 'delete_tribe_post', 'tribe_posts');
     
     console.log(`[SupabaseSource] Deleted tribe post: ${postId}`);
   } catch (error) {
