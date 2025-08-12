@@ -1,6 +1,57 @@
 import { useEffect, useState } from "react";
 import type { TribePost } from "@/services/data/types";
-import { getTribePosts, createTribePost } from "@/services/tribes/tribeService";
+
+// Mock service for tribe posts
+const mockTribePostsService = {
+  async getTribePosts(tribeId: string): Promise<TribePost[]> {
+    // Return mock posts for demonstration
+    return [
+      {
+        id: `post_${tribeId}_1`,
+        tribe_id: tribeId,
+        user_id: "user_1",
+        authorId: "user_1",
+        authorName: "Emma S.",
+        content: "Mijn favoriete winter look! Warme wollen jas gecombineerd met comfortabele boots.",
+        image_url: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+        likes_count: 12,
+        comments_count: 3,
+        likes: 12,
+        commentsCount: 3,
+        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: `post_${tribeId}_2`,
+        tribe_id: tribeId,
+        user_id: "user_2",
+        authorId: "user_2",
+        authorName: "Lisa M.",
+        content: "Vintage thrift find gecombineerd met moderne accessoires. Duurzaam én stijlvol!",
+        image_url: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+        likes_count: 8,
+        comments_count: 1,
+        likes: 8,
+        commentsCount: 1,
+        created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+      }
+    ];
+  },
+
+  async createTribePost(input: Omit<TribePost, "id" | "created_at" | "likes_count" | "comments_count">): Promise<TribePost> {
+    const newPost: TribePost = {
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      likes_count: 0,
+      comments_count: 0,
+      likes: 0,
+      commentsCount: 0,
+      authorId: input.user_id,
+      authorName: `User ${input.user_id.slice(-4)}`,
+      ...input,
+    };
+    return newPost;
+  }
+};
 
 export function useTribePosts(tribeId: string) {
   const [posts, setPosts] = useState<TribePost[] | null>(null);
@@ -9,7 +60,7 @@ export function useTribePosts(tribeId: string) {
 
   useEffect(() => {
     let alive = true;
-    getTribePosts(tribeId)
+    mockTribePostsService.getTribePosts(tribeId)
       .then(p => { if (alive) setPosts(p); })
       .catch(e => { if (alive) setError(String(e?.message ?? e)); })
       .finally(() => { if (alive) setLoading(false); });
@@ -17,37 +68,14 @@ export function useTribePosts(tribeId: string) {
   }, [tribeId]);
 
   async function addPost(input: Omit<TribePost, "id" | "created_at" | "likes_count" | "comments_count">) {
-    // Create optimistic post
-    const optimistic = {
-      id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
-      likes_count: 0,
-      comments_count: 0,
-      ...input,
-    } as TribePost;
-
-    // Optimistic update - add to top of list
-    setPosts(prev => prev ? [optimistic, ...prev] : [optimistic]);
-    
     try {
-      const saved = await createTribePost(input);
+      const saved = await mockTribePostsService.createTribePost(input);
       
-      // Replace optimistic post with real data
-      setPosts(prev => prev?.map(p => (p.id === optimistic.id ? saved : p)) ?? [saved]);
-      
-      // Optional: Refresh posts list to ensure consistency (only if needed)
-      try {
-        const updatedPosts = await getTribePosts(tribeId);
-        setPosts(updatedPosts);
-      } catch (refreshError) {
-        console.warn('[TribePosts] Could not refresh after post creation, keeping optimistic state');
-        // Keep optimistic state if refresh fails
-      }
+      // Add to top of list
+      setPosts(prev => prev ? [saved, ...prev] : [saved]);
       
       return saved;
     } catch (e) {
-      // Remove optimistic post on error
-      setPosts(prev => prev?.filter(p => p.id !== optimistic.id) ?? null);
       throw e;
     }
   }
@@ -56,7 +84,7 @@ export function useTribePosts(tribeId: string) {
     try {
       setLoading(true);
       setError(null);
-      const updatedPosts = await getTribePosts(tribeId);
+      const updatedPosts = await mockTribePostsService.getTribePosts(tribeId);
       setPosts(updatedPosts);
     } catch (e) {
       setError(String(e?.message ?? e));

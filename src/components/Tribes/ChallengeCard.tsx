@@ -1,6 +1,6 @@
 import React from "react";
 import type { TribeChallenge } from "@/services/data/types";
-import { ImageWithFallback } from "@/components/common/ImageWithFallback";
+import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { Calendar, Clock, Trophy, Star, Target, Zap, Crown } from 'lucide-react';
 
 interface ChallengeCardProps {
