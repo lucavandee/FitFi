@@ -1,84 +1,125 @@
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getFeed } from '@/services/DataRouter';
 import { fetchOutfits } from '@/services/data/dataService';
 import type { Outfit } from '@/services/data/types';
 
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
+interface UseOutfitsOptions {
+  archetype?: string;
+  season?: string;
+  limit?: number;
+  enabled?: boolean;
 }
 
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
-  
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
-      });
-    }
-  };
-  
-  return { variant, trackConversion };
-}
-
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+interface UseOutfitsResult {
+  data: Outfit[] | null;
+  loading: boolean;
+  error: string | null;
+  source: 'supabase' | 'local' | 'fallback';
+  cached: boolean;
+  refetch: () => Promise<void>;
 }
 
 /**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ * Hook for fetching outfits with filtering options
  */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
+  const {
+    archetype,
+    season,
+    limit,
+    enabled = true
+  } = options;
 
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
+  const [data, setData] = useState<Outfit[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
+  const [cached, setCached] = useState(false);
 
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+  const loadOutfits = async () => {
+    if (!enabled) {
+      setLoading(false);
+      return;
     }
-  }, [testName, userId, variant]);
 
-  return { variant, trackClick, markExposure };
+    let alive = true;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetchOutfits({
+        archetype,
+        season,
+        limit
+      });
+      
+      if (alive) {
+        setData(response.data);
+        setSource(response.source);
+        setCached(response.cached);
+        
+        // Set warning if using fallback
+        if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
+          setError('Live data niet beschikbaar, fallback gebruikt');
+        }
+      }
+    } catch (err) {
+      if (alive) {
+        setError(err instanceof Error ? err.message : 'Onbekende fout');
+        setData([]);
+        setSource('fallback');
+        setCached(false);
+      }
+    } finally {
+      if (alive) {
+        setLoading(false);
+      }
+    }
+    
+    return () => { alive = false; };
+  };
+
+  useEffect(() => {
+    const cleanup = loadOutfits();
+    return () => cleanup.then(fn => fn?.());
+  }, [archetype, season, limit, enabled]);
+
+  return {
+    data,
+    loading,
+    error,
+    source,
+    cached,
+    refetch: loadOutfits
+  };
+}
+
+/**
+ * Hook for infinite scrolling outfits feed
+ */
+export function useInfiniteOutfits(options: {
+  userId?: string;
+  archetypes?: string[];
+  pageSize?: number;
+}) {
+  return useInfiniteQuery({
+    queryKey: ['outfits', 'infinite', options],
+    queryFn: async ({ pageParam = 0 }) => {
+      const feed = await getFeed({
+        userId: options.userId,
+        count: options.pageSize || 12,
+        archetypes: options.archetypes,
+        offset: pageParam
+      });
+      
+      return {
+        outfits: feed,
+        nextCursor: feed.length === (options.pageSize || 12) ? pageParam + feed.length : undefined
+      };
+    },
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: 0
+  });
 }

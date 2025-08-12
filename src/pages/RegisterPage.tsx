@@ -1,82 +1,377 @@
-import { useMemo, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, User } from 'lucide-react';
+import Button from '../components/ui/Button';
+import { useUser } from '../context/UserContext';
+import { supabase } from '../lib/supabaseClient';
 
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
-}
-
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
+const RegisterPage: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, loading } = useUser();
+  const sb = supabase();
   
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
-      });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ 
+    name?: string; 
+    email?: string; 
+    password?: string; 
+    confirmPassword?: string; 
+    general?: string 
+  }>({});
+
+  // Get redirect path from location state or default to dashboard
+  const from = (location.state as any)?.from?.pathname || '/dashboard';
+
+  // Handle successful registration redirect
+  useEffect(() => {
+    if (user && !loading) {
+      navigate(from, { replace: true });
+    }
+  }, [user, loading, navigate, from]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear errors when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
     }
   };
-  
-  return { variant, trackConversion };
-}
 
-export type Variant = 'control' | 'v1' | 'v2';
+  const validateForm = (): boolean => {
+    const newErrors: typeof errors = {};
 
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
-
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+    if (!formData.name.trim()) {
+      newErrors.name = 'Naam is verplicht';
     }
-  }, [testName, userId, variant]);
 
-  return { variant, trackClick, markExposure };
-}
+    if (!formData.email) {
+      newErrors.email = 'E-mailadres is verplicht';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Ongeldig e-mailadres';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Wachtwoord is verplicht';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Wachtwoord moet minimaal 6 karakters zijn';
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Bevestig je wachtwoord';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Wachtwoorden komen niet overeen';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    if (!sb) {
+      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const { error } = await sb.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name
+          }
+        }
+      });
+      
+      if (error) {
+        setErrors({ general: 'Registratie mislukt. Probeer het opnieuw.' });
+      } else {
+        // Track successful registration
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'sign_up', {
+            event_category: 'authentication',
+            event_label: 'email_signup'
+          });
+        }
+        // Navigation will be handled by useEffect when user state updates
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      setErrors({ general: 'Er ging iets mis bij de registratie. Probeer het opnieuw.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading while auth is pending
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#bfae9f] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Registreren...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          {/* Header */}
+          <div className="text-center">
+            <Link to="/" className="inline-block mb-6">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-10 h-10 rounded-full bg-[#bfae9f] flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">F</span>
+                </div>
+                <span className="text-2xl font-light text-gray-900">FitFi</span>
+              </div>
+            </Link>
+            
+            <h2 className="text-3xl font-light text-gray-900 mb-2">
+              Maak je account aan
+            </h2>
+            <p className="text-gray-600">
+              Start je stijlreis met FitFi
+            </p>
+          </div>
+
+          {/* Registration Form */}
+          <div className="bg-white rounded-3xl shadow-sm p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* General Error */}
+              {errors.general && (
+                <div 
+                  className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3"
+                  role="alert"
+                  aria-live="assertive"
+                >
+                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-red-700 text-sm">{errors.general}</p>
+                </div>
+              )}
+
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  Naam
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
+                      errors.name ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Je volledige naam"
+                  />
+                </div>
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.name}
+                  </p>
+                )}
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  E-mailadres
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
+                      errors.email ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="je@email.com"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.email}
+                  </p>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Wachtwoord
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    required
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
+                      errors.password ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Minimaal 6 karakters"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.password}
+                  </p>
+                )}
+              </div>
+
+              {/* Confirm Password Field */}
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Bevestig wachtwoord
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
+                      errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Herhaal je wachtwoord"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.confirmPassword}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
+                disabled={isLoading}
+                icon={isLoading ? undefined : <ArrowRight size={20} />}
+                iconPosition="right"
+                className="cta-btn"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Account aanmaken...
+                  </div>
+                ) : (
+                  'Account aanmaken'
+                )}
+              </Button>
+            </form>
+
+            {/* Login Link */}
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Heb je al een account?{' '}
+                <Link
+                  to="/inloggen"
+                  className="text-[#bfae9f] hover:text-[#a89a8c] font-medium transition-colors"
+                >
+                  Log hier in
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          {/* Back to Home */}
+          <div className="text-center">
+            <Link
+              to="/"
+              className="text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              ← Terug naar home
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default RegisterPage;
