@@ -1,59 +1,35 @@
-import { useMemo, useCallback } from 'react';
-
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+{
+  "name": "fitfi",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
   }
-  return hash >>> 0; // forceer positief
-}
-
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
-
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
-    }
-  }, [testName, userId, variant]);
-
-  return { variant, trackClick, markExposure };
 }
