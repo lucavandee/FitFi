@@ -1,5 +1,4 @@
 import { useMemo, useCallback } from 'react';
-import { getFeed } from '@/services/DataRouter';
 
 interface ABTestingOptions {
   testName: string;
@@ -79,3 +78,5 @@ export function useABVariant(testName: string, userId?: string | null) {
 
   return { variant, trackClick, markExposure };
 }
+
+export default FeedPage;
