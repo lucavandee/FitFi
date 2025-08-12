@@ -132,41 +132,6 @@ export async function joinTribe(tribeId: string, userId: string): Promise<TribeM
   };
 }
 
-      return data;
-    } catch (error) {
-      console.warn('[TribeService] Supabase join failed, using localStorage:', error);
-      
-      // Fallback to localStorage
-      const success = lt_joinTribe(tribeId, userId);
-      if (!success) {
-        throw new Error('Already a member');
-      }
-      
-      return {
-        id: `local_${Date.now()}`,
-        tribe_id: tribeId,
-        user_id: userId,
-        role: 'member',
-        joined_at: new Date().toISOString()
-      };
-    }
-  }
-  
-  // Direct localStorage usage
-  const success = lt_joinTribe(tribeId, userId);
-  if (!success) {
-    throw new Error('Already a member');
-  }
-  
-  return {
-    id: `local_${Date.now()}`,
-    tribe_id: tribeId,
-    user_id: userId,
-    role: 'member',
-    joined_at: new Date().toISOString()
-  };
-}
-
 /**
  * Leave tribe with fallback to localStorage
  */
@@ -320,7 +285,7 @@ export async function checkTribeServiceHealth(): Promise<{
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
       // Test Supabase connection
-      const { error } = await supabase
+      const { error } = await supabase()
         .from('tribes')
         .select('id')
         .limit(1);
