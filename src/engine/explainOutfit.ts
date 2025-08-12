@@ -1,80 +1,150 @@
-import { useMemo, useCallback } from 'react';
+import { Outfit, UserProfile } from './types';
 
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
-}
-
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
-  
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
-      });
-    }
+/**
+ * Generates a human-readable explanation for why an outfit matches a user's style
+ * 
+ * @param outfit - The outfit to explain
+ * @param archetype - User's primary style archetype
+ * @param occasion - The occasion this outfit is for
+ * @returns A detailed explanation string
+ */
+export function generateOutfitExplanation(
+  outfit: Outfit,
+  archetype: string,
+  occasion: string
+): string {
+  // Base explanation templates for each archetype
+  const archetypeExplanations: Record<string, string> = {
+    'klassiek': 'Deze outfit past perfect bij jouw klassieke stijl door de tijdloze elegantie en verfijnde details.',
+    'casual_chic': 'Deze combinatie belichaamt jouw casual chic aesthetic met moeiteloze elegantie en moderne touches.',
+    'urban': 'Deze look sluit aan bij jouw urban stijl met functionele details en een stoere stadslook.',
+    'streetstyle': 'Deze outfit past bij jouw streetstyle door de authentieke streetwear elementen en creatieve expressie.',
+    'retro': 'Deze combinatie weerspiegelt jouw retro voorkeuren met vintage-geïnspireerde stukken en nostalgische details.',
+    'luxury': 'Deze outfit past bij jouw luxury stijl door de exclusieve stukken en premium kwaliteit.'
   };
+
+  // Occasion-specific explanations
+  const occasionExplanations: Record<string, string> = {
+    'Werk': 'De professionele uitstraling maakt deze outfit perfect voor zakelijke gelegenheden.',
+    'Formeel': 'De elegante details zorgen voor een geschikte look voor formele evenementen.',
+    'Casual': 'De relaxte pasvorm en comfortabele materialen maken dit ideaal voor dagelijks gebruik.',
+    'Weekend': 'De veelzijdige stukken zijn perfect voor een ontspannen weekend.',
+    'Uitgaan': 'De statement pieces zorgen voor een opvallende look voor sociale gelegenheden.',
+    'Sport': 'De functionele materialen en pasvorm ondersteunen een actieve lifestyle.'
+  };
+
+  // Product-specific insights
+  const productInsights: string[] = [];
   
-  return { variant, trackConversion };
-}
-
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  if (outfit.products && outfit.products.length > 0) {
+    const categories = outfit.products.map(p => p.category || p.type).filter(Boolean);
+    const uniqueCategories = [...new Set(categories)];
+    
+    if (uniqueCategories.length >= 3) {
+      productInsights.push('De complete outfit zorgt voor een gebalanceerde en doordachte look.');
+    }
+    
+    // Check for color coordination
+    const brands = outfit.products.map(p => p.brand).filter(Boolean);
+    if (brands.length > 1) {
+      productInsights.push('De mix van verschillende merken toont jouw persoonlijke stijl.');
+    }
   }
-  return hash >>> 0; // forceer positief
-}
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+  // Seasonal considerations
+  let seasonalNote = '';
+  if (outfit.season) {
+    const seasonMap: Record<string, string> = {
+      'spring': 'De lichte materialen en frisse kleuren passen perfect bij het lenteweer.',
+      'summer': 'De ademende stoffen en lichte tinten zijn ideaal voor warme zomerdagen.',
+      'autumn': 'De warme lagen en rijke kleuren sluiten aan bij het herfstseizoen.',
+      'winter': 'De isolerende materialen en donkere tinten bieden warmte en stijl in de winter.'
+    };
+    
+    if (typeof outfit.season === 'string') {
+      seasonalNote = seasonMap[outfit.season] || '';
+    } else if (Array.isArray(outfit.season) && outfit.season.length > 0) {
+      seasonalNote = seasonMap[outfit.season[0]] || '';
+    }
+  }
+
+  // Combine all explanations
+  const explanationParts = [
+    archetypeExplanations[archetype] || 'Deze outfit is zorgvuldig geselecteerd voor jouw unieke stijl.',
+    occasionExplanations[occasion] || 'Deze combinatie is geschikt voor verschillende gelegenheden.',
+    ...productInsights,
+    seasonalNote
+  ].filter(Boolean);
+
+  return explanationParts.join(' ');
 }
 
 /**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ * Generates Nova's personalized explanation for an outfit
+ * 
+ * @param outfit - The outfit to explain
+ * @param userProfile - User's style profile
+ * @returns Nova's personalized explanation
  */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+export function generateNovaExplanation(
+  outfit: Outfit,
+  userProfile?: UserProfile
+): string {
+  const userName = userProfile?.name || 'daar';
+  
+  let explanation = `Hoi ${userName}! `;
+  
+  // Personalize based on user's style preferences
+  if (userProfile?.stylePreferences) {
+    const topPreference = Object.entries(userProfile.stylePreferences)
+      .sort(([,a], [,b]) => b - a)[0];
+    
+    if (topPreference) {
+      const [style, score] = topPreference;
+      explanation += `Ik zie dat je van ${style} stijl houdt (score: ${score}/5), `;
     }
-  }, [testName, userId, variant]);
+  }
+  
+  explanation += `daarom heb ik deze ${outfit.archetype?.replace('_', ' ')} outfit voor je geselecteerd. `;
+  
+  // Add specific product insights
+  if (outfit.products && outfit.products.length > 0) {
+    const keyProduct = outfit.products[0];
+    if (keyProduct) {
+      explanation += `Het ${keyProduct.name || keyProduct.type} vormt de basis van deze look `;
+      
+      if (keyProduct.brand) {
+        explanation += `van ${keyProduct.brand} `;
+      }
+      
+      explanation += 'en combineert perfect met de andere stukken. ';
+    }
+  }
+  
+  // Add styling tip
+  explanation += 'Pro tip: ';
+  
+  const tips = [
+    'draag dit met zelfvertrouwen - dat maakt het verschil!',
+    'voeg een persoonlijk accent toe met je favoriete accessoire.',
+    'de kleuren in deze outfit laten je huid stralen.',
+    'deze pasvorm flatteert jouw lichaamsbouw optimaal.',
+    'perfect voor jouw lifestyle en persoonlijkheid!'
+  ];
+  
+  const randomTip = tips[Math.floor(Math.random() * tips.length)];
+  explanation += randomTip;
+  
+  return explanation;
+}
 
-  return { variant, trackClick, markExposure };
+/**
+ * Legacy function for backward compatibility
+ */
+export function explainOutfit(
+  outfit: Outfit,
+  archetype: string,
+  occasion: string = 'Casual'
+): string {
+  return generateOutfitExplanation(outfit, archetype, occasion);
 }
