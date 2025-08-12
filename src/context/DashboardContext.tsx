@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './UserContext';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
+
+// Get singleton client
+const sb = supabase();
 
 interface DashboardProfile {
   id: string;
@@ -50,13 +53,35 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return;
     }
 
+    if (!sb) {
+      console.warn('[Dashboard] Supabase not available, using fallback data');
+      setData({
+        profile: {
+          id: user.id,
+          full_name: user.name || 'Friend',
+          referral_count: 0
+        },
+        referrals: {
+          total: 0,
+          rank: 1,
+          is_founding_member: false
+        },
+        stats: {
+          quiz_completed: false,
+          outfits_viewed: 0
+        }
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
 
-      const { data: dashboardData, error: dashboardError } = await supabase.functions.invoke('dashboard-init', {
+      const { data: dashboardData, error: dashboardError } = await sb.functions.invoke('dashboard-init', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          Authorization: `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`
         },
         body: {}
       });

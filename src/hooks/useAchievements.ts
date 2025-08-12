@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { useUser } from '../context/UserContext';
 import { Achievement, UserAchievement } from '../types/achievements';
 import { achievements, getEarnedAchievements } from '../data/achievements';
 import toast from 'react-hot-toast';
+
+// Get singleton client
+const sb = supabase();
 
 export function useAchievements() {
   const { user } = useUser();
@@ -22,8 +25,14 @@ export function useAchievements() {
   const loadUserAchievements = async () => {
     if (!user?.id) return;
 
+    if (!sb) {
+      console.warn('[Achievements] Supabase not available');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('quiz_achievements')
         .select('*')
         .eq('user_id', user.id);
@@ -51,8 +60,13 @@ export function useAchievements() {
       );
 
       if (!hasAchievement) {
+        if (!sb) {
+          console.warn('[Achievements] Supabase not available for awarding');
+          continue;
+        }
+        
         try {
-          const { error } = await supabase
+          const { error } = await sb
             .from('quiz_achievements')
             .insert({
               user_id: user.id,

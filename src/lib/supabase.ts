@@ -1,16 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase as getSupabaseClient } from './supabaseClient';
 import toast from 'react-hot-toast';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables. Please check your .env file.');
-  // Don't throw in production to prevent app crashes
-  if (import.meta.env.DEV) {
-    throw new Error('Missing Supabase environment variables');
-  }
-}
 
 // Configuration for retry logic
 const RETRY_CONFIG = {
@@ -22,6 +11,17 @@ const RETRY_CONFIG = {
 
 // Session ID for error tracking
 let sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+// Get singleton client
+const supabase = getSupabaseClient();
+
+if (!supabase) {
+  console.error('Missing Supabase environment variables. Please check your .env file.');
+  // Don't throw in production to prevent app crashes
+  if (import.meta.env.DEV) {
+    throw new Error('Missing Supabase environment variables');
+  }
+}
 
 // Error logging function
 async function logSupabaseError(
@@ -48,7 +48,7 @@ async function logSupabaseError(
     };
 
     // Use the RPC function to log the error
-    await supabase.rpc('log_supabase_error', {
+    await supabase?.rpc('log_supabase_error', {
       error_code_param: error.code || error.status?.toString() || 'UNKNOWN',
       error_message_param: error.message || 'Unknown error',
       operation_type_param: operation,
@@ -184,15 +184,5 @@ export const TEST_USER_ID = 'test-user-123';
 // Feature flag for Supabase usage
 export const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  },
-  global: {
-    headers: {
-      'X-Session-ID': sessionId
-    }
-  }
-});
+// Export singleton client
+export { supabase };

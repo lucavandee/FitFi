@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
+
+// Get singleton client
+const sb = supabase();
 
 export function useFavorites(userId?: string) {
   return useQuery({
@@ -8,7 +11,9 @@ export function useFavorites(userId?: string) {
     queryFn: async () => {
       if (!userId) throw new Error('User ID required');
       
-      const { data, error } = await supabase
+      if (!sb) throw new Error('Supabase not available');
+      
+      const { data, error } = await sb
         .from('saved_outfits')
         .select('outfit_id, outfit_json, created_at')
         .eq('user_id', userId)

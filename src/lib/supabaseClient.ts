@@ -13,7 +13,7 @@ export function supabase(): SupabaseClient | null {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      storageKey: "fitfi.supabase.auth", // voorkomt her-verify
+      storageKey: "fitfi.supabase.auth",
     },
     global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
   });
