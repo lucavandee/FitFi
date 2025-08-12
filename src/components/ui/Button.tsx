@@ -1,80 +1,134 @@
-import { useMemo, useCallback } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
+export interface ButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  className?: string;
+  onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+  as?: 'button' | 'a' | typeof Link;
+  to?: string;
+  href?: string;
+  target?: string;
+  rel?: string;
+  'aria-label'?: string;
+  'aria-busy'?: boolean;
+  'data-ab-variant'?: string;
+  title?: string;
 }
 
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
-  
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
-      });
-    }
+const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  disabled = false,
+  loading = false,
+  icon,
+  iconPosition = 'left',
+  className = '',
+  onClick,
+  type = 'button',
+  as = 'button',
+  to,
+  href,
+  target,
+  rel,
+  'aria-label': ariaLabel,
+  'aria-busy': ariaBusy,
+  'data-ab-variant': abVariant,
+  title,
+  ...rest
+}) => {
+  const baseClasses = [
+    'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+    'disabled:opacity-50 disabled:cursor-not-allowed',
+    fullWidth ? 'w-full' : '',
+    className
+  ].filter(Boolean).join(' ');
+
+  const variantClasses = {
+    primary: 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] focus:ring-[#89CFF0]',
+    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 focus:ring-gray-500',
+    outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-gray-500',
+    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500',
+    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500'
   };
-  
-  return { variant, trackConversion };
-}
 
-export type Variant = 'control' | 'v1' | 'v2';
+  const sizeClasses = {
+    sm: 'px-3 py-2 text-sm rounded-lg',
+    md: 'px-4 py-2 text-base rounded-xl',
+    lg: 'px-6 py-3 text-lg rounded-2xl'
+  };
 
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
-}
+  const classes = [
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size]
+  ].join(' ');
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
-
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
+  const content = (
+    <>
+      {icon && iconPosition === 'left' && (
+        <span className="mr-2">{icon}</span>
+      )}
+      {children}
+      {icon && iconPosition === 'right' && (
+        <span className="ml-2">{icon}</span>
+      )}
+    </>
   );
 
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
-    }
-  }, [testName, userId, variant]);
+  const commonProps = {
+    className: classes,
+    disabled: disabled || loading,
+    'aria-label': ariaLabel,
+    'aria-busy': ariaBusy || loading,
+    'data-ab-variant': abVariant,
+    title,
+    ...rest
+  };
 
-  return { variant, trackClick, markExposure };
-}
+  if (as === 'a') {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        {...commonProps}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  if (as === Link) {
+    return (
+      <Link
+        to={to || '/'}
+        {...commonProps}
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      {...commonProps}
+    >
+      {content}
+    </button>
+  );
+};
+
+export default Button;
