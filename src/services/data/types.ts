@@ -259,6 +259,36 @@ export interface CreatePostData {
 }
 
 /**
+ * Tribe role type for membership management
+ */
+export type TribeRole = "member" | "admin" | "owner";
+
+/**
+ * Tribe member interface for membership tracking
+ */
+export interface TribeMember {
+  tribeId: string;
+  userId: string;
+  role?: TribeRole;
+  joinedAt: string; // ISO
+}
+
+/**
+ * Tribe post interface for community content
+ */
+export interface TribePost {
+  id: string;
+  tribeId: string;
+  authorId: string;
+  authorName?: string;
+  content: string;
+  imageUrl?: string;
+  createdAt: string; // ISO
+  likes?: number;
+  commentsCount?: number;
+}
+
+/**
  * Pagination metadata
  */
 export interface PaginationMeta {
