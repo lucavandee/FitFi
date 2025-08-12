@@ -1,4 +1,7 @@
 // src/services/data/types.ts
+export type ChallengeDifficulty = "easy" | "medium" | "hard";
+export type SubmissionType = "text" | "image" | "link" | "combo";
+
 export interface ImageVariant {
   url: string;
   alt?: string;
@@ -327,6 +330,7 @@ export interface TribeChallenge {
   tags?: string[];           // b.v. ["smart-casual","summer"]
   createdAt?: string;
   createdBy?: string;        // admin userId
+  difficulty?: ChallengeDifficulty;   // ✅ nieuw
 }
 
 /**
@@ -344,6 +348,7 @@ export interface TribeChallengeSubmission {
   score?: number;     // door moderators of AI
   isWinner?: boolean;
   createdAt: string;  // ISO
+  submissionType?: SubmissionType;    // ✅ nieuw
 }
 
 /**

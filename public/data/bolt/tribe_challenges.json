@@ -1,0 +1,134 @@
+[
+  {
+    "id": "challenge-winter-layers-001",
+    "tribeId": "tribe-italian-smart-casual",
+    "title": "Winter Layering Mastery",
+    "description": "Toon hoe je elegante winterlagen combineert met Italiaanse sophistication. Focus op texturen, kleuren en proportie.",
+    "image": "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2",
+    "rules": [
+      "Minimaal 3 lagen (base, mid, outer)",
+      "Italiaanse merken of stijl preferred",
+      "Neutrale kleuren: navy, camel, grijs, wit",
+      "Vertel het verhaal achter je layering keuzes"
+    ],
+    "rewardPoints": 75,
+    "winnerRewardPoints": 250,
+    "startAt": "2025-01-20T00:00:00.000Z",
+    "endAt": "2025-02-15T23:59:59.000Z",
+    "status": "open",
+    "tags": ["winter", "layering", "italian", "smart-casual"],
+    "difficulty": "medium",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "createdBy": "admin-user-001"
+  },
+  {
+    "id": "challenge-street-authenticity-002",
+    "tribeId": "tribe-streetstyle-europe",
+    "title": "Authentic Street Vibes",
+    "description": "Laat de echte European streetwear zien. Van Amsterdam tot Berlijn - wat maakt jouw street style uniek?",
+    "image": "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2",
+    "rules": [
+      "Authentieke streetwear brands",
+      "European city vibes",
+      "Geen fast fashion",
+      "Vertel over je inspiratie en locatie"
+    ],
+    "rewardPoints": 100,
+    "winnerRewardPoints": 300,
+    "startAt": "2025-01-25T00:00:00.000Z",
+    "endAt": "2025-02-20T23:59:59.000Z",
+    "status": "open",
+    "tags": ["streetwear", "authentic", "european", "urban"],
+    "difficulty": "hard",
+    "createdAt": "2025-01-20T14:30:00.000Z",
+    "createdBy": "admin-user-002"
+  },
+  {
+    "id": "challenge-minimal-capsule-003",
+    "tribeId": "tribe-minimalist-collective",
+    "title": "30-Piece Capsule Challenge",
+    "description": "Bouw een complete capsule wardrobe met maximaal 30 items. Toon hoe elk item met alles combineert.",
+    "image": "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2",
+    "rules": [
+      "Maximaal 30 items totaal",
+      "Neutrale kleurenpalet",
+      "Elk item moet met minimaal 5 andere items combineren",
+      "Deel je complete capsule overzicht"
+    ],
+    "rewardPoints": 150,
+    "winnerRewardPoints": 500,
+    "startAt": "2025-02-01T00:00:00.000Z",
+    "endAt": "2025-03-01T23:59:59.000Z",
+    "status": "draft",
+    "tags": ["minimalist", "capsule", "wardrobe", "efficiency"],
+    "difficulty": "hard",
+    "createdAt": "2025-01-28T09:15:00.000Z",
+    "createdBy": "admin-user-003"
+  },
+  {
+    "id": "challenge-sustainable-story-004",
+    "tribeId": "tribe-sustainable-fashion",
+    "title": "Sustainable Style Story",
+    "description": "Vertel het verhaal achter je duurzame outfit. Van thrift finds tot eco-friendly merken - inspireer anderen!",
+    "image": "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2",
+    "rules": [
+      "Minimaal 50% duurzame/vintage items",
+      "Vertel het verhaal van elk item",
+      "Deel tips voor duurzame shopping",
+      "Focus op kwaliteit en tijdloosheid"
+    ],
+    "rewardPoints": 125,
+    "winnerRewardPoints": 400,
+    "startAt": "2025-01-28T00:00:00.000Z",
+    "endAt": "2025-02-28T23:59:59.000Z",
+    "status": "open",
+    "tags": ["sustainable", "vintage", "storytelling", "eco"],
+    "difficulty": "medium",
+    "createdAt": "2025-01-25T16:45:00.000Z",
+    "createdBy": "admin-user-004"
+  },
+  {
+    "id": "challenge-luxury-investment-005",
+    "tribeId": "tribe-luxury-connoisseurs",
+    "title": "Investment Piece Spotlight",
+    "description": "Showcase je beste investment piece en leg uit waarom het de investering waard was. Focus op kwaliteit, tijdloosheid en veelzijdigheid.",
+    "image": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2",
+    "rules": [
+      "Item moet €200+ kosten",
+      "Minimaal 1 jaar in bezit",
+      "Toon verschillende styling opties",
+      "Leg cost-per-wear uit"
+    ],
+    "rewardPoints": 200,
+    "winnerRewardPoints": 600,
+    "startAt": "2025-02-05T00:00:00.000Z",
+    "endAt": "2025-03-05T23:59:59.000Z",
+    "status": "draft",
+    "tags": ["luxury", "investment", "quality", "timeless"],
+    "difficulty": "hard",
+    "createdAt": "2025-01-28T11:20:00.000Z",
+    "createdBy": "admin-user-005"
+  },
+  {
+    "id": "challenge-vintage-revival-006",
+    "tribeId": "tribe-vintage-revival",
+    "title": "90s Revival Challenge",
+    "description": "Breng de 90s terug met een moderne twist! Toon hoe vintage pieces perfect passen in 2025.",
+    "image": "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2",
+    "rules": [
+      "Minimaal 1 authentiek 90s item",
+      "Moderne twist verplicht",
+      "Vertel over je vintage find",
+      "Inspireer anderen met styling tips"
+    ],
+    "rewardPoints": 90,
+    "winnerRewardPoints": 350,
+    "startAt": "2025-01-30T00:00:00.000Z",
+    "endAt": "2025-02-25T23:59:59.000Z",
+    "status": "open",
+    "tags": ["vintage", "90s", "revival", "modern-twist"],
+    "difficulty": "easy",
+    "createdAt": "2025-01-27T13:10:00.000Z",
+    "createdBy": "admin-user-006"
+  }
+]

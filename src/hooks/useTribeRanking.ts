@@ -4,12 +4,15 @@ import { fetchTribeRankings } from "@/services/data/dataService";
 
 interface UseTribeRankingOptions {
   limit?: number;
+  userId?: string;
+  tribeId?: string;
   enabled?: boolean;
+  refetchOnMount?: boolean;
 }
 
 interface UseTribeRankingResult {
   rankings: TribeRanking[] | null;
-  userTribeRank: TribeRanking | null;
+  userRanking: TribeRanking | null;
   loading: boolean;
   error: string | null;
   source: 'supabase' | 'local' | 'fallback';
@@ -20,17 +23,16 @@ interface UseTribeRankingResult {
 /**
  * Hook for fetching tribe rankings
  */
-export function useTribeRanking(
-  userId?: string,
-  options: UseTribeRankingOptions = {}
-): UseTribeRankingResult {
+export function useTribeRanking(options: UseTribeRankingOptions = {}): UseTribeRankingResult {
   const {
     limit = 10,
-    enabled = true
+    userId,
+    tribeId,
+    enabled = true,
+    refetchOnMount = true
   } = options;
 
   const [rankings, setRankings] = useState<TribeRanking[] | null>(null);
-  const [userTribeRank, setUserTribeRank] = useState<TribeRanking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
@@ -50,19 +52,14 @@ export function useTribeRanking(
       
       const response: DataResponse<TribeRanking[]> = await fetchTribeRankings({
         limit,
-        userId
+        userId,
+        tribeId
       });
       
       if (alive) {
         setRankings(response.data);
         setSource(response.source);
         setCached(response.cached);
-        
-        // Find user's tribe rank if available
-        if (userId && response.data) {
-          const userRank = response.data.find(r => r.tribeId === userId);
-          setUserTribeRank(userRank || null);
-        }
         
         // Set warning if using fallback
         if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
@@ -73,7 +70,6 @@ export function useTribeRanking(
       if (alive) {
         setError(err instanceof Error ? err.message : 'Onbekende fout');
         setRankings([]);
-        setUserTribeRank(null);
         setSource('fallback');
         setCached(false);
       }
@@ -87,13 +83,20 @@ export function useTribeRanking(
   };
 
   useEffect(() => {
-    const cleanup = loadRankings();
-    return () => cleanup.then(fn => fn?.());
-  }, [userId, limit, enabled]);
+    if (refetchOnMount || !rankings) {
+      const cleanup = loadRankings();
+      return () => cleanup.then(fn => fn?.());
+    }
+  }, [limit, userId, tribeId, enabled, refetchOnMount]);
+
+  // Find user's ranking if userId provided
+  const userRanking = userId && rankings 
+    ? rankings.find(r => r.tribeId === tribeId) || null
+    : null;
 
   return {
     rankings,
-    userTribeRank,
+    userRanking,
     loading,
     error,
     source,
@@ -103,46 +106,69 @@ export function useTribeRanking(
 }
 
 /**
- * Hook for specific tribe ranking
+ * Hook for getting tribe leaderboard (top tribes by points)
  */
-export function useSpecificTribeRanking(tribeId: string) {
-  const [ranking, setRanking] = useState<TribeRanking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function useTribeLeaderboard(limit: number = 10): UseTribeRankingResult {
+  return useTribeRanking({
+    limit,
+    enabled: true,
+    refetchOnMount: true
+  });
+}
 
-  const loadTribeRanking = async () => {
-    if (!tribeId) {
-      setLoading(false);
-      return;
-    }
+/**
+ * Hook for getting specific tribe's ranking position
+ */
+export function useTribePosition(tribeId: string): {
+  position: TribeRanking | null;
+  loading: boolean;
+  error: string | null;
+} {
+  const { rankings, loading, error } = useTribeRanking({
+    tribeId,
+    limit: 1,
+    enabled: !!tribeId
+  });
 
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetchTribeRankings({ tribeId });
-      
-      if (response.data && response.data.length > 0) {
-        setRanking(response.data[0]);
-      } else {
-        setRanking(null);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Onbekende fout');
-      setRanking(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadTribeRanking();
-  }, [tribeId]);
+  const position = rankings?.[0] || null;
 
   return {
-    ranking,
+    position,
     loading,
-    error,
-    refetch: loadTribeRanking
+    error
   };
+}
+
+/**
+ * Hook for calculating tribe points from activities
+ */
+export function useTribePointsCalculator() {
+  const calculatePoints = (activities: {
+    newMembers: number;
+    posts: number;
+    challengeSubmissions: number;
+    challengeWins: number;
+    likes: number;
+    comments: number;
+  }): number => {
+    const pointsConfig = {
+      newMember: 50,        // Nieuwe member join
+      post: 25,             // Nieuwe post
+      challengeSubmission: 100, // Challenge deelname
+      challengeWin: 500,    // Challenge winnen
+      like: 5,              // Like ontvangen
+      comment: 10           // Comment ontvangen
+    };
+
+    return (
+      activities.newMembers * pointsConfig.newMember +
+      activities.posts * pointsConfig.post +
+      activities.challengeSubmissions * pointsConfig.challengeSubmission +
+      activities.challengeWins * pointsConfig.challengeWin +
+      activities.likes * pointsConfig.like +
+      activities.comments * pointsConfig.comment
+    );
+  };
+
+  return { calculatePoints };
 }
