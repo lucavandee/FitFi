@@ -13,7 +13,7 @@ export const ImageWithFallback: React.FC<Props> = ({
   fallbackSrc = FALLBACK,
   ...rest 
 }) => {
-  const [url, setUrl] = React.useState(src?.startsWith("http") ? src : fallbackSrc);
+  const [url, setUrl] = React.useState(src?.startsWith("http") || src?.startsWith("/") ? src : fallbackSrc);
   
   const handleError = () => {
     if (url !== fallbackSrc) {
