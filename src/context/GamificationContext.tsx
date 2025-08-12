@@ -1,70 +1,72 @@
-import { useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useMemo, useState, useCallback } from 'react';
 
-type Variant = 'control' | 'v1' | 'v2';
+export type GamificationContextValue = {
+  level: number;
+  xp: number;
+  streak: number;
+  loading: boolean;
+  claimDaily: () => Promise<void> | void;
+  addXp: (amount: number) => Promise<void> | void;
+};
 
-/** Superlichte, dependency-loze hash (djb2-variant) */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
-}
+const defaultValue: GamificationContextValue = {
+  level: 1,
+  xp: 0,
+  streak: 0,
+  loading: false,
+  claimDaily: () => {},
+  addXp: () => {},
+};
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
+export const GamificationContext = createContext<GamificationContextValue>(defaultValue);
 
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+export const GamificationProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  // Veilige lokale state (kan later gekoppeld worden aan echte hooks/API)
+  const [level, setLevel] = useState<number>(1);
+  const [xp, setXp] = useState<number>(0);
+  const [streak] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  /** Veilig tracken: gebruikt gtag als die bestaat, anders console.debug */
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      try {
-        const payload = {
-          label,
-          test_name: testName,
-          variant,
-          user_id: userId ?? 'guest',
-          ...extra,
-        };
-        // voorkom crashes zonder gtag
-        // @ts-ignore
-        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-          // @ts-ignore
-          window.gtag('event', 'cta_click', payload);
-        } else {
-          // eslint-disable-next-line no-console
-          console.debug('[ab/cta_click]', payload);
-        }
-      } catch {
-        /* no-op */
-      }
-    },
-    [testName, userId, variant]
-  );
+  const addXp = useCallback(async (amount: number) => {
+    setXp((x) => Math.max(0, x + (Number.isFinite(amount) ? amount : 0)));
+    // Eventueel: level berekenen o.b.v. XP (placeholder)
+    const newLevel = 1 + Math.floor((xp + amount) / 100);
+    setLevel((l) => Math.max(l, newLevel));
+  }, [xp]);
 
-  /** Exposure is bewust no-op in safe mode (later optioneel via API/Supabase) */
-  const markExposure = useCallback(() => {
+  const claimDaily = useCallback(async () => {
     try {
-      const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'ab_exposure', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/exposure]', payload);
-      }
-    } catch {
-      /* no-op */
+      setLoading(true);
+      // Hier kan later backend call komen; nu enkel bonus toevoegen
+      await addXp(10);
+    } finally {
+      setLoading(false);
     }
-  }, [testName, userId, variant]);
+  }, [addXp]);
 
-  return { variant, trackClick, markExposure };
+  const value = useMemo<GamificationContextValue>(() => ({
+    level,
+    xp,
+    streak,
+    loading,
+    claimDaily,
+    addXp,
+  }), [level, xp, streak, loading, claimDaily, addXp]);
+
+  return (
+    <GamificationContext.Provider value={value}>
+      {children}
+    </GamificationContext.Provider>
+  );
+};
+
+// Hook voor consumers
+export function useGamification(): GamificationContextValue {
+  return useContext(GamificationContext);
 }
+
+// Compat: sommige bestanden kunnen deze naam gebruiken
+export { GamificationProvider as GamificationContextProvider };
+
+// Default export tbv. legacy imports: import GamificationProvider from '...'
+export default GamificationProvider;
