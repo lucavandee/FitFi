@@ -6,27 +6,84 @@ import {
   Users, 
   Crown,
   UserPlus,
-  UserMinus
+  UserMinus,
+  Trophy,
+  Target
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useTribeBySlug, useTribes } from '../hooks/useTribes';
+import { useTribeChallenges, useChallengeSubmissions, useCreateChallengeSubmission } from '../hooks/useTribeChallenges';
 import { JoinButton } from '../components/tribes/JoinButton';
 import { PostComposer } from '../components/tribes/PostComposer';
 import { PostsList } from '../components/tribes/PostsList';
+import { ChallengeCard } from '../components/Tribes/ChallengeCard';
+import { ChallengeDetail } from '../components/Tribes/ChallengeDetail';
+import { SubmissionsList } from '../components/Tribes/SubmissionsList';
 import { useFitFiUser } from '../hooks/useFitFiUser';
-import type { Tribe } from '../services/data/types';
+import type { Tribe, TribeChallenge } from '../services/data/types';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import toast from 'react-hot-toast';
 
+// Helper component for challenge section
+const ChallengeSection: React.FC<{ challenge: TribeChallenge; userId?: string }> = ({ challenge, userId }) => {
+  const { data: subs, loading: subsLoading } = useChallengeSubmissions(challenge.id);
+  const createSub = useCreateChallengeSubmission();
+
+  async function onSubmit(payload: { content?: string; imageUrl?: string; linkUrl?: string }) {
+    if (!userId) {
+      toast.error('Log in om deel te nemen');
+      return;
+    }
+
+    try {
+      await createSub.mutateAsync({
+        id: crypto.randomUUID(),
+        tribeId: challenge.tribeId,
+        challengeId: challenge.id,
+        userId: userId,
+        userName: undefined, // Will be filled by backend
+        createdAt: new Date().toISOString(),
+        score: undefined,
+        isWinner: false,
+        submissionType: payload.imageUrl && payload.linkUrl ? 'combo' : 
+                       payload.imageUrl ? 'image' : 
+                       payload.linkUrl ? 'link' : 'text',
+        ...payload,
+      });
+      
+      toast.success('Challenge submission succesvol! 🎉');
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast.error('Submission mislukt. Probeer opnieuw.');
+    }
+  }
+
+  return (
+    <div className="mt-8 space-y-6">
+      <ChallengeDetail challenge={challenge} onSubmit={onSubmit} canSubmit={!!userId} />
+      <SubmissionsList subs={subs ?? null} loading={subsLoading} />
+    </div>
+  );
+};
 const TribeDetailPage: React.FC = () => {
   const { slug, tribeId } = useParams<{ slug?: string; tribeId?: string }>();
   const { user, status } = useUser();
   const navigate = useNavigate();
   const { data: fitFiUser } = useFitFiUser(user?.id);
   const { data: tribes } = useTribes();
+  
+  // Challenges state
+  const { data: challenges, loading: challengesLoading } = useTribeChallenges(
+    tribes?.find(t => t.slug === slug || t.id === tribeId)?.id
+  );
+  const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
+  const activeChallenge = useMemo<TribeChallenge | null>(
+    () => challenges?.find(c => c.id === activeChallengeId) ?? null,
+    [challenges, activeChallengeId]
+  );
   
   // Find tribe by slug or tribeId
   const tribe = useMemo(() => {
@@ -124,6 +181,90 @@ const TribeDetailPage: React.FC = () => {
             variant="primary"
           />
         </div>
+
+        {/* Challenges Section */}
+        <ErrorBoundary>
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
+                  <Trophy className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-medium text-gray-900">Tribe Challenges</h2>
+                  <p className="text-gray-600">Verdien punten en toon je stijl</p>
+                </div>
+              </div>
+              
+              {challenges && challenges.length > 0 && (
+                <div className="text-sm text-gray-600">
+                  {challenges.filter(c => c.status === 'open').length} actieve challenges
+                </div>
+              )}
+            </div>
+
+            {challengesLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-6 animate-pulse">
+                    <div className="h-32 bg-gray-200 rounded-xl mb-4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                ))}
+              </div>
+            ) : challenges && challenges.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {challenges.map((challenge, index) => (
+                  <div
+                    key={challenge.id}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <ChallengeCard 
+                      c={challenge} 
+                      onOpen={setActiveChallengeId}
+                      className="hover:transform hover:scale-105 transition-all"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Target className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-4">
+                  Nog geen challenges
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Deze tribe heeft nog geen actieve challenges. Check later terug!
+                </p>
+              </div>
+            )}
+          </div>
+        </ErrorBoundary>
+
+        {/* Active Challenge Detail */}
+        {activeChallenge && (
+          <ErrorBoundary>
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-medium text-gray-900">Challenge Details</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveChallengeId(null)}
+                  className="text-gray-600 hover:bg-gray-100"
+                >
+                  Sluiten
+                </Button>
+              </div>
+              
+              <ChallengeSection challenge={activeChallenge} userId={user?.id} />
+            </div>
+          </ErrorBoundary>
+        )}
 
         {/* Post Composer Integration */}
         <div className="mb-6">
