@@ -20,7 +20,7 @@ declare module '@/services/data/types' {
   // Minimale compat types om compile te laten slagen
   export type ID = string;
   export type Season = 'spring'|'summer'|'autumn'|'winter';
-  export type DataResponse<T=any> = { data: T; error?: string | null };
+  export type DataResponse<T=any> = { data: T; error?: string | null; source: 'supabase'|'local'|'fallback'; cached: boolean; errors?: string[] };
   export type FitFiUserProfile = { id: ID; name?: string; email?: string; };
   export type Outfit = { id: ID; title?: string; image?: string; priceMin?: number; priceMax?: number; };
   export type Tribe = { id: ID; name: string; slug?: string };
@@ -33,4 +33,5 @@ declare module '@/services/data/types' {
   export type UserStreak = { current_streak: number };
   export type ReferralRow = { id: ID; inviterId?: ID; invitedId?: ID; createdAt?: string };
   export type NotificationItem = { id: ID; title: string; body?: string; createdAt?: string };
+  export type BoltProduct = { id: ID; title: string; brand?: string; imageUrl?: string; type?: string; category: string; price?: number; };
 }
