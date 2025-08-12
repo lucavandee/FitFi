@@ -1,59 +1,170 @@
-import { useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
-export type Variant = 'control' | 'v1' | 'v2';
+// Get singleton client
+const sb = supabase();
 
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
+export interface FitFiUser {
+  id: string;
+  name: string;
+  email: string;
+  gender?: 'male' | 'female';
+  role?: string;
+  isPremium?: boolean;
+  stylePreferences?: {
+    casual: number;
+    formal: number;
+    sporty: number;
+    vintage: number;
+    minimalist: number;
+  };
 }
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+export interface UserProfile extends FitFiUser {
+  stylePreferences: {
+    casual: number;
+    formal: number;
+    sporty: number;
+    vintage: number;
+    minimalist: number;
+  };
 }
 
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+interface UserCtx {
+  user: FitFiUser | null;
+  status: 'loading' | 'authenticated' | 'unauthenticated';
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string, name: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  updateProfile: (updates: Partial<FitFiUser>) => Promise<void>;
+}
 
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
+const UserContext = createContext<UserCtx | undefined>(undefined);
 
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<FitFiUser | null>(null);
+  const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
+
+  useEffect(() => {
+    if (!sb) {
+      setStatus('unauthenticated');
+      return;
     }
-  }, [testName, userId, variant]);
 
-  return { variant, trackClick, markExposure };
-}
+    // Get initial session
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          gender: session.user.user_metadata?.gender,
+          role: session.user.user_metadata?.role || 'user'
+        });
+        setStatus('authenticated');
+      } else {
+        setStatus('unauthenticated');
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          gender: session.user.user_metadata?.gender,
+          role: session.user.user_metadata?.role || 'user'
+        });
+        setStatus('authenticated');
+      } else {
+        setUser(null);
+        setStatus('unauthenticated');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    if (!sb) return false;
+    
+    try {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      return !error;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
+  };
+
+  const register = async (email: string, password: string, name: string): Promise<boolean> => {
+    if (!sb) return false;
+    
+    try {
+      const { error } = await sb.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }
+        }
+      });
+      return !error;
+    } catch (error) {
+      console.error('Register error:', error);
+      return false;
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    if (!sb) return;
+    
+    try {
+      await sb.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const updateProfile = async (updates: Partial<FitFiUser>): Promise<void> => {
+    if (!sb || !user) return;
+    
+    try {
+      const { error } = await sb.auth.updateUser({
+        data: updates
+      });
+      
+      if (!error) {
+        setUser(prev => prev ? { ...prev, ...updates } : null);
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+    }
+  };
+
+  const value: UserCtx = {
+    user,
+    status,
+    isLoading: status === 'loading',
+    login,
+    register,
+    logout,
+    updateProfile
+  };
+
+  return (
+    <UserContext.Provider value={value}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+export const useUser = (): UserCtx => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};
