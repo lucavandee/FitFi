@@ -1,362 +1,80 @@
-import { supabase } from '../lib/supabaseClient';
-import { UserProfile } from '../context/UserContext';
-import { executeSupabaseOperation, SupabaseErrorContext } from '../utils/supabaseErrorHandler';
+import { useMemo, useCallback } from 'react';
 
-// Get singleton client
-const sb = supabase();
+interface ABTestingOptions {
+  testName: string;
+  variants: Array<{ name: string; weight: number }>;
+}
 
-// Quiz answer retrieval with proper error handling
-export const getQuizAnswer = async (userId: string, qId: string) => {
-  if (!sb) throw new Error('Supabase not available');
+export function useABTesting(options: ABTestingOptions) {
+  const variant = useABVariant(options.testName);
   
-  return executeSupabaseOperation(
-    async () => await sb
-      .from('quiz_answers')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('question_id', qId)
-      .maybeSingle(),
-    {
-      operation: 'select',
-      tableName: 'quiz_answers',
-      userId
-    },
-    {
-      fallbackValue: null,
-      showToast: false // Don't show toast for quiz data loading
-    }
-  );
-};
-
-// Retry configuration
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
-
-/**
- * Execute a function with retry logic
- */
-async function executeWithRetry<T>(
-  operation: () => Promise<T>,
-  retries: number = MAX_RETRIES
-): Promise<T> {
-  try {
-    return await operation();
-  } catch (error) {
-    if (retries > 0) {
-      console.warn(`Operation failed, retrying... (${retries} attempts left)`);
-      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-      return executeWithRetry(operation, retries - 1);
-    }
-    throw error;
-  }
-}
-
-/**
- * Validate UUID format
- */
-function isValidUUID(uuid: string): boolean {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-}
-
-/**
- * Fetch products from Supabase
- */
-export async function fetchProductsFromSupabase() {
-  if (!sb) throw new Error('Supabase not available');
-  
-  return executeSupabaseOperation(
-    async () => await sb
-      .from('products')
-      .select('*')
-      .limit(50),
-    {
-      operation: 'select',
-      tableName: 'products'
-    },
-    {
-      fallbackValue: [],
-      showToast: false
-    }
-  );
-}
-
-/**
- * Get user by ID
- */
-export async function getUserById(userId: string): Promise<UserProfile | null> {
-  if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
-  }
-
-  if (!sb) throw new Error('Supabase not available');
-
-  const data = await executeSupabaseOperation(
-    async () => await sb
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single(),
-    {
-      operation: 'select',
-      tableName: 'users',
-      userId
-    },
-    {
-      fallbackValue: null,
-      showToast: false
-    }
-  );
-
-  if (!data) return null;
-
-  return {
-    id: data.id,
-    name: data.name,
-    email: data.email,
-    gender: data.gender,
-    stylePreferences: {
-      casual: 3,
-      formal: 3,
-      sporty: 3,
-      vintage: 3,
-      minimalist: 3
-    },
-    isPremium: data.is_premium || false,
-    savedRecommendations: []
-  };
-}
-
-/**
- * Get user gamification data
- */
-export async function getUserGamification(userId: string) {
-  if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
-  }
-
-  if (!sb) throw new Error('Supabase not available');
-
-  let data = await executeSupabaseOperation(
-    async () => await sb
-      .from('user_gamification')
-      .select('*')
-      .eq('user_id', userId)
-      .single(),
-    {
-      operation: 'select',
-      tableName: 'user_gamification',
-      userId
-    },
-    {
-      fallbackValue: null,
-      showToast: false
-    }
-  );
-
-  // Create default record if not found
-  if (!data) {
-    const defaultData = {
-      user_id: userId,
-      points: 0,
-      level: 'beginner',
-      badges: [],
-      streak: 0,
-      completed_challenges: [],
-      total_referrals: 0,
-      seasonal_event_progress: {}
-    };
-
-    data = await executeSupabaseOperation(
-      async () => await sb
-        .from('user_gamification')
-        .insert([defaultData])
-        .select()
-        .single(),
-      {
-        operation: 'insert',
-        tableName: 'user_gamification',
-        userId
-      },
-      {
-        fallbackValue: defaultData,
-        showToast: false
-      }
-    );
-  }
-
-  return data;
-}
-
-/**
- * Update user gamification data
- */
-export async function updateUserGamification(userId: string, updates: any) {
-  if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
-  }
-
-  if (!sb) throw new Error('Supabase not available');
-
-  return executeWithRetry(async () => {
-    const { data, error } = await sb
-      .from('user_gamification')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('user_id', userId)
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Supabase gamification update error: ${error.message}`);
-    }
-
-    return data;
-  });
-}
-
-/**
- * Complete a challenge
- */
-export async function completeChallenge(userId: string, challengeId: string): Promise<boolean> {
-  if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
-  }
-
-  if (!sb) throw new Error('Supabase not available');
-
-  return executeWithRetry(async () => {
-    const { error } = await sb
-      .from('daily_challenges')
-      .upsert({
-        user_id: userId,
-        challenge_id: challengeId,
-        completed: true
+  const trackConversion = (data?: any) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'ab_conversion', {
+        test_name: options.testName,
+        variant,
+        ...data
       });
-
-    if (error) {
-      throw new Error(`Supabase challenge completion error: ${error.message}`);
     }
+  };
+  
+  return { variant, trackConversion };
+}
 
-    return true;
-  });
+export type Variant = 'control' | 'v1' | 'v2';
+
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  }
+  return hash >>> 0; // forceer positief
+}
+
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
 }
 
 /**
- * Get daily challenges for user
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
  */
-export async function getDailyChallenges(userId: string) {
-  if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
-  }
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
 
-  if (!sb) throw new Error('Supabase not available');
-
-  return executeWithRetry(async () => {
-    const { data, error } = await sb
-      .from('daily_challenges')
-      .select('*')
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new Error(`Supabase daily challenges error: ${error.message}`);
-    }
-
-    return data || [];
-  });
-}
-
-/**
- * Safe achievements query with proper error handling
- */
-async function getAchievements(userId: string) {
-  if (!isValidUUID(userId)) {
-    console.warn('[Supabase] Invalid user ID format for achievements');
-    return [];
-  }
-
-  if (!sb) {
-    console.warn('[Supabase] Client not available for achievements');
-    return [];
-  }
-
-  try {
-    const { data, error } = await sb
-      .from('quiz_achievements')
-      .select('id, achievement_id, achievement_type, earned_at, metadata')
-      .eq('user_id', userId);
-
-    if (error) {
-      // Don't throw on auth errors - return empty array instead
-      if (error.code === '42501' || error.message.includes('permission denied')) {
-        console.warn('[Supabase] Achievements permission denied, returning empty array');
-        return [];
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
       }
-      console.error('[Supabase] Achievements error:', error.message);
-      return [];
-    }
+    },
+    [testName, userId, variant]
+  );
 
-    return data || [];
-  } catch (error) {
-    console.error('[Supabase] Achievements query failed:', error);
-    return [];
-  }
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
+
+  return { variant, trackClick, markExposure };
 }
-
-/**
- * Safe gamification query with fallback
- */
-const getGamificationSafe = async (userId: string) => {
-  if (!isValidUUID(userId)) {
-    return null;
-  }
-
-  try {
-    return await getUserGamification(userId);
-  } catch (error: any) {
-    // Handle auth errors gracefully
-    if (error.message?.includes('permission denied') || 
-        error.message?.includes('401') || 
-        error.message?.includes('403')) {
-      console.warn('[Supabase] Gamification permission denied, using fallback');
-      return {
-        user_id: userId,
-        points: 0,
-        level: 'beginner',
-        badges: [],
-        streak: 0,
-        completed_challenges: [],
-        total_referrals: 0,
-        seasonal_event_progress: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-    }
-    throw error;
-  }
-};
-
-/**
- * Fetch user achievements with proper error handling
- */
-async function _fetchUserAchievements(userId: string) {
-  if (!isValidUUID(userId)) {
-    throw new Error('Invalid user ID format');
-  }
-
-  return executeWithRetry(async () => {
-    const { data, error } = await supabase
-      .from('quiz_achievements')
-      .select('*')
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new Error(`Supabase achievements error: ${error.message}`);
-    }
-
-    return data || [];
-  });
-}
-

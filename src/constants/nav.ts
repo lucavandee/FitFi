@@ -1,35 +1,59 @@
-import { Home, Info, HelpCircle, DollarSign, BookOpen, ShoppingBag, User, LogIn } from 'lucide-react';
-import { Users, Rss } from 'lucide-react';
+import { useMemo, useCallback } from 'react';
 
-interface NavLink {
-  label: string;
-  href: string;
-  external?: boolean;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  isSection?: boolean;
-  sectionId?: string;
-}
+export type Variant = 'control' | 'v1' | 'v2';
 
-export const NAV_ITEMS: NavLink[] = [
-  { label: 'Home', href: '/', icon: Home },
-  { label: 'Feed', href: '/feed', icon: Rss },
-  { label: 'Waarom FitFi', href: '/over-ons', icon: Info },
-  { label: 'Hoe het werkt', href: '/hoe-het-werkt', icon: HelpCircle },
-  { label: 'Prijzen', href: '/prijzen', icon: DollarSign },
-  { label: 'Aanbevelingen', href: '/results', icon: ShoppingBag },
-  { label: 'Outfits', href: '/outfits', icon: ShoppingBag },
-  { label: 'Tribes', href: '/tribes', icon: Users },
-  { label: 'Blog', href: '/blog', icon: BookOpen },
-  { label: 'Inloggen', href: '/inloggen', icon: LogIn },
-  { label: 'Dashboard', href: '/dashboard', icon: User }
-];
-
-// Development guard against duplicate navigation items
-if (import.meta.env.DEV) {
-  const labels = NAV_ITEMS.map(i => i.label);
-  const dupes = labels.filter((l, i) => labels.indexOf(l) !== i);
-  if (dupes.length) {
-    throw new Error(`Duplicate nav items: ${dupes.join(', ')}`);
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
   }
+  return hash >>> 0; // forceer positief
 }
 
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+}
+
+/**
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ */
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
+
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
+
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
+
+  return { variant, trackClick, markExposure };
+}

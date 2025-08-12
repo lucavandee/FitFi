@@ -1,72 +1,59 @@
-import React, { createContext, useContext, useMemo, useState, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 
-export type GamificationContextValue = {
-  level: number;
-  xp: number;
-  streak: number;
-  loading: boolean;
-  claimDaily: () => Promise<void> | void;
-  addXp: (amount: number) => Promise<void> | void;
-};
+export type Variant = 'control' | 'v1' | 'v2';
 
-const defaultValue: GamificationContextValue = {
-  level: 1,
-  xp: 0,
-  streak: 0,
-  loading: false,
-  claimDaily: () => {},
-  addXp: () => {},
-};
-
-export const GamificationContext = createContext<GamificationContextValue>(defaultValue);
-
-export const GamificationProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  // Veilige lokale state (kan later gekoppeld worden aan echte hooks/API)
-  const [level, setLevel] = useState<number>(1);
-  const [xp, setXp] = useState<number>(0);
-  const [streak] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const addXp = useCallback(async (amount: number) => {
-    setXp((x) => Math.max(0, x + (Number.isFinite(amount) ? amount : 0)));
-    // Eventueel: level berekenen o.b.v. XP (placeholder)
-    const newLevel = 1 + Math.floor((xp + amount) / 100);
-    setLevel((l) => Math.max(l, newLevel));
-  }, [xp]);
-
-  const claimDaily = useCallback(async () => {
-    try {
-      setLoading(true);
-      // Hier kan later backend call komen; nu enkel bonus toevoegen
-      await addXp(10);
-    } finally {
-      setLoading(false);
-    }
-  }, [addXp]);
-
-  const value = useMemo<GamificationContextValue>(() => ({
-    level,
-    xp,
-    streak,
-    loading,
-    claimDaily,
-    addXp,
-  }), [level, xp, streak, loading, claimDaily, addXp]);
-
-  return (
-    <GamificationContext.Provider value={value}>
-      {children}
-    </GamificationContext.Provider>
-  );
-};
-
-// Hook voor consumers
-export function useGamification(): GamificationContextValue {
-  return useContext(GamificationContext);
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+  }
+  return hash >>> 0; // forceer positief
 }
 
-// Compat: sommige bestanden kunnen deze naam gebruiken
-export { GamificationProvider as GamificationContextProvider };
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+}
 
-// Default export tbv. legacy imports: import GamificationProvider from '...'
-export default GamificationProvider;
+/**
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ */
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
+
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
+
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
+
+  return { variant, trackClick, markExposure };
+}

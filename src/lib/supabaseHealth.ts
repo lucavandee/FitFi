@@ -1,121 +1,59 @@
-import { supabase } from "@/lib/supabaseClient";
-import { withTimeout } from "@/lib/net/withTimeout";
-import { withRetry } from "@/lib/net/withRetry";
+import { useMemo, useCallback } from 'react';
 
-const TABLE = import.meta.env.VITE_SUPABASE_HEALTHCHECK_TABLE || "products";
-const TIMEOUT_MS = Number(import.meta.env.VITE_SUPABASE_HEALTHCHECK_TIMEOUT_MS || 3500);
-const MAX = Number(import.meta.env.VITE_SUPABASE_RETRY_MAX_ATTEMPTS || 3);
-const BASE = Number(import.meta.env.VITE_SUPABASE_RETRY_BASE_MS || 400);
+export type Variant = 'control' | 'v1' | 'v2';
 
-export async function supabaseHealthy(): Promise<boolean> {
-  const sb = supabase();
-  if (!sb) return false;
-  try {
-    const runner = () => sb.from(TABLE).select("id").limit(1);
-    const { data, error } = await withTimeout(withRetry(runner, MAX, BASE), TIMEOUT_MS);
-    if (error) throw error;
-    return Array.isArray(data);
-  } catch {
-    return false;
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
   }
+  return hash >>> 0; // forceer positief
+}
+
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
 }
 
 /**
- * Enhanced health check with detailed metrics
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
  */
-export async function getSupabaseHealth(): Promise<{
-  isHealthy: boolean;
-  responseTime: number;
-  error?: string;
-  retryCount?: number;
-}> {
-  const startTime = Date.now();
-  const sb = supabase();
-  
-  if (!sb) {
-    return {
-      isHealthy: false,
-      responseTime: 0,
-      error: 'Client not available - missing credentials'
-    };
-  }
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
 
-  let retryCount = 0;
-  
-  try {
-    const runner = async () => {
-      retryCount++;
-      const { data, error } = await sb.from(TABLE).select("id").limit(1);
-      if (error) throw error;
-      return data;
-    };
-    
-    const data = await withTimeout(withRetry(runner, MAX, BASE), TIMEOUT_MS, "health check");
-    
-    return {
-      isHealthy: Array.isArray(data),
-      responseTime: Date.now() - startTime,
-      retryCount: retryCount - 1 // Subtract 1 because first attempt isn't a retry
-    };
-  } catch (error) {
-    return {
-      isHealthy: false,
-      responseTime: Date.now() - startTime,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      retryCount: retryCount - 1
-    };
-  }
-}
-
-/**
- * Periodic health monitoring
- */
-let healthCheckInterval: NodeJS.Timeout | null = null;
-let lastHealthStatus = false;
-
-export function startHealthMonitoring(intervalMs = 60000): void {
-  if (healthCheckInterval) {
-    clearInterval(healthCheckInterval);
-  }
-  
-  // Initial check
-  supabaseHealthy().then(status => {
-    lastHealthStatus = status;
-    console.log(`[SupabaseHealth] Initial status: ${status ? 'healthy' : 'unhealthy'}`);
-  });
-  
-  // Periodic checks
-  healthCheckInterval = setInterval(async () => {
-    try {
-      const status = await supabaseHealthy();
-      
-      // Log status changes
-      if (status !== lastHealthStatus) {
-        console.log(`[SupabaseHealth] Status changed: ${lastHealthStatus ? 'healthy' : 'unhealthy'} → ${status ? 'healthy' : 'unhealthy'}`);
-        lastHealthStatus = status;
-        
-        // Track in analytics
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'supabase_health_change', {
-            event_category: 'infrastructure',
-            event_label: status ? 'healthy' : 'unhealthy',
-            value: status ? 1 : 0
-          });
-        }
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
       }
-    } catch (error) {
-      console.warn('[SupabaseHealth] Health check failed:', error);
+    },
+    [testName, userId, variant]
+  );
+
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
     }
-  }, intervalMs);
-}
+  }, [testName, userId, variant]);
 
-export function stopHealthMonitoring(): void {
-  if (healthCheckInterval) {
-    clearInterval(healthCheckInterval);
-    healthCheckInterval = null;
-  }
-}
-
-export function getLastHealthStatus(): boolean {
-  return lastHealthStatus;
+  return { variant, trackClick, markExposure };
 }

@@ -1,5 +1,26 @@
 import { useMemo, useCallback } from 'react';
 
+interface ABTestingOptions {
+  testName: string;
+  variants: Array<{ name: string; weight: number }>;
+}
+
+export function useABTesting(options: ABTestingOptions) {
+  const variant = useABVariant(options.testName);
+  
+  const trackConversion = (data?: any) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'ab_conversion', {
+        test_name: options.testName,
+        variant,
+        ...data
+      });
+    }
+  };
+  
+  return { variant, trackConversion };
+}
+
 export type Variant = 'control' | 'v1' | 'v2';
 
 /** Dependency-loze hash (djb2-variant), deterministisch en snel */
