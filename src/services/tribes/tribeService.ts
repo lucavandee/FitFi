@@ -49,30 +49,15 @@ async function executeTribesOperation<T>(
 export async function getTribeMembers(tribeId: string): Promise<TribeMember[]> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { data, error } = await executeTribesOperation(async () => {
-        const client = supabase();
-        if (!client) throw new Error('Supabase client not available');
-        
-        return await client
-          .from('tribe_members')
-          .select(`
-            *,
-            user_profile:profiles!tribe_members_user_id_fkey(full_name, avatar_url)
-          `)
-          .eq('tribe_id', tribeId);
-      }, 'get_tribe_members');
-
-      if (error) throw error;
+      const data = await sb_getTribeMembers(tribeId);
       
-      // Convert to our TribeMember format
-      return (data || []).map(member => ({
-        id: member.id,
-        tribe_id: member.tribe_id,
-        user_id: member.user_id,
-        role: member.role,
-        joined_at: member.joined_at,
-        user_profile: member.user_profile
-      }));
+      if (data && data.length >= 0) {
+        return data;
+      }
+      
+      // Fallback to localStorage if no data
+      console.log('[TribeService] No Supabase data, using localStorage fallback');
+      return lt_getMembers(tribeId);
     } catch (error) {
       console.warn('[TribeService] Supabase members failed, using localStorage:', error);
       return lt_getMembers(tribeId);
@@ -88,31 +73,64 @@ export async function getTribeMembers(tribeId: string): Promise<TribeMember[]> {
 export async function joinTribe(tribeId: string, userId: string): Promise<TribeMember> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { data, error } = await executeTribesOperation(async () => {
-        const sb = supabase();
-        if (!sb) throw new Error('Supabase client not available');
-        
-        return await sb
-          .from('tribe_members')
-          .insert({
-            tribe_id: tribeId,
-            user_id: userId,
-            role: 'member'
-          })
-          .select()
-          .single();
-      }, 'join_tribe');
-
-      if (error) {
-        // Handle duplicate membership gracefully
-        if (error.code === '23505') {
-          console.log('[TribeService] User already member, returning existing membership');
-          const existing = await getTribeMembers(tribeId);
-          const existingMember = existing.find(m => m.user_id === userId);
-          if (existingMember) return existingMember;
-        }
-        throw error;
+      const data = await sb_joinTribe(tribeId, userId);
+      
+      if (data) {
+        return data;
       }
+      
+      // If no data returned, try localStorage fallback
+      console.log('[TribeService] No Supabase response, using localStorage fallback');
+      const success = lt_joinTribe(tribeId, userId);
+      if (!success) {
+        throw new Error('Already a member');
+      }
+      
+      return {
+        id: `local_${Date.now()}`,
+        tribe_id: tribeId,
+        user_id: userId,
+        role: 'member',
+        joined_at: new Date().toISOString()
+      };
+    } catch (error) {
+      // Handle specific errors
+      if ((error as any)?.message?.includes('Already a member')) {
+        throw error; // Re-throw membership errors
+      }
+      
+      console.warn('[TribeService] Supabase join failed, using localStorage:', error);
+      
+      // Fallback to localStorage for network errors
+      const success = lt_joinTribe(tribeId, userId);
+      if (!success) {
+        throw new Error('Already a member');
+      }
+      
+      return {
+        id: `local_${Date.now()}`,
+        tribe_id: tribeId,
+        user_id: userId,
+        role: 'member',
+        joined_at: new Date().toISOString()
+      };
+    }
+  }
+  
+  // Direct localStorage usage when Supabase disabled
+  const success = lt_joinTribe(tribeId, userId);
+  if (!success) {
+    throw new Error('Already a member');
+  }
+  
+  return {
+    id: `local_${Date.now()}`,
+    tribe_id: tribeId,
+    user_id: userId,
+    role: 'member',
+    joined_at: new Date().toISOString()
+  };
+}
 
       return data;
     } catch (error) {
@@ -155,18 +173,7 @@ export async function joinTribe(tribeId: string, userId: string): Promise<TribeM
 export async function leaveTribe(tribeId: string, userId: string): Promise<void> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { error } = await executeTribesOperation(async () => {
-        const sb = supabase();
-        if (!sb) throw new Error('Supabase client not available');
-        
-        return await sb
-          .from('tribe_members')
-          .delete()
-          .eq('tribe_id', tribeId)
-          .eq('user_id', userId);
-      }, 'leave_tribe');
-
-      if (error) throw error;
+      await sb_leaveTribe(tribeId, userId);
       return;
     } catch (error) {
       console.warn('[TribeService] Supabase leave failed, using localStorage:', error);
@@ -187,29 +194,15 @@ export async function getTribePosts(tribeId: string, options?: {
 }): Promise<TribePost[]> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      let query = supabase
-        .from('tribe_posts')
-        .select(`
-          *,
-          user_profile:profiles!tribe_posts_user_id_fkey(full_name, avatar_url),
-          outfit:outfits(id, title, image_url, match_percentage)
-        `)
-        .eq('tribe_id', tribeId)
-        .order('created_at', { ascending: false });
-
-      if (options?.limit) {
-        query = query.limit(options.limit);
+      const data = await sb_getTribePosts(tribeId, options);
+      
+      if (data && data.length >= 0) {
+        return data;
       }
       
-      if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      
-      return data || [];
+      // Fallback to localStorage if no data
+      console.log('[TribeService] No Supabase posts, using localStorage fallback');
+      return lt_getPosts(tribeId);
     } catch (error) {
       console.warn('[TribeService] Supabase posts failed, using localStorage:', error);
       return lt_getPosts(tribeId);
@@ -225,47 +218,25 @@ export async function getTribePosts(tribeId: string, options?: {
 export async function createTribePost(post: Omit<TribePost, 'id' | 'created_at' | 'likes_count' | 'comments_count'>): Promise<TribePost> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { data, error } = await supabase
-        .from('tribe_posts')
-        .insert({
-          tribe_id: post.tribe_id,
-          user_id: post.user_id,
-          content: post.content,
-          image_url: post.image_url,
-          outfit_id: post.outfit_id
-        })
-        .select(`
-          *,
-          user_profile:profiles!tribe_posts_user_id_fkey(full_name, avatar_url),
-          outfit:outfits(id, title, image_url, match_percentage)
-        `)
-        .single();
-
-      if (error) throw error;
+      const data = await sb_createTribePost(post);
       
-      return data;
+      if (data) {
+        return data;
+      }
+      
+      // Fallback to localStorage if no data returned
+      console.log('[TribeService] No Supabase response, using localStorage fallback');
+      return lt_addPost(post);
     } catch (error) {
       console.warn('[TribeService] Supabase post creation failed, using localStorage:', error);
       
       // Fallback to localStorage
-      return lt_addPost({
-        tribe_id: post.tribe_id,
-        user_id: post.user_id,
-        content: post.content,
-        image_url: post.image_url,
-        outfit_id: post.outfit_id
-      });
+      return lt_addPost(post);
     }
   }
   
   // Direct localStorage usage
-  return lt_addPost({
-    tribe_id: post.tribe_id,
-    user_id: post.user_id,
-    content: post.content,
-    image_url: post.image_url,
-    outfit_id: post.outfit_id
-  });
+  return lt_addPost(post);
 }
 
 /**
@@ -277,8 +248,11 @@ export async function togglePostLike(postId: string, tribeId: string, userId: st
 }> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase client not available');
+      
       // Check if already liked
-      const { data: existingLike } = await supabase
+      const { data: existingLike } = await sb
         .from('tribe_post_likes')
         .select('id')
         .eq('post_id', postId)
@@ -287,7 +261,7 @@ export async function togglePostLike(postId: string, tribeId: string, userId: st
 
       if (existingLike) {
         // Unlike
-        const { error } = await supabase
+        const { error } = await sb
           .from('tribe_post_likes')
           .delete()
           .eq('id', existingLike.id);
@@ -295,7 +269,7 @@ export async function togglePostLike(postId: string, tribeId: string, userId: st
         if (error) throw error;
         
         // Get updated count
-        const { count } = await supabase
+        const { count } = await sb
           .from('tribe_post_likes')
           .select('*', { count: 'exact', head: true })
           .eq('post_id', postId);
@@ -303,7 +277,7 @@ export async function togglePostLike(postId: string, tribeId: string, userId: st
         return { liked: false, newCount: count || 0 };
       } else {
         // Like
-        const { error } = await supabase
+        const { error } = await sb
           .from('tribe_post_likes')
           .insert({
             post_id: postId,
@@ -313,7 +287,7 @@ export async function togglePostLike(postId: string, tribeId: string, userId: st
         if (error) throw error;
         
         // Get updated count
-        const { count } = await supabase
+        const { count } = await sb
           .from('tribe_post_likes')
           .select('*', { count: 'exact', head: true })
           .eq('post_id', postId);
