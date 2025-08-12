@@ -181,79 +181,11 @@ function getDeterministicVariant(
 function simpleHash(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      // Check if user already has a variant assigned
-      const { data: existingVariant } = await sb
-        .from('ab_test_variants')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('test_name', testConfig.testName)
-        .single();
-
-      if (existingVariant) {
-        setVariant(existingVariant.variant);
-        setIsLoading(false);
-        return;
-      }
-
-      // Assign new variant based on weights
-      const assignedVariant = selectVariantByWeight(testConfig.variants);
-
-      // Store in database
-      const { error } = await sb
-        .from('ab_test_variants')
-        .insert({
-          user_id: user.id,
-          test_name: testConfig.testName,
-          variant: assignedVariant
-        });
-
-      if (!error) {
-        setVariant(assignedVariant);
-      }
-    } catch (error) {
-      console.error('A/B testing error:', error);
-      setVariant('control'); // Fallback to control
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const trackConversion = async (conversionData: Record<string, any> = {}) => {
-    if (!user?.id) return;
-
-    try {
-      await supabase
-        .from('ab_test_variants')
-        .update({
-          converted: true,
-          conversion_data: conversionData
-        })
-        .eq('user_id', user.id)
-        .eq('test_name', testConfig.testName);
-
-      // Track in analytics
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'ab_test_conversion', {
-          event_category: 'ab_testing',
-          event_label: `${testConfig.testName}_${variant}`,
-          custom_parameter_1: variant
-        });
-      }
-    } catch (error) {
-      console.error('A/B test conversion tracking error:', error);
-    }
-  };
-
-  return {
-    variant,
-    isLoading,
-    trackConversion
-  };
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
 }
 
 function selectVariantByWeight(variants: Array<{ name: string; weight: number }>): string {
