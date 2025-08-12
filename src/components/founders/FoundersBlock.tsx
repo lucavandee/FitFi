@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase as getSupabaseClient } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
 
@@ -34,7 +34,13 @@ export const FoundersBlock: React.FC = () => {
         const count = rows.length;
         if (alive) setRefCount(count);
 
-        const { error: statsUpdateErr } = await supabase
+        const sb = getSupabaseClient();
+        if (!sb) {
+          console.warn("[FoundersBlock] Supabase client not available");
+          return;
+        }
+
+        const { error: statsUpdateErr } = await sb
           .from("user_stats")
           .upsert({
             user_id: userId,
