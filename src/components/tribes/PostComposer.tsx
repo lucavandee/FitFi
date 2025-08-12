@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTribePosts } from "@/hooks/useTribePosts";
 import { useUser } from "@/context/UserContext";
-import { Send, Image, X, Smile } from "lucide-react";
+import { Send, Image, X, Loader } from "lucide-react";
 import Button from "../ui/Button";
 import ImageWithFallback from "../ui/ImageWithFallback";
 import toast from "react-hot-toast";
