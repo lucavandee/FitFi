@@ -136,6 +136,8 @@ const TribeDetailPage: React.FC = () => {
         {/* Posts Feed Integration */}
         <PostsList 
           tribeId={tribe.id} 
+          userId={user?.id}
+          userId={user?.id}
           showComposer={false}
         />
       </div>
