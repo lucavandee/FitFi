@@ -178,6 +178,236 @@ export async function getLocalTribes(): Promise<Tribe[]> {
 }
 
 /**
+ * Get tribe challenges from local data (mock)
+ */
+export async function getLocalTribeChallenges(
+  tribeId: string,
+  options?: {
+    status?: "draft" | "open" | "closed" | "archived";
+    limit?: number;
+  }
+): Promise<TribeChallenge[]> {
+  try {
+    // Mock challenges for demonstration
+    const mockChallenges: TribeChallenge[] = [
+      {
+        id: `challenge_${tribeId}_1`,
+        tribeId,
+        title: "Winter Outfit Challenge",
+        description: "Deel je beste winter look met warme lagen en stijl",
+        image: "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2",
+        rules: [
+          "Minimaal 3 lagen",
+          "Winterse kleuren",
+          "Functioneel én stijlvol"
+        ],
+        rewardPoints: 50,
+        winnerRewardPoints: 200,
+        startAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        endAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "open",
+        tags: ["winter", "layering", "functional"],
+        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+        createdBy: "admin_user"
+      },
+      {
+        id: `challenge_${tribeId}_2`,
+        tribeId,
+        title: "Sustainable Style Challenge",
+        description: "Toon hoe je duurzame mode combineert met persoonlijke stijl",
+        image: "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2",
+        rules: [
+          "Minimaal 1 vintage/tweedehands item",
+          "Duurzame merken preferred",
+          "Vertel het verhaal achter je keuzes"
+        ],
+        rewardPoints: 75,
+        winnerRewardPoints: 300,
+        startAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        endAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "open",
+        tags: ["sustainable", "vintage", "storytelling"],
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        createdBy: "admin_user"
+      }
+    ];
+    
+    // Apply filters
+    let filtered = mockChallenges;
+    
+    if (options?.status) {
+      filtered = filtered.filter(c => c.status === options.status);
+    }
+    
+    if (options?.limit) {
+      filtered = filtered.slice(0, options.limit);
+    }
+    
+    console.log(`[LocalSource] Generated ${filtered.length} mock challenges for tribe ${tribeId}`);
+    return filtered;
+  } catch (error) {
+    console.error('[LocalSource] Error generating mock challenges:', error);
+    return [];
+  }
+}
+
+/**
+ * Get challenge submissions from local data (mock)
+ */
+export async function getLocalChallengeSubmissions(
+  challengeId: string,
+  options?: {
+    userId?: string;
+    limit?: number;
+  }
+): Promise<TribeChallengeSubmission[]> {
+  try {
+    // Mock submissions for demonstration
+    const mockSubmissions: TribeChallengeSubmission[] = [
+      {
+        id: `submission_${challengeId}_1`,
+        tribeId: "tribe-1",
+        challengeId,
+        userId: "user_1",
+        userName: "Emma S.",
+        content: "Mijn favoriete winter look! Warme wollen jas gecombineerd met comfortabele boots.",
+        imageUrl: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+        score: 85,
+        isWinner: false,
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: `submission_${challengeId}_2`,
+        tribeId: "tribe-1",
+        challengeId,
+        userId: "user_2",
+        userName: "Lisa M.",
+        content: "Vintage thrift find gecombineerd met moderne accessoires. Duurzaam én stijlvol!",
+        imageUrl: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+        linkUrl: "https://www.instagram.com/p/example",
+        score: 92,
+        isWinner: true,
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+      }
+    ];
+    
+    // Apply filters
+    let filtered = mockSubmissions;
+    
+    if (options?.userId) {
+      filtered = filtered.filter(s => s.userId === options.userId);
+    }
+    
+    if (options?.limit) {
+      filtered = filtered.slice(0, options.limit);
+    }
+    
+    console.log(`[LocalSource] Generated ${filtered.length} mock submissions for challenge ${challengeId}`);
+    return filtered;
+  } catch (error) {
+    console.error('[LocalSource] Error generating mock submissions:', error);
+    return [];
+  }
+}
+
+/**
+ * Create challenge submission in local storage
+ */
+export async function createLocalChallengeSubmission(
+  submission: Omit<TribeChallengeSubmission, 'id' | 'createdAt'>
+): Promise<TribeChallengeSubmission> {
+  try {
+    const newSubmission: TribeChallengeSubmission = {
+      ...submission,
+      id: `local_submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Store in localStorage for persistence
+    const storageKey = `fitfi_challenge_submissions_${submission.challengeId}`;
+    const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    existing.unshift(newSubmission);
+    localStorage.setItem(storageKey, JSON.stringify(existing.slice(0, 50))); // Keep last 50
+    
+    console.log(`[LocalSource] Created local challenge submission: ${newSubmission.id}`);
+    return newSubmission;
+  } catch (error) {
+    console.error('[LocalSource] Error creating local submission:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get tribe rankings from local data (mock)
+ */
+export async function getLocalTribeRankings(
+  options?: {
+    limit?: number;
+    userId?: string;
+    tribeId?: string;
+  }
+): Promise<TribeRanking[]> {
+  try {
+    // Mock rankings for demonstration
+    const mockRankings: TribeRanking[] = [
+      {
+        tribeId: "tribe-italian-smart-casual",
+        points: 2450,
+        rank: 1,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        tribeId: "tribe-streetstyle-europe",
+        points: 2180,
+        rank: 2,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        tribeId: "tribe-minimalist-collective",
+        points: 1920,
+        rank: 3,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        tribeId: "tribe-vintage-revival",
+        points: 1650,
+        rank: 4,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        tribeId: "tribe-sustainable-fashion",
+        points: 1380,
+        rank: 5,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        tribeId: "tribe-luxury-connoisseurs",
+        points: 1120,
+        rank: 6,
+        updatedAt: new Date().toISOString()
+      }
+    ];
+    
+    // Apply filters
+    let filtered = mockRankings;
+    
+    if (options?.tribeId) {
+      filtered = filtered.filter(r => r.tribeId === options.tribeId);
+    }
+    
+    if (options?.limit) {
+      filtered = filtered.slice(0, options.limit);
+    }
+    
+    console.log(`[LocalSource] Generated ${filtered.length} mock tribe rankings`);
+    return filtered;
+  } catch (error) {
+    console.error('[LocalSource] Error generating mock rankings:', error);
+    return [];
+  }
+}
+
+/**
  * Get default user profile as fallback
  * @returns Default user profile
  */

@@ -4,6 +4,7 @@ import { withTimeout } from "@/lib/net/withTimeout";
 import { withRetry } from "@/lib/net/withRetry";
 import { DATA_CONFIG } from "@/config/dataConfig";
 import type { BoltProduct, Outfit, FitFiUserProfile, TribeMember, TribePost, Tribe } from "./types";
+import type { TribeChallenge, TribeChallengeSubmission, TribeRanking } from "./types";
 
 // Configuration from environment
 const TIMEOUT_MS = Number(import.meta.env.VITE_SUPABASE_HEALTHCHECK_TIMEOUT_MS || 3500);
@@ -740,6 +741,186 @@ export async function sb_deleteTribePost(postId: string, authorId: string): Prom
     console.log(`[SupabaseSource] Deleted tribe post: ${postId}`);
   } catch (error) {
     console.error('[SupabaseSource] Tribe post deletion failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * TRIBE CHALLENGES CRUD
+ */
+
+/**
+ * Get tribe challenges from Supabase
+ */
+export async function getSbTribeChallenges(
+  tribeId: string,
+  options?: {
+    status?: "draft" | "open" | "closed" | "archived";
+    limit?: number;
+  }
+): Promise<TribeChallenge[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    let query = sb
+      .from('tribe_challenges')
+      .select('*')
+      .eq('tribe_id', tribeId)
+      .order('created_at', { ascending: false });
+    
+    // Apply filters
+    if (options?.status) {
+      query = query.eq('status', options.status);
+    }
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+    
+    const data = await executeSupabaseOperationSafe(
+      () => query,
+      'get_tribe_challenges',
+      'tribe_challenges'
+    );
+    
+    console.log(`[SupabaseSource] Loaded ${(data || []).length} challenges for tribe ${tribeId}`);
+    return (data || []) as TribeChallenge[];
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe challenges fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get challenge submissions from Supabase
+ */
+export async function getSbChallengeSubmissions(
+  challengeId: string,
+  options?: {
+    userId?: string;
+    limit?: number;
+  }
+): Promise<TribeChallengeSubmission[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    let query = sb
+      .from('tribe_challenge_submissions')
+      .select(`
+        *,
+        user_profile:profiles!tribe_challenge_submissions_user_id_fkey(full_name, avatar_url)
+      `)
+      .eq('challenge_id', challengeId)
+      .order('created_at', { ascending: false });
+    
+    // Apply filters
+    if (options?.userId) {
+      query = query.eq('user_id', options.userId);
+    }
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+    
+    const data = await executeSupabaseOperationSafe(
+      () => query,
+      'get_challenge_submissions',
+      'tribe_challenge_submissions'
+    );
+    
+    console.log(`[SupabaseSource] Loaded ${(data || []).length} submissions for challenge ${challengeId}`);
+    return (data || []) as TribeChallengeSubmission[];
+  } catch (error) {
+    console.error('[SupabaseSource] Challenge submissions fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create challenge submission via Supabase
+ */
+export async function createSbChallengeSubmission(
+  submission: Omit<TribeChallengeSubmission, 'id' | 'createdAt'>
+): Promise<TribeChallengeSubmission | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  // Validate user ID format
+  if (!isValidUUID(submission.userId)) {
+    console.warn('[SupabaseSource] Invalid user ID format for submission:', submission.userId);
+    return null;
+  }
+  
+  try {
+    const data = await executeSupabaseOperationSafe(async () => {
+      return await sb
+        .from('tribe_challenge_submissions')
+        .insert({
+          tribe_id: submission.tribeId,
+          challenge_id: submission.challengeId,
+          user_id: submission.userId,
+          content: submission.content,
+          image_url: submission.imageUrl,
+          link_url: submission.linkUrl
+        })
+        .select(`
+          *,
+          user_profile:profiles!tribe_challenge_submissions_user_id_fkey(full_name, avatar_url)
+        `)
+        .single();
+    }, 'create_challenge_submission', 'tribe_challenge_submissions');
+    
+    console.log(`[SupabaseSource] Created challenge submission: ${data.id}`);
+    return data as TribeChallengeSubmission;
+  } catch (error) {
+    console.error('[SupabaseSource] Challenge submission creation failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get tribe rankings from Supabase
+ */
+export async function getSbTribeRankings(
+  options?: {
+    limit?: number;
+    userId?: string;
+    tribeId?: string;
+  }
+): Promise<TribeRanking[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    let query = sb
+      .from('tribe_rankings')
+      .select('*')
+      .order('points', { ascending: false });
+    
+    // Apply filters
+    if (options?.tribeId) {
+      query = query.eq('tribe_id', options.tribeId);
+    }
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+    
+    const data = await executeSupabaseOperationSafe(
+      () => query,
+      'get_tribe_rankings',
+      'tribe_rankings'
+    );
+    
+    // Add rank numbers
+    const rankedData = (data || []).map((ranking: any, index: number) => ({
+      ...ranking,
+      rank: index + 1
+    }));
+    
+    console.log(`[SupabaseSource] Loaded ${rankedData.length} tribe rankings`);
+    return rankedData as TribeRanking[];
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe rankings fetch failed:', error);
     throw error;
   }
 }

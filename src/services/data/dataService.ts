@@ -1,8 +1,10 @@
 import { DATA_CONFIG } from "@/config/dataConfig";
 import { buildAffiliateUrl } from "@/services/affiliateLinkBuilder";
 import type { BoltProduct, Outfit, FitFiUserProfile, Tribe, TribePost, DataResponse, CacheEntry, DataServiceConfig, DataError } from "./types";
+import type { TribeChallenge, TribeChallengeSubmission, TribeRanking } from "./types";
 import { getLocalProducts, getLocalOutfits, getLocalUser, getLocalTribes } from "./localSource";
-import { getSbProducts, getSbOutfits, getSbUser, getSbTribes, getSbTribeBySlug, getSbTribePosts } from "./supabaseSource";
+import { getSbProducts, getSbOutfits, getSbUser, getSbTribes, getSbTribeBySlug, getSbTribePosts, getSbTribeChallenges, getSbChallengeSubmissions, createSbChallengeSubmission, getSbTribeRankings } from "./supabaseSource";
+import { getLocalTribeChallenges, getLocalChallengeSubmissions, createLocalChallengeSubmission, getLocalTribeRankings } from "./localSource";
 
 /**
  * Enterprise Data Service Orchestrator
@@ -648,6 +650,287 @@ class DataServiceOrchestrator {
   }
 
   /**
+   * Fetch tribe challenges with fallback chain
+   */
+  async fetchTribeChallenges(
+    tribeId: string,
+    options?: {
+      status?: "draft" | "open" | "closed" | "archived";
+      limit?: number;
+    }
+  ): Promise<DataResponse<TribeChallenge[]>> {
+    const cacheKey = `tribe_challenges_${tribeId}_${JSON.stringify(options || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<TribeChallenge[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbTribeChallenges(tribeId, options),
+          'fetch_tribe_challenges',
+          'supabase'
+        );
+        
+        if (sb && sb.length >= 0) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_tribe_challenges', (error as Error).message, { tribeId, options });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalTribeChallenges(tribeId, options),
+        'fetch_tribe_challenges',
+        'local'
+      );
+      
+      this.saveToCache(cacheKey, local, 'local');
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_tribe_challenges', (error as Error).message, { tribeId, options });
+      
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Fetch challenge submissions with fallback chain
+   */
+  async fetchChallengeSubmissions(
+    challengeId: string,
+    options?: {
+      userId?: string;
+      limit?: number;
+    }
+  ): Promise<DataResponse<TribeChallengeSubmission[]>> {
+    const cacheKey = `challenge_submissions_${challengeId}_${JSON.stringify(options || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<TribeChallengeSubmission[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbChallengeSubmissions(challengeId, options),
+          'fetch_challenge_submissions',
+          'supabase'
+        );
+        
+        if (sb && sb.length >= 0) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_challenge_submissions', (error as Error).message, { challengeId, options });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalChallengeSubmissions(challengeId, options),
+        'fetch_challenge_submissions',
+        'local'
+      );
+      
+      this.saveToCache(cacheKey, local, 'local');
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_challenge_submissions', (error as Error).message, { challengeId, options });
+      
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
+   * Create challenge submission with fallback
+   */
+  async createChallengeSubmission(
+    submission: Omit<TribeChallengeSubmission, 'id' | 'createdAt'>
+  ): Promise<DataResponse<TribeChallengeSubmission>> {
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => createSbChallengeSubmission(submission),
+          'create_challenge_submission',
+          'supabase'
+        );
+        
+        if (sb) {
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'create_challenge_submission', (error as Error).message, { submission });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => createLocalChallengeSubmission(submission),
+        'create_challenge_submission',
+        'local'
+      );
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'create_challenge_submission', (error as Error).message, { submission });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch tribe rankings with fallback chain
+   */
+  async fetchTribeRankings(
+    options?: {
+      limit?: number;
+      userId?: string;
+      tribeId?: string;
+    }
+  ): Promise<DataResponse<TribeRanking[]>> {
+    const cacheKey = `tribe_rankings_${JSON.stringify(options || {})}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<TribeRanking[]>(cacheKey);
+    if (cached) {
+      return {
+        data: cached,
+        source: 'local',
+        cached: true,
+        timestamp: Date.now()
+      };
+    }
+
+    // Try Supabase first
+    if (DATA_CONFIG.USE_SUPABASE) {
+      try {
+        const sb = await this.executeWithRetry(
+          () => getSbTribeRankings(options),
+          'fetch_tribe_rankings',
+          'supabase'
+        );
+        
+        if (sb && sb.length >= 0) {
+          this.saveToCache(cacheKey, sb, 'supabase');
+          
+          return {
+            data: sb,
+            source: 'supabase',
+            cached: false,
+            timestamp: Date.now()
+          };
+        }
+      } catch (error) {
+        this.logError('supabase', 'fetch_tribe_rankings', (error as Error).message, { options });
+      }
+    }
+
+    // Fallback to local
+    try {
+      const local = await this.executeWithRetry(
+        () => getLocalTribeRankings(options),
+        'fetch_tribe_rankings',
+        'local'
+      );
+      
+      this.saveToCache(cacheKey, local, 'local');
+      
+      return {
+        data: local,
+        source: 'local',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    } catch (error) {
+      this.logError('local', 'fetch_tribe_rankings', (error as Error).message, { options });
+      
+      return {
+        data: [],
+        source: 'fallback',
+        cached: false,
+        timestamp: Date.now(),
+        errors: this.getRecentErrors()
+      };
+    }
+  }
+
+  /**
    * Get recent errors
    */
   getRecentErrors(): DataError[] {
@@ -756,6 +1039,42 @@ export async function fetchTribePosts(
   }
 ): Promise<DataResponse<TribePost[]>> {
   return dataServiceOrchestrator.fetchTribePosts(tribeId, options);
+}
+
+export async function fetchTribeChallenges(
+  tribeId: string,
+  options?: {
+    status?: "draft" | "open" | "closed" | "archived";
+    limit?: number;
+  }
+): Promise<DataResponse<TribeChallenge[]>> {
+  return dataServiceOrchestrator.fetchTribeChallenges(tribeId, options);
+}
+
+export async function fetchChallengeSubmissions(
+  challengeId: string,
+  options?: {
+    userId?: string;
+    limit?: number;
+  }
+): Promise<DataResponse<TribeChallengeSubmission[]>> {
+  return dataServiceOrchestrator.fetchChallengeSubmissions(challengeId, options);
+}
+
+export async function createChallengeSubmission(
+  submission: Omit<TribeChallengeSubmission, 'id' | 'createdAt'>
+): Promise<DataResponse<TribeChallengeSubmission>> {
+  return dataServiceOrchestrator.createChallengeSubmission(submission);
+}
+
+export async function fetchTribeRankings(
+  options?: {
+    limit?: number;
+    userId?: string;
+    tribeId?: string;
+  }
+): Promise<DataResponse<TribeRanking[]>> {
+  return dataServiceOrchestrator.fetchTribeRankings(options);
 }
 
 // Export utility methods
