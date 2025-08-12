@@ -10,14 +10,33 @@ export const ChallengeSnapshot: React.FC = () => {
   const { best, loading } = useBestChallenge(user?.id);
 
   if (loading) {
-    return <div className="bg-white rounded-2xl p-4 shadow animate-pulse h-40" />;
+    return (
+      <div className="bg-white rounded-2xl p-4 shadow animate-pulse">
+        <div className="h-4 bg-gray-200 rounded w-32 mb-3"></div>
+        <div className="h-20 bg-gray-200 rounded-xl mb-3"></div>
+        <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
+        <div className="h-6 bg-gray-200 rounded w-20"></div>
+      </div>
+    );
   }
+  
   if (!best?.tribeId || !best?.challengeId) {
     return (
-      <div className="bg-white rounded-2xl p-4 shadow flex flex-col justify-between">
-        <div className="font-semibold">Challenges Snapshot</div>
-        <div className="text-sm text-gray-600">Geen open challenge gevonden. Ontdek tribes en vind jouw challenge.</div>
-        <a className="mt-2 text-[#6b21a8] font-medium" href={routeTo("tribe", {})}>Naar Tribes →</a>
+      <div className="bg-white rounded-2xl p-4 shadow">
+        <div className="font-semibold text-gray-900 mb-3">Challenges Snapshot</div>
+        <div className="text-center py-6">
+          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">🎯</span>
+          </div>
+          <h4 className="font-medium text-gray-900 mb-2">Geen open challenges</h4>
+          <p className="text-sm text-gray-600 mb-4">Ontdek tribes en vind jouw perfecte challenge.</p>
+          <a 
+            className="inline-block bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-4 py-2 rounded-xl font-medium transition-colors" 
+            href={routeTo("tribe", {})}
+          >
+            Ontdek Tribes →
+          </a>
+        </div>
       </div>
     );
   }
@@ -28,19 +47,69 @@ export const ChallengeSnapshot: React.FC = () => {
   if (!ch) {
     return (
       <div className="bg-white rounded-2xl p-4 shadow">
-        <div className="font-semibold">Challenges Snapshot</div>
-        <a className="mt-2 inline-block text-[#6b21a8]" href={routeTo("challenge", best)}>Open challenge →</a>
+        <div className="font-semibold text-gray-900 mb-3">Challenges Snapshot</div>
+        <div className="text-center py-4">
+          <p className="text-sm text-gray-600 mb-3">Challenge wordt geladen...</p>
+          <a 
+            className="inline-block text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium" 
+            href={routeTo("challenge", best)}
+          >
+            Open challenge →
+          </a>
+        </div>
       </div>
     );
   }
 
+  // Build challenge URL with proper query params
+  const challengeUrl = `/tribes/${best.tribeId}?challengeId=${best.challengeId}`;
+
   return (
-    <div className="bg-white rounded-2xl shadow overflow-hidden">
-      {ch.image && <ImageWithFallback src={ch.image} alt={ch.title} className="w-full h-32 object-cover" />}
+    <div className="bg-white rounded-2xl shadow overflow-hidden hover:shadow-md transition-shadow">
+      {ch.image && (
+        <div className="aspect-video overflow-hidden">
+          <ImageWithFallback 
+            src={ch.image} 
+            alt={ch.title} 
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
+            componentName="ChallengeSnapshot"
+          />
+        </div>
+      )}
       <div className="p-4">
-        <div className="text-xs text-gray-500 mb-1">{(ch.status ?? "open").toUpperCase()} • {ch.startAt?.slice(0,10)} → {ch.endAt?.slice(0,10)}</div>
-        <div className="font-semibold">{ch.title}</div>
-        <a className="mt-2 inline-block text-[#6b21a8] font-medium" href={routeTo("challenge", best)}>Doe mee →</a>
+        <div className="flex items-center space-x-2 mb-2">
+          <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+            {(ch.status ?? "open").toUpperCase()}
+          </span>
+          {ch.rewardPoints && (
+            <span className="px-2 py-1 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+              +{ch.rewardPoints} XP
+            </span>
+          )}
+        </div>
+        
+        <h4 className="font-semibold text-gray-900 mb-2 leading-tight">{ch.title}</h4>
+        
+        {ch.description && (
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            {ch.description}
+          </p>
+        )}
+        
+        <div className="flex items-center justify-between">
+          <div className="text-xs text-gray-500">
+            {ch.endAt && (
+              <>Eindigt: {new Date(ch.endAt).toLocaleDateString('nl-NL')}</>
+            )}
+          </div>
+          
+          <a 
+            className="inline-flex items-center bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-3 py-2 rounded-xl font-medium transition-all hover:scale-105" 
+            href={challengeUrl}
+          >
+            Doe mee →
+          </a>
+        </div>
       </div>
     </div>
   );
