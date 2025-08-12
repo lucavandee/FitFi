@@ -980,7 +980,8 @@ class DataServiceOrchestrator {
       await getLocalProducts();
       results.local = {
         healthy: true,
-        responseTime: Date.now() - localStartTime
+        responseTime: Date.now() - localStartTime,
+        error: undefined
       };
     } catch (error) {
       results.local = {
