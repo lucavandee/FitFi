@@ -170,6 +170,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       // Create user points record if doesn't exist
       if (!pointsData) {
+        if (!sb) {
+          throw new Error('Supabase client not available');
+        }
+        
         const { error: insertError } = await sb
           .from('user_points')
           .insert({
@@ -283,6 +287,11 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       // Get leaderboard rank
       try {
+        if (!sb) {
+          console.warn('Supabase client not available for leaderboard rank');
+          return;
+        }
+        
         const { data: rankData, error: rankError } = await sb
           .rpc('get_user_leaderboard_rank', {
             user_uuid: user.id,

@@ -82,6 +82,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         } else {
           // Get user's position if not in top list
           try {
+            if (!supabase) {
+              console.warn('Supabase client not available for user rank');
+              return;
+            }
+            
             const { data: userRank, error: rankError } = await supabase
               .rpc('get_user_leaderboard_rank', { 
                 user_uuid: user.id,

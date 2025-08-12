@@ -71,7 +71,12 @@ const FoundersBlock: React.FC<FoundersBlockProps> = ({ className = '' }) => {
       }
 
       // Get referral count
-      const { count, error: countError } = await supabase  
+      if (!supabase) {
+        console.error('Supabase client not available');
+        return;
+      }
+      
+      const { count, error: countError } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .eq('referred_by', user.id);
