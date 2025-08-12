@@ -213,6 +213,11 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
 
       // Load user badges
+      if (!sb) {
+        console.warn('[GamificationContext] Supabase client not available for badges');
+        return;
+      }
+      
       const { data: badgesData, error: badgesError } = await sb
         .from('user_badges')
         .select('*')
