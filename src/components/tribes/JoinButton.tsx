@@ -20,17 +20,19 @@ export const JoinButton: React.FC<Props> = ({
   size = 'md',
   variant = 'primary'
 }) => {
-  const { user } = useUser();
+  const { user, status } = useUser();
   const actualUserId = userId || user?.id;
   const { isMember, onJoin, onLeave, loading } = useTribeMembership(tribeId, actualUserId);
   const [busy, setBusy] = useState(false);
 
   const handleClick = async () => {
-    if (!actualUserId) {
+    if (!actualUserId || status !== 'authenticated') {
       toast.error("Log in om mee te doen met tribes", {
         id: 'tribe-login-required',
         duration: 3000
       });
+      // Redirect to login
+      window.location.href = `/inloggen?returnTo=${encodeURIComponent(window.location.pathname)}`;
       return;
     }
     
@@ -72,7 +74,7 @@ export const JoinButton: React.FC<Props> = ({
   };
 
   const isLoading = loading || busy;
-  const isDisabled = isLoading || !user?.id;
+  const isDisabled = isLoading || status !== 'authenticated';
   
   // Show different states based on membership and loading
   const getButtonContent = () => {
@@ -108,12 +110,12 @@ export const JoinButton: React.FC<Props> = ({
         isMember 
           ? 'border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400' 
           : 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]'
-      } ${!user?.id ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
+      } ${status !== 'authenticated' ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
       icon={buttonContent.icon}
       iconPosition="left"
       aria-busy={isLoading}
       aria-label={isMember ? "Lid van tribe" : "Join tribe"}
-      title={!user?.id ? "Log in om mee te doen" : isMember ? "Je bent lid van deze tribe" : "Word lid van deze tribe"}
+      title={status !== 'authenticated' ? "Log in om mee te doen" : isMember ? "Je bent lid van deze tribe" : "Word lid van deze tribe"}
     >
       {buttonContent.text}
     </Button>
