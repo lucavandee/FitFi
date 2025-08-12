@@ -1,49 +1,59 @@
-{
-  "name": "fitfi-site",
-  "version": "1.5.4",
-  "description": "AI-powered personal style recommendations platform",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "npx playwright test",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "check:json": "node scripts/validate-json.mjs",
-    "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "format": "prettier --write 'src/**/*.{ts,tsx,css,md,json}'",
-    "test:types": "tsc --noEmit",
-    "build:check": "npm run build",
-    "build:analyze": "npm run build && npx vite-bundle-analyzer dist",
-    "build:size": "npm run build && du -sh dist/*",
-    "perf:audit": "lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html"
-  },
-  "dependencies": {
-    "@headlessui/react": "^2.2.6",
-    "@supabase/supabase-js": "^2.53.0",
-    "@tanstack/react-query": "^5.84.2",
-    "react-hot-toast": "^2.5.2",
-    "lucide-react": "^0.532.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-helmet-async": "^2.0.5",
-    "react-router-dom": "^6.22.3"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.54.2",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.18",
-    "postcss": "^8.4.35",
-    "react-swipeable": "^7.0.2",
-    "rollup-plugin-visualizer": "^6.0.3",
-    "tailwindcss": "^3.4.1",
-    "terser": "^5.43.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.3",
-    "vite": "^5.4.2",
-    "vite-imagetools": "^7.1.0"
+import { useMemo, useCallback } from 'react';
+
+export type Variant = 'control' | 'v1' | 'v2';
+
+/** Dependency-loze hash (djb2-variant), deterministisch en snel */
+function djb2Hash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
   }
+  return hash >>> 0; // forceer positief
+}
+
+function pickVariant(seed: string): Variant {
+  const n = djb2Hash(seed) % 3;
+  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+}
+
+/**
+ * Pure client-side A/B:
+ * - Geen DB calls.
+ * - Deterministisch per (testName,userId).
+ * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
+ */
+export function useABVariant(testName: string, userId?: string | null) {
+  const variant = useMemo<Variant>(() => {
+    const seed = `${testName}:${userId ?? 'guest'}`;
+    return pickVariant(seed);
+  }, [testName, userId]);
+
+  const trackClick = useCallback(
+    (label: string, extra?: Record<string, any>) => {
+      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        // @ts-ignore
+        window.gtag('event', 'cta_click', payload);
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('[ab/cta_click]', payload);
+      }
+    },
+    [testName, userId, variant]
+  );
+
+  const markExposure = useCallback(() => {
+    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      // @ts-ignore
+      window.gtag('event', 'ab_exposure', payload);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[ab/exposure]', payload);
+    }
+  }, [testName, userId, variant]);
+
+  return { variant, trackClick, markExposure };
 }
