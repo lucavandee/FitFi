@@ -9,6 +9,8 @@ export const DATA_CONFIG = {
       outfits: "outfits",
       users: "users",
       tribes: "tribes",
+      tribeMembers: "tribe_members",
+      tribePosts: "tribe_posts",
       tribe_members: "tribe_members",
       tribe_posts: "tribe_posts",
       tribe_post_likes: "tribe_post_likes",
