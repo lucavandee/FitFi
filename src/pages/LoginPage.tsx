@@ -3,12 +3,16 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
+
+// Get singleton client
+const sb = supabase();
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, status } = useUser();
+  const { user, loading } = useUser();
+  const sb = supabase();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -23,10 +27,10 @@ const LoginPage: React.FC = () => {
 
   // Handle successful login redirect
   useEffect(() => {
-    if (user && status === 'authenticated') {
+    if (user && !loading) {
       navigate(from, { replace: true });
     }
-  }, [user, status, navigate, from]);
+  }, [user, loading, navigate, from]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,11 +74,21 @@ const LoginPage: React.FC = () => {
       return;
     }
 
+    if (!sb) {
+      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      return;
+    }
     setIsLoading(true);
     setErrors({});
 
+    if (!sb) {
+      const { error } = await sb.auth.signInWithPassword({
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await sb.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
       });
@@ -100,7 +114,7 @@ const LoginPage: React.FC = () => {
   };
 
   // Show loading while auth is pending
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
         <div className="text-center">

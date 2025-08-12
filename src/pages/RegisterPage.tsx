@@ -3,10 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
+import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
+
+// Get singleton client
+const sb = supabase();
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { register } = useUser();
+  const { user } = useUser();
+  const sb = supabase();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -81,13 +87,25 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
+    if (!sb) {
+      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      return;
+    }
     setIsLoading(true);
     setErrors({});
 
     try {
-      const result = await register(formData.name, formData.email, formData.password);
+      const { error } = await sb.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name
+          }
+        }
+      });
       
-      if (result.success) {
+      if (!error) {
         // Track successful registration
         if (typeof window.gtag === 'function') {
           window.gtag('event', 'sign_up', {
@@ -97,7 +115,7 @@ const RegisterPage: React.FC = () => {
         }
         
         // Redirect to onboarding
-        navigate(result.redirectTo || '/feed', { replace: true });
+        navigate('/onboarding', { replace: true });
       } else {
         setErrors({ general: 'Registratie mislukt. Controleer je gegevens en probeer opnieuw.' });
       }
@@ -114,6 +132,13 @@ const RegisterPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const getPasswordStrength = (password: string): { strength: number; label: string; color: string } => {
     let strength = 0;

@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
+
+// Get singleton client
+const sb = supabase();
 
 const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -80,8 +83,14 @@ const ResetPasswordPage: React.FC = () => {
     setIsLoading(true);
     setErrors({});
 
+    if (!sb) {
+      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.updateUser({
+      const { error } = await sb.auth.updateUser({
         password: formData.password
       });
 

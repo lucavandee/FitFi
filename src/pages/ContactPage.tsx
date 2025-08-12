@@ -10,9 +10,12 @@ import {
   AlertCircle
 } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+
+// Get singleton client
+const sb = supabase();
 
 const ContactPage: React.FC = () => {
   const navigate = useNavigate();
@@ -81,7 +84,11 @@ const ContactPage: React.FC = () => {
     try {
       try {
         // Try Supabase first
-        const { error } = await supabase.rpc('submit_contact', {
+        if (!sb) {
+          throw new Error('Supabase not available');
+        }
+        
+        const { error } = await sb.rpc('submit_contact', {
           contact_name: formData.name,
           contact_email: formData.email,
           contact_subject: formData.subject,
