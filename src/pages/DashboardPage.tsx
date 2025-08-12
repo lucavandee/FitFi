@@ -3,7 +3,14 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
-import { useUserStats, useUserStreak, useTouchStreak, useReferrals, useNotifications, useAddXp } from '@/hooks/useDashboard';
+import { 
+  useUserStats, 
+  useUserStreak, 
+  useTouchStreak, 
+  useReferrals, 
+  useNotifications, 
+  useAddXp 
+} from '@/hooks/useDashboard';
 import { NovaInsightCard } from '@/components/Dashboard/NovaInsightCard';
 import { GamificationPanel } from '@/components/Dashboard/GamificationPanel';
 import { NBAQuickActions } from '@/components/Dashboard/NBAQuickActions';

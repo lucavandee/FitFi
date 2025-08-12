@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { DATA_CONFIG } from "@/config/dataConfig";
 import type { UserStats, UserStreak, Referral, NotificationItem } from "@/services/data/types";
+import type { UserStats, UserStreak, Referral, NotificationItem } from "@/services/data/types";
 
 const T = {
   stats: "user_stats",
