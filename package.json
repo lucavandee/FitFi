@@ -10,6 +10,7 @@
     "test": "npx playwright test",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "check:json": "node scripts/validate-json.mjs",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "format": "prettier --write 'src/**/*.{ts,tsx,css,md,json}'",
     "test:types": "tsc --noEmit",
