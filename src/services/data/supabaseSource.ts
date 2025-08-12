@@ -1,7 +1,7 @@
 // src/services/data/supabaseSource.ts
 import { createClient } from "@supabase/supabase-js";
 import { DATA_CONFIG } from "@/config/dataConfig";
-import type { BoltProduct, Outfit, FitFiUserProfile } from "./types";
+import type { BoltProduct, Outfit, FitFiUserProfile, TribeMember, TribePost, Tribe } from "./types";
 
 /**
  * Safe Supabase client creation with environment validation
@@ -438,6 +438,255 @@ export async function getSbTribePosts(
     return posts as TribePost[];
   } catch (error) {
     console.error('[SupabaseSource] Tribe posts fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * TRIBES MEMBERS CRUD
+ */
+
+/**
+ * Get tribe members from Supabase
+ */
+export async function sb_getTribeMembers(tribeId: string): Promise<TribeMember[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    const { data, error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribeMembers)
+      .select("*")
+      .eq("tribeId", tribeId)
+      .order("joinedAt", { ascending: false });
+    
+    if (error) {
+      handleSupabaseError(error, 'select', 'tribe_members');
+    }
+    
+    console.log(`[SupabaseSource] Loaded ${(data ?? []).length} tribe members for ${tribeId}`);
+    return (data ?? []) as TribeMember[];
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe members fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Join a tribe via Supabase
+ */
+export async function sb_joinTribe(tribeId: string, userId: string): Promise<TribeMember | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  // Validate user ID format
+  if (!isValidUUID(userId)) {
+    console.warn('[SupabaseSource] Invalid user ID format for join:', userId);
+    return null;
+  }
+  
+  try {
+    const payload: TribeMember = { 
+      tribeId, 
+      userId, 
+      role: "member", 
+      joinedAt: new Date().toISOString() 
+    };
+    
+    const { data, error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribeMembers)
+      .insert(payload)
+      .select("*")
+      .single();
+    
+    if (error) {
+      // Handle duplicate membership gracefully
+      if (error.code === '23505') {
+        console.log(`[SupabaseSource] User ${userId} already member of tribe ${tribeId}`);
+        return null;
+      }
+      handleSupabaseError(error, 'insert', 'tribe_members');
+    }
+    
+    console.log(`[SupabaseSource] User ${userId} joined tribe ${tribeId}`);
+    return data as TribeMember;
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe join failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Leave a tribe via Supabase
+ */
+export async function sb_leaveTribe(tribeId: string, userId: string): Promise<void> {
+  const sb = getClient();
+  if (!sb) return;
+  
+  // Validate user ID format
+  if (!isValidUUID(userId)) {
+    console.warn('[SupabaseSource] Invalid user ID format for leave:', userId);
+    return;
+  }
+  
+  try {
+    const { error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribeMembers)
+      .delete()
+      .eq("tribeId", tribeId)
+      .eq("userId", userId);
+    
+    if (error) {
+      handleSupabaseError(error, 'delete', 'tribe_members');
+    }
+    
+    console.log(`[SupabaseSource] User ${userId} left tribe ${tribeId}`);
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe leave failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * TRIBES POSTS CRUD
+ */
+
+/**
+ * Get tribe posts from Supabase
+ */
+export async function sb_getTribePosts(tribeId: string, options?: {
+  limit?: number;
+  offset?: number;
+}): Promise<TribePost[] | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    let query = sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
+      .select("*")
+      .eq("tribeId", tribeId)
+      .order("createdAt", { ascending: false });
+    
+    // Apply pagination if provided
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+    if (options?.offset) {
+      query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+    }
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      handleSupabaseError(error, 'select', 'tribe_posts');
+    }
+    
+    console.log(`[SupabaseSource] Loaded ${(data ?? []).length} tribe posts for ${tribeId}`);
+    return (data ?? []) as TribePost[];
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe posts fetch failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new tribe post via Supabase
+ */
+export async function sb_createTribePost(post: Omit<TribePost, 'id' | 'createdAt'>): Promise<TribePost | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  // Validate user ID format
+  if (!isValidUUID(post.authorId)) {
+    console.warn('[SupabaseSource] Invalid author ID format for post:', post.authorId);
+    return null;
+  }
+  
+  try {
+    const payload: TribePost = {
+      ...post,
+      id: `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date().toISOString(),
+      likes: 0,
+      commentsCount: 0
+    };
+    
+    const { data, error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
+      .insert(payload)
+      .select("*")
+      .single();
+    
+    if (error) {
+      handleSupabaseError(error, 'insert', 'tribe_posts');
+    }
+    
+    console.log(`[SupabaseSource] Created tribe post: ${data?.id}`);
+    return data as TribePost;
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe post creation failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update tribe post (for likes, comments count, etc.)
+ */
+export async function sb_updateTribePost(
+  postId: string, 
+  updates: Partial<Pick<TribePost, 'likes' | 'commentsCount'>>
+): Promise<TribePost | null> {
+  const sb = getClient();
+  if (!sb) return null;
+  
+  try {
+    const { data, error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
+      .update(updates)
+      .eq("id", postId)
+      .select("*")
+      .single();
+    
+    if (error) {
+      handleSupabaseError(error, 'update', 'tribe_posts');
+    }
+    
+    console.log(`[SupabaseSource] Updated tribe post: ${postId}`);
+    return data as TribePost;
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe post update failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete tribe post via Supabase
+ */
+export async function sb_deleteTribePost(postId: string, authorId: string): Promise<void> {
+  const sb = getClient();
+  if (!sb) return;
+  
+  // Validate user ID format
+  if (!isValidUUID(authorId)) {
+    console.warn('[SupabaseSource] Invalid author ID format for delete:', authorId);
+    return;
+  }
+  
+  try {
+    const { error } = await sb
+      .from(DATA_CONFIG.SUPABASE.tables.tribePosts)
+      .delete()
+      .eq("id", postId)
+      .eq("authorId", authorId); // Only author can delete their own posts
+    
+    if (error) {
+      handleSupabaseError(error, 'delete', 'tribe_posts');
+    }
+    
+    console.log(`[SupabaseSource] Deleted tribe post: ${postId}`);
+  } catch (error) {
+    console.error('[SupabaseSource] Tribe post deletion failed:', error);
     throw error;
   }
 }
