@@ -7,7 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        brandPurple: '#6E2EB7',
+        midnight: '#0D1B2A',
+        turquoise: '#89CFF0',
+        surface: {
+          DEFAULT: '#FFFFFF',
+          light: '#F6F6F6'
+        },
         brandPurple: '#6E2EB7',
         brandPink: '#B043FF',
         brandPurpleLight: '#ECE7FB',
@@ -50,6 +55,8 @@ export default {
         }
       },
       boxShadow: {
+        'soft': '0 6px 24px rgba(13,27,42,0.06)',
+        'xl': '0 20px 40px rgba(13,27,42,0.12)',
         'founders': '0 10px 40px rgba(0, 0, 0, 0.06)',
         'card': '0 8px 30px rgba(0, 0, 0, 0.06)',
         'founders-dark': '0 10px 40px rgba(0, 0, 0, 0.3)',
@@ -57,8 +64,13 @@ export default {
         'menu': '0 10px 32px rgba(0, 0, 0, 0.08)',
       },
       fontFamily: {
+        heading: ['Montserrat', 'ui-sans-serif', 'system-ui'],
+        body: ['Lato', 'ui-sans-serif', 'system-ui'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif']
+      },
+      spacing: {
+        '2xl': '1.25rem'
       },
       spacing: {
         '18': '4.5rem',
