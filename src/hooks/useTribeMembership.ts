@@ -8,7 +8,7 @@ export function useTribeMembership(tribeId: string, userId?: string) {
 
   const isMember = useMemo(() => {
     if (!userId) return false;
-    return members.some(m => m.userId === userId);
+    return members.some(m => m.user_id === userId);
   }, [members, userId]);
 
   useEffect(() => {
@@ -22,13 +22,22 @@ export function useTribeMembership(tribeId: string, userId?: string) {
 
   async function onJoin() {
     if (!userId) throw new Error("Niet ingelogd");
-    const optimistic = { tribeId, userId, role: "member" as const, joinedAt: new Date().toISOString() };
-    setMembers(prev => prev.some(m => m.userId === userId) ? prev : [optimistic, ...prev]);
+    const optimistic = { 
+      id: `temp_${Date.now()}`,
+      tribe_id: tribeId, 
+      user_id: userId, 
+      role: "member" as const, 
+      joined_at: new Date().toISOString() 
+    };
+    setMembers(prev => prev.some(m => m.user_id === userId) ? prev : [optimistic, ...prev]);
     try {
       await joinTribe(tribeId, userId);
+      // Refresh members list to get real data
+      const updatedMembers = await getTribeMembers(tribeId);
+      setMembers(updatedMembers);
     } catch (e) {
       // revert
-      setMembers(prev => prev.filter(m => m.userId !== userId));
+      setMembers(prev => prev.filter(m => m.user_id !== userId));
       throw e;
     }
   }
@@ -36,9 +45,12 @@ export function useTribeMembership(tribeId: string, userId?: string) {
   async function onLeave() {
     if (!userId) throw new Error("Niet ingelogd");
     const prev = members;
-    setMembers(prev.filter(m => m.userId !== userId));
+    setMembers(prev.filter(m => m.user_id !== userId));
     try {
       await leaveTribe(tribeId, userId);
+      // Refresh members list to get real data
+      const updatedMembers = await getTribeMembers(tribeId);
+      setMembers(updatedMembers);
     } catch (e) {
       setMembers(prev); // revert
       throw e;

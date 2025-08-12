@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTribeMembership } from "@/hooks/useTribeMembership";
-import { UserPlus, UserMinus, Loader } from "lucide-react";
+import { UserPlus, UserMinus, Loader, CheckCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Button from "../ui/Button";
 import toast from "react-hot-toast";
@@ -24,7 +24,10 @@ export const JoinButton: React.FC<Props> = ({
 
   const handleClick = async () => {
     if (!user?.id) {
-      toast.error("Log in om mee te doen met tribes");
+      toast.error("Log in om mee te doen met tribes", {
+        id: 'tribe-login-required',
+        duration: 3000
+      });
       return;
     }
     
@@ -32,14 +35,33 @@ export const JoinButton: React.FC<Props> = ({
     try {
       if (isMember) { 
         await onLeave();
-        toast.success("Je hebt de tribe verlaten");
+        toast.success("Je hebt de tribe verlaten", {
+          id: `tribe-leave-${tribeId}`,
+          duration: 2000
+        });
       } else { 
         await onJoin();
-        toast.success("Welkom in de tribe! 🎉");
+        toast.success("Welkom in de tribe! 🎉", {
+          id: `tribe-join-${tribeId}`,
+          duration: 3000
+        });
       }
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "Actie mislukt";
-      toast.error(errorMessage);
+      
+      // Handle specific error cases
+      if (errorMessage.includes('Already a member')) {
+        toast.error("Je bent al lid van deze tribe", {
+          id: `tribe-already-member-${tribeId}`,
+          duration: 2000
+        });
+      } else {
+        toast.error(`Actie mislukt: ${errorMessage}`, {
+          id: `tribe-error-${tribeId}`,
+          duration: 3000
+        });
+      }
+      
       console.error('[JoinButton] Action failed:', e);
     } finally {
       setBusy(false);
@@ -48,6 +70,30 @@ export const JoinButton: React.FC<Props> = ({
 
   const isLoading = loading || busy;
   const isDisabled = isLoading || !user?.id;
+  
+  // Show different states based on membership and loading
+  const getButtonContent = () => {
+    if (isLoading) {
+      return {
+        icon: <Loader className="w-4 h-4 animate-spin" />,
+        text: "..."
+      };
+    }
+    
+    if (isMember) {
+      return {
+        icon: <CheckCircle className="w-4 h-4" />,
+        text: "Joined"
+      };
+    }
+    
+    return {
+      icon: <UserPlus className="w-4 h-4" />,
+      text: "Join Tribe"
+    };
+  };
+  
+  const buttonContent = getButtonContent();
 
   return (
     <Button
@@ -57,23 +103,16 @@ export const JoinButton: React.FC<Props> = ({
       size={size}
       className={`transition-all duration-200 ${
         isMember 
-          ? 'border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400' 
+          ? 'border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400' 
           : 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]'
       } ${!user?.id ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
-      icon={
-        isLoading ? (
-          <Loader className="w-4 h-4 animate-spin" />
-        ) : isMember ? (
-          <UserMinus className="w-4 h-4" />
-        ) : (
-          <UserPlus className="w-4 h-4" />
-        )
-      }
+      icon={buttonContent.icon}
       iconPosition="left"
       aria-busy={isLoading}
-      aria-label={isMember ? "Verlaat tribe" : "Join tribe"}
+      aria-label={isMember ? "Lid van tribe" : "Join tribe"}
+      title={!user?.id ? "Log in om mee te doen" : isMember ? "Je bent lid van deze tribe" : "Word lid van deze tribe"}
     >
-      {isLoading ? "..." : isMember ? "Verlaten" : "Join Tribe"}
+      {buttonContent.text}
     </Button>
   );
 };

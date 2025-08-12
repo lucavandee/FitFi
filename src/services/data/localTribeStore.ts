@@ -114,17 +114,17 @@ export function lt_getUserRole(tribeId: string, userId: string): TribeRole | nul
 /**
  * Add a post to tribe (localStorage fallback)
  */
-export function lt_addPost(post: Omit<TribePost, 'id' | 'createdAt'>): TribePost {
+export function lt_addPost(post: Omit<TribePost, 'id' | 'created_at' | 'likes_count' | 'comments_count'>): TribePost {
   const newPost: TribePost = {
     ...post,
     id: `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    createdAt: new Date().toISOString(),
-    likes: 0,
-    commentsCount: 0
+    created_at: new Date().toISOString(),
+    likes_count: 0,
+    comments_count: 0
   };
   
-  const posts = lt_getPosts(post.tribeId);
-  lt_setPosts(post.tribeId, [newPost, ...posts]);
+  const posts = lt_getPosts(post.tribe_id);
+  lt_setPosts(post.tribe_id, [newPost, ...posts]);
   
   return newPost;
 }
@@ -142,7 +142,7 @@ export function lt_togglePostLike(postId: string, tribeId: string, userId: strin
     }
     
     const post = posts[postIndex];
-    const currentLikes = post.likes || 0;
+    const currentLikes = post.likes_count || 0;
     
     // For simplicity, we'll just toggle the like count
     // In a real implementation, we'd track individual user likes
@@ -151,7 +151,7 @@ export function lt_togglePostLike(postId: string, tribeId: string, userId: strin
     
     posts[postIndex] = {
       ...post,
-      likes: newCount
+      likes_count: newCount
     };
     
     lt_setPosts(tribeId, posts);
