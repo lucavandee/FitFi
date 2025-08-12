@@ -1,59 +1,96 @@
-import { useMemo, useCallback } from 'react';
+import { supabase } from './supabase';
 
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
+interface HealthStatus {
+  isHealthy: boolean;
+  lastCheck: Date;
+  errors: string[];
+  responseTime?: number;
 }
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
-}
+let healthStatus: HealthStatus = {
+  isHealthy: true,
+  lastCheck: new Date(),
+  errors: []
+};
 
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
+let healthCheckInterval: NodeJS.Timeout | null = null;
 
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+export async function checkSupabaseHealth(): Promise<HealthStatus> {
+  const startTime = Date.now();
+  
+  try {
+    if (!supabase) {
+      throw new Error('Supabase client not initialized');
     }
-  }, [testName, userId, variant]);
 
-  return { variant, trackClick, markExposure };
+    // Simple health check - try to query a system table
+    const { data, error } = await supabase
+      .from('users')
+      .select('count')
+      .limit(1)
+      .single();
+
+    const responseTime = Date.now() - startTime;
+
+    if (error) {
+      healthStatus = {
+        isHealthy: false,
+        lastCheck: new Date(),
+        errors: [error.message],
+        responseTime
+      };
+    } else {
+      healthStatus = {
+        isHealthy: true,
+        lastCheck: new Date(),
+        errors: [],
+        responseTime
+      };
+    }
+  } catch (error) {
+    const responseTime = Date.now() - startTime;
+    healthStatus = {
+      isHealthy: false,
+      lastCheck: new Date(),
+      errors: [error instanceof Error ? error.message : 'Unknown error'],
+      responseTime
+    };
+  }
+
+  return healthStatus;
+}
+
+export function getHealthStatus(): HealthStatus {
+  return healthStatus;
+}
+
+export function startHealthMonitoring(intervalMs: number = 60000): () => void {
+  // Clear any existing interval
+  if (healthCheckInterval) {
+    clearInterval(healthCheckInterval);
+  }
+
+  // Start periodic health checks
+  healthCheckInterval = setInterval(async () => {
+    try {
+      await checkSupabaseHealth();
+    } catch (error) {
+      console.warn('Health check failed:', error);
+    }
+  }, intervalMs);
+
+  // Return cleanup function
+  return () => {
+    if (healthCheckInterval) {
+      clearInterval(healthCheckInterval);
+      healthCheckInterval = null;
+    }
+  };
+}
+
+export function stopHealthMonitoring(): void {
+  if (healthCheckInterval) {
+    clearInterval(healthCheckInterval);
+    healthCheckInterval = null;
+  }
 }
