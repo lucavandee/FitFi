@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import { Users, Plus, Search, TrendingUp, Star, ArrowRight } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useTribes } from '../hooks/useTribes';
+import { useFitFiUser } from '../hooks/useFitFiUser';
+import { JoinButton } from '../components/tribes/JoinButton';
 import type { Tribe } from '../services/data/types';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
@@ -13,6 +15,7 @@ import toast from 'react-hot-toast';
 
 const TribesPage: React.FC = () => {
   const { user } = useUser();
+  const { data: fitFiUser } = useFitFiUser(user?.id);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArchetype, setSelectedArchetype] = useState<string | undefined>();
   
@@ -30,16 +33,6 @@ const TribesPage: React.FC = () => {
     limit: 20
   });
 
-  const handleJoinTribe = async (tribeId: string) => {
-    if (!user?.id) {
-      toast.error('Je moet ingelogd zijn om een tribe te joinen');
-      return;
-    }
-
-    // Mock join functionality for now
-    toast.success('Je bent toegetreden tot de tribe!');
-    refetch(); // Refresh tribes data
-  };
 
   const filteredTribes = (tribes || []).filter(tribe =>
     tribe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -252,14 +245,17 @@ const TribesPage: React.FC = () => {
                     
                     {!tribe.is_member && user && (
                       <Button
-                        onClick={() => handleJoinTribe(tribe.id)}
+                        as="div"
                         variant="outline"
                         size="sm"
                         className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
-                        icon={<Plus size={16} />}
-                        iconPosition="left"
                       >
-                        Join
+                        <JoinButton 
+                          tribeId={tribe.id}
+                          size="sm"
+                          variant="outline"
+                          className="border-none bg-transparent text-inherit hover:bg-transparent"
+                        />
                       </Button>
                     )}
                   </div>
