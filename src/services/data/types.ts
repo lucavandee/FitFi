@@ -259,6 +259,58 @@ export interface CreatePostData {
 }
 
 /**
+ * Challenge status types
+ */
+export type ChallengeStatus = "draft" | "open" | "closed" | "archived";
+
+/**
+ * Tribe challenge interface
+ */
+export interface TribeChallenge {
+  id: string;
+  tribeId: string;
+  title: string;
+  description?: string;
+  image?: string;
+  rules?: string[];
+  rewardPoints?: number;     // punten voor deelname
+  winnerRewardPoints?: number; // extra punten winnaar
+  startAt?: string;          // ISO
+  endAt?: string;            // ISO
+  status: ChallengeStatus;
+  tags?: string[];           // b.v. ["smart-casual","summer"]
+  createdAt?: string;
+  createdBy?: string;        // admin userId
+}
+
+/**
+ * Tribe challenge submission interface
+ */
+export interface TribeChallengeSubmission {
+  id: string;
+  tribeId: string;
+  challengeId: string;
+  userId: string;
+  userName?: string;
+  content?: string;   // caption/omschrijving
+  imageUrl?: string;  // outfit foto/link
+  linkUrl?: string;   // optioneel externe link
+  score?: number;     // door moderators of AI
+  isWinner?: boolean;
+  createdAt: string;  // ISO
+}
+
+/**
+ * Tribe ranking interface
+ */
+export interface TribeRanking {
+  tribeId: string;
+  points: number;
+  rank?: number;
+  updatedAt?: string;
+}
+
+/**
  * Tribe role type for membership management
  */
 export type TribeRole = "member" | "admin" | "owner";
