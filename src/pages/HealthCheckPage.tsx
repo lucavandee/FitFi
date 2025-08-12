@@ -1,15 +1,15 @@
 import React from 'react';
-import { isSupabaseEnabled } from '@/lib/supabase';
+import { isPreview, disableMigrations, muteThirdParty, appsignalEnabled, Env } from '@/utils/env';
 
 export default function HealthCheckPage() {
-  const gtag = typeof window !== 'undefined' && typeof (window as any).gtag === 'function';
-
-  const rows: Array<{ k: string; v: any }> = [
-    { k: 'MODE', v: import.meta.env.MODE },
-    { k: 'VITE_USE_SUPABASE', v: String(import.meta.env.VITE_USE_SUPABASE ?? 'undefined') },
-    { k: 'Supabase enabled', v: String(isSupabaseEnabled) },
-    { k: 'GTAG present', v: String(gtag) },
-    { k: 'Build time', v: new Date().toISOString() },
+  const rows = [
+    ['MODE', Env.mode],
+    ['Host', Env.host],
+    ['Preview', String(isPreview)],
+    ['Disable migrations', String(disableMigrations)],
+    ['Mute third-party', String(muteThirdParty)],
+    ['AppSignal enabled', String(appsignalEnabled)],
+    ['Build', new Date().toISOString()],
   ];
 
   return (
@@ -18,10 +18,10 @@ export default function HealthCheckPage() {
       <div className="rounded-2xl border p-4 bg-white">
         <table className="w-full text-sm">
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.k} className="border-b last:border-none">
-                <td className="py-2 pr-4 font-medium">{r.k}</td>
-                <td className="py-2 text-gray-700">{String(r.v)}</td>
+            {rows.map(([k, v]) => (
+              <tr key={k as string} className="border-b last:border-none">
+                <td className="py-2 pr-4 font-medium">{k as string}</td>
+                <td className="py-2 text-gray-700">{String(v)}</td>
               </tr>
             ))}
           </tbody>

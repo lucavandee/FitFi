@@ -1,29 +1,14 @@
-// src/utils/env.ts
-
-export const env = {
-  // ✅ Databron instellingen
-  USE_MOCK_DATA: import.meta.env.VITE_USE_MOCK_DATA === 'true',
-  USE_BOLT: import.meta.env.VITE_USE_BOLT === 'true',
-  USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true',
-  USE_LOCAL_FALLBACK: import.meta.env.VITE_USE_LOCAL_FALLBACK === 'true',
-  USE_ZALANDO: import.meta.env.VITE_USE_ZALANDO === 'true',
-
-  // ✅ Bolt API
-  BOLT_API_URL: import.meta.env.VITE_BOLT_API_URL,
-  BOLT_API_KEY: import.meta.env.VITE_BOLT_API_KEY,
-
-  // ✅ Supabase
-  SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-  SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
-
-  // ✅ Omgeving & merk
-  ENVIRONMENT: import.meta.env.VITE_ENVIRONMENT || 'development',
-  BRAND_NAME: import.meta.env.VITE_BRAND_NAME || 'FitFi',
-
-  // ✅ Debug & configuratie
-  DEBUG_MODE: import.meta.env.VITE_DEBUG_MODE === 'true',
-  API_CONFIG: import.meta.env.VITE_API_CONFIG || '',
-
-  // ✅ Google Analytics (optioneel)
-  GTAG_ID: import.meta.env.VITE_GTAG_ID || '',
+export const Env = {
+  mode: import.meta.env.MODE,
+  host: typeof window !== 'undefined' ? window.location.hostname : '',
+  flag(name: string, def = 'false') {
+    const v = (import.meta.env as any)[name];
+    return (String(v ?? def)).toLowerCase() === 'true';
+  },
 };
+
+export const isBolt = typeof window !== 'undefined' && /(^|\.)bolt\.new$/.test(Env.host);
+export const isPreview = isBolt || Env.mode !== 'production';
+export const disableMigrations = Env.flag('VITE_DISABLE_MIGRATIONS', isPreview ? 'true' : 'true');
+export const muteThirdParty = Env.flag('VITE_DISABLE_THIRD_PARTY', isPreview ? 'true' : 'true');
+export const appsignalEnabled = Env.flag('VITE_APPSIGNAL_ENABLED', 'false');
