@@ -83,7 +83,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
           // Get user's position if not in top list
           try {
             if (!supabase) {
-              console.warn('Supabase client not available for user rank');
+              console.warn('Supabase client not available for leaderboard rank');
               return;
             }
             

@@ -981,7 +981,7 @@ class DataServiceOrchestrator {
       results.local = {
         healthy: true,
         responseTime: Date.now() - localStartTime,
-        error: undefined
+        error: ''
       };
     } catch (error) {
       results.local = {

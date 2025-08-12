@@ -17,6 +17,7 @@ const SUGGESTIONS = [
 ];
 export type NovaChatProps = {
   onClose?: () => void;
+  context?: string;
   // Single source of truth
   className?: string;
 };
