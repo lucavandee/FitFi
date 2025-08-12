@@ -1,45 +1,54 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  base: '/',
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const disableThird = String(env.VITE_DISABLE_THIRD_PARTY ?? 'true').toLowerCase() === 'true';
+  
+  return {
+    plugins: [react()],
+    base: '/',
+    resolve: {
+      alias: [
+        { find: '@', replacement: path.resolve(__dirname, 'src') },
+        // Shim AppSignal/Chameleon (alle varianten)
+        ...(disableThird ? [
+          { find: /^@appsignal\/.*/, replacement: path.resolve(__dirname, 'src/shims/appsignal.ts') },
+          { find: /^appsignal(\/.*)?$/, replacement: path.resolve(__dirname, 'src/shims/appsignal.ts') },
+          { find: /^chameleon(-js)?(\/.*)?$/, replacement: path.resolve(__dirname, 'src/shims/chameleon.ts') },
+        ] : []),
+      ],
     },
-  },
-  define: {
-    // Define environment variables for build
-    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL || ''),
-    'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY || ''),
-    'import.meta.env.VITE_USE_SUPABASE': JSON.stringify(process.env.VITE_USE_SUPABASE || 'false'),
-    'import.meta.env.VITE_ENVIRONMENT': JSON.stringify(process.env.VITE_ENVIRONMENT || 'production'),
-    'import.meta.env.VITE_NOVA_ENABLED': JSON.stringify(process.env.VITE_NOVA_ENABLED || 'true'),
-    'import.meta.env.VITE_GTAG_ID': JSON.stringify(process.env.VITE_GTAG_ID || ''),
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['lucide-react', '@headlessui/react'],
+    define: { 
+      'process.env.NODE_ENV': JSON.stringify(mode),
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL || ''),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || ''),
+      'import.meta.env.VITE_USE_SUPABASE': JSON.stringify(env.VITE_USE_SUPABASE || 'false'),
+      'import.meta.env.VITE_NOVA_ENABLED': JSON.stringify(env.VITE_NOVA_ENABLED || 'true'),
+      'import.meta.env.VITE_GTAG_ID': JSON.stringify(env.VITE_GTAG_ID || ''),
+    },
+    build: {
+      outDir: 'dist',
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            router: ['react-router-dom'],
+            ui: ['lucide-react', '@headlessui/react'],
+          },
         },
       },
+      chunkSizeWarningLimit: 1000,
     },
-    chunkSizeWarningLimit: 1000,
-  },
-  server: {
-    port: 3000,
-    host: true,
-  },
-  preview: {
-    port: 3000,
-    host: true,
-  },
-})
+    server: {
+      port: 3000,
+      host: true,
+    },
+    preview: {
+      port: 3000,
+      host: true,
+    },
+  };
+});

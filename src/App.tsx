@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CrashGate from '@/components/system/CrashGate';
 import { lazyAny } from '@/utils/lazyPage';
-import CrashGate from '@/components/system/CrashGate';
-import { lazyAny } from '@/utils/lazyPage';
 import { UserProvider } from '@/context/UserContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { GamificationProvider } from '@/context/GamificationContext';
@@ -200,9 +198,6 @@ function App() {
                           </ProtectedRoute>
                         } />
                         
-                        {/* Health Check Route */}
-                        <Route path="__health" element={<HealthCheckPage />} />
-                      
                         {/* Health Check Route */}
                         <Route path="__health" element={<HealthCheckPage />} />
                       
