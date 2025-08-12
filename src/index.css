@@ -3,6 +3,12 @@
 @tailwind utilities;
 @import './styles/components/pricing.css';
 
+@layer utilities {
+  /* Alias utilities voor leesbaarheid/consistentie */
+  .text-ink { @apply text-text-dark; }
+  .bg-surface-light { @apply bg-surface; }
+}
+
 @layer base {
   body {
     @apply bg-surface-light text-gray-900 font-body antialiased;

@@ -7,6 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
+        // FitFi brand tokens
+        accent: '#89CFF0',       // Turquoise
+        'text-dark': '#0D1B2A',  // Midnight Blue
+        surface: '#F6F6F6',      // Light Grey
+        ink: '#0D1B2A',          // Alias for text-dark
+        muted: '#6B7280',        // Muted gray
         midnight: '#0D1B2A',
         turquoise: '#89CFF0',
         surface: {
