@@ -5,13 +5,13 @@ import Button from '../ui/Button';
 import { useABVariant } from '@/hooks/useABVariant';
 import { track } from '@/utils/analytics';
 
-interface StickyMobileCTAProps {
+interface StickyBottomBarProps {
   onClaimDaily: () => void;
   userId?: string;
   className?: string;
 }
 
-const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
+const StickyBottomBar: React.FC<StickyBottomBarProps> = ({
   onClaimDaily,
   userId,
   className = ''
@@ -23,7 +23,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
       variant,
       label: 'outfits',
       userId,
-      source: 'dashboard_mobile_sticky'
+      source: 'dashboard_sticky_bottom'
     });
 
     if (typeof window.gtag === 'function') {
@@ -40,7 +40,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
       variant,
       label: 'claim_xp',
       userId,
-      source: 'dashboard_mobile_sticky'
+      source: 'dashboard_sticky_bottom'
     });
 
     if (typeof window.gtag === 'function') {
@@ -56,7 +56,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
 
   return (
     <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 ${className}`}>
-      <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200 p-4 shadow-lg">
+      <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200 rounded-t-2xl shadow-xl p-4">
         <div className="flex space-x-3 max-w-sm mx-auto">
           <Button
             as={Link}
@@ -64,7 +64,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
             onClick={handleOutfitsClick}
             variant="primary"
             size="lg"
-            className="flex-1 bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] shadow-sm"
+            className="flex-1 bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] shadow-sm rounded-2xl"
             icon={<ShoppingBag size={18} />}
             iconPosition="left"
             data-ab-variant={variant}
@@ -76,7 +76,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
             onClick={handleClaimClick}
             variant="outline"
             size="lg"
-            className="flex-1 border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+            className="flex-1 border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white rounded-2xl"
             icon={<Gift size={18} />}
             iconPosition="left"
             data-ab-variant={variant}
@@ -89,4 +89,4 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
   );
 };
 
-export default StickyMobileCTA;
+export default StickyBottomBar;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '@/context/UserContext';
 import { useQuizAnswers } from '@/hooks/useQuizAnswers';
@@ -20,34 +21,18 @@ import { ReferralCard } from '@/components/Dashboard/ReferralCard';
 import { NotificationsMini } from '@/components/Dashboard/NotificationsMini';
 import { ChallengeSnapshot } from '@/components/Dashboard/ChallengeSnapshot';
 import FeaturedOutfitCard from '@/components/dashboard/FeaturedOutfitCard';
-import StickyMobileCTA from '@/components/dashboard/StickyMobileCTA';
+import StickyBottomBar from '@/components/dashboard/StickyBottomBar';
 import Button from '@/components/ui/Button';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LoadingFallback from '@/components/ui/LoadingFallback';
 import { routeTo } from '@/services/navigation/NavigationService';
 import { track } from '@/utils/analytics';
+import SafeWidget from '@/components/dashboard/SafeWidget';
 import toast from 'react-hot-toast';
-
-// Kleine helper: vangt widgetfouten lokaal + voegt analytics toe
-const SafeWidget: React.FC<{ name: string; children: React.ReactNode }> = ({ name, children }) => (
-  <ErrorBoundary
-    onError={(err) => {
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'widget_error', {
-          event_category: 'error',
-          event_label: name,
-          error_message: err.message,
-        });
-      }
-    }}
-    fallback={<div className="bg-white rounded-2xl p-6 shadow"><div className="text-sm text-gray-500">Kon {name} niet laden.</div></div>}
-  >
-    {children}
-  </ErrorBoundary>
-);
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const queryClient = useQueryClient();
   const { user, isLoading: userLoading } = useUser();
   const { resetQuiz, isResetting } = useQuizAnswers();
@@ -62,6 +47,24 @@ const DashboardPage: React.FC = () => {
 
   const touch = useTouchStreak();
   const addXp = useAddXp();
+
+  // Prefetch critical routes
+  React.useEffect(() => {
+    if (userId) {
+      // Prefetch outfits and results for faster navigation
+      queryClient.prefetchQuery({
+        queryKey: ['outfits', userId],
+        queryFn: () => fetch('/api/outfits').then(res => res.json()),
+        staleTime: 5 * 60 * 1000 // 5 minutes
+      });
+      
+      queryClient.prefetchQuery({
+        queryKey: ['results', userId],
+        queryFn: () => fetch('/api/results').then(res => res.json()),
+        staleTime: 5 * 60 * 1000
+      });
+    }
+  }, [userId, queryClient]);
 
   // Prefetch critical routes
   React.useEffect(() => {
@@ -275,7 +278,7 @@ const DashboardPage: React.FC = () => {
         </div>
         
         {/* Sticky Mobile CTA */}
-        <StickyMobileCTA
+        <StickyBottomBar
           onClaimDaily={handleClaimDaily}
           userId={userId}
         />
