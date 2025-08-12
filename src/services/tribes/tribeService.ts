@@ -3,7 +3,7 @@
  * Orchestrates between Supabase and localStorage fallback
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { DATA_CONFIG } from '@/config/dataConfig';
 import type { TribeMember, TribePost, Tribe } from '@/services/data/types';
 import { 
@@ -22,7 +22,10 @@ import {
 export async function getTribeMembers(tribeId: string): Promise<TribeMember[]> {
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const { data, error } = await supabase
+      const client = supabase();
+      if (!client) throw new Error('Supabase client not available');
+      
+      const { data, error } = await client
         .from('tribe_members')
         .select(`
           *,
