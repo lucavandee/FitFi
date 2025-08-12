@@ -11,10 +11,9 @@ export const DATA_CONFIG = {
       tribes: "tribes",
       tribeMembers: "tribe_members",
       tribePosts: "tribe_posts",
-      tribe_members: "tribe_members",
-      tribe_posts: "tribe_posts",
-      tribe_post_likes: "tribe_post_likes",
-      tribe_post_comments: "tribe_post_comments",
+      tribeChallenges: "tribe_challenges",
+      tribeChallengeSubmissions: "tribe_challenge_subs",
+      tribeRanking: "tribe_ranking"
     },
   },
   LOCAL_JSON: {
@@ -22,6 +21,9 @@ export const DATA_CONFIG = {
     outfits: "/data/bolt/outfits.json",
     user: "/data/bolt/user.json",
     tribes: "/data/bolt/tribes.json",
+    tribeChallenges: "/data/bolt/tribe_challenges.json",
+    tribeChallengeSubmissions: "/data/bolt/tribe_challenge_subs.json",
+    tribeRanking: "/data/bolt/tribe_ranking.json"
   },
   AFFILIATE: {
     defaultUtm: {
