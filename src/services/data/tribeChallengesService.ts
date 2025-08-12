@@ -322,46 +322,6 @@ export const createChallengeSubmission = async (
 };
 
 /**
- * Create new tribe challenge (admin only)
- */
-export const createTribeChallenge = async (
-  challenge: Omit<TribeChallenge, 'id' | 'createdAt'>
-): Promise<TribeChallenge> => {
-  // Try Supabase first if available
-  if (DATA_CONFIG.USE_SUPABASE) {
-    try {
-      const { data, error } = await executeWithRetry(async () => {
-        const sb = getClient();
-        if (!sb) throw new Error('Supabase client not available');
-        
-        const challengeData = {
-          ...challenge,
-          id: `challenge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          createdAt: new Date().toISOString()
-        };
-        
-        return await sb
-          .from(DATA_CONFIG.SUPABASE.tables.tribeChallenges)
-          .insert([challengeData])
-          .select()
-          .single();
-      }, 'create_tribe_challenge');
-
-      if (error) throw error;
-      
-      console.log(`[TribeChallengesService] Created challenge via Supabase: ${data.id}`);
-      return data;
-    } catch (err) {
-      console.warn("[TribeChallengesService] Supabase challenge create failed:", err);
-      throw err; // Don't fallback for mutations
-    }
-  }
-
-  // No fallback for create operations - require Supabase
-  throw new Error('Supabase required for creating challenges');
-};
-
-/**
  * Update tribe challenge status (admin only)
  */
 export const updateTribeChallengeStatus = async (
