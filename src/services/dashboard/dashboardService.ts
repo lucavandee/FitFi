@@ -70,3 +70,20 @@ export async function fetchNotifications(userId: string): Promise<NotificationIt
   if (error) throw error;
   return (data ?? []) as NotificationItem[];
 }
+
+export async function addXp(userId: string, amount: number, reason?: string) {
+  const sb = supabase(); if (!sb) throw new Error("No Supabase client");
+  // fetch huidige stats
+  const cur = await fetchUserStats(userId);
+  const xp = (cur?.xp ?? 0) + amount;
+  const level = Math.max(1, Math.floor(xp / 100) + 1); // simpele curve: 100xp per level
+  const { data, error } = await sb.from("user_stats").upsert({
+    user_id: userId,
+    xp,
+    level,
+    updated_at: new Date().toISOString(),
+    last_active: new Date().toISOString(),
+  }).select().single();
+  if (error) throw error;
+  return data;
+}
