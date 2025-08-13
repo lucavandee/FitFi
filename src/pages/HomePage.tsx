@@ -23,13 +23,13 @@ const HomePage: React.FC = () => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-          <span className="font-heading tracking-tight text-text-dark text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
-            Welkom bij <span>FitFi</span>
+          <span className="font-heading heading-ink tracking-tight text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
+            Welkom bij <span className="heading-reset">FitFi</span>
           </span>
         </h1>
         
-        <p className="text-lg md:text-xl text-gray-600 mt-4 max-w-2xl mx-auto mb-8">
-          Ontdek jouw perfecte <span>stijl</span> met AI-powered personal styling
+        <p className="body-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8">
+          Ontdek jouw perfecte <span className="heading-reset">stijl</span> met AI-powered personal styling
         </p>
         
         <div className="space-y-4">
