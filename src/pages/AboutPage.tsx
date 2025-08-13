@@ -74,8 +74,8 @@ const AboutPage: React.FC = () => {
                     iconPosition="right"
                     className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                   >
-                <h1 className="hero-title mb-6">
-                  Waarom kiezen duizenden mensen voor <span className="heading-reset accent-underline">FitFi</span>?
+                    Start nu gratis
+                  </Button>
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
