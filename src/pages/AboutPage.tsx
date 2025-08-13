@@ -90,7 +90,7 @@ const AboutPage: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
-                  <div className="glass-card h-[500px] w-[350px]">
+                  <div className="rounded-3xl shadow-[var(--ff-soft-shadow)] bg-white h-[500px] w-[350px] overflow-hidden">
                     <div className="relative w-full h-full">
                       <ImageWithFallback 
                         src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
@@ -102,7 +102,7 @@ const AboutPage: React.FC = () => {
                     
                     {/* Trust indicator overlay */}
                     <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20">
-                      <div className="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 flex items-center space-x-2">
+                      <div className="shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 rounded-full px-4 py-2 flex items-center space-x-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                         <span className="text-sm font-medium text-gray-700">10.000+ tevreden gebruikers</span>
                       </div>

@@ -95,7 +95,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative">
               {/* Main Image in Glass Card */}
-              <div className="glass-card h-[500px] w-[350px]">
+              <div className="rounded-3xl shadow-[var(--ff-soft-shadow)] bg-white h-[500px] w-[350px] overflow-hidden">
                 <SmartImage
                   src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2"
                   alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi"
@@ -119,7 +119,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg p-4 animate-fade-in">
+              <div className="absolute -bottom-4 -left-4 shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4 animate-fade-in">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-[#bfae9f] rounded-full flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-white" />
