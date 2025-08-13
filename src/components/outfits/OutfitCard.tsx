@@ -191,8 +191,9 @@ export default function OutfitCard({
             id={outfit.id}
             kind="outfit"
             aspect="4/5"
+            containerClassName="w-full h-full"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
-            className="absolute inset-0 w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+            imgClassName="hover:scale-105 transition-transform duration-300"
           />
         </div>
       </div>

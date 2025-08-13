@@ -80,7 +80,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Image */}
         <div 
-          className="aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group"
+          className="cursor-pointer group"
           onClick={handleOutfitClick}
         >
           <SmartImage
@@ -89,8 +89,9 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
             id={outfit.id}
             kind="outfit"
             aspect="3/4"
+            containerClassName="rounded-2xl"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            imgClassName="group-hover:scale-105 transition-transform duration-300"
           />
         </div>
 
