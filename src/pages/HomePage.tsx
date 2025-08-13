@@ -39,12 +39,12 @@ const HomePage: React.FC = () => {
                 variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
-                iconPosition="right"
-                className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
-              >
+                <span className="hero-title">
+                  Ontdek wat <span className="heading-reset spark">jouw stijl</span> over je zegt
+                </span>
                 Ga naar Dashboard
               </Button>
-              <p className="text-gray-500">
+              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
                 Welkom terug, {user.name}!
               </p>
             </>
