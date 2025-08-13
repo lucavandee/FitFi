@@ -74,8 +74,8 @@ const AboutPage: React.FC = () => {
                     iconPosition="right"
                     className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                   >
-                    Probeer FitFi gratis
-                  </Button>
+                <h1 className="hero-title mb-6">
+                  Waarom kiezen duizenden mensen voor <span className="heading-reset accent-underline">FitFi</span>?
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
@@ -111,8 +111,8 @@ const AboutPage: React.FC = () => {
                 <h2 className="text-3xl md:text-4xl font-light text-[#0D1B2A] mb-6">
                   Wat maakt FitFi anders?
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  Wij combineren cutting-edge AI-technologie met menselijke expertise voor een unieke styling ervaring.
+                <p className="copy-muted text-lg md:text-xl mt-4 max-w-3xl mb-8">
+                  Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op <span className="heading-reset accent-underline">duurzaamheid</span>.
                 </p>
               </div>
 

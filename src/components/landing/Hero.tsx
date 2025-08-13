@@ -41,8 +41,8 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
               </div>
               
               <h1 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 leading-tight mb-6">
-                <span className="hero-title text-balance">
-                  Ontdek wat jouw <span className="heading-reset">stijl</span> over je zegt
+                <span className="hero-title">
+                  Ontdek wat jouw <span className="heading-reset accent-underline">stijl</span> over je zegt
                 </span>
               </h1>
               
