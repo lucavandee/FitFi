@@ -1,4 +1,5 @@
 /* imports moeten als eerste komen */
+@import './styles/components/images.css';
 @import './styles/components/pricing.css';
 
 /* tailwind layers */
