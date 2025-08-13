@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
 import Button from '../ui/Button';
 import SmartImage from '@/components/media/SmartImage';
+import GradientWord from '../ui/GradientWord';
 
 interface HeroProps {
   onCTAClick?: () => void;
@@ -28,7 +29,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
   };
 
   return (
-    <section className={`relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-white via-gray-50 to-purple-50 ${className}`} aria-labelledby="hero-heading">
+    <section className={`not-prose relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-white via-gray-50 to-purple-50 ${className}`} aria-labelledby="hero-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
@@ -40,11 +41,11 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 <span>Gratis AI Style Report</span>
               </div>
               
-              <h1 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 leading-tight mb-6">
-                Ontdek wat <span className="accent-word">jouw stijl</span> over je zegt
+              <h1 id="hero-heading" className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
+                Ontdek wat <GradientWord>jouw stijl</GradientWord> over je zegt
               </h1>
               
-              <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+              <p className="text-[#6B7280] text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
                 Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
                 jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
               </p>
@@ -87,20 +88,22 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
           {/* Visual */}
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative">
-              {/* Main Image */}
-              <SmartImage
-                src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2"
-                alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi"
-                id="hero-main"
-                kind="generic"
-                width={350}
-                height={500}
-                sizes="(max-width: 768px) 280px, 350px"
-                aspect="7/10"
-                containerClassName="h-[500px] w-[350px] rounded-3xl shadow-2xl"
-                priority
-                eager
-              />
+              {/* Main Image in Glass Card */}
+              <div className="glass-card h-[500px] w-[350px]">
+                <SmartImage
+                  src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2"
+                  alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi"
+                  id="hero-main"
+                  kind="generic"
+                  width={350}
+                  height={500}
+                  sizes="(max-width: 768px) 280px, 350px"
+                  aspect="7/10"
+                  imgClassName="img-fit"
+                  priority
+                  eager
+                />
+              </div>
               
               {/* Floating Elements */}
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce-gentle">
