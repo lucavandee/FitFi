@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { buildSrcSet, fallbackDataUrl, normalizeUrl, toCdn, ImageKind } from '@/utils/image';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { fallbackDataUrl, normalizeUrl, toCdn, buildSrcSet, ImageKind } from '@/utils/image';
 
 type SmartImageProps = {
   src?: string | null;
@@ -9,17 +9,27 @@ type SmartImageProps = {
   width?: number;
   height?: number;
   sizes?: string;
-  className?: string;
+  /**
+   * CSS aspect ratio voor de CONTAINER (bijv. "4/5" of 1.25).
+   * Als gezet, vullen we het frame met absolute positioned img.
+   */
+  aspect?: `${number}/${number}` | number;
+  /** extra classes voor container (hier hoort je rounded/overflow-hidden) */
+  containerClassName?: string;
+  /** extra classes voor het <img> element (optioneel) */
+  imgClassName?: string;
   eager?: boolean;
   priority?: boolean;
-  aspect?: `${number}/${number}` | number; // e.g. "4/5" of 1.25
   onLoad?: () => void;
   onError?: () => void;
+  className?: string; // backward compatibility
+  onClick?: () => void;
 };
 
 export default function SmartImage({
-  src, alt, id, kind = 'generic', width, height, sizes,
-  className, eager = false, priority = false, aspect, onLoad, onError
+  src, alt, id, kind = 'generic', width, height, sizes, aspect,
+  containerClassName, imgClassName, eager = false, priority = false, onLoad, onError,
+  className, onClick
 }: SmartImageProps) {
   const stableId = String(id ?? alt ?? 'x');
   const normalized = normalizeUrl(src);
@@ -30,42 +40,53 @@ export default function SmartImage({
   const [loaded, setLoaded] = useState(false);
   const errorCount = useRef(0);
 
+  useEffect(() => { setCurrent(initial); setLoaded(false); }, [initial]);
+
   const srcSet = useMemo(() => buildSrcSet(normalized), [normalized]);
   const cdnPrimary = useMemo(() => toCdn(normalized, width), [normalized, width]);
-
-  useEffect(() => { setCurrent(initial); setLoaded(false); }, [initial]);
 
   const handleError = () => {
     errorCount.current += 1;
     if (errorCount.current <= 1) setCurrent(kind === 'nova' ? '/images/nova.svg' : seeded);
     onError?.();
   };
-
   const handleLoad = () => { setLoaded(true); onLoad?.(); };
 
-  const img = (
+  const imgEl = (
     <img
       src={cdnPrimary ?? current}
       srcSet={srcSet}
       sizes={sizes}
       alt={alt}
-      width={width}
-      height={height}
       decoding="async"
       loading={eager ? 'eager' : 'lazy'}
-      fetchpriority={priority ? 'high' : 'auto'}
-      className={`img-fade ${loaded ? 'img-loaded' : ''} ${className ?? ''}`}
+      fetchPriority={priority ? 'high' : 'auto'}
       onLoad={handleLoad}
       onError={handleError}
+      onClick={onClick}
+      className={[
+        // VOL frame vullen (lost "halve afbeelding" op)
+        aspect ? 'absolute inset-0 w-full h-full object-cover' : 'w-full h-auto object-cover',
+        'block img-fade', loaded ? 'img-loaded' : '',
+        imgClassName ?? '',
+        className ?? '' // backward compatibility
+      ].join(' ')}
+      // width/height attributen alleen meegeven wanneer géén aspect container gebruikt wordt
+      {...(!aspect ? { width, height } : {})}
     />
   );
 
-  // Aspect guard to avoid layout shift
-  if (aspect) {
-    const style = typeof aspect === 'number'
-      ? { aspectRatio: String(aspect) }
-      : { aspectRatio: aspect };
-    return <div className={`img-skeleton ${loaded ? '' : ''}`} style={style}>{img}</div>;
-  }
-  return <div className="img-skeleton">{img}</div>;
+  // Container met skeleton & optional aspect
+  const style = aspect ? (typeof aspect === 'number'
+    ? { aspectRatio: String(aspect) }
+    : { aspectRatio: aspect }) : undefined;
+
+  return (
+    <div
+      className={['relative overflow-hidden img-skeleton', containerClassName ?? ''].join(' ')}
+      style={style}
+    >
+      {imgEl}
+    </div>
+  );
 }
