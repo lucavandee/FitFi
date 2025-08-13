@@ -1,8 +1,17 @@
 :root {
-  --brand-blue: #1fa4ff;
-  --brand-blue-hover: #0d8ce0;
-  --brand-gradient: linear-gradient(135deg, #9ad4ff 0%, #1fa4ff 100%);
-  --text-on-brand: #ffffff;
-  --text-on-light: #1f2937;   /* gray-800 */
-  --ring-brand: 0 0 0 3px rgb(31 164 255 / .4);
+  /* Brand palette */
+  --ff-midnight-900:#0D1B2A;
+  --ff-midnight-700:#14243A;
+  --ff-ink:#0f172a;
+
+  --ff-ice:#ECF7FF;
+  --ff-sky-300:#89CFF0;
+  --ff-sky-500:#5FB7E6;
+
+  /* Accent gradient */
+  --ff-grad-midnight: #0D1B2A;
+  --ff-grad-sky: #89CFF0;
+
+  /* Shadow */
+  --ff-soft-shadow: 0 10px 30px rgba(13,27,42,0.08);
 }
