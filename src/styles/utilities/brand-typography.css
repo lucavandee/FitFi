@@ -1,0 +1,37 @@
+@layer utilities {
+  /* Hero heading – exact merkstijl */
+  .hero-title {
+    font-family: theme(fontFamily.heading);
+    color: theme(colors.text-dark);  /* ink */
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    /* schaal zoals in je oorspronkelijke look (mobiel → desktop) */
+    font-size: clamp(2.6rem, 5.5vw + 0.2rem, 6rem);
+  }
+
+  /* Subcopy kleur – consistent muted */
+  .copy-muted { color: theme(colors.muted); }
+
+  /**
+   * Zorgt dat inline woorden in headings geen eigen kleur/grootte/weight meenemen.
+   * Lost "kleine woorden" en afwijkende grijze kleur definitief op.
+   */
+  .heading-reset {
+    color: inherit !important;
+    font: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: none !important;
+    display: inline;
+  }
+
+  /* Extra veiligheid: normaliseer <em>/<strong> binnen headings */
+  .hero-title em,
+  .hero-title strong,
+  .hero-title span {
+    color: inherit !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+  }
+}

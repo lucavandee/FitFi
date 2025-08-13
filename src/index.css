@@ -1,8 +1,8 @@
 /* imports moeten als eerste komen */
 @import './styles/components/images.css';
 @import './styles/components/pricing.css';
-@import './styles/utilities/typography.css';
 @import './styles/utilities/headings.css';
+@import './styles/utilities/brand-typography.css';
 
 /* tailwind layers */
 @tailwind base;
