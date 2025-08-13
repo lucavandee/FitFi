@@ -39,6 +39,8 @@ const HomePage: React.FC = () => {
                 variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
+                iconPosition="right"
+              >
                 <span className="hero-title">
                   Ontdek wat <span className="heading-reset spark">jouw stijl</span> over je zegt
                 </span>
