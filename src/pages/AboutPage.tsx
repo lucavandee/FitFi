@@ -57,13 +57,12 @@ const AboutPage: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#0D1B2A] leading-tight mb-6">
-                    Waarom kiezen duizenden mensen voor{' '}
-                    <span className="font-medium text-[#89CFF0]">FitFi?</span>
+                  <h1 className="display-hero text-balance mb-6">
+                    Waarom kiezen duizenden mensen voor <span className="accent-underline">FitFi</span>?
                   </h1>
                   
-                  <p className="text-xl md:text-2xl text-gray-600 leading-relaxed mb-8">
-                    Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op duurzaamheid.
+                  <p className="lead mt-4 max-w-3xl mb-8">
+                    Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op <span className="accent-underline">duurzaamheid</span>.
                   </p>
                   
                   <Button 

@@ -23,11 +23,13 @@ const HomePage: React.FC = () => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-          Welkom bij FitFi
+          <span className="display-hero text-balance">
+            Welkom bij <span className="accent-underline">FitFi</span>
+          </span>
         </h1>
         
-        <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-          Ontdek jouw perfecte stijl met AI-powered personal styling
+        <p className="lead mt-4 max-w-2xl mx-auto mb-8">
+          Ontdek jouw perfecte <span className="accent-underline">stijl</span> met AI-powered personal styling
         </p>
         
         <div className="space-y-4">
