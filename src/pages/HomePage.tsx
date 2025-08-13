@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
-import HeroTitle from '../components/marketing/HeroTitle';
+import HeroTitle from '@/components/marketing/HeroTitle';
 import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
@@ -25,11 +25,18 @@ const HomePage: React.FC = () => {
         
         <div className="mb-6">
           <HeroTitle
-            lines={["Ontdek wat jouw stijl over je zegt"]}
+            lines={[
+              'Ontdek wat',
+              'jouw stijl',
+              'over je zegt',
+            ]}
             accents={{
-              0: [{ word: 'stijl', className: 'text-gradient' }]
+              1: [
+                { word: 'jouw', className: 'text-gradient-soft', onlyFirst: true },
+                { word: 'stijl', className: 'text-gradient', onlyFirst: true },
+              ],
             }}
-            className="text-[#0D1B2A]"
+            className="mb-6"
           />
         </div>
         
@@ -49,9 +56,6 @@ const HomePage: React.FC = () => {
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
               >
-                <span className="hero-title">
-                  Ontdek wat <span className="heading-reset spark">jouw stijl</span> over je zegt
-                </span>
                 Ga naar Dashboard
               </Button>
               <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
