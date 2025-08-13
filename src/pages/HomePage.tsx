@@ -22,14 +22,12 @@ const HomePage: React.FC = () => {
           <Sparkles className="w-10 h-10 text-white" />
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-          <span className="hero-title text-balance">
-            Welkom bij <span className="heading-reset">FitFi</span>
-          </span>
+        <h1 className="hero-title mb-6">
+          Welkom bij <span className="heading-reset">FitFi</span>
         </h1>
         
         <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8">
-          Ontdek jouw perfecte <span className="heading-reset">stijl</span> met AI-powered personal styling
+          Ontdek jouw perfecte <span className="heading-reset accent-underline">stijl</span> met AI-powered personal styling
         </p>
         
         <div className="space-y-4">
