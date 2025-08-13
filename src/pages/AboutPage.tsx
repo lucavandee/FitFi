@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Users, Heart, Shield, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
+import GradientWord from '../components/ui/GradientWord';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
 const AboutPage: React.FC = () => {
@@ -53,16 +54,16 @@ const AboutPage: React.FC = () => {
         
         {/* Hero Section */}
         <ErrorBoundary>
-          <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-[#F6F6F6] via-white to-[#F5F3F0] rounded-3xl mb-16 shadow-sm">
+          <section className="not-prose relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-[#F6F6F6] via-white to-[#F5F3F0] rounded-3xl mb-16 shadow-sm">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
-                  <h1 id="hero-heading" className="hero-title mb-6">
-                    Waarom kiezen duizenden mensen voor <span className="accent-fitfi">FitFi</span>?
+                  <h1 id="hero-heading" className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
+                    Waarom kiezen duizenden mensen voor <GradientWord variant="fitfi">FitFi</GradientWord>?
                   </h1>
                   
-                  <p className="copy-muted text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
-                    Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op <span className="heading-reset">duurzaamheid</span>.
+                  <p className="text-[#6B7280] text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
+                    Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op duurzaamheid.
                   </p>
                   
                   <Button 
@@ -79,14 +80,15 @@ const AboutPage: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
-                  <div className="glass-card h-[500px] w-[350px]">
-                    
-                    <ImageWithFallback 
-                      src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
-                      alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi" 
-                      className="img-fit"
-                      componentName="AboutPage"
-                    />
+                  <div className="glass-card h-[500px] w-[350px] p-3">
+                    <div className="relative w-full h-full">
+                      <ImageWithFallback 
+                        src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
+                        alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi" 
+                        className="img-fit"
+                        componentName="AboutPage"
+                      />
+                    </div>
                     
                     {/* Trust indicator overlay */}
                     <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20">

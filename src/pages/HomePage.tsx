@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
+import GradientWord from '../components/ui/GradientWord';
 import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
@@ -17,16 +18,16 @@ const HomePage: React.FC = () => {
         keywords="AI personal stylist, outfit aanbevelingen, stijl quiz, fashion advies, Nederlandse mode platform"
       />
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-      <div className="text-center max-w-2xl mx-auto p-8">
+      <div className="not-prose text-center max-w-2xl mx-auto p-8">
         <div className="w-20 h-20 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">
           <Sparkles className="w-10 h-10 text-white" />
         </div>
         
-        <h1 className="hero-title mb-6">
-          Ontdek wat <span className="accent-word">jouw stijl</span> over je zegt
+        <h1 className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
+          Ontdek wat <GradientWord>jouw stijl</GradientWord> over je zegt
         </h1>
         
-        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
+        <p className="text-[#6B7280] text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
           Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
           jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
         </p>
