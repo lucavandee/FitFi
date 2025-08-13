@@ -75,12 +75,12 @@ const AboutPage: React.FC = () => {
                     iconPosition="right"
                     className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                   >
-                    Start nu gratis
+                <h1 id="hero-heading" className="hero-title mb-6">
                   </Button>
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
-                  <div className="glass-card h-[500px] w-[350px] p-3">
+                  <div className="glass-card h-[500px] w-[350px]">
                     <div className="relative w-full h-full">
                       <ImageWithFallback 
                         src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
@@ -112,7 +112,7 @@ const AboutPage: React.FC = () => {
                 <h2 className="text-3xl md:text-4xl font-light text-[#0D1B2A] mb-6">
                   Wat maakt FitFi anders?
                 </h2>
-                <p className="copy-muted text-lg md:text-xl mt-4 max-w-3xl mb-8">
+                <p className="copy-muted text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
                   Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op <span className="heading-reset accent-underline">duurzaamheid</span>.
                 </p>
               </div>

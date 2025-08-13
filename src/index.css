@@ -1,11 +1,62 @@
-/* IMPORTS MOETEN ALS EERSTE */
-@import './styles/components/images.css';
-@import './styles/components/pricing.css';
-@import './styles/brand/hero-guards.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import './styles/tokens.css';
+
+/* Gradient text utility */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-soft {
+    background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* Hero title utility */
+  .hero-title {
+    font-family: theme(fontFamily.heading);
+    color: var(--ff-midnight-900);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
+    font-size: clamp(2.6rem, 5.4vw + 0.2rem, 6rem);
+  }
+  
+  /* Subcopy muted */
+  .copy-muted { 
+    color: theme(colors.gray.600); 
+  }
+  
+  /* Glass card without overlay */
+  .glass-card {
+    position: relative;
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.60));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--ff-soft-shadow);
+    overflow: hidden;
+  }
+  .glass-card::before,
+  .glass-card::after { 
+    content: none !important; 
+  }
+  
+  /* Image fit helper */
+  .img-fit { 
+    object-fit: cover; 
+    width: 100%; 
+    height: 100%; 
+  }
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
