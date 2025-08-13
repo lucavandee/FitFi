@@ -41,12 +41,10 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
               </div>
               
               <h1 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 leading-tight mb-6">
-                <span className="hero-title">
-                  Ontdek wat <span className="heading-reset spark">jouw stijl</span> over je zegt
-                </span>
+                Ontdek wat <span className="heading-reset accent-word">jouw stijl</span> over je zegt
               </h1>
               
-              <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8">
+              <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
                 Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
                 jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
               </p>
@@ -103,7 +101,6 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 priority
                 eager
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#bfae9f]/20 to-transparent"></div>
               
               {/* Floating Elements */}
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce-gentle">

@@ -57,13 +57,11 @@ const AboutPage: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
-                  <h1 className="font-heading heading-ink tracking-tight text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6">
-                    <span className="hero-title">
-                      Waarom kiezen duizenden mensen voor <span className="heading-reset spark-fitfi">FitFi</span>?
-                    </span>
+                  <h1 id="hero-heading" className="hero-title text-balance font-heading heading-ink tracking-tight text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6">
+                    Waarom kiezen duizenden mensen voor <span className="heading-reset accent-fitfi">FitFi</span>?
                   </h1>
                   
-                  <p className="copy-muted text-lg md:text-xl mt-6 max-w-3xl mb-8">
+                  <p className="copy-muted text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
                     Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op <span className="heading-reset">duurzaamheid</span>.
                   </p>
                   
