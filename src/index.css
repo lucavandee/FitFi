@@ -1,9 +1,11 @@
-/* imports moeten als eerste komen */
+/* IMPORTS MOETEN ALS EERSTE */
 @import './styles/components/images.css';
 @import './styles/components/pricing.css';
-@import './styles/brand/legacy-hero.css';
+@import './styles/brand/hero-guards.css';
 
-/* tailwind layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -41,7 +41,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
               </div>
               
               <h1 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 leading-tight mb-6">
-                Ontdek wat <span className="heading-reset accent-word">jouw stijl</span> over je zegt
+                Ontdek wat <span className="accent-word">jouw stijl</span> over je zegt
               </h1>
               
               <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
