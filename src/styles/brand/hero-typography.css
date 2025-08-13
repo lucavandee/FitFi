@@ -1,0 +1,67 @@
+@layer utilities {
+  /* Basis hero heading */
+  .hero-title {
+    font-family: theme(fontFamily.heading);
+    color: theme(colors.text-dark);    /* ink */
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
+    font-size: clamp(2.6rem, 5.4vw + 0.2rem, 6rem);
+  }
+
+  /* Subcopy */
+  .copy-muted { color: theme(colors.muted); }
+
+  /* Inline woorden erven ALLES -> nooit kleiner/lichter */
+  .heading-reset {
+    font: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: none !important;
+    color: inherit !important;
+    display: inline;
+  }
+
+  /* Gradient accent – nette fallback (kleur = accent) */
+  .spark {
+    color: theme(colors.accent);
+  }
+  /* WebKit support */
+  @supports (-webkit-background-clip: text) {
+    .spark {
+      background: linear-gradient(90deg, #0D1B2A 0%, #89CFF0 45%, #0D1B2A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: unset;
+    }
+  }
+  /* Non-WebKit fallback */
+  @supports (background-clip: text) {
+    .spark {
+      background: linear-gradient(90deg, #0D1B2A 0%, #89CFF0 45%, #0D1B2A 100%);
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  /* Variant voor "FitFi": iets helderder midden (premium pop) */
+  .spark-fitfi {
+    color: theme(colors.accent);
+  }
+  @supports (-webkit-background-clip: text) {
+    .spark-fitfi {
+      background: linear-gradient(90deg, #0D1B2A 0%, #89CFF0 35%, #0D1B2A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: unset;
+    }
+  }
+  @supports (background-clip: text) {
+    .spark-fitfi {
+      background: linear-gradient(90deg, #0D1B2A 0%, #89CFF0 35%, #0D1B2A 100%);
+      background-clip: text;
+      color: transparent;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /* imports moeten als eerste komen */
 @import './styles/components/images.css';
 @import './styles/components/pricing.css';
-@import './styles/brand/hero.css';
+@import './styles/brand/hero-typography.css';
 
 /* tailwind layers */
 @tailwind base;
