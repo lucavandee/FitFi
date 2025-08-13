@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
 import Button from '../ui/Button';
 import SmartImage from '@/components/media/SmartImage';
-import { GradientTextLine } from '../ui/GradientText';
+import HeroTitle from '../marketing/HeroTitle';
 
 interface HeroProps {
   onCTAClick?: () => void;
@@ -41,12 +41,15 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 <span>Gratis AI Style Report</span>
               </div>
               
-              <h1 id="hero-heading" className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
-                <GradientTextLine 
-                  text="Ontdek wat jouw stijl over je zegt"
-                  accents={[{ word: 'stijl', className: 'text-gradient' }]}
+              <div className="mb-6">
+                <HeroTitle
+                  lines={["Ontdek wat jouw stijl over je zegt"]}
+                  accents={{
+                    0: [{ word: 'stijl', className: 'text-gradient' }]
+                  }}
+                  className="text-[#0D1B2A]"
                 />
-              </h1>
+              </div>
               
               <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
                 Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
