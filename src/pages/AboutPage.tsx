@@ -57,8 +57,8 @@ const AboutPage: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
-                  <h1 id="hero-heading" className="hero-title text-balance font-heading heading-ink tracking-tight text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6">
-                    Waarom kiezen duizenden mensen voor <span className="heading-reset accent-fitfi">FitFi</span>?
+                  <h1 id="hero-heading" className="hero-title mb-6">
+                    Waarom kiezen duizenden mensen voor <span className="accent-fitfi">FitFi</span>?
                   </h1>
                   
                   <p className="copy-muted text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
@@ -79,13 +79,12 @@ const AboutPage: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
-                  <div className="relative h-[500px] w-[350px] rounded-3xl overflow-hidden shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#89CFF0]/20 z-10"></div>
+                  <div className="glass-card h-[500px] w-[350px]">
                     
                     <ImageWithFallback 
                       src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
                       alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi" 
-                      className="h-full w-full object-cover"
+                      className="img-fit"
                       componentName="AboutPage"
                     />
                     
