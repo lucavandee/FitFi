@@ -61,14 +61,10 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
               </blockquote>
               
               <div className="flex items-center">
-                <SmartImage
+                <img
                   src={testimonial.avatar}
-                  alt={`${testimonial.author} - Tevreden gebruiker`}
-                  id={testimonial.id}
-                  kind="avatar"
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 rounded-full object-cover mr-4"
+                  alt={testimonial.author}
+                  className="w-12 h-12 rounded-full object-cover shadow-sm mr-4"
                 />
                 <div>
                   <div className="font-medium text-gray-900">{testimonial.author}</div>
