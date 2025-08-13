@@ -1,0 +1,20 @@
+@layer utilities {
+  /**
+   * Normaliseert inline heading-woorden:
+   * - zelfde font-size/weight/leading/spacing als de kop
+   * - geen uppercase/transform of eigen responsive schaal
+   */
+  .heading-reset {
+    font-size: inherit !important;
+    line-height: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: none !important;
+    display: inline;
+    vertical-align: baseline;
+  }
+
+  /* Kleur-utilities in lijn met merk */
+  .heading-ink { color: theme(colors.text-dark); }
+  .body-muted { color: theme(colors.muted); }
+}
