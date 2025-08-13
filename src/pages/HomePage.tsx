@@ -23,12 +23,12 @@ const HomePage: React.FC = () => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-          <span className="font-heading heading-ink tracking-tight text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
+          <span className="hero-title text-balance">
             Welkom bij <span className="heading-reset">FitFi</span>
           </span>
         </h1>
         
-        <p className="body-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8">
+        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8">
           Ontdek jouw perfecte <span className="heading-reset">stijl</span> met AI-powered personal styling
         </p>
         
