@@ -2,6 +2,7 @@
 @import './styles/components/images.css';
 @import './styles/components/pricing.css';
 @import './styles/utilities/typography.css';
+@import './styles/utilities/headings.css';
 
 /* tailwind layers */
 @tailwind base;
