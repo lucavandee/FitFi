@@ -42,11 +42,11 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
               
               <h1 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 leading-tight mb-6">
                 <span className="hero-title">
-                  Ontdek wat jouw <span className="heading-reset accent-underline">stijl</span> over je zegt
+                  Ontdek wat <span className="heading-reset spark">jouw stijl</span> over je zegt
                 </span>
               </h1>
               
-              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto lg:mx-0 mb-8">
+              <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8">
                 Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
                 jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
               </p>
