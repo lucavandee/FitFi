@@ -63,8 +63,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           id={id}
           kind="product"
           aspect="3/4"
+          containerClassName="w-full h-full"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
-          className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+          imgClassName="hover:scale-105 transition-transform duration-300 cursor-pointer"
           onClick={handleClick}
         />
       </div>
