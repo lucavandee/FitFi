@@ -124,4 +124,8 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'text-gradient',
+    'text-gradient-soft',
+  ],
 }
