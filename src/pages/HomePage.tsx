@@ -23,11 +23,12 @@ const HomePage: React.FC = () => {
         </div>
         
         <h1 className="hero-title mb-6">
-          Welkom bij <span className="heading-reset">FitFi</span>
+          Ontdek wat <span className="heading-reset accent-word">jouw stijl</span> over je zegt
         </h1>
         
-        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8">
-          Ontdek jouw perfecte <span className="heading-reset accent-underline">stijl</span> met AI-powered personal styling
+        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
+          Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
+          jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
         </p>
         
         <div className="space-y-4">
