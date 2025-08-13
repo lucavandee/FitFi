@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
-import GradientWord from '../components/ui/GradientWord';
+import { GradientTextLine } from '../components/ui/GradientText';
 import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
@@ -24,7 +24,10 @@ const HomePage: React.FC = () => {
         </div>
         
         <h1 className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
-          Ontdek wat <GradientWord>jouw stijl</GradientWord> over je zegt
+          <GradientTextLine 
+            text="Ontdek wat jouw stijl over je zegt"
+            accents={[{ word: 'stijl', className: 'text-gradient' }]}
+          />
         </h1>
         
         <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">

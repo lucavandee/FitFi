@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Users, Heart, Shield, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
-import GradientWord from '../components/ui/GradientWord';
+import { GradientTextLine } from '../components/ui/GradientText';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
 const AboutPage: React.FC = () => {
@@ -59,7 +59,10 @@ const AboutPage: React.FC = () => {
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
                   <h1 id="hero-heading" className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
-                    Waarom kiezen duizenden mensen voor <GradientWord variant="fitfi">FitFi</GradientWord>?
+                    <GradientTextLine 
+                      text="Waarom kiezen duizenden mensen voor FitFi?"
+                      accents={[{ word: 'FitFi', className: 'text-gradient-soft' }]}
+                    />
                   </h1>
                   
                   <p className="text-[#6B7280] text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
@@ -75,7 +78,7 @@ const AboutPage: React.FC = () => {
                     iconPosition="right"
                     className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                   >
-                <h1 id="hero-heading" className="hero-title mb-6">
+                    Start nu gratis
                   </Button>
                 </div>
                 

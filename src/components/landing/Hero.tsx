@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
 import Button from '../ui/Button';
 import SmartImage from '@/components/media/SmartImage';
-import GradientWord from '../ui/GradientWord';
+import { GradientTextLine } from '../ui/GradientText';
 
 interface HeroProps {
   onCTAClick?: () => void;
@@ -42,7 +42,10 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
               </div>
               
               <h1 id="hero-heading" className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
-                Ontdek wat <GradientWord>jouw stijl</GradientWord> over je zegt
+                <GradientTextLine 
+                  text="Ontdek wat jouw stijl over je zegt"
+                  accents={[{ word: 'stijl', className: 'text-gradient' }]}
+                />
               </h1>
               
               <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
