@@ -8,8 +8,9 @@ import { useFitFiUser } from '../hooks/useFitFiUser';
 import { JoinButton } from '../components/tribes/JoinButton';
 import { RankingBoard } from '../components/Tribes/RankingBoard';
 import type { Tribe } from '../services/data/types';
+import { stableKey } from '../utils/key';
 import Button from '../components/ui/Button';
-import ImageWithFallback from '../components/ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import toast from 'react-hot-toast';
@@ -184,19 +185,21 @@ const TribesPage: React.FC = () => {
         {/* Tribes Grid */}
         <ErrorBoundary>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredTribes.map((tribe, index) => (
+            {filteredTribes.map((tribe) => (
               <div
-                key={tribe.id}
+                key={stableKey(tribe)}
                 className="bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-md transition-all hover:transform hover:scale-105 animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {/* Cover Image */}
                 <div className="relative aspect-video overflow-hidden">
-                  <ImageWithFallback
+                  <SmartImage
                     src={tribe.cover_img || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&dpr=2'}
                     alt={`${tribe.name} tribe cover`}
+                    id={tribe.id}
+                    kind="generic"
+                    aspect="16/9"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="w-full h-full object-cover"
-                    componentName="TribesPage"
                   />
                   
                   {/* Member count overlay */}

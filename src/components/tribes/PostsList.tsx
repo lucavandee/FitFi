@@ -1,7 +1,8 @@
 import React from "react";
 import { useTribePosts } from "@/hooks/useTribePosts";
 import { MessageCircle, Heart, Share2, Clock, User } from "lucide-react";
-import ImageWithFallback from "../ui/ImageWithFallback";
+import SmartImage from "@/components/media/SmartImage";
+import { stableKey } from "@/utils/key";
 import LoadingFallback from "../ui/LoadingFallback";
 import Button from "../ui/Button";
 
@@ -85,11 +86,10 @@ export const PostsList: React.FC<PostsListProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {posts.map((post, index) => (
+      {posts.map((post) => (
         <article 
-          key={post.id} 
+          key={stableKey(post)}
           className="bg-white rounded-3xl shadow-sm p-6 hover:shadow-md transition-shadow animate-fade-in"
-          style={{ animationDelay: `${index * 0.05}s` }}
         >
           {/* Post Header */}
           <div className="flex items-center justify-between mb-4">
@@ -134,11 +134,13 @@ export const PostsList: React.FC<PostsListProps> = ({
           {/* Post Image */}
           {post.imageUrl && (
             <div className="mb-4 rounded-2xl overflow-hidden">
-              <ImageWithFallback
+              <SmartImage
                 src={post.imageUrl}
                 alt="Post afbeelding"
+                id={post.id}
+                kind="generic"
+                sizes="(max-width: 768px) 100vw, 600px"
                 className="w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300"
-                componentName="PostsList"
               />
             </div>
           )}

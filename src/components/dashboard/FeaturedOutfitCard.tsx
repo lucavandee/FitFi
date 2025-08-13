@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Star, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 import Button from '../ui/Button';
 import { track } from '@/utils/analytics';
 
@@ -83,11 +83,14 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
           className="aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group"
           onClick={handleOutfitClick}
         >
-          <ImageWithFallback
+          <SmartImage
             src={outfit.imageUrl}
             alt={outfit.title}
+            id={outfit.id}
+            kind="outfit"
+            aspect="3/4"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            componentName="FeaturedOutfitCard"
           />
         </div>
 

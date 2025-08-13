@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { isSaved } from '../../services/engagement';
 import { NovaTools } from '@/ai/nova/agent';
@@ -185,12 +185,14 @@ export default function OutfitCard({
     >
       <div className="relative rounded-xl overflow-hidden mb-3">
         <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/5]">
-          <ImageWithFallback 
-            src={outfit.imageUrl} 
-            fallbackSrc="/images/outfit-fallback.jpg" 
-            alt={outfit.title || 'Outfit'} 
-            className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            componentName="OutfitCard"
+          <SmartImage
+            src={outfit.imageUrl}
+            alt={outfit.title || 'Outfit'}
+            id={outfit.id}
+            kind="outfit"
+            aspect="4/5"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
+            className="absolute inset-0 w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
           />
         </div>
       </div>

@@ -178,7 +178,7 @@ const NovaChat: React.FC = () => {
         >
           {!isUser && (
             <div className="flex items-center space-x-2 mb-2">
-              <Sparkles className="w-4 h-4 text-[#89CFF0]" />
+              <img src="/images/nova.svg" alt="Nova" className="w-4 h-4" />
               <span className="text-sm font-medium text-[#89CFF0]">Nova</span>
             </div>
           )}
