@@ -1,6 +1,7 @@
 /* imports moeten als eerste komen */
 @import './styles/components/images.css';
 @import './styles/components/pricing.css';
+@import './styles/utilities/typography.css';
 
 /* tailwind layers */
 @tailwind base;
