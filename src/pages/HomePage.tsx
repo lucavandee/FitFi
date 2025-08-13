@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
-import { GradientTextLine } from '../components/ui/GradientText';
+import HeroTitle from '../components/marketing/HeroTitle';
 import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
@@ -23,12 +23,15 @@ const HomePage: React.FC = () => {
           <Sparkles className="w-10 h-10 text-white" />
         </div>
         
-        <h1 className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
-          <GradientTextLine 
-            text="Ontdek wat jouw stijl over je zegt"
-            accents={[{ word: 'stijl', className: 'text-gradient' }]}
+        <div className="mb-6">
+          <HeroTitle
+            lines={["Ontdek wat jouw stijl over je zegt"]}
+            accents={{
+              0: [{ word: 'stijl', className: 'text-gradient' }]
+            }}
+            className="text-[#0D1B2A]"
           />
-        </h1>
+        </div>
         
         <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
           Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
