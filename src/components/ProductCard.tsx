@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExternalLink, Heart } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
-import ImageWithFallback from './ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 import Button from './ui/Button';
 import { track } from '../utils/analytics';
 
@@ -57,12 +57,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <div className={`bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow ${className}`}>
       {/* Product Image */}
       <div className="aspect-[3/4] overflow-hidden">
-        <ImageWithFallback
+        <SmartImage
           src={imageUrl}
           alt={`${title} van ${brand}`}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+          id={id}
+          kind="product"
+          aspect="3/4"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
+          className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
           onClick={handleClick}
-          componentName="ProductCard"
         />
       </div>
       

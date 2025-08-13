@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 
 interface PreviewItem {
   id: string;
@@ -84,11 +84,14 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                     {/* Image */}
                     <div className="relative aspect-[4/5] lg:aspect-auto">
-                      <ImageWithFallback
+                      <SmartImage
                         src={preview.image}
                         alt={`Preview van ${preview.title} sectie`}
+                        id={preview.id}
+                        kind="generic"
+                        aspect="4/5"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
                         className="w-full h-full object-cover"
-                        componentName="PreviewCarousel"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent lg:hidden"></div>
                     </div>

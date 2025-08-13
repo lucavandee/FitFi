@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
 import Button from '../ui/Button';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 
 interface HeroProps {
   onCTAClick?: () => void;
@@ -91,11 +91,17 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
             <div className="relative">
               {/* Main Image */}
               <div className="relative h-[500px] w-[350px] rounded-3xl overflow-hidden shadow-2xl">
-                <ImageWithFallback 
-                  src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2" 
-                  alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi" 
+                <SmartImage
+                  src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2"
+                  alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi"
+                  id="hero-main"
+                  kind="generic"
+                  width={350}
+                  height={500}
+                  sizes="(max-width: 768px) 280px, 350px"
                   className="h-full w-full object-cover"
-                  componentName="Hero"
+                  priority
+                  eager
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#bfae9f]/20 to-transparent"></div>
               </div>

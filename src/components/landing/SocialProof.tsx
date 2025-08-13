@@ -1,6 +1,6 @@
 import React from 'react';
 import { Quote, Star } from 'lucide-react';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 
 interface Testimonial {
   id: string;
@@ -61,11 +61,14 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
               </blockquote>
               
               <div className="flex items-center">
-                <ImageWithFallback
+                <SmartImage
                   src={testimonial.avatar}
                   alt={`${testimonial.author} - Tevreden gebruiker`}
+                  id={testimonial.id}
+                  kind="avatar"
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full object-cover mr-4"
-                  componentName="SocialProof"
                 />
                 <div>
                   <div className="font-medium text-gray-900">{testimonial.author}</div>

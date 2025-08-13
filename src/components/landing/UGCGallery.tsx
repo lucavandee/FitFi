@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import SmartImage from '@/components/media/SmartImage';
 
 interface UGCItem {
   id: string;
@@ -63,11 +63,14 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
             >
               {/* Image */}
               <div className="relative aspect-[4/5] overflow-hidden">
-                <ImageWithFallback
+                <SmartImage
                   src={item.image}
                   alt={`${item.author}'s stijltransformatie`}
+                  id={item.id}
+                  kind="avatar"
+                  aspect="4/5"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  componentName="UGCGallery"
                 />
                 
                 {/* Overlay */}
