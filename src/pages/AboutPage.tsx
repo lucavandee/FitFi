@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Users, Heart, Shield, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
-import { GradientTextLine } from '../components/ui/GradientText';
+import HeroTitle from '../components/marketing/HeroTitle';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
 const AboutPage: React.FC = () => {
@@ -58,12 +58,15 @@ const AboutPage: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="flex-1 text-center lg:text-left mb-12 lg:mb-0 lg:pr-10">
-                  <h1 id="hero-heading" className="font-heading font-extrabold leading-[1.05] tracking-[-.02em] text-[clamp(2.6rem,5.4vw+.2rem,6rem)] text-[#0D1B2A] mb-6">
-                    <GradientTextLine 
-                      text="Waarom kiezen duizenden mensen voor FitFi?"
-                      accents={[{ word: 'FitFi', className: 'text-gradient-soft' }]}
+                  <div className="mb-6">
+                    <HeroTitle
+                      lines={["Waarom kiezen duizenden mensen voor FitFi?"]}
+                      accents={{
+                        0: [{ word: 'FitFi', className: 'text-gradient-soft' }]
+                      }}
+                      className="text-[#0D1B2A]"
                     />
-                  </h1>
+                  </div>
                   
                   <p className="text-[#6B7280] text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
                     Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op duurzaamheid.
