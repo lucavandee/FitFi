@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
             accents={{
               1: [
                 { word: 'jouw', className: 'text-gradient-soft', onlyFirst: true },
-                { word: 'stijl', className: 'text-gradient', onlyFirst: true },
+                { word: 'stijl', className: 'text-gradient accent-bump', onlyFirst: true },
               ],
             }}
             className="mb-6"
