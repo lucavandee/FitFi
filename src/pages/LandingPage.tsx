@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { track } from '@/utils/analytics';
 import Seo from '@/components/Seo';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import LoadingFallback from '../components/ui/LoadingFallback';
@@ -44,15 +45,12 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCTAClick = () => {
-    // Track conversion intent
+    track('quiz_start_intent', { loc: 'closing_cta' });
     if (typeof window.gtag === 'function') {
-      window.gtag('event', 'begin_checkout', {
-        event_category: 'conversion',
-        event_label: 'ai_style_report_landing',
-        value: 1
-      });
+      window.gtag('event', 'begin_checkout', { event_label: 'ai_style_report_landing', value: 1 });
     }
     
+    // Track conversion intent
     // Navigate to onboarding
     navigate('/onboarding');
   };
