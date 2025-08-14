@@ -40,11 +40,9 @@ export function GradientTextLine({ text, accents, className }: Props) {
         const needsHardGradient = rule.className?.includes('text-gradient');
         const isSoft = rule.className?.includes('text-gradient-soft');
         const hardStyle = needsHardGradient
-          ? {
-              backgroundImage: isSoft
+          ? { backgroundImage: isSoft
                 ? 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)'
-                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)',
-            }
+                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)' }
           : undefined;
 
         return (
