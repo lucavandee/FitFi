@@ -40,15 +40,35 @@ export function GradientTextLine({ text, accents, className }: Props) {
         const needsHardGradient = rule.className?.includes('text-gradient');
         const isSoft = rule.className?.includes('text-gradient-soft');
         const hardStyle = needsHardGradient
+          ? {
+              backgroundImage: isSoft
+                ? 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)'
+                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)',
+            }
+          : undefined;
+
+        const needsHardGradient = rule.className?.includes('text-gradient');
+        const isSoft = rule.className?.includes('text-gradient-soft');
+        const hardStyle = needsHardGradient
           ? { backgroundImage: isSoft
                 ? 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)'
                 : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)' }
           : undefined;
 
-        return (
+            style={hardStyle}
           <span key={`${tok}-${i}`} className={rule.className}>
             {tok}
           </span>
+        );
+      }
+    }
+    return <React.Fragment key={i}>{tok}</React.Fragment>;
+  });
+
+  return <span className={className}>{nodes}</span>;
+}
+
+export default GradientTextLine;
             style={hardStyle}
         );
       }
