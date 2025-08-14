@@ -13,49 +13,56 @@ type Props = {
 };
 
 /**
- * Veilig, deterministisch wrapper: wrapt exact gematchte woorden met een span.
- * - Geen replace-append bugs → dus GEEN duplicaties.
- * - Respecteert word boundaries → styling alleen op het hele woord.
+ * Veilig, deterministisch wrapper:
+ * - splitst op woordgrenzen zodat we losse spans per woord kunnen plaatsen
+ * - respecteert onlyFirst
+ * - voegt een defensieve inline backgroundImage toe voor gradient-classes
  */
-export function GradientTextLine({ text, accents, className }: Props) {
-  if (!accents?.length) return <span className={className}>{text}</span>;
-
-  // Bouw één gecombineerde regex per unieke word boundary
-  const rules = accents.map(a => ({...a, className: a.className ?? 'text-gradient'}));
-
-  // Splitten per woordgrens zodat we React nodes kunnen opbouwen
-  const tokens = text.split(/(\b)/g);
+export const GradientTextLine: React.FC<Props> = ({ text, accents, className }) => {
+  const rules = (accents ?? []).map(a => ({
+    ...a,
+    className: a.className ?? 'text-gradient',
+  }));
 
   const usedFirst: Record<string, boolean> = {};
 
+  // Splits per woordgrens; houdt spaties en leestekens als losse tokens in stand
+  const tokens = text.split(/(\b)/g);
+
   const nodes = tokens.map((tok, i) => {
-    // Alleen woorden targetten (door \b splits kunnen lege of spaties ook binnenkomen)
+    // leeg of alleen whitespace → direct teruggeven
     if (!tok || !tok.trim()) return <React.Fragment key={i}>{tok}</React.Fragment>;
 
+    // Probeer elke accent-regel op dit token
     for (const rule of rules) {
       if (tok.toLowerCase() === rule.word.toLowerCase()) {
         if (rule.onlyFirst && usedFirst[rule.word.toLowerCase()]) break;
         usedFirst[rule.word.toLowerCase()] = true;
-        
+
+        // Defensieve inline gradient — voorkomt "balken" bij CSS-order/minifier issues
         const needsHardGradient = rule.className?.includes('text-gradient');
         const isSoft = rule.className?.includes('text-gradient-soft');
         const hardStyle = needsHardGradient
-          ? { backgroundImage: isSoft
+          ? {
+              backgroundImage: isSoft
                 ? 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)'
-                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)' }
+                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)',
+            }
           : undefined;
 
         return (
-          <span key={`${tok}-${i}`} className={rule.className} style={hardStyle}>
+          <span key={i} className={rule.className} style={hardStyle}>
             {tok}
           </span>
         );
       }
     }
+
+    // Geen match → geef het token ongewijzigd terug
     return <React.Fragment key={i}>{tok}</React.Fragment>;
   });
 
   return <span className={className}>{nodes}</span>;
-}
+};
 
 export default GradientTextLine;
