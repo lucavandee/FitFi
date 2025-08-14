@@ -84,7 +84,7 @@ const AboutPage: React.FC = () => {
                     size="lg"
                     icon={<ArrowRight size={20} />}
                     iconPosition="right"
-                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
+                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all rounded-2xl focus-ring"
                   >
                     Start nu gratis
                   </Button>
@@ -96,7 +96,7 @@ const AboutPage: React.FC = () => {
                       <ImageWithFallback 
                         src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
                         alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi" 
-                        className="img-fit"
+                        className="img-fit focus-ring px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                       />
                     </div>
                     
