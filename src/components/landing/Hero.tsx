@@ -44,16 +44,13 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
               <div className="mb-6">
                 <HeroTitle
                   lines={["Ontdek wat jouw stijl over je zegt"]}
-                  accents={{
-                    0: [{ word: 'stijl', className: 'text-gradient' }]
-                  }}
-                  className="text-[#0D1B2A]"
+                  accents={{ 0: [{ word: 'stijl', className: 'text-gradient accent-bump sheen' }] }}
+                  className="text-ink"
                 />
               </div>
               
-              <p className="copy-muted text-lg md:text-xl mt-6 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
-                Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
-                jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
+              <p className="copy-muted text-lg md:text-xl mt-6 copy-narrow mb-8 leading-relaxed">
+                Krijg in 2 minuten een gepersonaliseerd AI-rapport dat laat zien hoe jouw kledingkeuzes je persoonlijkheid weerspiegelen — inclusief concrete outfits en shopbare aanbevelingen.
               </p>
             </div>
             
