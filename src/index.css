@@ -2,7 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './styles/tokens.css';
+:root {
+  /* Brand palette */
+  --ff-midnight-900:#0D1B2A;
+  --ff-midnight-700:#14243A;
+  --ff-ink:#0f172a;
+
+  --ff-ice:#ECF7FF;
+  --ff-sky-300:#89CFF0;
+  --ff-sky-500:#5FB7E6;
+
+  /* Accent gradient */
+  --ff-grad-midnight: #0D1B2A;
+  --ff-grad-sky: #89CFF0;
+
+  /* Shadow */
+  --ff-soft-shadow: 0 10px 30px rgba(13,27,42,0.08);
+}
 
 @layer utilities {
   /* Gradient text — cross‑browser safe */
@@ -10,9 +26,9 @@
   .text-gradient-soft {
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent; /* critical for Safari/WebKit */
-    color: transparent;                   /* fallback for other engines   */
-    display: inline-block;                /* stabilizes clipping on spans */
+    -webkit-text-fill-color: transparent; /* Safari/WebKit */
+    color: transparent;                   /* Fallback */
+    display: inline-block;
   }
   .text-gradient {
     background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%);
@@ -21,15 +37,12 @@
     background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%);
   }
 
-  /* Accent size bump for single word highlights (keeps color/gradient) */
-  .accent-bump {
-    font-size: 1.12em;
-    line-height: 0.92;
-  }
+  /* Size bump for accent words */
+  .accent-bump { font-size: 1.12em; line-height: 0.92; }
   @screen md { .accent-bump { font-size: 1.18em; } }
   @screen lg { .accent-bump { font-size: 1.24em; } }
 
-  /* Hard fallback if clip isn't supported (word must never disappear) */
+  /* Hard fallback if clip isn't supported */
   @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
     .text-gradient,
     .text-gradient-soft {
@@ -37,44 +50,6 @@
       -webkit-text-fill-color: unset !important;
       color: var(--ff-midnight-900) !important;
     }
-  }
-  
-  /* Hero title utility */
-  .hero-title {
-    font-family: theme(fontFamily.heading);
-    color: var(--ff-midnight-900);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-    text-wrap: balance;
-    font-size: clamp(2.6rem, 5.4vw + 0.2rem, 6rem);
-  }
-  
-  /* Subcopy muted */
-  .copy-muted { 
-    color: theme(colors.gray.600); 
-  }
-  
-  /* Glass card without overlay */
-  .glass-card {
-    position: relative;
-    border-radius: 1.25rem;
-    background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.60));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--ff-soft-shadow);
-    overflow: hidden;
-  }
-  .glass-card::before,
-  .glass-card::after { 
-    content: none !important; 
-  }
-  
-  /* Image fit helper */
-  .img-fit { 
-    object-fit: cover; 
-    width: 100%; 
-    height: 100%; 
   }
 }
 /* Animations */
