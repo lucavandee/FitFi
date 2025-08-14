@@ -21,23 +21,25 @@
 }
 
 @layer utilities {
-  /* Gradient text — cross‑browser safe */
+  /* Gradient text — bulletproof */
   .text-gradient,
   .text-gradient-soft {
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent; /* Safari/WebKit */
-    color: transparent;                   /* Fallback */
-    display: inline-block;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    display: inline; /* inline is het meest voorspelbaar voor clip */
   }
   .text-gradient {
-    background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%);
+    background-image: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%);
   }
   .text-gradient-soft {
-    background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%);
+    background-image: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%);
   }
 
-  /* Size bump for accent words */
+  /* Accent size bump for single-word highlights */
   .accent-bump { font-size: 1.12em; line-height: 0.92; }
   @screen md { .accent-bump { font-size: 1.18em; } }
   @screen lg { .accent-bump { font-size: 1.24em; } }
@@ -52,63 +54,47 @@
     }
   }
 }
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+
+/* CSS Variables for consistent header height */
+:root {
+  --header-height: 4.5rem;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+/* Scroll margin for sections to account for sticky header */
+section[id],
+div[id] {
+  scroll-margin-top: var(--header-height);
 }
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+/* CTA Button Global Styling */
+.cta-btn {
+  @apply inline-flex items-center justify-center px-6 py-4 font-semibold
+         rounded-2xl border-2 border-brandPurple
+         bg-white text-brandPurple hover:bg-purple-50
+         focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
+/* Mobile menu focus trap */
+.mobile-menu-open {
+  overflow: hidden;
 }
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
+/* Nova Chat Styling */
+.nova-bubble {
+  max-width: 360px;
+  width: min(92vw, 360px);
 }
 
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out forwards;
+/* Portal pointer events fix */
+#nova-root {
+  pointer-events: none;
 }
 
-/* Micro-interactions */
-.hover-lift {
-  transition: transform 0.2s ease;
+#nova-root > * {
+  pointer-events: auto;
 }
 
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Hide scrollbar for slider */
+/* Horizontal scrolling for suggestion chips */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -118,35 +104,12 @@
   display: none;
 }
 
-/* Focus styles for accessibility */
-.focus-visible:focus {
-  outline: 2px solid #89CFF0;
-  outline-offset: 2px;
+/* Quiz animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Progress bar */
-.progress-bar {
-  height: 4px;
-  background-color: #334155;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #89CFF0;
-  transition: width 0.3s ease-out;
-}
-
-/* Snap scrolling */
-.snap-x {
-  scroll-snap-type: x mandatory;
-}
-
-.snap-center {
-  scroll-snap-align: center;
-}
-
-.snap-mandatory {
-  scroll-snap-stop: always;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
