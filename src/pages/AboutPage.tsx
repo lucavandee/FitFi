@@ -64,9 +64,14 @@ const AboutPage: React.FC = () => {
                         'Waarom kiezen',
                         'duizenden mensen',
                         'voor FitFi?',
+                    <HeroTitle
+                      lines={[
+                        'Waarom kiezen',
+                        'duizenden mensen',
+                        'voor FitFi?',
                       ]}
                       accents={{
-                        2: [{ word: 'FitFi', className: 'text-gradient accent-bump', onlyFirst: true }],
+                        2: [{ word: 'FitFi', className: 'text-gradient accent-bump sheen', onlyFirst: true }],
                       }}
                       className="text-ink mb-6"
                       balance
