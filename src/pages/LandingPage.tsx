@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/Seo';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import LoadingFallback from '../components/ui/LoadingFallback';
 
@@ -59,13 +59,30 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Helmet>
-        <title>FitFi - AI Style Report | Ontdek wat jouw stijl over je zegt</title>
-        <meta name="description" content="Krijg je gratis AI Style Report en ontdek wat jouw kledingkeuzes vertellen over jouw persoonlijkheid. 2 minuten quiz, direct resultaat." />
-        <meta property="og:title" content="FitFi - AI Style Report | Ontdek wat jouw stijl over je zegt" />
-        <meta property="og:description" content="Krijg je gratis AI Style Report en ontdek wat jouw kledingkeuzes vertellen over jouw persoonlijkheid." />
-        <link rel="canonical" href="https://fitfi.app/" />
-      </Helmet>
+      <Seo
+        title="AI Style Report — Ontdek wat jouw stijl over je zegt"
+        description="Krijg je gratis AI Style Report in 2 minuten. Zie wat jouw kledingkeuzes over je zeggen en ontvang direct passende outfits."
+        jsonLd={[
+          {
+            "@context":"https://schema.org",
+            "@type":"Organization",
+            "name":"FitFi",
+            "url":"https://www.fitfi.ai",
+            "logo":"https://www.fitfi.ai/logo.png"
+          },
+          {
+            "@context":"https://schema.org",
+            "@type":"WebSite",
+            "name":"FitFi",
+            "url":"https://www.fitfi.ai",
+            "potentialAction": {
+              "@type":"SearchAction",
+              "target":"https://www.fitfi.ai/?q={search_term_string}",
+              "query-input":"required name=search_term_string"
+            }
+          }
+        ]}
+      />
 
       {/* Hero Section - Critical above-the-fold content */}
       <ErrorBoundary>
