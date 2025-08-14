@@ -56,7 +56,7 @@ const Button: React.FC<ButtonProps> = ({
   ].filter(Boolean).join(' ');
 
   const variantClasses = {
-    primary: 'bg-[#89CFF0] text-white hover:bg-[#5FB7E6] active:translate-y-[1px] shadow-[0_10px_30px_rgba(137,207,240,0.35)] focus:ring-[#89CFF0] focus-visible:ring-[#89CFF0]',
+    primary: 'bg-[#89CFF0] text-white hover:bg-[#5FB7E6] active:translate-y-[1px] shadow-[0_10px_30px_rgba(137,207,240,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white',
     secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 focus:ring-gray-500 focus-visible:ring-gray-500',
     outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-gray-500 focus-visible:ring-gray-500',
     ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500 focus-visible:ring-gray-500',
