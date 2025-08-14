@@ -16,6 +16,7 @@ interface SeoProps {
   noIndex?: boolean;
   noFollow?: boolean;
   canonical?: string;
+  jsonLd?: object;
 }
 
 const Seo: React.FC<SeoProps> = ({
@@ -32,7 +33,8 @@ const Seo: React.FC<SeoProps> = ({
   tags = [],
   noIndex = false,
   noFollow = false,
-  canonical
+  canonical,
+  jsonLd
 }) => {
   // Get current URL if not provided
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : 'https://fitfi.app');
@@ -149,6 +151,11 @@ const Seo: React.FC<SeoProps> = ({
         <script type="application/ld+json">
           {JSON.stringify(organizationData)}
         </script>
+      )}
+      
+      {/* Custom JSON-LD */}
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       )}
     </Helmet>
   );

@@ -17,6 +17,13 @@ const HomePage: React.FC = () => {
         description="Ontdek jouw perfecte stijl met AI-powered personal styling. Gepersonaliseerde outfit aanbevelingen, stijlquiz en fashion advies."
         canonical="https://fitfi.app/home"
         keywords="AI personal stylist, outfit aanbevelingen, stijl quiz, fashion advies, Nederlandse mode platform"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "FitFi",
+          "url": "https://fitfi.ai",
+          "logo": "https://fitfi.ai/logo.png"
+        }}
       />
     <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
       <div className="not-prose text-center max-w-2xl mx-auto p-8">
