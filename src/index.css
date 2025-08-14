@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 :root {
   /* Brand palette */
   --ff-midnight-900:#0D1B2A;
@@ -25,10 +24,10 @@
   .text-gradient,
   .text-gradient-soft {
     background-clip: text !important;
+    background-clip: text !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     color: transparent !important;
-    -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     display: inline; /* inline is het meest voorspelbaar voor clip */
   }
