@@ -15,11 +15,19 @@
     display: inline-block;                /* stabilizes clipping on spans */
   }
   .text-gradient {
-    background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%);
+    background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%);
   }
   .text-gradient-soft {
     background: linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%);
   }
+
+  /* Accent size bump for single word highlights (keeps color/gradient) */
+  .accent-bump {
+    font-size: 1.12em;
+    line-height: 0.92;
+  }
+  @screen md { .accent-bump { font-size: 1.18em; } }
+  @screen lg { .accent-bump { font-size: 1.24em; } }
 
   /* Hard fallback if clip isn't supported (word must never disappear) */
   @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
@@ -29,18 +37,6 @@
       -webkit-text-fill-color: unset !important;
       color: var(--ff-midnight-900) !important;
     }
-  }
-  
-  /* Accent size bump for single word highlights (keeps color/gradient) */
-  .accent-bump {
-    font-size: 1.12em;         /* subtle bump on mobile */
-    line-height: 0.92;         /* keep tight hero rhythm */
-  }
-  @screen md {
-    .accent-bump { font-size: 1.18em; }
-  }
-  @screen lg {
-    .accent-bump { font-size: 1.24em; }
   }
   
   /* Hero title utility */
