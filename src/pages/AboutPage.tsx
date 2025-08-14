@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/Seo';
 import { ArrowRight, Users, Heart, Shield, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
@@ -41,6 +42,18 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F6F6F6]">
+      <Seo
+        title="Over ons — Waarom kiezen mensen voor FitFi?"
+        description="Wij combineren AI en stijlkennis voor persoonlijk, onafhankelijk stylingadvies met focus op kwaliteit en duurzaamheid."
+        canonical="https://www.fitfi.ai/over-ons"
+        jsonLd={{
+          "@context":"https://schema.org",
+          "@type":"AboutPage",
+          "name":"Over FitFi",
+          "url":"https://www.fitfi.ai/over-ons",
+          "primaryImageOfPage":"https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg"
+        }}
+      />
       <Helmet>
         <title>Waarom FitFi? - AI-Powered Personal Styling | FitFi</title>
         <meta name="description" content="Ontdek waarom duizenden mensen kiezen voor FitFi's AI-powered styling advies. Onafhankelijk, duurzaam en met 14-dagen geld-terug garantie." />
