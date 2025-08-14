@@ -49,17 +49,18 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const baseClasses = [
     'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#89CFF0] focus-visible:ring-offset-white',
     'disabled:opacity-50 disabled:cursor-not-allowed',
     fullWidth ? 'w-full' : '',
     className
   ].filter(Boolean).join(' ');
 
   const variantClasses = {
-    primary: 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] focus:ring-[#89CFF0]',
-    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 focus:ring-gray-500',
-    outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-gray-500',
-    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500'
+    primary: 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] focus:ring-[#89CFF0] focus-visible:ring-[#89CFF0]',
+    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 focus:ring-gray-500 focus-visible:ring-gray-500',
+    outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-gray-500 focus-visible:ring-gray-500',
+    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500 focus-visible:ring-gray-500',
+    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500 focus-visible:ring-red-500'
   };
 
   const sizeClasses = {
