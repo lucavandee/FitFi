@@ -66,9 +66,10 @@ const AboutPage: React.FC = () => {
                         'voor FitFi?',
                       ]}
                       accents={{
-                        2: [{ word: 'FitFi', className: 'text-gradient accent-bump', onlyFirst: true }],
+                       2: [{ word: 'FitFi', className: 'text-gradient accent-bump', onlyFirst: true }],
                       }}
-                      className="text-[#0D1B2A] mb-6"
+                     className="text-ink mb-6"
+                     balance
                     />
                   </div>
                   
