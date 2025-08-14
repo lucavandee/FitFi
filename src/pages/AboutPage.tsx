@@ -83,7 +83,7 @@ const AboutPage: React.FC = () => {
                     variant="primary"
                     size="lg"
                     icon={<ArrowRight size={20} />}
-                    iconPosition="right"
+                     2: [{ word: 'FitFi', className: 'text-gradient accent-bump sheen', onlyFirst: true }],
                     className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                   >
                     Start nu gratis
@@ -97,7 +97,7 @@ const AboutPage: React.FC = () => {
                         src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
                         alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi" 
                         className="img-fit"
-                        componentName="AboutPage"
+                 className="focus-ring px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
                       />
                     </div>
                     
@@ -123,7 +123,7 @@ const AboutPage: React.FC = () => {
                 <h2 className="text-3xl md:text-4xl font-light text-[#0D1B2A] mb-6">
                   Wat maakt FitFi anders?
                 </h2>
-                <p className="copy-muted text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
+               <p className="text-gray-600 text-lg md:text-xl mt-6 copy-narrow mb-8 leading-relaxed">
                   Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op <span className="heading-reset accent-underline">duurzaamheid</span>.
                 </p>
               </div>
