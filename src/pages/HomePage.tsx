@@ -10,6 +10,17 @@ import { useUser } from '../context/UserContext';
 const HomePage: React.FC = () => {
   const { user } = useUser();
 
+  const handleStartQuiz = () => {
+    // Track quiz start from home hero
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'quiz_start', { 
+        location: 'home_hero',
+        event_category: 'conversion',
+        event_label: 'home_cta_click'
+      });
+    }
+  };
+
   return (
     <>
       <Seo 
@@ -71,6 +82,8 @@ const HomePage: React.FC = () => {
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
+                data-ff-event="cta_click"
+                data-ff-loc="home_hero"
               >
                 Ga naar Dashboard
               </Button>
@@ -83,11 +96,14 @@ const HomePage: React.FC = () => {
               <Button 
                 as={Link}
                 to="/registreren" 
+                onClick={handleStartQuiz}
                 variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
                 className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
+                data-ff-event="cta_click"
+                data-ff-loc="home_hero"
               >
                 Start nu gratis
               </Button>
