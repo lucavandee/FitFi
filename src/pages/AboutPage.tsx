@@ -73,8 +73,8 @@ const AboutPage: React.FC = () => {
                     />
                   </div>
                   
-                  <p className="text-[#6B7280] text-lg md:text-xl mt-6 max-w-3xl mb-8 leading-relaxed">
-                    Wij revolutioneren personal styling met AI-technologie, onafhankelijk advies en een focus op duurzaamheid.
+                  <p className="text-gray-600 text-lg md:text-xl mt-6 copy-narrow mb-8 leading-relaxed">
+                    Wij revolutioneren personal styling met AI — radicaal onafhankelijk, persoonlijk en met oog voor kwaliteit en duurzaamheid.
                   </p>
                   
                   <Button 
