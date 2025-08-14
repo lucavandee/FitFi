@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
                 { word: 'stijl', className: 'text-gradient accent-bump', onlyFirst: true },
               ],
             }}
-            className="text-[#0D1B2A]"
+            className="mb-6"
             balance
           />
         </div>
