@@ -96,9 +96,15 @@ const LandingPage: React.FC = () => {
 
       {/* Founders Club - Lazy loaded */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
-          <FoundersBlock />
-        </Suspense>
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-md mx-auto">
+              <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
+                <FoundersBlock />
+              </Suspense>
+            </div>
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* UGC Gallery - Lazy loaded */}
