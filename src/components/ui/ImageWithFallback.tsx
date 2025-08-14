@@ -5,6 +5,10 @@ type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
   componentName?: string;
   loading?: 'lazy' | 'eager';
   decoding?: 'auto' | 'sync' | 'async';
+  sizes?: string;
+  srcSet?: string;
+  loading?: 'lazy' | 'eager';
+  decoding?: 'auto' | 'sync' | 'async';
 };
 
 const FALLBACK_DATA_URI =
@@ -17,6 +21,10 @@ export default function ImageWithFallback({
   componentName,
   onError,
   className = '',
+  loading,
+  decoding,
+  sizes,
+  srcSet,
   loading,
   decoding,
   ...rest
@@ -90,6 +98,8 @@ export default function ImageWithFallback({
   return (
     <img
       src={currentSrc}
+      srcSet={srcSet}
+      sizes={sizes ?? '(max-width: 1024px) 90vw, 520px'}
       alt={alt}
       loading={loading ?? 'lazy'}
       decoding={decoding ?? 'async'}
