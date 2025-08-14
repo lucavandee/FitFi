@@ -91,19 +91,24 @@ const AboutPage: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
-                  <div className="rounded-3xl shadow-[var(--ff-soft-shadow)] bg-white h-[500px] w-[350px] overflow-hidden">
-                    <div className="relative w-full h-full">
-                      <ImageWithFallback 
-                        src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2" 
-                        alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi" 
-                        className="img-fit focus-ring px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
-                      />
-                    </div>
-                    
+                  <div className="relative rounded-3xl shadow-[var(--ff-soft-shadow)] bg-white overflow-hidden w-[360px] md:w-[420px] aspect-[4/5]">
+                    <ImageWithFallback
+                      src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2"
+                      alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi"
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(max-width: 768px) 360px, 420px"
+                      srcSet="
+                        https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=480&h=720 480w,
+                        https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200 800w
+                      "
+                    />
+
                     {/* Trust indicator overlay */}
-                    <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20">
-                      <div className="shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 rounded-full px-4 py-2 flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+                      <div className="rounded-full px-4 py-2 bg-white/70 backdrop-blur flex items-center gap-2 shadow-sm">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                         <span className="text-sm font-medium text-gray-700">10.000+ tevreden gebruikers</span>
                       </div>
                     </div>
