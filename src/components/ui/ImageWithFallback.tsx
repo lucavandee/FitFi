@@ -3,6 +3,8 @@ import React from 'react';
 type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
   fallbackSrc?: string;
   componentName?: string;
+  loading?: 'lazy' | 'eager';
+  decoding?: 'auto' | 'sync' | 'async';
 };
 
 const FALLBACK_DATA_URI =
@@ -15,6 +17,8 @@ export default function ImageWithFallback({
   componentName,
   onError,
   className = '',
+  loading,
+  decoding,
   ...rest
 }: Props) {
   const [currentSrc, setCurrentSrc] = React.useState<string>('');
@@ -87,6 +91,8 @@ export default function ImageWithFallback({
     <img
       src={currentSrc}
       alt={alt}
+      loading={loading ?? 'lazy'}
+      decoding={decoding ?? 'async'}
       onError={handleError}
       onLoad={handleLoad}
       className={`transition-opacity duration-300 ${
