@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
 import HeroTitle from '@/components/marketing/HeroTitle';
+import Chip from '@/components/ui/Chip';
 import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
@@ -33,7 +34,7 @@ const HomePage: React.FC = () => {
             accents={{
               1: [
                 { word: 'jouw', className: 'text-gradient-soft', onlyFirst: true },
-                { word: 'stijl', className: 'text-gradient accent-bump', onlyFirst: true },
+                { word: 'stijl', className: 'text-gradient accent-bump sheen', onlyFirst: true },
               ],
             }}
             className="mb-6"
@@ -41,10 +42,17 @@ const HomePage: React.FC = () => {
           />
         </div>
         
-        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
+        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
           Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
           jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
         </p>
+        
+        {/* Trust Indicators */}
+        <div className="flex flex-wrap justify-center gap-3 mt-4 mb-8">
+          <Chip>100% Gratis</Chip>
+          <Chip>2 Minuten</Chip>
+          <Chip>Direct Resultaat</Chip>
+        </div>
         
         <div className="space-y-4">
           {user ? (
@@ -59,7 +67,7 @@ const HomePage: React.FC = () => {
               >
                 Ga naar Dashboard
               </Button>
-              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed">
+              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
                 Welkom terug, {user.name}!
               </p>
             </>
@@ -76,24 +84,9 @@ const HomePage: React.FC = () => {
               >
                 Start nu gratis
               </Button>
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-                <Button 
-                  as={Link}
-                  to="/inloggen" 
-                  variant="outline"
-                  className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
-                >
-                  Inloggen
-                </Button>
-                <Button 
-                  as={Link}
-                  to="/hoe-het-werkt" 
-                  variant="ghost"
-                  className="text-gray-600 hover:bg-gray-50"
-                >
-                  Hoe het werkt
-                </Button>
-              </div>
+              <p className="text-sm text-gray-500 mt-4">
+                Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten gegenereerd
+              </p>
             </>
           )}
         </div>
