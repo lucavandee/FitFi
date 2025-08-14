@@ -88,8 +88,8 @@ const AboutPage: React.FC = () => {
                     variant="primary"
                     size="lg"
                     icon={<ArrowRight size={20} />}
-                     2: [{ word: 'FitFi', className: 'text-gradient accent-bump sheen', onlyFirst: true }],
-                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 rounded-2xl"
+                    iconPosition="right"
+                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all rounded-2xl focus-ring"
                   >
                     Start nu gratis
                   </Button>
