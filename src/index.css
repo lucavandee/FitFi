@@ -17,6 +17,12 @@
 
   /* Shadow */
   --ff-soft-shadow: 0 10px 30px rgba(13,27,42,0.08);
+
+  /* Extra tokens */
+  --ff-radius-2xl: 1.25rem;
+  --ff-ring: #89CFF0;
+  --ff-chip-bg: #F6F6F6;
+  --ff-chip-border: #E5E7EB;
 }
 
 @layer utilities {
@@ -112,3 +118,37 @@ div[id] {
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
+
+/* Premium focus ring (consistente a11y) */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  --tw-ring-color: var(--ff-ring);
+  --tw-ring-offset-color: #fff;
+}
+
+/* Premium Chip */
+.ff-chip {
+  @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm;
+  background: var(--ff-chip-bg);
+  border: 1px solid var(--ff-chip-border);
+}
+
+/* Subtiele "sheen" over gradient (alleen als motion ok) */
+.sheen {
+  position: relative;
+}
+.sheen::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.25) 20%, transparent 35%);
+  mix-blend-mode: overlay;
+  opacity: .0;
+  transition: opacity .4s ease;
+}
+.sheen:hover::after { opacity: .7; }
+@media (prefers-reduced-motion: reduce) {
+  .sheen::after { transition: none; }
+}
+
+/* Tweaks hero copy breedte */
+.copy-narrow { max-width: 46ch; }
