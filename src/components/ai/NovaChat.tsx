@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { streamChat } from '@/services/ai/novaService';
+import { streamChat, type NovaMode } from '@/services/ai/novaService';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
@@ -187,25 +187,32 @@ const NovaChat: React.FC = () => {
     try {
       // Create assistant message placeholder
       const assistantId = `assistant-${Date.now()}`;
-      const assistantMessage: Message = {
-        id: assistantId,
-        role: 'assistant',
-        content: '',
-        timestamp: Date.now(),
-        type: 'text'
-      };
-      
-      setMessages(prev => [...prev, assistantMessage]);
-      
-      // Stream response
       let acc = '';
-      const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
+      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '', timestamp: Date.now(), type: 'text' }]);
       
-      for await (const delta of streamChat({ mode: contextMode as any, messages: history, signal: abortController.signal })) {
-        acc += delta;
-        setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
-        // Auto-scroll after each chunk
-        scrollToBottom();
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+      setIsTyping(true);
+      
+      try {
+        const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
+        for await (const delta of streamChat({ mode: contextMode as NovaMode, messages: history, signal: abortRef.current.signal })) {
+          acc += delta;
+          setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
+          scrollToBottom();
+        }
+      } catch (e: any) {
+        const errorMsg = e?.message || String(e);
+        let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
+        
+        if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
+          content = 'Nova is nog niet actief (SSE/OpenAI). Zet OPENAI_API_KEY in Netlify en deploy de function.';
+        }
+        
+        setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content } : m));
+      } finally {
+        setIsTyping(false);
+        abortRef.current = null;
       }
       
       // Track Nova response
@@ -216,53 +223,8 @@ const NovaChat: React.FC = () => {
         user_id: user?.id
       });
 
-    } catch (error) {
-      // Check if error was due to abort
-      if (abortController.signal.aborted) {
-        console.log('[NovaChat] Request aborted by user');
-        
-        // Track abort
-        track('nova_request_aborted', {
-          event_category: 'ai_interaction',
-          event_label: 'user_abort',
-          user_id: user?.id,
-          context: contextMode
-        });
-      } else {
-        console.error('[NovaChat] Error:', error);
-        
-        // Check for SSE inactive error
-        const errorMsg = error instanceof Error ? error.message : String(error);
-        let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
-        
-        if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
-          content = 'Nova is nog niet actief (SSE/OPENAI). Vraag je team om OPENAI_API_KEY te zetten of de Netlify function te deployen.';
-        }
-        
-        setMessages(prev => prev.map(m => 
-          m.id === `assistant-${Date.now()}` ? { ...m, content } : m
-        ).concat(prev.length === messages.length + 1 ? [] : [{
-          id: `error-${Date.now()}`,
-          role: 'assistant',
-          content,
-          timestamp: Date.now(),
-          type: 'text'
-        }]));
-
-        // Track Nova error
-        track('nova_error', {
-          event_category: 'ai_interaction',
-          event_label: 'response_failed',
-          error_message: errorMsg,
-          user_id: user?.id,
-          context: contextMode
-        });
-      }
     } finally {
       setIsLoading(false);
-      setIsTyping(false);
-      setShowTypingDelay(false);
-      abortRef.current = null;
       
       // Track stream completion
       track('nova_stream_done', {
