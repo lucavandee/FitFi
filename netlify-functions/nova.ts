@@ -21,20 +21,20 @@ function okOrigin(o?: string) {
   return false;
 }
 
-function routeModel(mode: Mode){
-  if(mode==='outfits')   return process.env.NOVA_MODEL_OUTFITS   || 'gpt-4o';
-  if(mode==='archetype') return process.env.NOVA_MODEL_ARCHETYPE || 'gpt-4o-mini';
-  return                    process.env.NOVA_MODEL_SHOP          || 'gpt-4o-mini';
+function routeModel(mode: Mode) {
+  if (mode === 'outfits')   return process.env.NOVA_MODEL_OUTFITS   || 'gpt-4o';
+  if (mode === 'archetype') return process.env.NOVA_MODEL_ARCHETYPE || 'gpt-4o-mini';
+  return                       process.env.NOVA_MODEL_SHOP          || 'gpt-4o-mini';
 }
-function systemPrompt(mode: Mode){
+function systemPrompt(mode: Mode) {
   const base = [
-    'Je bent Nova, een premium AI-stylist. Antwoord altijd in het Nederlands, kort en duidelijk.',
-    'Stuur geen algemene welkomstteksten terug nadat de gebruiker al iets vroeg.',
-    'Vraag max. 1 verduidelijkende vraag als informatie ontbreekt (gelegenheid, seizoen, vibe, budget).'
+    'Je bent Nova, premium AI-stylist. Antwoord in het Nederlands, kort en duidelijk.',
+    'Stuur geen algemene welkomsttekst nadat de gebruiker iets vroeg.',
+    'Vraag max. 1 verduidelijking bij ontbrekende context (gelegenheid, seizoen, vibe, budget).'
   ].join(' ');
-  if(mode==='outfits')   return base + ' Geef 3 outfits met titel, 1-2 bullets en 1 zin "waarom".';
-  if(mode==='archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don\'t.';
-  return                   base + ' Geef 3-5 shoprichtingen met filters (fit, materiaal, kleur).';
+  if (mode === 'outfits')   return base + ' Geef 3 outfits met titel, 1–2 bullets en 1 zin "waarom".';
+  if (mode === 'archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don't.';
+  return                       base + ' Geef 3–5 shoprichtingen met filters (fit, materiaal, kleur).';
 }
 
 export const handler: Handler = async (event) => {
@@ -57,7 +57,9 @@ export const handler: Handler = async (event) => {
   try {
     if (!okOrigin(origin)) return { statusCode: 403, body: 'Forbidden' };
 
-    const { mode, messages, stream } = JSON.parse(event.body || '{}') as { mode: Mode; messages: Msg[]; stream?: boolean; };
+    const { mode, messages, stream } = JSON.parse(event.body || '{}') as {
+      mode: Mode; messages: Msg[]; stream?: boolean;
+    };
     const safeMode: Mode = (['outfits','archetype','shop'] as Mode[]).includes(mode) ? mode : 'outfits';
     if (!Array.isArray(messages) || messages.length === 0) return { statusCode: 400, body: 'Bad request' };
 
@@ -79,7 +81,7 @@ export const handler: Handler = async (event) => {
                 'Authorization': `Bearer ${process.env.OPENAI_API_KEY || ''}`
               },
               body: JSON.stringify({ model, messages: serverMessages, stream: true, temperature: 0.7 }),
-              // @ts-ignore
+              // @ts-ignore Node hint for streaming
               duplex: 'half'
             });
 
@@ -134,7 +136,7 @@ export const handler: Handler = async (event) => {
       } as any);
     }
 
-    // JSON fallback
+    // JSON fallback (alleen voor debug)
     return {
       statusCode: 200,
       headers: {
