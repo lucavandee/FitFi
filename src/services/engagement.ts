@@ -72,3 +72,45 @@ export function getSimilarOutfits(all: any[], base: any, count = 3) {
     .slice(0, count)
     .map(x=>x.o);
 }
+
+/**
+ * Safe, tree-shakeable engagement utilities.
+ * Works without crashing if no analytics providers are present.
+ */
+type KV = Record<string, any>;
+
+function safeCall(fn?: (...a: any[]) => any, ...args: any[]) {
+  try { return fn?.(...args); } catch { /* noop */ }
+}
+
+export function trackProductClick(data: KV) {
+  // gtag (GA4)
+  safeCall((window as any)?.gtag, 'event', 'product_click', data);
+  // plausible
+  safeCall((window as any)?.plausible, 'Product Click', { props: data });
+  // datalayer
+  ((window as any).dataLayer = (window as any).dataLayer || []).push({
+    event: 'product_click',
+    ...data,
+  });
+}
+
+export function trackShopCta(data: KV) {
+  safeCall((window as any)?.gtag, 'event', 'shop_cta', data);
+  safeCall((window as any)?.plausible, 'Shop CTA', { props: data });
+  ((window as any).dataLayer = (window as any).dataLayer || []).push({
+    event: 'shop_cta',
+    ...data,
+  });
+}
+
+export function trackImpression(data: KV) {
+  safeCall((window as any)?.gtag, 'event', 'product_impression', data);
+  safeCall((window as any)?.plausible, 'Product Impression', { props: data });
+  ((window as any).dataLayer = (window as any).dataLayer || []).push({
+    event: 'product_impression',
+    ...data,
+  });
+}
+
+export type { KV as EngagementPayload };
