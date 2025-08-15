@@ -20,7 +20,7 @@ function renderContentWithLinks(content:string){
   });
 }
 
-const URL_RE = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
+const URL_RE2 = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
 
 interface Message {
   id: string;
@@ -191,19 +191,19 @@ const NovaChat: React.FC = () => {
         
         // Track abort
         track('nova_request_aborted', {
-              
-              // Track stream completion
-              track('nova_stream_done', {
-                event_category: 'ai_interaction',
-                event_label: 'stream_completed',
-                user_id: user?.id,
-                context: contextMode
-              });
           event_category: 'ai_interaction',
           event_label: 'user_abort',
           user_id: user?.id,
           context: contextMode
         });
+      } else {
+        console.error('[NovaChat] Error:', error);
+        
+        const errorMessage: Message = {
+          id: `error-${Date.now()}`,
+          role: 'assistant',
+          content: 'Sorry, er ging iets mis. Probeer het opnieuw.',
+          timestamp: Date.now(),
           type: 'text'
         };
 
