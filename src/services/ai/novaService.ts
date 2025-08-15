@@ -15,6 +15,8 @@ export interface NovaStreamEvent {
 
 const START = '<<<FITFI_JSON>>>';
 const END   = '<<<END_FITFI_JSON>>>';
+const START_LEN = START.length; // 16
+const TAIL_HOLD = Math.max(START_LEN - 1, 8); // houd altijd wat staart vast om split markers te vangen
 
 export async function* streamChat({
   mode,
@@ -53,16 +55,17 @@ export async function* streamChat({
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
-  let buffer = '';
+  let sseBuf = '';
   let jsonMode = false;
   let jsonBuf = '';
+  let textBuf = ''; // menselijk zichtbare tekst die we chunk-veilig opbouwen
 
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
 
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n'); buffer = lines.pop() || '';
+    sseBuf += decoder.decode(value, { stream: true });
+    const lines = sseBuf.split('\n'); sseBuf = lines.pop() || '';
 
     for (const raw of lines) {
       const line = raw.trim();
@@ -77,44 +80,67 @@ export async function* streamChat({
       // --- JSON marker capture (werkt ook tijdens streaming) ---
       if (delta) {
         if (!jsonMode) {
-          const i = delta.indexOf(START);
+          // voeg toe aan textBuf en zoek START (ook als START over chunkgrens valt)
+          textBuf += delta;
+          let i = textBuf.indexOf(START);
           if (i >= 0) {
-            jsonMode = true;
-            jsonBuf = '';
-            // alles na START reserveren
-            jsonBuf += delta.slice(i + START.length);
-            // toon human tekst t/m START
-            const human = delta.slice(0, i);
+            // emit alles vóór START
+            const human = textBuf.slice(0, i);
             if (human) { onEvent?.({ type:'chunk', delta: human }); yield human; }
-            continue;
+            // enter JSON-mode
+            jsonMode = true;
+            jsonBuf = textBuf.slice(i + START_LEN);
+            textBuf = '';
+          } else {
+            // geen START nog → emit bijna alles, houd staart vast voor mogelijke gesplitste marker
+            if (textBuf.length > TAIL_HOLD) {
+              const emit = textBuf.slice(0, textBuf.length - TAIL_HOLD);
+              if (emit) { onEvent?.({ type:'chunk', delta: emit }); yield emit; }
+              textBuf = textBuf.slice(textBuf.length - TAIL_HOLD);
+            }
           }
         } else {
-          const j = delta.indexOf(END);
+          // in JSON-mode: append en zoek END (kan ook over meerdere chunks)
+          jsonBuf += delta;
+          let j = jsonBuf.indexOf(END);
           if (j >= 0) {
-            jsonBuf += delta.slice(0, j);
+            const jsonPayload = jsonBuf.slice(0, j);
             try {
-              const parsed = JSON.parse(jsonBuf) as NovaOutfitsPayload;
+              const parsed = JSON.parse(jsonPayload) as NovaOutfitsPayload;
               onEvent?.({ type:'json', data: parsed });
             } catch (e) {
               if (dbg) console.warn('[NOVA] JSON parse failed', e);
             }
+            // verlaat JSON-mode, verwerk rest na END als normale tekst
+            const rest = jsonBuf.slice(j + END.length);
             jsonMode = false;
-            const rest = delta.slice(j + END.length);
-            if (rest) { onEvent?.({ type:'chunk', delta: rest }); yield rest; }
-            continue;
-          } else {
-            jsonBuf += delta;
-            // verberg JSON voor de gebruiker
-            continue;
+            jsonBuf = '';
+            if (rest) {
+              textBuf += rest;
+              // probeer direct START opnieuw te vinden in rest
+              let k = textBuf.indexOf(START);
+              if (k >= 0) {
+                const human = textBuf.slice(0, k);
+                if (human) { onEvent?.({ type:'chunk', delta: human }); yield human; }
+                jsonMode = true;
+                jsonBuf = textBuf.slice(k + START_LEN);
+                textBuf = '';
+              }
+            }
           }
+          // als END nog niet gevonden is: niets tonen (JSON blijft verborgen)
         }
       }
 
       if (evt?.type === 'meta') {
         onEvent?.({ type:'meta', model: evt.model, traceId: evt.traceId });
-      } else if (delta) {
-        onEvent?.({ type:'chunk', delta }); yield delta;
       } else if (evt?.type === 'done') {
+        // flush tail zonder markers
+        if (!jsonMode && textBuf) {
+          onEvent?.({ type:'chunk', delta: textBuf });
+          yield textBuf;
+          textBuf = '';
+        }
         onEvent?.({ type:'done' });
       } else if (evt?.type === 'error') {
         onEvent?.({ type:'error' });
