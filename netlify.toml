@@ -6,7 +6,7 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20.11.1"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps --no-fund --no-audit"
   HUSKY = "0"
 
