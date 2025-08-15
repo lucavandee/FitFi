@@ -1,6 +1,7 @@
 import React from "react";
 import { track } from "@/utils/analytics";
 import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
+import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
 
 export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: number }> = ({ codeUrl, count, goal = 3 }) => {
   async function share() {
@@ -55,6 +56,9 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
   return (
     <div className="card p-5 sm:p-6">
       <div className="text-sm text-gray-500">Founders Club</div>
+      <div className="mt-1">
+        <FoundersTierBadge referrals={count} compact />
+      </div>
       <div className="mt-1">
         <FoundersTierBadge referrals={count} compact />
       </div>
