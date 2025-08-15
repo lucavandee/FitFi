@@ -21,7 +21,7 @@ export function mdNova(input: string) {
   // Autolink (http/https)
   s = s.replace(
     /(https?:\/\/[^\s)<>"']+)/g,
-    '<a href="$1" target="_blank" rel="nofollow noopener noreferrer" class="underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80">$1</a>'
+    '<a href="$1" target="_blank" rel="nofollow noopener noreferrer" class="text-[#89CFF0] underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80">$1</a>'
   );
 
   // Paragraph breaks
