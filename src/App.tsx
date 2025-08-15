@@ -58,6 +58,10 @@ const GamificationPage = lazyAny(() => import('@/pages/GamificationPage'));
 const AnalyticsPage = lazyAny(() => import('@/pages/AnalyticsPage'));
 const FeedPage = lazyAny(() => import('@/pages/FeedPage'));
 const HealthCheckPage = lazyAny(() => import('@/pages/HealthCheckPage'));
+const BrandSafetyPage = lazyAny(() => import('@/pages/BrandSafetyPage'));
+const DisclosurePage = lazyAny(() => import('@/pages/DisclosurePage'));
+const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
+const CookiesPage = lazyAny(() => import('@/pages/CookiesPage'));
 
 // Create a client
 const queryClient = new QueryClient({
@@ -128,6 +132,13 @@ function App() {
                         <Route path="/algemene-voorwaarden" element={<TermsPage />} />
                         <Route path="/bedankt" element={<ThankYouPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
+                        
+                        {/* Legal & Compliance Routes */}
+                        <Route path="/brand-safety" element={<BrandSafetyPage />} />
+                        <Route path="/disclosure" element={<DisclosurePage />} />
+                        <Route path="/privacy" element={<PrivacyPage />} />
+                        <Route path="/cookies" element={<CookiesPage />} />
+                        <Route path="/terms" element={<TermsPage />} />
                       
                         {/* Public Routes */}
                         <Route path="/feed" element={<FeedPage />} />
