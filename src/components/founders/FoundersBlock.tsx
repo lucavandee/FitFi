@@ -86,15 +86,15 @@ export const FoundersBlock: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow">
+    <div className="card lift-sm p-5 sm:p-6">
       <div className="text-sm text-gray-500">Founders Club</div>
 
-      <div className="flex items-center justify-between mt-1">
+      <div className="flex items-center justify-between mt-2">
         <div className="text-xl font-semibold">{loading ? "…" : `${refCount}/3`} referrals</div>
         <button
           type="button"
           onClick={onShare}
-          className="px-4 py-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-60"
+          className="px-4 py-2 rounded-full bg-[#89CFF0] text-white hover:bg-[#5FB7E6] btn-animate disabled:opacity-60"
           disabled={loading}
         >
           Deel invite
