@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { GamificationProvider } from '@/context/GamificationContext';
 import { OnboardingProvider } from '@/context/OnboardingContext';
 import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -99,140 +99,142 @@ function App() {
           <UserProvider>
             <GamificationProvider>
               <OnboardingProvider>
-                <Router>
-                  <NavigationServiceInitializer />
-                  <ScrollToTop />
-                  <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
-                    <Navbar />
-                    <Suspense fallback={<div className="p-8">Loading…</div>}>
-                      <Routes>
-                      
-                        {/* Public Routes */}
-                        <Route path="/" element={<LandingPage />} />
-                        <Route path="/home" element={<HomePage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/inloggen" element={<LoginPage />} />
-                        <Route path="/registreren" element={<RegisterPage />} />
-                        <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
-                        <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
-                        <Route path="/over-ons" element={<AboutPage />} />
-                        <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-                        <Route path="/prijzen"  element={<PricingPage />} />
-                        <Route path="/blog" element={<BlogIndexPage />} />
-                        <Route path="/blog/:slug" element={<BlogDetailPage />} />
-                        <Route path="/contact" element={<ContactPage />} />
-                        <Route path="/veelgestelde-vragen" element={<FAQPage />} />
-                        <Route path="/juridisch" element={<LegalPage />} />
-                        <Route path="/ondersteuning" element={<SupportPage />} />
-                        <Route path="/help" element={<HelpCenterPage />} />
-                        <Route path="/feedback" element={<FeedbackPage />} />
-                        <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
-                        <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
-                        <Route path="/product/:id" element={<ProductPage />} />
-                        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                        <Route path="/algemene-voorwaarden" element={<TermsPage />} />
-                        <Route path="/bedankt" element={<ThankYouPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
+                <ErrorBoundary>
+                  <Router>
+                    <NavigationServiceInitializer />
+                    <ScrollToTop />
+                    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+                      <Navbar />
+                      <Suspense fallback={<div className="p-8">Loading…</div>}>
+                        <Routes>
                         
-                        {/* Legal & Compliance Routes */}
-                        <Route path="/brand-safety" element={<BrandSafetyPage />} />
-                        <Route path="/disclosure" element={<DisclosurePage />} />
-                        <Route path="/privacy" element={<PrivacyPage />} />
-                        <Route path="/cookies" element={<CookiesPage />} />
-                        <Route path="/terms" element={<TermsPage />} />
-                      
-                        {/* Public Routes */}
-                        <Route path="/feed" element={<FeedPage />} />
-                        <Route path="/shop" element={<ShopRedirect />} />
+                          {/* Public Routes */}
+                          <Route path="/" element={<LandingPage />} />
+                          <Route path="/home" element={<HomePage />} />
+                          <Route path="/login" element={<LoginPage />} />
+                          <Route path="/inloggen" element={<LoginPage />} />
+                          <Route path="/registreren" element={<RegisterPage />} />
+                          <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
+                          <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
+                          <Route path="/over-ons" element={<AboutPage />} />
+                          <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                          <Route path="/prijzen"  element={<PricingPage />} />
+                          <Route path="/blog" element={<BlogIndexPage />} />
+                          <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                          <Route path="/contact" element={<ContactPage />} />
+                          <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+                          <Route path="/juridisch" element={<LegalPage />} />
+                          <Route path="/ondersteuning" element={<SupportPage />} />
+                          <Route path="/help" element={<HelpCenterPage />} />
+                          <Route path="/feedback" element={<FeedbackPage />} />
+                          <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
+                          <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
+                          <Route path="/product/:id" element={<ProductPage />} />
+                          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                          <Route path="/algemene-voorwaarden" element={<TermsPage />} />
+                          <Route path="/bedankt" element={<ThankYouPage />} />
+                          <Route path="/profile" element={<ProfilePage />} />
+                          
+                          {/* Legal & Compliance Routes */}
+                          <Route path="/brand-safety" element={<BrandSafetyPage />} />
+                          <Route path="/disclosure" element={<DisclosurePage />} />
+                          <Route path="/privacy" element={<PrivacyPage />} />
+                          <Route path="/cookies" element={<CookiesPage />} />
+                          <Route path="/terms" element={<TermsPage />} />
                         
-                        {/* Protected Routes */}
-                        <Route path="/onboarding" element={
-                          <ProtectedRoute>
-                            <OnboardingPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/quiz" element={
-                          <ProtectedRoute>
-                            <QuizPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/dynamic-onboarding" element={
-                          <ProtectedRoute>
-                            <DynamicOnboardingPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/results" element={
-                          <ProtectedRoute>
-                            <ResultsPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/resultaten" element={<Navigate to="/results" replace />} />
-                        <Route path="/dynamic-results" element={
-                          <ProtectedRoute>
-                            <DynamicResultsPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/enhanced-resultaten" element={
-                          <ProtectedRoute>
-                            <EnhancedResultsPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/dashboard" element={
-                          <ProtectedRoute>
-                            <DashboardPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/outfits" element={
-                          <ProtectedRoute>
-                            <OutfitsPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/gamification" element={
-                          <ProtectedRoute>
-                            <GamificationPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/analytics" element={
-                          <ProtectedRoute allowedRoles={['admin']} redirectTo="/login">
-                            <AnalyticsPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/tribes" element={
-                          <ProtectedRoute>
-                            <TribesPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/tribes/:slug" element={
-                          <ProtectedRoute>
-                            <TribeDetailPage />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/tribes/id/:tribeId" element={
-                          <ProtectedRoute>
-                            <TribeDetailPage />
-                          </ProtectedRoute>
-                        } />
+                          {/* Public Routes */}
+                          <Route path="/feed" element={<FeedPage />} />
+                          <Route path="/shop" element={<ShopRedirect />} />
+                          
+                          {/* Protected Routes */}
+                          <Route path="/onboarding" element={
+                            <ProtectedRoute>
+                              <OnboardingPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/quiz" element={
+                            <ProtectedRoute>
+                              <QuizPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/dynamic-onboarding" element={
+                            <ProtectedRoute>
+                              <DynamicOnboardingPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/results" element={
+                            <ProtectedRoute>
+                              <ResultsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/resultaten" element={<Navigate to="/results" replace />} />
+                          <Route path="/dynamic-results" element={
+                            <ProtectedRoute>
+                              <DynamicResultsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/enhanced-resultaten" element={
+                            <ProtectedRoute>
+                              <EnhancedResultsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/dashboard" element={
+                            <ProtectedRoute>
+                              <DashboardPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/outfits" element={
+                            <ProtectedRoute>
+                              <OutfitsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/gamification" element={
+                            <ProtectedRoute>
+                              <GamificationPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/analytics" element={
+                            <ProtectedRoute allowedRoles={['admin']} redirectTo="/login">
+                              <AnalyticsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/tribes" element={
+                            <ProtectedRoute>
+                              <TribesPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/tribes/:slug" element={
+                            <ProtectedRoute>
+                              <TribeDetailPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/tribes/id/:tribeId" element={
+                            <ProtectedRoute>
+                              <TribeDetailPage />
+                            </ProtectedRoute>
+                          } />
+                          
+                          {/* Health Check Route */}
+                          <Route path="__health" element={<HealthCheckPage />} />
                         
-                        {/* Health Check Route */}
-                        <Route path="__health" element={<HealthCheckPage />} />
+                          {/* Fallback */}
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Suspense>
                       
-                        {/* Fallback */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
-                    
-                    {/* Nova AI Chat - Always mounted with fail-safe */}
-                    {NOVA_ENABLED && (
-                      <>
-                        <Suspense fallback={null}><NovaLauncher /></Suspense>
-                        <Suspense fallback={null}><NovaBubble /></Suspense>
-                      </>
-                    )}
-                    
-                    {/* Cookie Consent Banner */}
-                    <Suspense fallback={null}><CookieBanner /></Suspense>
-                  </div>
-                </Router>
+                      {/* Nova AI Chat - Always mounted with fail-safe */}
+                      {NOVA_ENABLED && (
+                        <>
+                          <Suspense fallback={null}><NovaLauncher /></Suspense>
+                          <Suspense fallback={null}><NovaBubble /></Suspense>
+                        </>
+                      )}
+                      
+                      {/* Cookie Consent Banner */}
+                      <Suspense fallback={null}><CookieBanner /></Suspense>
+                    </div>
+                  </Router>
+                </ErrorBoundary>
               </OnboardingProvider>
             </GamificationProvider>
           </UserProvider>
