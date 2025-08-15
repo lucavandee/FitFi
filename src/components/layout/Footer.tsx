@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Instagram, Linkedin } from 'lucide-react';
 import Logo from '../ui/Logo';
+import CookieSettingsButton from '@/components/legal/CookieSettingsButton';
 
 interface FooterLink {
   label: string;
@@ -34,9 +35,19 @@ const Footer: React.FC = () => {
       links: [
         { label: 'Privacybeleid', href: '/privacy-policy' },
         { label: 'Algemene voorwaarden', href: '/algemene-voorwaarden' },
-        { label: 'Cookiebeleid', href: '/juridisch' },
+        { label: 'Cookiebeleid', href: '/cookies' },
         { label: 'Veelgestelde vragen', href: '/veelgestelde-vragen' },
         { label: 'Ondersteuning', href: '/ondersteuning' }
+      ]
+    },
+    {
+      title: 'Legal & Trust',
+      links: [
+        { label: 'Brand Safety & Editorial', href: '/brand-safety' },
+        { label: 'Affiliate Disclosure', href: '/disclosure' },
+        { label: 'Privacy Policy', href: '/privacy' },
+        { label: 'Cookie Policy', href: '/cookies' },
+        { label: 'Terms of Service', href: '/terms' }
       ]
     },
     {
@@ -71,7 +82,7 @@ const Footer: React.FC = () => {
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
-          <div className="lg:col-span-1">
+          <div>
             <Logo className="h-8 w-auto mb-4" textColor="text-white" />
             <p className="text-gray-300 mb-6 leading-relaxed">
               FitFi helpt je ontdekken wat jouw stijl over je zegt en hoe je dit kunt gebruiken 
@@ -138,6 +149,13 @@ const Footer: React.FC = () => {
                   </li>
                 ))}
               </ul>
+              
+              {/* Cookie Settings Button for Legal & Trust section */}
+              {section.title === 'Legal & Trust' && (
+                <div className="mt-3">
+                  <CookieSettingsButton className="text-gray-300 hover:text-[#89CFF0] transition-colors underline" />
+                </div>
+              )}
             </div>
           ))}
         </div>
