@@ -81,7 +81,15 @@ const queryClient = new QueryClient({
 const NOVA_ENABLED = (import.meta.env.VITE_NOVA_ENABLED ?? 'true') !== 'false';
 // NotFound component
 const NotFound: React.FC = () => (
-  <div className="p-8">Page not found</div>
+  <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center">
+    <h1 className="text-2xl font-semibold">Pagina niet gevonden</h1>
+    <p className="mt-2 text-slate-600">
+      De pagina die je zoekt bestaat niet of is verplaatst.
+    </p>
+    <Link to="/" className="mt-4 underline">
+      ← Terug naar home
+    </Link>
+  </div>
 );
 
 const App: React.FC = () => {
