@@ -1,107 +1,37 @@
-export type NovaMode = 'outfits' | 'archetype' | 'shop';
-
-type Msg = { role: 'system' | 'user' | 'assistant'; content: string };
-
-const ENV = {
-  ENDPOINT: '/.netlify/functions/nova',
-  MODEL_OUTFITS: import.meta.env.VITE_NOVA_MODEL_OUTFITS || 'gpt-4o',
-  MODEL_ARCHETYPE: import.meta.env.VITE_NOVA_MODEL_ARCHETYPE || 'gpt-4o-mini',
-  MODEL_SHOP: import.meta.env.VITE_NOVA_MODEL_SHOP || 'gpt-4o-mini',
-  MOCK: import.meta.env.VITE_USE_MOCK_DATA === 'true',
-};
-
-export function systemPrompt(mode: NovaMode): string {
-  switch (mode) {
-    case 'outfits':
-      return [
-        'Je bent Nova, een premium AI-stylist.',
-        'Taken: genereer outfits die passen bij het profiel, seizoen en archetype.',
-        'Antwoorden: kort, stijlvol, met 3 duidelijke opties en shop-klare bullets.',
-        'Geef match-reden (1 zin) en kleuradvies.',
-      ].join(' ');
-    case 'archetype':
-      return [
-        'Je bent Nova, een stijl-analist.',
-        'Taken: leg archetypes uit, geef herkenbare signalen en do\'s/don\'ts.',
-        'Antwoorden: beknopt, met 3 concrete tips.',
-      ].join(' ');
-    case 'shop':
-      return [
-        'Je bent Nova, een shopping-assistent.',
-        'Taken: suggereer productcategorieën en filters; vermijd merken zonder context.',
-        'Antwoorden: lijst met 3-5 productrichtingen en filters (fit, materiaal, kleur).',
-      ].join(' ');
-  }
-}
-
-export function routeModel(mode: NovaMode): string {
-  if (mode === 'outfits') return ENV.MODEL_OUTFITS;
-  if (mode === 'archetype') return ENV.MODEL_ARCHETYPE;
-  return ENV.MODEL_SHOP;
-}
-
-/** Client-side streaming reader.
- *  Probeert eerst server-stream (event stream / NDJSON).
- *  Valt terug op één respons + progressive reveal. */
-export async function* streamChat(params: {
-  mode: NovaMode;
-  messages: Msg[];
-  signal?: AbortSignal;
-}): AsyncGenerator<string, void, unknown> {
-  // Optioneel: directe mock
-  if (ENV.MOCK) {
-    const text = mockAnswer(params.mode, params.messages);
-    // progressive reveal
-    for (const chunk of chunkify(text)) {
-      yield chunk;
-      await sleep(30);
+        try { const evt = JSON.parse(payload); if (evt.type==='chunk' && evt.delta) yield evt.delta; } catch { /* ignore */ }
+      }
+        const payload = line.slice(5).trim();
     }
+        const line = raw.trim(); if (!line || line.startsWith(':') || !line.startsWith('data:')) continue;
     return;
+      for (const raw of lines) {
   }
+      const lines = buf.split('\n'); buf = lines.pop() || '';
 
-  // Probeer server (Netlify function) met SSE preference
-  try {
-    const res = await fetch(ENV.ENDPOINT, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Accept': 'text/event-stream'   // <-- prefer SSE
-      },
-      body: JSON.stringify({
-        mode: params.mode,
-        model: routeModel(params.mode),
-        messages: [
-          { role: 'system', content: systemPrompt(params.mode) },
-          ...params.messages,
-        ],
-        stream: true
-      }),
-      signal: params.signal,
-    });
+      buf += td.decode(value, { stream:true });
+  // --- Geen SSE -> duidelijk signaal voor UI ---
+      const { value, done } = await r.read(); if (done) break;
+  const msg = await res.text().catch(()=> '');
+    for (;;) {
+  throw new Error('NOVA_SSE_INACTIVE:' + msg.slice(0,200));
+    const r = res.body.getReader(); const td = new TextDecoder(); let buf = '';
+}
+  if (res.ok && res.body && ctype.includes('text/event-stream')) {
+  // --- SSE pad ---
 
-    const ctype = res.headers.get('content-type') || '';
-    // --- SSE PATH ---
-    if (res.ok && res.body && ctype.includes('text/event-stream')) {
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = '';
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
+  const ctype = (res.headers.get('content-type')||'').toLowerCase();
 
-        const lines = buf.split('\n');
-        buf = lines.pop() || '';
-        for (const raw of lines) {
-          const line = raw.trim();
-          if (!line) continue;
-          if (line.startsWith(':')) continue; // heartbeat
-          if (!line.startsWith('data:')) continue;
-          const payload = line.slice(5).trim();
-          if (!payload) continue;
-          try {
-            const evt = JSON.parse(payload);
-            if (evt.type === 'chunk' && typeof evt.delta === 'string') {
+  });
+    signal
+    body: JSON.stringify({ mode, messages, stream:true }),
+    headers: { 'Content-Type':'application/json', 'Accept':'text/event-stream' },
+    method: 'POST',
+  const res = await fetch('/.netlify/functions/nova', {
+}): AsyncGenerator<string, void, unknown> {
+  signal?: AbortSignal;
+  messages: { role:'system'|'user'|'assistant'; content:string }[];
+  mode: 'outfits'|'archetype'|'shop';
+export async function* streamChat({ mode, messages, signal }: {
               yield evt.delta;
             }
             // meta / done / error can be handled by caller if needed
