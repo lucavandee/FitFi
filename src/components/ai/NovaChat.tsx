@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { streamChat, type NovaMode } from '@/services/ai/novaService';
+import { mdNova } from '@/components/ai/markdown';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
@@ -320,7 +321,7 @@ const NovaChat: React.FC = () => {
             <div 
               className="prose prose-sm max-w-none text-ink" 
               data-testid="nova-assistant"
-              dangerouslySetInnerHTML={{ __html: mdLite(message.content) }} 
+              dangerouslySetInnerHTML={{ __html: mdNova(message.content) }} 
             />
           )}
           
