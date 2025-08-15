@@ -238,10 +238,20 @@ function App() {
                       <Suspense fallback={null}><CookieBanner /></Suspense>
                       
                       {/* Nova Login Prompt Modal */}
-                      <NovaLoginPrompt 
-                        open={novaLoginPromptOpen} 
-                        onClose={() => setNovaLoginPromptOpen(false)} 
-                      />
+                      <Suspense fallback={null}>
+                        <NovaLoginPrompt
+                          open={novaLoginPromptOpen}
+                          onClose={() => setNovaLoginPromptOpen(false)}
+                          onSignup={() => {
+                            setNovaLoginPromptOpen(false);
+                            window.location.assign('/registreren');
+                          }}
+                          onLogin={() => {
+                            setNovaLoginPromptOpen(false);
+                            window.location.assign('/inloggen');
+                          }}
+                        />
+                      </Suspense>
                     </div>
                   </Router>
                 </ErrorBoundary>
