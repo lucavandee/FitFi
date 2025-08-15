@@ -9,7 +9,6 @@
   "scripts": {
     "dev": "vite",
     "dev:netlify": "netlify dev",
-    "dev:netlify": "netlify dev",
     "build": "vite build",
     "preview": "vite preview",
     "preinstall": "node ./scripts/print-env.js",
