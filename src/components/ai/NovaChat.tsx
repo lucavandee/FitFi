@@ -9,6 +9,19 @@ import toast from 'react-hot-toast';
 
 const URL_RE = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
 
+function renderContentWithLinks(content:string){
+  const parts = content.split(URL_RE);
+  return parts.map((part,i)=>{
+    if(URL_RE.test(part)){
+      return <a key={`url-${i}`} href={part} target="_blank" rel="nofollow noopener noreferrer"
+        className="underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80">{part}</a>;
+    }
+    return <span key={`t-${i}`}>{part}</span>;
+  });
+}
+
+const URL_RE = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -30,27 +43,6 @@ const NovaChat: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Helper function to render content with clickable links
-  function renderContentWithLinks(content: string) {
-    const parts = content.split(URL_RE);
-    return parts.map((part, i) => {
-      if (URL_RE.test(part)) {
-        return (
-          <a
-            key={`url-${i}`}
-            href={part}
-            target="_blank"
-            rel="nofollow noopener noreferrer"
-            className="underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80"
-          >
-            {part}
-          </a>
-        );
-      }
-      return <span key={`t-${i}`}>{part}</span>;
-    });
-  }
-
   // Initialize Nova with greeting
   useEffect(() => {
     if (!isInitialized && user?.name) {
@@ -66,6 +58,14 @@ const NovaChat: React.FC = () => {
       setInput(prompt);
       if (submit && typeof handleSubmit === 'function') {
         handleSubmit(new Event('submit') as any);
+        
+        // Track stream completion
+        track('nova_stream_done', {
+          event_category: 'ai_interaction',
+          event_label: 'stream_completed',
+          user_id: user?.id,
+          context: contextMode
+        });
       }
     };
     const onSetCtx = (e: any) => {
@@ -191,19 +191,19 @@ const NovaChat: React.FC = () => {
         
         // Track abort
         track('nova_request_aborted', {
+              
+              // Track stream completion
+              track('nova_stream_done', {
+                event_category: 'ai_interaction',
+                event_label: 'stream_completed',
+                user_id: user?.id,
+                context: contextMode
+              });
           event_category: 'ai_interaction',
           event_label: 'user_abort',
           user_id: user?.id,
           context: contextMode
         });
-      } else {
-        console.error('[NovaChat] Error getting response:', error);
-        
-        const errorMessage: Message = {
-          id: `error-${Date.now()}`,
-          role: 'assistant',
-          content: 'Sorry, ik kan je nu niet helpen. Probeer het later opnieuw.',
-          timestamp: Date.now(),
           type: 'text'
         };
 
@@ -279,11 +279,11 @@ const NovaChat: React.FC = () => {
         className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}
       >
         <div
-          className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-            isUser
-              ? 'bg-[#89CFF0] text-[#0D1B2A]'
-              : 'bg-white/10 text-white border border-white/20'
-          }`}
+          className={[
+            'max-w-[85%] rounded-2xl px-3 py-2 shadow-sm',
+            isUser ? 'ml-auto bg-[var(--ff-bubble-user)] text-ink'
+                   : 'mr-auto bg-[var(--ff-panel)] text-ink'
+          ].join(' ')}
         >
           {/* Assistant message header with copy button */}
           {!isUser && (
@@ -304,7 +304,7 @@ const NovaChat: React.FC = () => {
             </div>
           )}
           
-          <div className={`${isUser ? '' : 'whitespace-pre-wrap'} text-sm leading-relaxed`} data-testid={isUser ? undefined : 'nova-assistant'}>
+          <div className="whitespace-pre-wrap leading-relaxed" data-testid={isUser?undefined:'nova-assistant'}>
             {isUser ? message.content : renderContentWithLinks(message.content)}
           </div>
           
