@@ -36,6 +36,7 @@ export default async (req: Request) => {
   const origin = req.headers.get('origin');
   const allow = corsOrigin(origin);
   const acceptsSSE = /text\/event-stream/i.test(req.headers.get('accept') || '');
+  const traceId = (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2));
 
   // CORS preflight
   if (req.method === 'OPTIONS') {
@@ -103,7 +104,7 @@ export default async (req: Request) => {
       const rs = new ReadableStream({
         start: async (controller) => {
           const send = (obj: any) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
-          send({ type:'meta', mode: safe, model });
+          send({ type:'meta', mode: safe, model, traceId });
 
           try {
             const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -161,13 +162,13 @@ export default async (req: Request) => {
     }
 
     // JSON fallback
-    return new Response(JSON.stringify({ model, content:'Nova (fallback): streaming niet actief.' }), {
+    return new Response(JSON.stringify({ model, content:'Nova (fallback): streaming niet actief.', traceId }), {
       headers: { 'Access-Control-Allow-Origin': allow, 'Content-Type':'application/json' }
     });
 
   } catch (err: any) {
     console.error('[nova] fatal', err?.message || err);
-    return new Response(JSON.stringify({ error:'nova function error' }), {
+    return new Response(JSON.stringify({ error:'nova function error', traceId }), {
       status: 500, headers: { 'Access-Control-Allow-Origin': corsOrigin(origin) }
     });
   }
