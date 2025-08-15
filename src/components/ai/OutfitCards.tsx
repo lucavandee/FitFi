@@ -35,7 +35,7 @@ function ShopLink({o}:{o:Outfit}) {
   );
 }
 
-export default function OutfitCards({ data }:{ data:NovaOutfitsPayload }) {
+export default function OutfitCards({ data, blur=false, onLockedClick }:{ data:NovaOutfitsPayload; blur?: boolean; onLockedClick?: () => void }) {
   return (
     <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
       {data.outfits.map(o=>(
@@ -63,13 +63,27 @@ export default function OutfitCards({ data }:{ data:NovaOutfitsPayload }) {
           {o.why && <p className="mt-2 text-sm text-gray-600">{o.why}</p>}
 
           <div className="mt-3 flex items-center gap-3">
-            <ShopLink o={o}/>
+            {blur ? (
+              <button
+                onClick={onLockedClick}
+                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium bg-[#89CFF0] text-[#0D1B2A] hover:bg-[#89CFF0]/90 transition"
+              >
+                Ontgrendel outfits
+              </button>
+            ) : (
+              <ShopLink o={o}/>
+            )}
             {o.budget && (
               <span className="inline-flex items-center gap-1 text-xs text-gray-600">
                 <Tag size={14}/> {o.budget}
               </span>
             )}
           </div>
+          {blur && (
+            <div className="absolute inset-0 rounded-2xl backdrop-blur-sm bg-white/45 border-dashed border-2 border-[#89CFF0]/50 flex items-center justify-center">
+              <div className="text-[#0D1B2A] font-medium">Word Member (gratis) om te zien</div>
+            </div>
+          )}
         </div>
       ))}
     </div>
