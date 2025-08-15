@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Sparkles, Copy, X } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { loadNovaAgent } from '@/ai/nova/load';
-import type { NovaReply } from '@/ai/nova/agent';
+import { streamChat } from '@/services/ai/novaService';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
@@ -157,30 +156,32 @@ const NovaChat: React.FC = () => {
     });
 
     try {
-      const agent = await loadNovaAgent();
-      const reply = await agent.ask(userMessage.content, { 
-        profile: user,
-        userId: user?.id,
-        context: contextMode,
-        signal: abortController.signal
-      });
-
+      // Create assistant message placeholder
+      const assistantId = `assistant-${Date.now()}`;
       const assistantMessage: Message = {
-        id: `assistant-${Date.now()}`,
+        id: assistantId,
         role: 'assistant',
-        content: getReplyContent(reply),
+        content: '',
         timestamp: Date.now(),
-        type: reply.type,
-        data: reply.type !== 'text' ? reply : undefined
+        type: 'text'
       };
-
+      
       setMessages(prev => [...prev, assistantMessage]);
-
+      
+      // Stream response
+      let acc = '';
+      const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
+      
+      for await (const delta of streamChat({ mode: contextMode as any, messages: history, signal: abortController.signal })) {
+        acc += delta;
+        setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
+      }
+      
       // Track Nova response
       track('nova_response_generated', {
         event_category: 'ai_interaction',
-        event_label: reply.type,
-        response_type: reply.type,
+        event_label: 'streaming_complete',
+        response_length: acc.length,
         user_id: user?.id
       });
 
@@ -199,21 +200,29 @@ const NovaChat: React.FC = () => {
       } else {
         console.error('[NovaChat] Error:', error);
         
-        const errorMessage: Message = {
+        // Check for SSE inactive error
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
+        
+        if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
+          content = 'Nova is nog niet actief (SSE/OPENAI). Vraag je team om OPENAI_API_KEY te zetten of de Netlify function te deployen.';
+        }
+        
+        setMessages(prev => prev.map(m => 
+          m.id === `assistant-${Date.now()}` ? { ...m, content } : m
+        ).concat(prev.length === messages.length + 1 ? [] : [{
           id: `error-${Date.now()}`,
           role: 'assistant',
-          content: 'Sorry, er ging iets mis. Probeer het opnieuw.',
+          content,
           timestamp: Date.now(),
           type: 'text'
-        };
-
-        setMessages(prev => [...prev, errorMessage]);
+        }]));
 
         // Track Nova error
         track('nova_error', {
           event_category: 'ai_interaction',
           event_label: 'response_failed',
-          error_message: error instanceof Error ? error.message : 'Unknown error',
+          error_message: errorMsg,
           user_id: user?.id,
           context: contextMode
         });
