@@ -23,6 +23,13 @@
   --ff-ring: #89CFF0;
   --ff-chip-bg: #F6F6F6;
   --ff-chip-border: #E5E7EB;
+
+  /* Nova chat tokens */
+  --ff-ink:#0D1B2A;          /* inktkleur (tekst) */
+  --ff-ink-soft:#1A2B3A;
+  --ff-muted:#6B7280;        /* placeholder/grijs */
+  --ff-panel:#FFFFFF;        /* panel/bubble */
+  --ff-bubble-user:#E6F3FF;  /* user bubble bg */
 }
 
 @layer utilities {
@@ -219,4 +226,9 @@ div[id] {
 }
 @layer utilities {
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+  .text-ink{ color:var(--ff-ink); }
+  .text-muted{ color:var(--ff-muted); }
+  .placeholder-muted::placeholder{ color:var(--ff-muted); }
+  .caret-ink{ caret-color:var(--ff-ink); }
 }
