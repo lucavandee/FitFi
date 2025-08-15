@@ -24,6 +24,7 @@ export async function* streamChat({
 }): AsyncGenerator<string, void, unknown> {
   const t0 = performance.now();
   const dbg = import.meta.env.VITE_NOVA_DEBUG === 'true';
+  const dbg = import.meta.env.VITE_NOVA_DEBUG === 'true';
 
   const res = await fetch('/.netlify/functions/nova', {
     method: 'POST',
@@ -33,6 +34,8 @@ export async function* streamChat({
   });
 
   const ctype = (res.headers.get('content-type') || '').toLowerCase();
+  
+  if (dbg) console.debug('[NOVA] status', res.status, 'ctype', res.headers.get('content-type'));
   
   if (dbg) console.debug('[NOVA] status', res.status, 'ctype', res.headers.get('content-type'));
 
@@ -87,6 +90,10 @@ export async function* streamChat({
 
   // geen SSE → harde fout (UI toont duidelijke melding)
   if (!res.ok || !res.body || !ctype.includes('text/event-stream')) {
+    if (dbg) {
+      const txt = await res.text().catch(() => '');
+      console.debug('[NOVA] non-SSE response', { status: res.status, ctype, bodySnippet: txt.slice(0, 200) });
+    }
     if (dbg) {
       const txt = await res.text().catch(() => '');
       console.debug('[NOVA] non-SSE response', { status: res.status, ctype, bodySnippet: txt.slice(0, 200) });
