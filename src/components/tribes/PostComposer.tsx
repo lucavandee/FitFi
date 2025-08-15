@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTribePosts } from "@/hooks/useTribePosts";
 import { useUser } from "@/context/UserContext";
+import { useAddXp } from '@/hooks/useDashboard';
 import { Send, Image, X, Loader } from "lucide-react";
 import Button from "../ui/Button";
 import ImageWithFallback from "../ui/ImageWithFallback";
@@ -22,6 +23,7 @@ export const PostComposer: React.FC<Props> = ({
   const { user, status } = useUser();
   const actualUserId = userId || user?.id;
   const { addPost } = useTribePosts(tribeId);
+  const addXp = useAddXp();
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [showImageInput, setShowImageInput] = useState(false);
@@ -50,12 +52,14 @@ export const PostComposer: React.FC<Props> = ({
         image_url: imageUrl.trim() || undefined,
       });
       
+      await addXp.mutateAsync({ userId: actualUserId, amount: 8, reason: 'tribe_post' });
+      
       // Reset form
       setContent("");
       setImageUrl("");
       setShowImageInput(false);
       
-      toast.success("Post geplaatst! 🎉");
+      toast.success("Post geplaatst! • +8 XP");
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "Posten mislukt";
       toast.error(errorMessage);
