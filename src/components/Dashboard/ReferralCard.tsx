@@ -52,13 +52,13 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
   }
   
   return (
-    <div className="bg-white rounded-2xl p-4 shadow">
+    <div className="card p-5 sm:p-6">
       <div className="text-sm text-gray-500">Founders Club</div>
       <div className="flex items-center justify-between mt-1">
         <div className="text-xl font-semibold">{count}/{goal} referrals</div>
-        <button 
-          onClick={share} 
-          className="px-4 py-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all hover:scale-105"
+        <button
+          onClick={share}
+          className="px-4 py-2 rounded-full bg-[#89CFF0] text-white hover:bg-[#5FB7E6] transition-all btn-animate"
         >
           Deel invite
         </button>
