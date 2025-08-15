@@ -26,10 +26,17 @@ function routeModel(m: Mode) {
 }
 
 function systemPrompt(m: Mode) {
-  const base = 'Je bent Nova, premium AI-stylist. Antwoord NL, kort en duidelijk. Geen generieke welkomsttekst na een vraag. Max. 1 verduidelijking.';
-  if (m==='outfits')   return base + ' Geef 3 outfits met titel, 1–2 bullets en 1 zin "waarom".';
-  if (m==='archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don\'t.';
-  return                  base + ' Geef 3–5 shoprichtingen met filters (fit, materiaal, kleur).';
+  const base = [
+    'Je bent Nova, premium AI-stylist. Antwoord NL, kort en duidelijk.',
+    'Eerst een beknopte menselijke uitleg met bullets.',
+    'DAARNA ALTIJD een machine-leesbare JSON payload tussen markers zonder codefences:',
+    '<<<FITFI_JSON>>> ... <<<END_FITFI_JSON>>>',
+    'JSON schema: {"type":"outfits","version":1,"outfits":[{"id":"string","title":"string","occasion":"string?","why":"string?","matchScore":0-100,"palette":["#RRGGBB",...],"budget":"low|mid|high?","items":[{"role":"top|bottom|outerwear|shoes|accessory","name":"string","color":"string?","note":"string?"}],"shopQuery":"string?"}]}',
+    'Zet matchScore integer 0..100. Palet in HEX (max 4). Gebruik korte, merkloze namen. GEEN markdown codefences in de JSON; alleen pure JSON tussen de markers.'
+  ].join(' ');
+  if (m==='outfits')   return base + ' Geef 3 outfits (casual/smart/business afhankelijk van de vraag).';
+  if (m==='archetype') return base + ' Voeg 2 outfits toe die het archetype belichamen.';
+  return                  base + ' Toon shoppingrichtingen als outfits met generieke items.';
 }
 
 export default async (req: Request) => {
