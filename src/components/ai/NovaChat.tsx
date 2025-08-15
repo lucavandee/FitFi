@@ -6,6 +6,16 @@ import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
 
+// ADD bovenaan
+function mdLite(s:string){
+  // \n\n -> paragrafen, *...* -> em, **...** -> strong, - lijstjes
+  const esc = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const strong = esc.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const em = strong.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  const lists = em.replace(/(?:^|\n)- (.+)/g, '\n• $1');
+  return lists.replace(/\n/g,'<br/>');
+}
+
 const URL_RE = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
 
 function renderContentWithLinks(content:string){
@@ -313,9 +323,17 @@ const NovaChat: React.FC = () => {
             </div>
           )}
           
-          <div className="whitespace-pre-wrap leading-relaxed" data-testid={isUser?undefined:'nova-assistant'}>
-            {isUser ? message.content : renderContentWithLinks(message.content)}
-          </div>
+          {isUser ? (
+            <div className="whitespace-pre-wrap leading-relaxed">
+              {message.content}
+            </div>
+          ) : (
+            <div 
+              className="prose prose-sm max-w-none text-ink" 
+              data-testid="nova-assistant"
+              dangerouslySetInnerHTML={{ __html: mdLite(message.content) }} 
+            />
+          )}
           
           {message.data && message.type === 'outfits' && (
             <div className="mt-3 pt-3 border-t border-white/20">
