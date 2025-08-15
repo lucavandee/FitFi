@@ -237,6 +237,19 @@ const NovaChat: React.FC = () => {
                 conn.setStatus('streaming');
               }
             } else if (evt.type === 'done') {
+              // failsafe: verwijder eventuele JSON markers uit de laatste assistant content
+              setMessages(prev => prev.map(m => {
+                if (m.id !== assistantId) return m;
+                const START = '<<<FITFI_JSON>>>';
+                const END = '<<<END_FITFI_JSON>>>';
+                let c = m.content || '';
+                const si = c.indexOf(START);
+                const ei = c.indexOf(END, si + START.length);
+                if (si >= 0 && ei > si) {
+                  c = c.slice(0, si) + c.slice(ei + END.length);
+                }
+                return { ...m, content: c };
+              }));
               conn.setStatus('done');
             } else if (evt.type === 'error') {
               conn.setStatus('error');
