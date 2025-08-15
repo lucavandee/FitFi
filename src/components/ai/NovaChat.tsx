@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader, Sparkles, Copy } from 'lucide-react';
+import { Send, Loader, Sparkles, Copy, X } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { loadNovaAgent } from '@/ai/nova/load';
 import type { NovaReply } from '@/ai/nova/agent';
