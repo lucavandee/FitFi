@@ -62,7 +62,15 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
       // Call original completion handler
       onComplete(challenge.id);
       
-      toast.success(`Challenge voltooid! • +${challenge.points || 25} XP`);
+      toast.custom((
+        <div className="bg-white rounded-xl shadow-lg p-4 flex items-center space-x-3">
+          <div className="text-yellow-600">🏆</div>
+          <span>Challenge voltooid!</span>
+          <ToastXp amount={challenge.points || 25} />
+        </div>
+      ), {
+        duration: 4000
+      });
     } catch (error) {
       console.error('Challenge completion XP award failed:', error);
       // Still complete the challenge even if XP fails

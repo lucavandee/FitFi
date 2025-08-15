@@ -4,6 +4,7 @@ import { useAddXp } from '@/hooks/useDashboard';
 import { UserPlus, UserMinus, Loader, CheckCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Button from "../ui/Button";
+import ToastXp from '@/components/ui/ToastXp';
 import toast from "react-hot-toast";
 
 type Props = { 
@@ -49,7 +50,13 @@ export const JoinButton: React.FC<Props> = ({
       } else { 
         await onJoin();
         await addXp.mutateAsync({ userId: actualUserId, amount: 10, reason: 'tribe_join' });
-        toast.success("Tribe gejoined • +10 XP", {
+        toast.custom((
+          <div className="bg-white rounded-xl shadow-lg p-4 flex items-center space-x-3">
+            <div className="text-green-600">✓</div>
+            <span>Tribe gejoined</span>
+            <ToastXp amount={10} />
+          </div>
+        ), {
           id: `tribe-join-${tribeId}`,
           duration: 3000
         });
