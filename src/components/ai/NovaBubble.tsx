@@ -75,33 +75,39 @@ export default function NovaBubble() {
             ? 'fixed left-0 right-0 bottom-0 z-[80] rounded-t-3xl bg-white shadow-2xl'
             : 'fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-[80] rounded-2xl bg-white shadow-2xl'
         }
-        style={mobile ? { maxHeight: '72vh' } : { width: 'min(92vw,420px)', height: 'min(78vh,640px)' }}
+      style={
+        mobile
+          ? { height: 'min(72vh, 640px)' }
+          : { width: 'min(92vw, 420px)', height: 'min(78vh, 640px)' }
+      }
       >
-        <header className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 id="nova-title" className="font-semibold text-ink">Nova AI</h2>
-          <button
-            aria-label="Sluit Nova chat"
-            onClick={() => setOpen(false)}
-            className="p-2 rounded-full hover:bg-black/5 focus-ring"
-          >
-            <X size={18} />
-          </button>
-        </header>
+        <div className="flex flex-col h-full">
+          <header className="flex items-center justify-between px-4 py-3 border-b">
+            <h2 id="nova-title" className="font-semibold text-ink">Nova AI</h2>
+            <button
+              aria-label="Sluit Nova chat"
+              onClick={() => setOpen(false)}
+              className="p-2 rounded-full hover:bg-black/5 focus-ring"
+            >
+              <X size={18} />
+            </button>
+          </header>
 
-        {/* Context & suggestions (first-open helper) */}
-        {!hasMessaged && (
-          <div className="px-4 pt-3 pb-2 border-b">
-            <ContextSwitcher className="mb-3" />
-            <SuggestionChips />
+          {/* Suggestions blokkie telt nu mee in de kolom */}
+          {!hasMessaged && (
+            <div className="px-4 pt-3 pb-2 border-b shrink-0">
+              <ContextSwitcher className="mb-3" />
+              <SuggestionChips />
+            </div>
+          )}
+
+          {/* Chat area vult de rest, input blijft zichtbaar */}
+          <div className="flex-1 min-h-0">
+            <Suspense fallback={<div className="p-4 text-gray-500">Nova laden…</div>}>
+              <NovaChat />
+            </Suspense>
           </div>
-        )}
-
-        {/* Chat area */}
-        <main className="flex flex-col min-h-0" style={mobile ? { height: 'calc(72vh - 56px)', paddingBottom: 'env(safe-area-inset-bottom)' } : { height: 'calc(min(78vh,640px) - 56px)' }}>
-          <Suspense fallback={<div className="p-4 text-gray-500">Nova laden…</div>}>
-            <NovaChat />
-          </Suspense>
-        </main>
+        </div>
       </div>
     </AppPortal>
   );
