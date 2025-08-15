@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import OutfitCards from '@/components/ai/OutfitCards';
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
 import QuotaModal from './QuotaModal';
-import { getUserTier } from '@/utils/session';
+import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 
 // ADD bovenaan
 function mdLite(s:string){
@@ -157,6 +157,15 @@ const NovaChat: React.FC = () => {
     
     if (!input.trim() || isLoading) return;
 
+    // Check quota before making request
+    const tier = getUserTier();
+    const userId = user?.id || 'anon';
+    
+    if (!checkQuotaLimit(tier, userId)) {
+      setQuotaOpen(true);
+      return;
+    }
+
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       role: 'user',
@@ -260,6 +269,9 @@ const NovaChat: React.FC = () => {
           setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
           scrollToBottom();
         }
+        
+        // Increment usage on successful completion
+        incrementUsage(getUserTier(), user?.id || 'anon');
       } catch (e: any) {
         conn.setStatus('error');
         const errorMsg = e?.message || String(e);
@@ -485,7 +497,7 @@ const NovaChat: React.FC = () => {
       </div>
       
       {/* Quota Modal */}
-      {quotaOpen && <QuotaModal tier={userTier} onClose={()=>setQuotaOpen(false)} />}
+      {quotaOpen && <QuotaModal tier={userTier} userId={user?.id} onClose={()=>setQuotaOpen(false)} />}
     </div>
   );
 };
