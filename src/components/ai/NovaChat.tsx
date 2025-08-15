@@ -28,6 +28,7 @@ const NovaChat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Helper function to render content with clickable links
   function renderContentWithLinks(content: string) {
@@ -138,6 +139,10 @@ const NovaChat: React.FC = () => {
     setInput('');
     setIsLoading(true);
     setIsTyping(true);
+    
+    // Create abort controller for this request
+    const abortController = new AbortController();
+    abortRef.current = abortController;
 
     // Fire analytics + bubble state
     window.dispatchEvent(new CustomEvent('nova:message', { detail: { role: 'user' } }));
@@ -156,7 +161,8 @@ const NovaChat: React.FC = () => {
       const reply = await agent.ask(userMessage.content, { 
         profile: user,
         userId: user?.id,
-        context: contextMode
+        context: contextMode,
+        signal: abortController.signal
       });
 
       const assistantMessage: Message = {
@@ -179,29 +185,58 @@ const NovaChat: React.FC = () => {
       });
 
     } catch (error) {
-      console.error('[NovaChat] Error getting response:', error);
-      
-      const errorMessage: Message = {
-        id: `error-${Date.now()}`,
-        role: 'assistant',
-        content: 'Sorry, ik kan je nu niet helpen. Probeer het later opnieuw.',
-        timestamp: Date.now(),
-        type: 'text'
-      };
+      // Check if error was due to abort
+      if (abortController.signal.aborted) {
+        console.log('[NovaChat] Request aborted by user');
+        
+        // Track abort
+        track('nova_request_aborted', {
+          event_category: 'ai_interaction',
+          event_label: 'user_abort',
+          user_id: user?.id,
+          context: contextMode
+        });
+      } else {
+        console.error('[NovaChat] Error getting response:', error);
+        
+        const errorMessage: Message = {
+          id: `error-${Date.now()}`,
+          role: 'assistant',
+          content: 'Sorry, ik kan je nu niet helpen. Probeer het later opnieuw.',
+          timestamp: Date.now(),
+          type: 'text'
+        };
 
-      setMessages(prev => [...prev, errorMessage]);
+        setMessages(prev => [...prev, errorMessage]);
 
-      // Track Nova error
-      track('nova_error', {
-        event_category: 'ai_interaction',
-        event_label: 'response_failed',
-        error_message: error instanceof Error ? error.message : 'Unknown error',
-        user_id: user?.id,
-        context: contextMode
-      });
+        // Track Nova error
+        track('nova_error', {
+          event_category: 'ai_interaction',
+          event_label: 'response_failed',
+          error_message: error instanceof Error ? error.message : 'Unknown error',
+          user_id: user?.id,
+          context: contextMode
+        });
+      }
     } finally {
       setIsLoading(false);
       setIsTyping(false);
+      abortRef.current = null;
+      
+      // Track stream completion
+      track('nova_stream_done', {
+        event_category: 'ai_interaction',
+        event_label: 'stream_completed',
+        user_id: user?.id,
+        context: contextMode
+      });
+    }
+  };
+
+  const handleAbort = () => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      toast.success('Nova gestopt', { duration: 1500 });
     }
   };
 
@@ -315,15 +350,27 @@ const NovaChat: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Vraag Nova om stijladvies..."
             className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0]"
-            disabled={isLoading}
+            disabled={false}
           />
-          <button
-            type="submit"
-            disabled={!input.trim() || isLoading}
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <Send className="w-4 h-4" />
-          </button>
+          
+          {isLoading ? (
+            <button
+              type="button"
+              onClick={handleAbort}
+              className="bg-red-500 hover:bg-red-600 text-white rounded-xl px-4 py-2 transition-colors"
+              title="Stop Nova"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          )}
         </form>
       </div>
     </div>
