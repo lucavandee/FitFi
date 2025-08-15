@@ -59,11 +59,14 @@ export async function* streamChat(params: {
     return;
   }
 
-  // Probeer server (Netlify function)
+  // Probeer server (Netlify function) met SSE preference
   try {
     const res = await fetch(ENV.ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream'   // <-- prefer SSE
+      },
       body: JSON.stringify({
         mode: params.mode,
         model: routeModel(params.mode),
@@ -77,8 +80,8 @@ export async function* streamChat(params: {
     });
 
     const ctype = res.headers.get('content-type') || '';
-    // text/event-stream of ndjson streaming
-    if (res.ok && res.body && (ctype.includes('event-stream') || ctype.includes('ndjson') || ctype.includes('text/plain'))) {
+    // --- SSE PATH ---
+    if (res.ok && res.body && ctype.includes('text/event-stream')) {
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       let buf = '';
@@ -87,29 +90,39 @@ export async function* streamChat(params: {
         if (done) break;
         buf += dec.decode(value, { stream: true });
 
-        // EventStream: lijnen als "data: <chunk>\n\n"
-        let lines = buf.split(/\r?\n/);
+        const lines = buf.split('\n');
         buf = lines.pop() || '';
-        for (const line of lines) {
-          const l = line.trim();
-          if (!l) continue;
-          const payload = l.startsWith('data:') ? l.slice(5).trim() : l;
-          if (payload === '[DONE]') continue;
-          yield payload;
+        for (const raw of lines) {
+          const line = raw.trim();
+          if (!line) continue;
+          if (line.startsWith(':')) continue; // heartbeat
+          if (!line.startsWith('data:')) continue;
+          const payload = line.slice(5).trim();
+          if (!payload) continue;
+          try {
+            const evt = JSON.parse(payload);
+            if (evt.type === 'chunk' && typeof evt.delta === 'string') {
+              yield evt.delta;
+            }
+            // meta / done / error can be handled by caller if needed
+          } catch {
+            // lenient: some providers send plain text
+            yield payload;
+          }
         }
       }
       return;
     }
 
-    // Fallback: non-stream JSON
+    // --- JSON FALLBACK ---
     const json = await res.json().catch(() => ({}));
-    const text = json?.content || 'Er ging iets mis, probeer het later opnieuw.';
+    const text = json?.content || 'Er ging iets mis.';
     for (const chunk of chunkify(text)) {
       yield chunk;
       await sleep(20);
     }
   } catch (e) {
-    const text = 'Netwerkprobleem — offline mode actief. Probeer opnieuw.';
+    const text = 'Netwerkprobleem — offline mode.';
     for (const chunk of chunkify(text)) {
       yield chunk;
       await sleep(25);
