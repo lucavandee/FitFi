@@ -43,6 +43,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                   lines={["Ontdek wat jouw stijl over je zegt"]}
                   accents={{ 0: [{ word: 'stijl', className: 'text-gradient accent-bump sheen' }] }}
                   className="text-ink"
+                  balance
                 />
               </div>
               
