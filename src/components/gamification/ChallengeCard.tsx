@@ -2,6 +2,9 @@ import React from 'react';
 import { Trophy, Clock, Star, Target } from 'lucide-react';
 import { track } from '../../utils/analytics';
 import Button from '../ui/Button';
+import { useAddXp } from '@/hooks/useDashboard';
+import { useUser } from '@/context/UserContext';
+import toast from 'react-hot-toast';
 
 interface Challenge {
   id: string;
@@ -28,6 +31,9 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
   onComplete,
   className = ''
 }) => {
+  const { user } = useUser();
+  const addXp = useAddXp();
+  
   const handleComplete = () => {
     // Track challenge attempt
     track('challenge_attempted', {
@@ -38,7 +44,31 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
       challenge_points: challenge.points
     });
     
-    onComplete(challenge.id);
+    // Award XP and complete challenge
+    handleChallengeCompletion();
+  };
+  
+  const handleChallengeCompletion = async () => {
+    if (!user?.id) return;
+    
+    try {
+      // Award XP for challenge completion
+      await addXp.mutateAsync({ 
+        userId: user.id, 
+        amount: challenge.points || 25, 
+        reason: 'challenge_complete' 
+      });
+      
+      // Call original completion handler
+      onComplete(challenge.id);
+      
+      toast.success(`Challenge voltooid! • +${challenge.points || 25} XP`);
+    } catch (error) {
+      console.error('Challenge completion XP award failed:', error);
+      // Still complete the challenge even if XP fails
+      onComplete(challenge.id);
+      toast.success('Challenge voltooid!');
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {

@@ -25,6 +25,7 @@ import { SubmissionsList } from '../components/Tribes/SubmissionsList';
 import { ChallengeAdminForm } from '../components/Tribes/ChallengeAdminForm';
 import { createTribeChallenge, updateTribeChallengeStatus } from '../services/data/tribeChallengesService';
 import { useFitFiUser } from '../hooks/useFitFiUser';
+import { useAddXp } from '../hooks/useDashboard';
 import type { Tribe, TribeChallenge } from '../services/data/types';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
@@ -36,6 +37,7 @@ import toast from 'react-hot-toast';
 const ChallengeSection: React.FC<{ challenge: TribeChallenge; userId?: string }> = ({ challenge, userId }) => {
   const { data: subs, loading: subsLoading } = useChallengeSubmissions(challenge.id);
   const createSub = useCreateChallengeSubmission();
+  const addXp = useAddXp();
 
   async function onSubmit(payload: { content?: string; imageUrl?: string; linkUrl?: string }) {
     if (!userId) {
@@ -58,6 +60,9 @@ const ChallengeSection: React.FC<{ challenge: TribeChallenge; userId?: string }>
                        payload.linkUrl ? 'link' : 'text',
         ...payload,
       });
+      
+      // Award XP for challenge participation
+      await addXp.mutateAsync({ userId, amount: 15, reason: 'challenge_participation' });
       
       toast.success('Challenge submission succesvol! 🎉');
     } catch (error) {
