@@ -4,8 +4,22 @@ import { randomUUID } from 'crypto';
 type Mode = 'outfits'|'archetype'|'shop';
 type Msg = { role:'system'|'user'|'assistant'; content:string };
 
-const ORIGINS = ['https://www.fitfi.ai','https://fitfi.ai','http://localhost:5173'];
-const okOrigin = (o?:string) => !!o && ORIGINS.includes(o);
+const ORIGINS = [
+  'https://www.fitfi.ai',
+  'https://fitfi.ai',
+  'https://fitfi.netlify.app',  // productie op Netlify
+  'http://localhost:5173'
+];
+function okOrigin(o?: string) {
+  if (!o) return false;
+  if (ORIGINS.includes(o)) return true;
+  try {
+    const { hostname, protocol } = new URL(o);
+    // Sta Netlify previews toe, bv. https://deploy-preview-123--fitfi.netlify.app
+    if ((protocol === 'https:' || protocol === 'http:') && hostname.endsWith('.netlify.app')) return true;
+  } catch {}
+  return false;
+}
 
 function routeModel(mode: Mode){
   if(mode==='outfits')   return process.env.NOVA_MODEL_OUTFITS   || 'gpt-4o';
