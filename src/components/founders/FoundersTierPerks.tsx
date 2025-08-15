@@ -1,18 +1,32 @@
 import React from 'react';
-import { Sparkles, Shield, Users, Star, Crown, Wand2, Ticket, Gift, Headphones, Video, Trophy, CheckCircle, Lock } from 'lucide-react';
+import {
+  Sparkles, Shield, Users, Star, Crown, Wand2, Ticket, Gift,
+  Headphones, Video, Trophy, CheckCircle, Lock
+} from 'lucide-react';
 import { allPerksSorted } from '@/config/foundersTiers';
 
-const ICONS = { Sparkles, Shield, Users, Star, Crown, Wand2, Ticket, Gift, Headphones, Video, Trophy } as const;
-
-type Props = {
-  referrals: number;
-  className?: string;
+const ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
+  Sparkles, Shield, Users, Star, Crown, Wand2, Ticket, Gift, Headphones, Video, Trophy
 };
+
+function getIcon(name?: string) {
+  if (!name) return Sparkles;
+  const Icon = ICONS[name];
+  if (!Icon) {
+    if (typeof window !== 'undefined') {
+      console.warn('[FoundersTierPerks] Unknown icon:', name);
+    }
+    return Sparkles;
+  }
+  return Icon;
+}
+
+type Props = { referrals: number; className?: string; };
 
 export default function FoundersTierPerks({ referrals, className }: Props) {
   const perks = allPerksSorted();
   const unlocked = perks.filter(p => referrals >= p.unlockedAt);
-  const upcoming = perks.filter(p => referrals < p.unlockedAt).slice(0, 6); // limiet voor rust
+  const upcoming = perks.filter(p => referrals < p.unlockedAt).slice(0, 6);
 
   return (
     <div className={className}>
@@ -23,7 +37,7 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="list">
             {unlocked.map(p => {
-              const Icon = p.icon ? ICONS[p.icon] : Sparkles;
+              const Icon = getIcon(p.icon);
               return (
                 <li key={p.id} className="flex items-start gap-3 p-3 rounded-xl bg-white shadow-sm">
                   <span className="mt-0.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 text-green-700">
@@ -48,7 +62,7 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="list">
             {upcoming.map(p => {
-              const Icon = p.icon ? ICONS[p.icon] : Sparkles;
+              const Icon = getIcon(p.icon);
               const remaining = Math.max(0, p.unlockedAt - referrals);
               return (
                 <li key={p.id} className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50">
