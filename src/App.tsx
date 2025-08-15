@@ -16,6 +16,7 @@ import AppPortal from '@/components/layout/AppPortal';
 
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
+const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
 
 // Lazy load all pages with lazyAny for optimal code-splitting
 const HomePage = lazyAny(() => import('@/pages/HomePage'));
@@ -208,11 +209,10 @@ function App() {
                     
                     {/* Nova AI Chat - Always mounted with fail-safe */}
                     {NOVA_ENABLED && (
-                      <AppPortal id="nova-root">
-                        <Suspense fallback={null}>
-                          <NovaBubble />
-                        </Suspense>
-                      </AppPortal>
+                      <>
+                        <Suspense fallback={null}><NovaLauncher /></Suspense>
+                        <Suspense fallback={null}><NovaBubble /></Suspense>
+                      </>
                     )}
                   </div>
                 </Router>
