@@ -400,9 +400,12 @@ const NovaChat: React.FC = () => {
       </div>
 
       {/* Messages */}
-      <div 
+      <div
         ref={messagesContainerRef}
         className="relative flex-1 min-h-0 overflow-y-auto p-4 md:p-5 space-y-3 bg-white/70 text-ink"
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions text"
       >
         {messages.map(renderMessage)}
         
@@ -450,6 +453,7 @@ const NovaChat: React.FC = () => {
             <button
               type="submit"
               disabled={!input.trim()}
+              aria-label="Verstuur bericht"
               className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-2xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md hover:scale-105"
             >
               <Send className="w-4 h-4" />
