@@ -161,6 +161,41 @@ export class QuizService {
       return null;
     }
   }
+
+  async resetQuiz(userId: string): Promise<boolean> {
+    let supabaseSuccess = false;
+    let localSuccess = false;
+
+    // Try Supabase first if enabled and available
+    if (DATA_CONFIG.USE_SUPABASE && sb) {
+      try {
+        const { error } = await sb
+          .from('quiz_answers')
+          .delete()
+          .eq('user_id', userId)
+          .eq('question_id', 'style_quiz_v1');
+
+        if (!error) {
+          console.log('[QuizService] Quiz reset in Supabase');
+          supabaseSuccess = true;
+        } else {
+          console.warn('[QuizService] Supabase reset failed:', error);
+        }
+      } catch (error) {
+        console.warn('[QuizService] Supabase reset error:', error);
+      }
+    }
+
+    // Always try local reset as well
+    try {
+      localSuccess = await localProvider.resetQuiz(userId);
+    } catch (error) {
+      console.error('[QuizService] Local reset failed:', error);
+    }
+
+    // Return true if either succeeded
+    return supabaseSuccess || localSuccess;
+  }
 }
 
 export const quizService = QuizService.getInstance();
