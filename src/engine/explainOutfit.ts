@@ -1,4 +1,8 @@
-import { Outfit, UserProfile } from './types';
+import { getDutchSeasonName } from './helpers';
+import type { Season } from './types';
+import { formatBlendString } from '@/engine/archetypeFusion';
+import type { OutfitExplain } from '@/types/style';
+import { DEFAULT_ARCHETYPE_MIX } from '@/config/archetypes';
 
 /**
  * Generates a human-readable explanation for why an outfit matches a user's style
@@ -151,13 +155,37 @@ export function generateNovaExplanation(
   return explanation;
 }
 
-/**
- * Legacy function for backward compatibility
- */
-export function explainOutfit(
-  outfit: Outfit,
-  archetype: string,
-  occasion: string = 'Casual'
-): string {
-  return generateOutfitExplanation(outfit, archetype, occasion);
+type ExplainOpts = {
+  archetypeMix?: Record<string, number>;
+  signals?: string[]; // uit _fusion.matchedSignals
+};
+
+export function explainOutfit(o: any, opts: ExplainOpts = {}): OutfitExplain {
+  const blend = formatBlendString(opts.archetypeMix ?? DEFAULT_ARCHETYPE_MIX);
+  const sig = (opts.signals ?? []).slice(0, 6);
+
+  const headline = `Hybride match: ${blend}`;
+  const rationale: string[] = [];
+
+  // eenvoudige, menselijke uitleg
+  if (sig.length) {
+    rationale.push(`Wij herkennen: ${sig.join(', ')}.`);
+  }
+  if (o?.matchScore != null) {
+    if (o.matchScore >= 80) rationale.push('Sterke consistentie met je stijl-DNA; dit voelt meteen "juist".');
+    else if (o.matchScore >= 60) rationale.push('Goede basis met ruimte voor nuance (accessoires of kleuraccent).');
+    else rationale.push('Experimentele match — interessant voor variatie, maar minder kern-stijl.');
+  }
+
+  // voorbeeld nuance
+  rationale.push('Tip: combineer één statement item met twee rustige basics voor balans.');
+
+  return {
+    headline,
+    rationale,
+    archetypeBlend: blend,
+    signals: sig,
+  };
 }
+
+// Legacy exports for backward compatibility
