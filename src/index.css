@@ -169,3 +169,51 @@ div[id] {
 @media (prefers-reduced-motion: reduce) {
   .sheen::after { transition: none; }
 }
+
+@layer utilities {
+  /* 8pt-inspired section rhythm */
+  .section {
+    padding-top: clamp(3rem, 6vw, 6rem);   /* 48 → 96 */
+    padding-bottom: clamp(3rem, 6vw, 6rem);
+  }
+  .container {
+    max-width: 72rem; /* ~7xl */
+    margin-left: auto; margin-right: auto;
+    padding-left: 1.5rem; padding-right: 1.5rem; /* px-6 */
+  }
+
+  /* Vertical stacks (consistent gaps) */
+  .stack-sm > * + * { margin-top: 0.75rem; } /* 6pt ~ 12px */
+  .stack-md > * + * { margin-top: 1rem; }    /* 8pt ~ 16px */
+  .stack-lg > * + * { margin-top: 1.5rem; }  /* 12pt ~ 24px */
+  .stack-xl > * + * { margin-top: 2rem; }    /* 16pt ~ 32px */
+
+  /* Card + lift interactions */
+  .card {
+    background: #fff;
+    border-radius: var(--ff-radius-2xl, 1.25rem);
+    box-shadow: var(--ff-soft-shadow);
+  }
+  .lift-sm {
+    transition: transform .2s ease-out, box-shadow .2s ease-out;
+  }
+  .lift-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(13,27,42,0.10);
+  }
+  .lift-sm:active {
+    transform: translateY(0);
+  }
+
+  /* Button micro-animation helpers (motion-safe) */
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-animate {
+      transition: transform .2s ease-out, box-shadow .2s ease-out, background-color .2s ease-out;
+    }
+    .btn-animate:hover { transform: translateY(-1px); }
+    .btn-animate:active { transform: translateY(0); }
+  }
+
+  /* Tight copy width for premium feel */
+  .copy-narrow { max-width: 46ch; }
+}
