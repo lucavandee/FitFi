@@ -35,7 +35,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
       product_price: price
     });
     
-    await saveOutfit();
+    try {
+      await saveOutfit();
+      toast.success('Product bewaard!');
+    } catch (error) {
+      console.warn('Save failed, using local fallback:', error);
+      // Fallback to local storage via engagement service
+      const { toggleSave } = await import('../../services/engagement');
+      const saved = toggleSave(id);
+      toast.success(saved ? 'Product bewaard!' : 'Product verwijderd uit favorieten');
+    }
   };
 
   const handleClick = () => {
