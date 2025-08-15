@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTribeMembership } from "@/hooks/useTribeMembership";
+import { useAddXp } from '@/hooks/useDashboard';
 import { UserPlus, UserMinus, Loader, CheckCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Button from "../ui/Button";
@@ -23,6 +24,7 @@ export const JoinButton: React.FC<Props> = ({
   const { user, status } = useUser();
   const actualUserId = userId || user?.id;
   const { isMember, onJoin, onLeave, loading } = useTribeMembership(tribeId, actualUserId);
+  const addXp = useAddXp();
   const [busy, setBusy] = useState(false);
 
   const handleClick = async () => {
@@ -46,7 +48,8 @@ export const JoinButton: React.FC<Props> = ({
         });
       } else { 
         await onJoin();
-        toast.success("Welkom in de tribe! 🎉", {
+        await addXp.mutateAsync({ userId: actualUserId, amount: 10, reason: 'tribe_join' });
+        toast.success("Tribe gejoined • +10 XP", {
           id: `tribe-join-${tribeId}`,
           duration: 3000
         });
