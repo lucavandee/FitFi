@@ -3,7 +3,7 @@ import { ExternalLink, Heart } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
 import SmartImage from '@/components/media/SmartImage';
 import Button from './ui/Button';
-import { trackProductClick, trackShopCta } from '@/services/engagement';
+import { trackProductClick, trackShopCta, trackImpression } from '@/services/engagement';
 import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
 import toast from 'react-hot-toast';
 
