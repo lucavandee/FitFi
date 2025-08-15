@@ -22,8 +22,7 @@ export async function* streamChat({
   signal?: AbortSignal;
   onEvent?: (evt: NovaStreamEvent) => void;
 }): AsyncGenerator<string, void, unknown> {
-  const t0 = performance.now();
-  const dbg = import.meta.env.VITE_NOVA_DEBUG === 'true';
+  const t0 = (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const dbg = import.meta.env.VITE_NOVA_DEBUG === 'true';
 
   const res = await fetch('/.netlify/functions/nova', {
@@ -35,22 +34,20 @@ export async function* streamChat({
 
   const ctype = (res.headers.get('content-type') || '').toLowerCase();
   
-  if (dbg) console.debug('[NOVA] status', res.status, 'ctype', res.headers.get('content-type'));
-  
-  if (dbg) console.debug('[NOVA] status', res.status, 'ctype', res.headers.get('content-type'));
+  if (dbg) console.debug('[NOVA] status', res.status, 'ctype', ctype);
 
   // --- SSE pad ---
   if (res.ok && res.body && ctype.includes('text/event-stream')) {
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
-    let sentFirstChunk = false;
+    let firstChunkAt: number | null = null;
 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-      buffer += decoder.decode(value, { stream: true });
 
+      buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
 
@@ -65,11 +62,9 @@ export async function* streamChat({
           if (evt.type === 'meta') {
             onEvent?.({ type: 'meta', model: evt.model, traceId: evt.traceId });
           } else if (evt.type === 'chunk' && typeof evt.delta === 'string') {
-            if (!sentFirstChunk) {
-              sentFirstChunk = true;
-              const ttfb = Math.max(0, Math.round(performance.now() - t0));
-              onEvent?.({ type: 'meta', model: evt.model, traceId: evt.traceId });
-              // We laten TTFB tonen via context (NovaChat berekent op meta→first chunk).
+            if (!firstChunkAt) {
+              firstChunkAt = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+              // TTFB wordt in NovaChat berekend uit t0 en firstChunkAt; hier geen state nodig
             }
             onEvent?.({ type: 'chunk', delta: evt.delta });
             yield evt.delta;
@@ -88,20 +83,14 @@ export async function* streamChat({
     return;
   }
 
-  // geen SSE → harde fout (UI toont duidelijke melding)
-  if (!res.ok || !res.body || !ctype.includes('text/event-stream')) {
-    if (dbg) {
-      const txt = await res.text().catch(() => '');
-      console.debug('[NOVA] non-SSE response', { status: res.status, ctype, bodySnippet: txt.slice(0, 200) });
-    }
-    if (dbg) {
-      const txt = await res.text().catch(() => '');
-      console.debug('[NOVA] non-SSE response', { status: res.status, ctype, bodySnippet: txt.slice(0, 200) });
-    }
-    onEvent?.({ type: 'error' });
-    throw new Error('NOVA_SSE_INACTIVE');
+  // --- geen SSE -> log snippet en faal hard zodat UI een duidelijke melding toont
+  if (dbg) {
+    let snippet = '';
+    try { snippet = (await res.text()).slice(0, 200); } catch {}
+    console.debug('[NOVA] non-SSE response', { status: res.status, ctype, bodySnippet: snippet });
   }
-
+  onEvent?.({ type: 'error' });
+  throw new Error('NOVA_SSE_INACTIVE');
 }
 
 const chunkify = function* (s: string) {
