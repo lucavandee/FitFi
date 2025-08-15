@@ -1,6 +1,8 @@
 import React, { lazy, Suspense, useEffect, useState, useRef } from 'react';
 import AppPortal from '@/components/layout/AppPortal';
 import { X } from 'lucide-react';
+import ContextSwitcher from '@/components/ai/ContextSwitcher';
+import SuggestionChips from '@/components/ai/SuggestionChips';
 
 const NovaChat = lazy(() => import('./NovaChat'));
 
@@ -10,6 +12,13 @@ const isMobile = () => window.matchMedia && window.matchMedia('(max-width: 767px
 export default function NovaBubble() {
   const [open, setOpen] = useState(false);
   const fabRef = useRef<HTMLButtonElement | null>(null);
+  const [hasMessaged, setHasMessaged] = useState(false);
+
+  useEffect(() => {
+    const onMsg = () => setHasMessaged(true);
+    window.addEventListener('nova:message', onMsg);
+    return () => window.removeEventListener('nova:message', onMsg);
+  }, []);
 
   useEffect(() => {
     const onOpen = () => {
@@ -79,6 +88,15 @@ export default function NovaBubble() {
           </button>
         </header>
 
+        {/* Context & suggestions (first-open helper) */}
+        {!hasMessaged && (
+          <div className="px-4 pt-3 pb-2 border-b">
+            <ContextSwitcher className="mb-3" />
+            <SuggestionChips />
+          </div>
+        )}
+
+        {/* Chat area */}
         <main className="flex flex-col min-h-0" style={mobile ? { height: 'calc(72vh - 56px)', paddingBottom: 'env(safe-area-inset-bottom)' } : { height: 'calc(min(78vh,640px) - 56px)' }}>
           <Suspense fallback={<div className="p-4 text-gray-500">Nova laden…</div>}>
             <NovaChat />
