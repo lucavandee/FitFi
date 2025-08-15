@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader, Sparkles, Copy, X } from 'lucide-react';
+import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { streamChat } from '@/services/ai/novaService';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
@@ -48,7 +48,9 @@ const NovaChat: React.FC = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [contextMode, setContextMode] = useState<'outfits'|'archetype'|'shop'>('outfits');
   const [isTyping, setIsTyping] = useState(false);
+  const [showTypingDelay, setShowTypingDelay] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -91,8 +93,17 @@ const NovaChat: React.FC = () => {
 
   // Auto-scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollToBottom();
   }, [messages]);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const initializeNova = async () => {
     try {
@@ -147,7 +158,15 @@ const NovaChat: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
-    setIsTyping(true);
+    
+    // Show typing delay first (600-1200ms)
+    const typingDelay = 600 + Math.random() * 600;
+    setShowTypingDelay(true);
+    
+    setTimeout(() => {
+      setShowTypingDelay(false);
+      setIsTyping(true);
+    }, typingDelay);
     
     // Create abort controller for this request
     const abortController = new AbortController();
@@ -185,6 +204,8 @@ const NovaChat: React.FC = () => {
       for await (const delta of streamChat({ mode: contextMode as any, messages: history, signal: abortController.signal })) {
         acc += delta;
         setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
+        // Auto-scroll after each chunk
+        scrollToBottom();
       }
       
       // Track Nova response
@@ -240,6 +261,7 @@ const NovaChat: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsTyping(false);
+      setShowTypingDelay(false);
       abortRef.current = null;
       
       // Track stream completion
@@ -300,16 +322,21 @@ const NovaChat: React.FC = () => {
         <div
           className={[
             'max-w-[85%] rounded-2xl px-3 py-2 shadow-sm',
-            isUser ? 'ml-auto bg-[var(--ff-bubble-user)] text-ink'
-                   : 'mr-auto bg-[var(--ff-panel)] text-ink'
+            isUser ? 'ml-auto bg-[var(--ff-bubble-user)] text-ink shadow-[0_2px_12px_rgba(13,27,42,0.04)]'
+                   : 'mr-auto bg-[var(--ff-panel)] text-ink shadow-[0_4px_20px_rgba(13,27,42,0.06)]'
           ].join(' ')}
         >
           {/* Assistant message header with copy button */}
           {!isUser && (
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
-                <img src="/images/nova.svg" alt="Nova" className="w-4 h-4" />
+                <div className="w-5 h-5 bg-[#89CFF0] rounded-full flex items-center justify-center">
+                  <Bot className="w-3 h-3 text-white" />
+                </div>
                 <span className="text-sm font-medium text-[#89CFF0]">Nova</span>
+                <span className="px-2 py-0.5 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+                  AI
+                </span>
               </div>
               
               <button
@@ -349,17 +376,38 @@ const NovaChat: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Enhanced Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center shadow-sm">
+            <Bot className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-ink">Nova AI</h2>
+            <div className="flex items-center space-x-2">
+              <span className="px-2 py-0.5 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+                Premium Stylist
+              </span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Online"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Messages */}
-      <div className="relative flex-1 min-h-0 overflow-y-auto p-4 md:p-5 space-y-3 bg-white/70 text-ink">
+      <div 
+        ref={messagesContainerRef}
+        className="relative flex-1 min-h-0 overflow-y-auto p-4 md:p-5 space-y-3 bg-white/70 text-ink"
+      >
         {messages.map(renderMessage)}
         
-        {isTyping && <TypingSkeleton />}
+        {(showTypingDelay || isTyping) && <TypingSkeleton />}
         
         {isLoading && (
           <div className="flex justify-start mb-4">
-            <div className="bg-white/10 text-white border border-white/20 rounded-2xl px-4 py-3 flex items-center space-x-2">
-              <Loader className="w-4 h-4 animate-spin" />
-              <span className="text-sm">Nova denkt na...</span>
+            <div className="bg-[var(--ff-panel)] text-ink border border-gray-100 rounded-2xl px-4 py-3 flex items-center space-x-2 shadow-[0_4px_20px_rgba(13,27,42,0.06)]">
+              <Loader className="w-4 h-4 animate-spin text-[#89CFF0]" />
+              <span className="text-sm text-gray-600">Nova denkt na...</span>
             </div>
           </div>
         )}
@@ -368,7 +416,7 @@ const NovaChat: React.FC = () => {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 border-t border-gray-100 bg-white/95 backdrop-blur-sm">
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <input
             ref={inputRef}
@@ -376,16 +424,16 @@ const NovaChat: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Vraag Nova om stijladvies..."
-            className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3
+            className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm
                        text-ink placeholder-muted caret-ink outline-none
-                       focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/30"
+                       focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/30 focus:shadow-[0_4px_20px_rgba(137,207,240,0.15)]"
           />
           
           {isLoading ? (
             <button
               type="button"
               onClick={handleAbort}
-              className="bg-red-500 hover:bg-red-600 text-white rounded-2xl px-4 py-2 transition-colors"
+              className="bg-red-500 hover:bg-red-600 text-white rounded-2xl px-4 py-2 transition-colors shadow-sm hover:shadow-md"
               title="Stop Nova"
             >
               <X className="w-4 h-4" />
@@ -394,7 +442,7 @@ const NovaChat: React.FC = () => {
             <button
               type="submit"
               disabled={!input.trim()}
-              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-2xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-2xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md hover:scale-105"
             >
               <Send className="w-4 h-4" />
             </button>
