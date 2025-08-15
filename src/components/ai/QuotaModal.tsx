@@ -92,11 +92,6 @@ export default function QuotaModal({
         
         {/* Action Buttons */}
         <div className="flex flex-col space-y-3">
-          {isVisitor
-            ? 'Maak gratis een account aan om outfits te ontgrendelen.'
-            : 'Je limiet is bereikt. Upgrade naar Plus voor onbeperkt stijladvies.'}
-        </p>
-        <div className="mt-5 flex gap-3">
           {isVisitor ? (
             <>
               <Button
