@@ -65,12 +65,19 @@ export default function OutfitCard({
       return;
     }
     
-    // Use optimistic save hook
-    saveOutfit.mutate({ 
-      outfit: outfit as any, 
-      userId: user.id, 
-      idempotencyKey: `${user.id}:${outfit.id}` 
-    });
+    // Use optimistic save hook with fallback to local storage
+    try {
+      saveOutfit.mutate({ 
+        outfit: outfit as any, 
+        userId: user.id, 
+        idempotencyKey: `${user.id}:${outfit.id}` 
+      });
+    } catch (error) {
+      // Fallback to local storage
+      const newSavedState = toggleSave(outfit.id);
+      setSaved(newSavedState);
+      toast.success(newSavedState ? 'Outfit bewaard!' : 'Outfit verwijderd uit favorieten');
+    }
     
     // Track save action
     track('add_to_favorites', { 
