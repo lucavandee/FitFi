@@ -7,6 +7,8 @@ import { useNovaConn } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
+import OutfitCards from '@/components/ai/OutfitCards';
+import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
 
 // ADD bovenaan
 function mdLite(s:string){
@@ -52,6 +54,7 @@ const NovaChat: React.FC = () => {
   const [contextMode, setContextMode] = useState<'outfits'|'archetype'|'shop'>('outfits');
   const [isTyping, setIsTyping] = useState(false);
   const [showTypingDelay, setShowTypingDelay] = useState(false);
+  const [cards, setCards] = useState<NovaOutfitsPayload | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -162,6 +165,9 @@ const NovaChat: React.FC = () => {
     setInput('');
     setIsLoading(true);
     
+    // Clear previous cards for new conversation
+    setCards(null);
+    
     // Show typing delay first (600-1200ms)
     const typingDelay = 600 + Math.random() * 600;
     setShowTypingDelay(true);
@@ -208,7 +214,10 @@ const NovaChat: React.FC = () => {
           mode: contextMode as NovaMode, 
           messages: history, 
           signal: abortRef.current.signal,
-          onEvent: (evt: NovaStreamEvent) => {
+          onEvent: (evt) => {
+            if (evt.type === 'json' && evt.data?.type === 'outfits') {
+              setCards(evt.data);
+            }
             if (evt.type === 'meta') {
               if (evt.model) conn.setMeta({ model: evt.model });
               if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
@@ -407,6 +416,9 @@ const NovaChat: React.FC = () => {
             </div>
           </div>
         )}
+        
+        {/* Outfit Cards */}
+        {cards && <OutfitCards data={cards} />}
         
         <div ref={messagesEndRef} />
       </div>
