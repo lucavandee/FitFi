@@ -131,11 +131,15 @@ const LandingPage: React.FC = () => {
         </section>
       </ErrorBoundary>
 
-      {/* Founders Club - Lazy loaded */}
+      {/* Founders Club - Lazy loaded (breder + gecentreerd) */}
       <ErrorBoundary>
         <section className="section bg-white">
-          <div className="container">
-            <div className="max-w-md mx-auto">
+          <div className="container max-w-5xl mx-auto">
+            <div className="mx-auto text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-semibold text-ink">Founders Club</h2>
+              <p className="text-gray-600 mt-2">Verdien perks met referrals — stijl, status en early access.</p>
+            </div>
+            <div className="max-w-3xl mx-auto">
               <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
                 <FoundersBlock />
               </Suspense>
