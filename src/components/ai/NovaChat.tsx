@@ -349,15 +349,16 @@ const NovaChat: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Vraag Nova om stijladvies..."
-            className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0]"
-            disabled={false}
+            className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3
+                       text-ink placeholder-muted caret-ink outline-none
+                       focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/30"
           />
           
           {isLoading ? (
             <button
               type="button"
               onClick={handleAbort}
-              className="bg-red-500 hover:bg-red-600 text-white rounded-xl px-4 py-2 transition-colors"
+              className="bg-red-500 hover:bg-red-600 text-white rounded-2xl px-4 py-2 transition-colors"
               title="Stop Nova"
             >
               <X className="w-4 h-4" />
@@ -366,7 +367,7 @@ const NovaChat: React.FC = () => {
             <button
               type="submit"
               disabled={!input.trim()}
-              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-2xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>
