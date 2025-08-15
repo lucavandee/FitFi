@@ -119,6 +119,9 @@ export function generateNovaExplanation(
       
       explanation += 'en combineert perfect met de andere stukken. ';
     }
+  } else {
+    // Fallback when no products available
+    explanation += `Deze ${outfit.title} combineert perfect met jouw stijlvoorkeuren. `;
   }
   
   // Add styling tip
@@ -134,6 +137,16 @@ export function generateNovaExplanation(
   
   const randomTip = tips[Math.floor(Math.random() * tips.length)];
   explanation += randomTip;
+  
+  // Add match percentage context
+  const matchPercentage = outfit.matchPercentage || 75;
+  if (matchPercentage >= 90) {
+    explanation += ' Deze outfit scoort extreem hoog voor jouw profiel!';
+  } else if (matchPercentage >= 80) {
+    explanation += ' Een sterke match voor jouw stijl.';
+  } else if (matchPercentage >= 70) {
+    explanation += ' Een goede basis die je kunt personaliseren.';
+  }
   
   return explanation;
 }

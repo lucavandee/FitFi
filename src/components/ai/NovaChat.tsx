@@ -11,6 +11,7 @@ import OutfitCards from '@/components/ai/OutfitCards';
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
 import QuotaModal from './QuotaModal';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
+import { generateNovaExplanation } from '@/engine/explainOutfit';
 
 // ADD bovenaan
 function mdLite(s:string){
@@ -456,6 +457,61 @@ const NovaChat: React.FC = () => {
         
         {/* Outfit Cards */}
         {cards && <OutfitCards data={cards} blur={userTier==='visitor'} onLockedClick={()=>setQuotaOpen(true)} />}
+        
+        {/* Outfit Explanations */}
+        {cards && cards.outfits.length > 0 && (
+          <div className="mt-4 space-y-3">
+            {cards.outfits.map((outfit, index) => (
+              <div key={outfit.id} className="bg-[#89CFF0]/10 rounded-2xl p-4 border border-[#89CFF0]/20">
+                <div className="flex items-center space-x-2 mb-2">
+                  <MessageCircle className="w-4 h-4 text-[#89CFF0]" />
+                  <span className="text-sm font-medium text-[#89CFF0]">
+                    Waarom outfit {index + 1} perfect bij je past:
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {generateNovaExplanation(
+                    {
+                      id: outfit.id,
+                      title: outfit.title,
+                      description: outfit.why || '',
+                      archetype: 'casual_chic', // Would be dynamic based on user profile
+                      occasion: outfit.occasion || 'Casual',
+                      products: outfit.items.map(item => ({
+                        id: `${outfit.id}-${item.role}`,
+                        name: item.name,
+                        type: item.role,
+                        category: item.role,
+                        brand: undefined,
+                        styleTags: [],
+                        imageUrl: undefined,
+                        price: undefined,
+                        affiliateUrl: undefined,
+                        season: ['spring', 'summer', 'autumn', 'winter']
+                      })),
+                      imageUrl: undefined,
+                      tags: [],
+                      matchPercentage: outfit.matchScore,
+                      explanation: ''
+                    },
+                    user ? {
+                      id: user.id,
+                      name: user.name,
+                      email: user.email,
+                      stylePreferences: {
+                        casual: 3,
+                        formal: 3,
+                        sporty: 3,
+                        vintage: 3,
+                        minimalist: 3
+                      }
+                    } : undefined
+                  )}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
         
         <div ref={messagesEndRef} />
       </div>

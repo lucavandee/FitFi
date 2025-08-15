@@ -49,8 +49,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
       value: price
     });
     
+    // Build affiliate URL with UTM tracking
+    const partner = detectPartner(deeplink || '');
+    const affiliateUrl = buildAffiliateUrl(deeplink || '#', partner || undefined);
+    
     // Open affiliate link
-    window.open(deeplink || '#', '_blank', 'noopener,noreferrer');
+    window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
