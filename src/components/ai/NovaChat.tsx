@@ -9,6 +9,8 @@ import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
 import OutfitCards from '@/components/ai/OutfitCards';
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
+import QuotaModal from './QuotaModal';
+import { getUserTier } from '@/utils/session';
 
 // ADD bovenaan
 function mdLite(s:string){
@@ -59,6 +61,8 @@ const NovaChat: React.FC = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const [quotaOpen, setQuotaOpen] = useState(false);
+  const userTier = getUserTier();
 
   // Initialize Nova with greeting
   useEffect(() => {
@@ -221,6 +225,11 @@ const NovaChat: React.FC = () => {
             if (evt.type === 'meta') {
               if (evt.model) conn.setMeta({ model: evt.model });
               if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
+            } else if (evt.type === 'error') {
+              // quota signal vanuit server
+              if ((evt as any).code === 'quota_exceeded') {
+                setQuotaOpen(true);
+              }
             } else if (evt.type === 'chunk') {
               if (!firstChunkAt) {
                 firstChunkAt = performance.now();
@@ -421,7 +430,7 @@ const NovaChat: React.FC = () => {
         )}
         
         {/* Outfit Cards */}
-        {cards && <OutfitCards data={cards} />}
+        {cards && <OutfitCards data={cards} blur={userTier==='visitor'} onLockedClick={()=>setQuotaOpen(true)} />}
         
         <div ref={messagesEndRef} />
       </div>
@@ -461,6 +470,9 @@ const NovaChat: React.FC = () => {
           )}
         </form>
       </div>
+      
+      {/* Quota Modal */}
+      {quotaOpen && <QuotaModal tier={userTier} onClose={()=>setQuotaOpen(false)} />}
     </div>
   );
 };
