@@ -75,23 +75,13 @@ export function useQuizAnswers() {
       return false;
     }
 
-    if (!sb) {
-      setError('Supabase not available');
-      return false;
-    }
-
     setIsResetting(true);
     setError(null);
 
     try {
-      const { data, error } = await sb.functions.invoke('reset-quiz', {
-        headers: {
-          Authorization: `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`
-        }
-      });
-
-      if (error) {
-        console.error('Quiz reset error:', error);
+      const success = await quizService.resetQuiz(user.id);
+      
+      if (!success) {
         setError('Kan quiz niet resetten. Probeer opnieuw.');
         return false;
       }
@@ -100,6 +90,7 @@ export function useQuizAnswers() {
       setQuizData(null);
       setError(null);
       
+      console.log('[useQuizAnswers] Quiz reset successfully');
       return true;
     } catch (err) {
       console.error('Quiz reset error:', err);
