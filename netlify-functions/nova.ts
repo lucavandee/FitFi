@@ -13,11 +13,14 @@ function routeModel(mode: Mode){
   return                    process.env.NOVA_MODEL_SHOP          || 'gpt-4o-mini';
 }
 function systemPrompt(mode: Mode){
-  switch(mode){
-    case 'outfits':   return 'Je bent Nova, premium AI-stylist. Geef 3 outfits met korte reden en kleuradvies. NL, beknopt.';
-    case 'archetype': return 'Je bent Nova, stijl-analist. Leg archetype uit in 3 bullets + do\'s/don\'ts. NL, beknopt.';
-    case 'shop':      return 'Je bent Nova, shopping-assistent. Geef 3-5 richtingen + filters. NL, geen harde merknamen.';
-  }
+  const base = [
+    'Je bent Nova, een premium AI-stylist. Antwoord altijd in het Nederlands, kort en duidelijk.',
+    'Stuur geen algemene welkomstteksten terug nadat de gebruiker al iets vroeg.',
+    'Vraag max. 1 verduidelijkende vraag als informatie ontbreekt (gelegenheid, seizoen, vibe, budget).'
+  ].join(' ');
+  if(mode==='outfits')   return base + ' Geef 3 outfits met titel, 1-2 bullets en 1 zin "waarom".';
+  if(mode==='archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don't.';
+  return                   base + ' Geef 3-5 shoprichtingen met filters (fit, materiaal, kleur).';
 }
 
 export const handler: Handler = async (event) => {
