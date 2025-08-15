@@ -13,3 +13,15 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+## Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; img-src * data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.openai.com https://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com /.netlify/functions"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
