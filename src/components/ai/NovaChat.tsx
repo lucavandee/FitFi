@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Sparkles } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { track } from '@/utils/analytics';
 import { loadNovaAgent } from '@/ai/nova/load';
 import type { NovaReply } from '@/ai/nova/agent';
+import TypingSkeleton from '@/components/ai/TypingSkeleton';
+import { track } from '@/utils/analytics';
 
 interface Message {
   id: string;
@@ -20,6 +21,8 @@ const NovaChat: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [contextMode, setContextMode] = useState<'outfits'|'archetype'|'shop'>('outfits');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -29,6 +32,28 @@ const NovaChat: React.FC = () => {
       initializeNova();
     }
   }, [user?.name, isInitialized]);
+
+  // Listen to prefill and context events
+  useEffect(() => {
+    const onPrefill = (e: any) => {
+      const { prompt, submit } = e.detail || {};
+      if (!prompt) return;
+      setInput(prompt);
+      if (submit && typeof handleSubmit === 'function') {
+        handleSubmit(new Event('submit') as any);
+      }
+    };
+    const onSetCtx = (e: any) => {
+      const m = e.detail?.mode;
+      if (m) setContextMode(m);
+    };
+    window.addEventListener('nova:prefill', onPrefill as any);
+    window.addEventListener('nova:set-context', onSetCtx as any);
+    return () => {
+      window.removeEventListener('nova:prefill', onPrefill as any);
+      window.removeEventListener('nova:set-context', onSetCtx as any);
+    };
+  }, []);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -88,6 +113,11 @@ const NovaChat: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setIsTyping(true);
+
+    // Fire analytics + bubble state
+    window.dispatchEvent(new CustomEvent('nova:message', { detail: { role: 'user' } }));
+    track('nova_message_send', { context: contextMode });
 
     // Track user message
     track('nova_user_message', {
@@ -101,7 +131,8 @@ const NovaChat: React.FC = () => {
       const agent = await loadNovaAgent();
       const reply = await agent.ask(userMessage.content, { 
         profile: user,
-        userId: user?.id 
+        userId: user?.id,
+        context: contextMode
       });
 
       const assistantMessage: Message = {
@@ -141,10 +172,12 @@ const NovaChat: React.FC = () => {
         event_category: 'ai_interaction',
         event_label: 'response_failed',
         error_message: error instanceof Error ? error.message : 'Unknown error',
-        user_id: user?.id
+        user_id: user?.id,
+        context: contextMode
       });
     } finally {
       setIsLoading(false);
+      setIsTyping(false);
     }
   };
 
@@ -204,6 +237,8 @@ const NovaChat: React.FC = () => {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {messages.map(renderMessage)}
+        
+        {isTyping && <TypingSkeleton />}
         
         {isLoading && (
           <div className="flex justify-start mb-4">
