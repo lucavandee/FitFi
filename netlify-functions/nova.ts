@@ -33,7 +33,7 @@ function systemPrompt(mode: Mode) {
     'Vraag max. 1 verduidelijking bij ontbrekende context (gelegenheid, seizoen, vibe, budget).'
   ].join(' ');
   if (mode === 'outfits')   return base + ' Geef 3 outfits met titel, 1–2 bullets en 1 zin "waarom".';
-  if (mode === 'archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don't.';
+  if (mode === 'archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don\'t.';
   return                       base + ' Geef 3–5 shoprichtingen met filters (fit, materiaal, kleur).';
 }
 
