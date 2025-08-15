@@ -81,10 +81,10 @@ const queryClient = new QueryClient({
 const NOVA_ENABLED = (import.meta.env.VITE_NOVA_ENABLED ?? 'true') !== 'false';
 // NotFound component
 const NotFound: React.FC = () => (
-  <div>Not Found</div>
+  <div className="p-8">Page not found</div>
 );
 
-function App() {
+const App: React.FC = () => {
   return (
     <CrashGate>
       <QueryClientProvider client={queryClient}>
@@ -226,10 +226,8 @@ function App() {
                       {/* Cookie Consent Banner */}
                       <Suspense fallback={null}><CookieBanner /></Suspense>
                       
-                      {/* Nova Login Prompt Modal */}
-                      <Suspense fallback={null}>
-                        <NovaLoginPromptHost />
-                      </Suspense>
+                      {/* Nova Login Prompt Host */}
+                      <NovaLoginPromptHost />
                     </div>
                   </Router>
                 </ErrorBoundary>
