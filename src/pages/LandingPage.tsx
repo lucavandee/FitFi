@@ -4,6 +4,7 @@ import { track } from '@/utils/analytics';
 import Seo from '@/components/Seo';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import AffiliateDisclosureNote from '@/components/legal/AffiliateDisclosureNote';
 
 // Import components directly (not lazy loaded for better LCP)
 import Hero from '../components/landing/Hero';
@@ -88,6 +89,7 @@ const LandingPage: React.FC = () => {
           <ErrorBoundary>
             <Hero onCTAClick={handleCTAClick} />
           </ErrorBoundary>
+          <AffiliateDisclosureNote />
         </div>
       </section>
 
