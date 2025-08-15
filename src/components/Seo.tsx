@@ -13,11 +13,13 @@ type SeoProps = {
 };
 
 const SITE_NAME = 'FitFi';
-const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'https://www.fitfi.ai';
+const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'https://fitfi.app';
+const DEFAULT_IMAGE = `${ORIGIN}/og-default.jpg`;
+const DEFAULT_DESCRIPTION = 'Ontdek welke stijl bij je past met ons AI-gedreven stylingplatform. In 2 minuten een persoonlijk rapport en shopbare outfits.';
 
 export default function Seo({
-  title = 'FitFi — AI Personal Styling',
-  description = 'Ontdek welke stijl bij je past met ons AI-gedreven stylingplatform. In 2 minuten een persoonlijk rapport en shopbare outfits.',
+  title,
+  description = DEFAULT_DESCRIPTION,
   canonical,
   noindex = false,
   jsonLd,
@@ -25,9 +27,9 @@ export default function Seo({
   type = 'website',
   image
 }: SeoProps) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} — AI Personal Styling`;
   const url = canonical ?? (typeof window !== 'undefined' ? window.location.href : ORIGIN);
-  const ogImage = image || `${ORIGIN}/og-default.jpg`;
+  const ogImage = image || DEFAULT_IMAGE;
 
   const ld = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
 
@@ -36,23 +38,27 @@ export default function Seo({
       <title>{fullTitle}</title>
       {description && <meta name="description" content={description} />}
       {keywords && <meta name="keywords" content={keywords} />}
-      {canonical && <link rel="canonical" href={canonical} />}
+      <link rel="canonical" href={canonical || url} />
       {noindex && <meta name="robots" content="noindex,nofollow" />}
       {!noindex && <meta name="robots" content="index,follow" />}
 
       {/* Open Graph */}
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:title" content={fullTitle} />
-      {description && <meta property="og:description" content={description} />}
+      <meta property="og:description" content={description} />
       <meta property="og:type" content={type} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:locale" content="nl_NL" />
       
       {/* Twitter Cards */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
-      {description && <meta name="twitter:description" content={description} />}
+      <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:site" content="@fitfi_ai" />
 
       {/* JSON-LD */}
       {ld.map((obj, i) => (

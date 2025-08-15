@@ -1,0 +1,99 @@
+/* FitFi Design Tokens */
+:root {
+  /* Brand Colors */
+  --ff-midnight-900: #0D1B2A;
+  --ff-midnight-700: #14243A;
+  --ff-midnight-500: #1B2F46;
+  --ff-ink: #0f172a;
+  --ff-muted: #6B7280;
+  
+  --ff-ice: #ECF7FF;
+  --ff-sky-300: #89CFF0;
+  --ff-sky-500: #5FB7E6;
+  --ff-sky-700: #3B9FD9;
+  
+  --ff-surface: #FFFFFF;
+  --ff-surface-light: #F6F6F6;
+  --ff-surface-warm: #FAF8F6;
+  
+  /* Brand Gradients */
+  --ff-grad-midnight: #0D1B2A;
+  --ff-grad-sky: #89CFF0;
+  --ff-gradient-primary: linear-gradient(135deg, var(--ff-midnight-900) 0%, var(--ff-sky-500) 100%);
+  --ff-gradient-soft: linear-gradient(135deg, var(--ff-midnight-700) 0%, var(--ff-sky-300) 100%);
+  --ff-gradient-accent: linear-gradient(90deg, var(--ff-sky-300) 0%, var(--ff-sky-500) 100%);
+  
+  /* Shadows */
+  --ff-soft-shadow: 0 10px 30px rgba(13, 27, 42, 0.08);
+  --ff-card-shadow: 0 8px 25px rgba(13, 27, 42, 0.06);
+  --ff-button-shadow: 0 6px 20px rgba(137, 207, 240, 0.35);
+  --ff-menu-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+  
+  /* Spacing & Layout */
+  --ff-header-height: 4.5rem;
+  --ff-radius-sm: 0.5rem;
+  --ff-radius-md: 1rem;
+  --ff-radius-lg: 1.5rem;
+  --ff-radius-xl: 2rem;
+  --ff-radius-2xl: 2.5rem;
+  
+  /* Typography */
+  --ff-font-heading: 'Montserrat', 'Inter', ui-sans-serif, system-ui;
+  --ff-font-body: 'Lato', 'Inter', ui-sans-serif, system-ui;
+  --ff-font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  
+  /* Focus Ring */
+  --ff-ring: #89CFF0;
+  --ff-ring-offset: #FFFFFF;
+  
+  /* Component Tokens */
+  --ff-chip-bg: #F6F6F6;
+  --ff-chip-border: #E5E7EB;
+  --ff-panel: #FFFFFF;
+  --ff-bubble-user: #E6F3FF;
+  
+  /* Animation Durations */
+  --ff-duration-fast: 150ms;
+  --ff-duration-normal: 250ms;
+  --ff-duration-slow: 350ms;
+  
+  /* Z-Index Scale */
+  --ff-z-dropdown: 1000;
+  --ff-z-sticky: 1020;
+  --ff-z-fixed: 1030;
+  --ff-z-modal-backdrop: 1040;
+  --ff-z-modal: 1050;
+  --ff-z-popover: 1060;
+  --ff-z-tooltip: 1070;
+  --ff-z-toast: 1080;
+  --ff-z-nova: 9999;
+}
+
+/* Dark mode tokens (future-ready) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ff-surface: #1a1a1a;
+    --ff-surface-light: #2a2a2a;
+    --ff-ink: #ffffff;
+    --ff-muted: #a1a1aa;
+    --ff-panel: #262626;
+    --ff-ring-offset: #000000;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --ff-soft-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --ff-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ff-duration-fast: 0ms;
+    --ff-duration-normal: 0ms;
+    --ff-duration-slow: 0ms;
+  }
+}
