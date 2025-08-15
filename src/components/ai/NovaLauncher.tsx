@@ -1,10 +1,17 @@
 import React from 'react';
 import AppPortal from '@/components/layout/AppPortal';
 import { Sparkles } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
 
 export default function NovaLauncher() {
+  const { user } = useUser();
+
   const onOpen = () => {
-    window.dispatchEvent(new CustomEvent('nova:open'));
+    if (!user) {
+      window.dispatchEvent(new CustomEvent('nova:prompt-login'));
+    } else {
+      window.dispatchEvent(new CustomEvent('nova:open'));
+    }
   };
 
   return (
