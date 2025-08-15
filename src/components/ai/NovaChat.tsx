@@ -323,7 +323,7 @@ const NovaChat: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="relative flex-1 min-h-0 overflow-y-auto p-4 md:p-5 space-y-3 bg-white/70 text-ink">
         {messages.map(renderMessage)}
         
         {isTyping && <TypingSkeleton />}
