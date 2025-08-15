@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:netlify": "netlify dev",
+    "dev:netlify": "netlify dev",
     "build": "vite build",
     "preview": "vite preview",
     "preinstall": "node ./scripts/print-env.js",
@@ -15,7 +16,7 @@
     "test:routes": "node scripts/test-routes.js",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:a11y": "playwright test tests/visual/nova-sse-health.spec.ts --headed",
+    "test:smoke": "playwright test tests/visual/nova-sse-health.spec.ts --headed",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "prepare": "node -e \"if(process.env.CI!=='true'){try{require('child_process').execSync('husky install',{stdio:'inherit'})}catch(e){console.log('husky skipped')}}\""
