@@ -34,6 +34,7 @@ interface UserCtx {
   user: FitFiUser | null;
   status: 'loading' | 'authenticated' | 'unauthenticated';
   isLoading: boolean;
+  isMember: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -45,6 +46,9 @@ const UserContext = createContext<UserCtx | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<FitFiUser | null>(null);
   const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
+  
+  // Determine if user is a member (has account = member for now)
+  const isMember = status === 'authenticated' && !!user?.id;
 
   useEffect(() => {
     if (!sb) {
@@ -148,6 +152,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     status,
     isLoading: status === 'loading',
+    isMember,
     login,
     register,
     logout,
