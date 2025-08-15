@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { streamChat, type NovaMode } from '@/services/ai/novaService';
+import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
 import { mdNova } from '@/components/ai/markdown';
+import { useNovaConn } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
@@ -43,6 +44,7 @@ interface Message {
 
 const NovaChat: React.FC = () => {
   const { user } = useUser();
+  const conn = useNovaConn();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -172,6 +174,11 @@ const NovaChat: React.FC = () => {
     // Create abort controller for this request
     const abortController = new AbortController();
     abortRef.current = abortController;
+    
+    // Set connection status and start timing
+    conn.setStatus('connecting');
+    const tStart = performance.now();
+    let firstChunkAt: number | null = null;
 
     // Fire analytics + bubble state
     window.dispatchEvent(new CustomEvent('nova:message', { detail: { role: 'user' } }));
@@ -197,12 +204,33 @@ const NovaChat: React.FC = () => {
       
       try {
         const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
-        for await (const delta of streamChat({ mode: contextMode as NovaMode, messages: history, signal: abortRef.current.signal })) {
+        for await (const delta of streamChat({ 
+          mode: contextMode as NovaMode, 
+          messages: history, 
+          signal: abortRef.current.signal,
+          onEvent: (evt: NovaStreamEvent) => {
+            if (evt.type === 'meta') {
+              if (evt.model) conn.setMeta({ model: evt.model });
+              if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
+            } else if (evt.type === 'chunk') {
+              if (!firstChunkAt) {
+                firstChunkAt = performance.now();
+                conn.setMeta({ ttfbMs: Math.max(0, Math.round(firstChunkAt - tStart)) });
+                conn.setStatus('streaming');
+              }
+            } else if (evt.type === 'done') {
+              conn.setStatus('done');
+            } else if (evt.type === 'error') {
+              conn.setStatus('error');
+            }
+          }
+        })) {
           acc += delta;
           setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
           scrollToBottom();
         }
       } catch (e: any) {
+        conn.setStatus('error');
         const errorMsg = e?.message || String(e);
         let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
         
@@ -214,6 +242,11 @@ const NovaChat: React.FC = () => {
       } finally {
         setIsTyping(false);
         abortRef.current = null;
+        
+        // Set final status if not already error
+        if (conn.status !== 'error') {
+          conn.setStatus('done');
+        }
       }
       
       // Track Nova response
