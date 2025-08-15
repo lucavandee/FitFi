@@ -7,6 +7,8 @@ import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import { track } from '@/utils/analytics';
 import toast from 'react-hot-toast';
 
+const URL_RE = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -26,6 +28,27 @@ const NovaChat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Helper function to render content with clickable links
+  function renderContentWithLinks(content: string) {
+    const parts = content.split(URL_RE);
+    return parts.map((part, i) => {
+      if (URL_RE.test(part)) {
+        return (
+          <a
+            key={`url-${i}`}
+            href={part}
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            className="underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={`t-${i}`}>{part}</span>;
+    });
+  }
 
   // Initialize Nova with greeting
   useEffect(() => {
@@ -246,8 +269,8 @@ const NovaChat: React.FC = () => {
             </div>
           )}
           
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">
-            <span data-testid="nova-assistant">{message.content}</span>
+          <div className={`${isUser ? '' : 'whitespace-pre-wrap'} text-sm leading-relaxed`} data-testid={isUser ? undefined : 'nova-assistant'}>
+            {isUser ? message.content : renderContentWithLinks(message.content)}
           </div>
           
           {message.data && message.type === 'outfits' && (
