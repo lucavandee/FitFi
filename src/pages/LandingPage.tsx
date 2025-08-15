@@ -83,36 +83,56 @@ const LandingPage: React.FC = () => {
       />
 
       {/* Hero Section - Critical above-the-fold content */}
-      <ErrorBoundary>
-        <Hero onCTAClick={handleCTAClick} />
-      </ErrorBoundary>
+      <section className="section bg-white">
+        <div className="container">
+          <ErrorBoundary>
+            <Hero onCTAClick={handleCTAClick} />
+          </ErrorBoundary>
+        </div>
+      </section>
 
       {/* Social Proof - Important for conversion */}
       <ErrorBoundary>
-        <SocialProof />
+        <section className="section bg-white">
+          <div className="container">
+            <SocialProof />
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* How It Works - Core value proposition */}
       <ErrorBoundary>
-        <HowItWorks />
+        <section className="section bg-white">
+          <div className="container">
+            <HowItWorks />
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* Features - Product details */}
       <ErrorBoundary>
-        <Features />
+        <section className="section bg-white">
+          <div className="container">
+            <Features />
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* Preview Carousel - Lazy loaded for performance */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
-          <PreviewCarousel />
-        </Suspense>
+        <section className="section bg-white">
+          <div className="container">
+            <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
+              <PreviewCarousel />
+            </Suspense>
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* Founders Club - Lazy loaded */}
       <ErrorBoundary>
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="section bg-white">
+          <div className="container">
             <div className="max-w-md mx-auto">
               <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
                 <FoundersBlock />
@@ -124,21 +144,33 @@ const LandingPage: React.FC = () => {
 
       {/* UGC Gallery - Lazy loaded */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Gebruikersverhalen laden..." />}>
-          <UGCGallery />
-        </Suspense>
+        <section className="section bg-white">
+          <div className="container">
+            <Suspense fallback={<LoadingFallback message="Gebruikersverhalen laden..." />}>
+              <UGCGallery />
+            </Suspense>
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* Closing CTA - Lazy loaded */}
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
-          <ClosingCTA onCTAClick={handleCTAClick} />
-        </Suspense>
+        <section className="section bg-white">
+          <div className="container">
+            <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
+              <ClosingCTA onCTAClick={handleCTAClick} />
+            </Suspense>
+          </div>
+        </section>
       </ErrorBoundary>
 
       {/* Footer */}
       <ErrorBoundary>
-        <Footer />
+        <section className="section bg-white">
+          <div className="container">
+            <Footer />
+          </div>
+        </section>
       </ErrorBoundary>
     </div>
   );
