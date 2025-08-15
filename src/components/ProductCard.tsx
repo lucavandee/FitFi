@@ -3,7 +3,9 @@ import { ExternalLink, Heart } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
 import SmartImage from '@/components/media/SmartImage';
 import Button from './ui/Button';
-import { track } from '../utils/analytics';
+import { trackProductClick, trackShopCta } from '@/services/engagement';
+import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
+import toast from 'react-hot-toast';
 
 interface ProductCardProps {
   id: string;
@@ -27,40 +29,39 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { saveOutfit } = useGamification();
 
   const handleSave = async () => {
-    // Track save action
-    track('add_to_favorites', { 
-      product_id: id,
-      product_title: title,
-      product_brand: brand,
-      product_price: price
-    });
-    
     try {
       await saveOutfit();
       toast.success('Product bewaard!');
     } catch (error) {
       console.warn('Save failed, using local fallback:', error);
-      // Fallback to local storage via engagement service
-      const { toggleSave } = await import('../../services/engagement');
+      // Fallback to local storage
+      const { toggleSave } = await import('@/services/engagement');
       const saved = toggleSave(id);
       toast.success(saved ? 'Product bewaard!' : 'Product verwijderd uit favorieten');
     }
   };
 
   const handleClick = () => {
-    // Track product click
-    track('product_click', {
-      product_id: id,
-      product_title: title,
-      product_brand: brand,
-      product_price: price,
-      event_category: 'ecommerce',
-      value: price
+    // Track product click with enhanced data
+    trackProductClick({
+      id: id,
+      title: title,
+      brand: brand,
+      price: price,
+      source: 'ProductCard'
     });
     
     // Build affiliate URL with UTM tracking
     const partner = detectPartner(deeplink || '');
     const affiliateUrl = buildAffiliateUrl(deeplink || '#', partner || undefined);
+    
+    // Track shop CTA
+    trackShopCta({
+      id: id,
+      partner: partner || 'unknown',
+      url: affiliateUrl,
+      source: 'ProductCard'
+    });
     
     // Open affiliate link
     window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
