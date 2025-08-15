@@ -3,6 +3,7 @@ import { supabase as getSupabaseClient } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
 import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
+import FoundersTierPerks from '@/components/founders/FoundersTierPerks';
 import { resolveTier } from '@/config/foundersTiers';
 
 export const FoundersBlock: React.FC = () => {
@@ -108,6 +109,8 @@ export const FoundersBlock: React.FC = () => {
       {errMsg && <div className="text-sm text-red-600 mt-2">{errMsg}</div>}
 
       <div className="text-xs text-gray-500 mt-2 break-all">{inviteUrl}</div>
+      
+      <FoundersTierPerks referrals={loading ? 0 : refCount} className="mt-6" />
     </div>
   );
 };
