@@ -4,6 +4,7 @@ import { useUser } from "@/context/UserContext";
 import { useAddXp } from '@/hooks/useDashboard';
 import { Send, Image, X, Loader } from "lucide-react";
 import Button from "../ui/Button";
+import ToastXp from '@/components/ui/ToastXp';
 import ImageWithFallback from "../ui/ImageWithFallback";
 import toast from "react-hot-toast";
 
@@ -59,7 +60,15 @@ export const PostComposer: React.FC<Props> = ({
       setImageUrl("");
       setShowImageInput(false);
       
-      toast.success("Post geplaatst! • +8 XP");
+      toast.custom((
+        <div className="bg-white rounded-xl shadow-lg p-4 flex items-center space-x-3">
+          <div className="text-green-600">✓</div>
+          <span>Post geplaatst!</span>
+          <ToastXp amount={8} />
+        </div>
+      ), {
+        duration: 3000
+      });
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "Posten mislukt";
       toast.error(errorMessage);
