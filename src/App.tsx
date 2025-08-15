@@ -62,6 +62,7 @@ const BrandSafetyPage = lazyAny(() => import('@/pages/BrandSafetyPage'));
 const DisclosurePage = lazyAny(() => import('@/pages/DisclosurePage'));
 const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
 const CookiesPage = lazyAny(() => import('@/pages/CookiesPage'));
+const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
 
 // Create a client
 const queryClient = new QueryClient({
@@ -142,6 +143,7 @@ function App() {
                       
                         {/* Public Routes */}
                         <Route path="/feed" element={<FeedPage />} />
+                        <Route path="/shop" element={<ShopRedirect />} />
                         
                         {/* Protected Routes */}
                         <Route path="/onboarding" element={
