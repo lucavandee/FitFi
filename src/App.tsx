@@ -17,6 +17,7 @@ import AppPortal from '@/components/layout/AppPortal';
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
 const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
+const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
 
 // Lazy load all pages with lazyAny for optimal code-splitting
 const HomePage = lazyAny(() => import('@/pages/HomePage'));
@@ -214,6 +215,9 @@ function App() {
                         <Suspense fallback={null}><NovaBubble /></Suspense>
                       </>
                     )}
+                    
+                    {/* Cookie Consent Banner */}
+                    <Suspense fallback={null}><CookieBanner /></Suspense>
                   </div>
                 </Router>
               </OnboardingProvider>
