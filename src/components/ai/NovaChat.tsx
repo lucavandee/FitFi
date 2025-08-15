@@ -247,7 +247,7 @@ const NovaChat: React.FC = () => {
           )}
           
           <div className="whitespace-pre-wrap text-sm leading-relaxed">
-            {message.content}
+            <span data-testid="nova-assistant">{message.content}</span>
           </div>
           
           {message.data && message.type === 'outfits' && (
