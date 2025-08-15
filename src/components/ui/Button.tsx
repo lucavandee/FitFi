@@ -56,16 +56,16 @@ const Button: React.FC<ButtonProps> = ({
   ].filter(Boolean).join(' ');
 
   const variantClasses = {
-    primary: 'bg-[#89CFF0] text-white hover:bg-[#5FB7E6] active:translate-y-[1px] shadow-[0_10px_30px_rgba(137,207,240,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white',
-    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 focus:ring-gray-500 focus-visible:ring-gray-500',
-    outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-gray-500 focus-visible:ring-gray-500',
-    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500 focus-visible:ring-gray-500',
+    primary: 'bg-[#89CFF0] text-white hover:bg-[#5FB7E6] shadow-[0_10px_30px_rgba(137,207,240,0.35)] btn-animate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white',
+    secondary: 'bg-[#0D1B2A] hover:bg-[#14243A] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white btn-animate',
+    outline: 'border border-[#89CFF0] bg-white hover:bg-[#89CFF0]/10 text-[#0D1B2A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white btn-animate',
+    ghost: 'bg-transparent hover:bg-[#89CFF0]/10 text-[#0D1B2A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white btn-animate',
     danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500 focus-visible:ring-red-500'
   };
 
   const sizeClasses = {
-    sm: 'px-3 py-2 text-sm rounded-lg',
-    md: 'px-4 py-2 text-base rounded-xl',
+    sm: 'px-3 py-2 text-sm rounded-xl',
+    md: 'px-4 py-2 text-base rounded-2xl',
     lg: 'px-6 py-3 text-lg rounded-2xl'
   };
 
