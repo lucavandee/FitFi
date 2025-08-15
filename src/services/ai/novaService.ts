@@ -22,7 +22,7 @@ export function systemPrompt(mode: NovaMode): string {
     case 'archetype':
       return [
         'Je bent Nova, een stijl-analist.',
-        'Taken: leg archetypes uit, geef herkenbare signalen en do's/don'ts.',
+        'Taken: leg archetypes uit, geef herkenbare signalen en do\'s/don'ts.',
         'Antwoorden: beknopt, met 3 concrete tips.',
       ].join(' ');
     case 'shop':
