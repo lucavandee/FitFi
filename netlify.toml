@@ -1,7 +1,6 @@
-# --- Netlify minimal config for FitFi (valid TOML) ---
+# --- Netlify optimized config for FitFi Nova AI streaming ---
 
 [build]
-  # Simpel en robuust: alleen Vite build. (tsc draait NIET hier)
   command = "npm run build"
   publish = "dist"
 
@@ -20,10 +19,5 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
-# (Optioneel) functies alleen definieren als de map bestaat.
-# [functions]
-#   directory = "netlify-functions"
-#   node_bundler = "esbuild"
 
 # --- Einde ---
