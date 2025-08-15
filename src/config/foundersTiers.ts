@@ -14,7 +14,7 @@ export type TierPerk = {
   id: string;
   label: string;
   unlockedAt: number;        // vanaf hoeveel referrals zichtbaar als unlocked
-  icon?: 'Sparkles' | 'Shield' | 'Users' | 'Star' | 'Crown' | 'Wand2' | 'Ticket' | 'Gift' | 'Headphones' | 'Video' | 'Trophy';
+  icon?: 'Sparkles' | 'Shield' | 'Users' | 'Star' | 'Crown' | 'Wand2' | 'Ticket' | 'Gift' | 'Headphones' | 'Video' | 'Trophy' | 'Award';
 };
 
 export const FOUNDERS_TIERS: FounderTier[] = [
