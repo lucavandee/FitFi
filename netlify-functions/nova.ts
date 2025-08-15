@@ -28,7 +28,7 @@ function routeModel(m: Mode) {
 function systemPrompt(m: Mode) {
   const base = 'Je bent Nova, premium AI-stylist. Antwoord NL, kort en duidelijk. Geen generieke welkomsttekst na een vraag. Max. 1 verduidelijking.';
   if (m==='outfits')   return base + ' Geef 3 outfits met titel, 1–2 bullets en 1 zin "waarom".';
-  if (m==='archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don't.';
+  if (m==='archetype') return base + ' Leg archetype uit in 3 bullets + 1 do/don\'t.';
   return                  base + ' Geef 3–5 shoprichtingen met filters (fit, materiaal, kleur).';
 }
 
