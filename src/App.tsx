@@ -13,10 +13,9 @@ import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Sparkles, ArrowRight } from 'lucide-react';
-import Button from '@/components/ui/Button';
+
+// Lazy load NovaLoginPrompt
+const NovaLoginPrompt = React.lazy(() => import('@/components/auth/NovaLoginPrompt'));
 
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
