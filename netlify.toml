@@ -1,23 +1,15 @@
-# --- Netlify optimized config for FitFi Nova AI streaming ---
-
 [build]
   command = "npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--legacy-peer-deps --no-fund --no-audit"
-  HUSKY = "0"
 
-# Enhanced functions configuration for Nova AI streaming
 [functions]
   directory = "netlify-functions"
   node_bundler = "esbuild"
 
-# Single Page App routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# --- Einde ---
