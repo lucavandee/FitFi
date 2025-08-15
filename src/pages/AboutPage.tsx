@@ -107,13 +107,15 @@ const AboutPage: React.FC = () => {
                   <div className="relative card overflow-hidden w-[360px] md:w-[420px] aspect-[4/5] lift-sm">
                     <ImageWithFallback
                       src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2"
+                      fallbackSrc="/images/fallbacks/portrait-4x5.jpg"
                       alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi"
                       className="w-full h-full object-cover"
                       loading="lazy"
                       decoding="async"
-                      sizes="(max-width: 768px) 360px, 420px"
+                      sizes="(max-width: 480px) 320px, (max-width: 768px) 360px, 420px"
                       srcSet="
                         https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=480&h=720 480w,
+                        https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=640&h=960 640w,
                         https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200 800w
                       "
                     />
