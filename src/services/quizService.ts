@@ -2,21 +2,81 @@ import { supabase } from '../lib/supabaseClient';
 import { QuizAnswers, QuizSubmission } from '../types/quiz';
 import { quizSteps } from '../data/quizSteps';
 import { getQuizAnswer } from './supabaseService';
+import { DATA_CONFIG } from '../config/dataConfig';
 
 // Get singleton client
 const sb = supabase();
 
-// Fallback quiz data
-const mockQuizData = {
-  steps: quizSteps,
-  defaultAnswers: {
-    stylePreferences: [],
-    baseColors: '',
-    bodyType: '',
-    occasions: [],
-    budgetRange: 100
-  }
+// Local storage keys for quiz data
+const QUIZ_KEYS = {
+  ANSWERS: 'fitfi.quiz.answers',
+  COMPLETED_AT: 'fitfi.quiz.completed_at',
+  USER_ID: 'fitfi.quiz.user_id'
 };
+
+// Local storage provider for quiz data
+class LocalQuizProvider {
+  async getUserAnswers(userId: string): Promise<QuizSubmission | null> {
+    try {
+      const answers = localStorage.getItem(QUIZ_KEYS.ANSWERS);
+      const completedAt = localStorage.getItem(QUIZ_KEYS.COMPLETED_AT);
+      const storedUserId = localStorage.getItem(QUIZ_KEYS.USER_ID);
+      
+      // Check if data belongs to current user
+      if (storedUserId !== userId) {
+        return null;
+      }
+      
+      if (!answers || !completedAt) {
+        return null;
+      }
+      
+      return {
+        id: `local-${userId}`,
+        user_id: userId,
+        answers: JSON.parse(answers),
+        completed_at: completedAt,
+        created_at: completedAt,
+        updated_at: completedAt
+      };
+    } catch (error) {
+      console.error('[LocalQuizProvider] Error reading answers:', error);
+      return null;
+    }
+  }
+  
+  async submitAnswers(userId: string, answers: QuizAnswers): Promise<boolean> {
+    try {
+      const completedAt = new Date().toISOString();
+      
+      localStorage.setItem(QUIZ_KEYS.ANSWERS, JSON.stringify(answers));
+      localStorage.setItem(QUIZ_KEYS.COMPLETED_AT, completedAt);
+      localStorage.setItem(QUIZ_KEYS.USER_ID, userId);
+      
+      console.log('[LocalQuizProvider] Quiz answers saved locally');
+      return true;
+    } catch (error) {
+      console.error('[LocalQuizProvider] Error saving answers:', error);
+      return false;
+    }
+  }
+  
+  async resetQuiz(userId: string): Promise<boolean> {
+    try {
+      localStorage.removeItem(QUIZ_KEYS.ANSWERS);
+      localStorage.removeItem(QUIZ_KEYS.COMPLETED_AT);
+      localStorage.removeItem(QUIZ_KEYS.USER_ID);
+      
+      console.log('[LocalQuizProvider] Quiz reset locally');
+      return true;
+    } catch (error) {
+      console.error('[LocalQuizProvider] Error resetting quiz:', error);
+      return false;
+    }
+  }
+}
+
+const localProvider = new LocalQuizProvider();
 
 export class QuizService {
   private static instance: QuizService;
