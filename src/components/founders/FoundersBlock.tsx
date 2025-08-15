@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { supabase as getSupabaseClient } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
+import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
+import { resolveTier } from '@/config/foundersTiers';
 
 export const FoundersBlock: React.FC = () => {
   const { user } = useUser();
@@ -86,11 +88,13 @@ export const FoundersBlock: React.FC = () => {
   }
 
   return (
-    <div className="card lift-sm p-5 sm:p-6">
-      <div className="text-sm text-gray-500">Founders Club</div>
-
-      <div className="flex items-center justify-between mt-2">
-        <div className="text-xl font-semibold">{loading ? "…" : `${refCount}/3`} referrals</div>
+    <div className="card p-5 sm:p-6">
+      <FoundersTierBadge referrals={loading ? 0 : refCount} className="mb-4" />
+      
+      <div className="flex items-center justify-between">
+        <span className="hidden sm:inline-block">
+          <FoundersTierBadge referrals={loading ? 0 : refCount} compact />
+        </span>
         <button
           type="button"
           onClick={onShare}
