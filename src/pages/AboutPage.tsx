@@ -104,7 +104,7 @@ const AboutPage: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 flex justify-center lg:justify-end relative">
-                  <div className="relative rounded-3xl shadow-[var(--ff-soft-shadow)] bg-white overflow-hidden w-[360px] md:w-[420px] aspect-[4/5]">
+                  <div className="relative card overflow-hidden w-[360px] md:w-[420px] aspect-[4/5] lift-sm">
                     <ImageWithFallback
                       src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2"
                       alt="Vrouw die haar perfecte outfit heeft gevonden met FitFi"
