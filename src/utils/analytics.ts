@@ -76,9 +76,6 @@ export function exception(description: string, fatal: boolean = false) {
 /**
  * Generic track function (alias for event)
  */
-export function track(name: string, params: Record<string, any> = {}) {
-  return event(name, params);
-}
 
 /**
  * Track event with category and label (legacy format)

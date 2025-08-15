@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
     base: '/',
     resolve: {
       dedupe: ['react', 'react-dom', 'react-helmet-async'],
+      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
       alias: [
         { find: '@', replacement: path.resolve(__dirname, 'src') },
         // Shim AppSignal/Chameleon (alle varianten)
