@@ -36,25 +36,8 @@ export function event(name: string, params: Record<string, any> = {}) {
  * Generic track function (alias for event)
  */
 export function track(event: string, data?: Record<string, any>) {
-  try { 
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', event, data ?? {}); 
-    }
-  } catch (error) {
-    console.debug('[Analytics] Track failed:', error);
-  }
-  try { 
-    // Support for other analytics providers (Mixpanel, Amplitude, etc.)
-    if (typeof window !== 'undefined' && (window as any).analytics?.track) {
-      (window as any).analytics.track(event, data);
-    }
-  } catch (error) {
-    console.debug('[Analytics] Secondary track failed:', error);
-  }
-  // Optional debug logging in development
-  if (import.meta.env.DEV) {
-    console.debug('[Analytics] Track:', event, data);
-  }
+  try { (window as any).gtag?.('event', event, data ?? {}); } catch {}
+  try { (window as any).analytics?.track?.(event, data); } catch {}
 }
 
 /**
