@@ -13,9 +13,7 @@ import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
-
-// Lazy load NovaLoginPrompt
-const NovaLoginPrompt = React.lazy(() => import('@/components/auth/NovaLoginPrompt'));
+import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
 
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
@@ -83,18 +81,6 @@ const queryClient = new QueryClient({
 const NOVA_ENABLED = (import.meta.env.VITE_NOVA_ENABLED ?? 'true') !== 'false';
 // NotFound component
 const NotFound: React.FC = () => (
-  <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-      <p className="text-gray-600 mb-6">Pagina niet gevonden</p>
-      <a href="/" className="text-[#bfae9f] hover:text-[#a89a8c] font-medium">
-        Terug naar home
-      </a>
-    </div>
-  </div>
-);
-
-function App() {
   return (
     <CrashGate>
       <QueryClientProvider client={queryClient}>
@@ -236,21 +222,8 @@ function App() {
                       {/* Cookie Consent Banner */}
                       <Suspense fallback={null}><CookieBanner /></Suspense>
                       
-                      {/* Nova Login Prompt Modal */}
-                      <Suspense fallback={null}>
-                        <NovaLoginPrompt
-                          open={novaLoginPromptOpen}
-                          onClose={() => setNovaLoginPromptOpen(false)}
-                          onSignup={() => {
-                            setNovaLoginPromptOpen(false);
-                            window.location.assign('/registreren');
-                          }}
-                          onLogin={() => {
-                            setNovaLoginPromptOpen(false);
-                            window.location.assign('/inloggen');
-                          }}
-                        />
-                      </Suspense>
+                      {/* Nova Login Prompt Host */}
+                      <NovaLoginPromptHost />
                     </div>
                   </Router>
                 </ErrorBoundary>
