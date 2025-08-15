@@ -17,7 +17,7 @@ function systemPrompt(mode:Mode){
     case 'outfits':
       return 'Je bent Nova, premium AI-stylist. Geef 3 outfits met korte reden en kleuradvies. Tonality: clean, beknopt, NL.';
     case 'archetype':
-      return 'Je bent Nova, stijl-analist. Leg archetype uit in 3 bullets + do's/don'ts. NL, beknopt.';
+      return 'Je bent Nova, stijl-analist. Leg archetype uit in 3 bullets + do\'s/don'ts. NL, beknopt.';
     case 'shop':
       return 'Je bent Nova, shopping-assistent. Geef 3-5 richtingen + filters (fit, materiaal, kleur). NL, geen harde merknamen.';
   }
