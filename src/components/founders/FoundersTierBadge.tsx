@@ -3,7 +3,19 @@ import { Award, Star, Crown, Gift } from 'lucide-react';
 import Progress from '@/components/ui/Progress';
 import { resolveTier } from '@/config/foundersTiers';
 
-const ICONS = { Award, Star, Crown, Gift } as const;
+const ICONS: Record<string, React.ComponentType<{ size?: number }>> = { Award, Star, Crown, Gift };
+
+function getIcon(name?: string) {
+  if (!name) return Gift;
+  const Icon = ICONS[name];
+  if (!Icon) {
+    if (typeof window !== 'undefined') {
+      console.warn('[FoundersTierBadge] Unknown icon:', name);
+    }
+    return Gift;
+  }
+  return Icon;
+}
 
 type Props = {
   referrals: number;
@@ -13,7 +25,7 @@ type Props = {
 
 export default function FoundersTierBadge({ referrals, compact = false, className }: Props) {
   const { current, next, progress, base, nextAt } = resolveTier(referrals);
-  const Icon = ICONS[current.icon];
+  const Icon = getIcon(current.icon);
 
   if (compact) {
     return (
