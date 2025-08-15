@@ -8,6 +8,7 @@ import { NovaTools } from '@/ai/nova/agent';
 import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
+import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
 
 interface OutfitCardProps {
   outfit: {

@@ -36,6 +36,9 @@ export const DATA_CONFIG = {
       amazon:  { param: "tag",    id: "dormiqnl-21" }, // pas aan indien nodig
       zalando: { param: "wmc",    id: "affiliate" },   // placeholder; geen scraping
     },
+    // Safe affiliate injection settings
+    enableAffiliateParams: !!import.meta.env.VITE_DEFAULT_SHOP_PARTNER,
+    trackingOnly: !import.meta.env.VITE_DEFAULT_SHOP_PARTNER, // UTM-only mode when no partner set
   },
 } as const;
 
