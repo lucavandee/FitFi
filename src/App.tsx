@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CrashGate from '@/components/system/CrashGate';
@@ -47,6 +47,25 @@ const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
 const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
 const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
+
+// Lazy load informational pages (only if they exist)
+const BlogIndexPage = lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = lazy(() => import('@/pages/BlogDetailPage'));
+const TribesPage = lazy(() => import('@/pages/TribesPage'));
+const TribeDetailPage = lazy(() => import('@/pages/TribeDetailPage'));
+const HelpCenterPage = lazy(() => import('@/pages/HelpCenterPage'));
+const FeedbackPage = lazy(() => import('@/pages/FeedbackPage'));
+const SuccessStoriesPage = lazy(() => import('@/pages/SuccessStoriesPage'));
+const GamificationPage = lazy(() => import('@/pages/GamificationPage'));
+const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
+const FeedPage = lazy(() => import('@/pages/FeedPage'));
+const HealthCheckPage = lazy(() => import('@/pages/HealthCheckPage'));
+const BrandSafetyPage = lazy(() => import('@/pages/BrandSafetyPage'));
+const DisclosurePage = lazy(() => import('@/pages/DisclosurePage'));
+const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
+const CookiesPage = lazy(() => import('@/pages/CookiesPage'));
+const SupportPage = lazy(() => import('@/pages/SupportPage'));
+const LegalPage = lazy(() => import('@/pages/LegalPage'));
 
 // Create a client
 const queryClient = new QueryClient({
@@ -158,6 +177,93 @@ const App: React.FC = () => {
                             <ProtectedRoute>
                               <OutfitsPage />
                             </ProtectedRoute>
+                          } />
+
+                          {/* Informational Pages */}
+                          <Route path="/blog" element={
+                            <Suspense fallback={null}>
+                              <BlogIndexPage />
+                            </Suspense>
+                          } />
+                          <Route path="/blog/:slug" element={
+                            <Suspense fallback={null}>
+                              <BlogDetailPage />
+                            </Suspense>
+                          } />
+                          <Route path="/tribes" element={
+                            <Suspense fallback={null}>
+                              <TribesPage />
+                            </Suspense>
+                          } />
+                          <Route path="/tribes/:id" element={
+                            <Suspense fallback={null}>
+                              <TribeDetailPage />
+                            </Suspense>
+                          } />
+                          <Route path="/help" element={
+                            <Suspense fallback={null}>
+                              <HelpCenterPage />
+                            </Suspense>
+                          } />
+                          <Route path="/feedback" element={
+                            <Suspense fallback={null}>
+                              <FeedbackPage />
+                            </Suspense>
+                          } />
+                          <Route path="/succesverhalen" element={
+                            <Suspense fallback={null}>
+                              <SuccessStoriesPage />
+                            </Suspense>
+                          } />
+                          <Route path="/gamification" element={
+                            <Suspense fallback={null}>
+                              <GamificationPage />
+                            </Suspense>
+                          } />
+                          <Route path="/analytics" element={
+                            <Suspense fallback={null}>
+                              <AnalyticsPage />
+                            </Suspense>
+                          } />
+                          <Route path="/feed" element={
+                            <Suspense fallback={null}>
+                              <FeedPage />
+                            </Suspense>
+                          } />
+                          <Route path="/health" element={
+                            <Suspense fallback={null}>
+                              <HealthCheckPage />
+                            </Suspense>
+                          } />
+                          <Route path="/brand-safety" element={
+                            <Suspense fallback={null}>
+                              <BrandSafetyPage />
+                            </Suspense>
+                          } />
+                          <Route path="/disclosure" element={
+                            <Suspense fallback={null}>
+                              <DisclosurePage />
+                            </Suspense>
+                          } />
+                          <Route path="/privacy" element={
+                            <Suspense fallback={null}>
+                              <PrivacyPage />
+                            </Suspense>
+                          } />
+                          <Route path="/cookies" element={
+                            <Suspense fallback={null}>
+                              <CookiesPage />
+                            </Suspense>
+                          } />
+                          <Route path="/ondersteuning" element={
+                            <Suspense fallback={null}>
+                              <SupportPage />
+                            </Suspense>
+                          } />
+                          <Route path="/juridisch" element={
+                            <Suspense fallback={null}>
+                              <LegalPage />
+                            </Suspense>
                           } />
                         
                           {/* Fallback */}
