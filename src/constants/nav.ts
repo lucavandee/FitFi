@@ -12,6 +12,6 @@ export const NAV_ITEMS: NavLink[] = [
   { href: '/succesverhalen', label: 'Stories', icon: Users },
   { href: '/blog', label: 'Blog', icon: BookOpen },
   { href: '/help', label: 'Help', icon: MessageSquare },
-  { href: '/veelgestelde-vragen', label: 'FAQ', icon: HelpCircle },
+  { href: '/faq', label: 'FAQ', icon: HelpCircle },
   { href: '/inloggen', label: 'Inloggen', icon: LogIn }
 ];
