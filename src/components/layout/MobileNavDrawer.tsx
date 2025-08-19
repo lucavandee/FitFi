@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, LogIn, User } from 'lucide-react';
-import { NAV_ITEMS } from '../../constants/nav';
+import { NAV_MAIN, NAV_CTA } from '../../constants/nav';
 import { useUser } from '../../context/UserContext';
 
 interface MobileNavDrawerProps {
@@ -76,11 +76,11 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   // Filter navigation items based on auth state
   const getNavigationItems = () => {
     if (user) {
-      return NAV_ITEMS.filter(item => item.href !== '/inloggen').concat([
+      return NAV_MAIN.filter(item => item.href !== '/inloggen').concat([
         { href: '/dashboard', label: 'Dashboard', icon: User }
       ]);
     } else {
-      return NAV_ITEMS.filter(item => !item.href.includes('/dashboard'));
+      return NAV_MAIN;
     }
   };
 
@@ -207,6 +207,21 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
                   >
                     Uitloggen
                   </button>
+                </div>
+              </div>
+            )}
+            
+            {/* CTA Section for non-authenticated users */}
+            {!user && (
+              <div className="px-6 pb-6 border-t border-black/5 dark:border-white/10">
+                <div className="pt-4">
+                  <Link
+                    to={NAV_CTA.href}
+                    onClick={() => handleNavClick(NAV_CTA.href)}
+                    className="w-full px-4 py-3 min-h-[44px] text-center font-medium bg-brandPurple text-white hover:bg-brandPurple/90 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-offset-2 block"
+                  >
+                    {NAV_CTA.label}
+                  </Link>
                 </div>
               </div>
             )}
