@@ -266,7 +266,7 @@ const App: React.FC = () => {
                             </Suspense>
                           } />
                         
-                          {/* Fallback */}
+                          {/* Fallback - MUST BE LAST */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </Suspense>
