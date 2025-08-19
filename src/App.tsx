@@ -1,7 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { IS_PROD_VIEW } from '@/config/preview';
 import CrashGate from '@/components/system/CrashGate';
 import { lazyAny } from '@/utils/lazyPage';
 import { UserProvider } from '@/context/UserContext';
@@ -17,31 +16,27 @@ import AppPortal from '@/components/layout/AppPortal';
 import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
 
 // Lazy load components with lazyAny for better error handling
-const HomePage = lazy(() => import('@/pages/HomePage'));
-const HowItWorksPage = lazy(() => import('@/pages/HowItWorksPage'));
-const SuccessStoriesPage = lazy(() => import('@/pages/SuccessStoriesPage'));
-const BlogIndexPage = lazy(() => import('@/pages/BlogIndexPage'));
-const BlogDetailPage = lazy(() => import('@/pages/BlogDetailPage'));
-const HelpCenterPage = lazy(() => import('@/pages/HelpCenterPage'));
-const FAQPage = lazy(() => import('@/pages/FAQPage'));
-const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
-const PricingPage = lazy(() => import('@/pages/PricingPage'));
-const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'));
-const TermsPage = lazy(() => import('@/pages/TermsPage'));
-const ContactPage = lazy(() => import('@/pages/ContactPage'));
-const AboutPage = lazy(() => import('@/pages/AboutPage'));
-
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
 const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
 
 // Lazy load all pages with lazyAny for optimal code-splitting
+const HomePage = lazyAny(() => import('@/pages/HomePage'));
 const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
+const LoginPage = lazyAny(() => import('@/pages/LoginPage'));
+const RegisterPage = lazyAny(() => import('@/pages/RegisterPage'));
 const ForgotPasswordPage = lazyAny(() => import('@/pages/ForgotPasswordPage'));
 const ResetPasswordPage = lazyAny(() => import('@/pages/ResetPasswordPage'));
+const ProfilePage = lazyAny(() => import('@/pages/ProfilePage'));
+const AboutPage = lazyAny(() => import('@/pages/AboutPage'));
+const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
+const PricingPage = lazyAny(() => import('@/pages/PricingPage'));
+const ContactPage = lazyAny(() => import('@/pages/ContactPage'));
+const FAQPage = lazyAny(() => import('@/pages/FAQPage'));
+const TermsPage = lazyAny(() => import('@/pages/TermsPage'));
 const GenderSelectPage = lazyAny(() => import('@/pages/GenderSelectPage'));
 const ProductPage = lazyAny(() => import('@/pages/ProductPage'));
+const PrivacyPolicyPage = lazyAny(() => import('@/pages/PrivacyPolicyPage'));
 const ThankYouPage = lazyAny(() => import('@/pages/ThankYouPage'));
 const OnboardingPage = lazyAny(() => import('@/pages/OnboardingPage'));
 const QuizPage = lazyAny(() => import('@/pages/QuizPage'));
@@ -52,12 +47,15 @@ const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
 const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
 const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
-const ProfilePage = lazyAny(() => import('@/pages/ProfilePage'));
 
 // Lazy load informational pages (only if they exist)
+const BlogIndexPage = lazy(() => import('@/pages/BlogIndexPage'));
+const BlogDetailPage = lazy(() => import('@/pages/BlogDetailPage'));
 const TribesPage = lazy(() => import('@/pages/TribesPage'));
 const TribeDetailPage = lazy(() => import('@/pages/TribeDetailPage'));
+const HelpCenterPage = lazy(() => import('@/pages/HelpCenterPage'));
 const FeedbackPage = lazy(() => import('@/pages/FeedbackPage'));
+const SuccessStoriesPage = lazy(() => import('@/pages/SuccessStoriesPage'));
 const GamificationPage = lazy(() => import('@/pages/GamificationPage'));
 const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
 const FeedPage = lazy(() => import('@/pages/FeedPage'));
@@ -114,84 +112,19 @@ const App: React.FC = () => {
                       <Suspense fallback={<div className="p-8">Loading…</div>}>
                         <Routes>
                         
-                          {/* Public Pages */}
-                          <Route path="/" element={
-                            <Suspense fallback={null}>
-                              <HomePage />
-                            </Suspense>
-                          } />
-                          <Route path="/hoe-het-werkt" element={
-                            <Suspense fallback={null}>
-                              <HowItWorksPage />
-                            </Suspense>
-                          } />
-                          <Route path="/succesverhalen" element={
-                            <Suspense fallback={null}>
-                              <SuccessStoriesPage />
-                            </Suspense>
-                          } />
-                          <Route path="/blog" element={
-                            <Suspense fallback={null}>
-                              <BlogIndexPage />
-                            </Suspense>
-                          } />
-                          <Route path="/blog/:slug" element={
-                            <Suspense fallback={null}>
-                              <BlogDetailPage />
-                            </Suspense>
-                          } />
-                          <Route path="/help" element={
-                            <Suspense fallback={null}>
-                              <HelpCenterPage />
-                            </Suspense>
-                          } />
-                          <Route path="/faq" element={
-                            <Suspense fallback={null}>
-                              <FAQPage />
-                            </Suspense>
-                          } />
-                          <Route path="/inloggen" element={
-                            <Suspense fallback={null}>
-                              <LoginPage />
-                            </Suspense>
-                          } />
-                          <Route path="/registreren" element={
-                            <Suspense fallback={null}>
-                              <RegisterPage />
-                            </Suspense>
-                          } />
-                          <Route path="/prijzen" element={
-                            <Suspense fallback={null}>
-                              <PricingPage />
-                            </Suspense>
-                          } />
-                          <Route path="/privacybeleid" element={
-                            <Suspense fallback={null}>
-                              <PrivacyPolicyPage />
-                            </Suspense>
-                          } />
-                          <Route path="/voorwaarden" element={
-                            <Suspense fallback={null}>
-                              <TermsPage />
-                            </Suspense>
-                          } />
-                          <Route path="/contact" element={
-                            <Suspense fallback={null}>
-                              <ContactPage />
-                            </Suspense>
-                          } />
-                          <Route path="/over-ons" element={
-                            <Suspense fallback={null}>
-                              <AboutPage />
-                            </Suspense>
-                          } />
-                          
-                          {/* Legacy/Additional Public Routes */}
+                          {/* Public Routes */}
+                          <Route path="/" element={<LandingPage />} />
                           <Route path="/home" element={<HomePage />} />
-                          <Route path="/login" element={<Navigate to="/inloggen" replace />} />
+                          <Route path="/login" element={<LoginPage />} />
+                          <Route path="/inloggen" element={<LoginPage />} />
+                          <Route path="/registreren" element={<RegisterPage />} />
                           <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
                           <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
-                          <Route path="/veelgestelde-vragen" element={<Navigate to="/faq" replace />} />
+                          <Route path="/over-ons" element={<AboutPage />} />
+                          <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                          <Route path="/prijzen"  element={<PricingPage />} />
+                          <Route path="/contact" element={<ContactPage />} />
+                          <Route path="/veelgestelde-vragen" element={<FAQPage />} />
                           <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
                           <Route path="/product/:id" element={<ProductPage />} />
                           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -199,6 +132,8 @@ const App: React.FC = () => {
                           <Route path="/bedankt" element={<ThankYouPage />} />
                           <Route path="/profile" element={<ProfilePage />} />
                           <Route path="/terms" element={<TermsPage />} />
+                        
+                          {/* Public Routes */}
                           <Route path="/shop" element={<ShopRedirect />} />
                           
                           {/* Protected Routes */}
@@ -245,6 +180,16 @@ const App: React.FC = () => {
                           } />
 
                           {/* Informational Pages */}
+                          <Route path="/blog" element={
+                            <Suspense fallback={null}>
+                              <BlogIndexPage />
+                            </Suspense>
+                          } />
+                          <Route path="/blog/:slug" element={
+                            <Suspense fallback={null}>
+                              <BlogDetailPage />
+                            </Suspense>
+                          } />
                           <Route path="/tribes" element={
                             <Suspense fallback={null}>
                               <TribesPage />
@@ -255,9 +200,19 @@ const App: React.FC = () => {
                               <TribeDetailPage />
                             </Suspense>
                           } />
+                          <Route path="/help" element={
+                            <Suspense fallback={null}>
+                              <HelpCenterPage />
+                            </Suspense>
+                          } />
                           <Route path="/feedback" element={
                             <Suspense fallback={null}>
                               <FeedbackPage />
+                            </Suspense>
+                          } />
+                          <Route path="/succesverhalen" element={
+                            <Suspense fallback={null}>
+                              <SuccessStoriesPage />
                             </Suspense>
                           } />
                           <Route path="/gamification" element={
@@ -310,8 +265,8 @@ const App: React.FC = () => {
                               <LegalPage />
                             </Suspense>
                           } />
-                          
-                          {/* 404 Fallback - MUST BE LAST */}
+                        
+                          {/* Fallback - MUST BE LAST */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </Suspense>
