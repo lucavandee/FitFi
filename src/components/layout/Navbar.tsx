@@ -4,7 +4,7 @@ import { Menu, X, User, LogOut } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import Button from '../ui/Button';
 import Logo from '../ui/Logo';
-import { NAV_ITEMS } from '../../constants/nav';
+import { NAV_MAIN, NAV_CTA } from '../../constants/nav';
 import MobileNavDrawer from './MobileNavDrawer';
 import { scrollToHash } from '../../utils/scrollUtils';
 
@@ -44,16 +44,14 @@ const Navbar: React.FC = () => {
     scrollToHash(href);
   };
 
-  // Filter desktop navigation items
-  const getDesktopNavItems = () => {
-    return NAV_ITEMS.filter(item => 
-      !item.href.includes('/inloggen') && 
-      !item.href.includes('/dashboard') &&
-      !item.href.includes('/results')
-    );
-  };
-
-  const desktopNavItems = getDesktopNavItems();
+  // Filter desktop navigation items - exclude login for authenticated users
+  const desktopNavItems = NAV_MAIN.filter(item => {
+    // Hide login link if user is authenticated
+    if (item.href === '/inloggen' && user) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <>
@@ -127,19 +125,11 @@ const Navbar: React.FC = () => {
                 <>
                   <Button
                     as={Link}
-                    to="/inloggen"
-                    variant="ghost"
-                    size="sm"
-                  >
-                    Inloggen
-                  </Button>
-                  <Button
-                    as={Link}
-                    to="/registreren"
+                    to={NAV_CTA.href}
                     variant="primary"
                     size="sm"
                   >
-                    Gratis starten
+                    {NAV_CTA.label}
                   </Button>
                 </>
               )}
