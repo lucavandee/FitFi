@@ -124,7 +124,8 @@ const App: React.FC = () => {
                           <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
                           <Route path="/prijzen"  element={<PricingPage />} />
                           <Route path="/contact" element={<ContactPage />} />
-                          <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+                          <Route path="/faq" element={<FAQPage />} />
+                          <Route path="/veelgestelde-vragen" element={<Navigate to="/faq" replace />} />
                           <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
                           <Route path="/product/:id" element={<ProductPage />} />
                           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
