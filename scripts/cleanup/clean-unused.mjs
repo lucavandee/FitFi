@@ -18,6 +18,7 @@ const ALWAYS_KEEP = new Set([
   'src/main.tsx',
   'src/main.ts',
   'src/vite-env.d.ts',
+  'src/bootstrap/guards.ts',
 ]);
 
 // Alias resolver for '@/...' → 'src/...'
