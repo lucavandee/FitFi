@@ -26,6 +26,7 @@
     "supabase:push": "npx supabase db push",
     "supabase:reset": "npx supabase db reset",
     "supabase:status": "npx supabase status",
+    "clean:unused": "node scripts/cleanup/clean-unused.mjs",
     "prepare": "node -e \"if(process.env.CI!=='true'){try{require('child_process').execSync('husky install',{stdio:'inherit'})}catch(e){console.log('husky skipped')}}\""
   },
   "dependencies": {
