@@ -4,7 +4,7 @@ import { ArrowLeft, Trophy } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../context/GamificationContext';
-import GamificationDashboard from '../components/gamification/GamificationDashboard';
+import GamificationDashboard from '@/components/gamification/GamificationDashboard';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import Button from '../components/ui/Button';
 
