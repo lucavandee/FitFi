@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useIsAdmin } from '../hooks/useIsAdmin';
-import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard';
+import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import FunnelVisualizer from '@/components/analytics/FunnelVisualizer';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
