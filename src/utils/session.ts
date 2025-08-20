@@ -24,6 +24,15 @@ export function getUID(): string {
   return uid;
 }
 
+export function hasValidSession(): boolean {
+  // Check for basic session indicators
+  const hasUID = !!localStorage.getItem(UID_KEY);
+  const hasCookie = document.cookie.includes('fitfi_uid');
+  const hasAuthCookie = document.cookie.includes('sb-') || document.cookie.includes('supabase');
+  
+  return hasUID || hasCookie || hasAuthCookie;
+}
+
 function getToday(): string {
   return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 }
@@ -72,6 +81,26 @@ export function incrementUsage(tier: FitfiTier, userId: string): void {
   
   setUsageCount('day', userId, dailyUsage + 1);
   setUsageCount('week', userId, weeklyUsage + 1);
+}
+
+export function getRemainingQuota(tier: FitfiTier, userId: string): {
+  daily: { remaining: number; limit: number };
+  weekly: { remaining: number; limit: number };
+} {
+  const limits = NOVA_ACCESS.limits[tier];
+  const dailyUsed = getUsageCount('day', userId);
+  const weeklyUsed = getUsageCount('week', userId);
+  
+  return {
+    daily: {
+      remaining: Math.max(0, limits.perDay - dailyUsed),
+      limit: limits.perDay
+    },
+    weekly: {
+      remaining: Math.max(0, limits.perWeek - weeklyUsed),
+      limit: limits.perWeek
+    }
+  };
 }
 
 export function getUsageStats(tier: FitfiTier, userId: string): {
