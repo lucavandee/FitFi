@@ -6,7 +6,7 @@ import { useUser } from '../context/UserContext';
 import { useTribes } from '../hooks/useTribes';
 import { useFitFiUser } from '../hooks/useFitFiUser';
 import { JoinButton } from '../components/tribes/JoinButton';
-import { RankingBoard } from '../components/Tribes/RankingBoard';
+import RankingBoard from "@/components/Tribes/RankingBoard";
 import type { Tribe } from '../services/data/types';
 import { stableKey } from '../utils/key';
 import Button from '../components/ui/Button';
