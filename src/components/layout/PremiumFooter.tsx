@@ -161,7 +161,11 @@ function PremiumFooterInner() {
   }, []);
 
   return (
-    <footer className="bg-[#0D1B2A] text-white" role="contentinfo">
+    <footer 
+      data-testid="app-footer" 
+      className={`bg-[#0D1B2A] text-white${import.meta.env.VITE_DEBUG_FOOTER === 'true' ? ' outline outline-1 outline-rose-400' : ''}`} 
+      role="contentinfo"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

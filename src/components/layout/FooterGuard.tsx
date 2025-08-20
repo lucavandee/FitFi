@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect, useRef, PropsWithChildren } from 'react';
 
-declare global {
-  interface Window { __FITFI_FOOTER_MOUNTED?: boolean }
+const KEY = '__FITFI_FOOTER_MOUNTED_V2__';
+declare global { interface Window { [key: string]: any } }
+
+export default function FooterGuard({ children }: PropsWithChildren) {
+  const claimed = useRef(false);
+
+  useEffect(() => {
+    if (window[KEY]) return;
+    window[KEY] = true;
+    claimed.current = true;
+    return () => { if (claimed.current) window[KEY] = false; };
+  }, []);
+
+  if (typeof window !== 'undefined' && window[KEY] && !claimed.current) return null;
+  return <>{children}</>;
 }
 
-/** Ensures the footer mounts only once app-wide. */
-export default function FooterGuard({ children }: { children: React.ReactNode }) {
-  if (typeof window !== 'undefined') {
-    if (window.__FITFI_FOOTER_MOUNTED) return null;
-    window.__FITFI_FOOTER_MOUNTED = true;
-  }
-  return <>{children}</>;
+if (import.meta && (import.meta as any).hot) {
+  (import.meta as any).hot.accept(() => { try { window[KEY] = false; } catch {} });
 }
