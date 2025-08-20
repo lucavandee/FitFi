@@ -3,6 +3,7 @@ import { openCookieSettings } from '@/utils/cookies';
 import { Mail, Phone, MapPin, ArrowRight, CheckCircle2, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useMemo } from 'react';
+import FooterGuard from '@/components/layout/FooterGuard';
 
 const year = new Date().getFullYear();
 
@@ -142,7 +143,7 @@ function SocialLinks() {
   );
 }
 
-export default function PremiumFooter() {
+function PremiumFooterInner() {
   const enhancedColumns = useMemo(() => {
     const columns = [...FOOTER_COLUMNS];
     
@@ -249,5 +250,13 @@ export default function PremiumFooter() {
         </div>
       </div>
     </footer>
+  );
+}
+
+export default function PremiumFooter() {
+  return (
+    <FooterGuard>
+      <PremiumFooterInner />
+    </FooterGuard>
   );
 }
