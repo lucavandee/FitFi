@@ -49,6 +49,7 @@ const DynamicOnboardingPage = lazyAny(() => import('@/pages/DynamicOnboardingPag
 const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
 const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
+const SavedOutfitsPage = lazyAny(() => import('@/pages/SavedOutfitsPage'));
 const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
 
 // Lazy load informational pages (only if they exist)
@@ -180,6 +181,11 @@ const App: React.FC = () => {
                           <Route path="/outfits" element={
                             <ProtectedRoute>
                               <OutfitsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/saved" element={
+                            <ProtectedRoute>
+                              <SavedOutfitsPage />
                             </ProtectedRoute>
                           } />
 
