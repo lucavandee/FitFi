@@ -11,6 +11,7 @@ import { NavigationServiceInitializer } from '@/components/NavigationServiceInit
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
+import PremiumFooter from '@/components/layout/PremiumFooter';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
 import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
@@ -285,6 +286,9 @@ const App: React.FC = () => {
                       
                       {/* Nova Login Prompt Host */}
                       <NovaLoginPromptHost />
+                      
+                      {/* Premium Footer */}
+                      <PremiumFooter />
                     </div>
                   </Router>
                 </ErrorBoundary>
