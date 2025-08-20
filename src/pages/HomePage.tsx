@@ -5,6 +5,8 @@ import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
 import HeroTitle from '@/components/marketing/HeroTitle';
 import Chip from '@/components/ui/Chip';
+import Hero from '@/components/sections/Hero';
+import StickyCTA from '@/components/ui/StickyCTA';
 import NovaStyleSwipe from '@/components/nova/NovaStyleSwipe';
 import HowItWorks from '@/components/sections/HowItWorks';
 import { useOutfitsFeed } from '@/hooks/useOutfitsFeed';
@@ -44,90 +46,9 @@ const HomePage: React.FC = () => {
       
       <div className="min-h-screen bg-[#FAF8F6]">
         {/* Hero Section */}
-        {getHomepageFlag('showHero') && (
-          <section className="flex items-center justify-center py-20 md:py-28">
-            <div className="not-prose text-center max-w-2xl mx-auto p-8">
-              <div className="w-20 h-20 bg-[#89CFF0] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 text-white" />
-              </div>
-              
-              <div className="mb-6">
-                <HeroTitle
-                  lines={[
-                    'Ontdek wat',
-                    'jouw stijl',
-                    'over je zegt',
-                  ]}
-                  accents={{
-                    1: [
-                      { word: 'jouw', className: 'text-gradient-soft', onlyFirst: true },
-                      { word: 'stijl', className: 'text-gradient accent-bump sheen', onlyFirst: true },
-                    ],
-                  }}
-                  className="mb-6"
-                  balance
-                />
-              </div>
-              
-              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
-                Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
-                jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
-              </p>
-              
-              {/* Trust Indicators */}
-              <div className="flex flex-wrap justify-center gap-3 mt-4 mb-8">
-                <Chip>100% Gratis</Chip>
-                <Chip>2 Minuten</Chip>
-                <Chip>Direct Resultaat</Chip>
-              </div>
-              
-              <div className="space-y-4">
-                {user ? (
-                  <>
-                    <Button 
-                      as={Link}
-                      to="/dashboard" 
-                      variant="primary"
-                      size="lg"
-                      icon={<ArrowRight size={20} />}
-                      iconPosition="right"
-                      data-ff-event="cta_click"
-                      data-ff-loc="home_hero"
-                      className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-                    >
-                      Ga naar Dashboard
-                    </Button>
-                    <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
-                      Welkom terug, {user.name}!
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <Button 
-                      as={Link}
-                      to="/registreren" 
-                      onClick={handleStartQuiz}
-                      variant="primary"
-                      size="lg"
-                      icon={<ArrowRight size={20} />}
-                      iconPosition="right"
-                      className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-                      data-ff-event="cta_click"
-                      data-ff-loc="home_hero"
-                    >
-                      Start nu gratis
-                    </Button>
-                    <p className="text-sm text-gray-500 mt-4">
-                      Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten gegenereerd
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
+        <Hero />
 
-        {/* Nova Style Swipe */}
+        {/* AI Style Preview Section */}
         {getHomepageFlag('showNovaStyleSwipe') && (
           <section className="py-16 bg-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -325,6 +246,9 @@ const HomePage: React.FC = () => {
           </section>
         )}
       </div>
+
+      {/* Sticky Mobile CTA */}
+      <StickyCTA />
     </>
   );
 };
