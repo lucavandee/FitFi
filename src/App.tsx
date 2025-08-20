@@ -11,10 +11,10 @@ import { NavigationServiceInitializer } from '@/components/NavigationServiceInit
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
-import PremiumFooter from '@/components/layout/PremiumFooter';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
 import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
+import PremiumFooter from '@/components/layout/PremiumFooter';
 
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
