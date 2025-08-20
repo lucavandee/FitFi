@@ -19,6 +19,8 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:smoke": "playwright test tests/visual/nova-sse-health.spec.ts --headed",
+    "clean:page-footers": "node scripts/codemods/remove-page-footers.mjs",
+    "preflight": "node scripts/preflight.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "supabase:setup": "node scripts/supabase-setup.js",
