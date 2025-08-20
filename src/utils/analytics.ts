@@ -3,6 +3,40 @@
  * Provides safe, fail-safe analytics tracking
  */
 
+export type AnalyticsPayload = Record<string, any>;
+
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+    plausible?: (event: string, opts?: { props?: Record<string, any> }) => void;
+  }
+}
+
+/**
+ * Track an event with fallback to multiple providers
+ */
+export function track(event: string, props: AnalyticsPayload = {}) {
+  try {
+    // Google Analytics 4 (gtag)
+    if (typeof window?.gtag === 'function') {
+      window.gtag('event', event, props);
+    }
+    // Plausible Analytics
+    else if (typeof window?.plausible === 'function') {
+      window.plausible(event, { props });
+    }
+    // Development logging
+    else if (import.meta.env.DEV) {
+      console.info('[Analytics]', event, props);
+    }
+  } catch (error) {
+    // Fail silently in production, log in development
+    if (import.meta.env.DEV) {
+      console.warn('[Analytics] Tracking failed:', error);
+    }
+  }
+}
+
 /**
  * Track a pageview
  */
@@ -33,14 +67,6 @@ export function event(name: string, params: Record<string, any> = {}) {
 }
 
 /**
- * Generic track function (alias for event)
- */
-export function track(event: string, data?: Record<string, any>) {
-  try { (window as any).gtag?.('event', event, data ?? {}); } catch {}
-  try { (window as any).analytics?.track?.(event, data); } catch {}
-}
-
-/**
  * Track an exception
  */
 export function exception(description: string, fatal: boolean = false) {
@@ -55,10 +81,6 @@ export function exception(description: string, fatal: boolean = false) {
     console.debug('[Analytics] Exception failed:', error);
   }
 }
-
-/**
- * Generic track function (alias for event)
- */
 
 /**
  * Track event with category and label (legacy format)
