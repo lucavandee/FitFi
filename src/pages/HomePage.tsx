@@ -9,6 +9,7 @@ import Hero from '@/components/sections/Hero';
 import StickyCTA from '@/components/ui/StickyCTA';
 import NovaStyleSwipe from '@/components/nova/NovaStyleSwipe';
 import HowItWorks from '@/components/sections/HowItWorks';
+import SocialProof from '@/components/sections/SocialProof';
 import { useOutfitsFeed } from '@/hooks/useOutfitsFeed';
 import { HOMEPAGE_FLAGS, getHomepageFlag } from '@/config/homepage';
 import { useUser } from '../context/UserContext';
@@ -75,73 +76,16 @@ const HomePage: React.FC = () => {
 
         {/* Social Proof - Gated */}
         {getHomepageFlag('showSocialProof') && (
-          <section className="py-16 bg-gray-50">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
-              <h2 className="text-2xl font-light text-[#0D1B2A] mb-8">
-                Wat anderen zeggen
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <p className="text-gray-700 italic mb-4">
-                    "Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter."
-                  </p>
-                  <div className="flex items-center justify-center">
-                    <div className="w-10 h-10 bg-[#89CFF0] rounded-full flex items-center justify-center text-white font-medium mr-3">
-                      E
-                    </div>
-                    <div>
-                      <p className="font-medium text-[#0D1B2A]">Emma</p>
-                      <p className="text-sm text-gray-600">Geverifieerde gebruiker</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <p className="text-gray-700 italic mb-4">
-                    "Alsof deze AI recht door mij heen keek, superwaardevol!"
-                  </p>
-                  <div className="flex items-center justify-center">
-                    <div className="w-10 h-10 bg-[#89CFF0] rounded-full flex items-center justify-center text-white font-medium mr-3">
-                      J
-                    </div>
-                    <div>
-                      <p className="font-medium text-[#0D1B2A]">Jordi</p>
-                      <p className="text-sm text-gray-600">Geverifieerde gebruiker</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Trust indicators */}
-              <div className="mt-12 flex flex-wrap justify-center items-center space-x-8 text-sm text-gray-500">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>10.000+ rapporten gegenereerd</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>4.8/5 gemiddelde beoordeling</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>95% nauwkeurigheid</span>
-                </div>
-              </div>
-            </div>
-          </section>
+          <SocialProof />
         )}
 
         {/* Features - Gated */}
         {getHomepageFlag('showFeatures') && (
-          <section className="py-16 bg-white">
+          <section className="py-16 bg-gray-50">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
-              <h2 className="text-3xl font-light text-[#0D1B2A] mb-6">
+              <h2 className="text-2xl font-light text-[#0D1B2A] mb-8">
                 Wat zit er in het AI Style Report?
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-                Jouw persoonlijke stijlrapport bevat alles wat je nodig hebt
-              </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
