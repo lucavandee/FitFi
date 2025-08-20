@@ -16,7 +16,7 @@ import { useUser } from '../context/UserContext';
 import { useTribeBySlug, useTribes } from '../hooks/useTribes';
 import { useTribeChallenges, useChallengeSubmissions, useCreateChallengeSubmission, useCreateTribeChallenge } from '../hooks/useTribeChallenges';
 import { useIsAdmin } from '../hooks/useIsAdmin';
-import { JoinButton } from '../components/tribes/JoinButton';
+import { JoinButton } from '@/components/tribes/JoinButton';
 import { PostComposer } from '../components/tribes/PostComposer';
 import { PostsList } from '../components/tribes/PostsList';
 import { ChallengeCard } from '../components/Tribes/ChallengeCard';
