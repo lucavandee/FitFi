@@ -64,6 +64,13 @@ export function getHealthStatus(): HealthStatus {
   return healthStatus;
 }
 
+/**
+ * Simple health check - returns true if Supabase is healthy
+ */
+export function isHealthy(): boolean {
+  return healthStatus.isHealthy;
+}
+
 export function startHealthMonitoring(intervalMs: number = 60000): () => void {
   // Clear any existing interval
   if (healthCheckInterval) {
