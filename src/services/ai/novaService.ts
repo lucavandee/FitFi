@@ -1,6 +1,21 @@
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
 import { getUserTier, getUID } from '@/utils/session';
 
+// Custom error types for Nova service
+export class NovaAuthError extends Error {
+  constructor(message: string = 'Authentication required for Nova') {
+    super(message);
+    this.name = 'NovaAuthError';
+  }
+}
+
+export class NovaQuotaError extends Error {
+  constructor(message: string = 'Nova quota exceeded') {
+    super(message);
+    this.name = 'NovaQuotaError';
+  }
+}
+
 export type NovaMode = 'outfits' | 'archetype' | 'shop';
 export type Role = 'system' | 'user' | 'assistant';
 export interface ChatMessage { role: Role; content: string; }
@@ -23,13 +38,34 @@ export async function* streamChat({
   messages,
   signal,
   onEvent,
+  requireAuth = true,
 }: {
   mode: NovaMode;
   messages: ChatMessage[];
   signal?: AbortSignal;
   onEvent?: (evt: NovaStreamEvent) => void;
+  requireAuth?: boolean;
 }): AsyncGenerator<string, void, unknown> {
   const dbg = import.meta.env.VITE_NOVA_DEBUG === 'true';
+
+  // Check authentication if required
+  if (requireAuth) {
+    // Check if user has valid session (basic check)
+    const hasValidSession = document.cookie.includes('fitfi_uid') || localStorage.getItem('fitfi_uid');
+    if (!hasValidSession) {
+      onEvent?.({ type: 'error' });
+      throw new NovaAuthError('Sessie vereist voor Nova');
+    }
+  }
+
+  // Check quota limits
+  const tier = getUserTier();
+  const uid = getUID();
+  
+  if (!checkQuotaLimit(tier, uid)) {
+    onEvent?.({ type: 'error' });
+    throw new NovaQuotaError(`Quota overschreden voor ${tier} tier`);
+  }
 
   const res = await fetch('/.netlify/functions/nova', {
     method: 'POST',

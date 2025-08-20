@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
+import { Send, Loader, Sparkles, Copy, X, Bot, Lock, ArrowRight } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
 import { mdNova } from '@/components/ai/markdown';
@@ -12,6 +12,8 @@ import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
 import QuotaModal from './QuotaModal';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 import { generateNovaExplanation } from '@/engine/explainOutfit';
+import Button from '@/components/ui/Button';
+import { Link } from 'react-router-dom';
 
 // ADD bovenaan
 function mdLite(s:string){
@@ -64,6 +66,85 @@ const NovaChat: React.FC = () => {
   const abortRef = useRef<AbortController | null>(null);
   const [quotaOpen, setQuotaOpen] = useState(false);
   const userTier = getUserTier();
+
+  // Authentication gate - render login required state if no user
+  if (!user) {
+    // Track blocked access
+    useEffect(() => {
+      track('nova_blocked_unauthenticated', {
+        event_category: 'ai_interaction',
+        event_label: 'login_required'
+      });
+    }, []);
+
+    return (
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center shadow-sm">
+              <Lock className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-ink">Nova AI</h2>
+              <div className="flex items-center space-x-2">
+                <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                  Inloggen vereist
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Login Required Content */}
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center max-w-sm">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-8 h-8 text-white" />
+            </div>
+            
+            <h3 className="text-xl font-medium text-gray-900 mb-3">
+              Inloggen vereist
+            </h3>
+            
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Maak een account aan of log in om persoonlijke stijladviezen van Nova te ontvangen.
+            </p>
+            
+            <div className="space-y-3">
+              <Button
+                as={Link}
+                to="/inloggen"
+                variant="primary"
+                size="lg"
+                fullWidth
+                icon={<ArrowRight size={20} />}
+                iconPosition="right"
+                className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+              >
+                Log in
+              </Button>
+              
+              <Button
+                as={Link}
+                to="/registreren"
+                variant="outline"
+                size="lg"
+                fullWidth
+                className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+              >
+                Account aanmaken
+              </Button>
+            </div>
+            
+            <p className="text-xs text-gray-500 mt-4">
+              100% gratis • Geen creditcard vereist
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Initialize Nova with greeting
   useEffect(() => {
