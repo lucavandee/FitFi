@@ -287,8 +287,6 @@ const App: React.FC = () => {
                       {/* Nova Login Prompt Host */}
                       <NovaLoginPromptHost />
                       
-                      {/* Footer */}
-                      <PremiumFooter />
                     </div>
                   </Router>
                 </ErrorBoundary>
