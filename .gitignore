@@ -134,3 +134,5 @@ Thumbs.db
 
 # Quarantine directory for safe cleanup
 .quarantine/
+# editor backups
+*.bak
