@@ -6,6 +6,7 @@ import Button from '../components/ui/Button';
 import HeroTitle from '@/components/marketing/HeroTitle';
 import Chip from '@/components/ui/Chip';
 import NovaStyleSwipe from '@/components/nova/NovaStyleSwipe';
+import HowItWorks from '@/components/sections/HowItWorks';
 import { useOutfitsFeed } from '@/hooks/useOutfitsFeed';
 import { HOMEPAGE_FLAGS, getHomepageFlag } from '@/config/homepage';
 import { useUser } from '../context/UserContext';
@@ -148,44 +149,19 @@ const HomePage: React.FC = () => {
 
         {/* How It Works - Gated */}
         {getHomepageFlag('showHowItWorks') && (
-          <section className="py-16 bg-gray-50">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
-              <h2 className="text-3xl font-light text-[#0D1B2A] mb-6">
-                Hoe werkt het?
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-12">
-                In drie eenvoudige stappen naar jouw persoonlijke AI Style Report
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  { step: 1, title: 'Doe de AI-stijlquiz', desc: 'Beantwoord 5 vragen over je voorkeuren' },
-                  { step: 2, title: 'Nova analyseert', desc: 'AI analyseert jouw unieke stijlprofiel' },
-                  { step: 3, title: 'Ontvang rapport', desc: 'Direct jouw gepersonaliseerde aanbevelingen' }
-                ].map((item) => (
-                  <div key={item.step} className="bg-white rounded-2xl p-6 shadow-sm">
-                    <div className="w-12 h-12 bg-[#89CFF0] text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold">
-                      {item.step}
-                    </div>
-                    <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">{item.title}</h3>
-                    <p className="text-gray-600">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <HowItWorks />
         )}
 
         {/* Social Proof - Gated */}
         {getHomepageFlag('showSocialProof') && (
-          <section className="py-16 bg-white">
+          <section className="py-16 bg-gray-50">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
               <h2 className="text-2xl font-light text-[#0D1B2A] mb-8">
                 Wat anderen zeggen
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div className="bg-gray-50 rounded-2xl p-6">
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <p className="text-gray-700 italic mb-4">
                     "Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter."
                   </p>
@@ -200,7 +176,7 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="bg-gray-50 rounded-2xl p-6">
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <p className="text-gray-700 italic mb-4">
                     "Alsof deze AI recht door mij heen keek, superwaardevol!"
                   </p>
@@ -237,7 +213,7 @@ const HomePage: React.FC = () => {
 
         {/* Features - Gated */}
         {getHomepageFlag('showFeatures') && (
-          <section className="py-16 bg-gray-50">
+          <section className="py-16 bg-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
               <h2 className="text-3xl font-light text-[#0D1B2A] mb-6">
                 Wat zit er in het AI Style Report?
@@ -253,7 +229,7 @@ const HomePage: React.FC = () => {
                   { icon: '✨', title: "Nova's aanbevelingen", desc: 'Direct toepasbare tips en voorbeeldoutfits' },
                   { icon: '💝', title: 'Wishlist', desc: 'Perfect passende producten geselecteerd door Nova' }
                 ].map((feature, index) => (
-                  <div key={index} className="bg-white rounded-2xl p-6 shadow-sm">
+                  <div key={index} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                     <div className="text-4xl mb-4">{feature.icon}</div>
                     <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">{feature.title}</h3>
                     <p className="text-gray-600">{feature.desc}</p>
