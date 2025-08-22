@@ -11,4 +11,4 @@ fi
 echo '✅ Geen Python headers gevonden in frontend code'
 
 # Run lint-staged
-npx lint-staged
+npx lint-stagednode scripts/guard/no-large-files.mjs
