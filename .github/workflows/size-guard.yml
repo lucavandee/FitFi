@@ -1,0 +1,22 @@
+name: Repo Size Guard
+on: [pull_request]
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Block large files in PR
+        run: |
+          MAX=$((500*1024))
+          bad=0
+          base="origin/${{ github.base_ref }}"
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git diff --name-only $base...HEAD | while read f; do
+            [ -f "$f" ] || continue
+            size=$(wc -c < "$f")
+            ext="${f##*.}"
+            case "$ext" in mp4|mov|mkv|avi|zip|7z|rar|psd|ai|sketch|fig|xd|map) echo "BANNED: $f"; bad=1;; esac
+            [ "$size" -gt "$MAX" ] && echo "TOO BIG ($size B): $f" && bad=1
+          done
+          [ "$bad" -eq 0 ] || { echo "❌ Large/banned files detected."; exit 1; }
