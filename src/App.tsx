@@ -3,6 +3,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 import CrashGate from '@/components/system/CrashGate';
 import { lazyAny } from '@/utils/lazyPage';
 import { UserProvider } from '@/context/UserContext';
@@ -297,6 +298,9 @@ const App: React.FC = () => {
                       
                       {/* Single App-Level Footer */}
                       <PremiumFooter />
+                      
+                      {/* Toast Notifications */}
+                      <Toaster position="top-center" toastOptions={{ duration: 2500 }} />
                       
                     </div>
                   </Router>
