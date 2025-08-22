@@ -133,4 +133,21 @@ Thumbs.db
 .temp
 
 # Quarantine directory for safe cleanup
-.quarantine/
+.quarantine/# Build artefacts
+dist/
+build/
+*.map
+
+# Heavy binaries we never want in Git
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.zip
+*.7z
+*.rar
+*.psd
+*.ai
+*.sketch
+*.fig
+*.xd
