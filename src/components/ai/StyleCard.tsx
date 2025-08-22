@@ -1,4 +1,8 @@
 import '@/bootstrap/guards';
+import { useSavedOutfit } from '@/hooks/useSavedOutfit';
+import { toastSaved, toastRemoved } from '@/utils/toast';
+import { track } from '@/utils/analytics';
+import { buildDeeplink } from '@/utils/deeplinks';
 import { HelmetProvider } from 'react-helmet-async';
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -20,6 +24,69 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
 import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
 import PremiumFooter from '@/components/layout/PremiumFooter';
+
+// StyleCard component implementation
+const StyleCard: React.FC<{ outfit: any }> = ({ outfit }) => {
+  const { saved, toggle, busy } = useSavedOutfit(outfit);
+  const main = outfit?.products?.[0];
+
+  const handleSave = async () => {
+    if (busy) return;
+    
+    try {
+      const newSavedState = await toggle();
+      
+      if (newSavedState) {
+        track('saved_outfit_add', { outfitId: outfit.id, source: 'style_preview' });
+        toastSaved(async () => { 
+          await toggle(); 
+          track('saved_outfit_undo_remove', { outfitId: outfit.id }); 
+        });
+      } else {
+        track('saved_outfit_remove', { outfitId: outfit.id, source: 'style_preview' });
+        toastRemoved(async () => { 
+          await toggle(); 
+          track('saved_outfit_undo_add', { outfitId: outfit.id }); 
+        });
+      }
+    } catch (error) {
+      console.error('Save toggle failed:', error);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm p-4">
+      <h3 className="font-medium text-gray-900 mb-2">{outfit.title}</h3>
+      
+      <div className="flex items-center justify-between">
+        <button
+          onClick={handleSave}
+          disabled={busy}
+          className={`rounded-2xl px-4 py-3 font-semibold transition ${
+            saved 
+              ? 'text-white bg-slate-900 hover:bg-slate-800' 
+              : 'text-slate-600 bg-slate-100 hover:bg-slate-200'
+          } ${busy ? 'opacity-50 cursor-not-allowed' : ''}`}
+          aria-label={saved ? 'Verwijder uit favorieten' : 'Bewaar outfit'}
+          title={saved ? 'Verwijder uit favorieten' : 'Bewaar outfit'}
+        >
+          {saved ? '♥' : '♡'}
+        </button>
+        
+        {main?.url && (
+          <a 
+            href={buildDeeplink(main.url)} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="rounded-2xl px-4 py-3 bg-[#89CFF0] text-[#0D1B2A] font-semibold hover:bg-[#89CFF0]/90 transition"
+          >
+            Shop deze look
+          </a>
+                )}
+      </div>
+    </div>
+  );
+};
 
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
