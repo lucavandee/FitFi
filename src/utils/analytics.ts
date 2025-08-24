@@ -37,6 +37,37 @@ export function track(event: string, props: AnalyticsPayload = {}) {
   }
 }
 
+export const w = (eventName: string, properties?: Record<string, any>) => {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    // Track with multiple providers
+    trackEvent(eventName, properties);
+    
+    // Also send to our analytics endpoint if available
+    if (window.gtag) {
+      window.gtag('event', eventName, properties);
+    }
+  } catch (error) {
+    console.warn('Analytics tracking failed:', error);
+  }
+};
+
+export const pageview = (url: string, title?: string) => {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    if (window.gtag) {
+      window.gtag('config', 'GA_MEASUREMENT_ID', {
+        page_path: url,
+        page_title: title
+      });
+    }
+  } catch (error) {
+    console.warn('Pageview tracking failed:', error);
+  }
+};
+
 /**
  * Track a pageview
  */
