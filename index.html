@@ -115,6 +115,8 @@
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Define Nova agent loader early, before any Nova widget loads -->
     <script>
       window.loadNovaAgent ??= async () => {
         // Laad de agent-module lui vanuit de app (werkt in Vite dev & build)
