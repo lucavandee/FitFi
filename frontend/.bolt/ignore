@@ -1,0 +1,47 @@
+# ========= FitFi .bolt/ignore (alleen AI-context, GEEN invloed op build) =========
+# Doel: project size verlagen door gegenereerde, zware of irrelevante files uit AI-context te houden.
+
+### 1) Build output (altijd veilig om te negeren)
+dist/**
+*.map
+
+### 2) Caches & tooling output
+.vite/**
+.storybook-out/**
+storybook-static/**
+coverage/**
+**/.cache/**
+**/.turbo/**
+**/.parcel-cache/**
+**/.next/**
+
+### 3) Test artifacts
+**/__snapshots__/**
+cypress/videos/**
+cypress/screenshots/**
+playwright-report/**
+test-results/**
+
+### 4) Logs & tijdelijk spul
+*.log
+logs/**
+tmp/**
+*.tmp
+
+### 5) Grote/binaire assets (voeg toe als nodig)
+# Let op: dit verbergt alleen voor AI; je app blijft werken.
+# Start bescheiden. Als de limiet nog geraakt wordt, kun je onderstaande directories deblokkeren.
+public/uploads/**
+public/videos/**
+public/media/**
+public/assets/**
+public/images/hero/**
+public/images/photos/**
+public/icons/raw/**
+*.zip
+*.pdf
+*.psd
+*.ai
+*.mp4
+*.mov
+*.webm
