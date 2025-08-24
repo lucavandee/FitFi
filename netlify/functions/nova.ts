@@ -28,6 +28,25 @@ export const handler: Handler = async (event) => {
   const acceptsSSE = /text\/event-stream/i.test(event.headers.accept || '');
   const traceId = randomUUID();
 
+  // Health check (GET)
+  if (event.httpMethod === 'GET') {
+    return {
+      statusCode: 200,
+      headers: {
+        'content-type': 'application/json',
+        'cache-control': 'no-store',
+        'access-control-allow-origin': '*',
+        'access-control-allow-headers': 'Content-Type, x-fitfi-tier, x-fitfi-uid',
+        'access-control-allow-methods': 'GET, POST, OPTIONS',
+      },
+      body: JSON.stringify({
+        ok: true,
+        hasKey: !!process.env.OPENAI_API_KEY,
+        model: process.env.FITFI_NOVA_MODEL || 'gpt-4o-mini'
+      }),
+    };
+  }
+
   // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
