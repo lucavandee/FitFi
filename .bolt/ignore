@@ -1,0 +1,59 @@
+# ========= Root .bolt/ignore (reduceer AI-context) =========
+# Dit beïnvloedt ALLEEN Bolt's AI context. Build/deploy blijven normaal werken.
+
+# 0) Repo intern en node_modules (grootst)
+.git/**
+**/node_modules/**
+
+# 1) Monorepo: backend buiten AI-context houden
+# (We bewerken frontend met Bolt; backend draait los op Netlify)
+backend/**
+
+# 2) Build artifacts overal
+**/dist/**
+**/*.map
+
+# 3) Tests, stories & snapshots
+**/*.test.*
+**/*.spec.*
+**/*.stories.*
+**/__tests__/**
+**/__mocks__/**
+**/__snapshots__/**
+cypress/**
+playwright-report/**
+test-results/**
+coverage/**
+.storybook-out/**
+storybook-static/**
+
+# 4) Caches & tool-artifacts
+.vite/**
+**/.cache/**
+**/.turbo/**
+**/.parcel-cache/**
+**/.next/**
+
+# 5) Logs & temp
+*.log
+logs/**
+tmp/**
+*.tmp
+
+# 6) Grote/binaire assets overal (AI heeft hier zelden waarde aan)
+**/*.{png,jpg,jpeg,webp,avif,gif}
+**/*.{mp4,mov,webm}
+**/*.{psd,ai,sketch}
+**/*.pdf
+**/*.zip
+**/*.{woff,woff2,ttf,otf}
+**/*.svg
+
+# Essentials uit frontend/public zichtbaar houden:
+!frontend/public/index.html
+!frontend/public/robots.txt
+!frontend/public/manifest.webmanifest
+!frontend/public/site.webmanifest
+!frontend/public/favicon.ico
+!frontend/public/favicon*.svg
+!frontend/public/logo*.svg
