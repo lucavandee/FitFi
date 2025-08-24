@@ -61,24 +61,6 @@ export function buildDeeplink(partnerOrUrl?: Partner | string, query?: string): 
       const tag = import.meta.env.VITE_AMAZON_TAG;
       const baseUrl = `https://www.amazon.nl/s?k=${encodeURIComponent(query)}`;
       if (!tag) return baseUrl;
-      return `${baseUrl}&tag=${tag}`;
-    }
-
-    if (partner === 'awin') {
-      const mid = import.meta.env.VITE_AWIN_MID;
-      const aff = import.meta.env.VITE_AWIN_AFFID;
-      const baseUrl = `https://www.zalando.nl/search/?q=${encodeURIComponent(query)}`;
-      if (!mid || !aff) return baseUrl;
-      return `https://www.awin1.com/cread.php?awinmid=${mid}&awinaffid=${aff}&ued=${encodeURIComponent(baseUrl)}`;
-    }
-
-    return `https://www.google.com/search?q=${encodeURIComponent(query)}+kleding`;
-  }
-
-  // Handle the single-parameter signature (rawUrl)
-  const rawUrl = partnerOrUrl as string | undefined;
-}
-export function buildDeeplink(rawUrl?: string): string | undefined;
 export function buildDeeplink(partnerOrUrl?: Partner | string, query?: string): string | undefined {
   // Handle the two different call signatures
   if (typeof partnerOrUrl === 'string' && partnerOrUrl && !query) {
