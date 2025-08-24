@@ -1,6 +1,9 @@
 import React from "react";
 
-export const NovaInsightCard: React.FC<{ text?: string; loading?: boolean }> = ({ text, loading = false }) => {
+export const NovaInsightCard: React.FC<{
+  text?: string;
+  loading?: boolean;
+}> = ({ text, loading = false }) => {
   // Loading skeleton
   if (loading || !text) {
     return (

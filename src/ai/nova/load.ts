@@ -5,23 +5,24 @@
 
 export const loadNovaAgent = async () => {
   try {
-    const mod = await import('@/ai/nova/agent');
+    const mod = await import("@/ai/nova/agent");
     const agent = mod.default ?? mod.agent;
-    
+
     if (!agent) {
-      throw new Error('Nova Agent not found in module');
+      throw new Error("Nova Agent not found in module");
     }
-    
+
     return agent;
   } catch (error) {
-    console.warn('[Nova] Failed to load agent:', error);
-    
+    console.warn("[Nova] Failed to load agent:", error);
+
     // Return minimal fallback agent
     return {
       async ask() {
-        return { 
-          type: 'text' as const, 
-          message: 'Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw.' 
+        return {
+          type: "text" as const,
+          message:
+            "Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw.",
         };
       },
       async greet(name: string) {
@@ -31,11 +32,11 @@ export const loadNovaAgent = async () => {
         readProfile: () => null,
         writeProfile: () => {},
         readHistory: () => [],
-        writeHistory: () => {}
+        writeHistory: () => {},
       },
       tools: {
-        searchOutfits: async () => []
-      }
+        searchOutfits: async () => [],
+      },
     };
   }
 };
@@ -46,7 +47,7 @@ export const loadNovaAgent = async () => {
 export const isNovaAgentAvailable = async (): Promise<boolean> => {
   try {
     const agent = await loadNovaAgent();
-    return !!(agent && typeof agent.ask === 'function');
+    return !!(agent && typeof agent.ask === "function");
   } catch {
     return false;
   }
@@ -57,13 +58,13 @@ export const isNovaAgentAvailable = async (): Promise<boolean> => {
  */
 export const safeNovaExecution = async <T>(
   operation: (agent: any) => Promise<T>,
-  fallback: T
+  fallback: T,
 ): Promise<T> => {
   try {
     const agent = await loadNovaAgent();
     return await operation(agent);
   } catch (error) {
-    console.warn('[Nova] Safe execution failed, using fallback:', error);
+    console.warn("[Nova] Safe execution failed, using fallback:", error);
     return fallback;
   }
 };

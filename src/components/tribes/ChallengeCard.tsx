@@ -1,8 +1,8 @@
-import React from 'react';
-import { Calendar, Trophy, Users, Clock } from 'lucide-react';
-import type { TribeChallenge } from '../../services/data/types';
-import Button from '../ui/Button';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import React from "react";
+import { Calendar, Trophy, Users, Clock } from "lucide-react";
+import type { TribeChallenge } from "../../services/data/types";
+import Button from "../ui/Button";
+import ImageWithFallback from "../ui/ImageWithFallback";
 
 interface ChallengeCardProps {
   c: TribeChallenge;
@@ -10,35 +10,41 @@ interface ChallengeCardProps {
   className?: string;
 }
 
-export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, className = '' }) => {
+export const ChallengeCard: React.FC<ChallengeCardProps> = ({
+  c,
+  onOpen,
+  className = "",
+}) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open':
-        return 'bg-green-100 text-green-800';
-      case 'closed':
-        return 'bg-red-100 text-red-800';
-      case 'draft':
-        return 'bg-gray-100 text-gray-800';
-      case 'archived':
-        return 'bg-yellow-100 text-yellow-800';
+      case "open":
+        return "bg-green-100 text-green-800";
+      case "closed":
+        return "bg-red-100 text-red-800";
+      case "draft":
+        return "bg-gray-100 text-gray-800";
+      case "archived":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('nl-NL', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("nl-NL", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   };
 
-  const isActive = c.status === 'open';
+  const isActive = c.status === "open";
   const isExpired = c.endDate && new Date(c.endDate) < new Date();
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md ${className}`}>
+    <div
+      className={`bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md ${className}`}
+    >
       {/* Challenge Image */}
       {c.imageUrl && (
         <div className="aspect-video w-full overflow-hidden">
@@ -62,11 +68,17 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
               {c.description}
             </p>
           </div>
-          
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(c.status)}`}>
-            {c.status === 'open' ? 'Actief' : 
-             c.status === 'closed' ? 'Gesloten' :
-             c.status === 'draft' ? 'Concept' : 'Gearchiveerd'}
+
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(c.status)}`}
+          >
+            {c.status === "open"
+              ? "Actief"
+              : c.status === "closed"
+                ? "Gesloten"
+                : c.status === "draft"
+                  ? "Concept"
+                  : "Gearchiveerd"}
           </span>
         </div>
 
@@ -78,12 +90,14 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
               <span>Start: {formatDate(c.startDate)}</span>
             </div>
           )}
-          
+
           {c.endDate && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-2" />
               <span>Einde: {formatDate(c.endDate)}</span>
-              {isExpired && <span className="ml-2 text-red-600">(Verlopen)</span>}
+              {isExpired && (
+                <span className="ml-2 text-red-600">(Verlopen)</span>
+              )}
             </div>
           )}
 
@@ -108,15 +122,17 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
           variant={isActive ? "primary" : "outline"}
           size="sm"
           className={`w-full ${
-            isActive 
-              ? 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]' 
-              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+            isActive
+              ? "bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+              : "border-gray-300 text-gray-700 hover:bg-gray-50"
           }`}
           disabled={!isActive}
         >
-          {isActive ? 'Bekijk Challenge' : 
-           isExpired ? 'Challenge Verlopen' : 
-           'Challenge Gesloten'}
+          {isActive
+            ? "Bekijk Challenge"
+            : isExpired
+              ? "Challenge Verlopen"
+              : "Challenge Gesloten"}
         </Button>
       </div>
     </div>

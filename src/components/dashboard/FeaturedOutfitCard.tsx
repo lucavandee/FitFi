@@ -1,9 +1,9 @@
-import React from 'react';
-import { ArrowRight, Star, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import SmartImage from '@/components/media/SmartImage';
-import Button from '../ui/Button';
-import { track } from '@/utils/analytics';
+import React from "react";
+import { ArrowRight, Star, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import SmartImage from "@/components/media/SmartImage";
+import Button from "../ui/Button";
+import { track } from "@/utils/analytics";
 
 interface FeaturedOutfitCardProps {
   outfit?: {
@@ -22,30 +22,32 @@ interface FeaturedOutfitCardProps {
 const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   outfit,
   loading = false,
-  className = ''
+  className = "",
 }) => {
   const handleViewMore = () => {
-    track('featured_outfit_view_more', {
+    track("featured_outfit_view_more", {
       outfit_id: outfit?.id,
       outfit_title: outfit?.title,
       match_percentage: outfit?.matchPercentage,
-      source: 'dashboard'
+      source: "dashboard",
     });
   };
 
   const handleOutfitClick = () => {
-    track('featured_outfit_click', {
+    track("featured_outfit_click", {
       outfit_id: outfit?.id,
       outfit_title: outfit?.title,
       match_percentage: outfit?.matchPercentage,
-      source: 'dashboard'
+      source: "dashboard",
     });
   };
 
   // Loading skeleton
   if (loading || !outfit) {
     return (
-      <div className={`bg-white rounded-3xl shadow-sm p-6 animate-pulse ${className}`}>
+      <div
+        className={`bg-white rounded-3xl shadow-sm p-6 animate-pulse ${className}`}
+      >
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
           <div className="h-4 bg-gray-200 rounded w-32"></div>
@@ -64,14 +66,18 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   }
 
   return (
-    <div className={`bg-white rounded-3xl shadow-sm p-6 hover:shadow-md transition-shadow ${className}`}>
+    <div
+      className={`bg-white rounded-3xl shadow-sm p-6 hover:shadow-md transition-shadow ${className}`}
+    >
       {/* Header */}
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-8 h-8 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Uitgelichte Outfit</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            Uitgelichte Outfit
+          </h3>
           <p className="text-gray-600 text-sm">Perfect voor jouw stijl</p>
         </div>
       </div>
@@ -79,10 +85,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
       {/* Outfit Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Image */}
-        <div 
-          className="cursor-pointer group"
-          onClick={handleOutfitClick}
-        >
+        <div className="cursor-pointer group" onClick={handleOutfitClick}>
           <SmartImage
             src={outfit.imageUrl}
             alt={outfit.title}

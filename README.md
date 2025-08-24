@@ -36,6 +36,7 @@ npm install
 ## 🤖 **Advanced ML & Analytics Features**
 
 ### **AI-Powered Recommendation Engine**
+
 ```bash
 # Installeer AI dependencies
 pip install tensorflow torch web3 scipy statsmodels
@@ -45,6 +46,7 @@ python ai_recommendation_engine.py
 ```
 
 **Features:**
+
 - **Deep learning neural networks** met TensorFlow/PyTorch
 - **Real-time personalization** voor elke gebruiker
 - **Collaborative filtering** met matrix factorization
@@ -53,6 +55,7 @@ python ai_recommendation_engine.py
 - **A/B testing integration** voor pricing optimization
 
 ### **Blockchain Data Verification**
+
 ```bash
 # Setup blockchain verification
 python blockchain_verifier.py
@@ -61,6 +64,7 @@ python blockchain_verifier.py
 ```
 
 **Features:**
+
 - **Smart contract integration** voor tamper-proof data
 - **IPFS distributed storage** voor product data
 - **Merkle tree verification** voor batch processing
@@ -69,6 +73,7 @@ python blockchain_verifier.py
 - **Real-time verification** API
 
 ### **Advanced A/B Testing Framework**
+
 ```bash
 # Setup A/B testing
 python ab_testing_framework.py
@@ -77,14 +82,16 @@ python ab_testing_framework.py
 ```
 
 **Features:**
+
 - **Multi-variate testing** support
 - **Bayesian statistics** voor early stopping
 - **Statistical significance** calculation
-- **Revenue impact analysis** 
+- **Revenue impact analysis**
 - **Automated winner selection**
 - **Segmented testing** (demographics, behavior)
 
 ### **Machine Learning Product Categorizer**
+
 ```bash
 # Installeer ML dependencies
 pip install scikit-learn transformers torch pandas numpy Pillow
@@ -94,6 +101,7 @@ python ml_categorizer.py
 ```
 
 **Features:**
+
 - **NLP-based categorization** met TF-IDF en Naive Bayes
 - **Sentiment analysis** van product reviews
 - **Computer vision** voor kleur/patroon detectie
@@ -101,6 +109,7 @@ python ml_categorizer.py
 - **Trend score calculation** met multiple factors
 
 ### **Real-time Price Monitor**
+
 ```bash
 # Setup price monitoring
 python price_monitor.py
@@ -109,6 +118,7 @@ python price_monitor.py
 ```
 
 **Features:**
+
 - **Multi-threaded monitoring** van duizenden producten
 - **Smart alerts** via email, Slack, webhooks
 - **Price prediction** met machine learning
@@ -116,6 +126,7 @@ python price_monitor.py
 - **SQLite database** voor price history
 
 ### **Web Dashboard Interface**
+
 ```bash
 # Start web dashboard
 python web_dashboard.py
@@ -124,6 +135,7 @@ python web_dashboard.py
 ```
 
 **Features:**
+
 - **Real-time monitoring** van scraping jobs
 - **Interactive charts** voor price analytics
 - **WebSocket updates** voor live data
@@ -134,6 +146,7 @@ python web_dashboard.py
 ## 🚀 **Production Deployment**
 
 ### **AI Infrastructure**
+
 ```yaml
 # Kubernetes deployment voor AI services
 apiVersion: apps/v1
@@ -148,21 +161,22 @@ spec:
   template:
     spec:
       containers:
-      - name: ai-engine
-        image: fitfi/ai-recommendation-engine:latest
-        resources:
-          requests:
-            memory: "2Gi"
-            cpu: "1000m"
-          limits:
-            memory: "4Gi"
-            cpu: "2000m"
-        env:
-        - name: TENSORFLOW_SERVING_MODEL_PATH
-          value: "/models/recommendation_model"
+        - name: ai-engine
+          image: fitfi/ai-recommendation-engine:latest
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          env:
+            - name: TENSORFLOW_SERVING_MODEL_PATH
+              value: "/models/recommendation_model"
 ```
 
 ### **Blockchain Infrastructure**
+
 ```yaml
 # Smart contract deployment
 apiVersion: v1
@@ -176,6 +190,7 @@ data:
 ```
 
 ### **Docker Setup**
+
 ```dockerfile
 FROM python:3.11-slim
 
@@ -194,6 +209,7 @@ CMD ["python", "web_dashboard.py"]
 ```
 
 ### **Kubernetes Deployment**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -210,19 +226,20 @@ spec:
         app: fitfi-scraper
     spec:
       containers:
-      - name: scraper
-        image: fitfi/zalando-scraper:latest
-        ports:
-        - containerPort: 5000
-        env:
-        - name: SUPABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: supabase-secret
-              key: url
+        - name: scraper
+          image: fitfi/zalando-scraper:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-secret
+                  key: url
 ```
 
 ### **Monitoring & Alerting**
+
 ```bash
 # Prometheus metrics endpoint
 curl http://localhost:5000/metrics
@@ -234,6 +251,7 @@ curl http://localhost:5000/metrics
 ## 📊 **Advanced Analytics**
 
 ### **Price Prediction API**
+
 ```python
 # Voorspel prijstrend voor product
 prediction = price_monitor.predictor.predict_price_trend('product-id', days_ahead=7)
@@ -249,6 +267,7 @@ prediction = price_monitor.predictor.predict_price_trend('product-id', days_ahea
 ```
 
 ### **ML Enhancement Pipeline**
+
 ```python
 # Verrijk producten met ML
 enhanced_products = ml_categorizer.batch_enhance_products(raw_products)
@@ -264,6 +283,7 @@ enhanced_products = ml_categorizer.batch_enhance_products(raw_products)
 ## 🔔 **Smart Alerting System**
 
 ### **Price Alerts**
+
 ```python
 # Maak price alert
 monitor.create_price_alert(
@@ -275,6 +295,7 @@ monitor.create_price_alert(
 ```
 
 ### **Webhook Integration**
+
 ```json
 {
   "alert_id": 123,
@@ -291,6 +312,7 @@ monitor.create_price_alert(
 ## 🎯 **Business Intelligence**
 
 ### **Trend Analysis**
+
 - **Seasonal patterns** detectie
 - **Brand performance** tracking
 - **Category growth** analysis
@@ -300,6 +322,7 @@ monitor.create_price_alert(
 ## 💰 **Business Value**
 
 ### **AI-Driven Revenue Growth**
+
 - **Personalized recommendations** verhogen conversie met 35%
 - **Dynamic pricing** optimaliseert revenue per user
 - **Predictive analytics** voor inventory management
@@ -307,6 +330,7 @@ monitor.create_price_alert(
 - **Blockchain verification** verhoogt trust en brand value
 
 ### **Advanced Analytics**
+
 - **Neural network insights** in user behavior
 - **Causal inference** voor business decisions
 - **Predictive modeling** voor demand forecasting
@@ -314,8 +338,9 @@ monitor.create_price_alert(
 - **Real-time personalization** engine
 
 ### **Revenue Optimization**
+
 - **Dynamic pricing** recommendations
-- **Inventory forecasting** 
+- **Inventory forecasting**
 - **Demand prediction**
 - **Profit margin** analysis
 - **A/B testing** voor pricing strategies
@@ -340,6 +365,7 @@ python zalando_scraper.py
 ## 🔮 **Next-Level Features**
 
 ### **AI Recommendation Engine**
+
 - **Deep learning models** voor style matching
 - **Real-time inference** API (< 50ms response)
 - **Collaborative filtering** met 95%+ accuracy
@@ -347,6 +373,7 @@ python zalando_scraper.py
 - **Blockchain verification** voor data integrity
 
 ### **Blockchain Verification**
+
 - **Smart contracts** op Ethereum/Polygon
 - **IPFS storage** voor distributed data
 - **Merkle tree proofs** voor batch verification
@@ -354,6 +381,7 @@ python zalando_scraper.py
 - **Compliance reporting** voor audits
 
 ### **A/B Testing Platform**
+
 - **Bayesian optimization** voor early stopping
 - **Multi-armed bandits** voor traffic allocation
 - **Causal inference** voor long-term impact
@@ -363,5 +391,5 @@ python zalando_scraper.py
 Deze cutting-edge features transformeren FitFi naar een **next-generation AI platform** die de toekomst van fashion e-commerce definieert!
 
 > **Wat zouden we nóg slimmer kunnen doen?**
-> 
+>
 > We zouden **quantum computing** kunnen integreren voor ultra-snelle optimization, **federated learning** voor privacy-preserving personalization, en **AR/VR integration** voor virtual try-on experiences om de user experience naar een compleet nieuw niveau te tillen.

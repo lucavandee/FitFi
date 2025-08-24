@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { Heart, MessageCircle, Share2, Filter, TrendingUp, Sparkles } from 'lucide-react';
-import { useUser } from '../context/UserContext';
-import { getFeed } from '../services/DataRouter';
-import OutfitCard from '../components/outfits/OutfitCard';
-import Button from '../components/ui/Button';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { ErrorBoundary } from '../components/ErrorBoundary';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  Filter,
+  TrendingUp,
+  Sparkles,
+} from "lucide-react";
+import { useUser } from "../context/UserContext";
+import { getFeed } from "../services/DataRouter";
+import OutfitCard from "../components/outfits/OutfitCard";
+import Button from "../components/ui/Button";
+import LoadingFallback from "../components/ui/LoadingFallback";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 const FeedPage: React.FC = () => {
   const { user } = useUser();
@@ -23,17 +30,17 @@ const FeedPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const feedData = await getFeed({
         userId: user?.id,
         count: 12,
-        archetypes: ['casual_chic', 'urban', 'klassiek']
+        archetypes: ["casual_chic", "urban", "klassiek"],
       });
-      
+
       setOutfits(feedData);
     } catch (err) {
-      console.error('Error loading feed:', err);
-      setError('Kon feed niet laden');
+      console.error("Error loading feed:", err);
+      setError("Kon feed niet laden");
     } finally {
       setLoading(false);
     }
@@ -47,7 +54,10 @@ const FeedPage: React.FC = () => {
     <div className="min-h-screen bg-[#F6F6F6]">
       <Helmet>
         <title>Style Feed - Ontdek Nieuwe Outfits | FitFi</title>
-        <meta name="description" content="Ontdek nieuwe outfit inspiratie in je persoonlijke style feed. Swipe, save en shop je favoriete looks." />
+        <meta
+          name="description"
+          content="Ontdek nieuwe outfit inspiratie in je persoonlijke style feed. Swipe, save en shop je favoriete looks."
+        />
       </Helmet>
 
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
@@ -57,11 +67,11 @@ const FeedPage: React.FC = () => {
             <div className="w-20 h-20 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <Sparkles className="w-10 h-10 text-white" />
             </div>
-            
+
             <h1 className="text-4xl font-light text-[#0D1B2A] mb-6">
               Jouw Style Feed
             </h1>
-            
+
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
               Ontdek nieuwe outfit inspiratie speciaal voor jouw stijl
             </p>
@@ -121,7 +131,7 @@ const FeedPage: React.FC = () => {
                       imageUrl: outfit.imageUrl,
                       matchPercentage: 87,
                       archetype: outfit.archetype,
-                      tags: outfit.tags
+                      tags: outfit.tags,
                     }}
                   />
                 </div>
@@ -136,7 +146,8 @@ const FeedPage: React.FC = () => {
                 Nog geen outfits
               </h3>
               <p className="text-gray-600 mb-6">
-                Voltooi je stijlquiz om gepersonaliseerde aanbevelingen te krijgen.
+                Voltooi je stijlquiz om gepersonaliseerde aanbevelingen te
+                krijgen.
               </p>
               <Button as={Link} to="/quiz" variant="primary">
                 Start Quiz
@@ -154,11 +165,12 @@ const FeedPage: React.FC = () => {
                   Krijg je persoonlijke feed
                 </h2>
                 <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Maak een account aan om gepersonaliseerde outfit aanbevelingen te ontvangen.
+                  Maak een account aan om gepersonaliseerde outfit aanbevelingen
+                  te ontvangen.
                 </p>
-                <Button 
+                <Button
                   as={Link}
-                  to="/registreren" 
+                  to="/registreren"
                   variant="primary"
                   size="lg"
                   className="cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"

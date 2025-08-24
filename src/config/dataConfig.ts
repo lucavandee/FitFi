@@ -1,6 +1,6 @@
 // src/config/dataConfig.ts
 export const DATA_CONFIG = {
-  USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true',
+  USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === "true",
   SUPABASE: {
     url: import.meta.env.VITE_SUPABASE_URL ?? "",
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY ?? "",
@@ -13,7 +13,7 @@ export const DATA_CONFIG = {
       tribePosts: "tribe_posts",
       tribeChallenges: "tribe_challenges",
       tribeChallengeSubmissions: "tribe_challenge_subs",
-      tribeRanking: "tribe_ranking"
+      tribeRanking: "tribe_ranking",
     },
   },
   LOCAL_JSON: {
@@ -23,7 +23,7 @@ export const DATA_CONFIG = {
     tribes: "/data/bolt/tribes.json",
     tribeChallenges: "/data/bolt/tribe_challenges.json",
     tribeChallengeSubmissions: "/data/bolt/tribe_challenge_subs.json",
-    tribeRanking: "/data/bolt/tribe_ranking.json"
+    tribeRanking: "/data/bolt/tribe_ranking.json",
   },
   AFFILIATE: {
     defaultUtm: {
@@ -33,8 +33,8 @@ export const DATA_CONFIG = {
     },
     providers: {
       generic: { param: "aff_id", id: "fitfi" },
-      amazon:  { param: "tag",    id: "dormiqnl-21" }, // pas aan indien nodig
-      zalando: { param: "wmc",    id: "affiliate" },   // placeholder; geen scraping
+      amazon: { param: "tag", id: "dormiqnl-21" }, // pas aan indien nodig
+      zalando: { param: "wmc", id: "affiliate" }, // placeholder; geen scraping
     },
     // Safe affiliate injection settings
     enableAffiliateParams: !!import.meta.env.VITE_DEFAULT_SHOP_PARTNER,

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import React from "react";
+import { Helmet } from "react-helmet-async";
 
 interface SEOProps {
   title?: string;
@@ -10,16 +10,16 @@ interface SEOProps {
   keywords?: string;
 }
 
-export function SEO({ 
-  title, 
-  description, 
-  ogImage, 
-  noIndex, 
+export function SEO({
+  title,
+  description,
+  ogImage,
+  noIndex,
   canonical,
-  keywords 
+  keywords,
 }: SEOProps) {
-  const fullTitle = title ? `${title} • FitFi` : 'FitFi';
-  
+  const fullTitle = title ? `${title} • FitFi` : "FitFi";
+
   return (
     <Helmet>
       <title>{fullTitle}</title>

@@ -12,26 +12,28 @@ interface UseFitFiUserResult {
   data: FitFiUserProfile | null;
   loading: boolean;
   error: string | null;
-  source: 'supabase' | 'local' | 'fallback';
+  source: "supabase" | "local" | "fallback";
   cached: boolean;
   refetch: () => Promise<void>;
   isStale: boolean;
 }
 
 export function useFitFiUser(
-  userId?: string, 
-  options: UseFitFiUserOptions = {}
+  userId?: string,
+  options: UseFitFiUserOptions = {},
 ): UseFitFiUserResult {
   const {
     enabled = true,
     refetchOnMount = true,
-    cacheTime = 5 * 60 * 1000 // 5 minutes
+    cacheTime = 5 * 60 * 1000, // 5 minutes
   } = options;
 
   const [data, setData] = useState<FitFiUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
+  const [source, setSource] = useState<"supabase" | "local" | "fallback">(
+    "fallback",
+  );
   const [cached, setCached] = useState(false);
   const [lastFetch, setLastFetch] = useState<number>(0);
 
@@ -42,29 +44,34 @@ export function useFitFiUser(
     }
 
     let alive = true;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
-      const response: DataResponse<FitFiUserProfile | null> = await fetchUser(userId);
-      
+
+      const response: DataResponse<FitFiUserProfile | null> =
+        await fetchUser(userId);
+
       if (alive) {
         setData(response.data);
         setSource(response.source);
         setCached(response.cached);
         setLastFetch(Date.now());
-        
+
         // Set warning if using fallback
-        if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
-          setError('Live data niet beschikbaar, fallback gebruikt');
+        if (
+          response.source === "fallback" &&
+          response.errors &&
+          response.errors.length > 0
+        ) {
+          setError("Live data niet beschikbaar, fallback gebruikt");
         }
       }
     } catch (err) {
       if (alive) {
-        setError(err instanceof Error ? err.message : 'Onbekende fout');
+        setError(err instanceof Error ? err.message : "Onbekende fout");
         setData(null);
-        setSource('fallback');
+        setSource("fallback");
         setCached(false);
       }
     } finally {
@@ -72,19 +79,21 @@ export function useFitFiUser(
         setLoading(false);
       }
     }
-    
-    return () => { alive = false; };
+
+    return () => {
+      alive = false;
+    };
   };
 
   useEffect(() => {
     if (refetchOnMount || !data) {
       const cleanup = fetchUserData();
-      return () => cleanup.then(fn => fn?.());
+      return () => cleanup.then((fn) => fn?.());
     }
   }, [userId, enabled, refetchOnMount]);
 
   // Check if data is stale
-  const isStale = lastFetch > 0 && (Date.now() - lastFetch) > cacheTime;
+  const isStale = lastFetch > 0 && Date.now() - lastFetch > cacheTime;
 
   return {
     data,
@@ -93,7 +102,7 @@ export function useFitFiUser(
     source,
     cached,
     refetch: fetchUserData,
-    isStale
+    isStale,
   };
 }
 
@@ -118,7 +127,7 @@ export function useCurrentUserProfile(): UseFitFiUserResult {
 
   return useFitFiUser(currentUserId, {
     enabled: !!currentUserId,
-    refetchOnMount: true
+    refetchOnMount: true,
   });
 }
 
@@ -131,7 +140,9 @@ export function useMultipleFitFiUsers(userIds: string[]): {
   errors: Record<string, string>;
   refetchAll: () => Promise<void>;
 } {
-  const [users, setUsers] = useState<Record<string, FitFiUserProfile | null>>({});
+  const [users, setUsers] = useState<Record<string, FitFiUserProfile | null>>(
+    {},
+  );
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -151,10 +162,11 @@ export function useMultipleFitFiUsers(userIds: string[]): {
           const response = await fetchUser(userId);
           newUsers[userId] = response.data;
         } catch (error) {
-          newErrors[userId] = error instanceof Error ? error.message : 'Onbekende fout';
+          newErrors[userId] =
+            error instanceof Error ? error.message : "Onbekende fout";
           newUsers[userId] = null;
         }
-      })
+      }),
     );
 
     setUsers(newUsers);
@@ -164,12 +176,12 @@ export function useMultipleFitFiUsers(userIds: string[]): {
 
   useEffect(() => {
     fetchAllUsers();
-  }, [userIds.join(',')]); // Re-run when userIds array changes
+  }, [userIds.join(",")]); // Re-run when userIds array changes
 
   return {
     users,
     loading,
     errors,
-    refetchAll: fetchAllUsers
+    refetchAll: fetchAllUsers,
   };
 }

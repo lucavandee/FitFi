@@ -1,18 +1,25 @@
-import React from 'react';
+import React from "react";
 
 export type RankingItem = { name: string; score: number; delta?: number };
 type Props = { items?: RankingItem[]; title?: string; className?: string };
 
 const MOCK: RankingItem[] = [
-  { name: 'Clean Minimalists', score: 1280, delta: +12 },
-  { name: 'Urban Athleisure',  score:  963, delta:  -3 },
-  { name: 'Smart Casual NL',   score:  847, delta:  +5 },
+  { name: "Clean Minimalists", score: 1280, delta: +12 },
+  { name: "Urban Athleisure", score: 963, delta: -3 },
+  { name: "Smart Casual NL", score: 847, delta: +5 },
 ];
 
-export default function RankingBoard({ items, title = 'Top tribes', className = '' }: Props) {
-  const data = (items && items.length)
-    ? items
-    : (import.meta.env.VITE_USE_MOCK_DATA === 'true' ? MOCK : []);
+export default function RankingBoard({
+  items,
+  title = "Top tribes",
+  className = "",
+}: Props) {
+  const data =
+    items && items.length
+      ? items
+      : import.meta.env.VITE_USE_MOCK_DATA === "true"
+        ? MOCK
+        : [];
 
   return (
     <section aria-label="Tribe ranking" className={className}>
@@ -28,19 +35,39 @@ export default function RankingBoard({ items, title = 'Top tribes', className = 
           </thead>
           <tbody>
             {data.length === 0 ? (
-              <tr><td colSpan={3} className="px-4 py-6 text-center text-slate-500">Nog geen data</td></tr>
-            ) : data.map((r, i) => {
-              const deltaClass = (r.delta ?? 0) >= 0 ? 'text-green-600' : 'text-red-600';
-              return (
-                <tr key={i} className="border-t border-slate-100">
-                  <td className="px-4 py-3 text-[#0D1B2A] font-medium">{r.name}</td>
-                  <td className="px-4 py-3 text-right tabular-nums">{r.score}</td>
-                  <td className={`px-4 py-3 text-right tabular-nums ${deltaClass}`}>
-                    {typeof r.delta === 'number' ? (r.delta > 0 ? `+${r.delta}` : `${r.delta}`) : '–'}
-                  </td>
-                </tr>
-              );
-            })}
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-4 py-6 text-center text-slate-500"
+                >
+                  Nog geen data
+                </td>
+              </tr>
+            ) : (
+              data.map((r, i) => {
+                const deltaClass =
+                  (r.delta ?? 0) >= 0 ? "text-green-600" : "text-red-600";
+                return (
+                  <tr key={i} className="border-t border-slate-100">
+                    <td className="px-4 py-3 text-[#0D1B2A] font-medium">
+                      {r.name}
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums">
+                      {r.score}
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-right tabular-nums ${deltaClass}`}
+                    >
+                      {typeof r.delta === "number"
+                        ? r.delta > 0
+                          ? `+${r.delta}`
+                          : `${r.delta}`
+                        : "–"}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

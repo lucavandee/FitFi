@@ -1,18 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
-import Seo from '@/components/Seo';
-import Button from '../components/ui/Button';
-import HeroTitle from '@/components/marketing/HeroTitle';
-import Chip from '@/components/ui/Chip';
-import Hero from '@/components/sections/Hero';
-import StickyCTA from '@/components/ui/StickyCTA';
-import NovaStyleSwipe from '@/components/nova/NovaStyleSwipe';
-import HowItWorks from '@/components/sections/HowItWorks';
-import SocialProof from '@/components/sections/SocialProof';
-import { useOutfitsFeed } from '@/hooks/useOutfitsFeed';
-import { HOMEPAGE_FLAGS, getHomepageFlag } from '@/config/homepage';
-import { useUser } from '../context/UserContext';
+import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Seo from "@/components/Seo";
+import Button from "../components/ui/Button";
+import HeroTitle from "@/components/marketing/HeroTitle";
+import Chip from "@/components/ui/Chip";
+import Hero from "@/components/sections/Hero";
+import StickyCTA from "@/components/ui/StickyCTA";
+import NovaStyleSwipe from "@/components/nova/NovaStyleSwipe";
+import HowItWorks from "@/components/sections/HowItWorks";
+import SocialProof from "@/components/sections/SocialProof";
+import { useOutfitsFeed } from "@/hooks/useOutfitsFeed";
+import { HOMEPAGE_FLAGS, getHomepageFlag } from "@/config/homepage";
+import { useUser } from "../context/UserContext";
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
@@ -20,18 +20,18 @@ const HomePage: React.FC = () => {
 
   const handleStartQuiz = () => {
     // Track quiz start from home hero
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'quiz_start', { 
-        location: 'home_hero',
-        event_category: 'conversion',
-        event_label: 'home_cta_click'
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "quiz_start", {
+        location: "home_hero",
+        event_category: "conversion",
+        event_label: "home_cta_click",
       });
     }
   };
 
   return (
     <>
-      <Seo 
+      <Seo
         title="FitFi - AI-Powered Personal Styling Platform"
         description="Ontdek jouw perfecte stijl met AI-powered personal styling. Gepersonaliseerde outfit aanbevelingen, stijlquiz en fashion advies."
         canonical="https://fitfi.app/home"
@@ -39,27 +39,32 @@ const HomePage: React.FC = () => {
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Organization",
-          "name": "FitFi",
-          "url": "https://fitfi.ai",
-          "logo": "https://fitfi.ai/logo.png"
+          name: "FitFi",
+          url: "https://fitfi.ai",
+          logo: "https://fitfi.ai/logo.png",
         }}
       />
-      
+
       <div className="min-h-screen bg-[#FAF8F6]">
         {/* Hero Section */}
         <Hero />
 
         {/* AI Style Preview Section */}
-        {getHomepageFlag('showNovaStyleSwipe') && (
+        {getHomepageFlag("showNovaStyleSwipe") && (
           <section className="py-16 bg-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               {outfitsLoading ? (
-                <div className="h-[400px] rounded-2xl bg-gray-100 animate-pulse flex items-center justify-center" aria-hidden="true">
+                <div
+                  className="h-[400px] rounded-2xl bg-gray-100 animate-pulse flex items-center justify-center"
+                  aria-hidden="true"
+                >
                   <div className="text-center">
                     <div className="w-12 h-12 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Sparkles className="w-6 h-6 text-[#89CFF0] animate-pulse" />
                     </div>
-                    <p className="text-gray-600">Nova bereidt je style preview voor...</p>
+                    <p className="text-gray-600">
+                      Nova bereidt je style preview voor...
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -70,33 +75,50 @@ const HomePage: React.FC = () => {
         )}
 
         {/* How It Works - Gated */}
-        {getHomepageFlag('showHowItWorks') && (
-          <HowItWorks />
-        )}
+        {getHomepageFlag("showHowItWorks") && <HowItWorks />}
 
         {/* Social Proof - Gated */}
-        {getHomepageFlag('showSocialProof') && (
-          <SocialProof />
-        )}
+        {getHomepageFlag("showSocialProof") && <SocialProof />}
 
         {/* Features - Gated */}
-        {getHomepageFlag('showFeatures') && (
+        {getHomepageFlag("showFeatures") && (
           <section className="py-16 bg-gray-50">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
               <h2 className="text-2xl font-light text-[#0D1B2A] mb-8">
                 Wat zit er in het AI Style Report?
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
-                  { icon: '👤', title: 'Persoonlijkheid & stijl', desc: 'Begrijp de verborgen boodschap achter jouw keuzes' },
-                  { icon: '🎯', title: '3 kritische insights', desc: 'De top 3 verbeterpunten die je nú kunt toepassen' },
-                  { icon: '✨', title: "Nova's aanbevelingen", desc: 'Direct toepasbare tips en voorbeeldoutfits' },
-                  { icon: '💝', title: 'Wishlist', desc: 'Perfect passende producten geselecteerd door Nova' }
+                  {
+                    icon: "👤",
+                    title: "Persoonlijkheid & stijl",
+                    desc: "Begrijp de verborgen boodschap achter jouw keuzes",
+                  },
+                  {
+                    icon: "🎯",
+                    title: "3 kritische insights",
+                    desc: "De top 3 verbeterpunten die je nú kunt toepassen",
+                  },
+                  {
+                    icon: "✨",
+                    title: "Nova's aanbevelingen",
+                    desc: "Direct toepasbare tips en voorbeeldoutfits",
+                  },
+                  {
+                    icon: "💝",
+                    title: "Wishlist",
+                    desc: "Perfect passende producten geselecteerd door Nova",
+                  },
                 ].map((feature, index) => (
-                  <div key={index} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div
+                    key={index}
+                    className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                  >
                     <div className="text-4xl mb-4">{feature.icon}</div>
-                    <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">{feature.title}</h3>
+                    <h3 className="text-lg font-medium text-[#0D1B2A] mb-3">
+                      {feature.title}
+                    </h3>
                     <p className="text-gray-600">{feature.desc}</p>
                   </div>
                 ))}
@@ -106,7 +128,7 @@ const HomePage: React.FC = () => {
         )}
 
         {/* Blog Teasers - Gated (disabled by default) */}
-        {getHomepageFlag('showBlogTeasers') && (
+        {getHomepageFlag("showBlogTeasers") && (
           <section className="py-16 bg-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
               <h2 className="text-2xl font-light text-[#0D1B2A] mb-8">
@@ -115,7 +137,9 @@ const HomePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Blog teaser cards would go here */}
                 <div className="bg-gray-50 rounded-2xl p-6">
-                  <h3 className="font-medium text-[#0D1B2A] mb-2">Blog teasers</h3>
+                  <h3 className="font-medium text-[#0D1B2A] mb-2">
+                    Blog teasers
+                  </h3>
                   <p className="text-gray-600 text-sm">Coming soon...</p>
                 </div>
               </div>
@@ -124,7 +148,7 @@ const HomePage: React.FC = () => {
         )}
 
         {/* Extra Feature Grid - Gated (disabled by default) */}
-        {getHomepageFlag('showExtraFeatureGrid') && (
+        {getHomepageFlag("showExtraFeatureGrid") && (
           <section className="py-16 bg-gray-50">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
               <h2 className="text-2xl font-light text-[#0D1B2A] mb-8">
@@ -133,7 +157,9 @@ const HomePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Extra feature cards would go here */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h3 className="font-medium text-[#0D1B2A] mb-2">Extra features</h3>
+                  <h3 className="font-medium text-[#0D1B2A] mb-2">
+                    Extra features
+                  </h3>
                   <p className="text-gray-600 text-sm">Coming soon...</p>
                 </div>
               </div>
@@ -148,12 +174,13 @@ const HomePage: React.FC = () => {
               Klaar om te ontdekken wat jouw stijl over je zegt?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Duizenden mensen hebben al hun persoonlijke AI Style Report ontvangen.
+              Duizenden mensen hebben al hun persoonlijke AI Style Report
+              ontvangen.
             </p>
-            
-            <Button 
+
+            <Button
               as={Link}
-              to="/registreren" 
+              to="/registreren"
               onClick={handleStartQuiz}
               variant="primary"
               size="lg"
@@ -165,7 +192,7 @@ const HomePage: React.FC = () => {
             >
               Ja, geef mij mijn gratis AI Style Report
             </Button>
-            
+
             <p className="text-white/80 text-sm mt-4">
               Geen creditcard vereist • Privacy gegarandeerd
             </p>
@@ -173,7 +200,7 @@ const HomePage: React.FC = () => {
         </section>
 
         {/* Debug Info - Gated */}
-        {getHomepageFlag('showDebugInfo') && import.meta.env.DEV && (
+        {getHomepageFlag("showDebugInfo") && import.meta.env.DEV && (
           <section className="py-8 bg-yellow-50 border-t border-yellow-200">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <details className="text-sm">
@@ -181,9 +208,17 @@ const HomePage: React.FC = () => {
                   🔧 Homepage Debug Info
                 </summary>
                 <div className="mt-2 text-yellow-700">
-                  <p>Active flags: {Object.entries(HOMEPAGE_FLAGS).filter(([,v]) => v).map(([k]) => k).join(', ')}</p>
+                  <p>
+                    Active flags:{" "}
+                    {Object.entries(HOMEPAGE_FLAGS)
+                      .filter(([, v]) => v)
+                      .map(([k]) => k)
+                      .join(", ")}
+                  </p>
                   <p>Outfit items: {outfitItems.length}</p>
-                  <p>User: {user ? `${user.name} (${user.id})` : 'Anonymous'}</p>
+                  <p>
+                    User: {user ? `${user.name} (${user.id})` : "Anonymous"}
+                  </p>
                 </div>
               </details>
             </div>

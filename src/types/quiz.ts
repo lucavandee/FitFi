@@ -11,7 +11,7 @@ export interface QuizStep {
   title: string;
   description: string;
   field: keyof QuizAnswers;
-  type: 'checkbox' | 'radio' | 'select' | 'multiselect' | 'slider';
+  type: "checkbox" | "radio" | "select" | "multiselect" | "slider";
   options?: Array<{
     value: string;
     label: string;

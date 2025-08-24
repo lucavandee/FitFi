@@ -1,15 +1,21 @@
-import React from 'react';
-import { isPreview, disableMigrations, muteThirdParty, appsignalEnabled, Env } from '@/utils/env';
+import React from "react";
+import {
+  isPreview,
+  disableMigrations,
+  muteThirdParty,
+  appsignalEnabled,
+  Env,
+} from "@/utils/env";
 
 export default function HealthCheckPage() {
   const rows = [
-    ['MODE', Env.mode],
-    ['Host', Env.host],
-    ['Preview', String(isPreview)],
-    ['Disable migrations', String(disableMigrations)],
-    ['Mute third-party', String(muteThirdParty)],
-    ['AppSignal enabled', String(appsignalEnabled)],
-    ['Build', new Date().toISOString()],
+    ["MODE", Env.mode],
+    ["Host", Env.host],
+    ["Preview", String(isPreview)],
+    ["Disable migrations", String(disableMigrations)],
+    ["Mute third-party", String(muteThirdParty)],
+    ["AppSignal enabled", String(appsignalEnabled)],
+    ["Build", new Date().toISOString()],
   ];
 
   return (
@@ -27,7 +33,10 @@ export default function HealthCheckPage() {
           </tbody>
         </table>
       </div>
-      <p className="mt-4 text-sm text-gray-500">Gebruik deze pagina om env/integraties te checken i.p.v. in het donker zoeken.</p>
+      <p className="mt-4 text-sm text-gray-500">
+        Gebruik deze pagina om env/integraties te checken i.p.v. in het donker
+        zoeken.
+      </p>
     </div>
   );
 }

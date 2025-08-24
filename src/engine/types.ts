@@ -1,4 +1,4 @@
-import { UserProfile } from '../context/UserContext';
+import { UserProfile } from "../context/UserContext";
 
 /**
  * Product interface representing a clothing item
@@ -57,25 +57,32 @@ export interface Outfit {
 /**
  * Season type
  */
-export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
+export type Season = "spring" | "summer" | "autumn" | "winter";
 
 /**
  * Weather type
  */
-export type Weather = 'cold' | 'mild' | 'warm' | 'hot' | 'rainy' | 'snowy' | 'windy';
+export type Weather =
+  | "cold"
+  | "mild"
+  | "warm"
+  | "hot"
+  | "rainy"
+  | "snowy"
+  | "windy";
 
 /**
  * Product category types for outfit composition
  */
 export enum ProductCategory {
-  TOP = 'top',
-  BOTTOM = 'bottom',
-  FOOTWEAR = 'footwear',
-  ACCESSORY = 'accessory',
-  OUTERWEAR = 'outerwear',
-  DRESS = 'dress',
-  JUMPSUIT = 'jumpsuit',
-  OTHER = 'other'
+  TOP = "top",
+  BOTTOM = "bottom",
+  FOOTWEAR = "footwear",
+  ACCESSORY = "accessory",
+  OUTERWEAR = "outerwear",
+  DRESS = "dress",
+  JUMPSUIT = "jumpsuit",
+  OTHER = "other",
 }
 
 /**
@@ -95,7 +102,7 @@ export interface CategoryRatio {
 /**
  * Variation level for outfit generation
  */
-export type VariationLevel = 'low' | 'medium' | 'high';
+export type VariationLevel = "low" | "medium" | "high";
 
 /**
  * Options for generating outfits

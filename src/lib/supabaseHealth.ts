@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from "./supabase";
 
 interface HealthStatus {
   isHealthy: boolean;
@@ -10,23 +10,23 @@ interface HealthStatus {
 let healthStatus: HealthStatus = {
   isHealthy: true,
   lastCheck: new Date(),
-  errors: []
+  errors: [],
 };
 
 let healthCheckInterval: NodeJS.Timeout | null = null;
 
 export async function checkSupabaseHealth(): Promise<HealthStatus> {
   const startTime = Date.now();
-  
+
   try {
     if (!supabase) {
-      throw new Error('Supabase client not initialized');
+      throw new Error("Supabase client not initialized");
     }
 
     // Simple health check - try to query a system table
     const { data, error } = await supabase
-      .from('users')
-      .select('count')
+      .from("users")
+      .select("count")
       .limit(1)
       .single();
 
@@ -37,14 +37,14 @@ export async function checkSupabaseHealth(): Promise<HealthStatus> {
         isHealthy: false,
         lastCheck: new Date(),
         errors: [error.message],
-        responseTime
+        responseTime,
       };
     } else {
       healthStatus = {
         isHealthy: true,
         lastCheck: new Date(),
         errors: [],
-        responseTime
+        responseTime,
       };
     }
   } catch (error) {
@@ -52,8 +52,8 @@ export async function checkSupabaseHealth(): Promise<HealthStatus> {
     healthStatus = {
       isHealthy: false,
       lastCheck: new Date(),
-      errors: [error instanceof Error ? error.message : 'Unknown error'],
-      responseTime
+      errors: [error instanceof Error ? error.message : "Unknown error"],
+      responseTime,
     };
   }
 
@@ -82,7 +82,7 @@ export function startHealthMonitoring(intervalMs: number = 60000): () => void {
     try {
       await checkSupabaseHealth();
     } catch (error) {
-      console.warn('Health check failed:', error);
+      console.warn("Health check failed:", error);
     }
   }, intervalMs);
 

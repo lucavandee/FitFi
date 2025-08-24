@@ -34,7 +34,7 @@ export interface HeatmapData {
   hover_count: number;
   scroll_depth: number;
   viewport_size: string;
-  device_type: 'mobile' | 'tablet' | 'desktop';
+  device_type: "mobile" | "tablet" | "desktop";
   timestamp: number;
   user_id?: string;
   session_id: string;
@@ -56,7 +56,7 @@ export interface SessionRecording {
 }
 
 export interface SessionEvent {
-  type: 'click' | 'scroll' | 'hover' | 'input' | 'navigation' | 'error';
+  type: "click" | "scroll" | "hover" | "input" | "navigation" | "error";
   timestamp: number;
   element: string;
   coordinates?: { x: number; y: number };
@@ -68,7 +68,7 @@ export interface DeviceInfo {
   userAgent: string;
   viewport: { width: number; height: number };
   screen: { width: number; height: number };
-  deviceType: 'mobile' | 'tablet' | 'desktop';
+  deviceType: "mobile" | "tablet" | "desktop";
   browser: string;
   os: string;
 }
@@ -90,12 +90,16 @@ export interface PredictiveModel {
 export interface ConversionOptimization {
   user_id: string;
   session_id: string;
-  optimization_type: 'cta_placement' | 'pricing_display' | 'product_order' | 'content_personalization';
+  optimization_type:
+    | "cta_placement"
+    | "pricing_display"
+    | "product_order"
+    | "content_personalization";
   variant: string;
   confidence: number;
   expected_lift: number;
   applied_at: number;
-  result?: 'converted' | 'abandoned' | 'ongoing';
+  result?: "converted" | "abandoned" | "ongoing";
 }
 
 export interface AnalyticsDashboardData {
@@ -145,5 +149,5 @@ export interface PredictiveInsight {
   confidence: number;
   recommended_action: string;
   potential_value: number;
-  urgency: 'low' | 'medium' | 'high' | 'critical';
+  urgency: "low" | "medium" | "high" | "critical";
 }

@@ -1,14 +1,10 @@
 /* eslint-disable no-console */
-import fs from 'fs';
-import fsp from 'fs/promises';
-import path from 'path';
+import fs from "fs";
+import fsp from "fs/promises";
+import path from "path";
 
 const ROOT = process.cwd();
-const GLOBS = [
-  'src/pages',
-  'src/features',
-  'src/sections',
-];
+const GLOBS = ["src/pages", "src/features", "src/sections"];
 
 function walk(dir) {
   const out = [];
@@ -22,31 +18,34 @@ function walk(dir) {
   return out;
 }
 
-const premiumImportRe = /(import\s+[^;]*?from\s+['"]@\/components\/layout\/PremiumFooter['"];?\s*\n)/g;
-const premiumAnyImportRe = /(import\s+[^;]*?PremiumFooter[^;]*?from\s+['"][^'"]*PremiumFooter[^'"]*['"];?\s*\n)/g;
+const premiumImportRe =
+  /(import\s+[^;]*?from\s+['"]@\/components\/layout\/PremiumFooter['"];?\s*\n)/g;
+const premiumAnyImportRe =
+  /(import\s+[^;]*?PremiumFooter[^;]*?from\s+['"][^'"]*PremiumFooter[^'"]*['"];?\s*\n)/g;
 const premiumJsxSelf = /<PremiumFooter(\s[^>]*)?\/>\s*\n?/g;
-const premiumJsxOpenClose = /<PremiumFooter(\s[^>]*)?>[\s\S]*?<\/PremiumFooter>\s*\n?/g;
+const premiumJsxOpenClose =
+  /<PremiumFooter(\s[^>]*)?>[\s\S]*?<\/PremiumFooter>\s*\n?/g;
 
 let changed = 0;
 for (const root of GLOBS) {
   for (const file of walk(path.join(ROOT, root))) {
     // skip App.tsx — it must keep the single footer
-    if (file.replace(/\\/g,'/').endsWith('src/App.tsx')) continue;
+    if (file.replace(/\\/g, "/").endsWith("src/App.tsx")) continue;
 
-    let src = fs.readFileSync(file, 'utf8');
+    let src = fs.readFileSync(file, "utf8");
     const before = src;
 
     // Remove imports of PremiumFooter (any path)
-    src = src.replace(premiumImportRe, '');
-    src = src.replace(premiumAnyImportRe, '');
+    src = src.replace(premiumImportRe, "");
+    src = src.replace(premiumAnyImportRe, "");
 
     // Remove JSX usages (self-closing or wrapped)
-    src = src.replace(premiumJsxOpenClose, '');
-    src = src.replace(premiumJsxSelf, '');
+    src = src.replace(premiumJsxOpenClose, "");
+    src = src.replace(premiumJsxSelf, "");
 
     if (src !== before) {
-      await fsp.writeFile(file, src, 'utf8');
-      console.log('Cleaned page-level footer in', path.relative(ROOT, file));
+      await fsp.writeFile(file, src, "utf8");
+      console.log("Cleaned page-level footer in", path.relative(ROOT, file));
       changed++;
     }
   }

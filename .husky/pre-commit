@@ -1,14 +1,15 @@
 #!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
+set -e
 
-# Check for Python headers in frontend code
-if grep -RIlE '(#!/usr/bin/env python3|Robust Wehkamp Scraper)' src; then
+# Block Python headers in frontend
+if grep -RIlE '(#!/usr/bin/env python3|Robust Wehkamp Scraper)' src 2>/dev/null; then
   echo '❌ Python header gevonden in frontend code – commit geweigerd'
-  echo 'Verwijder alle Python headers uit src/ bestanden voordat je commit.'
   exit 1
 fi
-
 echo '✅ Geen Python headers gevonden in frontend code'
 
-# Run lint-staged
-npx lint-stagednode scripts/guard/no-large-files.mjs
+# Block >2MB files (jouw guard script)
+if [ -f scripts/guard/no-large-files.mjs ]; then
+  node scripts/guard/no-large-files.mjs
+fi

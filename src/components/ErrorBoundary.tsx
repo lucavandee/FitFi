@@ -1,6 +1,6 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
-import ErrorFallback from './ui/ErrorFallback';
-import { TEST_USER_ID } from '../lib/supabase';
+import { Component, ErrorInfo, ReactNode } from "react";
+import ErrorFallback from "./ui/ErrorFallback";
+import { TEST_USER_ID } from "../lib/supabase";
 
 interface Props {
   children: ReactNode;
@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
-    errorInfo: null
+    errorInfo: null,
   };
 
   public static getDerivedStateFromError(error: Error): Partial<State> {
@@ -33,26 +33,26 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
-    
+
     // Call onError prop if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
-    
+
     // Log error without PII
-    console.error('Uncaught error in component:', {
+    console.error("Uncaught error in component:", {
       error: error instanceof Error ? error.message : String(error),
       componentStack: errorInfo.componentStack,
       url: window.location.href,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-    
+
     // Track error in analytics (production only)
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'error', {
-        event_category: 'error',
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", "error", {
+        event_category: "error",
         event_label: error.message,
         value: 1,
         non_interaction: true,
@@ -60,17 +60,17 @@ export class ErrorBoundary extends Component<Props, State> {
         error_message: error.message,
         component_stack: errorInfo.componentStack,
         page_url: window.location.href,
-        session_id: `session_${Date.now()}`
+        session_id: `session_${Date.now()}`,
       });
     }
-    
+
     // Additional error context for debugging (no PII)
-    console.error('Error captured by ErrorBoundary:', {
+    console.error("Error captured by ErrorBoundary:", {
       errorType: error.name,
       errorMessage: error.message,
       componentStack: errorInfo.componentStack,
       userAgent: navigator.userAgent,
-      viewport: `${window.innerWidth}x${window.innerHeight}`
+      viewport: `${window.innerWidth}x${window.innerHeight}`,
     });
   }
 
@@ -78,7 +78,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     });
   };
 
@@ -88,12 +88,12 @@ export class ErrorBoundary extends Component<Props, State> {
       if (this.props.fallback) {
         return this.props.fallback;
       }
-      
+
       return (
         <ErrorFallback
           error={this.state.error as Error}
           resetErrorBoundary={this.handleReset}
-          showDetails={process.env.NODE_ENV === 'development'}
+          showDetails={process.env.NODE_ENV === "development"}
         />
       );
     }

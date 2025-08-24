@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Wand2, FileText, ShoppingBag } from 'lucide-react';
-import { track } from '@/utils/analytics';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Wand2, FileText, ShoppingBag } from "lucide-react";
+import { track } from "@/utils/analytics";
 
 interface StepProps {
-  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   title: string;
   description: string;
 }
@@ -29,34 +29,41 @@ function Step({ icon: Icon, title, description }: StepProps) {
 
 export default function HowItWorks() {
   const handlePrimaryCTA = () => {
-    track('hiw_primary_cta_clicked', { 
-      location: 'homepage',
-      section: 'how_it_works',
-      cta_type: 'primary'
+    track("hiw_primary_cta_clicked", {
+      location: "homepage",
+      section: "how_it_works",
+      cta_type: "primary",
     });
   };
 
   const handleSecondaryCTA = () => {
-    track('hiw_secondary_cta_clicked', { 
-      location: 'homepage',
-      section: 'how_it_works',
-      cta_type: 'secondary'
+    track("hiw_secondary_cta_clicked", {
+      location: "homepage",
+      section: "how_it_works",
+      cta_type: "secondary",
     });
   };
 
   return (
-    <section aria-labelledby="how-it-works-heading" className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
+    <section
+      aria-labelledby="how-it-works-heading"
+      className="mx-auto max-w-7xl px-4 sm:px-6 py-16"
+    >
       <div className="text-center mb-12">
         <div className="mb-4">
           <span className="inline-block px-3 py-1 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-sm font-medium">
             Hoe het werkt
           </span>
         </div>
-        <h2 id="how-it-works-heading" className="text-3xl md:text-4xl font-light text-[#0D1B2A] mb-4">
+        <h2
+          id="how-it-works-heading"
+          className="text-3xl md:text-4xl font-light text-[#0D1B2A] mb-4"
+        >
           In 3 stappen naar outfits die kloppen
         </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Van stijltest tot gepersonaliseerde aanbevelingen in slechts een paar minuten
+          Van stijltest tot gepersonaliseerde aanbevelingen in slechts een paar
+          minuten
         </p>
       </div>
 
@@ -97,7 +104,7 @@ export default function HowItWorks() {
             Meer uitleg
           </Link>
         </div>
-        
+
         <p className="text-sm text-gray-500 mt-6">
           Geen creditcard vereist • Privacy gegarandeerd • 2 minuten van je tijd
         </p>

@@ -12,13 +12,17 @@ const mockTribePostsService = {
         user_id: "user_1",
         authorId: "user_1",
         authorName: "Emma S.",
-        content: "Mijn favoriete winter look! Warme wollen jas gecombineerd met comfortabele boots.",
-        image_url: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+        content:
+          "Mijn favoriete winter look! Warme wollen jas gecombineerd met comfortabele boots.",
+        image_url:
+          "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
         likes_count: 12,
         comments_count: 3,
         likes: 12,
         commentsCount: 3,
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+        created_at: new Date(
+          Date.now() - 2 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       },
       {
         id: `post_${tribeId}_2`,
@@ -26,18 +30,27 @@ const mockTribePostsService = {
         user_id: "user_2",
         authorId: "user_2",
         authorName: "Lisa M.",
-        content: "Vintage thrift find gecombineerd met moderne accessoires. Duurzaam én stijlvol!",
-        image_url: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+        content:
+          "Vintage thrift find gecombineerd met moderne accessoires. Duurzaam én stijlvol!",
+        image_url:
+          "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
         likes_count: 8,
         comments_count: 1,
         likes: 8,
         commentsCount: 1,
-        created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-      }
+        created_at: new Date(
+          Date.now() - 1 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+      },
     ];
   },
 
-  async createTribePost(input: Omit<TribePost, "id" | "created_at" | "likes_count" | "comments_count">): Promise<TribePost> {
+  async createTribePost(
+    input: Omit<
+      TribePost,
+      "id" | "created_at" | "likes_count" | "comments_count"
+    >,
+  ): Promise<TribePost> {
     const newPost: TribePost = {
       id: crypto.randomUUID(),
       created_at: new Date().toISOString(),
@@ -50,7 +63,7 @@ const mockTribePostsService = {
       ...input,
     };
     return newPost;
-  }
+  },
 };
 
 export function useTribePosts(tribeId: string) {
@@ -60,20 +73,34 @@ export function useTribePosts(tribeId: string) {
 
   useEffect(() => {
     let alive = true;
-    mockTribePostsService.getTribePosts(tribeId)
-      .then(p => { if (alive) setPosts(p); })
-      .catch(e => { if (alive) setError(String(e?.message ?? e)); })
-      .finally(() => { if (alive) setLoading(false); });
-    return () => { alive = false; };
+    mockTribePostsService
+      .getTribePosts(tribeId)
+      .then((p) => {
+        if (alive) setPosts(p);
+      })
+      .catch((e) => {
+        if (alive) setError(String(e?.message ?? e));
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
   }, [tribeId]);
 
-  async function addPost(input: Omit<TribePost, "id" | "created_at" | "likes_count" | "comments_count">) {
+  async function addPost(
+    input: Omit<
+      TribePost,
+      "id" | "created_at" | "likes_count" | "comments_count"
+    >,
+  ) {
     try {
       const saved = await mockTribePostsService.createTribePost(input);
-      
+
       // Add to top of list
-      setPosts(prev => prev ? [saved, ...prev] : [saved]);
-      
+      setPosts((prev) => (prev ? [saved, ...prev] : [saved]));
+
       return saved;
     } catch (e) {
       throw e;

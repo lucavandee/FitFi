@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 /**
  * Clean OnboardingContext for route-driven flow
  * No auto-populate, no navigation logic, just data management
  */
 interface OnboardingData {
-  gender?: 'man' | 'vrouw';
+  gender?: "man" | "vrouw";
   name?: string;
   archetypes?: string[];
-  season?: 'lente' | 'zomer' | 'herfst' | 'winter';
+  season?: "lente" | "zomer" | "herfst" | "winter";
   occasions?: string[];
   preferences?: {
     tops?: boolean;
@@ -28,13 +28,17 @@ interface OnboardingContextType {
   isComplete: boolean;
 }
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+const OnboardingContext = createContext<OnboardingContextType | undefined>(
+  undefined,
+);
 
-export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   // Clean initial state - no auto-population
   const initialState: OnboardingData = {
     gender: undefined,
-    name: '',
+    name: "",
     archetypes: [],
     season: undefined,
     occasions: [],
@@ -43,16 +47,16 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       bottoms: true,
       outerwear: true,
       shoes: true,
-      accessories: true
+      accessories: true,
     },
-    startTime: Date.now()
+    startTime: Date.now(),
   };
 
   const [data, setData] = useState<OnboardingData>(initialState);
 
   // Simple update function
   const updateAnswers = (newData: Partial<OnboardingData>) => {
-    setData(prev => ({ ...prev, ...newData }));
+    setData((prev) => ({ ...prev, ...newData }));
   };
 
   // Reset function
@@ -63,16 +67,18 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Check if onboarding is complete
   const isComplete = !!(
     data.gender &&
-    data.archetypes && data.archetypes.length > 0 &&
+    data.archetypes &&
+    data.archetypes.length > 0 &&
     data.season &&
-    data.occasions && data.occasions.length > 0
+    data.occasions &&
+    data.occasions.length > 0
   );
 
   const value: OnboardingContextType = {
     data,
     updateAnswers,
     resetData,
-    isComplete
+    isComplete,
   };
 
   return (
@@ -85,7 +91,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 export const useOnboarding = (): OnboardingContextType => {
   const context = useContext(OnboardingContext);
   if (context === undefined) {
-    throw new Error('useOnboarding must be used within an OnboardingProvider');
+    throw new Error("useOnboarding must be used within an OnboardingProvider");
   }
   return context;
 };

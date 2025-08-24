@@ -7,25 +7,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
       - name: Fail on files > 2 MB
         shell: bash
         run: |
           base="${{ github.event.pull_request.base.sha }}"
-          head="${{ github.event.pull_request.head.sha }}"
-          files=$(git diff --name-only "$base" "$head")
-          too_big=0
-          for f in $files; do
-            if [ -f "$f" ]; then
-              sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")
-              if [ "$sz" -gt 2000000 ]; then
-                echo "File too big: $f ($(numfmt --to=iec $sz))"
-                too_big=1
-              fi
+          head="${{ github.sha }}"
+          echo "Checking files changed between $base and $head"
+          changed=$(git diff --name-only "$base"..."$head" || true)
+          fail=0
+          for f in $changed; do
+            [ -f "$f" ] || continue
+            bytes=$(wc -c < "$f")
+            if [ "$bytes" -gt $((2*1024*1024)) ]; then
+              echo "::error file=$f::File exceeds 2MB ($bytes bytes)"
+              fail=1
             fi
           done
-          if [ "$too_big" -eq 1 ]; then
-            echo "::error::One or more files exceed 2 MB. Remove or use LFS."
-            exit 1
-          fi
+          [ "$fail" -eq 0 ] || { echo "❌ Large files detected"; exit 1; }
+          echo "✅ All changed files < 2MB"

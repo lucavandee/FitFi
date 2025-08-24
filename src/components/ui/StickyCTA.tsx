@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // Inline analytics fallback (use existing @/utils/analytics if available)
 let track = (event: string, props: any = {}) => {
   try {
     const w: any = window;
-    if (typeof w.gtag === 'function') {
-      w.gtag('event', event, props);
-    } else if (typeof w.plausible === 'function') {
+    if (typeof w.gtag === "function") {
+      w.gtag("event", event, props);
+    } else if (typeof w.plausible === "function") {
       w.plausible(event, { props });
     } else if (import.meta.env.DEV) {
-      console.info('[analytics]', event, props);
+      console.info("[analytics]", event, props);
     }
   } catch {}
 };
@@ -19,7 +19,7 @@ export default function StickyCTA() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const sentinel = document.getElementById('hero-sentinel');
+    const sentinel = document.getElementById("hero-sentinel");
     if (!sentinel) return;
 
     const observer = new IntersectionObserver(
@@ -28,9 +28,9 @@ export default function StickyCTA() {
         setShow(!entry.isIntersecting);
       },
       {
-        rootMargin: '0px',
-        threshold: 0
-      }
+        rootMargin: "0px",
+        threshold: 0,
+      },
     );
 
     observer.observe(sentinel);
@@ -38,10 +38,10 @@ export default function StickyCTA() {
   }, []);
 
   const handleStickyCTAClick = () => {
-    track('sticky_cta_clicked', {
-      location: 'sticky_cta',
-      section: 'mobile_bottom',
-      cta_type: 'primary'
+    track("sticky_cta_clicked", {
+      location: "sticky_cta",
+      section: "mobile_bottom",
+      cta_type: "primary",
     });
   };
 
@@ -49,8 +49,8 @@ export default function StickyCTA() {
     <div
       className={[
         "md:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out",
-        show ? "translate-y-0" : "translate-y-full"
-      ].join(' ')}
+        show ? "translate-y-0" : "translate-y-full",
+      ].join(" ")}
       aria-hidden={!show}
     >
       <div className="mx-auto max-w-7xl px-4 pb-4">
@@ -64,7 +64,7 @@ export default function StickyCTA() {
           >
             Start de stijltest
           </Link>
-          
+
           {/* Trust indicator */}
           <p className="text-center text-xs text-white/80 mt-2">
             Gratis • 2 minuten • Direct resultaat

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Star, Quote, ArrowRight, MessageSquare } from 'lucide-react';
-import Button from '../components/ui/Button';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Star, Quote, ArrowRight, MessageSquare } from "lucide-react";
+import Button from "../components/ui/Button";
 
 const SuccessStoriesPage: React.FC = () => {
   return (
@@ -13,7 +13,9 @@ const SuccessStoriesPage: React.FC = () => {
             Succesverhalen van onze gebruikers
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Ontdek hoe FitFi het leven van duizenden Nederlanders heeft veranderd door hen te helpen hun perfecte stijl te vinden en zelfverzekerder te worden.
+            Ontdek hoe FitFi het leven van duizenden Nederlanders heeft
+            veranderd door hen te helpen hun perfecte stijl te vinden en
+            zelfverzekerder te worden.
           </p>
         </div>
 
@@ -21,9 +23,9 @@ const SuccessStoriesPage: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-16 transition-colors">
           <div className="md:flex">
             <div className="md:w-1/2">
-              <img 
-                src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-                alt="Emma's transformatie" 
+              <img
+                src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                alt="Emma's transformatie"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -31,36 +33,54 @@ const SuccessStoriesPage: React.FC = () => {
               <div className="flex items-center mb-4">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-current" size={20} />
+                    <Star
+                      key={i}
+                      className="text-yellow-400 fill-current"
+                      size={20}
+                    />
                   ))}
                 </div>
-                <span className="ml-2 text-gray-600 dark:text-gray-400 text-sm">5.0</span>
+                <span className="ml-2 text-gray-600 dark:text-gray-400 text-sm">
+                  5.0
+                </span>
               </div>
-              
+
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                "FitFi heeft mijn garderobe en zelfvertrouwen compleet getransformeerd"
+                "FitFi heeft mijn garderobe en zelfvertrouwen compleet
+                getransformeerd"
               </h2>
-              
+
               <div className="mb-6">
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                  "Als drukke moeder van twee had ik nooit tijd om na te denken over mijn stijl. Ik droeg altijd dezelfde saaie outfits en voelde me onzeker over mijn lichaam na twee zwangerschappen. FitFi heeft me geholpen te ontdekken welke stijlen echt bij mijn lichaamsbouw passen en me zelfverzekerder maken."
+                  "Als drukke moeder van twee had ik nooit tijd om na te denken
+                  over mijn stijl. Ik droeg altijd dezelfde saaie outfits en
+                  voelde me onzeker over mijn lichaam na twee zwangerschappen.
+                  FitFi heeft me geholpen te ontdekken welke stijlen echt bij
+                  mijn lichaamsbouw passen en me zelfverzekerder maken."
                 </p>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                  "De persoonlijke aanbevelingen waren verrassend nauwkeurig en hebben me aangemoedigd om buiten mijn comfortzone te treden. Ik krijg nu regelmatig complimenten over mijn outfits en voel me eindelijk weer goed in mijn eigen huid!"
+                  "De persoonlijke aanbevelingen waren verrassend nauwkeurig en
+                  hebben me aangemoedigd om buiten mijn comfortzone te treden.
+                  Ik krijg nu regelmatig complimenten over mijn outfits en voel
+                  me eindelijk weer goed in mijn eigen huid!"
                 </p>
               </div>
-              
+
               <div className="flex items-center">
                 <div className="mr-4">
-                  <img 
-                    src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                    alt="Emma van der Berg" 
+                  <img
+                    src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
+                    alt="Emma van der Berg"
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Emma van der Berg</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Amsterdam • Premium gebruiker sinds 2024</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Emma van der Berg
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Amsterdam • Premium gebruiker sinds 2024
+                  </p>
                 </div>
               </div>
             </div>
@@ -72,14 +92,18 @@ const SuccessStoriesPage: React.FC = () => {
           {/* Story 1 */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
             <div className="relative h-64">
-              <img 
-                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2" 
-                alt="Thomas' verhaal" 
+              <img
+                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2"
+                alt="Thomas' verhaal"
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
             </div>
@@ -88,19 +112,26 @@ const SuccessStoriesPage: React.FC = () => {
                 "Eindelijk kleding die echt bij me past"
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                "Als man vond ik het altijd lastig om mijn eigen stijl te vinden. FitFi heeft me geholpen te begrijpen welke kleuren en pasvorm bij mijn lichaamsbouw passen. Ik krijg nu regelmatig complimenten over mijn outfits!"
+                "Als man vond ik het altijd lastig om mijn eigen stijl te
+                vinden. FitFi heeft me geholpen te begrijpen welke kleuren en
+                pasvorm bij mijn lichaamsbouw passen. Ik krijg nu regelmatig
+                complimenten over mijn outfits!"
               </p>
               <div className="flex items-center">
                 <div className="mr-3">
-                  <img 
-                    src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                    alt="Thomas Jansen" 
+                  <img
+                    src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
+                    alt="Thomas Jansen"
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Thomas Jansen</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Utrecht</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                    Thomas Jansen
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Utrecht
+                  </p>
                 </div>
               </div>
             </div>
@@ -109,14 +140,18 @@ const SuccessStoriesPage: React.FC = () => {
           {/* Story 2 */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
             <div className="relative h-64">
-              <img 
-                src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2" 
-                alt="Sophie's verhaal" 
+              <img
+                src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2"
+                alt="Sophie's verhaal"
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
             </div>
@@ -125,19 +160,26 @@ const SuccessStoriesPage: React.FC = () => {
                 "Zoveel tijd en geld bespaard"
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                "Ik kocht altijd kleding die ik uiteindelijk nauwelijks droeg. FitFi heeft me geholpen bewustere keuzes te maken en een capsule garderobe op te bouwen met items die ik echt draag en die perfect bij elkaar passen."
+                "Ik kocht altijd kleding die ik uiteindelijk nauwelijks droeg.
+                FitFi heeft me geholpen bewustere keuzes te maken en een capsule
+                garderobe op te bouwen met items die ik echt draag en die
+                perfect bij elkaar passen."
               </p>
               <div className="flex items-center">
                 <div className="mr-3">
-                  <img 
-                    src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                    alt="Sophie Bakker" 
+                  <img
+                    src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
+                    alt="Sophie Bakker"
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Sophie Bakker</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Rotterdam</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                    Sophie Bakker
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Rotterdam
+                  </p>
                 </div>
               </div>
             </div>
@@ -146,14 +188,18 @@ const SuccessStoriesPage: React.FC = () => {
           {/* Story 3 */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
             <div className="relative h-64">
-              <img 
-                src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2" 
-                alt="Jayden's verhaal" 
+              <img
+                src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2"
+                alt="Jayden's verhaal"
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
             </div>
@@ -162,19 +208,26 @@ const SuccessStoriesPage: React.FC = () => {
                 "Van stijlloos naar stijlvol"
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                "Ik had geen idee wat mijn stijl was en droeg vooral wat comfortabel was. FitFi heeft me laten zien dat stijlvol en comfortabel hand in hand kunnen gaan. Nu voel ik me zelfverzekerder bij zakelijke afspraken én in mijn vrije tijd."
+                "Ik had geen idee wat mijn stijl was en droeg vooral wat
+                comfortabel was. FitFi heeft me laten zien dat stijlvol en
+                comfortabel hand in hand kunnen gaan. Nu voel ik me
+                zelfverzekerder bij zakelijke afspraken én in mijn vrije tijd."
               </p>
               <div className="flex items-center">
                 <div className="mr-3">
-                  <img 
-                    src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2" 
-                    alt="Jayden de Vries" 
+                  <img
+                    src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
+                    alt="Jayden de Vries"
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Jayden de Vries</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Den Haag</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                    Jayden de Vries
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Den Haag
+                  </p>
                 </div>
               </div>
             </div>
@@ -186,19 +239,24 @@ const SuccessStoriesPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-10">
             Wat onze gebruikers zeggen
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Testimonial 1 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
               <div className="mb-4">
                 <Quote className="text-gray-300 dark:text-gray-600" size={24} />
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  "FitFi heeft me geholpen mijn eigen stijl te ontdekken. De aanbevelingen zijn verrassend nauwkeurig!"
+                  "FitFi heeft me geholpen mijn eigen stijl te ontdekken. De
+                  aanbevelingen zijn verrassend nauwkeurig!"
                 </p>
               </div>
               <div className="flex items-center">
@@ -208,8 +266,12 @@ const SuccessStoriesPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">Lisa K.</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">Basis gebruiker</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                    Lisa K.
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">
+                    Basis gebruiker
+                  </p>
                 </div>
               </div>
             </div>
@@ -218,13 +280,18 @@ const SuccessStoriesPage: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
               <div className="mb-4">
                 <Quote className="text-gray-300 dark:text-gray-600" size={24} />
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  "Als iemand die altijd moeite had met winkelen, is FitFi een gamechanger. Ik bespaar zoveel tijd!"
+                  "Als iemand die altijd moeite had met winkelen, is FitFi een
+                  gamechanger. Ik bespaar zoveel tijd!"
                 </p>
               </div>
               <div className="flex items-center">
@@ -234,8 +301,12 @@ const SuccessStoriesPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">Mark V.</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">Premium gebruiker</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                    Mark V.
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">
+                    Premium gebruiker
+                  </p>
                 </div>
               </div>
             </div>
@@ -244,13 +315,18 @@ const SuccessStoriesPage: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
               <div className="mb-4">
                 <Quote className="text-gray-300 dark:text-gray-600" size={24} />
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  "De persoonlijke aanbevelingen zijn geweldig. Eindelijk kleding die echt bij mijn lichaamsbouw past!"
+                  "De persoonlijke aanbevelingen zijn geweldig. Eindelijk
+                  kleding die echt bij mijn lichaamsbouw past!"
                 </p>
               </div>
               <div className="flex items-center">
@@ -260,8 +336,12 @@ const SuccessStoriesPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">Anouk B.</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">Premium gebruiker</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                    Anouk B.
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">
+                    Premium gebruiker
+                  </p>
                 </div>
               </div>
             </div>
@@ -270,14 +350,19 @@ const SuccessStoriesPage: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
                 {[...Array(4)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
                 <Star className="text-gray-300 dark:text-gray-600" size={16} />
               </div>
               <div className="mb-4">
                 <Quote className="text-gray-300 dark:text-gray-600" size={24} />
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  "Goede aanbevelingen, maar soms niet helemaal mijn smaak. Over het algemeen wel tevreden!"
+                  "Goede aanbevelingen, maar soms niet helemaal mijn smaak. Over
+                  het algemeen wel tevreden!"
                 </p>
               </div>
               <div className="flex items-center">
@@ -287,8 +372,12 @@ const SuccessStoriesPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">Jeroen T.</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">Basis gebruiker</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                    Jeroen T.
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">
+                    Basis gebruiker
+                  </p>
                 </div>
               </div>
             </div>
@@ -297,13 +386,18 @@ const SuccessStoriesPage: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
               <div className="mb-4">
                 <Quote className="text-gray-300 dark:text-gray-600" size={24} />
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  "De Premium upgrade was het absoluut waard! Zoveel meer opties en de seizoensgebonden updates zijn geweldig."
+                  "De Premium upgrade was het absoluut waard! Zoveel meer opties
+                  en de seizoensgebonden updates zijn geweldig."
                 </p>
               </div>
               <div className="flex items-center">
@@ -313,8 +407,12 @@ const SuccessStoriesPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">Femke R.</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">Premium gebruiker</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                    Femke R.
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">
+                    Premium gebruiker
+                  </p>
                 </div>
               </div>
             </div>
@@ -323,13 +421,18 @@ const SuccessStoriesPage: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                  <Star
+                    key={i}
+                    className="text-yellow-400 fill-current"
+                    size={16}
+                  />
                 ))}
               </div>
               <div className="mb-4">
                 <Quote className="text-gray-300 dark:text-gray-600" size={24} />
                 <p className="text-gray-600 dark:text-gray-400 mt-2">
-                  "Als stylist gebruik ik FitFi Business om mijn klanten beter te adviseren. Een onmisbaar hulpmiddel!"
+                  "Als stylist gebruik ik FitFi Business om mijn klanten beter
+                  te adviseren. Een onmisbaar hulpmiddel!"
                 </p>
               </div>
               <div className="flex items-center">
@@ -339,8 +442,12 @@ const SuccessStoriesPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">David P.</h4>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">Business gebruiker</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                    David P.
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">
+                    Business gebruiker
+                  </p>
                 </div>
               </div>
             </div>
@@ -354,11 +461,12 @@ const SuccessStoriesPage: React.FC = () => {
               Deel jouw verhaal
             </h2>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Heb jij een positieve ervaring met FitFi? We horen graag hoe onze service jouw stijl en zelfvertrouwen heeft verbeterd.
+              Heb jij een positieve ervaring met FitFi? We horen graag hoe onze
+              service jouw stijl en zelfvertrouwen heeft verbeterd.
             </p>
-            <Button 
+            <Button
               as={Link}
-              to="/feedback" 
+              to="/feedback"
               variant="secondary"
               size="lg"
               className="bg-white text-orange-600 hover:bg-gray-100"
@@ -376,11 +484,12 @@ const SuccessStoriesPage: React.FC = () => {
             Klaar om je eigen succesverhaal te schrijven?
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
-            Sluit je aan bij duizenden tevreden gebruikers en ontdek hoe FitFi jouw stijl kan transformeren.
+            Sluit je aan bij duizenden tevreden gebruikers en ontdek hoe FitFi
+            jouw stijl kan transformeren.
           </p>
-          <Button 
+          <Button
             as={Link}
-            to="/onboarding" 
+            to="/onboarding"
             variant="primary"
             size="lg"
             icon={<ArrowRight size={20} />}

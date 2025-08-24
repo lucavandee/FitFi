@@ -1,5 +1,5 @@
-import { useLayoutEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLayoutEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 /**
  * ScrollToTop component that automatically scrolls to the top of the page
@@ -11,13 +11,12 @@ export const ScrollToTop = () => {
 
   useLayoutEffect(() => {
     // Scroll to top smoothly on route change
-    window.scrollTo({ 
-      top: 0, 
-      behavior: 'smooth' 
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   }, [pathname]);
 
   // This component doesn't render anything
   return null;
 };
-

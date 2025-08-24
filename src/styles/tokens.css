@@ -1,34 +1,46 @@
 /* FitFi Design Tokens */
 :root {
   /* Brand Colors */
-  --ff-midnight-900: #0D1B2A;
-  --ff-midnight-700: #14243A;
-  --ff-midnight-500: #1B2F46;
+  --ff-midnight-900: #0d1b2a;
+  --ff-midnight-700: #14243a;
+  --ff-midnight-500: #1b2f46;
   --ff-ink: #0f172a;
-  --ff-muted: #6B7280;
-  
-  --ff-ice: #ECF7FF;
-  --ff-sky-300: #89CFF0;
-  --ff-sky-500: #5FB7E6;
-  --ff-sky-700: #3B9FD9;
-  
-  --ff-surface: #FFFFFF;
-  --ff-surface-light: #F6F6F6;
-  --ff-surface-warm: #FAF8F6;
-  
+  --ff-muted: #6b7280;
+
+  --ff-ice: #ecf7ff;
+  --ff-sky-300: #89cff0;
+  --ff-sky-500: #5fb7e6;
+  --ff-sky-700: #3b9fd9;
+
+  --ff-surface: #ffffff;
+  --ff-surface-light: #f6f6f6;
+  --ff-surface-warm: #faf8f6;
+
   /* Brand Gradients */
-  --ff-grad-midnight: #0D1B2A;
-  --ff-grad-sky: #89CFF0;
-  --ff-gradient-primary: linear-gradient(135deg, var(--ff-midnight-900) 0%, var(--ff-sky-500) 100%);
-  --ff-gradient-soft: linear-gradient(135deg, var(--ff-midnight-700) 0%, var(--ff-sky-300) 100%);
-  --ff-gradient-accent: linear-gradient(90deg, var(--ff-sky-300) 0%, var(--ff-sky-500) 100%);
-  
+  --ff-grad-midnight: #0d1b2a;
+  --ff-grad-sky: #89cff0;
+  --ff-gradient-primary: linear-gradient(
+    135deg,
+    var(--ff-midnight-900) 0%,
+    var(--ff-sky-500) 100%
+  );
+  --ff-gradient-soft: linear-gradient(
+    135deg,
+    var(--ff-midnight-700) 0%,
+    var(--ff-sky-300) 100%
+  );
+  --ff-gradient-accent: linear-gradient(
+    90deg,
+    var(--ff-sky-300) 0%,
+    var(--ff-sky-500) 100%
+  );
+
   /* Shadows */
   --ff-soft-shadow: 0 10px 30px rgba(13, 27, 42, 0.08);
   --ff-card-shadow: 0 8px 25px rgba(13, 27, 42, 0.06);
   --ff-button-shadow: 0 6px 20px rgba(137, 207, 240, 0.35);
   --ff-menu-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
-  
+
   /* Spacing & Layout */
   --ff-header-height: 4.5rem;
   --ff-radius-sm: 0.5rem;
@@ -36,27 +48,27 @@
   --ff-radius-lg: 1.5rem;
   --ff-radius-xl: 2rem;
   --ff-radius-2xl: 2.5rem;
-  
+
   /* Typography */
-  --ff-font-heading: 'Montserrat', 'Inter', ui-sans-serif, system-ui;
-  --ff-font-body: 'Lato', 'Inter', ui-sans-serif, system-ui;
-  --ff-font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  
+  --ff-font-heading: "Montserrat", "Inter", ui-sans-serif, system-ui;
+  --ff-font-body: "Lato", "Inter", ui-sans-serif, system-ui;
+  --ff-font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+
   /* Focus Ring */
-  --ff-ring: #89CFF0;
-  --ff-ring-offset: #FFFFFF;
-  
+  --ff-ring: #89cff0;
+  --ff-ring-offset: #ffffff;
+
   /* Component Tokens */
-  --ff-chip-bg: #F6F6F6;
-  --ff-chip-border: #E5E7EB;
-  --ff-panel: #FFFFFF;
-  --ff-bubble-user: #E6F3FF;
-  
+  --ff-chip-bg: #f6f6f6;
+  --ff-chip-border: #e5e7eb;
+  --ff-panel: #ffffff;
+  --ff-bubble-user: #e6f3ff;
+
   /* Animation Durations */
   --ff-duration-fast: 150ms;
   --ff-duration-normal: 250ms;
   --ff-duration-slow: 350ms;
-  
+
   /* Z-Index Scale */
   --ff-z-dropdown: 1000;
   --ff-z-sticky: 1020;

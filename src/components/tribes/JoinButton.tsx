@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
-import { UserPlus, UserMinus, Loader2 } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import { useTribeMembership } from '@/hooks/useTribeMembership';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { UserPlus, UserMinus, Loader2 } from "lucide-react";
+import Button from "@/components/ui/Button";
+import { useTribeMembership } from "@/hooks/useTribeMembership";
+import toast from "react-hot-toast";
 
 interface JoinButtonProps {
   tribeId: string;
   userId?: string;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'primary' | 'outline' | 'ghost';
+  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "outline" | "ghost";
 }
 
 export const JoinButton: React.FC<JoinButtonProps> = ({
   tribeId,
   userId,
-  className = '',
-  size = 'md',
-  variant = 'primary'
+  className = "",
+  size = "md",
+  variant = "primary",
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { isMember, joinTribe, leaveTribe } = useTribeMembership(tribeId, userId);
+  const { isMember, joinTribe, leaveTribe } = useTribeMembership(
+    tribeId,
+    userId,
+  );
 
   const handleToggleMembership = async () => {
     if (!userId) {
-      toast.error('Log in om lid te worden van deze tribe');
+      toast.error("Log in om lid te worden van deze tribe");
       return;
     }
 
@@ -32,14 +35,14 @@ export const JoinButton: React.FC<JoinButtonProps> = ({
     try {
       if (isMember) {
         await leaveTribe();
-        toast.success('Je hebt de tribe verlaten');
+        toast.success("Je hebt de tribe verlaten");
       } else {
         await joinTribe();
-        toast.success('Welkom bij de tribe! 🎉');
+        toast.success("Welkom bij de tribe! 🎉");
       }
     } catch (error) {
-      console.error('Membership toggle error:', error);
-      toast.error(isMember ? 'Verlaten mislukt' : 'Lid worden mislukt');
+      console.error("Membership toggle error:", error);
+      toast.error(isMember ? "Verlaten mislukt" : "Lid worden mislukt");
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +65,7 @@ export const JoinButton: React.FC<JoinButtonProps> = ({
     <Button
       onClick={handleToggleMembership}
       disabled={isLoading}
-      variant={isMember ? 'outline' : variant}
+      variant={isMember ? "outline" : variant}
       size={size}
       className={className}
       icon={
@@ -76,7 +79,7 @@ export const JoinButton: React.FC<JoinButtonProps> = ({
       }
       iconPosition="left"
     >
-      {isLoading ? 'Bezig...' : isMember ? 'Verlaten' : 'Lid worden'}
+      {isLoading ? "Bezig..." : isMember ? "Verlaten" : "Lid worden"}
     </Button>
   );
 };

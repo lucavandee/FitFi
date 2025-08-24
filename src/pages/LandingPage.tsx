@@ -1,58 +1,85 @@
-import React, { Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { track } from '@/utils/analytics';
-import Seo from '@/components/Seo';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import AffiliateDisclosureNote from '@/components/legal/AffiliateDisclosureNote';
+import React, { Suspense } from "react";
+import { useNavigate } from "react-router-dom";
+import { track } from "@/utils/analytics";
+import Seo from "@/components/Seo";
+import { ErrorBoundary } from "../components/ErrorBoundary";
+import LoadingFallback from "../components/ui/LoadingFallback";
+import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
 
 // Import components directly (not lazy loaded for better LCP)
-import Hero from '../components/landing/Hero';
-import SocialProof from '../components/landing/SocialProof';
-import HowItWorks from '../components/landing/HowItWorks';
-import Features from '../components/landing/Features';
+import Hero from "../components/landing/Hero";
+import SocialProof from "../components/landing/SocialProof";
+import HowItWorks from "../components/landing/HowItWorks";
+import Features from "../components/landing/Features";
 
 // Lazy load heavy components with better error handling
-const PreviewCarousel = React.lazy(() => 
-  import('../components/landing/PreviewCarousel').catch(err => {
-    console.error('Failed to load PreviewCarousel:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Preview tijdelijk niet beschikbaar</div> };
-  })
+const PreviewCarousel = React.lazy(() =>
+  import("../components/landing/PreviewCarousel").catch((err) => {
+    console.error("Failed to load PreviewCarousel:", err);
+    return {
+      default: () => (
+        <div className="py-8 text-center text-gray-500">
+          Preview tijdelijk niet beschikbaar
+        </div>
+      ),
+    };
+  }),
 );
 
-const FoundersBlock = React.lazy(() => 
-  import('../components/founders/FoundersBlock').catch(err => {
-    console.error('Failed to load FoundersBlock:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Founders Club tijdelijk niet beschikbaar</div> };
-  })
+const FoundersBlock = React.lazy(() =>
+  import("../components/founders/FoundersBlock").catch((err) => {
+    console.error("Failed to load FoundersBlock:", err);
+    return {
+      default: () => (
+        <div className="py-8 text-center text-gray-500">
+          Founders Club tijdelijk niet beschikbaar
+        </div>
+      ),
+    };
+  }),
 );
 
-const UGCGallery = React.lazy(() => 
-  import('../components/landing/UGCGallery').catch(err => {
-    console.error('Failed to load UGCGallery:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Gebruikersverhalen tijdelijk niet beschikbaar</div> };
-  })
+const UGCGallery = React.lazy(() =>
+  import("../components/landing/UGCGallery").catch((err) => {
+    console.error("Failed to load UGCGallery:", err);
+    return {
+      default: () => (
+        <div className="py-8 text-center text-gray-500">
+          Gebruikersverhalen tijdelijk niet beschikbaar
+        </div>
+      ),
+    };
+  }),
 );
 
-const ClosingCTA = React.lazy(() => 
-  import('../components/landing/ClosingCTA').catch(err => {
-    console.error('Failed to load ClosingCTA:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">CTA tijdelijk niet beschikbaar</div> };
-  })
+const ClosingCTA = React.lazy(() =>
+  import("../components/landing/ClosingCTA").catch((err) => {
+    console.error("Failed to load ClosingCTA:", err);
+    return {
+      default: () => (
+        <div className="py-8 text-center text-gray-500">
+          CTA tijdelijk niet beschikbaar
+        </div>
+      ),
+    };
+  }),
 );
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCTAClick = () => {
-    track('quiz_start_intent', { loc: 'closing_cta' });
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'begin_checkout', { event_label: 'ai_style_report_landing', value: 1 });
+    track("quiz_start_intent", { loc: "closing_cta" });
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "begin_checkout", {
+        event_label: "ai_style_report_landing",
+        value: 1,
+      });
     }
-    
+
     // Track conversion intent
     // Navigate to onboarding
-    navigate('/onboarding');
+    navigate("/onboarding");
   };
 
   return (
@@ -62,23 +89,23 @@ const LandingPage: React.FC = () => {
         description="Krijg je gratis AI Style Report in 2 minuten. Zie wat jouw kledingkeuzes over je zeggen en ontvang direct passende outfits."
         jsonLd={[
           {
-            "@context":"https://schema.org",
-            "@type":"Organization",
-            "name":"FitFi",
-            "url":"https://www.fitfi.ai",
-            "logo":"https://www.fitfi.ai/logo.png"
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "FitFi",
+            url: "https://www.fitfi.ai",
+            logo: "https://www.fitfi.ai/logo.png",
           },
           {
-            "@context":"https://schema.org",
-            "@type":"WebSite",
-            "name":"FitFi",
-            "url":"https://www.fitfi.ai",
-            "potentialAction": {
-              "@type":"SearchAction",
-              "target":"https://www.fitfi.ai/?q={search_term_string}",
-              "query-input":"required name=search_term_string"
-            }
-          }
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "FitFi",
+            url: "https://www.fitfi.ai",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://www.fitfi.ai/?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
         ]}
       />
 
@@ -135,11 +162,17 @@ const LandingPage: React.FC = () => {
         <section className="section bg-white">
           <div className="container max-w-5xl mx-auto">
             <div className="mx-auto text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-semibold text-ink">Founders Club</h2>
-              <p className="text-gray-600 mt-2">Verdien perks met referrals — stijl, status en early access.</p>
+              <h2 className="text-2xl md:text-3xl font-semibold text-ink">
+                Founders Club
+              </h2>
+              <p className="text-gray-600 mt-2">
+                Verdien perks met referrals — stijl, status en early access.
+              </p>
             </div>
             <div className="max-w-3xl mx-auto">
-              <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
+              <Suspense
+                fallback={<LoadingFallback message="Founders Club laden..." />}
+              >
                 <FoundersBlock />
               </Suspense>
             </div>
@@ -151,7 +184,11 @@ const LandingPage: React.FC = () => {
       <ErrorBoundary>
         <section className="section bg-white">
           <div className="container">
-            <Suspense fallback={<LoadingFallback message="Gebruikersverhalen laden..." />}>
+            <Suspense
+              fallback={
+                <LoadingFallback message="Gebruikersverhalen laden..." />
+              }
+            >
               <UGCGallery />
             </Suspense>
           </div>
@@ -162,13 +199,14 @@ const LandingPage: React.FC = () => {
       <ErrorBoundary>
         <section className="section bg-white">
           <div className="container">
-            <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
+            <Suspense
+              fallback={<LoadingFallback message="Laatste sectie laden..." />}
+            >
               <ClosingCTA onCTAClick={handleCTAClick} />
             </Suspense>
           </div>
         </section>
       </ErrorBoundary>
-
     </div>
   );
 };

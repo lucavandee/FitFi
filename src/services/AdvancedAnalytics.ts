@@ -1,4 +1,8 @@
-import { event as gaEvent, pageview as gaPageview, exception as gaException } from '@/utils/analytics';
+import {
+  event as gaEvent,
+  pageview as gaPageview,
+  exception as gaException,
+} from "@/utils/analytics";
 
 type Params = Record<string, any>;
 
@@ -36,7 +40,11 @@ export class AdvancedAnalytics {
   /** Track een custom event (stuurt naar gtag als beschikbaar) */
   track(name: string, params: Params = {}) {
     if (!this.enabled) return;
-    const payload = { user_id: this.userId ?? 'guest', ...this.context, ...params };
+    const payload = {
+      user_id: this.userId ?? "guest",
+      ...this.context,
+      ...params,
+    };
     try {
       gaEvent(name, payload);
     } catch {
@@ -54,7 +62,7 @@ export class AdvancedAnalytics {
   page(path: string, params: Params = {}) {
     if (!this.enabled) return;
     try {
-      gaPageview(path, { user_id: this.userId ?? 'guest', ...params });
+      gaPageview(path, { user_id: this.userId ?? "guest", ...params });
     } catch {
       /* no-op */
     }
@@ -83,7 +91,9 @@ export class AdvancedAnalytics {
 
 // Feature-flag (optioneel): zet uit met VITE_ADVANCED_ANALYTICS=false
 const ADV_ENABLED =
-  (import.meta.env.VITE_ADVANCED_ANALYTICS ?? 'true').toString().toLowerCase() !== 'false';
+  (import.meta.env.VITE_ADVANCED_ANALYTICS ?? "true")
+    .toString()
+    .toLowerCase() !== "false";
 
 /** ▶ Named export die elders verwacht wordt */
 export const advancedAnalytics = new AdvancedAnalytics(ADV_ENABLED);

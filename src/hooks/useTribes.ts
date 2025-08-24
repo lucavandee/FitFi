@@ -14,7 +14,7 @@ interface UseTribesResult {
   data: Tribe[] | null;
   loading: boolean;
   error: string | null;
-  source: 'supabase' | 'local' | 'fallback';
+  source: "supabase" | "local" | "fallback";
   cached: boolean;
   refetch: () => Promise<void>;
 }
@@ -28,13 +28,15 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
     archetype,
     limit,
     enabled = true,
-    refetchOnMount = true
+    refetchOnMount = true,
   } = options;
 
   const [data, setData] = useState<Tribe[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
+  const [source, setSource] = useState<"supabase" | "local" | "fallback">(
+    "fallback",
+  );
   const [cached, setCached] = useState(false);
 
   const loadTribes = async () => {
@@ -44,32 +46,36 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
     }
 
     let alive = true;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       const response: DataResponse<Tribe[]> = await fetchTribes({
         featured,
         archetype,
-        limit
+        limit,
       });
-      
+
       if (alive) {
         setData(response.data);
         setSource(response.source);
         setCached(response.cached);
-        
+
         // Set warning if using fallback
-        if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
-          setError('Live data niet beschikbaar, fallback gebruikt');
+        if (
+          response.source === "fallback" &&
+          response.errors &&
+          response.errors.length > 0
+        ) {
+          setError("Live data niet beschikbaar, fallback gebruikt");
         }
       }
     } catch (err) {
       if (alive) {
-        setError(err instanceof Error ? err.message : 'Onbekende fout');
+        setError(err instanceof Error ? err.message : "Onbekende fout");
         setData([]);
-        setSource('fallback');
+        setSource("fallback");
         setCached(false);
       }
     } finally {
@@ -77,14 +83,16 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
         setLoading(false);
       }
     }
-    
-    return () => { alive = false; };
+
+    return () => {
+      alive = false;
+    };
   };
 
   useEffect(() => {
     if (refetchOnMount || !data) {
       const cleanup = loadTribes();
-      return () => cleanup.then(fn => fn?.());
+      return () => cleanup.then((fn) => fn?.());
     }
   }, [featured, archetype, limit, enabled, refetchOnMount]);
 
@@ -94,18 +102,23 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
     error,
     source,
     cached,
-    refetch: loadTribes
+    refetch: loadTribes,
   };
 }
 
 /**
  * Hook for fetching a single tribe by slug
  */
-export function useTribeBySlug(slug: string, userId?: string): UseTribesResult & { tribe: Tribe | null } {
+export function useTribeBySlug(
+  slug: string,
+  userId?: string,
+): UseTribesResult & { tribe: Tribe | null } {
   const [tribe, setTribe] = useState<Tribe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
+  const [source, setSource] = useState<"supabase" | "local" | "fallback">(
+    "fallback",
+  );
   const [cached, setCached] = useState(false);
 
   const loadTribe = async () => {
@@ -115,28 +128,35 @@ export function useTribeBySlug(slug: string, userId?: string): UseTribesResult &
     }
 
     let alive = true;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
-      const response: DataResponse<Tribe | null> = await fetchTribeBySlug(slug, userId);
-      
+
+      const response: DataResponse<Tribe | null> = await fetchTribeBySlug(
+        slug,
+        userId,
+      );
+
       if (alive) {
         setTribe(response.data);
         setSource(response.source);
         setCached(response.cached);
-        
+
         // Set warning if using fallback
-        if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
-          setError('Live data niet beschikbaar, fallback gebruikt');
+        if (
+          response.source === "fallback" &&
+          response.errors &&
+          response.errors.length > 0
+        ) {
+          setError("Live data niet beschikbaar, fallback gebruikt");
         }
       }
     } catch (err) {
       if (alive) {
-        setError(err instanceof Error ? err.message : 'Onbekende fout');
+        setError(err instanceof Error ? err.message : "Onbekende fout");
         setTribe(null);
-        setSource('fallback');
+        setSource("fallback");
         setCached(false);
       }
     } finally {
@@ -144,13 +164,15 @@ export function useTribeBySlug(slug: string, userId?: string): UseTribesResult &
         setLoading(false);
       }
     }
-    
-    return () => { alive = false; };
+
+    return () => {
+      alive = false;
+    };
   };
 
   useEffect(() => {
     const cleanup = loadTribe();
-    return () => cleanup.then(fn => fn?.());
+    return () => cleanup.then((fn) => fn?.());
   }, [slug, userId]);
 
   return {
@@ -160,6 +182,6 @@ export function useTribeBySlug(slug: string, userId?: string): UseTribesResult &
     error,
     source,
     cached,
-    refetch: loadTribe
+    refetch: loadTribe,
   };
 }

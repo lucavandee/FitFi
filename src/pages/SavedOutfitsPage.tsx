@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Heart, Trash2, Share2, Filter } from 'lucide-react';
-import { useUser } from '../context/UserContext';
-import { listSaved, removeOutfit } from '@/services/saved/savedOutfitsService';
-import type { SavedOutfitRecord } from '@/services/saved/savedOutfitsService';
-import Button from '../components/ui/Button';
-import ImageWithFallback from '../components/ui/ImageWithFallback';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { ArrowLeft, Heart, Trash2, Share2, Filter } from "lucide-react";
+import { useUser } from "../context/UserContext";
+import { listSaved, removeOutfit } from "@/services/saved/savedOutfitsService";
+import type { SavedOutfitRecord } from "@/services/saved/savedOutfitsService";
+import Button from "../components/ui/Button";
+import ImageWithFallback from "../components/ui/ImageWithFallback";
+import LoadingFallback from "../components/ui/LoadingFallback";
+import { ErrorBoundary } from "../components/ErrorBoundary";
+import toast from "react-hot-toast";
 
 const SavedOutfitsPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
@@ -33,8 +33,10 @@ const SavedOutfitsPage: React.FC = () => {
       const savedItems = await listSaved();
       setItems(savedItems || []);
     } catch (err) {
-      console.error('Error loading saved outfits:', err);
-      setError(err instanceof Error ? err.message : 'Kon favorieten niet laden');
+      console.error("Error loading saved outfits:", err);
+      setError(
+        err instanceof Error ? err.message : "Kon favorieten niet laden",
+      );
       setItems([]);
     } finally {
       setLoading(false);
@@ -44,20 +46,22 @@ const SavedOutfitsPage: React.FC = () => {
   const handleRemoveOutfit = async (outfitId: string) => {
     if (deletingIds.has(outfitId)) return;
 
-    setDeletingIds(prev => new Set(prev).add(outfitId));
+    setDeletingIds((prev) => new Set(prev).add(outfitId));
 
     try {
       await removeOutfit(outfitId);
-      
+
       // Update local state
-      setItems(prev => prev ? prev.filter(item => item.outfit_id !== outfitId) : []);
-      
-      toast.success('Outfit verwijderd uit favorieten');
+      setItems((prev) =>
+        prev ? prev.filter((item) => item.outfit_id !== outfitId) : [],
+      );
+
+      toast.success("Outfit verwijderd uit favorieten");
     } catch (error) {
-      console.error('Error removing outfit:', error);
-      toast.error('Kon outfit niet verwijderen');
+      console.error("Error removing outfit:", error);
+      toast.error("Kon outfit niet verwijderen");
     } finally {
-      setDeletingIds(prev => {
+      setDeletingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(outfitId);
         return newSet;
@@ -66,18 +70,18 @@ const SavedOutfitsPage: React.FC = () => {
   };
 
   const handleShareOutfit = (outfit: any) => {
-    const shareText = `Check deze outfit uit: ${outfit.title || 'Mijn favoriete look'} via FitFi!`;
+    const shareText = `Check deze outfit uit: ${outfit.title || "Mijn favoriete look"} via FitFi!`;
     const shareUrl = `${window.location.origin}/outfits?shared=${outfit.id}`;
-    
+
     if (navigator.share) {
       navigator.share({
-        title: outfit.title || 'Mijn favoriete outfit',
+        title: outfit.title || "Mijn favoriete outfit",
         text: shareText,
-        url: shareUrl
+        url: shareUrl,
       });
     } else {
       navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
-      toast.success('Link gekopieerd naar klembord!');
+      toast.success("Link gekopieerd naar klembord!");
     }
   };
 
@@ -92,8 +96,12 @@ const SavedOutfitsPage: React.FC = () => {
           <div className="w-16 h-16 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Heart className="w-8 h-8 text-[#89CFF0]" />
           </div>
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Inloggen vereist</h2>
-          <p className="text-gray-600 mb-6">Je moet ingelogd zijn om je favorieten te bekijken.</p>
+          <h2 className="text-2xl font-light text-gray-900 mb-4">
+            Inloggen vereist
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Je moet ingelogd zijn om je favorieten te bekijken.
+          </p>
           <Button as={Link} to="/inloggen" variant="primary" fullWidth>
             Inloggen
           </Button>
@@ -106,7 +114,10 @@ const SavedOutfitsPage: React.FC = () => {
     <div className="min-h-screen bg-[#F6F6F6]">
       <Helmet>
         <title>Mijn Favorieten - Opgeslagen Outfits | FitFi</title>
-        <meta name="description" content="Bekijk al je opgeslagen outfit favorieten. Beheer je collectie en vind snel terug wat je mooi vindt." />
+        <meta
+          name="description"
+          content="Bekijk al je opgeslagen outfit favorieten. Beheer je collectie en vind snel terug wat je mooi vindt."
+        />
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
@@ -114,14 +125,14 @@ const SavedOutfitsPage: React.FC = () => {
         {/* Header */}
         <ErrorBoundary>
           <div className="mb-8">
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
             >
               <ArrowLeft size={20} className="mr-2" />
               Terug naar dashboard
             </Link>
-            
+
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-4xl font-light text-[#0D1B2A] mb-4">
@@ -131,7 +142,7 @@ const SavedOutfitsPage: React.FC = () => {
                   {items?.length || 0} opgeslagen outfits
                 </p>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <Button
                   variant="outline"
@@ -188,17 +199,17 @@ const SavedOutfitsPage: React.FC = () => {
                 Bewaar outfits die je leuk vindt door op het hartje te tikken.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button 
+                <Button
                   as={Link}
-                  to="/outfits" 
+                  to="/outfits"
                   variant="primary"
                   className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
                 >
                   Ontdek outfits
                 </Button>
-                <Button 
+                <Button
                   as={Link}
-                  to="/feed" 
+                  to="/feed"
                   variant="outline"
                   className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
                 >
@@ -217,24 +228,30 @@ const SavedOutfitsPage: React.FC = () => {
                 const outfit = item.outfit_json || {};
                 const mainProduct = outfit.products?.[0];
                 const isDeleting = deletingIds.has(item.outfit_id);
-                
+
                 return (
                   <div
                     key={item.id}
                     className={`bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-md transition-all ${
-                      isDeleting ? 'opacity-50 pointer-events-none' : 'hover:transform hover:scale-105'
+                      isDeleting
+                        ? "opacity-50 pointer-events-none"
+                        : "hover:transform hover:scale-105"
                     }`}
                   >
                     {/* Image */}
                     <div className="aspect-[4/5] bg-gray-100 relative">
                       <ImageWithFallback
-                        src={mainProduct?.imageUrl || outfit.imageUrl || '/images/fallbacks/outfit.jpg'}
-                        alt={outfit.title || 'Opgeslagen outfit'}
+                        src={
+                          mainProduct?.imageUrl ||
+                          outfit.imageUrl ||
+                          "/images/fallbacks/outfit.jpg"
+                        }
+                        alt={outfit.title || "Opgeslagen outfit"}
                         className="w-full h-full object-cover"
                         loading="lazy"
                         decoding="async"
                       />
-                      
+
                       {/* Match Score */}
                       {outfit.matchScore && (
                         <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
@@ -242,17 +259,19 @@ const SavedOutfitsPage: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Content */}
                     <div className="p-4">
                       <h3 className="font-medium text-gray-900 mb-2 line-clamp-1">
-                        {outfit.title || 'Opgeslagen outfit'}
+                        {outfit.title || "Opgeslagen outfit"}
                       </h3>
-                      
+
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                        {outfit.why || outfit.description || 'Een van je favoriete looks'}
+                        {outfit.why ||
+                          outfit.description ||
+                          "Een van je favoriete looks"}
                       </p>
-                      
+
                       {/* Tags */}
                       {outfit.tags && outfit.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mb-3">
@@ -266,15 +285,20 @@ const SavedOutfitsPage: React.FC = () => {
                           ))}
                         </div>
                       )}
-                      
+
                       {/* Actions */}
                       <div className="flex items-center justify-between">
                         <div className="text-xs text-gray-500">
                           {item.created_at && (
-                            <>Bewaard {new Date(item.created_at).toLocaleDateString('nl-NL')}</>
+                            <>
+                              Bewaard{" "}
+                              {new Date(item.created_at).toLocaleDateString(
+                                "nl-NL",
+                              )}
+                            </>
                           )}
                         </div>
-                        
+
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleShareOutfit(outfit)}
@@ -283,7 +307,7 @@ const SavedOutfitsPage: React.FC = () => {
                           >
                             <Share2 className="w-4 h-4 text-gray-500" />
                           </button>
-                          
+
                           <button
                             onClick={() => handleRemoveOutfit(item.outfit_id)}
                             disabled={isDeleting}
@@ -314,20 +338,21 @@ const SavedOutfitsPage: React.FC = () => {
                 Vind meer outfits die je leuk vindt
               </h2>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Ontdek nog meer gepersonaliseerde aanbevelingen en bouw je perfecte garderobe op.
+                Ontdek nog meer gepersonaliseerde aanbevelingen en bouw je
+                perfecte garderobe op.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button 
+                <Button
                   as={Link}
-                  to="/outfits" 
+                  to="/outfits"
                   variant="primary"
                   className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
                 >
                   Ontdek meer outfits
                 </Button>
-                <Button 
+                <Button
                   as={Link}
-                  to="/feed" 
+                  to="/feed"
                   variant="outline"
                   className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
                 >

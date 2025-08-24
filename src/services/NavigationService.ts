@@ -3,13 +3,16 @@
  * Provides consistent loading states, error handling, and user feedback
  */
 
-import { NavigateFunction } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { NavigateFunction } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Debug logging utility
 const debugLog = (message: string, data?: any) => {
-  if (typeof window !== 'undefined' && (import.meta.env.DEV || localStorage.getItem('fitfi-debug') === 'true')) {
-    console.log(`[🔍 NavigationService] ${message}`, data || '');
+  if (
+    typeof window !== "undefined" &&
+    (import.meta.env.DEV || localStorage.getItem("fitfi-debug") === "true")
+  ) {
+    console.log(`[🔍 NavigationService] ${message}`, data || "");
   }
 };
 interface NavigationOptions {
@@ -44,8 +47,8 @@ class NavigationService {
     currentRoute: null,
     targetRoute: null,
     progress: 0,
-    message: '',
-    error: null
+    message: "",
+    error: null,
   };
   private listeners: ((state: NavigationState) => void)[] = [];
   private progressInterval: NodeJS.Timeout | null = null;
@@ -55,7 +58,7 @@ class NavigationService {
    */
   initialize(navigate: NavigateFunction) {
     this.navigate = navigate;
-    debugLog('Initialized with navigate function');
+    debugLog("Initialized with navigate function");
   }
 
   /**
@@ -64,7 +67,7 @@ class NavigationService {
   subscribe(listener: (state: NavigationState) => void) {
     this.listeners.push(listener);
     return () => {
-      this.listeners = this.listeners.filter(l => l !== listener);
+      this.listeners = this.listeners.filter((l) => l !== listener);
     };
   }
 
@@ -80,7 +83,7 @@ class NavigationService {
    */
   private updateState(updates: Partial<NavigationState>) {
     this.state = { ...this.state, ...updates };
-    this.listeners.forEach(listener => listener(this.state));
+    this.listeners.forEach((listener) => listener(this.state));
   }
 
   /**
@@ -91,7 +94,7 @@ class NavigationService {
       isNavigating: true,
       progress: 0,
       message,
-      error: null
+      error: null,
     });
 
     let progress = 0;
@@ -124,8 +127,8 @@ class NavigationService {
         currentRoute: null,
         targetRoute: null,
         progress: 0,
-        message: '',
-        error: null
+        message: "",
+        error: null,
       });
     }, 500);
   }
@@ -134,8 +137,8 @@ class NavigationService {
    * Handle navigation error
    */
   private handleError(error: Error, options?: NavigationOptions) {
-    debugLog('ERROR in navigation:', error);
-    console.error('[ERROR] NavigationService navigation failed:', error);
+    debugLog("ERROR in navigation:", error);
+    console.error("[ERROR] NavigationService navigation failed:", error);
 
     if (this.progressInterval) {
       clearInterval(this.progressInterval);
@@ -145,7 +148,7 @@ class NavigationService {
     this.updateState({
       isNavigating: false,
       progress: 0,
-      error: error.message
+      error: error.message,
     });
 
     // Call error callback if provided
@@ -169,22 +172,24 @@ class NavigationService {
    * Navigate to a route with enhanced UX
    */
   async navigateTo(
-    route: string, 
+    route: string,
     options: NavigationOptions = {},
-    state?: any
+    state?: any,
   ): Promise<void> {
     if (!this.navigate) {
-      throw new Error('NavigationService not initialized. Call initialize() first.');
+      throw new Error(
+        "NavigationService not initialized. Call initialize() first.",
+      );
     }
 
     const {
       delay = 300,
       showLoading = true,
-      loadingMessage = 'Navigeren...',
+      loadingMessage = "Navigeren...",
       onStart,
       onComplete,
       analytics,
-      fallbackRoute
+      fallbackRoute,
     } = options;
 
     try {
@@ -193,7 +198,7 @@ class NavigationService {
       // Update state
       this.updateState({
         currentRoute: window.location.pathname,
-        targetRoute: route
+        targetRoute: route,
       });
 
       // Call start callback
@@ -202,11 +207,11 @@ class NavigationService {
       }
 
       // Track analytics if provided
-      if (analytics && typeof window.gtag === 'function') {
-        window.gtag('event', analytics.event, {
+      if (analytics && typeof window.gtag === "function") {
+        window.gtag("event", analytics.event, {
           event_category: analytics.category,
           event_label: analytics.label || route,
-          value: analytics.value
+          value: analytics.value,
         });
       }
 
@@ -216,7 +221,7 @@ class NavigationService {
       }
 
       // Wait for delay
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
 
       // Perform navigation
       if (state) {
@@ -238,7 +243,6 @@ class NavigationService {
       }
 
       debugLog(`Successfully navigated to: ${route}`);
-
     } catch (error) {
       this.handleError(error as Error, options);
       throw error;
@@ -248,77 +252,96 @@ class NavigationService {
   /**
    * Navigate to quiz results with enhanced UX
    */
-  async navigateToResults(data?: any, options?: Partial<NavigationOptions>): Promise<void> {
-    return this.navigateTo('/results', {
-      delay: 500,
-      loadingMessage: 'Je stijlprofiel wordt gemaakt...',
-      fallbackRoute: '/onboarding',
-      analytics: {
-        event: 'navigate_to_results',
-        category: 'user_journey',
-        label: 'quiz_completion'
+  async navigateToResults(
+    data?: any,
+    options?: Partial<NavigationOptions>,
+  ): Promise<void> {
+    return this.navigateTo(
+      "/results",
+      {
+        delay: 500,
+        loadingMessage: "Je stijlprofiel wordt gemaakt...",
+        fallbackRoute: "/onboarding",
+        analytics: {
+          event: "navigate_to_results",
+          category: "user_journey",
+          label: "quiz_completion",
+        },
+        ...options,
       },
-      ...options
-    }, data ? { answers: data } : undefined);
+      data ? { answers: data } : undefined,
+    );
   }
 
   /**
    * Navigate to enhanced results with onboarding data
    */
-  async navigateToEnhancedResults(onboardingData?: any, options?: Partial<NavigationOptions>): Promise<void> {
-    return this.navigateTo('/results', {
-      delay: 300,
-      loadingMessage: 'Aanbevelingen worden geladen...',
-      fallbackRoute: '/onboarding',
-      analytics: {
-        event: 'navigate_to_enhanced_results',
-        category: 'user_journey',
-        label: 'onboarding_completion'
+  async navigateToEnhancedResults(
+    onboardingData?: any,
+    options?: Partial<NavigationOptions>,
+  ): Promise<void> {
+    return this.navigateTo(
+      "/results",
+      {
+        delay: 300,
+        loadingMessage: "Aanbevelingen worden geladen...",
+        fallbackRoute: "/onboarding",
+        analytics: {
+          event: "navigate_to_enhanced_results",
+          category: "user_journey",
+          label: "onboarding_completion",
+        },
+        ...options,
       },
-      ...options
-    }, onboardingData ? { onboardingData } : undefined);
+      onboardingData ? { onboardingData } : undefined,
+    );
   }
 
   /**
    * Navigate to onboarding with error recovery
    */
-  async navigateToOnboarding(options?: Partial<NavigationOptions>): Promise<void> {
-    return this.navigateTo('/onboarding', {
+  async navigateToOnboarding(
+    options?: Partial<NavigationOptions>,
+  ): Promise<void> {
+    return this.navigateTo("/onboarding", {
       delay: 200,
-      loadingMessage: 'Onboarding laden...',
+      loadingMessage: "Onboarding laden...",
       analytics: {
-        event: 'navigate_to_onboarding',
-        category: 'user_journey',
-        label: 'restart_flow'
+        event: "navigate_to_onboarding",
+        category: "user_journey",
+        label: "restart_flow",
       },
-      ...options
+      ...options,
     });
   }
 
   /**
    * Navigate to next onboarding step
    */
-  async navigateToNextStep(step: string, options?: Partial<NavigationOptions>): Promise<void> {
+  async navigateToNextStep(
+    step: string,
+    options?: Partial<NavigationOptions>,
+  ): Promise<void> {
     const stepRoutes: Record<string, string> = {
-      'gender_name': '/onboarding/gender-name',
-      'archetype': '/onboarding/archetype',
-      'season': '/onboarding/season',
-      'occasion': '/onboarding/occasion',
-      'preferences': '/onboarding/preferences',
-      'results': '/onboarding/results'
+      gender_name: "/onboarding/gender-name",
+      archetype: "/onboarding/archetype",
+      season: "/onboarding/season",
+      occasion: "/onboarding/occasion",
+      preferences: "/onboarding/preferences",
+      results: "/onboarding/results",
     };
 
-    const route = stepRoutes[step] || '/onboarding';
+    const route = stepRoutes[step] || "/onboarding";
 
     return this.navigateTo(route, {
       delay: 200,
       loadingMessage: `Naar ${step}...`,
       analytics: {
-        event: 'navigate_onboarding_step',
-        category: 'onboarding',
-        label: step
+        event: "navigate_onboarding_step",
+        category: "onboarding",
+        label: step,
       },
-      ...options
+      ...options,
     });
   }
 
@@ -349,8 +372,8 @@ class NavigationService {
       currentRoute: null,
       targetRoute: null,
       progress: 0,
-      message: '',
-      error: null
+      message: "",
+      error: null,
     });
   }
 }
@@ -362,4 +385,3 @@ export const navigationService = new NavigationService();
 const useNavigationService = () => {
   return navigationService;
 };
-

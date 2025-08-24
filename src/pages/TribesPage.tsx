@@ -1,57 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { Users, Plus, Search, TrendingUp, Star, ArrowRight } from 'lucide-react';
-import { useUser } from '../context/UserContext';
-import { useTribes } from '../hooks/useTribes';
-import { useFitFiUser } from '../hooks/useFitFiUser';
-import { JoinButton } from '../components/tribes/JoinButton';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import {
+  Users,
+  Plus,
+  Search,
+  TrendingUp,
+  Star,
+  ArrowRight,
+} from "lucide-react";
+import { useUser } from "../context/UserContext";
+import { useTribes } from "../hooks/useTribes";
+import { useFitFiUser } from "../hooks/useFitFiUser";
+import { JoinButton } from "../components/tribes/JoinButton";
 import RankingBoard from "@/components/Tribes/RankingBoard";
-import type { Tribe } from '../services/data/types';
-import { stableKey } from '../utils/key';
-import Button from '../components/ui/Button';
-import SmartImage from '@/components/media/SmartImage';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import toast from 'react-hot-toast';
+import type { Tribe } from "../services/data/types";
+import { stableKey } from "../utils/key";
+import Button from "../components/ui/Button";
+import SmartImage from "@/components/media/SmartImage";
+import LoadingFallback from "../components/ui/LoadingFallback";
+import { ErrorBoundary } from "../components/ErrorBoundary";
+import toast from "react-hot-toast";
 
 const TribesPage: React.FC = () => {
   const { user } = useUser();
   const { data: fitFiUser } = useFitFiUser(user?.id);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedArchetype, setSelectedArchetype] = useState<string | undefined>();
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedArchetype, setSelectedArchetype] = useState<
+    string | undefined
+  >();
+
   // Use new tribes hook
-  const { 
-    data: tribes, 
-    loading: isLoading, 
-    error, 
+  const {
+    data: tribes,
+    loading: isLoading,
+    error,
     source,
     cached,
-    refetch 
+    refetch,
   } = useTribes({
     featured: undefined,
     archetype: selectedArchetype,
-    limit: 20
+    limit: 20,
   });
 
-
-  const filteredTribes = (tribes || []).filter(tribe =>
-    tribe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tribe.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTribes = (tribes || []).filter(
+    (tribe) =>
+      tribe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tribe.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Show error state if data service failed
-  if (error && source === 'fallback') {
+  if (error && source === "fallback") {
     return (
       <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Users className="w-8 h-8 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Tribes laden mislukt</h2>
+          <h2 className="text-2xl font-light text-gray-900 mb-4">
+            Tribes laden mislukt
+          </h2>
           <p className="text-gray-600 mb-6">
-            Er ging iets mis bij het laden van tribes. Probeer het later opnieuw.
+            Er ging iets mis bij het laden van tribes. Probeer het later
+            opnieuw.
           </p>
           <div className="space-y-3">
             <Button onClick={refetch} variant="primary">
@@ -74,9 +86,18 @@ const TribesPage: React.FC = () => {
     <div className="min-h-screen bg-[#F6F6F6]">
       <Helmet>
         <title>Style Tribes - Community voor Stijlliefhebbers | FitFi</title>
-        <meta name="description" content="Sluit je aan bij Style Tribes en deel je outfits met gelijkgestemde stijlliefhebbers. Ontdek nieuwe trends en inspiratie." />
-        <meta property="og:title" content="Style Tribes - Community voor Stijlliefhebbers" />
-        <meta property="og:description" content="Deel je outfits en ontdek nieuwe stijlinspiratie in onze community." />
+        <meta
+          name="description"
+          content="Sluit je aan bij Style Tribes en deel je outfits met gelijkgestemde stijlliefhebbers. Ontdek nieuwe trends en inspiratie."
+        />
+        <meta
+          property="og:title"
+          content="Style Tribes - Community voor Stijlliefhebbers"
+        />
+        <meta
+          property="og:description"
+          content="Deel je outfits en ontdek nieuwe stijlinspiratie in onze community."
+        />
         <link rel="canonical" href="https://fitfi.app/tribes" />
       </Helmet>
 
@@ -87,13 +108,13 @@ const TribesPage: React.FC = () => {
             <div className="w-20 h-20 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <Users className="w-10 h-10 text-white" />
             </div>
-            
+
             <h1 className="text-4xl font-light text-[#0D1B2A] mb-6">
               Style Tribes
             </h1>
-            
+
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Sluit je aan bij communities van gelijkgestemde stijlliefhebbers. 
+              Sluit je aan bij communities van gelijkgestemde stijlliefhebbers.
               Deel je outfits, ontdek nieuwe trends en laat je inspireren.
             </p>
 
@@ -107,27 +128,30 @@ const TribesPage: React.FC = () => {
                   placeholder="Zoek tribes..."
                   className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] text-gray-900 placeholder-gray-500 transition-all"
                 />
-                <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                <Search
+                  className="absolute left-4 top-3.5 text-gray-400"
+                  size={20}
+                />
               </div>
             </div>
 
             {/* Archetype Filter */}
             <div className="flex flex-wrap justify-center gap-2 mb-8">
               {[
-                { id: undefined, label: 'Alle' },
-                { id: 'klassiek', label: 'Klassiek' },
-                { id: 'casual_chic', label: 'Casual Chic' },
-                { id: 'streetstyle', label: 'Streetstyle' },
-                { id: 'retro', label: 'Retro' },
-                { id: 'luxury', label: 'Luxury' }
+                { id: undefined, label: "Alle" },
+                { id: "klassiek", label: "Klassiek" },
+                { id: "casual_chic", label: "Casual Chic" },
+                { id: "streetstyle", label: "Streetstyle" },
+                { id: "retro", label: "Retro" },
+                { id: "luxury", label: "Luxury" },
               ].map((archetype) => (
                 <button
-                  key={archetype.id || 'all'}
+                  key={archetype.id || "all"}
                   onClick={() => setSelectedArchetype(archetype.id)}
                   className={`px-4 py-2 rounded-full transition-colors ${
                     selectedArchetype === archetype.id
-                      ? 'bg-[#89CFF0] text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                      ? "bg-[#89CFF0] text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
                   }`}
                 >
                   {archetype.label}
@@ -138,18 +162,22 @@ const TribesPage: React.FC = () => {
             {/* Data Source Indicator (Development) */}
             {import.meta.env.DEV && (
               <div className="mb-4 text-center">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                  source === 'supabase' ? 'bg-green-100 text-green-800' :
-                  source === 'local' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  Data source: {source} {cached ? '(cached)' : ''}
+                <span
+                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                    source === "supabase"
+                      ? "bg-green-100 text-green-800"
+                      : source === "local"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  Data source: {source} {cached ? "(cached)" : ""}
                 </span>
               </div>
             )}
 
             {/* Create Tribe CTA */}
-            {status === 'authenticated' && (
+            {status === "authenticated" && (
               <Button
                 as={Link}
                 to="/tribes/create"
@@ -175,7 +203,7 @@ const TribesPage: React.FC = () => {
                 De meest actieve en succesvolle tribes van deze maand
               </p>
             </div>
-            
+
             <div className="max-w-4xl mx-auto">
               <RankingBoard />
             </div>
@@ -193,7 +221,10 @@ const TribesPage: React.FC = () => {
                 {/* Cover Image */}
                 <div className="relative aspect-video overflow-hidden">
                   <SmartImage
-                    src={tribe.cover_img || 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&dpr=2'}
+                    src={
+                      tribe.cover_img ||
+                      "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&dpr=2"
+                    }
                     alt={`${tribe.name} tribe cover`}
                     id={tribe.id}
                     kind="generic"
@@ -201,7 +232,7 @@ const TribesPage: React.FC = () => {
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="w-full h-full object-cover"
                   />
-                  
+
                   {/* Member count overlay */}
                   <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
                     <Users size={14} className="inline mr-1" />
@@ -227,8 +258,8 @@ const TribesPage: React.FC = () => {
                         {tribe.description}
                       </p>
                     </div>
-                    
-                    {tribe.user_role === 'owner' && (
+
+                    {tribe.user_role === "owner" && (
                       <div className="ml-3">
                         <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                           <Star size={14} className="text-yellow-600" />
@@ -264,7 +295,7 @@ const TribesPage: React.FC = () => {
                     >
                       Bekijk tribe
                     </Button>
-                    
+
                     {!tribe.is_member && user && (
                       <Button
                         as="div"
@@ -272,7 +303,7 @@ const TribesPage: React.FC = () => {
                         size="sm"
                         className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
                       >
-                        <JoinButton 
+                        <JoinButton
                           tribeId={tribe.id}
                           userId={user.id}
                           size="sm"
@@ -296,13 +327,12 @@ const TribesPage: React.FC = () => {
                 <Search className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-xl font-medium text-gray-900 mb-4">
-                {searchQuery ? 'Geen tribes gevonden' : 'Nog geen tribes'}
+                {searchQuery ? "Geen tribes gevonden" : "Nog geen tribes"}
               </h3>
               <p className="text-gray-600 mb-6">
-                {searchQuery 
-                  ? 'Probeer een andere zoekterm of maak je eigen tribe.'
-                  : 'Wees de eerste om een style tribe te maken!'
-                }
+                {searchQuery
+                  ? "Probeer een andere zoekterm of maak je eigen tribe."
+                  : "Wees de eerste om een style tribe te maken!"}
               </p>
               {user && (
                 <Button
@@ -329,11 +359,12 @@ const TribesPage: React.FC = () => {
                   Sluit je aan bij de community
                 </h2>
                 <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Maak een account aan om tribes te joinen, outfits te delen en deel uit te maken van onze stijlcommunity.
+                  Maak een account aan om tribes te joinen, outfits te delen en
+                  deel uit te maken van onze stijlcommunity.
                 </p>
-                <Button 
+                <Button
                   as={Link}
-                  to="/registreren" 
+                  to="/registreren"
                   variant="primary"
                   size="lg"
                   icon={<ArrowRight size={20} />}

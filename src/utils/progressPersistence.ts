@@ -23,12 +23,12 @@ interface OnboardingProgress {
 }
 
 const STORAGE_KEYS = {
-  QUIZ_PROGRESS: 'fitfi-quiz-progress',
-  ONBOARDING_PROGRESS: 'fitfi-onboarding-progress',
-  SESSION_ID: 'fitfi-session-id'
+  QUIZ_PROGRESS: "fitfi-quiz-progress",
+  ONBOARDING_PROGRESS: "fitfi-onboarding-progress",
+  SESSION_ID: "fitfi-session-id",
 } as const;
 
-const CURRENT_VERSION = '1.0.0';
+const CURRENT_VERSION = "1.0.0";
 const MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
@@ -63,7 +63,7 @@ function _isDataValid(timestamp: number): boolean {
 function _saveQuizProgress(
   currentStep: number,
   totalSteps: number,
-  answers: Record<string, any>
+  answers: Record<string, any>,
 ): void {
   try {
     const progress: QuizProgress = {
@@ -73,24 +73,29 @@ function _saveQuizProgress(
       timestamp: Date.now(),
       sessionId: getSessionId(),
       userAgent: navigator.userAgent,
-      version: CURRENT_VERSION
+      version: CURRENT_VERSION,
     };
-    
+
     localStorage.setItem(STORAGE_KEYS.QUIZ_PROGRESS, JSON.stringify(progress));
-    
+
     // Track progress save
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'quiz_progress_saved', {
-        event_category: 'persistence',
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "quiz_progress_saved", {
+        event_category: "persistence",
         event_label: `step_${currentStep}`,
         step: currentStep,
-        total_steps: totalSteps
+        total_steps: totalSteps,
       });
     }
-    
-    console.log(`[📱 ProgressPersistence] Quiz progress saved: step ${currentStep}/${totalSteps}`);
+
+    console.log(
+      `[📱 ProgressPersistence] Quiz progress saved: step ${currentStep}/${totalSteps}`,
+    );
   } catch (error) {
-    console.error('[❌ ProgressPersistence] Failed to save quiz progress:', error);
+    console.error(
+      "[❌ ProgressPersistence] Failed to save quiz progress:",
+      error,
+    );
   }
 }
 
@@ -101,39 +106,46 @@ function _loadQuizProgress(): QuizProgress | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.QUIZ_PROGRESS);
     if (!stored) return null;
-    
+
     const progress: QuizProgress = JSON.parse(stored);
-    
+
     // Validate data
     if (!_isDataValid(progress.timestamp)) {
-      console.log('[📱 ProgressPersistence] Quiz progress expired, clearing');
+      console.log("[📱 ProgressPersistence] Quiz progress expired, clearing");
       _clearQuizProgress();
       return null;
     }
-    
+
     // Version check
     if (progress.version !== CURRENT_VERSION) {
-      console.log('[📱 ProgressPersistence] Quiz progress version mismatch, clearing');
+      console.log(
+        "[📱 ProgressPersistence] Quiz progress version mismatch, clearing",
+      );
       _clearQuizProgress();
       return null;
     }
-    
-    console.log(`[📱 ProgressPersistence] Quiz progress loaded: step ${progress.currentStep}/${progress.totalSteps}`);
-    
+
+    console.log(
+      `[📱 ProgressPersistence] Quiz progress loaded: step ${progress.currentStep}/${progress.totalSteps}`,
+    );
+
     // Track progress load
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'quiz_progress_loaded', {
-        event_category: 'persistence',
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "quiz_progress_loaded", {
+        event_category: "persistence",
         event_label: `step_${progress.currentStep}`,
         step: progress.currentStep,
         total_steps: progress.totalSteps,
-        age_minutes: Math.round((Date.now() - progress.timestamp) / 60000)
+        age_minutes: Math.round((Date.now() - progress.timestamp) / 60000),
       });
     }
-    
+
     return progress;
   } catch (error) {
-    console.error('[❌ ProgressPersistence] Failed to load quiz progress:', error);
+    console.error(
+      "[❌ ProgressPersistence] Failed to load quiz progress:",
+      error,
+    );
     _clearQuizProgress();
     return null;
   }
@@ -145,9 +157,12 @@ function _loadQuizProgress(): QuizProgress | null {
 function _clearQuizProgress(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
-    console.log('[📱 ProgressPersistence] Quiz progress cleared');
+    console.log("[📱 ProgressPersistence] Quiz progress cleared");
   } catch (error) {
-    console.error('[❌ ProgressPersistence] Failed to clear quiz progress:', error);
+    console.error(
+      "[❌ ProgressPersistence] Failed to clear quiz progress:",
+      error,
+    );
   }
 }
 
@@ -157,41 +172,51 @@ function _clearQuizProgress(): void {
 export function saveOnboardingProgress(
   currentStep: string,
   completedSteps: string[],
-  data: Record<string, any>
+  data: Record<string, any>,
 ): void {
   try {
     // Only skip saving if we're explicitly told to skip
     const shouldSkipSave = data._skipSave === true;
-    
+
     if (shouldSkipSave) {
-      console.log('[📱 ProgressPersistence] Explicitly skipping save due to _skipSave flag');
+      console.log(
+        "[📱 ProgressPersistence] Explicitly skipping save due to _skipSave flag",
+      );
       return;
     }
-    
+
     const progress: OnboardingProgress = {
       currentStep,
       completedSteps,
       data,
       timestamp: Date.now(),
       sessionId: getSessionId(),
-      version: CURRENT_VERSION
+      version: CURRENT_VERSION,
     };
-    
-    localStorage.setItem(STORAGE_KEYS.ONBOARDING_PROGRESS, JSON.stringify(progress));
-    
+
+    localStorage.setItem(
+      STORAGE_KEYS.ONBOARDING_PROGRESS,
+      JSON.stringify(progress),
+    );
+
     // Track progress save
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'onboarding_progress_saved', {
-        event_category: 'persistence',
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "onboarding_progress_saved", {
+        event_category: "persistence",
         event_label: currentStep,
         step: currentStep,
-        completed_steps: completedSteps.length
+        completed_steps: completedSteps.length,
       });
     }
-    
-    console.log(`[📱 ProgressPersistence] Onboarding progress saved: ${currentStep}`);
+
+    console.log(
+      `[📱 ProgressPersistence] Onboarding progress saved: ${currentStep}`,
+    );
   } catch (error) {
-    console.error('[❌ ProgressPersistence] Failed to save onboarding progress:', error);
+    console.error(
+      "[❌ ProgressPersistence] Failed to save onboarding progress:",
+      error,
+    );
   }
 }
 
@@ -202,39 +227,48 @@ export function loadOnboardingProgress(): OnboardingProgress | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.ONBOARDING_PROGRESS);
     if (!stored) return null;
-    
+
     const progress: OnboardingProgress = JSON.parse(stored);
-    
+
     // Validate data
     if (!_isDataValid(progress.timestamp)) {
-      console.log('[📱 ProgressPersistence] Onboarding progress expired, clearing');
+      console.log(
+        "[📱 ProgressPersistence] Onboarding progress expired, clearing",
+      );
       _clearOnboardingProgress();
       return null;
     }
-    
+
     // Version check
     if (progress.version !== CURRENT_VERSION) {
-      console.log('[📱 ProgressPersistence] Onboarding progress version mismatch, clearing');
+      console.log(
+        "[📱 ProgressPersistence] Onboarding progress version mismatch, clearing",
+      );
       _clearOnboardingProgress();
       return null;
     }
-    
-    console.log(`[📱 ProgressPersistence] Onboarding progress loaded: ${progress.currentStep}`);
-    
+
+    console.log(
+      `[📱 ProgressPersistence] Onboarding progress loaded: ${progress.currentStep}`,
+    );
+
     // Track progress load
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'onboarding_progress_loaded', {
-        event_category: 'persistence',
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "onboarding_progress_loaded", {
+        event_category: "persistence",
         event_label: progress.currentStep,
         step: progress.currentStep,
         completed_steps: progress.completedSteps.length,
-        age_minutes: Math.round((Date.now() - progress.timestamp) / 60000)
+        age_minutes: Math.round((Date.now() - progress.timestamp) / 60000),
       });
     }
-    
+
     return progress;
   } catch (error) {
-    console.error('[❌ ProgressPersistence] Failed to load onboarding progress:', error);
+    console.error(
+      "[❌ ProgressPersistence] Failed to load onboarding progress:",
+      error,
+    );
     _clearOnboardingProgress();
     return null;
   }
@@ -245,13 +279,15 @@ export function loadOnboardingProgress(): OnboardingProgress | null {
  */
 function _shouldLoadSavedProgress(currentContextData: any): boolean {
   // Only load saved progress if context is empty or has minimal data
-  const hasValidContextData = currentContextData && (
-    currentContextData.gender || 
-    (currentContextData.archetypes && currentContextData.archetypes.length > 0) ||
-    currentContextData.season ||
-    (currentContextData.occasions && currentContextData.occasions.length > 0)
-  );
-  
+  const hasValidContextData =
+    currentContextData &&
+    (currentContextData.gender ||
+      (currentContextData.archetypes &&
+        currentContextData.archetypes.length > 0) ||
+      currentContextData.season ||
+      (currentContextData.occasions &&
+        currentContextData.occasions.length > 0));
+
   return !hasValidContextData;
 }
 /**
@@ -260,9 +296,12 @@ function _shouldLoadSavedProgress(currentContextData: any): boolean {
 function _clearOnboardingProgress(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.ONBOARDING_PROGRESS);
-    console.log('[📱 ProgressPersistence] Onboarding progress cleared');
+    console.log("[📱 ProgressPersistence] Onboarding progress cleared");
   } catch (error) {
-    console.error('[❌ ProgressPersistence] Failed to clear onboarding progress:', error);
+    console.error(
+      "[❌ ProgressPersistence] Failed to clear onboarding progress:",
+      error,
+    );
   }
 }
 
@@ -272,39 +311,39 @@ function _clearOnboardingProgress(): void {
 function _hasSavedProgress(): {
   hasQuizProgress: boolean;
   hasOnboardingProgress: boolean;
-  mostRecentType: 'quiz' | 'onboarding' | null;
+  mostRecentType: "quiz" | "onboarding" | null;
   mostRecentTimestamp: number | null;
 } {
   const quizProgress = _loadQuizProgress();
   const onboardingProgress = loadOnboardingProgress();
-  
+
   const hasQuizProgress = !!quizProgress;
   const hasOnboardingProgress = !!onboardingProgress;
-  
-  let mostRecentType: 'quiz' | 'onboarding' | null = null;
+
+  let mostRecentType: "quiz" | "onboarding" | null = null;
   let mostRecentTimestamp: number | null = null;
-  
+
   if (quizProgress && onboardingProgress) {
     if (quizProgress.timestamp > onboardingProgress.timestamp) {
-      mostRecentType = 'quiz';
+      mostRecentType = "quiz";
       mostRecentTimestamp = quizProgress.timestamp;
     } else {
-      mostRecentType = 'onboarding';
+      mostRecentType = "onboarding";
       mostRecentTimestamp = onboardingProgress.timestamp;
     }
   } else if (quizProgress) {
-    mostRecentType = 'quiz';
+    mostRecentType = "quiz";
     mostRecentTimestamp = quizProgress.timestamp;
   } else if (onboardingProgress) {
-    mostRecentType = 'onboarding';
+    mostRecentType = "onboarding";
     mostRecentTimestamp = onboardingProgress.timestamp;
   }
-  
+
   return {
     hasQuizProgress,
     hasOnboardingProgress,
     mostRecentType,
-    mostRecentTimestamp
+    mostRecentTimestamp,
   };
 }
 
@@ -313,23 +352,22 @@ function _hasSavedProgress(): {
  */
 export function setupAutoSave(): void {
   // Save progress before page unload
-  window.addEventListener('beforeunload', () => {
+  window.addEventListener("beforeunload", () => {
     // This will be called by individual components
-    console.log('[📱 ProgressPersistence] Page unload detected');
+    console.log("[📱 ProgressPersistence] Page unload detected");
   });
-  
+
   // Save progress on visibility change (tab switch, minimize)
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      console.log('[📱 ProgressPersistence] Page hidden, auto-save triggered');
+      console.log("[📱 ProgressPersistence] Page hidden, auto-save triggered");
       // This will be called by individual components
     }
   });
-  
+
   // Periodic auto-save every 30 seconds
   setInterval(() => {
     // This will be called by individual components if they have unsaved changes
-    console.log('[📱 ProgressPersistence] Periodic auto-save check');
+    console.log("[📱 ProgressPersistence] Periodic auto-save check");
   }, 30000);
 }
-

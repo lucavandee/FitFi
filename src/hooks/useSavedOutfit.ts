@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react';
-import { isSaved, saveOutfit, removeOutfit } from '@/services/saved/savedOutfitsService';
+import { useEffect, useState } from "react";
+import {
+  isSaved,
+  saveOutfit,
+  removeOutfit,
+} from "@/services/saved/savedOutfitsService";
 
 export function useSavedOutfit(outfit: any) {
-  const outfitId = String(outfit?.id || '');
+  const outfitId = String(outfit?.id || "");
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -13,9 +17,13 @@ export function useSavedOutfit(outfit: any) {
       try {
         const ok = await isSaved(outfitId);
         if (mounted) setSaved(ok);
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [outfitId]);
 
   const toggle = async () => {

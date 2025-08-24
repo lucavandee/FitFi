@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
 
-type Loading = 'lazy' | 'eager';
-type Decoding = 'auto' | 'sync' | 'async';
+type Loading = "lazy" | "eager";
+type Decoding = "auto" | "sync" | "async";
 
-type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'loading' | 'decoding'> & {
+type Props = Omit<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  "src" | "alt" | "loading" | "decoding"
+> & {
   src: string;
   alt: string;
   /** Optionele fallbackafbeelding als de hoofdbron faalt */
@@ -35,8 +38,8 @@ export default function ImageWithFallback({
     }
   }, [fallbackSrc, imgSrc]);
 
-  const loading: Loading = loadingProp ?? 'lazy';
-  const decoding: Decoding = decodingProp ?? 'async';
+  const loading: Loading = loadingProp ?? "lazy";
+  const decoding: Decoding = decodingProp ?? "async";
 
   return (
     <img

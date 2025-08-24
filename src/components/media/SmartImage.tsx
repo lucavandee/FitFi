@@ -1,5 +1,11 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { fallbackDataUrl, normalizeUrl, toCdn, buildSrcSet, ImageKind } from '@/utils/image';
+import React, { useMemo, useRef, useState, useEffect } from "react";
+import {
+  fallbackDataUrl,
+  normalizeUrl,
+  toCdn,
+  buildSrcSet,
+  ImageKind,
+} from "@/utils/image";
 
 type SmartImageProps = {
   src?: string | null;
@@ -27,30 +33,56 @@ type SmartImageProps = {
 };
 
 export default function SmartImage({
-  src, alt, id, kind = 'generic', width, height, sizes, aspect,
-  containerClassName, imgClassName, eager = false, priority = false, onLoad, onError,
-  className, onClick
+  src,
+  alt,
+  id,
+  kind = "generic",
+  width,
+  height,
+  sizes,
+  aspect,
+  containerClassName,
+  imgClassName,
+  eager = false,
+  priority = false,
+  onLoad,
+  onError,
+  className,
+  onClick,
 }: SmartImageProps) {
-  const stableId = String(id ?? alt ?? 'x');
+  const stableId = String(id ?? alt ?? "x");
   const normalized = normalizeUrl(src);
-  const seeded = useMemo(() => fallbackDataUrl(stableId, kind, width ?? 480, height ?? 640), [stableId, kind, width, height]);
-  const initial = kind === 'nova' ? '/images/nova.svg' : (normalized ?? seeded);
+  const seeded = useMemo(
+    () => fallbackDataUrl(stableId, kind, width ?? 480, height ?? 640),
+    [stableId, kind, width, height],
+  );
+  const initial = kind === "nova" ? "/images/nova.svg" : (normalized ?? seeded);
 
   const [current, setCurrent] = useState<string>(initial);
   const [loaded, setLoaded] = useState(false);
   const errorCount = useRef(0);
 
-  useEffect(() => { setCurrent(initial); setLoaded(false); }, [initial]);
+  useEffect(() => {
+    setCurrent(initial);
+    setLoaded(false);
+  }, [initial]);
 
   const srcSet = useMemo(() => buildSrcSet(normalized), [normalized]);
-  const cdnPrimary = useMemo(() => toCdn(normalized, width), [normalized, width]);
+  const cdnPrimary = useMemo(
+    () => toCdn(normalized, width),
+    [normalized, width],
+  );
 
   const handleError = () => {
     errorCount.current += 1;
-    if (errorCount.current <= 1) setCurrent(kind === 'nova' ? '/images/nova.svg' : seeded);
+    if (errorCount.current <= 1)
+      setCurrent(kind === "nova" ? "/images/nova.svg" : seeded);
     onError?.();
   };
-  const handleLoad = () => { setLoaded(true); onLoad?.(); };
+  const handleLoad = () => {
+    setLoaded(true);
+    onLoad?.();
+  };
 
   const imgEl = (
     <img
@@ -59,31 +91,39 @@ export default function SmartImage({
       sizes={sizes}
       alt={alt}
       decoding="async"
-      loading={eager ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : 'auto'}
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
       onLoad={handleLoad}
       onError={handleError}
       onClick={onClick}
       className={[
         // VOL frame vullen (lost "halve afbeelding" op)
-        aspect ? 'absolute inset-0 w-full h-full object-cover' : 'w-full h-auto object-cover',
-        'block img-fade', loaded ? 'img-loaded' : '',
-        imgClassName ?? '',
-        className ?? '' // backward compatibility
-      ].join(' ')}
+        aspect
+          ? "absolute inset-0 w-full h-full object-cover"
+          : "w-full h-auto object-cover",
+        "block img-fade",
+        loaded ? "img-loaded" : "",
+        imgClassName ?? "",
+        className ?? "", // backward compatibility
+      ].join(" ")}
       // width/height attributen alleen meegeven wanneer géén aspect container gebruikt wordt
       {...(!aspect ? { width, height } : {})}
     />
   );
 
   // Container met skeleton & optional aspect
-  const style = aspect ? (typeof aspect === 'number'
-    ? { aspectRatio: String(aspect) }
-    : { aspectRatio: aspect }) : undefined;
+  const style = aspect
+    ? typeof aspect === "number"
+      ? { aspectRatio: String(aspect) }
+      : { aspectRatio: aspect }
+    : undefined;
 
   return (
     <div
-      className={['relative overflow-hidden img-skeleton', containerClassName ?? ''].join(' ')}
+      className={[
+        "relative overflow-hidden img-skeleton",
+        containerClassName ?? "",
+      ].join(" ")}
       style={style}
     >
       {imgEl}

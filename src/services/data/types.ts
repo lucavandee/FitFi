@@ -4,7 +4,7 @@
 
 export interface DataResponse<T> {
   data: T;
-  source: 'supabase' | 'local' | 'fallback';
+  source: "supabase" | "local" | "fallback";
   cached: boolean;
   errors?: string[];
 }
@@ -64,7 +64,7 @@ export interface FitFiUserProfile {
   id: string;
   name?: string;
   email?: string;
-  gender?: 'male' | 'female';
+  gender?: "male" | "female";
   archetypes?: string[];
   preferences?: {
     casual: number;
@@ -88,9 +88,9 @@ export interface Tribe {
   created_at: string;
   updated_at?: string;
   is_member?: boolean;
-  user_role?: 'member' | 'moderator' | 'owner' | null;
+  user_role?: "member" | "moderator" | "owner" | null;
   archetype?: string;
-  activity_level?: 'low' | 'medium' | 'high' | 'very_high';
+  activity_level?: "low" | "medium" | "high" | "very_high";
   featured?: boolean;
   tags?: string[];
   rules?: string[];
@@ -117,7 +117,7 @@ export interface TribeMember {
   id: string;
   tribe_id: string;
   user_id: string;
-  role: 'member' | 'moderator' | 'owner';
+  role: "member" | "moderator" | "owner";
   joined_at: string;
   user_profile?: {
     full_name?: string;
@@ -154,7 +154,7 @@ export interface TribeChallengeSubmission {
   linkUrl?: string;
   score?: number;
   isWinner: boolean;
-  submissionType?: 'text' | 'image' | 'link' | 'combo';
+  submissionType?: "text" | "image" | "link" | "combo";
   createdAt: string;
 }
 

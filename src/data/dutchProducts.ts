@@ -8,7 +8,7 @@ const dutchProducts = [
     styleTags: ["casual", "minimalist"],
     brand: "Levi's",
     price: 89.95,
-    season: ["spring", "summer", "autumn", "winter"] // All-season item
+    season: ["spring", "summer", "autumn", "winter"], // All-season item
   },
   {
     id: "p002",
@@ -19,7 +19,7 @@ const dutchProducts = [
     styleTags: ["casual", "sporty", "minimalist"],
     brand: "H&M",
     price: 19.99,
-    season: ["spring", "summer"] // Spring/summer item
+    season: ["spring", "summer"], // Spring/summer item
   },
   {
     id: "p003",
@@ -30,7 +30,7 @@ const dutchProducts = [
     styleTags: ["formal", "minimalist"],
     brand: "COS",
     price: 59.95,
-    season: ["autumn", "winter"] // Autumn/winter item
+    season: ["autumn", "winter"], // Autumn/winter item
   },
   {
     id: "p004",
@@ -41,7 +41,7 @@ const dutchProducts = [
     styleTags: ["vintage", "casual"],
     brand: "Weekday",
     price: 79.95,
-    season: ["spring", "autumn"] // Spring/autumn item
+    season: ["spring", "autumn"], // Spring/autumn item
   },
   {
     id: "p005",
@@ -52,7 +52,7 @@ const dutchProducts = [
     styleTags: ["sporty"],
     brand: "Nike",
     price: 99.95,
-    season: ["autumn", "winter"] // Autumn/winter item
+    season: ["autumn", "winter"], // Autumn/winter item
   },
   {
     id: "p006",
@@ -63,7 +63,7 @@ const dutchProducts = [
     styleTags: ["formal", "minimalist"],
     brand: "Zara",
     price: 49.95,
-    season: ["spring", "summer", "autumn"] // Spring/summer/autumn item
+    season: ["spring", "summer", "autumn"], // Spring/summer/autumn item
   },
   {
     id: "p007",
@@ -74,7 +74,7 @@ const dutchProducts = [
     styleTags: ["vintage"],
     brand: "Ray-Ban",
     price: 149.95,
-    season: ["spring", "summer"] // Spring/summer item
+    season: ["spring", "summer"], // Spring/summer item
   },
   {
     id: "p008",
@@ -85,7 +85,7 @@ const dutchProducts = [
     styleTags: ["formal", "minimalist"],
     brand: "Hugo Boss",
     price: 249.95,
-    season: ["autumn", "winter", "spring"] // Autumn/winter/spring item
+    season: ["autumn", "winter", "spring"], // Autumn/winter/spring item
   },
   {
     id: "p009",
@@ -96,7 +96,7 @@ const dutchProducts = [
     styleTags: ["casual", "sporty"],
     brand: "Adidas",
     price: 89.95,
-    season: ["spring", "summer", "autumn"] // Spring/summer/autumn item
+    season: ["spring", "summer", "autumn"], // Spring/summer/autumn item
   },
   {
     id: "p010",
@@ -107,129 +107,140 @@ const dutchProducts = [
     styleTags: ["casual", "sporty"],
     brand: "Champion",
     price: 59.95,
-    season: ["autumn", "winter"] // Autumn/winter item
+    season: ["autumn", "winter"], // Autumn/winter item
   },
   {
     id: "p011",
     name: "Elegante Blouse",
-    imageUrl: "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg",
     type: "Blouse",
     category: "top",
     styleTags: ["formal", "minimalist"],
     brand: "Massimo Dutti",
     price: 79.95,
-    season: ["spring", "summer", "autumn"] // Spring/summer/autumn item
+    season: ["spring", "summer", "autumn"], // Spring/summer/autumn item
   },
   {
     id: "p012",
     name: "Leren Rok",
-    imageUrl: "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg",
     type: "Rok",
     category: "bottom",
     styleTags: ["formal", "vintage"],
     brand: "Mango",
     price: 69.95,
-    season: ["autumn", "winter"] // Autumn/winter item
+    season: ["autumn", "winter"], // Autumn/winter item
   },
   {
     id: "p013",
     name: "Zomerjurk met Print",
-    imageUrl: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg",
     type: "Jurk",
     category: "dress",
     styleTags: ["casual", "vintage"],
     brand: "& Other Stories",
     price: 89.95,
-    season: ["summer"] // Summer only item
+    season: ["summer"], // Summer only item
   },
   {
     id: "p014",
     name: "Klassieke Pumps",
-    imageUrl: "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg",
     type: "Schoenen",
     category: "footwear",
     styleTags: ["formal"],
     brand: "Jimmy Choo",
     price: 299.95,
-    season: ["spring", "summer", "autumn", "winter"] // All-season item
+    season: ["spring", "summer", "autumn", "winter"], // All-season item
   },
   {
     id: "p015",
     name: "Leren Handtas",
-    imageUrl: "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg",
     type: "Tas",
     category: "accessory",
     styleTags: ["formal", "minimalist"],
     brand: "Michael Kors",
     price: 199.95,
-    season: ["spring", "summer", "autumn", "winter"] // All-season item
+    season: ["spring", "summer", "autumn", "winter"], // All-season item
   },
   {
     id: "p016",
     name: "Denim Jumpsuit",
-    imageUrl: "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg",
     type: "Jumpsuit",
     category: "jumpsuit",
     styleTags: ["casual", "vintage"],
     brand: "Levi's",
     price: 119.95,
-    season: ["spring", "summer"] // Spring/summer item
+    season: ["spring", "summer"], // Spring/summer item
   },
   {
     id: "p017",
     name: "Wollen Winterjas",
-    imageUrl: "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg",
     type: "Jas",
     category: "outerwear",
     styleTags: ["formal", "minimalist"],
     brand: "Max Mara",
     price: 349.95,
-    season: ["autumn", "winter"] // Autumn/winter item
+    season: ["autumn", "winter"], // Autumn/winter item
   },
   {
     id: "p018",
     name: "Leren Laarzen",
-    imageUrl: "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg",
     type: "Schoenen",
     category: "footwear",
     styleTags: ["formal", "vintage"],
     brand: "Dr. Martens",
     price: 169.95,
-    season: ["autumn", "winter"] // Autumn/winter item
+    season: ["autumn", "winter"], // Autumn/winter item
   },
   {
     id: "p019",
     name: "Zijden Sjaal",
-    imageUrl: "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg",
     type: "Accessoire",
     category: "accessory",
     styleTags: ["formal", "luxury"],
     brand: "Hermès",
     price: 299.95,
-    season: ["spring", "summer", "autumn", "winter"] // All-season item
+    season: ["spring", "summer", "autumn", "winter"], // All-season item
   },
   {
     id: "p020",
     name: "Linnen Zomerbroek",
-    imageUrl: "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg",
     type: "Broek",
     category: "bottom",
     styleTags: ["casual", "minimalist"],
     brand: "Arket",
     price: 79.95,
-    season: ["spring", "summer"] // Spring/summer item
+    season: ["spring", "summer"], // Spring/summer item
   },
   // Adding more seasonal items
   {
     id: "p021",
     name: "Lichte Regenjas",
-    imageUrl: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg",
     type: "Jas",
     category: "outerwear",
     styleTags: ["casual", "practical"],
     brand: "Rains",
     price: 89.95,
-    season: ["spring", "autumn"] // Spring/autumn item for rainy weather
+    season: ["spring", "autumn"], // Spring/autumn item for rainy weather
   },
   {
     id: "p022",
@@ -240,48 +251,52 @@ const dutchProducts = [
     styleTags: ["casual", "warm"],
     brand: "Acne Studios",
     price: 129.95,
-    season: ["autumn", "winter"] // Autumn/winter item for cold weather
+    season: ["autumn", "winter"], // Autumn/winter item for cold weather
   },
   {
     id: "p023",
     name: "Korte Broek",
-    imageUrl: "https://images.pexels.com/photos/52518/jeans-pants-blue-shop-52518.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/52518/jeans-pants-blue-shop-52518.jpeg",
     type: "Broek",
     category: "bottom",
     styleTags: ["casual", "sporty"],
     brand: "Tommy Hilfiger",
     price: 59.95,
-    season: ["summer"] // Summer only item for hot weather
+    season: ["summer"], // Summer only item for hot weather
   },
   {
     id: "p024",
     name: "Thermische Ondershirt",
-    imageUrl: "https://images.pexels.com/photos/6311387/pexels-photo-6311387.jpeg",
+    imageUrl:
+      "https://images.pexels.com/photos/6311387/pexels-photo-6311387.jpeg",
     type: "Shirt",
     category: "top",
     styleTags: ["practical", "minimalist"],
     brand: "Uniqlo",
     price: 29.95,
-    season: ["winter"] // Winter only item for cold weather
-  }
+    season: ["winter"], // Winter only item for cold weather
+  },
 ];
 
 // Helper function to get products by category
 const getProductsByCategory = (category: string) => {
-  return dutchProducts.filter(product => product.category === category || product.type === category);
+  return dutchProducts.filter(
+    (product) => product.category === category || product.type === category,
+  );
 };
 
 // Helper function to get products by style tags
 const getProductsByStyle = (style: string) => {
-  return dutchProducts.filter(product => 
-    product.styleTags && product.styleTags.includes(style)
+  return dutchProducts.filter(
+    (product) => product.styleTags && product.styleTags.includes(style),
   );
 };
 
 // Helper function to get products by season
 const getProductsBySeason = (season: string) => {
-  return dutchProducts.filter(product => 
-    product.season && product.season.includes(season)
+  return dutchProducts.filter(
+    (product) => product.season && product.season.includes(season),
   );
 };
 
@@ -289,23 +304,24 @@ const getProductsBySeason = (season: string) => {
 const getProductsByWeather = (weather: string) => {
   // Map weather conditions to seasons
   const weatherToSeasons: Record<string, string[]> = {
-    'cold': ['winter', 'autumn'],
-    'mild': ['spring', 'autumn'],
-    'warm': ['spring', 'summer'],
-    'hot': ['summer'],
-    'rainy': ['spring', 'autumn'],
-    'snowy': ['winter'],
-    'windy': ['autumn', 'winter', 'spring']
+    cold: ["winter", "autumn"],
+    mild: ["spring", "autumn"],
+    warm: ["spring", "summer"],
+    hot: ["summer"],
+    rainy: ["spring", "autumn"],
+    snowy: ["winter"],
+    windy: ["autumn", "winter", "spring"],
   };
-  
+
   const seasons = weatherToSeasons[weather] || [];
-  
+
   if (seasons.length === 0) {
     return dutchProducts; // Return all products if no mapping
   }
-  
-  return dutchProducts.filter(product => 
-    product.season && product.season.some(s => seasons.includes(s))
+
+  return dutchProducts.filter(
+    (product) =>
+      product.season && product.season.some((s) => seasons.includes(s)),
   );
 };
 

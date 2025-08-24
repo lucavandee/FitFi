@@ -1,66 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { 
-  User, 
-  Settings, 
-  TrendingUp, 
-  Trophy, 
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import {
+  User,
+  Settings,
+  TrendingUp,
+  Trophy,
   Target,
   Users,
   Sparkles,
   ArrowRight,
-  Gift
-} from 'lucide-react';
-import { useUser } from '../context/UserContext';
-import { useGamification } from '../context/GamificationContext';
-import { useUserStats, useUserStreak, useReferrals, useNotifications, useTouchStreak, useAddXp } from '../hooks/useDashboard';
-import { computeNextActions } from '../services/nba/nextBestActions';
-import { NBAQuickActions } from '../components/Dashboard/NBAQuickActions';
-import { GamificationPanel } from '../components/Dashboard/GamificationPanel';
-import { NovaInsightCard } from '../components/Dashboard/NovaInsightCard';
-import { ChallengeSnapshot } from '../components/Dashboard/ChallengeSnapshot';
-import { ReferralCard } from '../components/Dashboard/ReferralCard';
-import { NotificationsMini } from '../components/Dashboard/NotificationsMini';
-import FeaturedOutfitCard from '../components/dashboard/FeaturedOutfitCard';
-import StickyBottomBar from '../components/dashboard/StickyBottomBar';
-import SafeWidget from '../components/dashboard/SafeWidget';
-import Button from '../components/ui/Button';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { ErrorBoundary } from '../components/ErrorBoundary';
+  Gift,
+} from "lucide-react";
+import { useUser } from "../context/UserContext";
+import { useGamification } from "../context/GamificationContext";
+import {
+  useUserStats,
+  useUserStreak,
+  useReferrals,
+  useNotifications,
+  useTouchStreak,
+  useAddXp,
+} from "../hooks/useDashboard";
+import { computeNextActions } from "../services/nba/nextBestActions";
+import { NBAQuickActions } from "../components/Dashboard/NBAQuickActions";
+import { GamificationPanel } from "../components/Dashboard/GamificationPanel";
+import { NovaInsightCard } from "../components/Dashboard/NovaInsightCard";
+import { ChallengeSnapshot } from "../components/Dashboard/ChallengeSnapshot";
+import { ReferralCard } from "../components/Dashboard/ReferralCard";
+import { NotificationsMini } from "../components/Dashboard/NotificationsMini";
+import FeaturedOutfitCard from "../components/dashboard/FeaturedOutfitCard";
+import StickyBottomBar from "../components/dashboard/StickyBottomBar";
+import SafeWidget from "../components/dashboard/SafeWidget";
+import Button from "../components/ui/Button";
+import LoadingFallback from "../components/ui/LoadingFallback";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 const DashboardPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
   const { points, level, streak } = useGamification();
-  
+
   // Dashboard data hooks
   const { data: userStats, isLoading: statsLoading } = useUserStats(user?.id);
-  const { data: userStreak, isLoading: streakLoading } = useUserStreak(user?.id);
-  const { data: referrals, isLoading: referralsLoading } = useReferrals(user?.id);
-  const { data: notifications, isLoading: notificationsLoading } = useNotifications(user?.id);
-  
+  const { data: userStreak, isLoading: streakLoading } = useUserStreak(
+    user?.id,
+  );
+  const { data: referrals, isLoading: referralsLoading } = useReferrals(
+    user?.id,
+  );
+  const { data: notifications, isLoading: notificationsLoading } =
+    useNotifications(user?.id);
+
   // Mutations
   const touchStreak = useTouchStreak();
   const addXp = useAddXp();
 
   const [featuredOutfit] = useState({
-    id: 'featured-001',
-    title: 'Casual Urban Look',
-    description: 'Perfect voor een dag in de stad met vrienden',
-    imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2',
+    id: "featured-001",
+    title: "Casual Urban Look",
+    description: "Perfect voor een dag in de stad met vrienden",
+    imageUrl:
+      "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
     matchPercentage: 92,
-    archetype: 'casual_chic',
-    tags: ['casual', 'urban', 'comfortable']
+    archetype: "casual_chic",
+    tags: ["casual", "urban", "comfortable"],
   });
 
   const handleClaimDaily = async () => {
     if (!user?.id) return;
-    
+
     try {
       await touchStreak.mutateAsync(user.id);
-      await addXp.mutateAsync({ userId: user.id, amount: 10, reason: 'daily_checkin' });
+      await addXp.mutateAsync({
+        userId: user.id,
+        amount: 10,
+        reason: "daily_checkin",
+      });
     } catch (error) {
-      console.error('Daily claim failed:', error);
+      console.error("Daily claim failed:", error);
     }
   };
 
@@ -72,7 +89,7 @@ const DashboardPage: React.FC = () => {
     hasSubmission: false,
     referrals: referrals?.length || 0,
     streak: userStreak?.current_streak || 0,
-    level: userStats?.level || 1
+    level: userStats?.level || 1,
   };
 
   if (userLoading) {
@@ -83,8 +100,12 @@ const DashboardPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Inloggen vereist</h2>
-          <p className="text-gray-600 mb-6">Je moet ingelogd zijn om je dashboard te bekijken.</p>
+          <h2 className="text-2xl font-light text-gray-900 mb-4">
+            Inloggen vereist
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Je moet ingelogd zijn om je dashboard te bekijken.
+          </p>
           <Button as={Link} to="/inloggen" variant="primary" fullWidth>
             Inloggen
           </Button>
@@ -97,7 +118,10 @@ const DashboardPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 pb-20 md:pb-8">
       <Helmet>
         <title>Dashboard - Jouw Stijlcentrum | FitFi</title>
-        <meta name="description" content="Bekijk je stijlprofiel, outfits, challenges en voortgang op je persoonlijke FitFi dashboard." />
+        <meta
+          name="description"
+          content="Bekijk je stijlprofiel, outfits, challenges en voortgang op je persoonlijke FitFi dashboard."
+        />
       </Helmet>
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -113,7 +137,7 @@ const DashboardPage: React.FC = () => {
                   Hier is je persoonlijke stijloverzicht
                 </p>
               </div>
-              
+
               <Button
                 as={Link}
                 to="/profile"
@@ -137,7 +161,9 @@ const DashboardPage: React.FC = () => {
             <ErrorBoundary>
               <SafeWidget name="Quick Actions">
                 <div className="bg-white rounded-3xl shadow-sm p-6">
-                  <h2 className="text-xl font-medium text-gray-900 mb-6">Aanbevolen acties</h2>
+                  <h2 className="text-xl font-medium text-gray-900 mb-6">
+                    Aanbevolen acties
+                  </h2>
                   <NBAQuickActions ctx={nbaContext} />
                 </div>
               </SafeWidget>
@@ -146,10 +172,7 @@ const DashboardPage: React.FC = () => {
             {/* Featured Outfit */}
             <ErrorBoundary>
               <SafeWidget name="Featured Outfit">
-                <FeaturedOutfitCard 
-                  outfit={featuredOutfit}
-                  loading={false}
-                />
+                <FeaturedOutfitCard outfit={featuredOutfit} loading={false} />
               </SafeWidget>
             </ErrorBoundary>
 
@@ -166,7 +189,7 @@ const DashboardPage: React.FC = () => {
             {/* Gamification Panel */}
             <ErrorBoundary>
               <SafeWidget name="Gamification Panel">
-                <GamificationPanel 
+                <GamificationPanel
                   level={userStats?.level}
                   xp={userStats?.xp}
                   streak={userStreak?.current_streak}
@@ -178,7 +201,7 @@ const DashboardPage: React.FC = () => {
             {/* Nova Insight */}
             <ErrorBoundary>
               <SafeWidget name="Nova Insight">
-                <NovaInsightCard 
+                <NovaInsightCard
                   text="Je stijl evolueert naar meer verfijnde keuzes. Probeer eens een statement accessoire!"
                   loading={false}
                 />
@@ -188,7 +211,7 @@ const DashboardPage: React.FC = () => {
             {/* Referral Card */}
             <ErrorBoundary>
               <SafeWidget name="Referral Card">
-                <ReferralCard 
+                <ReferralCard
                   codeUrl={`https://fitfi.app/?ref=${user.id}`}
                   count={referrals?.length || 0}
                   goal={3}
@@ -199,7 +222,7 @@ const DashboardPage: React.FC = () => {
             {/* Notifications */}
             <ErrorBoundary>
               <SafeWidget name="Notifications">
-                <NotificationsMini 
+                <NotificationsMini
                   items={notifications}
                   loading={notificationsLoading}
                 />
@@ -212,17 +235,39 @@ const DashboardPage: React.FC = () => {
         <ErrorBoundary>
           <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { href: '/outfits', label: 'Outfits', icon: <TrendingUp size={20} />, color: 'bg-blue-50 text-blue-600' },
-              { href: '/gamification', label: 'Levels', icon: <Trophy size={20} />, color: 'bg-yellow-50 text-yellow-600' },
-              { href: '/tribes', label: 'Tribes', icon: <Users size={20} />, color: 'bg-purple-50 text-purple-600' },
-              { href: '/quiz', label: 'Quiz', icon: <Target size={20} />, color: 'bg-green-50 text-green-600' }
+              {
+                href: "/outfits",
+                label: "Outfits",
+                icon: <TrendingUp size={20} />,
+                color: "bg-blue-50 text-blue-600",
+              },
+              {
+                href: "/gamification",
+                label: "Levels",
+                icon: <Trophy size={20} />,
+                color: "bg-yellow-50 text-yellow-600",
+              },
+              {
+                href: "/tribes",
+                label: "Tribes",
+                icon: <Users size={20} />,
+                color: "bg-purple-50 text-purple-600",
+              },
+              {
+                href: "/quiz",
+                label: "Quiz",
+                icon: <Target size={20} />,
+                color: "bg-green-50 text-green-600",
+              },
             ].map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all hover:transform hover:scale-105 text-center group"
               >
-                <div className={`w-12 h-12 ${link.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                <div
+                  className={`w-12 h-12 ${link.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}
+                >
                   {link.icon}
                 </div>
                 <span className="font-medium text-gray-900">{link.label}</span>
@@ -233,10 +278,7 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Mobile Sticky Bottom Bar */}
-      <StickyBottomBar 
-        onClaimDaily={handleClaimDaily}
-        userId={user.id}
-      />
+      <StickyBottomBar onClaimDaily={handleClaimDaily} userId={user.id} />
     </div>
   );
 };

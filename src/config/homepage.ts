@@ -7,7 +7,7 @@ export const HOMEPAGE_FLAGS = {
   // Core sections (always shown)
   showHero: true,
   showNovaStyleSwipe: true,
-  
+
   // Optional sections (can be toggled)
   showHowItWorks: true,
   showSocialProof: true,
@@ -16,17 +16,17 @@ export const HOMEPAGE_FLAGS = {
   showFoundersBlock: true,
   showUGCGallery: true,
   showClosingCTA: true,
-  
+
   // Future sections (disabled by default)
   showBlogTeasers: false,
   showExtraFeatureGrid: false,
   showTestimonialCarousel: false,
   showPricingPreview: false,
   showPartnerLogos: false,
-  
+
   // Development flags
   showDebugInfo: false,
-  enableAnalytics: true
+  enableAnalytics: true,
 } as const;
 
 /**
@@ -38,11 +38,11 @@ export function getHomepageFlag(flag: keyof typeof HOMEPAGE_FLAGS): boolean {
   // Allow environment overrides for specific flags
   const envKey = `VITE_HOMEPAGE_${flag.toUpperCase()}`;
   const envValue = import.meta.env[envKey];
-  
+
   if (envValue !== undefined) {
-    return envValue.toString().toLowerCase() === 'true';
+    return envValue.toString().toLowerCase() === "true";
   }
-  
+
   return HOMEPAGE_FLAGS[flag];
 }
 
@@ -52,11 +52,11 @@ export function getHomepageFlag(flag: keyof typeof HOMEPAGE_FLAGS): boolean {
  */
 export function hasOptionalSections(): boolean {
   return (
-    getHomepageFlag('showBlogTeasers') ||
-    getHomepageFlag('showExtraFeatureGrid') ||
-    getHomepageFlag('showTestimonialCarousel') ||
-    getHomepageFlag('showPricingPreview') ||
-    getHomepageFlag('showPartnerLogos')
+    getHomepageFlag("showBlogTeasers") ||
+    getHomepageFlag("showExtraFeatureGrid") ||
+    getHomepageFlag("showTestimonialCarousel") ||
+    getHomepageFlag("showPricingPreview") ||
+    getHomepageFlag("showPartnerLogos")
   );
 }
 

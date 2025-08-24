@@ -1,75 +1,79 @@
-import React, { useState } from 'react';
-import { Calendar, Trophy, Users, Image, Type, Clock } from 'lucide-react';
-import type { TribeChallenge } from '../../services/data/types';
-import Button from '../ui/Button';
+import React, { useState } from "react";
+import { Calendar, Trophy, Users, Image, Type, Clock } from "lucide-react";
+import type { TribeChallenge } from "../../services/data/types";
+import Button from "../ui/Button";
 
 interface ChallengeAdminFormProps {
   tribeId: string;
-  onCreate: (challengeData: Omit<TribeChallenge, 'id' | 'createdAt'>) => Promise<void>;
+  onCreate: (
+    challengeData: Omit<TribeChallenge, "id" | "createdAt">,
+  ) => Promise<void>;
   onCancel: () => void;
 }
 
 export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
   tribeId,
   onCreate,
-  onCancel
+  onCancel,
 }) => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    imageUrl: '',
-    startDate: '',
-    endDate: '',
-    maxParticipants: '',
-    xpReward: '15',
-    status: 'draft' as const
+    title: "",
+    description: "",
+    imageUrl: "",
+    startDate: "",
+    endDate: "",
+    maxParticipants: "",
+    xpReward: "15",
+    status: "draft" as const,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.description.trim()) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
-      const challengeData: Omit<TribeChallenge, 'id' | 'createdAt'> = {
+      const challengeData: Omit<TribeChallenge, "id" | "createdAt"> = {
         tribeId,
         title: formData.title.trim(),
         description: formData.description.trim(),
         imageUrl: formData.imageUrl.trim() || undefined,
         startDate: formData.startDate || undefined,
         endDate: formData.endDate || undefined,
-        maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : undefined,
+        maxParticipants: formData.maxParticipants
+          ? parseInt(formData.maxParticipants)
+          : undefined,
         xpReward: parseInt(formData.xpReward) || 15,
-        status: formData.status
+        status: formData.status,
       };
 
       await onCreate(challengeData);
-      
+
       // Reset form
       setFormData({
-        title: '',
-        description: '',
-        imageUrl: '',
-        startDate: '',
-        endDate: '',
-        maxParticipants: '',
-        xpReward: '15',
-        status: 'draft'
+        title: "",
+        description: "",
+        imageUrl: "",
+        startDate: "",
+        endDate: "",
+        maxParticipants: "",
+        xpReward: "15",
+        status: "draft",
       });
     } catch (error) {
-      console.error('Challenge creation failed:', error);
+      console.error("Challenge creation failed:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -96,7 +100,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
+              onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="Bijv. 'Laat je winter outfit zien'"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
               required
@@ -109,7 +113,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Beschrijf wat deelnemers moeten doen..."
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent resize-none"
               rows={4}
@@ -125,7 +129,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <input
               type="url"
               value={formData.imageUrl}
-              onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+              onChange={(e) => handleInputChange("imageUrl", e.target.value)}
               placeholder="https://example.com/challenge-image.jpg"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
             />
@@ -142,7 +146,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <input
               type="datetime-local"
               value={formData.startDate}
-              onChange={(e) => handleInputChange('startDate', e.target.value)}
+              onChange={(e) => handleInputChange("startDate", e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
             />
           </div>
@@ -155,7 +159,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <input
               type="datetime-local"
               value={formData.endDate}
-              onChange={(e) => handleInputChange('endDate', e.target.value)}
+              onChange={(e) => handleInputChange("endDate", e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
             />
           </div>
@@ -171,7 +175,9 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <input
               type="number"
               value={formData.maxParticipants}
-              onChange={(e) => handleInputChange('maxParticipants', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("maxParticipants", e.target.value)
+              }
               placeholder="Geen limiet"
               min="1"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
@@ -186,7 +192,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <input
               type="number"
               value={formData.xpReward}
-              onChange={(e) => handleInputChange('xpReward', e.target.value)}
+              onChange={(e) => handleInputChange("xpReward", e.target.value)}
               min="1"
               max="100"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
@@ -200,7 +206,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             </label>
             <select
               value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
+              onChange={(e) => handleInputChange("status", e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent"
             >
               <option value="draft">Concept</option>
@@ -227,10 +233,14 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             variant="primary"
             size="lg"
             className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-            disabled={isSubmitting || !formData.title.trim() || !formData.description.trim()}
+            disabled={
+              isSubmitting ||
+              !formData.title.trim() ||
+              !formData.description.trim()
+            }
             loading={isSubmitting}
           >
-            {isSubmitting ? 'Challenge Maken...' : 'Maak Challenge'}
+            {isSubmitting ? "Challenge Maken..." : "Maak Challenge"}
           </Button>
         </div>
       </form>

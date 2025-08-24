@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 type AccentRule = {
-  word: string;               // exact match (case-insensitive)
-  className?: string;         // default 'text-gradient'
-  onlyFirst?: boolean;        // wrap alleen de eerste hit
+  word: string; // exact match (case-insensitive)
+  className?: string; // default 'text-gradient'
+  onlyFirst?: boolean; // wrap alleen de eerste hit
 };
 
 type Props = {
@@ -18,10 +18,14 @@ type Props = {
  * - respecteert onlyFirst
  * - voegt een defensieve inline backgroundImage toe voor gradient-classes
  */
-export const GradientTextLine: React.FC<Props> = ({ text, accents, className }) => {
-  const rules = (accents ?? []).map(a => ({
+export const GradientTextLine: React.FC<Props> = ({
+  text,
+  accents,
+  className,
+}) => {
+  const rules = (accents ?? []).map((a) => ({
     ...a,
-    className: a.className ?? 'text-gradient',
+    className: a.className ?? "text-gradient",
   }));
 
   const usedFirst: Record<string, boolean> = {};
@@ -31,7 +35,8 @@ export const GradientTextLine: React.FC<Props> = ({ text, accents, className }) 
 
   const nodes = tokens.map((tok, i) => {
     // leeg of alleen whitespace → direct teruggeven
-    if (!tok || !tok.trim()) return <React.Fragment key={i}>{tok}</React.Fragment>;
+    if (!tok || !tok.trim())
+      return <React.Fragment key={i}>{tok}</React.Fragment>;
 
     // Probeer elke accent-regel op dit token
     for (const rule of rules) {
@@ -40,13 +45,13 @@ export const GradientTextLine: React.FC<Props> = ({ text, accents, className }) 
         usedFirst[rule.word.toLowerCase()] = true;
 
         // Defensieve inline gradient — voorkomt "balken" bij CSS-order/minifier issues
-        const needsHardGradient = rule.className?.includes('text-gradient');
-        const isSoft = rule.className?.includes('text-gradient-soft');
+        const needsHardGradient = rule.className?.includes("text-gradient");
+        const isSoft = rule.className?.includes("text-gradient-soft");
         const hardStyle = needsHardGradient
           ? {
               backgroundImage: isSoft
-                ? 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)'
-                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)',
+                ? "linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)"
+                : "linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)",
             }
           : undefined;
 

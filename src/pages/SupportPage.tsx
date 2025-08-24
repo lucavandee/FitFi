@@ -1,17 +1,17 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  MessageCircle, 
-  Mail, 
-  Phone, 
-  Clock, 
-  ArrowRight, 
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  MessageCircle,
+  Mail,
+  Phone,
+  Clock,
+  ArrowRight,
   HelpCircle,
   FileText,
   Video,
-  BookOpen
-} from 'lucide-react';
-import Button from '../components/ui/Button';
+  BookOpen,
+} from "lucide-react";
+import Button from "../components/ui/Button";
 
 const SupportPage: React.FC = () => {
   return (
@@ -23,7 +23,8 @@ const SupportPage: React.FC = () => {
             Ondersteuning
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            We staan voor je klaar om je te helpen met al je vragen over FitFi. Vind snel antwoorden of neem direct contact met ons op.
+            We staan voor je klaar om je te helpen met al je vragen over FitFi.
+            Vind snel antwoorden of neem direct contact met ons op.
           </p>
         </div>
 
@@ -39,7 +40,8 @@ const SupportPage: React.FC = () => {
                 Live Chat
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Chat direct met ons supportteam voor snelle antwoorden op al je vragen.
+                Chat direct met ons supportteam voor snelle antwoorden op al je
+                vragen.
               </p>
               <div className="mb-4">
                 <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-1">
@@ -47,12 +49,14 @@ const SupportPage: React.FC = () => {
                   <span>Beschikbaarheid</span>
                 </div>
                 <p className="text-gray-900 dark:text-white">
-                  Ma-Vr: 9:00 - 18:00<br />
-                  Za: 10:00 - 16:00<br />
+                  Ma-Vr: 9:00 - 18:00
+                  <br />
+                  Za: 10:00 - 16:00
+                  <br />
                   Zo: Gesloten
                 </p>
               </div>
-              <Button 
+              <Button
                 variant="primary"
                 fullWidth
                 icon={<MessageCircle size={16} />}
@@ -73,7 +77,8 @@ const SupportPage: React.FC = () => {
                 E-mail
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Stuur ons een e-mail voor uitgebreidere vragen of feedback. We reageren binnen 24 uur.
+                Stuur ons een e-mail voor uitgebreidere vragen of feedback. We
+                reageren binnen 24 uur.
               </p>
               <div className="mb-4">
                 <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-1">
@@ -81,12 +86,14 @@ const SupportPage: React.FC = () => {
                   <span>Reactietijd</span>
                 </div>
                 <p className="text-gray-900 dark:text-white">
-                  Meestal binnen 24 uur<br />
-                  Premium: binnen 12 uur<br />
+                  Meestal binnen 24 uur
+                  <br />
+                  Premium: binnen 12 uur
+                  <br />
                   Business: binnen 4 uur
                 </p>
               </div>
-              <Button 
+              <Button
                 as="a"
                 href="mailto:support@fitfi.nl"
                 variant="outline"
@@ -109,7 +116,8 @@ const SupportPage: React.FC = () => {
                 Telefoon
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Liever persoonlijk contact? Bel ons voor directe ondersteuning bij complexe vragen.
+                Liever persoonlijk contact? Bel ons voor directe ondersteuning
+                bij complexe vragen.
               </p>
               <div className="mb-4">
                 <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-1">
@@ -117,12 +125,16 @@ const SupportPage: React.FC = () => {
                   <span>Beschikbaarheid</span>
                 </div>
                 <p className="text-gray-900 dark:text-white">
-                  Ma-Vr: 9:00 - 17:00<br />
-                  Za-Zo: Gesloten<br />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">(Premium & Business only)</span>
+                  Ma-Vr: 9:00 - 17:00
+                  <br />
+                  Za-Zo: Gesloten
+                  <br />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    (Premium & Business only)
+                  </span>
                 </p>
               </div>
-              <Button 
+              <Button
                 as="a"
                 href="tel:+31201234567"
                 variant="outline"
@@ -141,7 +153,7 @@ const SupportPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-10">
             Zelfhulp bronnen
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Help Center */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
@@ -155,11 +167,12 @@ const SupportPage: React.FC = () => {
                       Helpcentrum
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Vind antwoorden op veelgestelde vragen en gedetailleerde handleidingen voor alle FitFi functies.
+                      Vind antwoorden op veelgestelde vragen en gedetailleerde
+                      handleidingen voor alle FitFi functies.
                     </p>
-                    <Button 
+                    <Button
                       as={Link}
-                      to="/help-center" 
+                      to="/help-center"
                       variant="outline"
                       icon={<ArrowRight size={16} />}
                       iconPosition="right"
@@ -183,11 +196,12 @@ const SupportPage: React.FC = () => {
                       Kennisbank
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Uitgebreide artikelen over mode, stijl en hoe je het meeste uit FitFi kunt halen.
+                      Uitgebreide artikelen over mode, stijl en hoe je het
+                      meeste uit FitFi kunt halen.
                     </p>
-                    <Button 
+                    <Button
                       as={Link}
-                      to="/knowledge-base" 
+                      to="/knowledge-base"
                       variant="outline"
                       icon={<ArrowRight size={16} />}
                       iconPosition="right"
@@ -211,11 +225,12 @@ const SupportPage: React.FC = () => {
                       Video tutorials
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Visuele handleidingen die je stap voor stap door alle FitFi functies leiden.
+                      Visuele handleidingen die je stap voor stap door alle
+                      FitFi functies leiden.
                     </p>
-                    <Button 
+                    <Button
                       as={Link}
-                      to="/tutorials" 
+                      to="/tutorials"
                       variant="outline"
                       icon={<ArrowRight size={16} />}
                       iconPosition="right"
@@ -239,11 +254,12 @@ const SupportPage: React.FC = () => {
                       Documentatie
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Technische documentatie voor ontwikkelaars en Business gebruikers van onze API.
+                      Technische documentatie voor ontwikkelaars en Business
+                      gebruikers van onze API.
                     </p>
-                    <Button 
+                    <Button
                       as={Link}
-                      to="/docs" 
+                      to="/docs"
                       variant="outline"
                       icon={<ArrowRight size={16} />}
                       iconPosition="right"
@@ -263,41 +279,47 @@ const SupportPage: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
               Veelgestelde vragen
             </h2>
-            
+
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   Hoe nauwkeurig zijn de stijlaanbevelingen?
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Onze AI-algoritmen zijn getraind op duizenden mode-items en stijlvoorkeuren. De nauwkeurigheid verbetert naarmate je meer feedback geeft op aanbevelingen. Premium gebruikers krijgen toegang tot geavanceerde analyses voor nog nauwkeurigere resultaten.
+                  Onze AI-algoritmen zijn getraind op duizenden mode-items en
+                  stijlvoorkeuren. De nauwkeurigheid verbetert naarmate je meer
+                  feedback geeft op aanbevelingen. Premium gebruikers krijgen
+                  toegang tot geavanceerde analyses voor nog nauwkeurigere
+                  resultaten.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   Hoe worden mijn foto's gebruikt en opgeslagen?
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Je foto's worden end-to-end versleuteld en alleen gebruikt voor stijlanalyse. Ze worden nooit gedeeld met derden zonder jouw expliciete toestemming. Je kunt je foto's op elk moment verwijderen via je privacy-instellingen.
+                  Je foto's worden end-to-end versleuteld en alleen gebruikt
+                  voor stijlanalyse. Ze worden nooit gedeeld met derden zonder
+                  jouw expliciete toestemming. Je kunt je foto's op elk moment
+                  verwijderen via je privacy-instellingen.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   Kan ik mijn abonnement op elk moment opzeggen?
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Ja, je kunt je Premium abonnement op elk moment opzeggen. Je behoudt toegang tot alle Premium functies tot het einde van je huidige factureringsperiode. Er zijn geen verborgen kosten of opzegtermijnen.
+                  Ja, je kunt je Premium abonnement op elk moment opzeggen. Je
+                  behoudt toegang tot alle Premium functies tot het einde van je
+                  huidige factureringsperiode. Er zijn geen verborgen kosten of
+                  opzegtermijnen.
                 </p>
               </div>
-              
+
               <div className="text-center mt-8">
-                <Button 
-                  as={Link}
-                  to="/faq" 
-                  variant="outline"
-                >
+                <Button as={Link} to="/faq" variant="outline">
                   Bekijk alle veelgestelde vragen
                 </Button>
               </div>
@@ -310,13 +332,13 @@ const SupportPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-10">
             Ons supportteam
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Team Member 1 */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md text-center transition-all hover:shadow-lg">
-              <img 
-                src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2" 
-                alt="Emma" 
+              <img
+                src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2"
+                alt="Emma"
                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
               />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -326,15 +348,16 @@ const SupportPage: React.FC = () => {
                 Support Manager
               </p>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
-                "Ik help je graag met al je vragen over je account en abonnement."
+                "Ik help je graag met al je vragen over je account en
+                abonnement."
               </p>
             </div>
 
             {/* Team Member 2 */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md text-center transition-all hover:shadow-lg">
-              <img 
-                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2" 
-                alt="Thomas" 
+              <img
+                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2"
+                alt="Thomas"
                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
               />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -344,15 +367,16 @@ const SupportPage: React.FC = () => {
                 Stijlexpert
               </p>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
-                "Mijn specialiteit is het beantwoorden van al je vragen over stijladvies."
+                "Mijn specialiteit is het beantwoorden van al je vragen over
+                stijladvies."
               </p>
             </div>
 
             {/* Team Member 3 */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md text-center transition-all hover:shadow-lg">
-              <img 
-                src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2" 
-                alt="Sophie" 
+              <img
+                src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2"
+                alt="Sophie"
                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
               />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -368,9 +392,9 @@ const SupportPage: React.FC = () => {
 
             {/* Team Member 4 */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md text-center transition-all hover:shadow-lg">
-              <img 
-                src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2" 
-                alt="Jayden" 
+              <img
+                src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2"
+                alt="Jayden"
                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
               />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -393,10 +417,11 @@ const SupportPage: React.FC = () => {
               Nog steeds vragen?
             </h2>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Ons vriendelijke supportteam staat klaar om je te helpen. Neem vandaag nog contact met ons op.
+              Ons vriendelijke supportteam staat klaar om je te helpen. Neem
+              vandaag nog contact met ons op.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button 
+              <Button
                 as="a"
                 href="mailto:support@fitfi.nl"
                 variant="secondary"
@@ -406,7 +431,7 @@ const SupportPage: React.FC = () => {
               >
                 E-mail ons
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 className="text-white border-white/30 hover:bg-white/10"
                 icon={<MessageCircle size={20} />}

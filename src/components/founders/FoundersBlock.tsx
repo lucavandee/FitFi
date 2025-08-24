@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { supabase as getSupabaseClient } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
-import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
-import FoundersTierPerks from '@/components/founders/FoundersTierPerks';
-import { resolveTier } from '@/config/foundersTiers';
+import FoundersTierBadge from "@/components/founders/FoundersTierBadge";
+import FoundersTierPerks from "@/components/founders/FoundersTierPerks";
+import { resolveTier } from "@/config/foundersTiers";
 
 export const FoundersBlock: React.FC = () => {
   const { user } = useUser();
@@ -15,7 +15,10 @@ export const FoundersBlock: React.FC = () => {
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
   const inviteUrl = useMemo(() => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://fitfi.ai";
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://fitfi.ai";
     return `${origin}/?ref=${userId ?? "guest"}`;
   }, [userId]);
 
@@ -28,7 +31,10 @@ export const FoundersBlock: React.FC = () => {
 
       if (!userId) {
         // Geen ingelogde user of geen client → toon 0 en stop zonder error
-        if (alive) { setRefCount(0); setLoading(false); }
+        if (alive) {
+          setRefCount(0);
+          setLoading(false);
+        }
         return;
       }
 
@@ -43,18 +49,23 @@ export const FoundersBlock: React.FC = () => {
           return;
         }
 
-        const { error: statsUpdateErr } = await sb
-          .from("user_stats")
-          .upsert({
-            user_id: userId,
-            invites: count,
-            updated_at: new Date().toISOString(),
-            last_active: new Date().toISOString(),
-          });
+        const { error: statsUpdateErr } = await sb.from("user_stats").upsert({
+          user_id: userId,
+          invites: count,
+          updated_at: new Date().toISOString(),
+          last_active: new Date().toISOString(),
+        });
 
-        if (statsUpdateErr) console.warn("[FoundersBlock] user_stats upsert warning:", statsUpdateErr.message);
+        if (statsUpdateErr)
+          console.warn(
+            "[FoundersBlock] user_stats upsert warning:",
+            statsUpdateErr.message,
+          );
       } catch (e: any) {
-        console.error("[FoundersBlock] load referrals failed:", e?.message ?? e);
+        console.error(
+          "[FoundersBlock] load referrals failed:",
+          e?.message ?? e,
+        );
         if (alive) {
           setErrMsg("Referrals laden mislukt (wordt snel gefixt).");
           setRefCount(0); // graceful
@@ -64,13 +75,19 @@ export const FoundersBlock: React.FC = () => {
       }
     })();
 
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [userId]);
 
   async function onShare() {
     try {
       if (navigator.share) {
-        await navigator.share({ title: "Join FitFi", text: "Word mijn stijl‑buddy op FitFi!", url: inviteUrl });
+        await navigator.share({
+          title: "Join FitFi",
+          text: "Word mijn stijl‑buddy op FitFi!",
+          url: inviteUrl,
+        });
       } else {
         await navigator.clipboard.writeText(inviteUrl);
       }
@@ -83,7 +100,8 @@ export const FoundersBlock: React.FC = () => {
   function toast(msg: string) {
     const el = document.createElement("div");
     el.textContent = msg;
-    el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-[9999]";
+    el.className =
+      "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-[9999]";
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1600);
   }
@@ -91,7 +109,7 @@ export const FoundersBlock: React.FC = () => {
   return (
     <div className="card p-5 sm:p-6">
       <FoundersTierBadge referrals={loading ? 0 : refCount} className="mb-4" />
-      
+
       <div className="flex items-center justify-between">
         <span className="hidden sm:inline-block">
           <FoundersTierBadge referrals={loading ? 0 : refCount} compact />
@@ -109,7 +127,7 @@ export const FoundersBlock: React.FC = () => {
       {errMsg && <div className="text-sm text-red-600 mt-2">{errMsg}</div>}
 
       <div className="text-xs text-gray-500 mt-2 break-all">{inviteUrl}</div>
-      
+
       <FoundersTierPerks referrals={loading ? 0 : refCount} className="mt-6" />
     </div>
   );

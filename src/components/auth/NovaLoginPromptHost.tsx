@@ -1,14 +1,16 @@
-import React from 'react';
-import { useUser } from '@/context/UserContext';
+import React from "react";
+import { useUser } from "@/context/UserContext";
 
-const NovaLoginPrompt = React.lazy(() => import('@/components/auth/NovaLoginPrompt'));
+const NovaLoginPrompt = React.lazy(
+  () => import("@/components/auth/NovaLoginPrompt"),
+);
 
 export default function NovaLoginPromptHost() {
   const { user, status } = useUser();
   const [open, setOpen] = React.useState(false);
-  
+
   // Determine if user is a member (has account = member for now)
-  const isMember = status === 'authenticated' && !!user?.id;
+  const isMember = status === "authenticated" && !!user?.id;
 
   React.useEffect(() => {
     const onPrompt = () => {
@@ -18,9 +20,9 @@ export default function NovaLoginPromptHost() {
       }
     };
     const handler = onPrompt as unknown as EventListener;
-    if (typeof window !== 'undefined') {
-      window.addEventListener('nova:prompt-login', handler);
-      return () => window.removeEventListener('nova:prompt-login', handler);
+    if (typeof window !== "undefined") {
+      window.addEventListener("nova:prompt-login", handler);
+      return () => window.removeEventListener("nova:prompt-login", handler);
     }
     return;
   }, [user, isMember]);
@@ -35,11 +37,11 @@ export default function NovaLoginPromptHost() {
   // Esc-key support
   React.useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { 
-      if (e.key === 'Escape') setOpen(false); 
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   // Render niks als gebruiker al member is (extra veiligheid)
@@ -52,11 +54,11 @@ export default function NovaLoginPromptHost() {
         onClose={() => setOpen(false)}
         onSignup={() => {
           setOpen(false);
-          window.location.assign('/onboarding');
+          window.location.assign("/onboarding");
         }}
         onLogin={() => {
           setOpen(false);
-          window.location.assign('/inloggen');
+          window.location.assign("/inloggen");
         }}
       />
     </React.Suspense>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import React from "react";
+import { Helmet } from "react-helmet-async";
 
 type SeoProps = {
   title?: string;
@@ -8,14 +8,16 @@ type SeoProps = {
   noindex?: boolean;
   jsonLd?: Record<string, any> | Record<string, any>[];
   keywords?: string;
-  type?: 'website' | 'article';
+  type?: "website" | "article";
   image?: string;
 };
 
-const SITE_NAME = 'FitFi';
-const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'https://fitfi.app';
+const SITE_NAME = "FitFi";
+const ORIGIN =
+  typeof window !== "undefined" ? window.location.origin : "https://fitfi.app";
 const DEFAULT_IMAGE = `${ORIGIN}/og-default.jpg`;
-const DEFAULT_DESCRIPTION = 'Ontdek welke stijl bij je past met ons AI-gedreven stylingplatform. In 2 minuten een persoonlijk rapport en shopbare outfits.';
+const DEFAULT_DESCRIPTION =
+  "Ontdek welke stijl bij je past met ons AI-gedreven stylingplatform. In 2 minuten een persoonlijk rapport en shopbare outfits.";
 
 export default function Seo({
   title,
@@ -24,14 +26,18 @@ export default function Seo({
   noindex = false,
   jsonLd,
   keywords,
-  type = 'website',
-  image
+  type = "website",
+  image,
 }: SeoProps) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} — AI Personal Styling`;
-  const url = canonical ?? (typeof window !== 'undefined' ? window.location.href : ORIGIN);
+  const fullTitle = title
+    ? `${title} | ${SITE_NAME}`
+    : `${SITE_NAME} — AI Personal Styling`;
+  const url =
+    canonical ??
+    (typeof window !== "undefined" ? window.location.href : ORIGIN);
   const ogImage = image || DEFAULT_IMAGE;
 
-  const ld = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
+  const ld = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 
   return (
     <Helmet>
@@ -52,7 +58,7 @@ export default function Seo({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:locale" content="nl_NL" />
-      
+
       {/* Twitter Cards */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
@@ -62,7 +68,11 @@ export default function Seo({
 
       {/* JSON-LD */}
       {ld.map((obj, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
+        />
       ))}
     </Helmet>
   );

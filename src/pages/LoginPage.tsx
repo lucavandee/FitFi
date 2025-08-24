@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
-import Button from '../components/ui/Button';
-import { useUser } from '../context/UserContext';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
+import Button from "../components/ui/Button";
+import { useUser } from "../context/UserContext";
+import { supabase } from "../lib/supabaseClient";
 
 // Get singleton client
 const sb = supabase();
@@ -13,17 +13,21 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
   const { user, loading } = useUser();
   const sb = supabase();
-  
+
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
 
   // Get redirect path from location state
-  const from = (location.state as any)?.from?.pathname || '/feed';
+  const from = (location.state as any)?.from?.pathname || "/feed";
 
   // Handle successful login redirect
   useEffect(() => {
@@ -34,16 +38,16 @@ const LoginPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear errors when user starts typing
     if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: undefined
+        [name]: undefined,
       }));
     }
   };
@@ -52,15 +56,15 @@ const LoginPage: React.FC = () => {
     const newErrors: typeof errors = {};
 
     if (!formData.email) {
-      newErrors.email = 'E-mailadres is verplicht';
+      newErrors.email = "E-mailadres is verplicht";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Ongeldig e-mailadres';
+      newErrors.email = "Ongeldig e-mailadres";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Wachtwoord is verplicht';
+      newErrors.password = "Wachtwoord is verplicht";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Wachtwoord moet minimaal 6 karakters zijn';
+      newErrors.password = "Wachtwoord moet minimaal 6 karakters zijn";
     }
 
     setErrors(newErrors);
@@ -69,13 +73,15 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     if (!sb) {
-      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
+      setErrors({
+        general: "Supabase niet beschikbaar. Probeer het later opnieuw.",
+      });
       return;
     }
     setIsLoading(true);
@@ -84,24 +90,29 @@ const LoginPage: React.FC = () => {
     try {
       const { error } = await sb.auth.signInWithPassword({
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
-      
+
       if (error) {
-        setErrors({ general: 'Inloggen mislukt. Controleer je gegevens en probeer opnieuw.' });
+        setErrors({
+          general:
+            "Inloggen mislukt. Controleer je gegevens en probeer opnieuw.",
+        });
       } else {
         // Track successful login
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'login', {
-            event_category: 'authentication',
-            event_label: 'email_login'
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "login", {
+            event_category: "authentication",
+            event_label: "email_login",
           });
         }
         // Navigation will be handled by useEffect when user state updates
       }
     } catch (error: any) {
-      console.error('Login error:', error);
-      setErrors({ general: 'Er ging iets mis bij het inloggen. Probeer het opnieuw.' });
+      console.error("Login error:", error);
+      setErrors({
+        general: "Er ging iets mis bij het inloggen. Probeer het opnieuw.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -133,7 +144,7 @@ const LoginPage: React.FC = () => {
                 <span className="text-2xl font-light text-gray-900">FitFi</span>
               </div>
             </Link>
-            
+
             <h2 className="text-3xl font-light text-gray-900 mb-2">
               Welkom terug
             </h2>
@@ -147,19 +158,25 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
-                <div 
+                <div
                   className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3"
                   role="alert"
                   aria-live="assertive"
                 >
-                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                  <AlertCircle
+                    className="text-red-500 flex-shrink-0 mt-0.5"
+                    size={20}
+                  />
                   <p className="text-red-700 text-sm">{errors.general}</p>
                 </div>
               )}
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   E-mailadres
                 </label>
                 <div className="relative">
@@ -175,7 +192,7 @@ const LoginPage: React.FC = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.email ? 'border-red-300' : 'border-gray-300'
+                      errors.email ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="je@email.com"
                   />
@@ -189,7 +206,10 @@ const LoginPage: React.FC = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Wachtwoord
                 </label>
                 <div className="relative">
@@ -199,13 +219,13 @@ const LoginPage: React.FC = () => {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     required
                     value={formData.password}
                     onChange={handleInputChange}
                     className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.password ? 'border-red-300' : 'border-gray-300'
+                      errors.password ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="Je wachtwoord"
                   />
@@ -213,7 +233,9 @@ const LoginPage: React.FC = () => {
                     type="button"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                    aria-label={
+                      showPassword ? "Verberg wachtwoord" : "Toon wachtwoord"
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5 text-gray-400" />
@@ -256,7 +278,7 @@ const LoginPage: React.FC = () => {
                     Inloggen...
                   </div>
                 ) : (
-                  'Inloggen'
+                  "Inloggen"
                 )}
               </Button>
             </form>
@@ -264,7 +286,7 @@ const LoginPage: React.FC = () => {
             {/* Register Link */}
             <div className="mt-6 text-center">
               <p className="text-gray-600">
-                Nog geen account?{' '}
+                Nog geen account?{" "}
                 <Link
                   to="/registreren"
                   className="text-[#bfae9f] hover:text-[#a89a8c] font-medium transition-colors"

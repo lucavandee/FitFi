@@ -1,21 +1,29 @@
-import React from 'react';
-import { Trophy, Calendar, ExternalLink, Image as ImageIcon } from 'lucide-react';
-import type { ChallengeSubmission } from '../../services/data/types';
-import ImageWithFallback from '../ui/ImageWithFallback';
-import LoadingFallback from '../ui/LoadingFallback';
+import React from "react";
+import {
+  Trophy,
+  Calendar,
+  ExternalLink,
+  Image as ImageIcon,
+} from "lucide-react";
+import type { ChallengeSubmission } from "../../services/data/types";
+import ImageWithFallback from "../ui/ImageWithFallback";
+import LoadingFallback from "../ui/LoadingFallback";
 
 interface SubmissionsListProps {
   subs: ChallengeSubmission[] | null;
   loading: boolean;
 }
 
-export const SubmissionsList: React.FC<SubmissionsListProps> = ({ subs, loading }) => {
+export const SubmissionsList: React.FC<SubmissionsListProps> = ({
+  subs,
+  loading,
+}) => {
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('nl-NL', {
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("nl-NL", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -25,7 +33,10 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({ subs, loading 
         <h3 className="text-lg font-medium text-gray-900">Submissions</h3>
         <div className="grid gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 border border-gray-200 animate-pulse">
+            <div
+              key={i}
+              className="bg-white rounded-xl p-4 border border-gray-200 animate-pulse"
+            >
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
                 <div className="flex-1">
@@ -74,19 +85,19 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({ subs, loading 
             key={submission.id}
             className={`bg-white rounded-xl p-4 border transition-all ${
               submission.isWinner
-                ? 'border-yellow-300 bg-yellow-50 shadow-md'
-                : 'border-gray-200 hover:shadow-sm'
+                ? "border-yellow-300 bg-yellow-50 shadow-md"
+                : "border-gray-200 hover:shadow-sm"
             }`}
           >
             {/* Submission Header */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-[#89CFF0] rounded-full flex items-center justify-center text-white font-medium text-sm">
-                  {submission.userName?.charAt(0).toUpperCase() || 'U'}
+                  {submission.userName?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div>
                   <div className="font-medium text-gray-900">
-                    {submission.userName || 'Anonieme gebruiker'}
+                    {submission.userName || "Anonieme gebruiker"}
                   </div>
                   <div className="text-sm text-gray-500 flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
@@ -153,16 +164,24 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({ subs, loading 
 
               {/* Submission Type Badge */}
               <div className="flex items-center justify-between">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  submission.submissionType === 'text' ? 'bg-gray-100 text-gray-700' :
-                  submission.submissionType === 'image' ? 'bg-purple-100 text-purple-700' :
-                  submission.submissionType === 'link' ? 'bg-blue-100 text-blue-700' :
-                  'bg-green-100 text-green-700'
-                }`}>
-                  {submission.submissionType === 'text' ? 'Tekst' :
-                   submission.submissionType === 'image' ? 'Afbeelding' :
-                   submission.submissionType === 'link' ? 'Link' :
-                   'Combo'}
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    submission.submissionType === "text"
+                      ? "bg-gray-100 text-gray-700"
+                      : submission.submissionType === "image"
+                        ? "bg-purple-100 text-purple-700"
+                        : submission.submissionType === "link"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {submission.submissionType === "text"
+                    ? "Tekst"
+                    : submission.submissionType === "image"
+                      ? "Afbeelding"
+                      : submission.submissionType === "link"
+                        ? "Link"
+                        : "Combo"}
                 </span>
               </div>
             </div>

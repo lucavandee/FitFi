@@ -1,15 +1,19 @@
-import React, { lazy, Suspense, useEffect, useState, useRef } from 'react';
-import AppPortal from '@/components/layout/AppPortal';
-import { X } from 'lucide-react';
-import ContextSwitcher from '@/components/ai/ContextSwitcher';
-import SuggestionChips from '@/components/ai/SuggestionChips';
-import { NovaConnectionProvider, useNovaConn } from '@/components/ai/NovaConnection';
-import NovaHealthChip from '@/components/ai/NovaHealthChip';
+import React, { lazy, Suspense, useEffect, useState, useRef } from "react";
+import AppPortal from "@/components/layout/AppPortal";
+import { X } from "lucide-react";
+import ContextSwitcher from "@/components/ai/ContextSwitcher";
+import SuggestionChips from "@/components/ai/SuggestionChips";
+import {
+  NovaConnectionProvider,
+  useNovaConn,
+} from "@/components/ai/NovaConnection";
+import NovaHealthChip from "@/components/ai/NovaHealthChip";
 
-const NovaChat = lazy(() => import('./NovaChat'));
+const NovaChat = lazy(() => import("./NovaChat"));
 
-const LS_KEY = 'fitfi.nova.dismissedAt';
-const isMobile = () => window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+const LS_KEY = "fitfi.nova.dismissedAt";
+const isMobile = () =>
+  window.matchMedia && window.matchMedia("(max-width: 767px)").matches;
 
 export default function NovaBubble() {
   const [open, setOpen] = useState(false);
@@ -18,8 +22,8 @@ export default function NovaBubble() {
 
   useEffect(() => {
     const onMsg = () => setHasMessaged(true);
-    window.addEventListener('nova:message', onMsg);
-    return () => window.removeEventListener('nova:message', onMsg);
+    window.addEventListener("nova:message", onMsg);
+    return () => window.removeEventListener("nova:message", onMsg);
   }, []);
 
   useEffect(() => {
@@ -31,28 +35,28 @@ export default function NovaBubble() {
       setOpen(false);
       localStorage.setItem(LS_KEY, new Date().toISOString());
     };
-    window.addEventListener('nova:open', onOpen);
-    window.addEventListener('nova:close', onClose);
+    window.addEventListener("nova:open", onOpen);
+    window.addEventListener("nova:close", onClose);
     return () => {
-      window.removeEventListener('nova:open', onOpen);
-      window.removeEventListener('nova:close', onClose);
+      window.removeEventListener("nova:open", onOpen);
+      window.removeEventListener("nova:close", onClose);
     };
   }, []);
 
   // Prefetch NovaChat on desktop when idle
   useEffect(() => {
-    if (!isMobile() && 'requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(() => import('./NovaChat'));
+    if (!isMobile() && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => import("./NovaChat"));
     }
   }, []);
 
   // Close on ESC
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) setOpen(false);
+      if (e.key === "Escape" && open) setOpen(false);
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   if (!open) return null;
@@ -66,18 +70,20 @@ export default function NovaBubble() {
       aria-labelledby="nova-title"
       className={
         mobile
-          ? 'fixed left-0 right-0 bottom-0 z-[80] rounded-t-3xl bg-white shadow-2xl'
-          : 'fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-[80] rounded-2xl bg-white shadow-2xl'
+          ? "fixed left-0 right-0 bottom-0 z-[80] rounded-t-3xl bg-white shadow-2xl"
+          : "fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-[80] rounded-2xl bg-white shadow-2xl"
       }
       style={
         mobile
-          ? { height: 'min(72vh, 640px)' }
-          : { width: 'min(92vw, 420px)', height: 'min(78vh, 640px)' }
+          ? { height: "min(72vh, 640px)" }
+          : { width: "min(92vw, 420px)", height: "min(78vh, 640px)" }
       }
     >
       <div className="flex flex-col h-full">
         <header className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 id="nova-title" className="font-semibold text-ink">Nova AI</h2>
+          <h2 id="nova-title" className="font-semibold text-ink">
+            Nova AI
+          </h2>
           <div className="flex items-center gap-3">
             <NovaHeaderChipBridge />
             <button
@@ -100,7 +106,9 @@ export default function NovaBubble() {
 
         {/* Chat area vult de rest, input blijft zichtbaar */}
         <div className="flex-1 min-h-0">
-          <Suspense fallback={<div className="p-4 text-gray-500">Nova laden…</div>}>
+          <Suspense
+            fallback={<div className="p-4 text-gray-500">Nova laden…</div>}
+          >
             <NovaChat />
           </Suspense>
         </div>
@@ -116,11 +124,9 @@ export default function NovaBubble() {
         role="presentation"
         onClick={() => setOpen(false)}
       />
-      
+
       {/* Panel with Connection Provider */}
-      <NovaConnectionProvider>
-        {panel}
-      </NovaConnectionProvider>
+      <NovaConnectionProvider>{panel}</NovaConnectionProvider>
     </AppPortal>
   );
 }
@@ -128,5 +134,12 @@ export default function NovaBubble() {
 // Kleine bridge die de context leest en chip rendert
 function NovaHeaderChipBridge() {
   const { status, model, ttfbMs, traceId } = useNovaConn();
-  return <NovaHealthChip status={status} model={model} ttfbMs={ttfbMs} traceId={traceId} />;
+  return (
+    <NovaHealthChip
+      status={status}
+      model={model}
+      ttfbMs={ttfbMs}
+      traceId={traceId}
+    />
+  );
 }

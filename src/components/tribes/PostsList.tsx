@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { Heart, MessageCircle, MoreHorizontal, Flag, Trash2 } from 'lucide-react';
-import { useTribePosts } from '@/hooks/useTribePosts';
-import SmartImage from '@/components/media/SmartImage';
-import Button from '@/components/ui/Button';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import {
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Flag,
+  Trash2,
+} from "lucide-react";
+import { useTribePosts } from "@/hooks/useTribePosts";
+import SmartImage from "@/components/media/SmartImage";
+import Button from "@/components/ui/Button";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import toast from "react-hot-toast";
 
 interface PostsListProps {
   tribeId: string;
@@ -17,20 +23,20 @@ export const PostsList: React.FC<PostsListProps> = ({
   tribeId,
   userId,
   showComposer = true,
-  className = ''
+  className = "",
 }) => {
   const { posts, loading, error, addPost } = useTribePosts(tribeId);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
 
   const handleLike = async (postId: string) => {
     if (!userId) {
-      toast.error('Log in om posts te liken');
+      toast.error("Log in om posts te liken");
       return;
     }
 
     try {
       // Optimistic update
-      setLikedPosts(prev => {
+      setLikedPosts((prev) => {
         const newSet = new Set(prev);
         if (newSet.has(postId)) {
           newSet.delete(postId);
@@ -42,13 +48,13 @@ export const PostsList: React.FC<PostsListProps> = ({
 
       // In a real implementation, this would call an API
       // For now, just show success feedback
-      toast.success('Like bijgewerkt!');
+      toast.success("Like bijgewerkt!");
     } catch (error) {
-      console.error('Error liking post:', error);
-      toast.error('Kon like niet bijwerken');
-      
+      console.error("Error liking post:", error);
+      toast.error("Kon like niet bijwerken");
+
       // Revert optimistic update
-      setLikedPosts(prev => {
+      setLikedPosts((prev) => {
         const newSet = new Set(prev);
         if (newSet.has(postId)) {
           newSet.delete(postId);
@@ -62,41 +68,47 @@ export const PostsList: React.FC<PostsListProps> = ({
 
   const handleComment = (postId: string) => {
     if (!userId) {
-      toast.error('Log in om te reageren');
+      toast.error("Log in om te reageren");
       return;
     }
-    
+
     // In a real implementation, this would open a comment modal
-    toast.success('Comment functie komt binnenkort!');
+    toast.success("Comment functie komt binnenkort!");
   };
 
   const handleReport = (postId: string) => {
     if (!userId) {
-      toast.error('Log in om te rapporteren');
+      toast.error("Log in om te rapporteren");
       return;
     }
-    
-    toast.success('Post gerapporteerd voor moderatie');
+
+    toast.success("Post gerapporteerd voor moderatie");
   };
 
   const formatTimeAgo = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) return 'zojuist';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m geleden`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}u geleden`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d geleden`;
-    
-    return date.toLocaleDateString('nl-NL');
+
+    if (diffInSeconds < 60) return "zojuist";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)}m geleden`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)}u geleden`;
+    if (diffInSeconds < 604800)
+      return `${Math.floor(diffInSeconds / 86400)}d geleden`;
+
+    return date.toLocaleDateString("nl-NL");
   };
 
   if (loading) {
     return (
       <div className={`space-y-6 ${className}`}>
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white rounded-2xl p-6 shadow-sm animate-pulse">
+          <div
+            key={i}
+            className="bg-white rounded-2xl p-6 shadow-sm animate-pulse"
+          >
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
               <div className="flex-1">
@@ -114,7 +126,9 @@ export const PostsList: React.FC<PostsListProps> = ({
 
   if (error) {
     return (
-      <div className={`bg-white rounded-2xl p-6 shadow-sm text-center ${className}`}>
+      <div
+        className={`bg-white rounded-2xl p-6 shadow-sm text-center ${className}`}
+      >
         <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">⚠️</span>
         </div>
@@ -134,7 +148,9 @@ export const PostsList: React.FC<PostsListProps> = ({
 
   if (!posts || posts.length === 0) {
     return (
-      <div className={`bg-white rounded-2xl p-8 shadow-sm text-center ${className}`}>
+      <div
+        className={`bg-white rounded-2xl p-8 shadow-sm text-center ${className}`}
+      >
         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <MessageCircle className="w-8 h-8 text-gray-400" />
         </div>
@@ -148,7 +164,7 @@ export const PostsList: React.FC<PostsListProps> = ({
           <Button
             variant="primary"
             className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-            onClick={() => toast.success('Post composer komt binnenkort!')}
+            onClick={() => toast.success("Post composer komt binnenkort!")}
           >
             Maak eerste post
           </Button>
@@ -161,7 +177,7 @@ export const PostsList: React.FC<PostsListProps> = ({
     <div className={`space-y-6 ${className}`}>
       {posts.map((post, index) => (
         <ErrorBoundary key={post.id}>
-          <article 
+          <article
             className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow animate-fade-in"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
@@ -170,19 +186,19 @@ export const PostsList: React.FC<PostsListProps> = ({
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-[#89CFF0] rounded-full flex items-center justify-center">
                   <span className="text-white font-medium text-sm">
-                    {post.authorName?.charAt(0).toUpperCase() || 'U'}
+                    {post.authorName?.charAt(0).toUpperCase() || "U"}
                   </span>
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">
-                    {post.authorName || 'Anonieme gebruiker'}
+                    {post.authorName || "Anonieme gebruiker"}
                   </h4>
                   <p className="text-sm text-gray-500">
                     {formatTimeAgo(post.created_at)}
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleReport(post.id)}
@@ -224,19 +240,19 @@ export const PostsList: React.FC<PostsListProps> = ({
                   onClick={() => handleLike(post.id)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors ${
                     likedPosts.has(post.id)
-                      ? 'bg-red-50 text-red-600'
-                      : 'hover:bg-gray-50 text-gray-600'
+                      ? "bg-red-50 text-red-600"
+                      : "hover:bg-gray-50 text-gray-600"
                   }`}
                   disabled={!userId}
                 >
-                  <Heart 
-                    className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} 
+                  <Heart
+                    className={`w-4 h-4 ${likedPosts.has(post.id) ? "fill-current" : ""}`}
                   />
                   <span className="text-sm font-medium">
                     {(post.likes || 0) + (likedPosts.has(post.id) ? 1 : 0)}
                   </span>
                 </button>
-                
+
                 <button
                   onClick={() => handleComment(post.id)}
                   className="flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-gray-50 text-gray-600 transition-colors"
@@ -248,7 +264,7 @@ export const PostsList: React.FC<PostsListProps> = ({
                   </span>
                 </button>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleReport(post.id)}
@@ -257,10 +273,12 @@ export const PostsList: React.FC<PostsListProps> = ({
                 >
                   <Flag className="w-4 h-4" />
                 </button>
-                
+
                 {userId === post.authorId && (
                   <button
-                    onClick={() => toast.success('Delete functie komt binnenkort!')}
+                    onClick={() =>
+                      toast.success("Delete functie komt binnenkort!")
+                    }
                     className="p-2 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors"
                     title="Verwijder post"
                   >

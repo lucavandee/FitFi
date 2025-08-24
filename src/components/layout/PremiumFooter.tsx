@@ -1,9 +1,18 @@
-import { FOOTER_COLUMNS, FOOTER_CTA, SOCIALS, BRAND } from '@/constants/footer';
-import { openCookieSettings } from '@/utils/cookies';
-import { Mail, Phone, MapPin, ArrowRight, CheckCircle2, Instagram, Linkedin, Twitter } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useState, useMemo } from 'react';
-import FooterGuard from '@/components/layout/FooterGuard';
+import { FOOTER_COLUMNS, FOOTER_CTA, SOCIALS, BRAND } from "@/constants/footer";
+import { openCookieSettings } from "@/utils/cookies";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  ArrowRight,
+  CheckCircle2,
+  Instagram,
+  Linkedin,
+  Twitter,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { useState, useMemo } from "react";
+import FooterGuard from "@/components/layout/FooterGuard";
 
 const year = new Date().getFullYear();
 
@@ -12,8 +21,8 @@ function ContactBlock() {
     <div className="space-y-3">
       <div className="flex items-center space-x-3 text-gray-300">
         <Mail size={16} />
-        <a 
-          href={`mailto:${BRAND.email}`} 
+        <a
+          href={`mailto:${BRAND.email}`}
           className="hover:text-[#89CFF0] transition-colors"
         >
           {BRAND.email}
@@ -21,8 +30,8 @@ function ContactBlock() {
       </div>
       <div className="flex items-center space-x-3 text-gray-300">
         <Phone size={16} />
-        <a 
-          href={`tel:${BRAND.phone.replace(/\s+/g,'')}`} 
+        <a
+          href={`tel:${BRAND.phone.replace(/\s+/g, "")}`}
           className="hover:text-[#89CFF0] transition-colors"
         >
           {BRAND.phone}
@@ -41,41 +50,43 @@ function ContactBlock() {
 }
 
 function Newsletter() {
-  const [email, setEmail] = useState('');
-  const [state, setState] = useState<'idle' | 'success' | 'error'>('idle');
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "success" | "error">("idle");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!valid) { 
-      setState('error'); 
-      return; 
+    if (!valid) {
+      setState("error");
+      return;
     }
 
     try {
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'footer' }),
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "footer" }),
       });
-      
+
       if (response.ok) {
-        setState('success');
-        setEmail('');
+        setState("success");
+        setEmail("");
       } else {
-        throw new Error('Subscribe failed');
+        throw new Error("Subscribe failed");
       }
     } catch {
       // Fallback: mailto – altijd functioneel
       window.location.href = `mailto:${BRAND.email}?subject=Aanmelden%20nieuwsbrief&body=${encodeURIComponent(email)}`;
-      setState('success');
+      setState("success");
     }
   }
 
   return (
     <div className="max-w-md mx-auto">
       <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-3">
-        <label className="sr-only" htmlFor="newsletter-email">E-mailadres voor nieuwsbrief</label>
+        <label className="sr-only" htmlFor="newsletter-email">
+          E-mailadres voor nieuwsbrief
+        </label>
         <input
           id="newsletter-email"
           type="email"
@@ -94,14 +105,14 @@ function Newsletter() {
           Aanmelden
         </button>
       </form>
-      
-      {state === 'success' && (
+
+      {state === "success" && (
         <p className="mt-2 text-sm text-green-400 flex items-center gap-1">
           <CheckCircle2 className="w-4 h-4" />
           Ingeschreven — bedankt!
         </p>
       )}
-      {state === 'error' && (
+      {state === "error" && (
         <p className="mt-2 text-sm text-red-400">
           Ongeldig e-mailadres. Probeer opnieuw.
         </p>
@@ -111,8 +122,8 @@ function Newsletter() {
 }
 
 function SocialLinks() {
-  const visibleSocials = SOCIALS.filter(social => social.url);
-  
+  const visibleSocials = SOCIALS.filter((social) => social.url);
+
   if (visibleSocials.length === 0) {
     return null;
   }
@@ -121,7 +132,7 @@ function SocialLinks() {
     LinkedIn: <Linkedin size={20} />,
     Instagram: <Instagram size={20} />,
     TikTok: <div className="w-5 h-5 text-center font-bold">T</div>,
-    X: <Twitter size={20} />
+    X: <Twitter size={20} />,
   };
 
   return (
@@ -146,24 +157,27 @@ function SocialLinks() {
 function PremiumFooterInner() {
   const enhancedColumns = useMemo(() => {
     const columns = [...FOOTER_COLUMNS];
-    
+
     // Add Cookie-instellingen to Legal section if not already present
-    const legalColumn = columns.find(col => col.title === 'Juridisch');
-    if (legalColumn && !legalColumn.links.some(link => link.label === 'Cookie-instellingen')) {
+    const legalColumn = columns.find((col) => col.title === "Juridisch");
+    if (
+      legalColumn &&
+      !legalColumn.links.some((link) => link.label === "Cookie-instellingen")
+    ) {
       legalColumn.links.push({
-        label: 'Cookie-instellingen',
-        href: '#',
-        onClick: openCookieSettings
+        label: "Cookie-instellingen",
+        href: "#",
+        onClick: openCookieSettings,
       });
     }
-    
+
     return columns;
   }, []);
 
   return (
-    <footer 
-      data-testid="app-footer" 
-      className={`bg-[#0D1B2A] text-white${import.meta.env.VITE_DEBUG_FOOTER === 'true' ? ' outline outline-1 outline-rose-400' : ''}`} 
+    <footer
+      data-testid="app-footer"
+      className={`bg-[#0D1B2A] text-white${import.meta.env.VITE_DEBUG_FOOTER === "true" ? " outline outline-1 outline-rose-400" : ""}`}
       role="contentinfo"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -177,16 +191,16 @@ function PremiumFooterInner() {
               </div>
               <span className="text-xl font-bold text-white">{BRAND.name}</span>
             </div>
-            
+
             <p className="text-gray-300 mb-6 leading-relaxed">
               {BRAND.tagline}
             </p>
-            
+
             <p className="text-gray-300 mb-6 leading-relaxed">
-              FitFi helpt je ontdekken wat jouw stijl over je zegt en hoe je dit kunt gebruiken 
-              om jouw doelen te bereiken.
+              FitFi helpt je ontdekken wat jouw stijl over je zegt en hoe je dit
+              kunt gebruiken om jouw doelen te bereiken.
             </p>
-            
+
             {/* Contact Info */}
             <ContactBlock />
           </div>

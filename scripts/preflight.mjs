@@ -1,8 +1,15 @@
 /* eslint-disable no-console */
-import fs from 'fs';
-const app = 'src/App.tsx';
+import fs from "fs";
+const app = "src/App.tsx";
 
-function exists(p) { try { fs.accessSync(p); return true; } catch { return false; } }
+function exists(p) {
+  try {
+    fs.accessSync(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 let ok = true;
 
@@ -18,34 +25,47 @@ function scan(dir) {
   return out;
 }
 
-const pages = [...scan('src/pages'), ...scan('src/features'), ...scan('src/sections')];
+const pages = [
+  ...scan("src/pages"),
+  ...scan("src/features"),
+  ...scan("src/sections"),
+];
 const offenders = [];
 for (const f of pages) {
-  const s = fs.readFileSync(f, 'utf8');
+  const s = fs.readFileSync(f, "utf8");
   if (s.match(/<\s*PremiumFooter\b/)) offenders.push(f);
 }
 if (offenders.length) {
   ok = false;
-  console.error('❌ Page-level PremiumFooter usage found (should be only in App.tsx):');
-  offenders.forEach(o => console.error('   -', o));
+  console.error(
+    "❌ Page-level PremiumFooter usage found (should be only in App.tsx):",
+  );
+  offenders.forEach((o) => console.error("   -", o));
 }
 
 // (b) ensure wildcard route is last
 if (exists(app)) {
-  const s = fs.readFileSync(app, 'utf8');
-  const routes = Array.from(s.matchAll(/<Route\s+path=("[^"]+"|'[^']+')/g)).map(m=>m[1].slice(1,-1));
-  const starIndex = routes.lastIndexOf('*');
+  const s = fs.readFileSync(app, "utf8");
+  const routes = Array.from(s.matchAll(/<Route\s+path=("[^"]+"|'[^']+')/g)).map(
+    (m) => m[1].slice(1, -1),
+  );
+  const starIndex = routes.lastIndexOf("*");
   if (starIndex !== -1 && starIndex !== routes.length - 1) {
     ok = false;
-    console.error('❌ Wildcard 404 route (path="*") is not the last route in src/App.tsx');
+    console.error(
+      '❌ Wildcard 404 route (path="*") is not the last route in src/App.tsx',
+    );
   }
 }
 
 // (c) ensure AffiliateDisclosureNote has import where used
-const adFiles = pages.filter(f => /AffiliateDisclosureNote\b/.test(fs.readFileSync(f, 'utf8')));
+const adFiles = pages.filter((f) =>
+  /AffiliateDisclosureNote\b/.test(fs.readFileSync(f, "utf8")),
+);
 for (const f of adFiles) {
-  const s = fs.readFileSync(f, 'utf8');
-  const hasImport = /from\s+['"]@\/components\/legal\/AffiliateDisclosureNote['"]/.test(s);
+  const s = fs.readFileSync(f, "utf8");
+  const hasImport =
+    /from\s+['"]@\/components\/legal\/AffiliateDisclosureNote['"]/.test(s);
   if (!hasImport) {
     ok = false;
     console.error(`❌ Missing import for AffiliateDisclosureNote in ${f}`);
@@ -53,7 +73,7 @@ for (const f of adFiles) {
 }
 
 if (!ok) {
-  console.error('\nPreflight failed. Fix issues above.');
+  console.error("\nPreflight failed. Fix issues above.");
   process.exit(2);
 }
-console.log('✅ Preflight OK');
+console.log("✅ Preflight OK");

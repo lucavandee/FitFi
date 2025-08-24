@@ -1,6 +1,8 @@
 @layer utilities {
   /* Balans in kopregels (Chrome/Safari/Edge) */
-  .text-balance { text-wrap: balance; }
+  .text-balance {
+    text-wrap: balance;
+  }
 
   /* Display scale — fluid via clamp: min, preferred(viewport), max */
   .display-hero {
@@ -39,10 +41,16 @@
   .accent-underline::after {
     content: "";
     position: absolute;
-    left: 0; right: 0; bottom: -0.15em;
+    left: 0;
+    right: 0;
+    bottom: -0.15em;
     height: 0.28em;
     border-radius: 999px;
-    background: linear-gradient(90deg, theme(colors.accent), theme(colors.text-dark));
+    background: linear-gradient(
+      90deg,
+      theme(colors.accent),
+      theme(colors.text-dark)
+    );
     opacity: 0.9;
   }
 }

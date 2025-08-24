@@ -1,6 +1,11 @@
-import React from 'react';
+import React from "react";
 
-type Notification = { id: string; title: string; body?: string; createdAt?: string };
+type Notification = {
+  id: string;
+  title: string;
+  body?: string;
+  createdAt?: string;
+};
 
 export const NotificationsMini: React.FC<{
   items?: Notification[] | null;
@@ -31,7 +36,9 @@ export const NotificationsMini: React.FC<{
       <div className="bg-white rounded-2xl p-4 shadow">
         <div className="text-sm font-semibold mb-2">Notificaties</div>
         <div className="flex items-center space-x-3">
-          <div className="h-8 w-8 rounded-full bg-gray-100 grid place-items-center">💤</div>
+          <div className="h-8 w-8 rounded-full bg-gray-100 grid place-items-center">
+            💤
+          </div>
           <div className="text-sm text-gray-600">Geen nieuwe notificaties</div>
         </div>
       </div>
@@ -47,7 +54,9 @@ export const NotificationsMini: React.FC<{
           <li key={n.id} className="text-sm">
             <div className="font-medium">{n.title}</div>
             {n.body && <div className="text-gray-600">{n.body}</div>}
-            {n.createdAt && <div className="text-xs text-gray-400 mt-0.5">{n.createdAt}</div>}
+            {n.createdAt && (
+              <div className="text-xs text-gray-400 mt-0.5">{n.createdAt}</div>
+            )}
           </li>
         ))}
       </ul>

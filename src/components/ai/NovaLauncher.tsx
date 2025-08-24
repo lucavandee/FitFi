@@ -1,46 +1,46 @@
-import React from 'react';
-import AppPortal from '@/components/layout/AppPortal';
-import { Sparkles } from 'lucide-react';
-import { useUser } from '@/context/UserContext';
+import React from "react";
+import AppPortal from "@/components/layout/AppPortal";
+import { Sparkles } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 export default function NovaLauncher() {
   const { user, status } = useUser();
-  
+
   // Determine if user is a member (has account = member for now)
-  const isMember = status === 'authenticated' && !!user?.id;
+  const isMember = status === "authenticated" && !!user?.id;
 
   const handleOpen = () => {
     // Niet ingelogd of geen member? -> prompt login
     if (!user || !isMember) {
-      window.dispatchEvent(new Event('nova:prompt-login'));
+      window.dispatchEvent(new Event("nova:prompt-login"));
       return;
     }
 
     // Wel member -> open chat
-    window.dispatchEvent(new Event('nova:open'));
+    window.dispatchEvent(new Event("nova:open"));
   };
 
   const onOpen = () => {
     // Pak user/member uit context
     const { user, status } = useUser();
-    const isMember = status === 'authenticated' && !!user?.id;
+    const isMember = status === "authenticated" && !!user?.id;
 
     // Niet ingelogd of geen member? -> prompt login
     if (!user || !isMember) {
-      window.dispatchEvent(new Event('nova:prompt-login'));
+      window.dispatchEvent(new Event("nova:prompt-login"));
       return;
     }
 
     // Wel member -> open chat
-    window.dispatchEvent(new Event('nova:open'));
+    window.dispatchEvent(new Event("nova:open"));
   };
 
   const handleClick = () => {
     // Use the safer handleOpen function
     if (!user || !isMember) {
-      window.dispatchEvent(new Event('nova:prompt-login'));
+      window.dispatchEvent(new Event("nova:prompt-login"));
     } else {
-      window.dispatchEvent(new Event('nova:open'));
+      window.dispatchEvent(new Event("nova:open"));
     }
   };
 

@@ -1,4 +1,4 @@
-import { installNetworkGuards } from '@/utils/networkGuards';
+import { installNetworkGuards } from "@/utils/networkGuards";
 
 installNetworkGuards();
 

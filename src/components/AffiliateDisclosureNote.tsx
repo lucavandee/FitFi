@@ -1,1 +1,1 @@
-export { default } from '@/components/legal/AffiliateDisclosureNote';
+export { default } from "@/components/legal/AffiliateDisclosureNote";

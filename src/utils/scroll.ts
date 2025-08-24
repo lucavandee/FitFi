@@ -8,35 +8,36 @@
  * Prevents layout shift when scrollbar disappears
  */
 export function lockBodyScroll(): void {
-  if (typeof window === 'undefined') return;
-  
+  if (typeof window === "undefined") return;
+
   // Calculate scrollbar width to prevent layout shift
-  const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-  
+  const scrollBarWidth =
+    window.innerWidth - document.documentElement.clientWidth;
+
   // Lock scroll
-  document.body.style.overflow = 'hidden';
-  
+  document.body.style.overflow = "hidden";
+
   // Compensate for scrollbar width
   if (scrollBarWidth > 0) {
     document.body.style.paddingRight = `${scrollBarWidth}px`;
   }
-  
+
   // Add class for CSS targeting
-  document.body.classList.add('scroll-locked');
+  document.body.classList.add("scroll-locked");
 }
 
 /**
  * Unlock body scroll and remove scrollbar compensation
  */
 export function unlockBodyScroll(): void {
-  if (typeof window === 'undefined') return;
-  
+  if (typeof window === "undefined") return;
+
   // Restore scroll
-  document.body.style.overflow = '';
-  document.body.style.paddingRight = '';
-  
+  document.body.style.overflow = "";
+  document.body.style.paddingRight = "";
+
   // Remove class
-  document.body.classList.remove('scroll-locked');
+  document.body.classList.remove("scroll-locked");
 }
 
 /**
@@ -56,6 +57,6 @@ export function toggleBodyScroll(lock: boolean): void {
  * @returns Whether body scroll is locked
  */
 export function isBodyScrollLocked(): boolean {
-  if (typeof window === 'undefined') return false;
-  return document.body.style.overflow === 'hidden';
+  if (typeof window === "undefined") return false;
+  return document.body.style.overflow === "hidden";
 }

@@ -11,7 +11,7 @@ declare global {
       action: string,
       params?: {
         [key: string]: any;
-      }
+      },
     ) => void;
   }
 }
@@ -27,18 +27,24 @@ interface SupabaseError {
 }
 
 // Toast notification
-declare module 'react-hot-toast' {
+declare module "react-hot-toast" {
   interface ToastOptions {
     id?: string;
     icon?: React.ReactNode;
     duration?: number;
-    position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+    position?:
+      | "top-left"
+      | "top-center"
+      | "top-right"
+      | "bottom-left"
+      | "bottom-center"
+      | "bottom-right";
     style?: React.CSSProperties;
     className?: string;
     ariaProps?: {
       role?: string;
-      'aria-live'?: 'assertive' | 'off' | 'polite';
-      'aria-atomic'?: 'true' | 'false';
+      "aria-live"?: "assertive" | "off" | "polite";
+      "aria-atomic"?: "true" | "false";
     };
   }
 }

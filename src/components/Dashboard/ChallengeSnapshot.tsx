@@ -19,19 +19,25 @@ export const ChallengeSnapshot: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!best?.tribeId || !best?.challengeId) {
     return (
       <div className="bg-white rounded-2xl p-4 shadow">
-        <div className="font-semibold text-gray-900 mb-3">Challenges Snapshot</div>
+        <div className="font-semibold text-gray-900 mb-3">
+          Challenges Snapshot
+        </div>
         <div className="text-center py-6">
           <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🎯</span>
           </div>
-          <h4 className="font-medium text-gray-900 mb-2">Geen open challenges</h4>
-          <p className="text-sm text-gray-600 mb-4">Ontdek tribes en vind jouw perfecte challenge.</p>
-          <a 
-            className="inline-block bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-4 py-2 rounded-xl font-medium transition-colors" 
+          <h4 className="font-medium text-gray-900 mb-2">
+            Geen open challenges
+          </h4>
+          <p className="text-sm text-gray-600 mb-4">
+            Ontdek tribes en vind jouw perfecte challenge.
+          </p>
+          <a
+            className="inline-block bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-4 py-2 rounded-xl font-medium transition-colors"
             href={routeTo("tribe", {})}
           >
             Ontdek Tribes →
@@ -42,16 +48,20 @@ export const ChallengeSnapshot: React.FC = () => {
   }
 
   const { data: list } = useTribeChallenges(best.tribeId);
-  const ch = (list ?? []).find(c => c.id === best.challengeId);
+  const ch = (list ?? []).find((c) => c.id === best.challengeId);
 
   if (!ch) {
     return (
       <div className="bg-white rounded-2xl p-4 shadow">
-        <div className="font-semibold text-gray-900 mb-3">Challenges Snapshot</div>
+        <div className="font-semibold text-gray-900 mb-3">
+          Challenges Snapshot
+        </div>
         <div className="text-center py-4">
-          <p className="text-sm text-gray-600 mb-3">Challenge wordt geladen...</p>
-          <a 
-            className="inline-block text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium" 
+          <p className="text-sm text-gray-600 mb-3">
+            Challenge wordt geladen...
+          </p>
+          <a
+            className="inline-block text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium"
             href={routeTo("challenge", best)}
           >
             Open challenge →
@@ -68,10 +78,10 @@ export const ChallengeSnapshot: React.FC = () => {
     <div className="bg-white rounded-2xl shadow overflow-hidden hover:shadow-md transition-shadow">
       {ch.image && (
         <div className="aspect-video overflow-hidden">
-          <ImageWithFallback 
-            src={ch.image} 
-            alt={ch.title} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
+          <ImageWithFallback
+            src={ch.image}
+            alt={ch.title}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             componentName="ChallengeSnapshot"
           />
         </div>
@@ -87,24 +97,26 @@ export const ChallengeSnapshot: React.FC = () => {
             </span>
           )}
         </div>
-        
-        <h4 className="font-semibold text-gray-900 mb-2 leading-tight">{ch.title}</h4>
-        
+
+        <h4 className="font-semibold text-gray-900 mb-2 leading-tight">
+          {ch.title}
+        </h4>
+
         {ch.description && (
           <p className="text-sm text-gray-600 mb-3 line-clamp-2">
             {ch.description}
           </p>
         )}
-        
+
         <div className="flex items-center justify-between">
           <div className="text-xs text-gray-500">
             {ch.endAt && (
-              <>Eindigt: {new Date(ch.endAt).toLocaleDateString('nl-NL')}</>
+              <>Eindigt: {new Date(ch.endAt).toLocaleDateString("nl-NL")}</>
             )}
           </div>
-          
-          <a 
-            className="inline-flex items-center bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-3 py-2 rounded-xl font-medium transition-all hover:scale-105" 
+
+          <a
+            className="inline-flex items-center bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
             href={challengeUrl}
           >
             Doe mee →

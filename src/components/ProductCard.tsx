@@ -1,11 +1,15 @@
-import React from 'react';
-import { ExternalLink, Heart } from 'lucide-react';
-import { useGamification } from '../context/GamificationContext';
-import SmartImage from '@/components/media/SmartImage';
-import Button from './ui/Button';
-import { trackProductClick, trackShopCta, trackImpression } from '@/services/engagement';
-import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
-import toast from 'react-hot-toast';
+import React from "react";
+import { ExternalLink, Heart } from "lucide-react";
+import { useGamification } from "../context/GamificationContext";
+import SmartImage from "@/components/media/SmartImage";
+import Button from "./ui/Button";
+import {
+  trackProductClick,
+  trackShopCta,
+  trackImpression,
+} from "@/services/engagement";
+import { buildAffiliateUrl, detectPartner } from "@/utils/deeplinks";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   id: string;
@@ -24,20 +28,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   imageUrl,
   deeplink,
-  className = ''
+  className = "",
 }) => {
   const { saveOutfit } = useGamification();
 
   const handleSave = async () => {
     try {
       await saveOutfit();
-      toast.success('Product bewaard!');
+      toast.success("Product bewaard!");
     } catch (error) {
-      console.warn('Save failed, using local fallback:', error);
+      console.warn("Save failed, using local fallback:", error);
       // Fallback to local storage
-      const { toggleSave } = await import('@/services/engagement');
+      const { toggleSave } = await import("@/services/engagement");
       const saved = toggleSave(id);
-      toast.success(saved ? 'Product bewaard!' : 'Product verwijderd uit favorieten');
+      toast.success(
+        saved ? "Product bewaard!" : "Product verwijderd uit favorieten",
+      );
     }
   };
 
@@ -48,27 +54,32 @@ const ProductCard: React.FC<ProductCardProps> = ({
       title: title,
       brand: brand,
       price: price,
-      source: 'ProductCard'
+      source: "ProductCard",
     });
-    
+
     // Build affiliate URL with UTM tracking
-    const partner = detectPartner(deeplink || '');
-    const affiliateUrl = buildAffiliateUrl(deeplink || '#', partner || undefined);
-    
+    const partner = detectPartner(deeplink || "");
+    const affiliateUrl = buildAffiliateUrl(
+      deeplink || "#",
+      partner || undefined,
+    );
+
     // Track shop CTA
     trackShopCta({
       id: id,
-      partner: partner || 'unknown',
+      partner: partner || "unknown",
       url: affiliateUrl,
-      source: 'ProductCard'
+      source: "ProductCard",
     });
-    
+
     // Open affiliate link
-    window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+    window.open(affiliateUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow ${className}`}>
+    <div
+      className={`bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow ${className}`}
+    >
       {/* Product Image */}
       <div className="aspect-[3/4] overflow-hidden">
         <SmartImage
@@ -83,7 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           onClick={handleClick}
         />
       </div>
-      
+
       {/* Product Info */}
       <div className="p-4">
         <div className="mb-3">
@@ -92,12 +103,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </h3>
           <p className="text-gray-600 text-xs">{brand}</p>
         </div>
-        
+
         <div className="flex items-center justify-between">
           <div className="text-lg font-bold text-gray-900">
             €{price.toFixed(2)}
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Button
               variant="ghost"

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Download } from 'lucide-react';
-import Button from './Button';
-import LoadingFallback from './LoadingFallback';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Download } from "lucide-react";
+import Button from "./Button";
+import LoadingFallback from "./LoadingFallback";
 
 interface MarkdownPageProps {
   title: string;
@@ -18,10 +18,10 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
   description,
   markdownPath,
   downloadUrl,
-  backLink = '/',
-  backLabel = 'Terug naar home'
+  backLink = "/",
+  backLabel = "Terug naar home",
 }) => {
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,14 +30,16 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
       try {
         const response = await fetch(markdownPath);
         if (!response.ok) {
-          throw new Error('Content niet gevonden');
+          throw new Error("Content niet gevonden");
         }
-        
+
         const text = await response.text();
         setContent(text);
       } catch (error) {
-        console.error('Error loading markdown:', error);
-        setError('Er is een fout opgetreden bij het laden van de content. Neem contact op voor meer informatie.');
+        console.error("Error loading markdown:", error);
+        setError(
+          "Er is een fout opgetreden bij het laden van de content. Neem contact op voor meer informatie.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -49,16 +51,31 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
   const renderMarkdown = (markdown: string) => {
     // Simple markdown to HTML conversion
     return markdown
-      .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-gray-900 mb-6">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold text-gray-900 mb-4 mt-8">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 class="text-xl font-medium text-gray-900 mb-3 mt-6">$1</h3>')
+      .replace(
+        /^# (.*$)/gim,
+        '<h1 class="text-3xl font-bold text-gray-900 mb-6">$1</h1>',
+      )
+      .replace(
+        /^## (.*$)/gim,
+        '<h2 class="text-2xl font-semibold text-gray-900 mb-4 mt-8">$1</h2>',
+      )
+      .replace(
+        /^### (.*$)/gim,
+        '<h3 class="text-xl font-medium text-gray-900 mb-3 mt-6">$1</h3>',
+      )
       .replace(/^\*\*(.*)\*\*/gim, '<strong class="font-semibold">$1</strong>')
       .replace(/^\*(.*)\*/gim, '<em class="italic">$1</em>')
       .replace(/^- (.*$)/gim, '<li class="mb-1 ml-4">• $1</li>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-[#89CFF0] hover:text-[#89CFF0]/80 underline">$1</a>')
+      .replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" class="text-[#89CFF0] hover:text-[#89CFF0]/80 underline">$1</a>',
+      )
       .replace(/\n\n/g, '</p><p class="text-gray-700 leading-relaxed mb-4">')
-      .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-gray-700 leading-relaxed mb-4">')
-      .replace(/$(?![>])/gm, '</p>');
+      .replace(
+        /^(?!<[h|l|s|e])/gm,
+        '<p class="text-gray-700 leading-relaxed mb-4">',
+      )
+      .replace(/$(?![>])/gm, "</p>");
   };
 
   if (isLoading) {
@@ -69,7 +86,9 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
     return (
       <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Content niet gevonden</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Content niet gevonden
+          </h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <Button as={Link} to={backLink} variant="primary">
             {backLabel}
@@ -84,20 +103,22 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
       <div className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Header */}
         <div className="mb-8">
-          <Link 
-            to={backLink} 
+          <Link
+            to={backLink}
             className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
           >
             <ArrowLeft size={20} className="mr-2" />
             {backLabel}
           </Link>
-          
+
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-light text-gray-900 mb-2">{title}</h1>
+              <h1 className="text-3xl font-light text-gray-900 mb-2">
+                {title}
+              </h1>
               <p className="text-gray-600">{description}</p>
             </div>
-            
+
             {downloadUrl && (
               <Button
                 as="a"
@@ -115,7 +136,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
 
         {/* Content */}
         <div className="bg-white rounded-3xl shadow-sm p-8 md:p-12">
-          <div 
+          <div
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
           />

@@ -5,7 +5,7 @@ type EngagementStore = {
   similarClicks: Record<string, number>;
 };
 
-const KEY = 'fitfi.engagement.v1';
+const KEY = "fitfi.engagement.v1";
 
 function read(): EngagementStore {
   try {
@@ -15,7 +15,7 @@ function read(): EngagementStore {
     return {
       saved: parsed?.saved ?? {},
       disliked: parsed?.disliked ?? {},
-      similarClicks: parsed?.similarClicks ?? {}
+      similarClicks: parsed?.similarClicks ?? {},
     };
   } catch {
     return { saved: {}, disliked: {}, similarClicks: {} };
@@ -23,7 +23,9 @@ function read(): EngagementStore {
 }
 
 function write(store: EngagementStore) {
-  try { localStorage.setItem(KEY, JSON.stringify(store)); } catch {}
+  try {
+    localStorage.setItem(KEY, JSON.stringify(store));
+  } catch {}
 }
 
 export function isSaved(id: string): boolean {
@@ -58,19 +60,19 @@ export function undoDislike(id: string): void {
 export function getSimilarOutfits(all: any[], base: any, count = 3) {
   if (!all?.length || !base) return [];
   const baseTags: string[] = base.tags || [];
-  const baseArch = base.archetype || '';
+  const baseArch = base.archetype || "";
   const score = (o: any) => {
-    const t = new Set([...(o.tags||[])]);
-    const inter = baseTags.filter(x => t.has(x)).length;
+    const t = new Set([...(o.tags || [])]);
+    const inter = baseTags.filter((x) => t.has(x)).length;
     const arch = o.archetype === baseArch ? 2 : 0;
     return inter + arch;
   };
   return all
-    .filter(o => o.id !== base.id)
-    .map(o => ({o, s: score(o)}))
-    .sort((a,b)=>b.s-a.s)
+    .filter((o) => o.id !== base.id)
+    .map((o) => ({ o, s: score(o) }))
+    .sort((a, b) => b.s - a.s)
     .slice(0, count)
-    .map(x=>x.o);
+    .map((x) => x.o);
 }
 
 /**
@@ -80,35 +82,39 @@ export function getSimilarOutfits(all: any[], base: any, count = 3) {
 type KV = Record<string, any>;
 
 function safeCall(fn?: (...a: any[]) => any, ...args: any[]) {
-  try { return fn?.(...args); } catch { /* noop */ }
+  try {
+    return fn?.(...args);
+  } catch {
+    /* noop */
+  }
 }
 
 export function trackProductClick(data: KV) {
   // gtag (GA4)
-  safeCall((window as any)?.gtag, 'event', 'product_click', data);
+  safeCall((window as any)?.gtag, "event", "product_click", data);
   // plausible
-  safeCall((window as any)?.plausible, 'Product Click', { props: data });
+  safeCall((window as any)?.plausible, "Product Click", { props: data });
   // datalayer
   ((window as any).dataLayer = (window as any).dataLayer || []).push({
-    event: 'product_click',
+    event: "product_click",
     ...data,
   });
 }
 
 export function trackShopCta(data: KV) {
-  safeCall((window as any)?.gtag, 'event', 'shop_cta', data);
-  safeCall((window as any)?.plausible, 'Shop CTA', { props: data });
+  safeCall((window as any)?.gtag, "event", "shop_cta", data);
+  safeCall((window as any)?.plausible, "Shop CTA", { props: data });
   ((window as any).dataLayer = (window as any).dataLayer || []).push({
-    event: 'shop_cta',
+    event: "shop_cta",
     ...data,
   });
 }
 
 export function trackImpression(data: KV) {
-  safeCall((window as any)?.gtag, 'event', 'product_impression', data);
-  safeCall((window as any)?.plausible, 'Product Impression', { props: data });
+  safeCall((window as any)?.gtag, "event", "product_impression", data);
+  safeCall((window as any)?.plausible, "Product Impression", { props: data });
   ((window as any).dataLayer = (window as any).dataLayer || []).push({
-    event: 'product_impression',
+    event: "product_impression",
     ...data,
   });
 }

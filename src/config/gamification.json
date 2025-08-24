@@ -15,56 +15,275 @@
     "friendInvite": 60
   },
   "levels": [
-    {"id": "beginner", "rank": 1, "minPoints": 0, "name": "Style Starter", "icon": "🌱", "color": "#10b981", "perks": ["Basic recommendations"]},
-    {"id": "explorer", "rank": 2, "minPoints": 100, "name": "Style Explorer", "icon": "🔍", "color": "#3b82f6", "perks": ["Daily challenges", "Basic analytics"]},
-    {"id": "enthusiast", "rank": 3, "minPoints": 300, "name": "Style Enthusiast", "icon": "✨", "color": "#8b5cf6", "perks": ["Weekly challenges", "Outfit history"]},
-    {"id": "trendsetter", "rank": 4, "minPoints": 600, "name": "Trendsetter", "icon": "🎯", "color": "#f59e0b", "perks": ["Premium challenges", "Style insights"]},
-    {"id": "influencer", "rank": 5, "minPoints": 1000, "name": "Style Influencer", "icon": "⭐", "color": "#ef4444", "perks": ["Exclusive content", "Early access"]},
-    {"id": "icon", "rank": 6, "minPoints": 1500, "name": "Style Icon", "icon": "👑", "color": "#8b5cf6", "perks": ["VIP support", "Custom styling"]},
-    {"id": "legend", "rank": 7, "minPoints": 2500, "name": "Style Legend", "icon": "💎", "color": "#fbbf24", "perks": ["Legendary status", "All features"]},
-    {"id": "master", "rank": 8, "minPoints": 5000, "name": "Style Master", "icon": "🏆", "color": "#f97316", "perks": ["Master privileges", "Beta features"]},
-    {"id": "guru", "rank": 9, "minPoints": 7500, "name": "Style Guru", "icon": "🌟", "color": "#a855f7", "perks": ["Guru status", "Mentorship"]},
-    {"id": "deity", "rank": 10, "minPoints": 10000, "name": "Style Deity", "icon": "⚡", "color": "#06b6d4", "perks": ["Ultimate status", "All perks"]}
+    {
+      "id": "beginner",
+      "rank": 1,
+      "minPoints": 0,
+      "name": "Style Starter",
+      "icon": "🌱",
+      "color": "#10b981",
+      "perks": ["Basic recommendations"]
+    },
+    {
+      "id": "explorer",
+      "rank": 2,
+      "minPoints": 100,
+      "name": "Style Explorer",
+      "icon": "🔍",
+      "color": "#3b82f6",
+      "perks": ["Daily challenges", "Basic analytics"]
+    },
+    {
+      "id": "enthusiast",
+      "rank": 3,
+      "minPoints": 300,
+      "name": "Style Enthusiast",
+      "icon": "✨",
+      "color": "#8b5cf6",
+      "perks": ["Weekly challenges", "Outfit history"]
+    },
+    {
+      "id": "trendsetter",
+      "rank": 4,
+      "minPoints": 600,
+      "name": "Trendsetter",
+      "icon": "🎯",
+      "color": "#f59e0b",
+      "perks": ["Premium challenges", "Style insights"]
+    },
+    {
+      "id": "influencer",
+      "rank": 5,
+      "minPoints": 1000,
+      "name": "Style Influencer",
+      "icon": "⭐",
+      "color": "#ef4444",
+      "perks": ["Exclusive content", "Early access"]
+    },
+    {
+      "id": "icon",
+      "rank": 6,
+      "minPoints": 1500,
+      "name": "Style Icon",
+      "icon": "👑",
+      "color": "#8b5cf6",
+      "perks": ["VIP support", "Custom styling"]
+    },
+    {
+      "id": "legend",
+      "rank": 7,
+      "minPoints": 2500,
+      "name": "Style Legend",
+      "icon": "💎",
+      "color": "#fbbf24",
+      "perks": ["Legendary status", "All features"]
+    },
+    {
+      "id": "master",
+      "rank": 8,
+      "minPoints": 5000,
+      "name": "Style Master",
+      "icon": "🏆",
+      "color": "#f97316",
+      "perks": ["Master privileges", "Beta features"]
+    },
+    {
+      "id": "guru",
+      "rank": 9,
+      "minPoints": 7500,
+      "name": "Style Guru",
+      "icon": "🌟",
+      "color": "#a855f7",
+      "perks": ["Guru status", "Mentorship"]
+    },
+    {
+      "id": "deity",
+      "rank": 10,
+      "minPoints": 10000,
+      "name": "Style Deity",
+      "icon": "⚡",
+      "color": "#06b6d4",
+      "perks": ["Ultimate status", "All perks"]
+    }
   ],
   "actions": {
-    "quiz": {"points": 50, "description": "Complete style quiz"},
-    "checkin": {"points": 10, "description": "Daily check-in"},
-    "purchase": {"points": 100, "description": "Make a purchase"},
-    "referral": {"points": 50, "description": "Successful referral"},
-    "challenge": {"points": 75, "description": "Complete challenge"},
-    "share": {"points": 25, "description": "Share outfit"},
-    "save": {"points": 15, "description": "Save outfit"},
-    "view": {"points": 5, "description": "View recommendation"}
+    "quiz": { "points": 50, "description": "Complete style quiz" },
+    "checkin": { "points": 10, "description": "Daily check-in" },
+    "purchase": { "points": 100, "description": "Make a purchase" },
+    "referral": { "points": 50, "description": "Successful referral" },
+    "challenge": { "points": 75, "description": "Complete challenge" },
+    "share": { "points": 25, "description": "Share outfit" },
+    "save": { "points": 15, "description": "Save outfit" },
+    "view": { "points": 5, "description": "View recommendation" }
   },
   "badges": [
-    {"id": "first_quiz", "label": "First Quiz", "icon": "⭐", "description": "Completed your first style quiz"},
-    {"id": "seven_day_streak", "label": "7-Day Streak", "icon": "🔥", "description": "Checked in for 7 consecutive days"},
-    {"id": "referrer", "label": "Referral Pro", "icon": "🤝", "description": "Referred 3 friends to FitFi"},
-    {"id": "pro_purchaser", "label": "Pro Purchaser", "icon": "🏆", "description": "Made your first purchase"},
-    {"id": "style_explorer", "label": "Style Explorer", "icon": "🧭", "description": "Viewed 50 style recommendations"},
-    {"id": "trendsetter", "label": "Trendsetter", "icon": "✨", "description": "Shared 10 looks on social media"},
-    {"id": "challenge_master", "label": "Challenge Master", "icon": "🎯", "description": "Completed 20 daily challenges"},
-    {"id": "premium_member", "label": "Premium Member", "icon": "💎", "description": "Upgraded to Premium subscription"},
-    {"id": "level_10", "label": "Style Deity", "icon": "⚡", "description": "Reached maximum level"},
-    {"id": "perfect_week", "label": "Perfect Week", "icon": "🌟", "description": "Completed all challenges for a week"},
-    {"id": "social_butterfly", "label": "Social Butterfly", "icon": "🦋", "description": "Shared 25 outfits"},
-    {"id": "loyal_user", "label": "Loyal User", "icon": "💝", "description": "Used FitFi for 30 consecutive days"}
+    {
+      "id": "first_quiz",
+      "label": "First Quiz",
+      "icon": "⭐",
+      "description": "Completed your first style quiz"
+    },
+    {
+      "id": "seven_day_streak",
+      "label": "7-Day Streak",
+      "icon": "🔥",
+      "description": "Checked in for 7 consecutive days"
+    },
+    {
+      "id": "referrer",
+      "label": "Referral Pro",
+      "icon": "🤝",
+      "description": "Referred 3 friends to FitFi"
+    },
+    {
+      "id": "pro_purchaser",
+      "label": "Pro Purchaser",
+      "icon": "🏆",
+      "description": "Made your first purchase"
+    },
+    {
+      "id": "style_explorer",
+      "label": "Style Explorer",
+      "icon": "🧭",
+      "description": "Viewed 50 style recommendations"
+    },
+    {
+      "id": "trendsetter",
+      "label": "Trendsetter",
+      "icon": "✨",
+      "description": "Shared 10 looks on social media"
+    },
+    {
+      "id": "challenge_master",
+      "label": "Challenge Master",
+      "icon": "🎯",
+      "description": "Completed 20 daily challenges"
+    },
+    {
+      "id": "premium_member",
+      "label": "Premium Member",
+      "icon": "💎",
+      "description": "Upgraded to Premium subscription"
+    },
+    {
+      "id": "level_10",
+      "label": "Style Deity",
+      "icon": "⚡",
+      "description": "Reached maximum level"
+    },
+    {
+      "id": "perfect_week",
+      "label": "Perfect Week",
+      "icon": "🌟",
+      "description": "Completed all challenges for a week"
+    },
+    {
+      "id": "social_butterfly",
+      "label": "Social Butterfly",
+      "icon": "🦋",
+      "description": "Shared 25 outfits"
+    },
+    {
+      "id": "loyal_user",
+      "label": "Loyal User",
+      "icon": "💝",
+      "description": "Used FitFi for 30 consecutive days"
+    }
   ],
   "challenges": [
-    {"id": "view3", "type": "daily", "label": "Bekijk 3 stijladviezen", "points": 20, "icon": "👀", "difficulty": "easy"},
-    {"id": "shareLook", "type": "daily", "label": "Deel je Look", "points": 30, "icon": "📱", "difficulty": "medium"},
-    {"id": "saveOutfit", "type": "daily", "label": "Bewaar een outfit", "points": 15, "icon": "💾", "difficulty": "easy"},
-    {"id": "completeProfile", "type": "weekly", "label": "Voltooi je profiel", "points": 25, "icon": "👤", "difficulty": "medium"},
-    {"id": "visitShop", "type": "daily", "label": "Bezoek partner shop", "points": 10, "icon": "🛍️", "difficulty": "easy"},
-    {"id": "weeklyStreak", "type": "weekly", "label": "7 dagen actief", "points": 100, "icon": "🔥", "difficulty": "hard"},
-    {"id": "tryNewStyle", "type": "weekly", "label": "Probeer nieuwe stijl", "points": 50, "icon": "🎨", "difficulty": "medium"},
-    {"id": "shareOnSocial", "type": "weekly", "label": "Deel op social media", "points": 75, "icon": "📲", "difficulty": "hard"},
-    {"id": "inviteFriend", "type": "weekly", "label": "Nodig vriend uit", "points": 60, "icon": "👥", "difficulty": "medium"},
-    {"id": "perfectOutfit", "type": "special", "label": "Creëer perfect outfit", "points": 150, "icon": "💫", "difficulty": "legendary"}
+    {
+      "id": "view3",
+      "type": "daily",
+      "label": "Bekijk 3 stijladviezen",
+      "points": 20,
+      "icon": "👀",
+      "difficulty": "easy"
+    },
+    {
+      "id": "shareLook",
+      "type": "daily",
+      "label": "Deel je Look",
+      "points": 30,
+      "icon": "📱",
+      "difficulty": "medium"
+    },
+    {
+      "id": "saveOutfit",
+      "type": "daily",
+      "label": "Bewaar een outfit",
+      "points": 15,
+      "icon": "💾",
+      "difficulty": "easy"
+    },
+    {
+      "id": "completeProfile",
+      "type": "weekly",
+      "label": "Voltooi je profiel",
+      "points": 25,
+      "icon": "👤",
+      "difficulty": "medium"
+    },
+    {
+      "id": "visitShop",
+      "type": "daily",
+      "label": "Bezoek partner shop",
+      "points": 10,
+      "icon": "🛍️",
+      "difficulty": "easy"
+    },
+    {
+      "id": "weeklyStreak",
+      "type": "weekly",
+      "label": "7 dagen actief",
+      "points": 100,
+      "icon": "🔥",
+      "difficulty": "hard"
+    },
+    {
+      "id": "tryNewStyle",
+      "type": "weekly",
+      "label": "Probeer nieuwe stijl",
+      "points": 50,
+      "icon": "🎨",
+      "difficulty": "medium"
+    },
+    {
+      "id": "shareOnSocial",
+      "type": "weekly",
+      "label": "Deel op social media",
+      "points": 75,
+      "icon": "📲",
+      "difficulty": "hard"
+    },
+    {
+      "id": "inviteFriend",
+      "type": "weekly",
+      "label": "Nodig vriend uit",
+      "points": 60,
+      "icon": "👥",
+      "difficulty": "medium"
+    },
+    {
+      "id": "perfectOutfit",
+      "type": "special",
+      "label": "Creëer perfect outfit",
+      "points": 150,
+      "icon": "💫",
+      "difficulty": "legendary"
+    }
   ],
   "subscriptionTiers": [
-    {"id": "free", "features": ["basicChallenges", "limitedRecommendations"]},
-    {"id": "pro", "features": ["premiumChallenges", "exclusiveSales", "doublePoints", "unlimitedRecommendations", "prioritySupport"]}
+    { "id": "free", "features": ["basicChallenges", "limitedRecommendations"] },
+    {
+      "id": "pro",
+      "features": [
+        "premiumChallenges",
+        "exclusiveSales",
+        "doublePoints",
+        "unlimitedRecommendations",
+        "prioritySupport"
+      ]
+    }
   ],
   "referralRewards": {
     "pointsForReferrer": 50,
@@ -80,7 +299,12 @@
       "endDate": "2025-01-31",
       "bonusMultiplier": 2,
       "specialBadges": [
-        {"id": "winter_warrior", "label": "Winter Warrior", "icon": "❄️", "description": "Participated in Winter Fashion Week"}
+        {
+          "id": "winter_warrior",
+          "label": "Winter Warrior",
+          "icon": "❄️",
+          "description": "Participated in Winter Fashion Week"
+        }
       ]
     }
   ]

@@ -8,7 +8,6 @@
 export function initializeSentry() {
   // Sentry removed for bundle size optimization
   if (import.meta.env.DEV) {
-    console.log('Sentry disabled for optimization');
+    console.log("Sentry disabled for optimization");
   }
 }
-

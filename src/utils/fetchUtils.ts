@@ -13,14 +13,21 @@ export const safeFetch = async <T>(url: string): Promise<T> => {
     const contentType = response.headers.get("content-type") || "";
 
     if (!response.ok) {
-      throw new Error(`[❌ Fetch Error] ${response.status}: ${response.statusText}`);
+      throw new Error(
+        `[❌ Fetch Error] ${response.status}: ${response.statusText}`,
+      );
     }
 
     if (contentType.includes("application/json")) {
       return await response.json();
     } else {
       const text = await response.text();
-      console.warn("[⚠️ JSON Error] Unexpected content type:", contentType, "\nPreview:", text.slice(0, 100));
+      console.warn(
+        "[⚠️ JSON Error] Unexpected content type:",
+        contentType,
+        "\nPreview:",
+        text.slice(0, 100),
+      );
       throw new Error("Expected JSON but received something else");
     }
   } catch (error) {
@@ -39,7 +46,7 @@ export const safeFetch = async <T>(url: string): Promise<T> => {
 export const fetchWithRetry = async <T>(
   url: string,
   retries: number = 2,
-  delay: number = 1000
+  delay: number = 1000,
 ): Promise<T> => {
   let lastError: Error;
 
@@ -48,10 +55,15 @@ export const fetchWithRetry = async <T>(
       return await safeFetch<T>(url);
     } catch (error) {
       lastError = error as Error;
-      console.warn(`[⚠️ Retry ${attempt + 1}/${retries + 1}] Failed to fetch ${url}:`, error);
+      console.warn(
+        `[⚠️ Retry ${attempt + 1}/${retries + 1}] Failed to fetch ${url}:`,
+        error,
+      );
 
       if (attempt < retries) {
-        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempt)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, delay * Math.pow(2, attempt)),
+        );
       }
     }
   }
@@ -69,12 +81,15 @@ export const fetchWithRetry = async <T>(
 export const safeFetchWithFallback = async <T>(
   url: string,
   fallback: T,
-  retries: number = 1
+  retries: number = 1,
 ): Promise<T> => {
   try {
     return await fetchWithRetry<T>(url, retries);
   } catch (error) {
-    console.warn(`[⚠️ safeFetchWithFallback] Using fallback for ${url}:`, error);
+    console.warn(
+      `[⚠️ safeFetchWithFallback] Using fallback for ${url}:`,
+      error,
+    );
     return fallback;
   }
 };

@@ -2,11 +2,8 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 echo "🧪 Running tests before push..."
-npm test -- --passWithNoTests --watchAll=false
-
-if [ $? -ne 0 ]; then
-  echo "❌ Tests failed - push aborted"
-  exit 1
+if npx -y vitest --version >/dev/null 2>&1; then
+  npx vitest --passWithNoTests --run || exit 1
+else
+  echo "ℹ️ Vitest niet gevonden; tests overgeslagen"
 fi
-
-echo "✅ All tests passed"

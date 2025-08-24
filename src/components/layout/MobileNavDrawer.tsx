@@ -1,9 +1,19 @@
-import React, { Fragment, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Dialog, Transition } from '@headlessui/react';
-import { X, Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, LogIn, User } from 'lucide-react';
-import { NAV_MAIN, NAV_CTA } from '../../constants/nav';
-import { useUser } from '../../context/UserContext';
+import React, { Fragment, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Dialog, Transition } from "@headlessui/react";
+import {
+  X,
+  Home,
+  Info,
+  HelpCircle,
+  DollarSign,
+  ShoppingBag,
+  BookOpen,
+  LogIn,
+  User,
+} from "lucide-react";
+import { NAV_MAIN, NAV_CTA } from "../../constants/nav";
+import { useUser } from "../../context/UserContext";
 
 interface MobileNavDrawerProps {
   open: boolean;
@@ -17,46 +27,46 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   // Body scroll lock
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('mobile-menu-open');
+      document.body.style.overflow = "hidden";
+      document.body.classList.add("mobile-menu-open");
     } else {
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('mobile-menu-open');
+      document.body.style.overflow = "unset";
+      document.body.classList.remove("mobile-menu-open");
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('mobile-menu-open');
+      document.body.style.overflow = "unset";
+      document.body.classList.remove("mobile-menu-open");
     };
   }, [open]);
 
   // ESC key handler
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
+      if (e.key === "Escape" && open) {
         onClose();
       }
     };
 
     if (open) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [open, onClose]);
 
   const handleNavClick = (href: string) => {
     // Close drawer - ScrollToTop component handles the scrolling
     onClose();
-    
+
     // Track analytics
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'mobile_nav_click', {
-        event_category: 'navigation',
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "mobile_nav_click", {
+        event_category: "navigation",
         event_label: href,
-        page_location: window.location.href
+        page_location: window.location.href,
       });
     }
   };
@@ -67,8 +77,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   };
 
   const isActiveLink = (href: string) => {
-    if (href === '/') {
-      return location.pathname === '/';
+    if (href === "/") {
+      return location.pathname === "/";
     }
     return location.pathname.startsWith(href);
   };
@@ -76,8 +86,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   // Filter navigation items based on auth state
   const getNavigationItems = () => {
     if (user) {
-      return NAV_MAIN.filter(item => item.href !== '/inloggen').concat([
-        { href: '/dashboard', label: 'Dashboard', icon: User }
+      return NAV_MAIN.filter((item) => item.href !== "/inloggen").concat([
+        { href: "/dashboard", label: "Dashboard", icon: User },
       ]);
     } else {
       return NAV_MAIN;
@@ -88,8 +98,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
 
   return (
     <Transition show={open} as={Fragment}>
-      <Dialog 
-        onClose={onClose} 
+      <Dialog
+        onClose={onClose}
         className="fixed inset-0 z-50 md:hidden"
         aria-labelledby="mobile-menu-title"
         aria-modal="true"
@@ -104,8 +114,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div 
-            className="absolute inset-0 bg-navy/80 backdrop-blur-md" 
+          <div
+            className="absolute inset-0 bg-navy/80 backdrop-blur-md"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -124,7 +134,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
           <div className="fixed inset-y-0 right-0 z-50 w-[80vw] max-w-[320px] bg-white dark:bg-[#14172B] rounded-l-2xl shadow-menu flex flex-col animate-slide-in-right">
             {/* Header */}
             <header className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
-              <Dialog.Title 
+              <Dialog.Title
                 id="mobile-menu-title"
                 className="text-xl font-bold text-brandPurple dark:text-white"
               >
@@ -142,47 +152,49 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto" role="navigation">
               <ul className="py-2" role="list">
-                {navigationItems.map(({ href, label, icon: IconComponent }, index) => {
-                  const isActive = isActiveLink(href);
-                  
-                  return (
-                    <li 
-                      key={href} 
-                      className="group relative animate-fade-in"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                      {/* Active Route Indicator */}
-                      {isActive && (
-                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-brandPurple" />
-                      )}
-                      
-                      <Link
-                        to={href}
-                        onClick={() => handleNavClick(href)}
-                        className={`flex items-center gap-4 px-6 py-4 min-h-[44px] text-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-inset ${
-                          isActive 
-                            ? 'bg-brandPurpleLight dark:bg-white/5 text-brandPurple dark:text-white font-semibold' 
-                            : 'text-navy dark:text-white hover:bg-brandPurpleLight dark:hover:bg-white/5'
-                        }`}
-                        role="menuitem"
+                {navigationItems.map(
+                  ({ href, label, icon: IconComponent }, index) => {
+                    const isActive = isActiveLink(href);
+
+                    return (
+                      <li
+                        key={href}
+                        className="group relative animate-fade-in"
+                        style={{ animationDelay: `${index * 0.05}s` }}
                       >
-                        <IconComponent 
-                          className={`h-5 w-5 transition-all duration-200 group-hover:scale-105 ${
-                            isActive 
-                              ? 'text-brandPurple dark:text-white' 
-                              : 'text-brandPurple opacity-70 group-hover:opacity-100'
-                          }`} 
-                        />
-                        <span className="flex-1">{label}</span>
-                      </Link>
-                      
-                      {/* Divider */}
-                      {index < navigationItems.length - 1 && (
-                        <div className="border-b border-black/5 dark:border-white/10 mx-6" />
-                      )}
-                    </li>
-                  );
-                })}
+                        {/* Active Route Indicator */}
+                        {isActive && (
+                          <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-brandPurple" />
+                        )}
+
+                        <Link
+                          to={href}
+                          onClick={() => handleNavClick(href)}
+                          className={`flex items-center gap-4 px-6 py-4 min-h-[44px] text-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-inset ${
+                            isActive
+                              ? "bg-brandPurpleLight dark:bg-white/5 text-brandPurple dark:text-white font-semibold"
+                              : "text-navy dark:text-white hover:bg-brandPurpleLight dark:hover:bg-white/5"
+                          }`}
+                          role="menuitem"
+                        >
+                          <IconComponent
+                            className={`h-5 w-5 transition-all duration-200 group-hover:scale-105 ${
+                              isActive
+                                ? "text-brandPurple dark:text-white"
+                                : "text-brandPurple opacity-70 group-hover:opacity-100"
+                            }`}
+                          />
+                          <span className="flex-1">{label}</span>
+                        </Link>
+
+                        {/* Divider */}
+                        {index < navigationItems.length - 1 && (
+                          <div className="border-b border-black/5 dark:border-white/10 mx-6" />
+                        )}
+                      </li>
+                    );
+                  },
+                )}
               </ul>
             </nav>
 
@@ -193,12 +205,16 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
                   <div className="flex items-center space-x-3 mb-4 p-3 rounded-xl bg-brandPurpleLight dark:bg-white/5">
                     <div className="w-10 h-10 rounded-full bg-brandPurple flex items-center justify-center">
                       <span className="text-white font-medium text-sm">
-                        {user.name?.charAt(0).toUpperCase() || 'U'}
+                        {user.name?.charAt(0).toUpperCase() || "U"}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-navy dark:text-white">{user.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                      <p className="font-medium text-navy dark:text-white">
+                        {user.name}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                   <button
@@ -210,7 +226,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
                 </div>
               </div>
             )}
-            
+
             {/* CTA Section for non-authenticated users */}
             {!user && (
               <div className="px-6 pb-6 border-t border-black/5 dark:border-white/10">

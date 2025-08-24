@@ -1,6 +1,6 @@
-import React from 'react';
-import { Quote, Star } from 'lucide-react';
-import SmartImage from '@/components/media/SmartImage';
+import React from "react";
+import { Quote, Star } from "lucide-react";
+import SmartImage from "@/components/media/SmartImage";
 
 interface Testimonial {
   id: string;
@@ -14,36 +14,45 @@ interface SocialProofProps {
   className?: string;
 }
 
-const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
+const SocialProof: React.FC<SocialProofProps> = ({ className = "" }) => {
   const testimonials: Testimonial[] = [
     {
-      id: 'emma',
-      quote: "Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter.",
+      id: "emma",
+      quote:
+        "Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter.",
       author: "Emma",
-      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
-      rating: 5
+      avatar:
+        "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
+      rating: 5,
     },
     {
-      id: 'jordi',
+      id: "jordi",
       quote: "Alsof deze AI recht door mij heen keek, superwaardevol!",
       author: "Jordi",
-      avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
-      rating: 5
-    }
+      avatar:
+        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
+      rating: 5,
+    },
   ];
 
   return (
-    <section className={`py-16 bg-white ${className}`} aria-labelledby="social-proof-heading">
+    <section
+      className={`py-16 bg-white ${className}`}
+      aria-labelledby="social-proof-heading"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 id="social-proof-heading" className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
+          <h2
+            id="social-proof-heading"
+            className="text-2xl md:text-3xl font-light text-gray-900 mb-4"
+          >
             Wat anderen zeggen over hun AI Style Report
           </h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {testimonials.map((testimonial) => (
-            <div 
+            <div
               key={testimonial.id}
               className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
             >
@@ -51,15 +60,19 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
                 <Quote className="text-[#bfae9f] mr-3" size={24} />
                 <div className="flex">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                    <Star
+                      key={i}
+                      className="text-yellow-400 fill-current"
+                      size={16}
+                    />
                   ))}
                 </div>
               </div>
-              
+
               <blockquote className="text-lg text-gray-700 leading-relaxed mb-6 italic">
                 "{testimonial.quote}"
               </blockquote>
-              
+
               <div className="flex items-center">
                 <img
                   src={testimonial.avatar}
@@ -67,14 +80,18 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
                   className="w-12 h-12 rounded-full object-cover shadow-sm mr-4"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">{testimonial.author}</div>
-                  <div className="text-sm text-gray-500">Geverifieerde gebruiker</div>
+                  <div className="font-medium text-gray-900">
+                    {testimonial.author}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Geverifieerde gebruiker
+                  </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        
+
         {/* Trust Indicators */}
         <div className="mt-12 text-center">
           <div className="flex flex-wrap justify-center items-center space-x-8 text-sm text-gray-500">

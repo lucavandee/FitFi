@@ -1,6 +1,6 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from "react";
 
-export type Variant = 'control' | 'v1' | 'v2';
+export type Variant = "control" | "v1" | "v2";
 
 /** Dependency-loze hash (djb2-variant), deterministisch en snel */
 function djb2Hash(input: string): number {
@@ -13,7 +13,7 @@ function djb2Hash(input: string): number {
 
 function pickVariant(seed: string): Variant {
   const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+  return n === 0 ? "control" : n === 1 ? "v1" : "v2";
 }
 
 /**
@@ -24,34 +24,44 @@ function pickVariant(seed: string): Variant {
  */
 export function useABVariant(testName: string, userId?: string | null) {
   const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
+    const seed = `${testName}:${userId ?? "guest"}`;
     return pickVariant(seed);
   }, [testName, userId]);
 
   const trackClick = useCallback(
     (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
+      const payload = {
+        label,
+        test_name: testName,
+        variant,
+        user_id: userId ?? "guest",
+        ...extra,
+      };
       // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
         // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
+        window.gtag("event", "cta_click", payload);
       } else {
         // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
+        console.debug("[ab/cta_click]", payload);
       }
     },
-    [testName, userId, variant]
+    [testName, userId, variant],
   );
 
   const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
+    const payload = {
+      test_name: testName,
+      variant,
+      user_id: userId ?? "guest",
+    };
     // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
       // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
+      window.gtag("event", "ab_exposure", payload);
     } else {
       // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
+      console.debug("[ab/exposure]", payload);
     }
   }, [testName, userId, variant]);
 
@@ -65,16 +75,16 @@ interface ABTestingOptions {
 
 export function useABTesting(options: ABTestingOptions) {
   const variant = useABVariant(options.testName);
-  
+
   const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "ab_conversion", {
         test_name: options.testName,
         variant,
-        ...data
+        ...data,
       });
     }
   };
-  
+
   return { variant, trackConversion };
 }

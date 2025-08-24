@@ -11,18 +11,18 @@
 export const generateMockUser = (userId: string) => {
   return {
     id: userId,
-    name: 'Test User',
-    email: 'test@example.com',
-    gender: 'female',
+    name: "Test User",
+    email: "test@example.com",
+    gender: "female",
     stylePreferences: {
       casual: 3,
       formal: 3,
       sporty: 3,
       vintage: 3,
-      minimalist: 3
+      minimalist: 3,
     },
     isPremium: false,
-    savedRecommendations: []
+    savedRecommendations: [],
   };
 };
 
@@ -36,15 +36,15 @@ export const generateMockGamification = (userId: string) => {
     id: `mock_gamification_${userId}`,
     user_id: userId,
     points: 120,
-    level: 'beginner',
-    badges: ['first_quiz'],
+    level: "beginner",
+    badges: ["first_quiz"],
     streak: 2,
     last_check_in: new Date().toISOString(),
-    completed_challenges: ['view3', 'shareLook'],
+    completed_challenges: ["view3", "shareLook"],
     total_referrals: 1,
     seasonal_event_progress: {},
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   };
 };
 
@@ -55,51 +55,64 @@ export const generateMockGamification = (userId: string) => {
  */
 export const generateMockOutfits = (count: number = 3) => {
   console.log(`[🧪 MockDataUtils] Generating ${count} mock outfits`);
-  
+
   const baseOutfit = {
-    id: 'outfit_001',
-    title: 'Casual Urban',
-    description: 'Denim Jacket + Slim Fit Jeans + Leren Rugtas. Perfect voor een dag in de stad.',
+    id: "outfit_001",
+    title: "Casual Urban",
+    description:
+      "Denim Jacket + Slim Fit Jeans + Leren Rugtas. Perfect voor een dag in de stad.",
     match_percentage: 92,
-    imageUrl: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2',
-    tags: ['casual', 'urban', 'denim', 'streetwear', 'comfortabel'],
-    occasions: ['casual', 'weekend', 'stad', 'vrienden'],
-    explanation: 'Deze outfit past perfect bij jouw casual urban stijl en is ideaal voor een dag in de stad.',
+    imageUrl:
+      "https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+    tags: ["casual", "urban", "denim", "streetwear", "comfortabel"],
+    occasions: ["casual", "weekend", "stad", "vrienden"],
+    explanation:
+      "Deze outfit past perfect bij jouw casual urban stijl en is ideaal voor een dag in de stad.",
     items: [
       {
-        id: 'item_001',
-        outfit_id: 'outfit_001',
-        name: 'Oversized Denim Jacket',
-        brand: 'H&M',
+        id: "item_001",
+        outfit_id: "outfit_001",
+        name: "Oversized Denim Jacket",
+        brand: "H&M",
         price: 39.99,
-        imageUrl: 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
-        url: 'https://www2.hm.com/nl_nl/product/jas_002?ref=fitfi_hm_001&utm_source=fitfi&utm_medium=affiliate',
-        retailer: 'H&M NL',
-        category: 'Jassen'
+        imageUrl:
+          "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+        url: "https://www2.hm.com/nl_nl/product/jas_002?ref=fitfi_hm_001&utm_source=fitfi&utm_medium=affiliate",
+        retailer: "H&M NL",
+        category: "Jassen",
       },
       {
-        id: 'item_002',
-        outfit_id: 'outfit_001',
-        name: 'High-Waist Mom Jeans',
-        brand: 'Weekday',
+        id: "item_002",
+        outfit_id: "outfit_001",
+        name: "High-Waist Mom Jeans",
+        brand: "Weekday",
         price: 69.99,
-        imageUrl: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2',
-        url: 'https://www.asos.com/nl/product/broek_001?ref=fitfi_asos_001&utm_source=fitfi&utm_medium=affiliate',
-        retailer: 'ASOS NL',
-        category: 'Broeken'
-      }
-    ]
+        imageUrl:
+          "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
+        url: "https://www.asos.com/nl/product/broek_001?ref=fitfi_asos_001&utm_source=fitfi&utm_medium=affiliate",
+        retailer: "ASOS NL",
+        category: "Broeken",
+      },
+    ],
   };
-  
+
   // Generate variations
   const outfits = Array.from({ length: count }, (_, i) => ({
     ...baseOutfit,
     id: `outfit_00${i + 1}`,
     matchPercentage: Math.floor(Math.random() * 15) + 85, // 85-99%
-    title: i === 0 ? 'Casual Urban' : i === 1 ? 'Modern Minimalist' : 'Streetwear Chic'
+    title:
+      i === 0
+        ? "Casual Urban"
+        : i === 1
+          ? "Modern Minimalist"
+          : "Streetwear Chic",
   }));
-  
-  console.log(`[🧪 MockDataUtils] Generated ${outfits.length} mock outfits:`, outfits.map(o => o.title));
+
+  console.log(
+    `[🧪 MockDataUtils] Generated ${outfits.length} mock outfits:`,
+    outfits.map((o) => o.title),
+  );
   return outfits;
 };
 
@@ -112,64 +125,70 @@ export const generateMockOutfits = (count: number = 3) => {
 export const generateMockProducts = (category?: string, count: number = 10) => {
   const allProducts = [
     {
-      id: 'jas_001',
-      name: 'Klassieke Wollen Mantel',
-      brand: 'Mango',
+      id: "jas_001",
+      name: "Klassieke Wollen Mantel",
+      brand: "Mango",
       price: 129.99,
       original_price: 159.99,
-      imageUrl: 'https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2',
-      retailer: 'Zalando',
-      url: 'https://www.zalando.nl/product/jas_001?ref=fitfi_zal_001&utm_source=fitfi&utm_medium=affiliate',
-      category: 'Jassen',
-      description: 'Elegante wollen mantel perfect voor de Nederlandse winter. Tijdloos design met moderne pasvorm.',
-      sizes: ['XS', 'S', 'M', 'L', 'XL'],
-      colors: ['Zwart', 'Camel', 'Navy'],
+      imageUrl:
+        "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+      retailer: "Zalando",
+      url: "https://www.zalando.nl/product/jas_001?ref=fitfi_zal_001&utm_source=fitfi&utm_medium=affiliate",
+      category: "Jassen",
+      description:
+        "Elegante wollen mantel perfect voor de Nederlandse winter. Tijdloos design met moderne pasvorm.",
+      sizes: ["XS", "S", "M", "L", "XL"],
+      colors: ["Zwart", "Camel", "Navy"],
       in_stock: true,
       rating: 4.5,
       review_count: 127,
-      tags: ['winter', 'elegant', 'tijdloos', 'warm']
+      tags: ["winter", "elegant", "tijdloos", "warm"],
     },
     {
-      id: 'broek_001',
-      name: 'High-Waist Mom Jeans',
-      brand: 'Weekday',
+      id: "broek_001",
+      name: "High-Waist Mom Jeans",
+      brand: "Weekday",
       price: 69.99,
-      imageUrl: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2',
-      retailer: 'ASOS NL',
-      url: 'https://www.asos.com/nl/product/broek_001?ref=fitfi_asos_001&utm_source=fitfi&utm_medium=affiliate',
-      category: 'Broeken',
-      description: 'Vintage-inspired mom jeans met hoge taille. Comfortabel en stijlvol voor dagelijks gebruik.',
-      sizes: ['24', '25', '26', '27', '28', '29', '30', '31', '32'],
-      colors: ['Light Blue', 'Dark Blue', 'Black', 'White'],
+      imageUrl:
+        "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+      retailer: "ASOS NL",
+      url: "https://www.asos.com/nl/product/broek_001?ref=fitfi_asos_001&utm_source=fitfi&utm_medium=affiliate",
+      category: "Broeken",
+      description:
+        "Vintage-inspired mom jeans met hoge taille. Comfortabel en stijlvol voor dagelijks gebruik.",
+      sizes: ["24", "25", "26", "27", "28", "29", "30", "31", "32"],
+      colors: ["Light Blue", "Dark Blue", "Black", "White"],
       in_stock: true,
       rating: 4.4,
       review_count: 203,
-      tags: ['vintage', 'high-waist', 'casual', 'denim']
+      tags: ["vintage", "high-waist", "casual", "denim"],
     },
     {
-      id: 'top_001',
-      name: 'Oversized T-shirt',
-      brand: 'COS',
+      id: "top_001",
+      name: "Oversized T-shirt",
+      brand: "COS",
       price: 29.99,
-      imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2',
-      retailer: 'H&M NL',
-      url: 'https://www2.hm.com/nl_nl/product/top_001?ref=fitfi_hm_001&utm_source=fitfi&utm_medium=affiliate',
-      category: 'Tops',
-      description: 'Comfortabel oversized T-shirt van hoogwaardig katoen. Veelzijdig voor casual looks.',
-      sizes: ['XS', 'S', 'M', 'L', 'XL'],
-      colors: ['White', 'Black', 'Grey', 'Navy'],
+      imageUrl:
+        "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
+      retailer: "H&M NL",
+      url: "https://www2.hm.com/nl_nl/product/top_001?ref=fitfi_hm_001&utm_source=fitfi&utm_medium=affiliate",
+      category: "Tops",
+      description:
+        "Comfortabel oversized T-shirt van hoogwaardig katoen. Veelzijdig voor casual looks.",
+      sizes: ["XS", "S", "M", "L", "XL"],
+      colors: ["White", "Black", "Grey", "Navy"],
       in_stock: true,
       rating: 4.2,
       review_count: 156,
-      tags: ['basic', 'casual', 'oversized', 'cotton']
-    }
+      tags: ["basic", "casual", "oversized", "cotton"],
+    },
   ];
 
   if (category) {
     return allProducts
-      .filter(product => product.category === category)
+      .filter((product) => product.category === category)
       .slice(0, count);
   }
-  
+
   return allProducts.slice(0, count);
 };

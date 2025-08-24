@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Calendar, Clock, User, Share2, Heart } from 'lucide-react';
-import Button from '../components/ui/Button';
-import LoadingFallback from '../components/ui/LoadingFallback';
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { ArrowLeft, Calendar, Clock, User, Share2, Heart } from "lucide-react";
+import Button from "../components/ui/Button";
+import LoadingFallback from "../components/ui/LoadingFallback";
 
 interface BlogPost {
   title: string;
@@ -24,7 +24,7 @@ const BlogDetailPage: React.FC = () => {
   useEffect(() => {
     const loadPost = async () => {
       if (!slug) {
-        setError('Geen artikel gevonden');
+        setError("Geen artikel gevonden");
         setIsLoading(false);
         return;
       }
@@ -32,42 +32,45 @@ const BlogDetailPage: React.FC = () => {
       try {
         const response = await fetch(`/content/blog/${slug}.md`);
         if (!response.ok) {
-          throw new Error('Artikel niet gevonden');
+          throw new Error("Artikel niet gevonden");
         }
-        
+
         const text = await response.text();
-        
+
         // Parse frontmatter and content
-        const lines = text.split('\n');
-        const contentStart = lines.findIndex(line => line.trim() === '') + 1;
-        const frontmatter = lines.slice(0, contentStart - 1).join('\n');
-        const content = lines.slice(contentStart).join('\n');
-        
+        const lines = text.split("\n");
+        const contentStart = lines.findIndex((line) => line.trim() === "") + 1;
+        const frontmatter = lines.slice(0, contentStart - 1).join("\n");
+        const content = lines.slice(contentStart).join("\n");
+
         // Extract metadata from frontmatter
         const authorMatch = frontmatter.match(/\*Door (.*?) •/);
         const dateMatch = frontmatter.match(/• (.*?) •/);
         const readTimeMatch = frontmatter.match(/• (.*?) leestijd\*/);
-        
+
         // Extract title from content
         const titleMatch = content.match(/^# (.+)$/m);
-        const title = titleMatch ? titleMatch[1] : 'Artikel';
-        
+        const title = titleMatch ? titleMatch[1] : "Artikel";
+
         // Extract excerpt from first paragraph
         const excerptMatch = content.match(/\n\n([^#\n]+)/);
-        const excerpt = excerptMatch?.[1] ? excerptMatch[1].substring(0, 160) + '...' : '';
-        
+        const excerpt = excerptMatch?.[1]
+          ? excerptMatch[1].substring(0, 160) + "..."
+          : "";
+
         setPost({
-          title: title ?? 'FitFi blog',
-          author: authorMatch?.[1] ?? 'FitFi Team',
-          date: dateMatch?.[1] ?? '15 december 2024',
-          readTime: readTimeMatch?.[1] ?? '5 min',
+          title: title ?? "FitFi blog",
+          author: authorMatch?.[1] ?? "FitFi Team",
+          date: dateMatch?.[1] ?? "15 december 2024",
+          readTime: readTimeMatch?.[1] ?? "5 min",
           content: content,
-          imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2',
-          excerpt
+          imageUrl:
+            "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2",
+          excerpt,
         });
       } catch (error) {
-        console.error('Error loading blog post:', error);
-        setError('Artikel kon niet worden geladen');
+        console.error("Error loading blog post:", error);
+        setError("Artikel kon niet worden geladen");
       } finally {
         setIsLoading(false);
       }
@@ -79,23 +82,38 @@ const BlogDetailPage: React.FC = () => {
   const renderMarkdown = (markdown: string) => {
     // Simple markdown to HTML conversion
     return markdown
-      .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-gray-900 mb-6">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold text-gray-900 mb-4 mt-8">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 class="text-xl font-medium text-gray-900 mb-3 mt-6">$1</h3>')
+      .replace(
+        /^# (.*$)/gim,
+        '<h1 class="text-3xl font-bold text-gray-900 mb-6">$1</h1>',
+      )
+      .replace(
+        /^## (.*$)/gim,
+        '<h2 class="text-2xl font-semibold text-gray-900 mb-4 mt-8">$1</h2>',
+      )
+      .replace(
+        /^### (.*$)/gim,
+        '<h3 class="text-xl font-medium text-gray-900 mb-3 mt-6">$1</h3>',
+      )
       .replace(/^\*\*(.*)\*\*/gim, '<strong class="font-semibold">$1</strong>')
       .replace(/^\*(.*)\*/gim, '<em class="italic">$1</em>')
       .replace(/^- (.*$)/gim, '<li class="mb-1 ml-4">• $1</li>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-[#89CFF0] hover:text-[#89CFF0]/80 underline">$1</a>')
+      .replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" class="text-[#89CFF0] hover:text-[#89CFF0]/80 underline">$1</a>',
+      )
       .replace(/\n\n/g, '</p><p class="text-gray-700 leading-relaxed mb-6">')
-      .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-gray-700 leading-relaxed mb-6">')
-      .replace(/$(?![>])/gm, '</p>');
+      .replace(
+        /^(?!<[h|l|s|e])/gm,
+        '<p class="text-gray-700 leading-relaxed mb-6">',
+      )
+      .replace(/$(?![>])/gm, "</p>");
   };
 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: post?.title ?? 'FitFi blog',
-        url: window.location.href
+        title: post?.title ?? "FitFi blog",
+        url: window.location.href,
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
@@ -110,8 +128,12 @@ const BlogDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Artikel niet gevonden</h1>
-          <p className="text-gray-600 mb-6">{error || 'Het opgevraagde artikel bestaat niet.'}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Artikel niet gevonden
+          </h1>
+          <p className="text-gray-600 mb-6">
+            {error || "Het opgevraagde artikel bestaat niet."}
+          </p>
           <Button as={Link} to="/blog" variant="primary">
             Terug naar blog
           </Button>
@@ -135,8 +157,8 @@ const BlogDetailPage: React.FC = () => {
       <div className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Header */}
         <div className="mb-8">
-          <Link 
-            to="/blog" 
+          <Link
+            to="/blog"
             className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
           >
             <ArrowLeft size={20} className="mr-2" />
@@ -148,13 +170,13 @@ const BlogDetailPage: React.FC = () => {
         <article className="bg-white rounded-3xl shadow-sm overflow-hidden">
           {/* Hero Image */}
           <div className="aspect-video overflow-hidden">
-            <img 
-              src={post.imageUrl} 
+            <img
+              src={post.imageUrl}
               alt={post.title}
               className="w-full h-full object-cover"
             />
           </div>
-          
+
           {/* Content */}
           <div className="p-8 md:p-12">
             {/* Meta */}
@@ -172,7 +194,7 @@ const BlogDetailPage: React.FC = () => {
                 <span>{post.readTime} leestijd</span>
               </div>
             </div>
-            
+
             {/* Actions */}
             <div className="flex items-center space-x-4 mb-8 pb-8 border-b border-gray-200">
               <Button
@@ -195,9 +217,9 @@ const BlogDetailPage: React.FC = () => {
                 Bewaren
               </Button>
             </div>
-            
+
             {/* Article Content */}
-            <div 
+            <div
               className="prose prose-lg max-w-none"
               dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
             />
@@ -209,9 +231,9 @@ const BlogDetailPage: React.FC = () => {
           <h2 className="text-2xl font-medium text-gray-900 mb-6">
             Gerelateerde artikelen
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link 
+            <Link
               to="/blog/stijlregels-breken-2025"
               className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
             >
@@ -219,11 +241,12 @@ const BlogDetailPage: React.FC = () => {
                 5 Stijlregels Die Je Kunt Breken in 2025
               </h3>
               <p className="text-gray-600 text-sm">
-                Mode-regels zijn er om gebroken te worden. Leer welke traditionele stijlregels je veilig kunt negeren.
+                Mode-regels zijn er om gebroken te worden. Leer welke
+                traditionele stijlregels je veilig kunt negeren.
               </p>
             </Link>
-            
-            <Link 
+
+            <Link
               to="/blog/capsule-wardrobe-gids"
               className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
             >
@@ -231,7 +254,8 @@ const BlogDetailPage: React.FC = () => {
                 Capsule Wardrobe: Minder is Meer
               </h3>
               <p className="text-gray-600 text-sm">
-                Hoe je met 30 items een complete garderobe creëert die altijd werkt.
+                Hoe je met 30 items een complete garderobe creëert die altijd
+                werkt.
               </p>
             </Link>
           </div>

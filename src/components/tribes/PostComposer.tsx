@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Send, Image, X } from 'lucide-react';
-import { useTribePosts } from '@/hooks/useTribePosts';
-import Button from '@/components/ui/Button';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { Send, Image, X } from "lucide-react";
+import { useTribePosts } from "@/hooks/useTribePosts";
+import Button from "@/components/ui/Button";
+import toast from "react-hot-toast";
 
 interface PostComposerProps {
   tribeId: string;
@@ -15,25 +15,25 @@ interface PostComposerProps {
 export const PostComposer: React.FC<PostComposerProps> = ({
   tribeId,
   userId,
-  placeholder = 'Deel iets met de tribe...',
-  className = '',
-  onPostCreated
+  placeholder = "Deel iets met de tribe...",
+  className = "",
+  onPostCreated,
 }) => {
   const { addPost } = useTribePosts(tribeId);
-  const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!userId) {
-      toast.error('Log in om een post te maken');
+      toast.error("Log in om een post te maken");
       return;
     }
 
     if (!content.trim()) {
-      toast.error('Voeg wat tekst toe aan je post');
+      toast.error("Voeg wat tekst toe aan je post");
       return;
     }
 
@@ -48,21 +48,21 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         content: content.trim(),
         image_url: imageUrl || undefined,
         likes: 0,
-        commentsCount: 0
+        commentsCount: 0,
       });
 
       // Reset form
-      setContent('');
-      setImageUrl('');
-      
-      toast.success('Post gedeeld! 🎉');
-      
+      setContent("");
+      setImageUrl("");
+
+      toast.success("Post gedeeld! 🎉");
+
       if (onPostCreated) {
         onPostCreated();
       }
     } catch (error) {
-      console.error('Error creating post:', error);
-      toast.error('Kon post niet maken. Probeer opnieuw.');
+      console.error("Error creating post:", error);
+      toast.error("Kon post niet maken. Probeer opnieuw.");
     } finally {
       setIsSubmitting(false);
     }
@@ -74,12 +74,14 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   };
 
   const clearImage = () => {
-    setImageUrl('');
+    setImageUrl("");
   };
 
   if (!userId) {
     return (
-      <div className={`bg-white rounded-2xl p-6 shadow-sm text-center ${className}`}>
+      <div
+        className={`bg-white rounded-2xl p-6 shadow-sm text-center ${className}`}
+      >
         <div className="w-12 h-12 bg-[#89CFF0]/20 rounded-full flex items-center justify-center mx-auto mb-4">
           <Send className="w-6 h-6 text-[#89CFF0]" />
         </div>
@@ -91,7 +93,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
           variant="primary"
           size="sm"
           className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-          onClick={() => window.location.href = '/inloggen'}
+          onClick={() => (window.location.href = "/inloggen")}
         >
           Inloggen
         </Button>
@@ -137,7 +139,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               )}
             </div>
           </div>
-          
+
           {/* Image Preview */}
           {imageUrl && (
             <div className="mt-3">
@@ -147,8 +149,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   alt="Preview"
                   className="w-24 h-24 object-cover rounded-lg border border-gray-200"
                   onError={() => {
-                    toast.error('Ongeldige afbeelding URL');
-                    setImageUrl('');
+                    toast.error("Ongeldige afbeelding URL");
+                    setImageUrl("");
                   }}
                 />
                 <button
@@ -169,7 +171,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             <Image className="w-4 h-4" />
             <span>Voeg een afbeelding toe voor meer engagement</span>
           </div>
-          
+
           <Button
             type="submit"
             variant="primary"
@@ -179,7 +181,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             iconPosition="right"
             className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
           >
-            {isSubmitting ? 'Delen...' : 'Deel post'}
+            {isSubmitting ? "Delen..." : "Deel post"}
           </Button>
         </div>
       </form>

@@ -1,34 +1,34 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 // Inline analytics fallback (use existing @/utils/analytics if available)
 let track = (event: string, props: any = {}) => {
   try {
     const w: any = window;
-    if (typeof w.gtag === 'function') {
-      w.gtag('event', event, props);
-    } else if (typeof w.plausible === 'function') {
+    if (typeof w.gtag === "function") {
+      w.gtag("event", event, props);
+    } else if (typeof w.plausible === "function") {
       w.plausible(event, { props });
     } else if (import.meta.env.DEV) {
-      console.info('[analytics]', event, props);
+      console.info("[analytics]", event, props);
     }
   } catch {}
 };
 
 export default function Hero() {
   const handlePrimaryCTA = () => {
-    track('hero_primary_cta_clicked', {
-      location: 'hero',
-      section: 'homepage',
-      cta_type: 'primary'
+    track("hero_primary_cta_clicked", {
+      location: "hero",
+      section: "homepage",
+      cta_type: "primary",
     });
   };
 
   const handleSecondaryCTA = () => {
-    track('hero_secondary_cta_clicked', {
-      location: 'hero',
-      section: 'homepage',
-      cta_type: 'secondary'
+    track("hero_secondary_cta_clicked", {
+      location: "hero",
+      section: "homepage",
+      cta_type: "secondary",
     });
   };
 
@@ -46,17 +46,22 @@ export default function Hero() {
                 AI-Powered Personal Styling
               </span>
             </div>
-            
-            <h1 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-[#0D1B2A] mb-6">
-              Jouw persoonlijke stijl.{' '}
+
+            <h1
+              id="hero-heading"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-[#0D1B2A] mb-6"
+            >
+              Jouw persoonlijke stijl.{" "}
               <span className="text-[#89CFF0]">Aangedreven door AI.</span>
             </h1>
-            
+
             <p className="text-lg md:text-xl text-slate-600 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
-              Doe de slimme stijltest en krijg direct een persoonlijk AI Style Report met outfits die écht bij je passen. 
-              In 2 minuten weet je precies welke kleding jouw persoonlijkheid en lichaamsbouw flatteert.
+              Doe de slimme stijltest en krijg direct een persoonlijk AI Style
+              Report met outfits die écht bij je passen. In 2 minuten weet je
+              precies welke kleding jouw persoonlijkheid en lichaamsbouw
+              flatteert.
             </p>
-            
+
             {/* Trust indicators */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 mb-8 text-sm text-slate-600">
               <div className="flex items-center space-x-2">
@@ -72,7 +77,7 @@ export default function Hero() {
                 <span>Direct Resultaat</span>
               </div>
             </div>
-            
+
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
@@ -83,7 +88,7 @@ export default function Hero() {
               >
                 Doe de stijltest
               </Link>
-              
+
               <Link
                 to="/hoe-het-werkt"
                 onClick={handleSecondaryCTA}
@@ -93,10 +98,11 @@ export default function Hero() {
                 Meer uitleg
               </Link>
             </div>
-            
+
             {/* Disclaimer */}
             <p className="mt-6 text-sm text-slate-500 max-w-2xl mx-auto lg:mx-0">
-              Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten gegenereerd
+              Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten
+              gegenereerd
             </p>
           </div>
 
@@ -110,12 +116,13 @@ export default function Hero() {
                   alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi"
                   className="h-full w-full object-cover"
                   onError={(e: any) => {
-                    e.currentTarget.src = 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2';
+                    e.currentTarget.src =
+                      "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2";
                   }}
                   loading="eager"
                 />
               </div>
-              
+
               {/* Floating elements */}
               <div className="absolute -top-4 -right-4 w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce-gentle">
                 <div className="text-center">
@@ -123,14 +130,16 @@ export default function Hero() {
                   <div className="text-xs text-slate-600">Match</div>
                 </div>
               </div>
-              
+
               <div className="absolute -bottom-4 -left-4 bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-[#89CFF0] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">N</span>
                   </div>
                   <div>
-                    <div className="font-medium text-slate-900 text-sm">Nova AI</div>
+                    <div className="font-medium text-slate-900 text-sm">
+                      Nova AI
+                    </div>
                     <div className="text-xs text-slate-600">Jouw stylist</div>
                   </div>
                 </div>

@@ -1,40 +1,40 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
-import Button from '../components/ui/Button';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Mail, ArrowRight, AlertCircle, CheckCircle } from "lucide-react";
+import Button from "../components/ui/Button";
+import { supabase } from "../lib/supabaseClient";
 
 const ForgotPasswordPage: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const sb = supabase();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
-      setError('E-mailadres is verplicht');
+      setError("E-mailadres is verplicht");
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Ongeldig e-mailadres');
+      setError("Ongeldig e-mailadres");
       return;
     }
 
     if (!sb) {
-      setError('Supabase niet beschikbaar. Probeer het later opnieuw.');
+      setError("Supabase niet beschikbaar. Probeer het later opnieuw.");
       return;
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/wachtwoord-reset`
+        redirectTo: `${window.location.origin}/wachtwoord-reset`,
       });
 
       if (error) {
@@ -43,17 +43,17 @@ const ForgotPasswordPage: React.FC = () => {
       }
 
       setIsSuccess(true);
-      
+
       // Track password reset request
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'password_reset_request', {
-          event_category: 'authentication',
-          event_label: 'email_reset'
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "password_reset_request", {
+          event_category: "authentication",
+          event_label: "email_reset",
         });
       }
     } catch (error: any) {
-      console.error('Password reset error:', error);
-      setError('Er ging iets mis. Probeer het opnieuw.');
+      console.error("Password reset error:", error);
+      setError("Er ging iets mis. Probeer het opnieuw.");
     } finally {
       setIsLoading(false);
     }
@@ -67,17 +67,18 @@ const ForgotPasswordPage: React.FC = () => {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            
+
             <h2 className="text-2xl font-light text-gray-900 mb-4">
               E-mail verzonden!
             </h2>
-            
+
             <p className="text-gray-600 mb-6 leading-relaxed">
-              We hebben een link om je wachtwoord te resetten verzonden naar{' '}
+              We hebben een link om je wachtwoord te resetten verzonden naar{" "}
               <span className="font-medium text-gray-900">{email}</span>.
-              Controleer je inbox en klik op de link om een nieuw wachtwoord in te stellen.
+              Controleer je inbox en klik op de link om een nieuw wachtwoord in
+              te stellen.
             </p>
-            
+
             <div className="space-y-4">
               <Button
                 as={Link}
@@ -89,11 +90,11 @@ const ForgotPasswordPage: React.FC = () => {
               >
                 Terug naar inloggen
               </Button>
-              
+
               <button
                 onClick={() => {
                   setIsSuccess(false);
-                  setEmail('');
+                  setEmail("");
                 }}
                 className="w-full text-sm text-gray-500 hover:text-gray-700 transition-colors"
               >
@@ -120,12 +121,13 @@ const ForgotPasswordPage: React.FC = () => {
                 <span className="text-2xl font-light text-gray-900">FitFi</span>
               </div>
             </Link>
-            
+
             <h2 className="text-3xl font-light text-gray-900 mb-2">
               Wachtwoord vergeten?
             </h2>
             <p className="text-gray-600">
-              Geen probleem! Voer je e-mailadres in en we sturen je een link om je wachtwoord te resetten.
+              Geen probleem! Voer je e-mailadres in en we sturen je een link om
+              je wachtwoord te resetten.
             </p>
           </div>
 
@@ -135,14 +137,20 @@ const ForgotPasswordPage: React.FC = () => {
               {/* Error Message */}
               {error && (
                 <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3">
-                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                  <AlertCircle
+                    className="text-red-500 flex-shrink-0 mt-0.5"
+                    size={20}
+                  />
                   <p className="text-red-700 text-sm">{error}</p>
                 </div>
               )}
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   E-mailadres
                 </label>
                 <div className="relative">
@@ -158,7 +166,7 @@ const ForgotPasswordPage: React.FC = () => {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
-                      setError('');
+                      setError("");
                     }}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors"
                     placeholder="je@email.com"
@@ -183,7 +191,7 @@ const ForgotPasswordPage: React.FC = () => {
                     Verzenden...
                   </div>
                 ) : (
-                  'Reset link verzenden'
+                  "Reset link verzenden"
                 )}
               </Button>
             </form>

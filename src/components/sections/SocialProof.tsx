@@ -1,6 +1,6 @@
-import React from 'react';
-import { ShieldCheck, Lock, Sparkles, Quote } from 'lucide-react';
-import { TESTIMONIALS_FALLBACK } from '@/data/testimonials';
+import React from "react";
+import { ShieldCheck, Lock, Sparkles, Quote } from "lucide-react";
+import { TESTIMONIALS_FALLBACK } from "@/data/testimonials";
 
 function Badge({ icon: Icon, text }: { icon: any; text: string }) {
   return (
@@ -11,7 +11,17 @@ function Badge({ icon: Icon, text }: { icon: any; text: string }) {
   );
 }
 
-function TestimonialCard({ q, a, r, av }: { q: string; a: string; r?: string; av?: string }) {
+function TestimonialCard({
+  q,
+  a,
+  r,
+  av,
+}: {
+  q: string;
+  a: string;
+  r?: string;
+  av?: string;
+}) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_30px_rgba(13,27,42,0.06)]">
       <Quote className="w-5 h-5 text-slate-400" aria-hidden="true" />
@@ -20,11 +30,13 @@ function TestimonialCard({ q, a, r, av }: { q: string; a: string; r?: string; av
       </blockquote>
       <div className="mt-4 flex items-center gap-3">
         {av && (
-          <img 
-            src={av} 
-            alt="" 
-            onError={(e: any) => { e.currentTarget.style.display = 'none'; }} 
-            className="w-9 h-9 rounded-full object-cover" 
+          <img
+            src={av}
+            alt=""
+            onError={(e: any) => {
+              e.currentTarget.style.display = "none";
+            }}
+            className="w-9 h-9 rounded-full object-cover"
           />
         )}
         <div className="text-sm">
@@ -38,12 +50,18 @@ function TestimonialCard({ q, a, r, av }: { q: string; a: string; r?: string; av
 
 export default function SocialProof() {
   const testimonials = TESTIMONIALS_FALLBACK.slice(0, 2);
-  
+
   return (
-    <section aria-labelledby="social-proof-heading" className="mx-auto max-w-7xl px-4 sm:px-6 my-16">
+    <section
+      aria-labelledby="social-proof-heading"
+      className="mx-auto max-w-7xl px-4 sm:px-6 my-16"
+    >
       <div className="mb-6">
         <p className="text-sm font-medium text-[#89CFF0]">Vertrouwen</p>
-        <h2 id="social-proof-heading" className="text-2xl md:text-3xl font-light text-[#0D1B2A]">
+        <h2
+          id="social-proof-heading"
+          className="text-2xl md:text-3xl font-light text-[#0D1B2A]"
+        >
           Gebouwd op duidelijkheid en privacy
         </h2>
       </div>
@@ -57,13 +75,13 @@ export default function SocialProof() {
 
       {/* Testimonials */}
       <div className="grid gap-6 md:grid-cols-2">
-        {testimonials.map(t => (
-          <TestimonialCard 
-            key={t.id} 
-            q={t.quote} 
-            a={t.author} 
-            r={t.role} 
-            av={t.avatar} 
+        {testimonials.map((t) => (
+          <TestimonialCard
+            key={t.id}
+            q={t.quote}
+            a={t.author}
+            r={t.role}
+            av={t.avatar}
           />
         ))}
       </div>

@@ -36,7 +36,7 @@
           "retailer": "Wehkamp",
           "url": "https://www.wehkamp.nl/clarks-leren-pumps-kaylin-cara-zwart-16296547",
           "imageUrl": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 119.00,
+          "price": 119.0,
           "sizes": ["37", "38", "39", "40", "41"],
           "inStock": true,
           "category": "Schoenen"
@@ -60,7 +60,7 @@
           "retailer": "Bol.com",
           "url": "https://www.bol.com/nl/nl/p/liebeskind-berlin-handtas-essential-satchel-m-black/9300000007917755/",
           "imageUrl": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 159.00,
+          "price": 159.0,
           "sizes": ["One Size"],
           "inStock": true,
           "category": "Tassen"
@@ -115,7 +115,7 @@
           "retailer": "Wehkamp",
           "url": "https://www.wehkamp.nl/veja-campo-leren-sneakers-wit-16708589",
           "imageUrl": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 89.00,
+          "price": 89.0,
           "sizes": ["36", "37", "38", "39", "40", "41"],
           "inStock": true,
           "category": "Sneakers"
@@ -127,7 +127,7 @@
           "retailer": "De Bijenkorf",
           "url": "https://www.zalando.nl/arket-canvas-crossbodytas-van-katoen-9706090037-970609003712000",
           "imageUrl": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 39.00,
+          "price": 39.0,
           "sizes": ["One Size"],
           "inStock": true,
           "category": "Tassen"
@@ -170,7 +170,7 @@
           "retailer": "ASOS NL",
           "url": "https://www.asos.com/nl/buffalo/buffalo-london-classic-chunky-sneakers-in-zwart/prd/201254248",
           "imageUrl": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 129.00,
+          "price": 129.0,
           "sizes": ["36", "37", "38", "39", "40"],
           "inStock": true,
           "category": "Sneakers"
@@ -182,7 +182,7 @@
           "retailer": "Zalando",
           "url": "https://www.zalando.nl/stone-island-gilet-black-s3722b01m-q11.html",
           "imageUrl": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 189.00,
+          "price": 189.0,
           "sizes": ["M", "L", "XL"],
           "inStock": true,
           "category": "Vesten"
@@ -213,7 +213,7 @@
           "retailer": "ASOS NL",
           "url": "https://www.asos.com/nl/champion/champion-oversized-hoodie-met-klein-logo-in-grijs/prd/201254248",
           "imageUrl": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 49.00,
+          "price": 49.0,
           "sizes": ["XS", "S", "M", "L"],
           "inStock": true,
           "category": "Hoodies"
@@ -280,7 +280,7 @@
           "retailer": "About You NL",
           "url": "https://www.aboutyou.nl/p/monki/jeans-yoko-4183667",
           "imageUrl": "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 89.00,
+          "price": 89.0,
           "sizes": ["26", "28", "30", "32"],
           "inStock": true,
           "category": "Jeans"
@@ -304,7 +304,7 @@
           "retailer": "ASOS NL",
           "url": "https://www.asos.com/nl/fila/fila-windbreaker-in-kleurblokontwerp/prd/201254248",
           "imageUrl": "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 79.00,
+          "price": 79.0,
           "sizes": ["S", "M", "L", "XL"],
           "inStock": true,
           "category": "Jassen"
@@ -328,7 +328,7 @@
           "retailer": "H&M NL",
           "url": "https://www2.hm.com/nl_nl/productpage.1074402001.html",
           "imageUrl": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 119.00,
+          "price": 119.0,
           "sizes": ["S", "M", "L", "XL"],
           "inStock": true,
           "category": "Jassen"
@@ -347,7 +347,7 @@
           "retailer": "Net-A-Porter",
           "url": "https://www.zalando.nl/cos/cashmere-sweater/46376663162432304",
           "imageUrl": "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 299.00,
+          "price": 299.0,
           "sizes": ["S", "M", "L"],
           "inStock": true,
           "category": "Truien"
@@ -359,7 +359,7 @@
           "retailer": "De Bijenkorf",
           "url": "https://www.zalando.nl/mansur-gavriel-mini-mini-bucket-bag-leren-crossbodytas-9706090037-970609003712000",
           "imageUrl": "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 449.00,
+          "price": 449.0,
           "sizes": ["One Size"],
           "inStock": true,
           "category": "Tassen"
@@ -371,7 +371,7 @@
           "retailer": "Zalando",
           "url": "https://www.zalando.nl/celine-zonnebril-black-ce154f00m-q11.html",
           "imageUrl": "https://images.pexels.com/photos/6764034/pexels-photo-6764034.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 389.00,
+          "price": 389.0,
           "sizes": ["One Size"],
           "inStock": true,
           "category": "Accessoires"
@@ -383,7 +383,7 @@
           "retailer": "Net-A-Porter",
           "url": "https://www.zalando.nl/max-mara/madame-wool-and-cashmere-blend-coat/46376663162432304",
           "imageUrl": "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 899.00,
+          "price": 899.0,
           "sizes": ["34", "36", "38", "40"],
           "inStock": true,
           "category": "Jassen"
@@ -395,7 +395,7 @@
           "retailer": "De Bijenkorf",
           "url": "https://www.zalando.nl/gucci-jordaan-leren-loafers-9706090037-970609003712000",
           "imageUrl": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&dpr=2",
-          "price": 649.00,
+          "price": 649.0,
           "sizes": ["36", "37", "38", "39", "40"],
           "inStock": true,
           "category": "Schoenen"

@@ -7,11 +7,7 @@
     "gender": "male",
     "color": "beige",
     "dominantColorHex": "#F5F5DC",
-    "styleTags": [
-      "smart",
-      "clean",
-      "italian"
-    ],
+    "styleTags": ["smart", "clean", "italian"],
     "season": "all_season",
     "archetypeMatch": {
       "klassiek": 1,
@@ -31,11 +27,7 @@
     "gender": "male",
     "color": "white",
     "dominantColorHex": "#FFFFFF",
-    "styleTags": [
-      "sporty",
-      "athletic",
-      "street"
-    ],
+    "styleTags": ["sporty", "athletic", "street"],
     "season": "all_season",
     "archetypeMatch": {
       "streetstyle": 1,
@@ -55,11 +47,7 @@
     "gender": "female",
     "color": "white",
     "dominantColorHex": "#FFFFFF",
-    "styleTags": [
-      "elegant",
-      "feminine",
-      "minimal"
-    ],
+    "styleTags": ["elegant", "feminine", "minimal"],
     "season": "all_season",
     "archetypeMatch": {
       "klassiek": 0.8,
@@ -79,11 +67,7 @@
     "gender": "female",
     "color": "blue",
     "dominantColorHex": "#0000FF",
-    "styleTags": [
-      "casual",
-      "denim",
-      "american"
-    ],
+    "styleTags": ["casual", "denim", "american"],
     "season": "all_season",
     "archetypeMatch": {
       "casual_chic": 0.9,
@@ -103,11 +87,7 @@
     "gender": "female",
     "color": "beige",
     "dominantColorHex": "#F5F5DC",
-    "styleTags": [
-      "minimal",
-      "clean",
-      "quality"
-    ],
+    "styleTags": ["minimal", "clean", "quality"],
     "season": "winter",
     "archetypeMatch": {
       "casual_chic": 0.7,
@@ -127,11 +107,7 @@
     "gender": "female",
     "color": "white",
     "dominantColorHex": "#FFFFFF",
-    "styleTags": [
-      "sporty",
-      "minimal",
-      "clean"
-    ],
+    "styleTags": ["sporty", "minimal", "clean"],
     "season": "all_season",
     "archetypeMatch": {
       "casual_chic": 0.8,
@@ -151,11 +127,7 @@
     "gender": "female",
     "color": "black",
     "dominantColorHex": "#000000",
-    "styleTags": [
-      "luxury",
-      "minimal",
-      "versatile"
-    ],
+    "styleTags": ["luxury", "minimal", "versatile"],
     "season": "all_season",
     "archetypeMatch": {
       "luxury": 0.8,
@@ -175,11 +147,7 @@
     "gender": "female",
     "color": "white",
     "dominantColorHex": "#FFFFFF",
-    "styleTags": [
-      "minimal",
-      "clean",
-      "scandinavian"
-    ],
+    "styleTags": ["minimal", "clean", "scandinavian"],
     "season": "all_season",
     "archetypeMatch": {
       "casual_chic": 0.9,

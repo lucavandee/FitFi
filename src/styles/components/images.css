@@ -2,16 +2,31 @@
   .img-skeleton {
     position: relative;
     overflow: hidden;
-    background: #F6F6F6;
+    background: #f6f6f6;
   }
   .img-skeleton::after {
     content: "";
-    position: absolute; inset: 0;
+    position: absolute;
+    inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.6) 50%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
     animation: img-shimmer 1.2s infinite;
   }
-  @keyframes img-shimmer { 100% { transform: translateX(100%); } }
-  .img-fade { opacity: 0; transition: opacity .35s ease; }
-  .img-fade.img-loaded { opacity: 1; }
+  @keyframes img-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  .img-fade {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .img-fade.img-loaded {
+    opacity: 1;
+  }
 }
