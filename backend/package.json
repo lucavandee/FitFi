@@ -1,0 +1,15 @@
+{
+  "name": "fitfi-backend-functions",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo \"Netlify bundelt functions met esbuild\"",
+    "serve": "netlify dev"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^2.6.0",
+    "netlify-cli": "^17.37.1"
+  }
+}
