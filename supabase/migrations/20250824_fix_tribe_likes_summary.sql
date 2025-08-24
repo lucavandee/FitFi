@@ -1,12 +1,10 @@
--- Idempotent: veilig om vaker te draaien
+-- Idempotent: veilig herhaald uit te voeren.
 
 -- Voor gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Schema + tabel (alle IF NOT EXISTS -> veilig herhaalbaar)
-CREATE SCHEMA IF NOT EXISTS tribes;
-
-CREATE TABLE IF NOT EXISTS tribes.tribe_likes (
+-- Tabel in public-schema (sluit aan op bestaande code/migrations)
+CREATE TABLE IF NOT EXISTS public.tribe_likes (
   id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tribe_id   uuid NOT NULL,
   user_id    uuid NOT NULL,
@@ -14,45 +12,43 @@ CREATE TABLE IF NOT EXISTS tribes.tribe_likes (
 );
 
 -- Unieke like per (tribe, user)
-CREATE UNIQUE INDEX IF NOT EXISTS tribes_tribe_likes_unique
-  ON tribes.tribe_likes (tribe_id, user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS tribe_likes_unique
+  ON public.tribe_likes (tribe_id, user_id);
 
--- RLS aan + policies alleen aanmaken als ze nog niet bestaan
-ALTER TABLE tribes.tribe_likes ENABLE ROW LEVEL SECURITY;
+-- RLS + policies (alleen aanmaken als ze nog niet bestaan)
+ALTER TABLE public.tribe_likes ENABLE ROW LEVEL SECURITY;
 
 DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
-    WHERE schemaname='tribes' AND tablename='tribe_likes' AND policyname='allow_select_all'
+    WHERE schemaname='public' AND tablename='tribe_likes' AND policyname='allow_select_all'
   ) THEN
-    CREATE POLICY allow_select_all ON tribes.tribe_likes FOR SELECT USING (true);
+    CREATE POLICY allow_select_all ON public.tribe_likes FOR SELECT USING (true);
   END IF;
 
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
-    WHERE schemaname='tribes' AND tablename='tribe_likes' AND policyname='allow_insert_own'
+    WHERE schemaname='public' AND tablename='tribe_likes' AND policyname='allow_insert_own'
   ) THEN
-    CREATE POLICY allow_insert_own ON tribes.tribe_likes FOR INSERT
+    CREATE POLICY allow_insert_own ON public.tribe_likes FOR INSERT
       WITH CHECK (auth.uid() = user_id);
   END IF;
 
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
-    WHERE schemaname='tribes' AND tablename='tribe_likes' AND policyname='allow_delete_own'
+    WHERE schemaname='public' AND tablename='tribe_likes' AND policyname='allow_delete_own'
   ) THEN
-    CREATE POLICY allow_delete_own ON tribes.tribe_likes FOR DELETE
+    CREATE POLICY allow_delete_own ON public.tribe_likes FOR DELETE
       USING (auth.uid() = user_id);
   END IF;
 END $$;
 
--- ✅ Fix: vervang MIN(uuid) door deterministisch "eerste like" op tijd
---   - earliest created_at per tribe_id
---   - tie-break op user_id voor determinisme
-CREATE OR REPLACE VIEW tribes.tribe_likes_summary AS
+-- ✅ Fix: geen MIN(uuid). Pak de "eerste like" op tijd (stabiel, met tie-break op user_id)
+CREATE OR REPLACE VIEW public.tribe_likes_summary AS
 WITH counts AS (
   SELECT tribe_id, COUNT(*)::int AS like_count
-  FROM tribes.tribe_likes
+  FROM public.tribe_likes
   GROUP BY tribe_id
 ),
 first_like AS (
@@ -60,7 +56,7 @@ first_like AS (
          tribe_id,
          user_id   AS first_like_user_id,
          created_at AS first_like_at
-  FROM tribes.tribe_likes
+  FROM public.tribe_likes
   ORDER BY tribe_id, created_at, user_id
 )
 SELECT
