@@ -1,38 +1,63 @@
+# ─────────────────────────────────────────────────────────
 # FitFi — Bolt context slimming (root allow-list)
+# ─────────────────────────────────────────────────────────
 
-# 0) Verberg standaard alles in de repo
-/*
+# 0) Ignore alles…
+*
 
-# 1) Laat deze paden/bestanden WEL zien
-!.bolt/**
+# 1) …behalve exact wat we nodig hebben
+!frontend/**
 !README.md
+!LICENSE
 !netlify.toml
-
-# Functions (Netlify gebruikt 'netlify-functions' in jullie setup)
-!netlify-functions/**
-# (Als je ook een '.netlify/functions' map zou hebben:)
-!.netlify/functions/**
-!.netlify/functions/**
-
-# 2) Frontend: alleen code + minimale config/public zichtbaar
-!frontend/
-frontend/**                 # eerst alles onder frontend weer dicht…
-!frontend/src/**           # …en vervolgens alleen src/ openen
-!frontend/index.html
-!frontend/package.json
-!frontend/tsconfig*.json
-!frontend/vite.config.*
-!frontend/.env.example
-
-# 3) Public: super dun (alleen 2–3 kleintjes)
-!frontend/public/
-frontend/public/**          # alles in public dicht…
-!frontend/public/favicon.ico
-!frontend/public/site.webmanifest
-!frontend/public/robots.txt
-
-# 4) (Optioneel) root package files inzien voor context
 !package.json
 !package-lock.json
-!pnpm-lock.yaml
-!yarn.lock
+!.gitignore
+!.gitattributes
+
+# 2) Binnen frontend/ sluiten we zware/irrelevante zaken weer uit
+frontend/**/node_modules/**
+frontend/**/dist/**
+frontend/**/.vite/**
+frontend/**/.cache/**
+frontend/**/.temp/**
+frontend/**/.esbuild/**
+frontend/**/.rollup.cache/**
+frontend/**/.next/**
+frontend/**/.nuxt/**
+frontend/**/.svelte-kit/**
+
+# Public/binary assets die Bolt niet hoeft te lezen
+frontend/public/media/**
+frontend/public/videos/**
+frontend/public/images/**
+frontend/public/**.png
+frontend/public/**.jpg
+frontend/public/**.jpeg
+frontend/public/**.webp
+frontend/public/**.gif
+frontend/public/**.mp4
+frontend/public/**.mov
+frontend/public/**.zip
+frontend/public/**.pdf
+
+# Src assets (binaries) buiten code
+frontend/src/assets/**
+
+# Storybook/tests/e2e/mdx
+frontend/**/__tests__/**
+frontend/**/__mocks__/**
+frontend/**/__snapshots__/**
+frontend/**/cypress/**
+frontend/**/stories/**
+frontend/**/*.stories.@(js|jsx|ts|tsx|mdx)
+
+# Tooling/config dat niet nodig is voor begrip van de code
+frontend/**/coverage/**
+frontend/**/reports/**
+frontend/**/.husky/**
+frontend/**/.vscode/**
+frontend/**/.idea/**
+
+# Secrets & env (nooit delen)
+frontend/**/.env*
