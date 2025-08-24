@@ -88,4 +88,9 @@ export function pageview(a?: PageviewArg, b?: PageviewArg): void {
   }
 }
 
+/**
+ * Alias for `w` function - for backward compatibility
+ */
+export const track = w;
+
 // Let op: GEEN default export
