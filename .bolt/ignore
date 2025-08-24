@@ -1,12 +1,18 @@
-# ========= Bolt AI context: alleen frontend en enkele root-files =========
-# Verberg ALLES…
-**
+# Ignore heavy/irrelevant
+.*
+node_modules/**
+dist/**
+.git/**
+*.log
+*.lock
 
-# …behalve deze:
-!.bolt/**
-!frontend/**
-
-# (optionele root files die soms handig zijn in de AI-context)
-!README.md
-!LICENSE
+# Keep the app sources
+!src/**
+!public/**
+!netlify/functions/**
+!index.html
+!vite.config.ts
+!tsconfig.json
+!package.json
 !netlify.toml
+!.env.example
