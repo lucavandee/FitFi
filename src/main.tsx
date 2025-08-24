@@ -41,11 +41,11 @@ declare global {
 if (!window.loadNovaAgent) {
   window.loadNovaAgent = async () => {
     try {
-      const mod: any = await import('./agent');
+      const mod: any = await import('./ai/nova/agent');
       return mod.default ?? mod.agent ?? mod;
     } catch {
       try {
-        const mod: any = await import('./services/ai/agent');
+        const mod: any = await import('./services/ai/novaService');
         return mod.default ?? mod.agent ?? mod;
       } catch {
         throw new ReferenceError('Nova agent module kon niet worden geladen');
