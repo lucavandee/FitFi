@@ -115,5 +115,12 @@
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window.loadNovaAgent ??= async () => {
+        // Laad de agent-module lui vanuit de app (werkt in Vite dev & build)
+        const mod = await import('/src/services/ai/agent');
+        return mod.default ?? mod.agent ?? mod;
+      };
+    </script>
   </body>
 </html>
