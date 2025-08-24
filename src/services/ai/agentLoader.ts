@@ -1,13 +1,9 @@
+// frontend/src/services/ai/agentLoader.ts
 /**
- * Agent loader service
- * Loads the Nova agent module dynamically
+ * Lazy loader voor de Nova agent module.
+ * Pakt default export of named `agent` – afhankelijk van bundling.
  */
-
-import type { MockAgent } from './agent';
-
-export async function loadNovaAgent(): Promise<MockAgent> {
+export async function loadNovaAgent() {
   const mod = await import('./agent');
-  return mod.default ?? mod.agent ?? mod;
+  return (mod as any).default ?? (mod as any).agent ?? mod;
 }
-
-export default loadNovaAgent;
