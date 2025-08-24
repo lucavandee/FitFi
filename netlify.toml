@@ -1,15 +1,12 @@
 [build]
-  # Build vanaf de root, want op main staat je app niet in /frontend
-  command = "npm install && npm run build"
+  command = "npm run build"
   publish = "dist"
 
 [functions]
-  # Functions-map op repo-root
-  directory = "netlify-functions"
+  directory = "netlify/functions"
   node_bundler = "esbuild"
 
-## Alleen SPA fallback (de /.netlify redirect is verwijderd; die veroorzaakte jouw parse warning)
 [[redirects]]
   from = "/*"
-  to     = "/index.html"
+  to = "/index.html"
   status = 200
