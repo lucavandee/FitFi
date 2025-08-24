@@ -1,3 +1,14 @@
+declare global {
+  interface Window { loadNovaAgent?: () => Promise<any>; }
+}
+
+if (!window.loadNovaAgent) {
+  window.loadNovaAgent = async () => {
+    const { loadNovaAgent } = await import("@/services/ai/agentLoader");
+    return loadNovaAgent();
+  };
+}
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
