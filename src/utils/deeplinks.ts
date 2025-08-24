@@ -1,15 +1,28 @@
 type Partner = 'amazon' | 'awin' | 'none';
 
-function partner(): Partner {
+function _getEnvPartner(): Partner {
   const p = (import.meta.env.VITE_DEFAULT_SHOP_PARTNER || '').toLowerCase();
   if (p === 'amazon') return 'amazon';
   if (p === 'awin') return 'awin';
   return 'none';
 }
 
+export function getDefaultPartner(): Partner {
+  return _getEnvPartner();
+}
+
+export function detectPartner(url?: string): Partner {
+  if (!url) return getDefaultPartner();
+  
+  if (url.includes('amazon.')) return 'amazon';
+  if (url.includes('awin1.com')) return 'awin';
+  
+  return getDefaultPartner();
+}
+
 export function buildDeeplink(rawUrl?: string): string | undefined {
   if (!rawUrl) return rawUrl;
-  const p = partner();
+  const p = _getEnvPartner();
 
   if (p === 'amazon') {
     const tag = import.meta.env.VITE_AMAZON_TAG;
@@ -26,3 +39,5 @@ export function buildDeeplink(rawUrl?: string): string | undefined {
 
   return rawUrl;
 }
+
+export const buildAffiliateUrl = buildDeeplink;
