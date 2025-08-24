@@ -227,7 +227,8 @@ const NovaChat: React.FC = () => {
 
   const initializeNova = async () => {
     try {
-      const agent = await loadNovaAgent();
+      const mod = await import('@/ai/nova/agent');
+      const agent = (mod as any).default || (mod as any).agent;
       const greeting = await agent.greet(user?.name || "daar");
 
       setMessages([
