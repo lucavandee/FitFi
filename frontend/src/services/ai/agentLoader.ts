@@ -3,6 +3,6 @@
  * Pakt default export of named `agent` – afhankelijk van bundling.
  */
 export async function loadNovaAgent() {
-  const mod = await import('./agent'); // bronbestand: frontend/src/services/ai/agent.(ts|tsx)
-  return (mod as any).default ?? (mod as any).agent ?? mod;
+  const mod = await import("./agent");
+  return (mod as any).default ?? (mod as any).agent ?? (mod as any).agentExport ?? mod;
 }
