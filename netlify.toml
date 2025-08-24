@@ -1,6 +1,6 @@
 [build]
   # Installeer en build alleen binnen /frontend
-  command = "npm ci --prefix frontend && npm run --prefix frontend build"
+  command = "npm install --prefix frontend && npm run --prefix frontend build"
   publish = "frontend/dist"
 
 [functions]
@@ -8,14 +8,8 @@
   directory = "netlify-functions"
   node_bundler = "esbuild"
 
-## Laat function-calls gewoon door (nodig voor dev/preview en SPA)
+## Alleen SPA fallback (de /.netlify redirect is verwijderd; die veroorzaakte jouw parse warning)
 [[redirects]]
-  from   = "/.netlify/functions/*"
-  to     = "/.netlify/functions/:splat"
-  status = 200
-
-## SPA fallback voor Vite/React routes
-[[redirects]]
-  from   = "/*"
+  from = "/*"
   to     = "/index.html"
   status = 200
