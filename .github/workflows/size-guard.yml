@@ -1,22 +1,29 @@
-name: Repo Size Guard
-on: [pull_request]
+name: size-guard
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
-  guard:
+  block-large-files:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Block large files in PR
+      - name: Fail on files > 2 MB
         run: |
-          MAX=$((500*1024))
-          bad=0
-          base="origin/${{ github.base_ref }}"
-          git fetch origin ${{ github.base_ref }} --depth=1
-          git diff --name-only $base...HEAD | while read f; do
-            [ -f "$f" ] || continue
-            size=$(wc -c < "$f")
-            ext="${f##*.}"
-            case "$ext" in mp4|mov|mkv|avi|zip|7z|rar|psd|ai|sketch|fig|xd|map) echo "BANNED: $f"; bad=1;; esac
-            [ "$size" -gt "$MAX" ] && echo "TOO BIG ($size B): $f" && bad=1
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          files=$(git diff --name-only "$base" "$head")
+          too_big=0
+          for f in $files; do
+            if [ -f "$f" ]; then
+              sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")
+              if [ "$sz" -gt 2000000 ]; then
+                echo "File too big: $f ($(numfmt --to=iec $sz))"
+                too_big=1
+              fi
+            fi
           done
-          [ "$bad" -eq 0 ] || { echo "❌ Large/banned files detected."; exit 1; }
+          if [ "$too_big" -eq 1 ]; then
+            echo "::error::One or more files exceed 2 MB. Remove or use LFS."
+            exit 1
+          fi

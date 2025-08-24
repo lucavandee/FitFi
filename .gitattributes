@@ -56,4 +56,7 @@ error.log export-ignore
 *~ export-ignore
 *.bak export-ignore
 *.backup export-ignore
-*.old export-ignore
+*.old export-ignorescripts/ export-ignore
+cypress/ export-ignore
+docs/ export-ignore
+.github/ export-ignore
