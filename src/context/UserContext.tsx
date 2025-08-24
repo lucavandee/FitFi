@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
-import { w } from '@/utils/analytics';
+import { w } from '@/utils/index';
 
 // Get singleton client
 const sb = supabase();
