@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { w } from '@/utils/analytics';
 
 const url = import.meta.env.VITE_SUPABASE_URL ?? "";
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
@@ -14,9 +15,28 @@ export function supabase(): SupabaseClient | null {
       persistSession: true,
       autoRefreshToken: true,
       storageKey: "fitfi.supabase.auth",
+      // Enhanced error handling for refresh token issues
+      onAuthStateChange: (event, session) => {
+        if (event === 'TOKEN_REFRESHED' && !session) {
+          console.warn('Token refresh failed, session is null');
+          w('auth_token_refresh_failed');
+        }
+      }
     },
     global: {
-      fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+      // Add global error handler for API requests
+      fetch: (url, options = {}) => {
+        return fetch(url, options).catch(error => {
+          // Check for refresh token errors in fetch responses
+          if (error?.message?.includes('refresh_token_not_found') || 
+              error?.body?.includes('refresh_token_not_found')) {
+            console.warn('Refresh token not found in API request, clearing session');
+            supabase().auth.signOut();
+            w('auth_api_refresh_token_error');
+          }
+          throw error;
+        });
+      }
     },
   });
 
