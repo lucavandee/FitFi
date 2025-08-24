@@ -1,62 +1,11 @@
-# Auto detect text files and perform LF normalization
+# Normalize line endings
 * text=auto
 
-# Exclude from deployment
-tests/ export-ignore
-test/ export-ignore
-__tests__/ export-ignore
+# Exclude dev-only from source zips (Download ZIP / codeload)
+scripts/ export-ignore
 playwright-report/ export-ignore
 test-results/ export-ignore
-coverage/ export-ignore
-__trash_review/ export-ignore
-tmp/ export-ignore
-temp/ export-ignore
-.cache/ export-ignore
-*.py export-ignore
-*_REPORT.md export-ignore
-monitor_config.json export-ignore
-requirements.txt export-ignore
-Pipfile export-ignore
-Pipfile.lock export-ignore
-*.log export-ignore
-debug.log export-ignore
-error.log export-ignore
-
-# Binary files
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
-*.ico binary
-*.svg binary
-*.woff binary
-*.woff2 binary
-*.ttf binary
-*.eot binary
-*.pdf binary
-*.zip binary
-*.tar.gz binary
-
-# Large data files
-*.json.backup export-ignore
-*.csv export-ignore
-*.xlsx export-ignore
-
-# Development files
-.vscode/ export-ignore
-.idea/ export-ignore
-*.sublime-* export-ignore
-*.code-workspace export-ignore
-
-# Temporary files
-*.tmp export-ignore
-*.temp export-ignore
-*.swp export-ignore
-*.swo export-ignore
-*~ export-ignore
-*.bak export-ignore
-*.backup export-ignore
-*.old export-ignorescripts/ export-ignore
 cypress/ export-ignore
+coverage/ export-ignore
 docs/ export-ignore
 .github/ export-ignore
