@@ -5,7 +5,10 @@ import Seo from "@/components/Seo";
 import Button from "../components/ui/Button";
 import HeroTitle from "@/components/marketing/HeroTitle";
 import Chip from "@/components/ui/Chip";
-import Hero from "@/components/sections/Hero";
+import { Suspense } from 'react';
+import HomeHero from '../components/landing/HomeHero';
+import AIStylePreview from '../components/landing/AIStylePreview';
+import MiniFAQ from '../components/landing/MiniFAQ';
 import StickyCTA from "@/components/ui/StickyCTA";
 import NovaStyleSwipe from "@/components/nova/NovaStyleSwipe";
 import HowItWorks from "@/components/sections/HowItWorks";
@@ -47,7 +50,7 @@ const HomePage: React.FC = () => {
 
       <div className="min-h-screen bg-[#FAF8F6]">
         {/* Hero Section */}
-        <Hero />
+        <HomeHero />
 
         {/* AI Style Preview Section */}
         {getHomepageFlag("showNovaStyleSwipe") && (
