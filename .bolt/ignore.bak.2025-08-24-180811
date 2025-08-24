@@ -1,0 +1,18 @@
+# Ignore heavy/irrelevant
+.*
+node_modules/**
+dist/**
+.git/**
+*.log
+*.lock
+
+# Keep the app sources
+!src/**
+!public/**
+!netlify/functions/**
+!index.html
+!vite.config.ts
+!tsconfig.json
+!package.json
+!netlify.toml
+!.env.example
