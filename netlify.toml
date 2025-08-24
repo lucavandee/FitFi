@@ -1,49 +1,21 @@
 [build]
-  # Bouw de frontend uit /frontend
-  base    = "frontend"
-  command = "npm ci && npm run build"
-  publish = "dist"
+  # Installeer en build alleen binnen /frontend
+  command = "npm ci --prefix frontend && npm run --prefix frontend build"
+  publish = "frontend/dist"
 
-# Netlify Functions uit /netlify-functions
 [functions]
-  directory          = "netlify-functions"
-  node_bundler       = "esbuild"
-  included_files     = ["netlify-functions/**"]
-  # Als je OpenAI of andere libs server-side gebruikt:
-  external_node_modules = ["openai","undici"]
+  # Functions-map op repo-root
+  directory = "netlify-functions"
+  node_bundler = "esbuild"
 
-# Laat requests naar /.netlify/functions/* gewoon door (nodig bij SPA)
+## Laat function-calls gewoon door (nodig voor dev/preview en SPA)
 [[redirects]]
   from   = "/.netlify/functions/*"
   to     = "/.netlify/functions/:splat"
   status = 200
 
-# Vite SPA fallback
+## SPA fallback voor Vite/React routes
 [[redirects]]
-  from = "/*"
-  to   = "/index.html"
+  from   = "/*"
+  to     = "/index.html"
   status = 200
-
-[build.environment]
-  NODE_VERSION = "20"
-
-[functions]
-  directory = "netlify-functions"
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-## Security headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Security-Policy = "default-src 'self'; img-src * data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.openai.com https://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com /.netlify/functions"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "DENY"
-    Cross-Origin-Opener-Policy = "same-origin"
-    Cross-Origin-Embedder-Policy = "require-corp"
