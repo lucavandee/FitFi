@@ -61,6 +61,9 @@ export function buildDeeplink(partnerOrUrl?: Partner | string, query?: string): 
       const tag = import.meta.env.VITE_AMAZON_TAG;
       const baseUrl = `https://www.amazon.nl/s?k=${encodeURIComponent(query)}`;
       if (!tag) return baseUrl;
+    }
+  }
+}
 export function buildDeeplink(partnerOrUrl?: Partner | string, query?: string): string | undefined {
   // Handle the two different call signatures
   if (typeof partnerOrUrl === 'string' && partnerOrUrl && !query) {
