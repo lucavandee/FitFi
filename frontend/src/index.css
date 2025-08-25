@@ -1,9 +1,7 @@
-/* Tailwind base (safe defaults). Adjust if your project already has Tailwind set up. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Minimal reset & app shell spacing */
-:root { color-scheme: light dark; }
-html, body, #root { height: 100%; }
-body { margin: 0; }
+/* optioneel wat nette defaults */
+:root { color-scheme: light; }
+html, body, #root { height: 100%; margin: 0; }
