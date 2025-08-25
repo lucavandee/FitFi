@@ -1,2 +1,5 @@
-// Zorgt dat imports op "./ai/nova/agent" blijven werken
-export { default, agent } from "../../services/ai/agent";
+export default {
+  async sendMessage(input: string) {
+    return { role: "assistant", content: `Nova (stub): ${input}` };
+  },
+};
