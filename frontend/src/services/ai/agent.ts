@@ -1,35 +1,21 @@
-/**
- * Minimal Nova agent stub voor development.
- * Exporteert zowel default als named `agent` zodat verschillende loaders werken.
- */
+// frontend/src/services/ai/agent.ts
+export type ChatMessage = { role: "user" | "assistant" | "system"; content: string };
+export type ChatInput = { messages?: ChatMessage[] };
 
-export type ChatInput =
-  | string
-  | {
-      input?: string;
-      messages?: Array<{ role: "user" | "assistant" | "system"; content: string }>;
-    };
+type ChatResult = { messages: ChatMessage[] };
 
-function lastUserMessage(input: ChatInput): string {
-  if (typeof input === "string") return input;
-  if (input?.input) return input.input;
-  const arr = input?.messages ?? [];
-  const last = arr[arr.length - 1];
-  return last?.content ?? "";
-}
-
-const agent = {
+export const agent = {
   id: "nova-stub",
-  name: "Nova (stub)",
-  /**
-   * Eenvoudig antwoord; genoeg om UI te ontkoppelen van backend.
-   */
-  async respond(input: ChatInput) {
-    const text = lastUserMessage(input);
-    const reply = `Nova (stub) — backend niet verbonden. Ontvangen: ${text.slice(0, 140)}`;
-    return { text: reply };
+  name: "Nova",
+  async send(input: ChatInput = {}): Promise<ChatResult> {
+    const last = (input.messages ?? []).slice(-1)[0];
+    const echo = last?.content?.trim();
+    const reply =
+      echo && echo.length > 0
+        ? `Nova (stub): ik ontving — "${echo}"`
+        : "Nova (stub): hallo! Stel me een vraag over stijl of outfits.";
+    return { messages: [{ role: "assistant", content: reply }] };
   },
 };
 
 export default agent;
-export { agent };
