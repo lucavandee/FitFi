@@ -1,63 +1,26 @@
-# ─────────────────────────────────────────────────────────
-# FitFi — Bolt context slimming (root allow-list)
-# ─────────────────────────────────────────────────────────
-
-# 0) Ignore alles…
+# Ignore alles…
 *
 
-# 1) …behalve exact wat we nodig hebben
-!frontend/**
-!README.md
-!LICENSE
+# …behalve wat we nodig hebben
+!src/**
+!index.html
+!vite.config.ts
+!tsconfig.json
+!tsconfig.app.json
+!tsconfig.node.json
 !netlify.toml
+!netlify/**
+!public/**
+!tailwind.config.ts
+!postcss.config.js
 !package.json
 !package-lock.json
-!.gitignore
-!.gitattributes
+!README.md
+!LICENSE
 
-# 2) Binnen frontend/ sluiten we zware/irrelevante zaken weer uit
-frontend/**/node_modules/**
-frontend/**/dist/**
-frontend/**/.vite/**
-frontend/**/.cache/**
-frontend/**/.temp/**
-frontend/**/.esbuild/**
-frontend/**/.rollup.cache/**
-frontend/**/.next/**
-frontend/**/.nuxt/**
-frontend/**/.svelte-kit/**
-
-# Public/binary assets die Bolt niet hoeft te lezen
-frontend/public/media/**
-frontend/public/videos/**
-frontend/public/images/**
-frontend/public/**.png
-frontend/public/**.jpg
-frontend/public/**.jpeg
-frontend/public/**.webp
-frontend/public/**.gif
-frontend/public/**.mp4
-frontend/public/**.mov
-frontend/public/**.zip
-frontend/public/**.pdf
-
-# Src assets (binaries) buiten code
-frontend/src/assets/**
-
-# Storybook/tests/e2e/mdx
-frontend/**/__tests__/**
-frontend/**/__mocks__/**
-frontend/**/__snapshots__/**
-frontend/**/cypress/**
-frontend/**/stories/**
-frontend/**/*.stories.@(js|jsx|ts|tsx|mdx)
-
-# Tooling/config dat niet nodig is voor begrip van de code
-frontend/**/coverage/**
-frontend/**/reports/**
-frontend/**/.husky/**
-frontend/**/.vscode/**
-frontend/**/.idea/**
-
-# Secrets & env (nooit delen)
-frontend/**/.env*
+# Zeker uitsluiten:
+node_modules/**
+dist/**
+frontend/**       # oude placeholder; NIET meer gebruiken
+.git/**
+.github/**
