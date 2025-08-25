@@ -1,8 +1,10 @@
 /**
- * Lazy loader voor de Nova agent module.
- * Pakt default export of named `agent` – afhankelijk van bundling.
+ * Agent loader fallback voor als directe agent import faalt
  */
+import agent from "./agent";
+
 export async function loadNovaAgent() {
-  const mod = await import("./agent");
-  return (mod as any).default ?? (mod as any).agent ?? (mod as any).agentExport ?? mod;
+  return agent;
 }
+
+export default { loadNovaAgent };

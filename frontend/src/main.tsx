@@ -16,7 +16,7 @@ if (!window.loadNovaAgent) {
       const mod = await import("./ai/nova/agent"); // re-export naar services/ai/agent
       return (mod as any).default ?? (mod as any).agent ?? mod;
     } catch {
-      const loader = await import("@/services/ai/agentLoader");
+      const loader = await import("./services/ai/agentLoader");
       return loader.loadNovaAgent();
     }
   };
