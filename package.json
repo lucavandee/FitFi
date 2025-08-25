@@ -9,6 +9,9 @@
   "scripts": {
     "dev": "npm --prefix frontend run dev",
     "build": "npm --prefix frontend ci || npm --prefix frontend install && npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist ./dist",
+    "preview": "npm --prefix frontend run preview"
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend ci || npm --prefix frontend install && npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist ./dist",
     "preview": "npm --prefix frontend run preview",
     "dev": "vite",
     "build": "vite build",
