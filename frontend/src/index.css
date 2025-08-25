@@ -1,11 +1,9 @@
-/* frontend/src/index.css */
+/* Tailwind base (safe defaults). Adjust if your project already has Tailwind set up. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Zorg dat @apply op border-brandPurple werkt */
-@layer utilities {
-  .border-brandPurple {
-    border-color: theme('colors.brandPurple');
-  }
-}
+/* Minimal reset & app shell spacing */
+:root { color-scheme: light dark; }
+html, body, #root { height: 100%; }
+body { margin: 0; }
