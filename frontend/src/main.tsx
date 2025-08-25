@@ -1,20 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
+import App from "@/App";
+import "@/index.css";
 
-// Zorg dat de globale loader altijd bestaat (crash-preventie)
+// Zorg dat de globale loader bestaat (crash-preventie voor Nova)
 declare global {
   interface Window { loadNovaAgent?: () => Promise<any>; }
 }
 if (!window.loadNovaAgent) {
   window.loadNovaAgent = async () => {
     try {
-      // Probeer lokale loader (relatief pad, werkt zonder @ alias)
-      const mod = await import("./services/ai/agentLoader");
-      return mod.default ?? (mod as any).agent ?? mod;
+      const mod = await import("@/services/ai/agentLoader");
+      return (mod as any).default ?? (mod as any).agent ?? mod;
     } catch {
-      // Fallback stub
       return { stub: true };
     }
   };
