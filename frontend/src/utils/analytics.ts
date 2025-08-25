@@ -1,67 +1,36 @@
-export type AnalyticsPayload = {
-  event_category?: string;
-  event_label?: string;
-  value?: number | string;
-  [key: string]: unknown;
-};
-
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-    dataLayer?: any[];
-    analytics?: { track?: (event: string, payload?: Record<string, any>) => void };
-  }
-}
-
 /**
- * Event helper (gebruik: w("event_naam", { key: "value" }))
+ * Analytics utilities for FitFi
+ * Lightweight wrapper with pageview tracking
  */
-export function w(event: string, payload: AnalyticsPayload = {}): void {
+
+// Simple analytics event function
+export function w(eventName: string, properties?: Record<string, any>) {
   try {
-    if (typeof window === "undefined") return;
-
-    // 1) GA4
-    if (typeof window.gtag === "function") {
-      window.gtag("event", event, payload);
-      return;
+    // Console log for development
+    if (import.meta.env.DEV) {
+      console.log(`📊 Analytics: ${eventName}`, properties);
     }
-
-    // 2) GTM
-    if (Array.isArray(window.dataLayer)) {
-      window.dataLayer.push({ event, ...payload });
-      return;
-    }
-
-    // 3) Segment
-    if (window.analytics?.track) {
-      window.analytics.track(event, payload);
-      return;
-    }
-  } catch {
-    // ignore
-  }
-
-  // 4) Dev fallback
-  // eslint-disable-next-line no-console
-  console.debug("[analytics:w]", event, payload);
-}
-
-/** Track a pageview */
-export function pageview(path?: string, title?: string): void {
-  if (typeof window === "undefined") return;
-
-  const params: Record<string, any> = {};
-  if (path) params.page_location = path;
-  if (title) params.page_title = title;
-
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "page_view", params);
-  } else if (Array.isArray(window.dataLayer)) {
-    window.dataLayer.push({ event: "page_view", ...params });
-  } else if (window.analytics?.track) {
-    window.analytics.track("page_view", params);
-  } else {
-    // eslint-disable-next-line no-console
-    console.debug("[analytics:pageview]", params);
+    
+    // Add your analytics provider here (GA4, Mixpanel, etc.)
+    // Example: gtag('event', eventName, properties);
+    
+  } catch (error) {
+    console.warn('Analytics error:', error);
   }
 }
+
+// Track page views
+export function trackPageView(path: string) {
+  w('page_view', {
+    page_path: path,
+    page_title: document.title,
+    timestamp: Date.now()
+  });
+}
+
+// Auto-track initial page view
+if (typeof window !== 'undefined') {
+  trackPageView(window.location.pathname);
+}
+
+export default { w, trackPageView };
