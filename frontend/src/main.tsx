@@ -1,6 +1,6 @@
 declare global {
   interface Window { loadNovaAgent?: () => Promise<any>; }
-}
+import "../../src/index.css";
 
 if (!window.loadNovaAgent) {
   window.loadNovaAgent = async () => {
