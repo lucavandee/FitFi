@@ -4,9 +4,8 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": true,
     "noEmit": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["vite.config.ts", "netlify/**/*.ts"]
+  "include": ["vite.config.ts"]
 }
