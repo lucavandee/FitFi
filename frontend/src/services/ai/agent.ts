@@ -1,13 +1,9 @@
-// frontend/src/services/ai/agent.ts
-export type NovaAgent = {
-  send: (input: string, opts?: Record<string, any>) => AsyncGenerator<string, void, unknown>;
-};
-
-const agent: NovaAgent = {
-  async *send(input: string) {
-    yield `Nova stub actief — echo: ${input}`;
-  },
+const agent = {
+  id: "nova-stub",
+  async respond(_input?: any) {
+    return { type: "message", role: "assistant", content: "Nova stub active." };
+  }
 };
 
 export default agent;
-export const agentExport = agent; // eventueel named variant
+export { agent };
