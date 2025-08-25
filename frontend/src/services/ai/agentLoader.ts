@@ -1,7 +1,3 @@
-/**
- * Lazy/stub loader voor Nova agent.
- * Retourneert een stub als echte agent ontbreekt.
- */
 export async function loadNovaAgent() {
   try {
     const mod = await import("./agent"); // alleen als aanwezig
