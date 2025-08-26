@@ -162,10 +162,9 @@ export const handler: Handler = async (event) => {
           'Cache-Control': 'no-cache, no-transform',
           'Connection': 'keep-alive',
           'Access-Control-Allow-Origin': okOrigin(origin) ? origin! : ORIGINS[0],
+          'Access-Control-Allow-Headers': 'content-type, x-fitfi-tier, x-fitfi-uid, accept'
         }
-      }
-      )
-      'Access-Control-Allow-Headers': 'content-type, x-fitfi-tier, x-fitfi-uid, accept'
+      });
     }
 
     // JSON FALLBACK
