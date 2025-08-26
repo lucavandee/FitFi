@@ -10,6 +10,7 @@ export default {
         surface: "#F6F6F6", // Light Grey
         ink: "#0D1B2A", // Alias for text-dark
         brandPurple: "#6E59A5",
+        brandPurple: "#6E59A5",
         muted: "#6B7280", // Muted gray
         midnight: "#0D1B2A",
         turquoise: "#89CFF0",
@@ -122,6 +123,12 @@ export default {
     },
   },
   safelist: [
+  safelist: [
+    "text-brandPurple",
+    "border-brandPurple", 
+    "ring-brandPurple",
+    "focus:ring-brandPurple/40"
+  ],
     "text-brandPurple",
     "border-brandPurple", 
     "ring-brandPurple",

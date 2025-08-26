@@ -1,145 +1,56 @@
-@import "./styles/tokens.css";
 @import './styles/tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  --ff-midnight-900: #0d1b2a;
-  --ff-midnight-700: #14243a;
-  --ff-ink: #0f172a;
 
-  --ff-ice: #ecf7ff;
-  --ff-sky-300: #89cff0;
-  --ff-sky-500: #5fb7e6;
+@import './styles/main.css';
+@import './styles/animations.css';
+@import './styles/components/images.css';
+@import './styles/components/pricing.css';
 
-  /* Accent gradient */
-  --ff-grad-midnight: #0d1b2a;
-  --ff-grad-sky: #89cff0;
-
-  /* Shadow */
-  --ff-soft-shadow: 0 10px 30px rgba(13, 27, 42, 0.08);
-
-  /* Extra tokens */
-  --ff-radius-2xl: 1.25rem;
-  --ff-ring: #89cff0;
-  --ff-chip-bg: #f6f6f6;
-  --ff-chip-border: #e5e7eb;
-
-  /* Nova chat tokens */
-  --ff-ink: #0d1b2a; /* inktkleur (tekst) */
-  --ff-ink-soft: #1a2b3a;
-  --ff-muted: #6b7280; /* placeholder/grijs */
-  --ff-panel: #ffffff; /* panel/bubble */
-  --ff-bubble-user: #e6f3ff; /* user bubble bg */
+/* Global styles */
+html {
+  scroll-behavior: smooth;
 }
 
-@layer utilities {
-  /* Gradient text — bulletproof */
-  .text-gradient,
-  .text-gradient-soft {
-    background-clip: text !important;
-    background-clip: text !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    color: transparent !important;
-    box-decoration-break: clone;
-    display: inline; /* inline is het meest voorspelbaar voor clip */
-  }
-  .text-gradient {
-    background-image: linear-gradient(
-      90deg,
-      var(--ff-grad-midnight) 0%,
-      var(--ff-sky-500) 100%
-    );
-  }
-  .text-gradient-soft {
-    background-image: linear-gradient(
-      90deg,
-      var(--ff-grad-midnight) 0%,
-      var(--ff-sky-300) 100%
-    );
-  }
-
-  /* Accent size bump for single-word highlights */
-  .accent-bump {
-    font-size: 1.12em;
-    line-height: 0.92;
-  }
-  @screen md {
-    .accent-bump {
-      font-size: 1.18em;
-    }
-  }
-  @screen lg {
-    .accent-bump {
-      font-size: 1.24em;
-    }
-  }
-
-  /* Hard fallback if clip isn't supported */
-  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-    .text-gradient,
-    .text-gradient-soft {
-      background: none !important;
-      -webkit-text-fill-color: unset !important;
-      color: var(--ff-midnight-900) !important;
-    }
-  }
+body {
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* CSS Variables for consistent header height */
-:root {
-  --header-height: 4.5rem;
-}
-
-/* Scroll margin for sections to account for sticky header */
-section[id],
-div[id] {
-  scroll-margin-top: var(--header-height);
-}
-
-/* CTA Button Global Styling */
+/* Component styles with @apply */
 .cta-btn {
-  @apply inline-flex items-center justify-center px-6 py-4 font-semibold
-         rounded-2xl border-2 border-brandPurple
-         bg-white text-brandPurple hover:bg-purple-50
-         focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
 }
 
-/* Mobile menu focus trap */
-.mobile-menu-open {
-  overflow: hidden;
+.secondary-btn {
+  @apply border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200;
 }
 
-/* Nova Chat Styling */
-.nova-bubble {
-  max-width: 360px;
-  width: min(92vw, 360px);
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
 }
 
-/* Portal pointer events fix */
-#nova-root {
-  pointer-events: none;
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
 }
 
-#nova-root > * {
-  pointer-events: auto;
+.section-padding {
+  @apply py-16 px-4 sm:px-6 lg:px-8;
 }
 
-/* Horizontal scrolling for suggestion chips */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.container-max {
+  @apply max-w-7xl mx-auto;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Quiz animations */
-@keyframes fadeIn {
+/* Animations */
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -147,166 +58,24 @@ div[id] {
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
 }
 
-/* Premium focus ring (consistente a11y) */
-.focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-  --tw-ring-color: var(--ff-ring);
-  --tw-ring-offset-color: #fff;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Premium Chip */
-.ff-chip {
-  @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm;
-  background: var(--ff-chip-bg);
-  border: 1px solid var(--ff-chip-border);
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-/* Subtiele "sheen" over gradient (alleen als motion ok) */
-.sheen {
-  position: relative;
-}
-.sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.25) 20%,
-    transparent 35%
-  );
-  mix-blend-mode: overlay;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.sheen:hover::after {
-  opacity: 0.7;
-}
-@media (prefers-reduced-motion: reduce) {
-  .sheen::after {
-    transition: none;
-  }
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
 }
 
-/* Tweaks hero copy breedte */
-.copy-narrow {
-  max-width: 46ch;
-}
-
-/* Sheen effect voor premium micro-interactions */
-.sheen {
-  position: relative;
-}
-.sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.25) 20%,
-    transparent 35%
-  );
-  mix-blend-mode: overlay;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.sheen:hover::after {
-  opacity: 0.7;
-}
-@media (prefers-reduced-motion: reduce) {
-  .sheen::after {
-    transition: none;
-  }
-}
-
-@layer utilities {
-  /* 8pt-inspired section rhythm */
-  .section {
-    padding-top: clamp(3rem, 6vw, 6rem); /* 48 → 96 */
-    padding-bottom: clamp(3rem, 6vw, 6rem);
-  }
-  .container {
-    max-width: 72rem; /* ~7xl */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem; /* px-6 */
-  }
-
-  /* Vertical stacks (consistent gaps) */
-  .stack-sm > * + * {
-    margin-top: 0.75rem;
-  } /* 6pt ~ 12px */
-  .stack-md > * + * {
-    margin-top: 1rem;
-  } /* 8pt ~ 16px */
-  .stack-lg > * + * {
-    margin-top: 1.5rem;
-  } /* 12pt ~ 24px */
-  .stack-xl > * + * {
-    margin-top: 2rem;
-  } /* 16pt ~ 32px */
-
-  /* Card + lift interactions */
-  .card {
-    background: #fff;
-    border-radius: var(--ff-radius-2xl, 1.25rem);
-    box-shadow: var(--ff-soft-shadow);
-  }
-  .lift-sm {
-    transition:
-      transform 0.2s ease-out,
-      box-shadow 0.2s ease-out;
-  }
-  .lift-sm:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 36px rgba(13, 27, 42, 0.1);
-  }
-  .lift-sm:active {
-    transform: translateY(0);
-  }
-
-  /* Button micro-animation helpers (motion-safe) */
-  @media (prefers-reduced-motion: no-preference) {
-    .btn-animate {
-      transition:
-        transform 0.2s ease-out,
-        box-shadow 0.2s ease-out,
-        background-color 0.2s ease-out;
-    }
-    .btn-animate:hover {
-      transform: translateY(-1px);
-    }
-    .btn-animate:active {
-      transform: translateY(0);
-    }
-  }
-
-  /* Tight copy width for premium feel */
-  .copy-narrow {
-    max-width: 46ch;
-  }
-}
-@layer utilities {
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .text-ink {
-    color: var(--ff-ink);
-  }
-  .text-muted {
-    color: var(--ff-muted);
-  }
-  .placeholder-muted::placeholder {
-    color: var(--ff-muted);
-  }
-  .caret-ink {
-    caret-color: var(--ff-ink);
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

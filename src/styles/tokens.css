@@ -1,111 +1,48 @@
-/* FitFi Design Tokens */
 :root {
-  /* Brand Colors */
-  --ff-midnight-900: #0d1b2a;
-  --ff-midnight-700: #14243a;
-  --ff-midnight-500: #1b2f46;
-  --ff-ink: #0f172a;
-  --ff-muted: #6b7280;
-
-  --ff-ice: #ecf7ff;
-  --ff-sky-300: #89cff0;
-  --ff-sky-500: #5fb7e6;
-  --ff-sky-700: #3b9fd9;
-
-  --ff-surface: #ffffff;
-  --ff-surface-light: #f6f6f6;
-  --ff-surface-warm: #faf8f6;
-
-  /* Brand Gradients */
-  --ff-grad-midnight: #0d1b2a;
-  --ff-grad-sky: #89cff0;
-  --ff-gradient-primary: linear-gradient(
-    135deg,
-    var(--ff-midnight-900) 0%,
-    var(--ff-sky-500) 100%
-  );
-  --ff-gradient-soft: linear-gradient(
-    135deg,
-    var(--ff-midnight-700) 0%,
-    var(--ff-sky-300) 100%
-  );
-  --ff-gradient-accent: linear-gradient(
-    90deg,
-    var(--ff-sky-300) 0%,
-    var(--ff-sky-500) 100%
-  );
-
-  /* Shadows */
-  --ff-soft-shadow: 0 10px 30px rgba(13, 27, 42, 0.08);
-  --ff-card-shadow: 0 8px 25px rgba(13, 27, 42, 0.06);
-  --ff-button-shadow: 0 6px 20px rgba(137, 207, 240, 0.35);
-  --ff-menu-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
-
-  /* Spacing & Layout */
-  --ff-header-height: 4.5rem;
-  --ff-radius-sm: 0.5rem;
-  --ff-radius-md: 1rem;
-  --ff-radius-lg: 1.5rem;
-  --ff-radius-xl: 2rem;
-  --ff-radius-2xl: 2.5rem;
-
-  /* Typography */
-  --ff-font-heading: "Montserrat", "Inter", ui-sans-serif, system-ui;
-  --ff-font-body: "Lato", "Inter", ui-sans-serif, system-ui;
-  --ff-font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
-
-  /* Focus Ring */
-  --ff-ring: #89cff0;
-  --ff-ring-offset: #ffffff;
-
-  /* Component Tokens */
-  --ff-chip-bg: #f6f6f6;
-  --ff-chip-border: #e5e7eb;
-  --ff-panel: #ffffff;
-  --ff-bubble-user: #e6f3ff;
-
-  /* Animation Durations */
-  --ff-duration-fast: 150ms;
-  --ff-duration-normal: 250ms;
-  --ff-duration-slow: 350ms;
-
-  /* Z-Index Scale */
-  --ff-z-dropdown: 1000;
-  --ff-z-sticky: 1020;
-  --ff-z-fixed: 1030;
-  --ff-z-modal-backdrop: 1040;
-  --ff-z-modal: 1050;
-  --ff-z-popover: 1060;
-  --ff-z-tooltip: 1070;
-  --ff-z-toast: 1080;
-  --ff-z-nova: 9999;
+  --ff-brand-purple: #6E59A5;
+  --ff-brand-purple-rgb: 110 89 165;
+  
+  /* Existing shadcn/ui tokens */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
 }
 
-/* Dark mode tokens (future-ready) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ff-surface: #1a1a1a;
-    --ff-surface-light: #2a2a2a;
-    --ff-ink: #ffffff;
-    --ff-muted: #a1a1aa;
-    --ff-panel: #262626;
-    --ff-ring-offset: #000000;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  :root {
-    --ff-soft-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --ff-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --ff-duration-fast: 0ms;
-    --ff-duration-normal: 0ms;
-    --ff-duration-slow: 0ms;
-  }
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
 }
