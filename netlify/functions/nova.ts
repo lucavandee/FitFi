@@ -4,9 +4,26 @@ import { randomUUID } from 'crypto';
 type Mode = 'outfits'|'archetype'|'shop';
 type Msg = { role:'system'|'user'|'assistant'; content:string };
 
-const ORIGINS = ['https://www.fitfi.ai','https://fitfi.ai','http://localhost:5173'];
+const DEFAULT_ORIGINS = [
+  'https://www.fitfi.ai',
+  'https://fitfi.ai',
+  'http://localhost:3000', // Vite dev (huidige poort)
+  'http://localhost:5173', // fallback oude Vite poort
+  'http://localhost:8888', // Netlify dev proxy
+];
+const ORIGINS = (
+  process.env.NOVA_ALLOWED_ORIGINS
+    ? process.env.NOVA_ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+    : DEFAULT_ORIGINS
+);
 
-function okOrigin(o?:string){ return !!o && ORIGINS.includes(o); }
+function okOrigin(o?: string){
+  if (!o) return false;
+  // exact match
+  if (ORIGINS.includes(o)) return true;
+  // wildcard support: '*.netlify.app' -> match op suffix
+  return ORIGINS.some(allowed => allowed.startsWith('*.') && o.endsWith(allowed.slice(1)));
+}
 function routeModel(mode:Mode){
   if(mode==='outfits')   return process.env.NOVA_MODEL_OUTFITS   || 'gpt-4o';
   if(mode==='archetype') return process.env.NOVA_MODEL_ARCHETYPE || 'gpt-4o-mini';
@@ -146,7 +163,7 @@ export const handler: Handler = async (event) => {
           'Connection': 'keep-alive',
           'Access-Control-Allow-Origin': okOrigin(origin) ? origin! : ORIGINS[0],
         }
-      } as any);
+      'Access-Control-Allow-Headers': 'content-type, x-fitfi-tier, x-fitfi-uid, accept'
     }
 
     // JSON FALLBACK
