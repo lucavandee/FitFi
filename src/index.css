@@ -1,9 +1,8 @@
 @import "./styles/tokens.css";
+@import './styles/tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root {
-  /* Brand palette */
   --ff-midnight-900: #0d1b2a;
   --ff-midnight-700: #14243a;
   --ff-ink: #0f172a;

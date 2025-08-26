@@ -9,6 +9,7 @@ export default {
         "text-dark": "#0D1B2A", // Midnight Blue
         surface: "#F6F6F6", // Light Grey
         ink: "#0D1B2A", // Alias for text-dark
+        brandPurple: "#6E59A5",
         muted: "#6B7280", // Muted gray
         midnight: "#0D1B2A",
         turquoise: "#89CFF0",
@@ -120,6 +121,12 @@ export default {
       },
     },
   },
+  safelist: [
+    "text-brandPurple",
+    "border-brandPurple", 
+    "ring-brandPurple",
+    "focus:ring-brandPurple/40",
+  ],
   plugins: [],
   safelist: ["text-gradient", "text-gradient-soft"],
 };
