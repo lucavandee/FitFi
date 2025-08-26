@@ -51,13 +51,16 @@ if (!window.loadNovaAgent) {
         throw new ReferenceError('Nova agent module kon niet worden geladen');
       }
     }
+import { AuthProvider } from '@/providers/AuthProvider'
   };
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </HelmetProvider>
   </React.StrictMode>,
 );
