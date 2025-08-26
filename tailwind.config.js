@@ -68,4 +68,4 @@ module.exports = {
     'focus:ring-brandPurple/40',
   ],
   plugins: [require('tailwindcss-animate')],
-};
+    require('tailwindcss-animate')
