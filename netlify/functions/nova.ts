@@ -163,6 +163,8 @@ export const handler: Handler = async (event) => {
           'Connection': 'keep-alive',
           'Access-Control-Allow-Origin': okOrigin(origin) ? origin! : ORIGINS[0],
         }
+      }
+      )
       'Access-Control-Allow-Headers': 'content-type, x-fitfi-tier, x-fitfi-uid, accept'
     }
 
