@@ -17,17 +17,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true
-    // Start zonder geforceerde refresh; alleen huidige sessie lezen
     supabase.auth.getSession().then(({ data, error }) => {
       if (!mounted) return
-      if (error) {
-        // zachte handling: geen throw, user blijft null
-        console.warn('supabase.getSession error (ignored):', error?.message)
-      }
+      if (error) console.warn('supabase.getSession (ignored):', error?.message)
       setUser(data?.session?.user ?? null)
       setLoading(false)
     })
-
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
@@ -41,26 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signUp({ email, password })
     return { error }
   }
-
   const signIn: AuthCtx['signIn'] = async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return { error }
   }
+  const signOut: AuthCtx['signOut'] = async () => { await supabase.auth.signOut() }
 
-  const signOut: AuthCtx['signOut'] = async () => {
-    await supabase.auth.signOut()
-    // user wordt in onAuthStateChange weer op null gezet
-  }
-
-  return (
-    <Ctx.Provider value={{ user, loading, signUp, signIn, signOut }}>
-      {children}
-    </Ctx.Provider>
-  )
+  return <Ctx.Provider value={{ user, loading, signUp, signIn, signOut }}>{children}</Ctx.Provider>
 }
-
-export function useAuth() {
-  const ctx = useContext(Ctx)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
-}
+export function useAuth(){ const c = useContext(Ctx); if(!c) throw new Error('useAuth within AuthProvider'); return c }

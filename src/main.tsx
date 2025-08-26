@@ -5,11 +5,23 @@ import { AuthProvider } from '@/providers/AuthProvider'
 import App from './App'
 import './index.css'
 
+// Sanity routes zonder je bestaande router te hoeven wijzigen
+const path = window.location.pathname
+let Root: React.FC = App as any
+async function loadSanity(){
+  if (path.startsWith('/__auth-sanity')) {
+    const m = await import('@/sanity/AuthSanity'); Root = (m.default as any)
+  } else if (path.startsWith('/__nova-sanity')) {
+    const m = await import('@/sanity/NovaSanity'); Root = (m.default as any)
+  }
+}
+await loadSanity()
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HelmetProvider>
       <AuthProvider>
-        <App />
+        <Root />
       </AuthProvider>
     </HelmetProvider>
   </React.StrictMode>
