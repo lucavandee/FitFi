@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { useAuth } from '@/providers/AuthProvider'
+import { useState } from 'react';
+import { useAuth } from '@/providers/AuthProvider';
 
 export default function AuthSanity(){
-  const { user, loading, signUp, signIn, signOut } = useAuth()
-  const [email,setEmail]=useState(''); const [pw,setPw]=useState(''); const [msg,setMsg]=useState('')
+  const { user, loading, signUp, signIn, signOut, lastError } = useAuth();
+  const [email,setEmail]=useState(''); const [pw,setPw]=useState('');
+
   return (
     <div className="max-w-md mx-auto p-6 space-y-3">
       <h1 className="text-2xl font-bold">Auth Sanity</h1>
@@ -11,11 +12,11 @@ export default function AuthSanity(){
       <input className="w-full border p-2 rounded" placeholder="email" value={email} onChange={e=>setEmail(e.target.value)} />
       <input className="w-full border p-2 rounded" type="password" placeholder="password" value={pw} onChange={e=>setPw(e.target.value)} />
       <div className="flex gap-2">
-        <button className="cta-btn" onClick={async()=>{ const {error}=await signUp(email,pw); setMsg(error?error.message:'Check inbox to confirm'); }}>Register</button>
-        <button className="cta-btn" onClick={async()=>{ const {error}=await signIn(email,pw); setMsg(error?error.message:'Signed in'); }}>Login</button>
-        <button className="cta-btn" onClick={async()=>{ await signOut(); setMsg('Signed out') }}>Logout</button>
+        <button className="border rounded p-2" onClick={()=>signUp(email,pw).catch(()=>{})}>Register</button>
+        <button className="border rounded p-2" onClick={()=>signIn(email,pw).catch(()=>{})}>Login</button>
+        <button className="border rounded p-2" onClick={()=>signOut().catch(()=>{})}>Logout</button>
       </div>
-      {msg && <p className="text-sm">{msg}</p>}
+      {lastError && <p className="text-sm text-red-600">Last error: {lastError}</p>}
     </div>
-  )
+  );
 }
