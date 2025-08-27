@@ -13,7 +13,7 @@ const client: SupabaseClient = createClient(url, anon, {
   },
 })
 
-// Compat: werkt als object én functie (supabase() => client)
+// Compat: werkt als object én als functie (supabase() => client)
 type SupabaseCompat = SupabaseClient & (() => SupabaseClient)
 const supabaseCompat = Object.assign(() => client, client) as SupabaseCompat
 

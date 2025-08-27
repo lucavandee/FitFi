@@ -5,7 +5,6 @@ import { AuthProvider } from '@/providers/AuthProvider'
 import App from './App'
 import './index.css'
 
-// Sanity routes zonder je bestaande router te hoeven wijzigen
 const path = window.location.pathname
 let Root: React.FC = App as any
 async function loadSanity(){

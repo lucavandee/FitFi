@@ -7,7 +7,7 @@ type StreamOpts = {
   tier?: string
   uid?: string
   signal?: AbortSignal
-  baseUrl?: string // bij netlify dev: '', prod idem
+  baseUrl?: string
 }
 export async function* streamNova(opts: StreamOpts) {
   const { mode, messages, tier='visitor', uid='anon', signal, baseUrl='' } = opts

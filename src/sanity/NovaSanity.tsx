@@ -7,7 +7,6 @@ export default function NovaSanity(){
   const [lines,setLines]=useState<string[]>([])
   const [busy,setBusy]=useState(false)
   const abortRef = useRef<AbortController|null>(null)
-
   useEffect(()=>()=>{ abortRef.current?.abort() },[])
 
   async function send(){
