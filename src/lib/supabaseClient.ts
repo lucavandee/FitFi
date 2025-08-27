@@ -3,13 +3,12 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 const url  = import.meta.env.VITE_SUPABASE_URL as string;
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-// Helpt direct zien als env ontbreekt (ook in productie)
 if (!url || !anon) {
   console.error('Supabase env missing', { url: !!url, anon: !!anon });
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
 }
 
-// Eén singleton client
+// Singleton client
 const client: SupabaseClient = createClient(url, anon, {
   auth: {
     persistSession: true,
@@ -19,8 +18,12 @@ const client: SupabaseClient = createClient(url, anon, {
   },
 });
 
-// Backwards-compatible exports
-export const supabase = client;          // named export
-export const supabaseClient = client;    // named export
+// Hybride: functie die client retourneert + alle client props (auth, from, etc.)
+type SupabaseCompat = SupabaseClient & (() => SupabaseClient);
+const supabaseCompat = Object.assign(() => client, client) as SupabaseCompat;
+
+// Exports
+export const supabase = supabaseCompat;     // named (callable + object)
+export const supabaseClient = client;       // named (puur object)
 export type { SupabaseClient };
-export default client;                   // default export
+export default supabaseCompat;              // default (callable + object)
