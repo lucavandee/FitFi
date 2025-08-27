@@ -48,6 +48,8 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        }
+      }
       colors: { 
         brandPurple: '#6E59A5' 
       },
