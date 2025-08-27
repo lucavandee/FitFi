@@ -13,6 +13,7 @@ import {
   Trophy,
   CheckCircle,
   Lock,
+  Award,
 } from "lucide-react";
 import { allPerksSorted } from "@/config/foundersTiers";
 
@@ -69,7 +70,7 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
                   className="flex items-start gap-3 p-3 rounded-xl bg-white shadow-sm"
                 >
                   <span className="mt-0.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 text-green-700">
-                    <CheckCircle size={14} />
+                    <Award size={14} />
                   </span>
                   <div className="flex-1">
                     <div className="text-sm text-ink">{p.label}</div>
