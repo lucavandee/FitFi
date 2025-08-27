@@ -9,12 +9,12 @@ const path = window.location.pathname;
 let Root: React.FC = App as any;
 
 async function loadSanity(){
-  if (path.startsWith('/__auth-sanity')) {
+  if (path.startsWith('/__env-sanity')) {
+    const m = await import('@/sanity/EnvSanity'); Root = (m.default as any);
+  } else if (path.startsWith('/__auth-sanity')) {
     const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
   } else if (path.startsWith('/__nova-sanity')) {
     const m = await import('@/sanity/NovaSanity'); Root = (m.default as any);
-  } else if (path.startsWith('/__env-sanity')) {
-    const m = await import('@/sanity/EnvSanity'); Root = (m.default as any);
   }
 }
 await loadSanity();

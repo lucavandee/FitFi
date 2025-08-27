@@ -1,15 +1,17 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { ENV, logEnvOnce } from '@/env';
 
-const url  = import.meta.env.VITE_SUPABASE_URL as string;
-const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+logEnvOnce();
 
-if (!url || !anon) {
-  console.error('Supabase env missing', { url: !!url, anon: !!anon });
-  throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+if (!ENV.SUPABASE_URL || !ENV.SUPABASE_ANON_KEY) {
+  console.error('Supabase env missing', {
+    url: !!ENV.SUPABASE_URL,
+    anon: !!ENV.SUPABASE_ANON_KEY,
+  });
+  throw new Error('Missing Supabase env (URL or ANON KEY)');
 }
 
-// Singleton client
-const client: SupabaseClient = createClient(url, anon, {
+const client: SupabaseClient = createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -18,12 +20,11 @@ const client: SupabaseClient = createClient(url, anon, {
   },
 });
 
-// Hybride: functie die client retourneert + alle client props (auth, from, etc.)
+// Hybride export: functie die client retourneert + alle props
 type SupabaseCompat = SupabaseClient & (() => SupabaseClient);
-const supabaseCompat = Object.assign(() => client, client) as SupabaseCompat;
+const compat = Object.assign(() => client, client) as SupabaseCompat;
 
-// Exports
-export const supabase = supabaseCompat;     // named (callable + object)
-export const supabaseClient = client;       // named (puur object)
+export const supabase = compat;       // named (callable + object)
+export const supabaseClient = client; // named (object)
 export type { SupabaseClient };
-export default supabaseCompat;              // default (callable + object)
+export default compat;                // default (callable + object)
