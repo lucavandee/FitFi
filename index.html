@@ -5,30 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FitFi</title>
 
-    <!-- Tailwind runtime fallback: laadt CDN als de bundel/Preflight niet actief is -->
-    <script>
-      (function(){
-        try {
-          // 1) Test of een basis-utility werkt
-          var probe = document.createElement('div');
-          probe.className = 'hidden';
-          document.documentElement.appendChild(probe);
-          var active = getComputedStyle(probe).display === 'none';
-          probe.remove();
-
-          if (!active) {
-            // 2) Configureer onze merk-kleur vóór het laden van de CDN
-            var cfg = document.createElement('script');
-            cfg.innerHTML = "window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{brandPurple:'#6E59A5'}}},safelist:['text-brandPurple','border-brandPurple','ring-brandPurple','focus:ring-brandPurple/40']};";
-
-            // 3) Laad Tailwind CDN
-            var cdn = document.createElement('script');
-            cdn.src = 'https://cdn.tailwindcss.com';
-
-            document.head.appendChild(cfg);
-            document.head.appendChild(cdn);
-          }
-        } catch(_) {}
+    <!-- Tailwind fallback: alleen in DEV en pas NA module-CSS injectie -->
+    <script type="module">
+      const wait = () => new Promise(r => setTimeout(r, 0));
+      (async () => {
+        if (!import.meta.env.DEV) return;   // ✅ nooit in productie
+        // wacht 2 frames zodat Vite de CSS kan injecteren
+        await wait(); await wait();
+        const probe = document.createElement('div');
+        probe.className = 'hidden';
+        document.documentElement.appendChild(probe);
+        const active = getComputedStyle(probe).display === 'none';
+        probe.remove();
+        if (!active) {
+          const cfg = document.createElement('script');
+          cfg.innerHTML = `
+            window.tailwind = window.tailwind || {};
+            window.tailwind.config = {
+              theme: { extend: { colors: { brandPurple: '#6E59A5' } } },
+              safelist: [
+                'text-brandPurple','border-brandPurple','ring-brandPurple','focus:ring-brandPurple/40'
+              ]
+            };
+          `;
+          const cdn = document.createElement('script');
+          cdn.src = 'https://cdn.tailwindcss.com';
+          document.head.appendChild(cfg);
+          document.head.appendChild(cdn);
+        }
       })();
     </script>
   </head>
