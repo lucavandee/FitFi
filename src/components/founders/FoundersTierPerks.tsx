@@ -14,7 +14,6 @@ import {
   CheckCircle,
   Lock,
   Award,
-  Award,
 } from "lucide-react";
 import { allPerksSorted } from "@/config/foundersTiers";
 
