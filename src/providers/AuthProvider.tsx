@@ -1,12 +1,10 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { AUTH_REDIRECT } from '@/config/app';
-import { AUTH_REDIRECT } from '@/config/app';
 
 type AuthCtx = {
   user: import('@supabase/supabase-js').User | null;
   loading: boolean;
-  lastError: string | null;
   lastError: string | null;
   signUp: (email: string, password: string, data?: Record<string, any>) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
@@ -18,7 +16,6 @@ const Ctx = createContext<AuthCtx | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthCtx['user']>(null);
   const [loading, setLoading] = useState(true);
-  const [lastError, setLastError] = useState<string | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,58 +36,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string, data?: Record<string, any>) {
     setLastError(null);
-    setLastError(null);
 
-    // 1) Normale signup proberen (stuurt e-mail als confirm aan staat)
+    // 1) Probeer normale GoTrue signup (met mogelijke email confirm)
     const primary = await supabase().auth.signUp({
       email,
       password,
-      options: { 
-        data,
-        emailRedirectTo: AUTH_REDIRECT, // <= MOET in Supabase allowlist staan
-      },
+      options: { data, emailRedirectTo: AUTH_REDIRECT },
     });
 
-    if (!primary.error) return; // klaar
+    if (!primary.error) return; // ✅ klaar (mail verzonden of direct ingelogd indien confirm uit)
 
-    // 2) Als het een server/SMTP/500-achtig probleem is -> fallback via function
+    // 2) Als het een server-side probleem lijkt (500/SMTP/template), val terug op admin function
     const status = (primary as any)?.error?.status ?? 0;
-    const msg = (primary as any)?.error?.message || '';
-    const likelyServerSide = status >= 500 || /smtp|template|internal/i.test(msg);
+    const message = (primary as any)?.error?.message || '';
+    const serverish = status >= 500 || /smtp|template|internal/i.test(message);
 
-    if (!likelyServerSide) {
-      // client-fout (weak password, invalid email, already registered, etc.)
-      setLastError(`${(primary as any).error.code ?? 'signup_error'}: ${msg}`);
+    if (!serverish) {
+      // client-fout: zwak wachtwoord, ongeldig e-mail, bestaat al, etc.
+      setLastError(`${(primary as any).error.code ?? 'signup_error'}: ${message}`);
       throw primary.error;
     }
 
-    try {
-      const res = await fetch('/.netlify/functions/auth-signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, data }),
-      });
+    // 3) Fallback via Netlify Function (service-role), daarna direct inloggen
+    const res = await fetch('/.netlify/functions/auth-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, data }),
+    });
 
-      if (!res.ok) {
-        const body = await res.text();
-        setLastError(`admin_signup_failed: HTTP ${res.status} ${body}`);
-        throw new Error(`admin_signup_failed: ${res.status}`);
-      }
+    if (!res.ok) {
+      const body = await res.text();
+      setLastError(`admin_signup_failed: HTTP ${res.status} ${body}`);
+      throw new Error(`admin_signup_failed: ${res.status}`);
+    }
 
-      // 3) Direct inloggen nadat user is aangemaakt
-      const { error: signInErr } = await supabase().auth.signInWithPassword({ email, password });
-      if (signInErr) {
-        setLastError(`signin_after_admin_failed: ${signInErr.message}`);
-        throw signInErr;
-      }
-    } catch (e: any) {
-      setLastError(e?.message || 'signup_fallback_failed');
-      throw e;
+    const { error: signInErr } = await supabase().auth.signInWithPassword({ email, password });
+    if (signInErr) {
+      setLastError(`signin_after_admin_failed: ${signInErr.message}`);
+      throw signInErr;
     }
   }
 
   async function signIn(email: string, password: string) {
-    setLastError(null);
     setLastError(null);
     const { error } = await supabase().auth.signInWithPassword({ email, password });
     if (error) {
@@ -100,7 +87,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
-    setLastError(null);
     setLastError(null);
     const { error } = await supabase().auth.signOut();
     if (error) {
@@ -118,6 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const c = useContext(Ctx);
-  if (!c) throw new Error('useAuth within AuthProvider');
+  if (!c) throw new Error('useAuth must be used within AuthProvider');
   return c;
 }
