@@ -6,6 +6,20 @@ import { ErrorBoundary } from "../components/ErrorBoundary";
 import LoadingFallback from "../components/ui/LoadingFallback";
 import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
 
+// Dev helper guard - only load in development
+if (import.meta.env.DEV) {
+  (async () => {
+    try {
+      // only try to load dev inspector when available; ignore failures
+      // @ts-ignore
+      const mod = await import('./ConsoleInspector').catch(() => null);
+      if (mod && typeof mod.default === 'function') {
+        // optionally mount it or do nothing
+      }
+    } catch {}
+  })();
+}
+
 // Import components directly (not lazy loaded for better LCP)
 import Hero from "../components/landing/Hero";
 import SocialProof from "../components/landing/SocialProof";
