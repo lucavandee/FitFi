@@ -14,6 +14,7 @@ import {
   CheckCircle,
   Lock,
   Award,
+  Award,
 } from "lucide-react";
 import { allPerksSorted } from "@/config/foundersTiers";
 
@@ -31,6 +32,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
   Trophy,
 };
 
+  Award, // ✅ toegevoegd zodat "Unknown icon: Award" verdwijnt
 function getIcon(name?: string) {
   if (!name) return Sparkles;
   const Icon = ICONS[name];

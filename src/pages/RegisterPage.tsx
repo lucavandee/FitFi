@@ -112,7 +112,8 @@ const RegisterPage: React.FC = () => {
       const { error } = await sb.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
+        options: { data: { name: formData.name } }
+        // GEEN emailRedirectTo forceren → volg Supabase project settings
           data: {
             name: formData.name,
           },
@@ -120,6 +121,7 @@ const RegisterPage: React.FC = () => {
       });
 
       if (error) {
+        console.error('[signup] error:', { code: (error as any).code, message: error.message, status: (error as any).status });
         setErrors({ general: "Registratie mislukt. Probeer het opnieuw." });
       } else {
         // Track successful registration
@@ -129,9 +131,11 @@ const RegisterPage: React.FC = () => {
             event_label: "email_signup",
           });
         }
+        // Navigatie gebeurt via user-state (zoals voorheen)
         // Navigation will be handled by useEffect when user state updates
       }
     } catch (error: any) {
+      console.error('Registration error (catch):', err);
       console.error("Registration error:", error);
       setErrors({
         general: "Er ging iets mis bij de registratie. Probeer het opnieuw.",

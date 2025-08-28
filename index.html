@@ -5,61 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FitFi</title>
 
-    <!-- Fallback meta-tags voor Supabase (veilig: anon key is public).
-         Netlify gebruikt build-time VITE_ env; deze tags zijn enkel runtime fallback. -->
+    <!-- Runtime fallbacks voor Supabase; veilig (anon key is public) -->
     <meta name="supabase-url" content="https://wojexzgjyhijuxzperhq.supabase.co" />
-    <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NTM2NDAsImV4cCI6MjA2NjQyOTY0MH0.nLozOsn1drQPvRuSWRl_gLsh0_EvgtjidiUxpdUnhg0" />
+    <meta name="supabase-anon-key" content="REPLACE_WITH_YOUR_ANON_IF_NEEDED" />
 
     <script>
-      // Optioneel: globaal object als extra fallback (niet nodig als meta's al goed staan)
+      // Optionele runtime fallback
       window.__FITFI_ENV__ = window.__FITFI_ENV__ || {
         SUPABASE_URL: document.querySelector('meta[name="supabase-url"]')?.content || '',
         SUPABASE_ANON_KEY: document.querySelector('meta[name="supabase-anon-key"]')?.content || '',
       };
     </script>
 
-    <!-- Tailwind FAILSAFE (prod+dev): laad CDN ALLEEN als build-CSS niet actief is.
-         Onderdrukt de 'cdn.tailwindcss.com should not be used in production' warning. -->
-    <script>
-      (function(){
-        try {
-          // 1) Wacht kort zodat eventuele CSS-chunks kunnen laden
-          var defer = function(fn) { setTimeout(fn, 0); };
-          defer(function(){
-            // 2) Detecteer of een basis-utility werkt
-            var probe = document.createElement('div');
-            probe.className = 'hidden';
-            document.documentElement.appendChild(probe);
-            var active = getComputedStyle(probe).display === 'none';
-            probe.remove();
-
-            if (!active) {
-              // 3) Muf de specifieke console warning van de CDN
-              var _warn = console.warn;
-              console.warn = function(){
-                if (arguments[0] && typeof arguments[0]==='string' &&
-                    arguments[0].includes('cdn.tailwindcss.com should not be used in production')) {
-                  return; // slik die warning in
-                }
-                return _warn.apply(console, arguments);
-              };
-              // 4) Zet onze merk-kleur/safelist vóór het laden van CDN
-              var cfg = document.createElement('script');
-              cfg.innerHTML =
-                "window.tailwind=window.tailwind||{};window.tailwind.config={" +
-                " theme:{extend:{colors:{brandPurple:'#6E59A5'}}}," +
-                " safelist:['text-brandPurple','border-brandPurple','ring-brandPurple','focus:ring-brandPurple/40']" +
-                "};";
-              // 5) Laad Tailwind CDN
-              var cdn = document.createElement('script');
-              cdn.src = 'https://cdn.tailwindcss.com';
-              document.head.appendChild(cfg);
-              document.head.appendChild(cdn);
-            }
-          });
-        } catch(_) {}
-      })();
-    </script>
+    <!-- VERWIJDERD: Tailwind CDN failsafe. We vertrouwen op onze gebuilde CSS. -->
   </head>
   <body>
     <div id="root"></div>
