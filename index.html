@@ -1,25 +1,13 @@
-<!doctype html>
-<html lang="nl">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FitFi</title>
-
-    <!-- Runtime fallbacks voor Supabase; veilig (anon key is public) -->
-    <meta name="supabase-url" content="https://wojexzgjyhijuxzperhq.supabase.co" />
-    <meta name="supabase-anon-key" content="REPLACE_WITH_YOUR_ANON_IF_NEEDED" />
-
-    <script>
-      // Optionele runtime fallback
-      window.__FITFI_ENV__ = window.__FITFI_ENV__ || {
-        SUPABASE_URL: document.querySelector('meta[name="supabase-url"]')?.content || '',
-        SUPABASE_ANON_KEY: document.querySelector('meta[name="supabase-anon-key"]')?.content || '',
-      };
+    <title>Vite + React + TS</title>
   </head>
   <body>
     <div id="root"></div>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
