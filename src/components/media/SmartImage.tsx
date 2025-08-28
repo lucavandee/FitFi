@@ -92,7 +92,7 @@ export default function SmartImage({
       alt={alt}
       decoding="async"
       loading={eager ? "eager" : "lazy"}
-      /* @ts-ignore non-standard DOM attr */ fetchpriority={priority ? "high" : "auto"}
+      /* @ts-ignore */ fetchpriority={priority ? "high" : "auto"}
       onLoad={handleLoad}
       onError={handleError}
       onClick={onClick}

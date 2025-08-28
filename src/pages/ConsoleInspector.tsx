@@ -1,4 +1,1 @@
-export default function ConsoleInspector() {
-  // no-op dev helper stub
-  return null;
-}
+export default function ConsoleInspector(){ return null; }
