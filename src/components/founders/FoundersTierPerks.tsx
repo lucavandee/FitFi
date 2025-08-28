@@ -13,7 +13,6 @@ import {
   Trophy,
   CheckCircle,
   Lock,
-  Award,
 } from "lucide-react";
 import { allPerksSorted } from "@/config/foundersTiers";
 
@@ -31,18 +30,12 @@ const ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
   Trophy,
 };
 
-  Award, // ✅ toegevoegd zodat "Unknown icon: Award" verdwijnt
-function getIcon(name?: string) {
-  if (!name) return Sparkles;
-  const Icon = ICONS[name];
-  if (!Icon) {
-    if (typeof window !== "undefined") {
-      console.warn("[FoundersTierPerks] Unknown icon:", name);
-    }
-    return Sparkles;
-  }
+  Award,
+const getIcon = (name?: string) => {
+  const Icon =
+    (name ? ICONS[name as keyof typeof ICONS] : undefined) ?? Sparkles;
   return Icon;
-}
+};
 
 type Props = { referrals: number; className?: string };
 
