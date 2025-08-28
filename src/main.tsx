@@ -8,14 +8,17 @@ import './index.css';
 async function bootstrap() {
   // Laad sanity routes dynamisch (zonder top-level await)
 
-  // ✅ gebruik 'pathname' i.p.v. 'path' om conflicts te voorkomen
-  if (pathname.startsWith('/__auth-sanity')) {
+  // ✅ Veilig en namesafe: geen losse 'pathname' identifier meer
+  const currentPathname =
+    (typeof globalThis !== 'undefined' && globalThis.location && typeof globalThis.location.pathname === 'string')
+  // Sanity-routes dynamisch laden (zonder top-level await)
+  if (currentPathname.startsWith('/__auth-sanity')) {
     const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
-  } else if (pathname.startsWith('/__nova-sanity')) {
+  } else if (currentPathname.startsWith('/__nova-sanity')) {
     const m = await import('@/sanity/NovaSanity'); Root = (m.default as any);
-  } else if (pathname.startsWith('/__env-sanity')) {
+  } else if (currentPathname.startsWith('/__env-sanity')) {
     const m = await import('@/sanity/EnvSanity'); Root = (m.default as any);
-  } else if (pathname.startsWith('/__auth-diagnose')) {
+  } else if (currentPathname.startsWith('/__auth-diagnose')) {
     const m = await import('@/sanity/AuthDiagnose'); Root = (m.default as any);
   } else if (path.startsWith('/__auth-sanity')) {
     const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
