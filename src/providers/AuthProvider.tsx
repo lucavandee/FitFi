@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import supabase from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
+import { AUTH_REDIRECT } from '@/config/app';
 
 type AuthCtx = {
   user: import('@supabase/supabase-js').User | null;
@@ -19,12 +20,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase().auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setUser(data?.session?.user ?? null);
       setLoading(false);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
     return () => {
@@ -35,9 +36,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string, data?: Record<string, any>) {
     setLastError(null);
-    const { error } = await supabase.auth.signUp({ email, password, options: { data } });
+    const { error } = await supabase().auth.signUp({
+      email,
+      password,
+      options: {
+        data,
+        emailRedirectTo: AUTH_REDIRECT, // <= MOET in Supabase allowlist staan
+      },
+    });
     if (error) {
-      console.error('Supabase signUp error', { code: (error as any)?.code, message: error.message, status: (error as any)?.status });
+      console.error('Supabase signUp error', {
+        code: (error as any)?.code,
+        status: (error as any)?.status,
+        message: error.message,
+      });
       setLastError(`${(error as any)?.code ?? 'signup_error'}: ${error.message}`);
       throw error;
     }
@@ -45,9 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string) {
     setLastError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase().auth.signInWithPassword({ email, password });
     if (error) {
-      console.error('Supabase signIn error', { code: (error as any)?.code, message: error.message, status: (error as any)?.status });
+      console.error('Supabase signIn error', error);
       setLastError(`${(error as any)?.code ?? 'signin_error'}: ${error.message}`);
       throw error;
     }
@@ -55,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signOut() {
     setLastError(null);
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase().auth.signOut();
     if (error) {
       console.error('Supabase signOut error', error);
       setLastError(error.message);
