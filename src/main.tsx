@@ -10,6 +10,7 @@ async function bootstrap() {
 
   // Altijd een string; fallback naar '/'
   const currentPathname: string = String(
+  )
   // Sanity-routes dynamisch laden (zonder top-level await en zonder extra helpers)
   try {
     if (currentPathname.slice(0, '/__auth-sanity'.length) === '/__auth-sanity') {
