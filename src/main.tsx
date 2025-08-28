@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from '@/providers/AuthProvider';
 import App from './App';
 import './index.css';
+import { StrictMode } from 'react'
 
 function getPathname(): string {
   try {

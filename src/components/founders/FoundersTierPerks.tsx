@@ -52,15 +52,10 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
           const Icon = getIcon(p.icon);
           return (
             <li key={p.id} className="flex items-start gap-3">
-              <Icon
-                size={20}
-                className={p.unlocked ? "text-green-600" : "text-gray-400"}
-              />
+              <Icon size={20} className={p.unlocked ? "text-green-600" : "text-gray-400"} />
               <div>
                 <div className="font-medium">{p.title}</div>
-                <div className="text-sm text-muted-foreground">
-                  {p.description}
-                </div>
+                <div className="text-sm text-muted-foreground">{p.description}</div>
               </div>
             </li>
           );
