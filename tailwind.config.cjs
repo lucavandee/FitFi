@@ -5,8 +5,11 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brandPurple: '#6E59A5',
+      },
+    },
   },
-  // optioneel; gebruikt door veel shadcn/ui componenten
   plugins: [require('tailwindcss-animate')],
 };
