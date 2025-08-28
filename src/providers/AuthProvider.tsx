@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const primary = await supabase().auth.signUp({
       email,
       password,
-      options: { data, emailRedirectTo: AUTH_REDIRECT },
+      options: { 
         data,
         emailRedirectTo: AUTH_REDIRECT, // <= MOET in Supabase allowlist staan
       },
@@ -87,14 +87,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLastError(e?.message || 'signup_fallback_failed');
       throw e;
     }
-      console.error('Supabase signUp error', {
-        code: (error as any)?.code,
-        status: (error as any)?.status,
-        message: error.message,
-      });
-      setLastError(`${(error as any)?.code ?? 'signup_error'}: ${error.message}`);
-      throw error;
-    }
   }
 
   async function signIn(email: string, password: string) {
@@ -105,10 +97,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLastError(`${(error as any)?.code ?? 'signin_error'}: ${error.message}`);
       throw error;
     }
-      console.error('Supabase signIn error', error);
-      setLastError(`${(error as any)?.code ?? 'signin_error'}: ${error.message}`);
-      throw error;
-    }
   }
 
   async function signOut() {
@@ -116,10 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLastError(null);
     const { error } = await supabase().auth.signOut();
     if (error) {
-      setLastError(error.message);
-      throw error;
-    }
-      console.error('Supabase signOut error', error);
       setLastError(error.message);
       throw error;
     }
