@@ -1,3 +1,8 @@
+/* Tailwind v4 entry (moet als eerste regel staan) */
+@import "tailwindcss";
+
+/* jouw bestaande globale styles blijven eronder staan … */
+
 @import './styles/tokens.css';
 @tailwind base;
 @tailwind components;
