@@ -112,12 +112,10 @@ const RegisterPage: React.FC = () => {
       const { error } = await sb.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: { data: { name: formData.name } }
+        options: { 
+          data: { name: formData.name }
+        }
         // GEEN emailRedirectTo forceren → volg Supabase project settings
-          data: {
-            name: formData.name,
-          },
-        },
       });
 
       if (error) {
@@ -135,7 +133,7 @@ const RegisterPage: React.FC = () => {
         // Navigation will be handled by useEffect when user state updates
       }
     } catch (error: any) {
-      console.error('Registration error (catch):', err);
+      console.error('Registration error (catch):', error);
       console.error("Registration error:", error);
       setErrors({
         general: "Er ging iets mis bij de registratie. Probeer het opnieuw.",
