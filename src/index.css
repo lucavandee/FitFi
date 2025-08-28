@@ -1,69 +1,38 @@
-/* Tailwind v4 entry + content globs (zéér belangrijk) */
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Vertel Tailwind waar classnames voorkomen */
-@source "../index.html";
-@source "./**/*.{ts,tsx,js,jsx,html}";
-
-/* jouw bestaande globale CSS mag hieronder blijven staan */
-
+/* CSS Custom Properties voor theming */
 :root {
   --color-primary: #0D1B2A;
   --color-secondary: #89CFF0;
   --color-accent: #F6F6F6;
-  --color-text: #333333;
+  --color-text: #0D1B2A;
   --color-background: #FFFFFF;
   
-  --font-heading: 'Montserrat', sans-serif;
-  --font-body: 'Lato', sans-serif;
+  /* Font families */
+  --font-heading: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
-  --border-radius: 8px;
+  /* Spacing scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  
+  /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: var(--font-body);
-  line-height: 1.6;
-  color: var(--color-text);
-  background-color: var(--color-background);
-  margin: 0;
-  padding: 0;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0 0 1rem 0;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Focus styles */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 /* Animation keyframes */
@@ -74,12 +43,12 @@ h1, h2, h3, h4, h5, h6 {
 
 @keyframes slideUp {
   from { 
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0; 
+    transform: translateY(20px); 
   }
   to { 
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1; 
+    transform: translateY(0); 
   }
 }
 
@@ -95,7 +64,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Utility classes */
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .animate-slide-up {
@@ -110,9 +79,94 @@ h1, h2, h3, h4, h5, h6 {
   animation: spin 1s linear infinite;
 }
 
-.gradient-text {
+/* Typography utilities */
+.text-gradient {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Layout utilities */
+.container-custom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.section-padding {
+  padding: var(--spacing-2xl) 0;
+}
+
+/* Component utilities */
+.card-shadow {
+  box-shadow: var(--shadow-md);
+}
+
+.card-shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.button-primary {
+  background-color: var(--color-primary);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.button-primary:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 90%, black);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.button-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.button-secondary:hover {
+  background-color: color-mix(in srgb, var(--color-secondary) 90%, white);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Focus states */
+.focus-ring {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .container-custom {
+    padding: 0 0.75rem;
+  }
+  
+  .section-padding {
+    padding: var(--spacing-xl) 0;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #FFFFFF;
+    --color-background: #0D1B2A;
+    --color-accent: #1A2332;
+  }
 }
