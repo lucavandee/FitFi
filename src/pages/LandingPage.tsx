@@ -10,13 +10,15 @@ import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote"
 if (import.meta.env.DEV) {
   (async () => {
     try {
-      // only try to load dev inspector when available; ignore failures
-      // @ts-ignore
-      const mod = await import('./ConsoleInspector').catch(() => null);
+      const p = './ConsoleInspector'; // keep literal separate
+      // @vite-ignore prevents static analysis; catch avoids runtime crash
+      const mod = await import(/* @vite-ignore */ p).catch(() => null);
       if (mod && typeof mod.default === 'function') {
-        // optionally mount it or do nothing
+        // optional: mod.default();
       }
-    } catch {}
+    } catch {
+      // ignore dev helper failures entirely
+    }
   })();
 }
 
