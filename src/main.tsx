@@ -7,13 +7,15 @@ import './index.css';
 
 async function bootstrap() {
   // Laad sanity routes dynamisch (zonder top-level await)
-  if (path.startsWith('/__auth-sanity')) {
+
+  // ✅ gebruik 'pathname' i.p.v. 'path' om conflicts te voorkomen
+  if (pathname.startsWith('/__auth-sanity')) {
     const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
-  } else if (path.startsWith('/__nova-sanity')) {
+  } else if (pathname.startsWith('/__nova-sanity')) {
     const m = await import('@/sanity/NovaSanity'); Root = (m.default as any);
-  } else if (path.startsWith('/__env-sanity')) {
+  } else if (pathname.startsWith('/__env-sanity')) {
     const m = await import('@/sanity/EnvSanity'); Root = (m.default as any);
-  } else if (path.startsWith('/__auth-diagnose')) {
+  } else if (pathname.startsWith('/__auth-diagnose')) {
     const m = await import('@/sanity/AuthDiagnose'); Root = (m.default as any);
   } else if (path.startsWith('/__auth-sanity')) {
     const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
