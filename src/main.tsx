@@ -5,6 +5,9 @@ import './index.css';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from '@/providers/AuthProvider';
 import App from './App';
+/* Zorg dat Tailwind binnenkomt */
+import './index.css';
+
 import { StrictMode } from 'react'
 
 function getPathname(): string {

@@ -2,16 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Brand tokens */
-:root {
-  --ff-brand-purple: #6E59A5;
-}
+/* Tokens */
+:root { --ff-brand-purple: #6E59A5; }
 
-/* Vervang gebroken @apply op custom classes door ruw CSS (anders faalt Tailwind) */
-.cta-btn {
-  /* was: @apply inline-flex ... border-brandPurple text-brandPurple ... */
+/* Vervang @apply op custom class door ruw CSS (anders breekt Tailwind) */
+.cta-btn{
   @apply inline-flex items-center justify-center px-6 py-4 font-semibold rounded-2xl border-2;
-  background-color: #fff;
-  color: var(--ff-brand-purple);
-  border-color: var(--ff-brand-purple);
+  background-color:#fff;
+  color:var(--ff-brand-purple);
+  border-color:var(--ff-brand-purple);
 }
