@@ -22,6 +22,7 @@ async function loadSanity(){
     const m = await import('@/sanity/EnvSanity'); Root = (m.default as any);
   } else if (path.startsWith('/__auth-sanity')) {
     const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
+  }
 }
 await loadSanity();
 
