@@ -55,7 +55,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const isMember = status === "authenticated" && !!user?.id;
 
   useEffect(() => {
-    if (!sb) {
+    const sb = supabase;   // ✅ client object
       setStatus("unauthenticated");
       return;
     }
