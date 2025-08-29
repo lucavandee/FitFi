@@ -36,6 +36,11 @@ const END = "<<<END_FITFI_JSON>>>";
 const START_LEN = START.length; // 16
 const TAIL_HOLD = Math.max(START_LEN - 1, 8); // houd altijd wat staart vast om split markers te vangen
 
+function checkQuotaLimit(tier: string, uid: string): boolean {
+  // Placeholder implementation
+  return true;
+}
+
 export async function* streamChat({
   mode,
   messages,
