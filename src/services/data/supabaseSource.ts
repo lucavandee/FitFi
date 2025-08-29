@@ -1,5 +1,5 @@
 // src/services/data/supabaseSource.ts
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import { withTimeout } from "@/lib/net/withTimeout";
 import { withRetry } from "@/lib/net/withRetry";
 import { DATA_CONFIG } from "@/config/dataConfig";
@@ -30,7 +30,7 @@ const BASE_DELAY = Number(import.meta.env.VITE_SUPABASE_RETRY_BASE_MS || 400);
  * Get Supabase client from singleton
  */
 function getClient() {
-  const client = supabase();
+  const client = supabase;
   if (!client) {
     console.warn(
       "[SupabaseSource] Client not available - check environment variables",
@@ -96,7 +96,7 @@ async function executeTribesOperation<T>(
   operationName: string,
 ): Promise<T> {
   const runner = async () => {
-    const sb = supabase();
+    const sb = supabase;
     if (!sb) throw new Error("Supabase client not available");
     return await operation();
   };

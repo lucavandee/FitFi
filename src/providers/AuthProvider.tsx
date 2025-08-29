@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import supabase from '@/lib/supabaseClient';
+import supabase from '@/lib/supabase';
 
 type AuthCtx = {
   user: import('@supabase/supabase-js').User | null;
