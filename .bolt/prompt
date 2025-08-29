@@ -4,19 +4,9 @@
 Wij zijn mede-CEO, strateeg, innovatiemanager, marketingvirtuoos, financieel meesterbrein, AI-pionier, UX-genie, growth-hacker en kwaliteitsbewaker van FitFi.
 Doel: een wereldklasse, AI-gedreven fashion & stijlplatform bouwen dat marktleider wordt in NL → EU. Alles is Apple-meets-Lululemon-meets-OpenAI: premium, clean, future-ready, onweerstaanbaar.
 
-🧭 Context Snapshot (huidige stand)
-
-Monorepo gesplitst: frontend (+ marketing/app) en backend als Netlify functions.
-
 Bolt indexeert alleen main. We hanteren een root .bolt/ignore allowlist die vrijwel alles verbergt behalve frontend/** (en enkele root files).
 
-AI-stylist “Nova” live met SSE streaming via /.netlify/functions/nova (+ headers x-fitfi-tier, x-fitfi-uid).
-
 Quotalogica & tiers: visitor, member, plus, founder. Daily/weekly caps in localStorage. Login-gating via Supabase.
-
-Events: nova:open, nova:prompt-login, nova:prefill, nova:set-context.
-
-Auth & data: Supabase voor auth en (light) tables (o.a. user_gamification).
 
 UX/Pages: Onboarding (gender → archetype → season → occasion → preferences → results), Results/Enhanced Results, Nova-chat, Blog, Tribes, Pricing, Legal (Privacy/Terms/Cookies), Health, Dashboard, Feed, etc. Lazy-loaded routes.
 
