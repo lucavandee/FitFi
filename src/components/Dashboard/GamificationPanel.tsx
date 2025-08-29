@@ -47,3 +47,6 @@ export const GamificationPanel: React.FC<{
     </div>
   );
 };
+
+  )
+}

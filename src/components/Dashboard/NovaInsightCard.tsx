@@ -19,3 +19,5 @@ export const NovaInsightCard: React.FC<{
         <h2 className="text-xl font-semibold text-midnight">Nova Insights</h2>
   );
 };
+
+}

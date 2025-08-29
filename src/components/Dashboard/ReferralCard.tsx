@@ -86,3 +86,5 @@ export const ReferralCard: React.FC<{
     </div>
   );
 };
+
+}
