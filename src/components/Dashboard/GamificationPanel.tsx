@@ -28,7 +28,7 @@ export const GamificationPanel: React.FC<{
   const nextLv = Math.max(100, Math.ceil((level + 1) * 100)); // simple curve
   const pct = Math.min(100, Math.round(((xp % nextLv) / nextLv) * 100));
   return (
-    <div className="bg-white rounded-2xl p-4 shadow flex items-center justify-between">
+    <div className="ff-card p-6">
       <div>
         <div className="text-sm text-gray-500">Jouw level</div>
         <div className="text-2xl font-bold">Lv {level}</div>

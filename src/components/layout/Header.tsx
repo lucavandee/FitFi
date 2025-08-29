@@ -98,7 +98,7 @@ function HeaderInner() {
             {/* Brand */}
             <Link
               to="/"
-              className="inline-flex items-center gap-2 group"
+              className="btn btn-primary"
               aria-label="FitFi homepage"
             >
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#89CFF0] to-blue-500 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">

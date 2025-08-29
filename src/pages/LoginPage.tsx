@@ -243,13 +243,13 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={pending}
-                  className="flex-1 rounded-lg bg-black text-white py-2 disabled:opacity-60"
+                  className="flex-1 btn btn-primary disabled:opacity-60"
                 >
                   {pending ? "Bezig..." : "Stuur reset-link"}
                 </button>
                 <button
                   type="button"
-                  className="flex-1 rounded-lg border py-2 hover:bg-gray-50"
+                  className="flex-1 btn btn-ghost"
                   onClick={() => setMode("login")}
                 >
                   Terug

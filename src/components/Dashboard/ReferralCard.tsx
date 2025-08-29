@@ -62,7 +62,7 @@ export const ReferralCard: React.FC<{
   }
 
   return (
-    <div className="card p-5 sm:p-6">
+    <div className="ff-card p-6">
       {/* header */}
       <div className="flex items-center justify-between gap-4">
         <div>
