@@ -6,7 +6,7 @@ import { generateMockOutfits } from "@/utils/mockOutfits";
 import { rankOutfits, ensureDiversity } from "@/engine/ranking";
 import { fetchProducts } from "@/services/data/dataService";
 import { generateMockProducts } from "../utils/mockDataUtils";
-import { getSupabase } from "@/lib/supabase";
+import supabase from "@/lib/supabase";
 import { loadLocalJSON } from "@/utils/loadLocalJSON";
 
 /**
@@ -17,7 +17,7 @@ import { loadLocalJSON } from "@/utils/loadLocalJSON";
 // Supabase source functions
 const supabaseSource = {
   async getOutfits(query?: any): Promise<Outfit[]> {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) throw new Error("Supabase not available");
 
     let supabaseQuery = sb.from("outfits").select("*");
@@ -36,7 +36,7 @@ const supabaseSource = {
   },
 
   async getProducts(query?: any): Promise<Product[]> {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) throw new Error("Supabase not available");
 
     let supabaseQuery = sb.from("products").select("*");
@@ -71,7 +71,7 @@ const supabaseSource = {
   },
 
   async getTribes(query?: any): Promise<any[]> {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) throw new Error("Supabase not available");
 
     let supabaseQuery = sb.from("tribes").select("*");
@@ -93,7 +93,7 @@ const supabaseSource = {
   },
 
   async getDashboardStats(userId: string): Promise<any> {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) throw new Error("Supabase not available");
 
     const { data, error } = await sb
@@ -375,7 +375,7 @@ export async function getArchetypes(): Promise<any[]> {
   // Try Supabase if enabled and healthy
   if (shouldUseSupabase() && isHealthy()) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         const { data, error } = await sb.from("style_archetypes").select("*");
         if (!error && data && data.length > 0) {
@@ -439,7 +439,7 @@ export async function getStyleProfile(userId: string): Promise<any> {
   // Try Supabase if enabled and healthy
   if (shouldUseSupabase() && isHealthy()) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         const { data, error } = await sb
           .from("style_preferences")
