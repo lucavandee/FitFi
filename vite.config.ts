@@ -9,6 +9,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    build: { 
+      sourcemap: true 
+    },
     base: "/",
     resolve: {
       dedupe: ["react", "react-dom", "react-helmet-async"],
