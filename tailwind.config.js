@@ -76,6 +76,7 @@ export default {
           900: '#134e4a',
           950: '#042f2e',
         },
+        border: 'hsl(var(--border))',
         'fitfi-midnight': '#0D1B2A',
         'fitfi-turquoise': '#89CFF0',
       },
