@@ -9,10 +9,10 @@ export type ReferralRow = {
 };
 
 export async function fetchReferralsByInviter(userId: string): Promise<ReferralRow[]> {
-  const sb = supabase; // ✅ client object — niet aanroepen
+  const sb = supabase; // object — not a function
   const { data, error } = await sb
     .from("referrals")
-    .select("id,inviter_id,status,created_at")
+    .select("id, inviter_id, status, created_at")
     .eq("inviter_id", userId)
     .order("created_at", { ascending: false });
 
