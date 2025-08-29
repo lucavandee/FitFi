@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabase";
 import { DATA_CONFIG } from "@/config/dataConfig";
 import { fetchReferralsByInviter } from "./referralsService";
 import type {
