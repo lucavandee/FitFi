@@ -47,19 +47,23 @@ export const NotificationsMini: React.FC<{
 
   // Content
   return (
-          <div key={notif.id} className="flex items-start gap-3 p-3 bg-light-gray rounded-lg hover:bg-midnight/5 transition-colors cursor-pointer">
+    <div className="bg-white rounded-2xl p-4 shadow">
       <div className="text-sm font-semibold mb-2">Notificaties</div>
       <ul className="space-y-3">
         {list.slice(0, 4).map((n) => (
-          <h2 className="text-xl font-semibold text-midnight">Notificaties</h2>
-            <div className="font-medium">{n.title}</div>
-        <div className="w-2 h-2 bg-turquoise rounded-full animate-pulse"></div>
-              <div className="text-sm text-midnight">{notif.message}</div>
-              <div className="text-xs text-midnight/50 mt-1">{notif.time} geleden</div>
-            )}
-      <button className="btn btn-ghost w-full mt-4">
+          <li key={n.id} className="flex items-start gap-3 p-3 bg-light-gray rounded-lg hover:bg-midnight/5 transition-colors cursor-pointer">
+            <div className="w-2 h-2 bg-turquoise rounded-full animate-pulse"></div>
+            <div>
+              <div className="font-medium">{n.title}</div>
+              <div className="text-sm text-midnight">{n.body}</div>
+              <div className="text-xs text-midnight/50 mt-1">{n.createdAt} geleden</div>
+            </div>
+          </li>
         ))}
       </ul>
+      <button className="btn btn-ghost w-full mt-4">
+        Alle notificaties bekijken
+      </button>
     </div>
   );
 };
