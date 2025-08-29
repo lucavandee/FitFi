@@ -1,30 +1,18 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { ENV, logEnvOnce } from '@/env';
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-logEnvOnce();
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 
-if (!ENV.SUPABASE_URL || !ENV.SUPABASE_ANON_KEY) {
-  console.error('Supabase env missing', {
-    url: !!ENV.SUPABASE_URL,
-    anon: !!ENV.SUPABASE_ANON_KEY,
-  });
-  throw new Error('Missing Supabase env (URL or ANON KEY)');
+// Create a single shared client instance
+const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+// Default export (common pattern across the app)
+export default supabase;
+
+// Named helper used by services (e.g., dataService.ts)
+export function getSupabase(): SupabaseClient {
+  return supabase;
 }
 
-const client: SupabaseClient = createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storageKey: 'fitfi.auth',
-  },
-});
-
-// Hybride export: functie die client retourneert + alle props
-type SupabaseCompat = SupabaseClient & (() => SupabaseClient);
-const compat = Object.assign(() => client, client) as SupabaseCompat;
-
-export const supabase = compat;       // named (callable + object)
-export const supabaseClient = client; // named (object)
+// (optional) re-export type if you need it elsewhere
 export type { SupabaseClient };
-export default compat;                // default (callable + object)
