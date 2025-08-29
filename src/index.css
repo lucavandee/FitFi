@@ -1,12 +1,46 @@
-@import './styles/tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Sanity: simpele knopstijl die Tailwind utilities gebruikt */
-.cta-btn {
-  @apply inline-flex items-center justify-center px-6 py-3 font-semibold
-         rounded-2xl border-2 border-brandPurple
-         bg-white text-brandPurple hover:bg-purple-50
-         focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
+/* CSS vars – gebruikt door components voor consistente theming */
+:root {
+  --ff-bg: #ffffff;
+  --ff-ink: #0D1B2A;
+  --ff-ink-soft: #1A2B3A;
+  --ff-muted: #6B7280;
+  --ff-panel: #ffffff;
+  --ff-accent: #89CFF0;
+  --ff-surface: #F6F6F6;
 }
+
+/* Basis */
+html, body, #root { height: 100%; }
+body {
+  @apply text-[15px] text-[color:var(--ff-ink)] bg-[color:var(--ff-bg)];
+  font-family: theme(fontFamily.sans);
+}
+
+/* Headings */
+h1,h2,h3,h4 { font-family: theme(fontFamily.heading); }
+
+/* Cards */
+.ff-card {
+  @apply bg-white rounded-2xl shadow-card border border-black/5;
+}
+
+/* Gradient text utilities */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(90deg, #0D1B2A 0%, #89CFF0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* Buttons */
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-xl transition;
+}
+.btn-primary { @apply bg-black text-white hover:opacity-90; }
+.btn-ghost   { @apply border hover:bg-gray-50; }
