@@ -7,15 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        brandPurple: '#6E59A5',
-      },
+        primary: {
+          50: '#f0f9ff',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+        },
+        secondary: {
+          50: '#f8fafc',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+        }
+      }
     },
   },
-  safelist: [
-    'text-brandPurple',
-    'border-brandPurple',
-    'ring-brandPurple',
-    'focus:ring-brandPurple/40',
-  ],
   plugins: [],
-};
+}
