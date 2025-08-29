@@ -1,38 +1,31 @@
-# FitFi — Bolt context slimming (root allow-list)
-
-# 0) Verberg standaard alles in de repo
+# Verberg standaard alles
 /*
 
-# 1) Laat deze paden/bestanden WEL zien
+# Toon Bolt wat we nodig hebben
 !.bolt/**
 !README.md
 !netlify.toml
-
-# Functions (Netlify gebruikt 'netlify-functions' in jullie setup)
-!netlify-functions/**
-# (Als je ook een '.netlify/functions' map zou hebben:)
-!.netlify/functions/**
-!.netlify/functions/**
-
-# 2) Frontend: alleen code + minimale config/public zichtbaar
-!frontend/
-frontend/**                 # eerst alles onder frontend weer dicht…
-!frontend/src/**           # …en vervolgens alleen src/ openen
-!frontend/index.html
-!frontend/package.json
-!frontend/tsconfig*.json
-!frontend/vite.config.*
-!frontend/.env.example
-
-# 3) Public: super dun (alleen 2–3 kleintjes)
-!frontend/public/
-frontend/public/**          # alles in public dicht…
-!frontend/public/favicon.ico
-!frontend/public/site.webmanifest
-!frontend/public/robots.txt
-
-# 4) (Optioneel) root package files inzien voor context
 !package.json
 !package-lock.json
-!pnpm-lock.yaml
-!yarn.lock
+!vite.config.ts
+!tailwind.config.js
+!postcss.config.cjs
+!tsconfig.json
+!tsconfig.app.json
+!tsconfig.node.json
+!index.html
+
+# Hoofdapp + statics
+!src/**
+!public/**
+
+# Netlify functions
+!netlify/**
+!netlify/functions/**
+
+# (optioneel) oude frontend zichtbaar houden
+!frontend/**
+
+# Artefacts dicht
+dist/**
+node_modules/**
