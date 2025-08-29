@@ -1,8 +1,8 @@
-import { supabase } from "../lib/supabaseClient";
+import supabase from "../lib/supabaseClient";
 import { QuizAnswers, QuizSubmission } from "../types/quiz";
 
 // Get singleton client
-const sb = supabase();
+const sb = supabase;
 
 export interface SupabaseUser {
   id: string;
