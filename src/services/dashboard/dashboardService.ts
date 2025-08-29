@@ -66,7 +66,7 @@ const T = {
 export async function fetchUserStats(
   userId: string,
 ): Promise<UserStats | null> {
-  const sb = supabase();
+  const sb = supabase;
   if (!sb) return readLocalStats(userId);
   const { data, error } = await sb
     .from(T.stats)
