@@ -1,32 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { HelmetProvider } from 'react-helmet-async';
-import { AuthProvider } from '@/providers/AuthProvider';
-import App from './App';
-import './index.css';
-
-const path = window.location.pathname;
-let Root: React.FC = App as any;
-
-async function loadSanity(){
-  if (path.startsWith('/__env-sanity')) {
-    const m = await import('@/sanity/EnvSanity'); Root = (m.default as any);
-  } else if (path.startsWith('/__auth-sanity')) {
-    const m = await import('@/sanity/AuthSanity'); Root = (m.default as any);
-  } else if (path.startsWith('/__nova-sanity')) {
-    const m = await import('@/sanity/NovaSanity'); Root = (m.default as any);
-  }
-}
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import CrashGate from "@/components/system/CrashGate";
-await loadSanity();
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <HelmetProvider>
-      <AuthProvider>
-        <Root />
-      </AuthProvider>
     <ErrorBoundary>
       <CrashGate>
         <App />
@@ -34,4 +14,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </React.StrictMode>
 );
-)
