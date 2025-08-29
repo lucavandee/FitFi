@@ -73,4 +73,7 @@ export default defineConfig(({ mode }) => {
       host: true,
     },
   };
+  build: {
+    sourcemap: true
+  }
 });
