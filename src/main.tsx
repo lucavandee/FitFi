@@ -17,6 +17,8 @@ async function loadSanity(){
     const m = await import('@/sanity/NovaSanity'); Root = (m.default as any);
   }
 }
+import ErrorBoundary from "@/components/ErrorBoundary";
+import CrashGate from "@/components/system/CrashGate";
 await loadSanity();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -25,6 +27,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <Root />
       </AuthProvider>
-    </HelmetProvider>
+    <ErrorBoundary>
+      <CrashGate>
+        <App />
+      </CrashGate>
+    </ErrorBoundary>
   </React.StrictMode>
 );
