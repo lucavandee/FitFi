@@ -11,7 +11,7 @@ export const ChallengeSnapshot: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-4 shadow animate-pulse">
+      <div className="ff-card animate-pulse">
         <div className="h-4 bg-gray-200 rounded w-32 mb-3"></div>
         <div className="h-20 bg-gray-200 rounded-xl mb-3"></div>
         <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
@@ -22,18 +22,18 @@ export const ChallengeSnapshot: React.FC = () => {
 
   if (!best?.tribeId || !best?.challengeId) {
     return (
-      <div className="bg-white rounded-2xl p-4 shadow">
-        <div className="font-semibold text-gray-900 mb-3">
+      <div className="ff-card">
+        <div className="font-semibold text-midnight mb-3">
           Challenges Snapshot
         </div>
         <div className="text-center py-6">
-          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 bg-light-gray rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🎯</span>
           </div>
-          <h4 className="font-medium text-gray-900 mb-2">
+          <h4 className="font-medium text-midnight mb-2">
             Geen open challenges
           </h4>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-midnight/60 mb-4">
             Ontdek tribes en vind jouw perfecte challenge.
           </p>
           <a
@@ -52,12 +52,12 @@ export const ChallengeSnapshot: React.FC = () => {
 
   if (!ch) {
     return (
-      <div className="bg-white rounded-2xl p-4 shadow">
-        <div className="font-semibold text-gray-900 mb-3">
+      <div className="ff-card">
+        <div className="font-semibold text-midnight mb-3">
           Challenges Snapshot
         </div>
         <div className="text-center py-4">
-          <p className="text-sm text-gray-600 mb-3">
+          <p className="text-sm text-midnight/60 mb-3">
             Challenge wordt geladen...
           </p>
           <a
@@ -88,22 +88,22 @@ export const ChallengeSnapshot: React.FC = () => {
       )}
       <div className="p-4">
         <div className="flex items-center space-x-2 mb-2">
-          <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+          <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
             {(ch.status ?? "open").toUpperCase()}
           </span>
           {ch.rewardPoints && (
-            <span className="px-2 py-1 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+            <span className="px-3 py-1 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
               +{ch.rewardPoints} XP
             </span>
           )}
         </div>
 
-        <h4 className="font-semibold text-gray-900 mb-2 leading-tight">
+        <h4 className="font-semibold text-midnight mb-2 leading-tight">
           {ch.title}
         </h4>
 
         {ch.description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          <p className="text-sm text-midnight/60 mb-3 line-clamp-2">
             {ch.description}
           </p>
         )}

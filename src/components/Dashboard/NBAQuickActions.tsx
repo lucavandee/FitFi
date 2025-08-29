@@ -25,10 +25,10 @@ export const NBAQuickActions: React.FC<{
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="ff-card">
       {items.map((a) => {
         // State-aware route mapping
-        let route = a.route;
+        <h2 className="text-xl font-semibold text-midnight">Quick Actions</h2>
         let disabled = false;
 
         if (a.id === "challenge") {
@@ -53,7 +53,7 @@ export const NBAQuickActions: React.FC<{
                 : "hover:shadow-md hover:transform hover:scale-105"
             }`}
             title={disabled ? "Geen open challenge gevonden" : undefined}
-            aria-disabled={disabled}
+            className={`flex flex-col items-center gap-2 p-4 rounded-lg ${action.bg} hover:scale-105 transition-all duration-200 hover:shadow-sm`}
           >
             <div className="text-sm text-gray-500 mb-1">{a.badge ?? ""}</div>
             <div className="font-semibold">{a.title}</div>
@@ -64,7 +64,7 @@ export const NBAQuickActions: React.FC<{
               className={`mt-3 font-medium ${disabled ? "text-gray-400" : "text-[#6b21a8]"}`}
             >
               {a.cta} →
-            </div>
+            <span className="text-sm font-medium text-midnight">{action.label}</span>
           </a>
         );
       })}

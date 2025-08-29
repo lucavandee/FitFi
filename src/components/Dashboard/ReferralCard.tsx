@@ -61,26 +61,26 @@ export const ReferralCard: React.FC<{
     }
   }
 
-  return (
-    <div className="ff-card p-6">
-      {/* header */}
+      <div className="bg-gradient-to-r from-turquoise/10 to-primary/10 rounded-lg p-4 mb-4">
+        <div className="text-sm text-midnight/60 mb-1">Jouw referral code</div>
+        <div className="font-mono text-lg font-bold text-midnight">FITFI2024</div>
       <div className="flex items-center justify-between gap-4">
-        <div>
+        <h2 className="text-xl font-semibold text-midnight">Referral Programma</h2>
           <div className="text-sm text-gray-500">Jouw invite status</div>
-          <div className="text-lg font-semibold text-ink">Founders Club</div>
+        <div className="text-center bg-light-gray rounded-lg p-3">
         </div>
-        <FoundersTierBadge referrals={count} compact />
-      </div>
+          <div className="text-lg font-bold text-midnight">3</div>
+          <div className="text-xs text-midnight/60">Uitnodigingen</div>
       <div className="flex items-center justify-between mt-3">
         <div className="text-xl font-semibold tabular-nums">
-          {count}/{goal} referrals
+        <div className="text-center bg-light-gray rounded-lg p-3">
         </div>
-        <button
-          onClick={share}
+          <div className="text-lg font-bold text-midnight">€45</div>
+          <div className="text-xs text-midnight/60">Verdiend</div>
           className="px-4 py-2 rounded-full bg-[#89CFF0] text-white hover:bg-[#5FB7E6] transition-all btn-animate"
         >
           Deel invite
-        </button>
+      <button className="btn btn-primary w-full">
       </div>
       <div className="text-xs text-gray-500 mt-2 break-all">{codeUrl}</div>
     </div>

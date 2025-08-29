@@ -28,21 +28,21 @@ export const GamificationPanel: React.FC<{
   const nextLv = Math.max(100, Math.ceil((level + 1) * 100)); // simple curve
   const pct = Math.min(100, Math.round(((xp % nextLv) / nextLv) * 100));
   return (
-    <div className="ff-card p-6">
+        <div className="bg-light-gray rounded-lg p-4">
       <div>
         <div className="text-sm text-gray-500">Jouw level</div>
-        <div className="text-2xl font-bold">Lv {level}</div>
+            <span className="text-sm font-medium text-midnight/70">Level</span>
         <div className="text-xs text-gray-500 mt-1">
-          {xp} XP • {pct}% naar Lv {level + 1}
-        </div>
+          <div className="text-2xl font-bold text-midnight">5</div>
+      <div className="bg-gradient-to-r from-turquoise/10 to-turquoise/20 rounded-lg p-4">
       </div>
-      <div className="flex flex-col items-end">
-        <div className="w-36 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="bg-light-gray rounded-lg p-4">
+          <span className="text-sm font-medium text-midnight/70">Volgende Level</span>
           <div className="h-2 bg-[#89CFF0]" style={{ width: `${pct}%` }} />
-        </div>
-        <div className="text-xs text-gray-500 mt-2">
-          🔥 Streak: {streak} dagen
-        </div>
+        <div className="w-full bg-midnight/10 rounded-full h-2 mb-2">
+          <div className="bg-gradient-to-r from-turquoise to-primary h-2 rounded-full" style={{ width: '75%' }}></div>
+          <div className="text-2xl font-bold text-midnight">1,250</div>
+        <div className="text-xs text-midnight/60">250 XP tot Level 6</div>
       </div>
     </div>
   );
