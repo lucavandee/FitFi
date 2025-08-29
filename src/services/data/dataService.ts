@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from "react";
 import { DATA_CONFIG } from "@/config/dataConfig";
 import { loadLocalJSON } from "@/utils/loadLocalJSON";
-import { getSupabase } from "@/lib/supabase";
+import supabase from "@/lib/supabase";
 import type {
   BoltProduct,
   Outfit,
@@ -74,7 +74,7 @@ export async function fetchProducts(options?: {
   // Try Supabase first if enabled
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         let query = sb.from(DATA_CONFIG.SUPABASE.tables.products).select("*");
 
@@ -176,7 +176,7 @@ export async function fetchOutfits(options?: {
   // Try Supabase first if enabled
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         let query = sb.from(DATA_CONFIG.SUPABASE.tables.outfits).select("*");
 
@@ -270,7 +270,7 @@ export async function fetchUser(
   // Try Supabase first if enabled
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         const { data, error } = await sb
           .from(DATA_CONFIG.SUPABASE.tables.users)
@@ -350,7 +350,7 @@ export async function fetchTribes(options?: {
   // Try Supabase first if enabled
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         let query = sb.from(DATA_CONFIG.SUPABASE.tables.tribes).select("*");
 
@@ -451,7 +451,7 @@ export async function fetchTribeBySlug(
   // Try Supabase first if enabled
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         const { data: tribe, error } = await sb
           .from(DATA_CONFIG.SUPABASE.tables.tribes)
@@ -573,7 +573,7 @@ export async function healthCheck(): Promise<{
 
   if (DATA_CONFIG.USE_SUPABASE) {
     try {
-      const sb = getSupabase();
+      const sb = supabase;
       if (sb) {
         const { error } = await sb.from("users").select("id").limit(1);
         const responseTime = Date.now() - startTime;
@@ -611,7 +611,7 @@ export async function getQuizAnswer(
   stepId: string,
 ): Promise<QuizAnswer | null> {
   try {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) {
       // Fallback (client only)
       if (typeof window !== "undefined") {
