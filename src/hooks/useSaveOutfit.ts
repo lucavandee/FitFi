@@ -1,10 +1,10 @@
+import supabase from "@/lib/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabaseClient";
 import type { Outfit } from "@/engine/types";
 import { track } from "@/utils/telemetry";
 
 // Get singleton client
-const sb = supabase();
+const sb = supabase;
 
 type SaveInput = { outfit: Outfit; userId: string; idempotencyKey?: string };
 

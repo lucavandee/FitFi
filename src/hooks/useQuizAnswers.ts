@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabaseClient";
+import supabase from "../lib/supabase";
 import { useUser } from "../context/UserContext";
 import { QuizAnswers, QuizSubmission } from "../types/quiz";
 import { quizService } from "../services/quizService";
-
-// Get singleton client
-const sb = supabase();
 
 export function useQuizAnswers() {
   const { user } = useUser();
