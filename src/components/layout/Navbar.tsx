@@ -67,12 +67,8 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between h-18">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <Link
-                to="/"
-                className="flex items-center space-x-2 group"
-                aria-label="FitFi homepage"
-              >
-                <Logo className="h-8 w-auto" textColor="text-[#0D1B2A]" />
+              <Link to="/" className="flex items-center gap-2">
+                <span className="font-heading text-2xl font-bold text-ink">FitFi</span>
               </Link>
             </div>
 
