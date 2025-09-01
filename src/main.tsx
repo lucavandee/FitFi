@@ -1,23 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+
+// Gebruik onze eigen ErrorBoundary component
 import ErrorBoundary from "@/components/ErrorBoundary";
+// Één CrashGate
 import CrashGate from "@/components/system/CrashGate";
-import { HelmetProvider } from 'react-helmet-async'
-import { ErrorBoundary } from 'react-error-boundary'
-import CrashGate from '@/components/system/CrashGate'
+// Één HelmetProvider
 import { HelmetProvider } from "react-helmet-async";
-// import "./index.css"; // laat staan als je deze gebruikt
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <ErrorBoundary fallback={<div>Something went wrong</div>}>
-        <CrashGate>
-          <App />
-        </CrashGate>
-      </ErrorBoundary>
-    </HelmetProvider>
       <ErrorBoundary>
         <CrashGate>
           <App />
