@@ -78,7 +78,7 @@ export async function fetchUserStats(
 }
 
 export async function upsertUserStats(stats: UserStats): Promise<UserStats> {
-  const sb = supabase();
+  const sb = supabase;
   if (!sb) return writeLocalStats(stats);
   const { data, error } = await sb
     .from(T.stats)
@@ -90,7 +90,7 @@ export async function upsertUserStats(stats: UserStats): Promise<UserStats> {
 }
 
 export async function fetchUserStreak(userId: string): Promise<UserStreak> {
-  const sb = supabase();
+  const sb = supabase;
   if (!sb) return readLocalStreak(userId);
   const { data, error } = await sb
     .from(T.streaks)
@@ -102,7 +102,7 @@ export async function fetchUserStreak(userId: string): Promise<UserStreak> {
 }
 
 export async function touchDailyStreak(userId: string): Promise<UserStreak> {
-  const sb = supabase();
+  const sb = supabase;
   const today = new Date().toISOString().slice(0, 10);
   if (!sb) {
     // local fallback
@@ -167,7 +167,7 @@ export async function fetchReferrals(inviterId: string): Promise<Referral[]> {
 export async function fetchNotifications(
   userId: string,
 ): Promise<NotificationItem[]> {
-  const sb = supabase();
+  const sb = supabase;
   if (!sb) return [];
   const { data, error } = await sb
     .from(T.notifications)
@@ -179,7 +179,7 @@ export async function fetchNotifications(
 }
 
 export async function addXp(userId: string, amount: number, reason?: string) {
-  const sb = supabase();
+  const sb = supabase;
   // fallback
   if (!sb) {
     const cur = await fetchUserStats(userId);
