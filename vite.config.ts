@@ -10,8 +10,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    build: { 
-      sourcemap: true 
+    build: {
+      sourcemap: true
     },
     base: "/",
     resolve: {
@@ -77,10 +77,4 @@ export default defineConfig(({ mode }) => {
       host: true,
     },
   };
-  build: {
-    sourcemap: true
-  }
-  build: { 
-    sourcemap: true 
-  }
 });

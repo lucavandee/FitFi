@@ -3,7 +3,9 @@
   "private": true,
   "version": "1.7.1",
   "type": "module",
-  "engines": { "node": ">=20.19 <=22" },
+  "engines": {
+    "node": ">=20.19 <=22"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -19,7 +21,8 @@
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-helmet-async": "^2.0.4",
+    "react-error-boundary": "^6.0.0",
+    "react-helmet-async": "^2.0.5",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.22.3",
     "typescript": "^5.2.2"
