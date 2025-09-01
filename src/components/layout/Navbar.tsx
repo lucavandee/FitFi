@@ -68,7 +68,9 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center gap-2">
-                <span className="font-heading text-2xl font-bold text-ink">FitFi</span>
+                <span className="font-heading text-xl font-bold text-[#0D1B2A]">
+                  FitFi
+                </span>
               </Link>
             </div>
 
