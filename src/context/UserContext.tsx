@@ -39,9 +39,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     });
 
     // 2) Luisteren naar auth-wijzigingen
+    const sb2 = supabase;
     const {
       data: { subscription },
-    } = sb.auth.onAuthStateChange((_event, session) => {
+    } = sb2.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser({
           id: session.user.id,
