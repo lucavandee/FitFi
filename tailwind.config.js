@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        display: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       colors: {
         // FitFi Brand Colors
         'midnight': '#0D1B2A',
