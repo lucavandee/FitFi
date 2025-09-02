@@ -101,9 +101,6 @@ function HeaderInner() {
               className="btn btn-primary"
               aria-label="FitFi homepage"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#89CFF0] to-blue-500 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                <span className="text-white font-bold text-sm">F</span>
-              </div>
               <span className="font-bold text-xl text-[#0D1B2A] group-hover:text-[#89CFF0] transition-colors">
                 FitFi
               </span>
