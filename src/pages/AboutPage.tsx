@@ -6,7 +6,7 @@ import { ArrowRight, Users, Heart, Shield, CheckCircle } from "lucide-react";
 import Button from "../components/ui/Button";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import HeroTitle from "@/components/marketing/HeroTitle";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const AboutPage: React.FC = () => {
   const uspCards = [

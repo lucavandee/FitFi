@@ -18,7 +18,7 @@ import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
 import FunnelVisualizer from "@/components/analytics/FunnelVisualizer";
 import Button from "../components/ui/Button";
 import LoadingFallback from "../components/ui/LoadingFallback";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const AnalyticsPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
