@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Download,
   Filter,
+  Sparkles,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useIsAdmin } from "../hooks/useIsAdmin";
