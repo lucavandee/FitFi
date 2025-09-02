@@ -6,6 +6,9 @@ export default {
       fontFamily: {
         display: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
       },
+      fontFamily: {
+        display: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       colors: {
         // FitFi Brand Colors
         'midnight': '#0D1B2A',
