@@ -99,7 +99,7 @@ function HeaderInner() {
             {/* Brand */}
             <Link
               to="/"
-              className="flex items-center space-x-2 group"
+              className="ff-brand flex items-center space-x-2 group"
               aria-label="FitFi homepage"
             >
               <Logo className="h-8 w-auto" textColor="text-[#0D1B2A]" />
