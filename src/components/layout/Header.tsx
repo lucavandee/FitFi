@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X, User, LogOut } from "lucide-react";
+import Logo from '@/components/ui/Logo';
 import { useUser } from "@/context/UserContext";
 import { NAV_MAIN, NAV_CTA } from "@/constants/nav";
 import { lockBodyScroll, unlockBodyScroll } from "@/utils/scroll";
@@ -98,12 +99,10 @@ function HeaderInner() {
             {/* Brand */}
             <Link
               to="/"
-              className="btn btn-primary"
+              className="flex items-center space-x-2 group"
               aria-label="FitFi homepage"
             >
-              <span className="font-bold text-xl text-[#0D1B2A] group-hover:text-[#89CFF0] transition-colors">
-                FitFi
-              </span>
+              <Logo className="h-8 w-auto" textColor="text-[#0D1B2A]" />
             </Link>
 
             {/* Desktop Navigation */}
