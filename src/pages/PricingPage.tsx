@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import Seo from "@/components/Seo";
 import { Check, Star, ArrowRight, Sparkles, Crown, Zap } from "lucide-react";
 import Button from "../components/ui/Button";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const PricingPage: React.FC = () => {
   const plans = [

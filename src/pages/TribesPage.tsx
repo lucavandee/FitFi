@@ -19,7 +19,7 @@ import { stableKey } from "../utils/key";
 import Button from "../components/ui/Button";
 import SmartImage from "@/components/media/SmartImage";
 import LoadingFallback from "../components/ui/LoadingFallback";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import toast from "react-hot-toast";
 
 const TribesPage: React.FC = () => {

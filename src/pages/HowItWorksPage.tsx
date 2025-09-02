@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const HowItWorksPage: React.FC = () => {
   const steps = [

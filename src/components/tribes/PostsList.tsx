@@ -9,7 +9,7 @@ import {
 import { useTribePosts } from "@/hooks/useTribePosts";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import toast from "react-hot-toast";
 
 interface PostsListProps {

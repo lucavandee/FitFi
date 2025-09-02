@@ -8,7 +8,7 @@ import type { SavedOutfitRecord } from "@/services/saved/savedOutfitsService";
 import Button from "../components/ui/Button";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import LoadingFallback from "../components/ui/LoadingFallback";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import toast from "react-hot-toast";
 
 const SavedOutfitsPage: React.FC = () => {
