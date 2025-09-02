@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --- Brand utilities --- */
+.ff-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  text-decoration: none;
+  background: transparent !important; /* kill elke overerfde pill */
+  padding: 0;                          /* geen padding rond de tekst */
+  border-radius: 0;                    /* geen afgeronde pill */
+}
+
+/* Tekst-stijl van het logo */
+.ff-brand-text {
+  font-family: Montserrat, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem; /* ~text-xl */
+  line-height: 1;
+  color: #0D1B2A; /* Midnight Blue */
+}
+
+/* Safety net: maak elke avatar/fallback in het brand-blok transparant en onzichtbaar */
+.ff-brand :where([data-avatar], .avatar, .AvatarRoot, .AvatarFallback, .bg-black, .bg-neutral-900) {
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Als ergens nog een "F" fallback wordt gerenderd, verberg 'm expliciet */
+.ff-brand :where(.AvatarFallback, [data-avatar]) * {
+  display: none !important;
+}
+
 /* FitFi Brand Tokens & Utilities */
 @layer components {
   .ff-card {
