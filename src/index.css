@@ -102,3 +102,9 @@ h1,h2,h3,h4 { font-family: theme(fontFamily.heading); }
 }
 .btn-primary { @apply bg-black text-white hover:opacity-90; }
 .btn-ghost   { @apply border hover:bg-gray-50; }
+
+/* Ensure proper text rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
