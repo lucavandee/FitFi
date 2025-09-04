@@ -9,13 +9,16 @@ import CrashGate from "@/components/system/CrashGate";
 // Één HelmetProvider
 import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
+import AuthProvider from "@/context/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <ErrorBoundary>
-        <CrashGate>
-          <App />
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
         </CrashGate>
       </ErrorBoundary>
     </HelmetProvider>
