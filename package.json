@@ -10,7 +10,7 @@
     "preflight": "node scripts/preflight.mjs",
     "dev": "npm run preflight && vite",
     "build": "npm run preflight && tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit --pretty",
     "build:strict": "npm run typecheck && vite build",
     "test": "vitest run --passWithNoTests"
