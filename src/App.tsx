@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import CrashGate from "@/components/system/CrashGate";
 import { lazyAny } from "@/utils/lazyPage";
+import AuthProvider from "@/context/AuthContext";
 import { UserProvider } from "@/context/UserContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { GamificationProvider } from "@/context/GamificationContext";
@@ -114,324 +115,326 @@ const App: React.FC = () => {
     <CrashGate>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <UserProvider>
-            <GamificationProvider>
-              <OnboardingProvider>
-                <ErrorBoundary>
-                  <Router>
-                    <NavigationServiceInitializer />
-                    <ScrollToTop />
-                    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
-                      <Header />
-                      <Suspense fallback={<div className="p-8">Loading…</div>}>
-                        <Routes>
-                          {/* Public Routes */}
-                          <Route path="/" element={<LandingPage />} />
-                          <Route path="/home" element={<HomePage />} />
-                          <Route path="/login" element={<LoginPage />} />
-                          <Route path="/inloggen" element={<LoginPage />} />
-                          <Route
-                            path="/registreren"
-                            element={<RegisterPage />}
-                          />
-                          <Route
-                            path="/wachtwoord-vergeten"
-                            element={<ForgotPasswordPage />}
-                          />
-                          <Route
-                            path="/wachtwoord-reset"
-                            element={<ResetPasswordPage />}
-                          />
-                          <Route path="/over-ons" element={<AboutPage />} />
-                          <Route
-                            path="/hoe-het-werkt"
-                            element={<HowItWorksPage />}
-                          />
-                          <Route path="/prijzen" element={<PricingPage />} />
-                          <Route path="/contact" element={<ContactPage />} />
-                          <Route path="/faq" element={<FAQPage />} />
-                          <Route
-                            path="/veelgestelde-vragen"
-                            element={<Navigate to="/faq" replace />}
-                          />
-                          <Route
-                            path="/geslacht-selecteren"
-                            element={<GenderSelectPage />}
-                          />
-                          <Route
-                            path="/product/:id"
-                            element={<ProductPage />}
-                          />
-                          <Route
-                            path="/privacy-policy"
-                            element={<PrivacyPolicyPage />}
-                          />
-                          <Route
-                            path="/algemene-voorwaarden"
-                            element={<TermsPage />}
-                          />
-                          <Route path="/bedankt" element={<ThankYouPage />} />
-                          <Route path="/profile" element={<ProfilePage />} />
-                          <Route path="/terms" element={<TermsPage />} />
+          <AuthProvider>
+            <UserProvider>
+              <GamificationProvider>
+                <OnboardingProvider>
+                  <ErrorBoundary>
+                    <Router>
+                      <NavigationServiceInitializer />
+                      <ScrollToTop />
+                      <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+                        <Header />
+                        <Suspense fallback={<div className="p-8">Loading…</div>}>
+                          <Routes>
+                            {/* Public Routes */}
+                            <Route path="/" element={<LandingPage />} />
+                            <Route path="/home" element={<HomePage />} />
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/inloggen" element={<LoginPage />} />
+                            <Route
+                              path="/registreren"
+                              element={<RegisterPage />}
+                            />
+                            <Route
+                              path="/wachtwoord-vergeten"
+                              element={<ForgotPasswordPage />}
+                            />
+                            <Route
+                              path="/wachtwoord-reset"
+                              element={<ResetPasswordPage />}
+                            />
+                            <Route path="/over-ons" element={<AboutPage />} />
+                            <Route
+                              path="/hoe-het-werkt"
+                              element={<HowItWorksPage />}
+                            />
+                            <Route path="/prijzen" element={<PricingPage />} />
+                            <Route path="/contact" element={<ContactPage />} />
+                            <Route path="/faq" element={<FAQPage />} />
+                            <Route
+                              path="/veelgestelde-vragen"
+                              element={<Navigate to="/faq" replace />}
+                            />
+                            <Route
+                              path="/geslacht-selecteren"
+                              element={<GenderSelectPage />}
+                            />
+                            <Route
+                              path="/product/:id"
+                              element={<ProductPage />}
+                            />
+                            <Route
+                              path="/privacy-policy"
+                              element={<PrivacyPolicyPage />}
+                            />
+                            <Route
+                              path="/algemene-voorwaarden"
+                              element={<TermsPage />}
+                            />
+                            <Route path="/bedankt" element={<ThankYouPage />} />
+                            <Route path="/profile" element={<ProfilePage />} />
+                            <Route path="/terms" element={<TermsPage />} />
 
-                          {/* Public Routes */}
-                          <Route path="/shop" element={<ShopRedirect />} />
+                            {/* Public Routes */}
+                            <Route path="/shop" element={<ShopRedirect />} />
 
-                          {/* Protected Routes */}
-                          <Route
-                            path="/onboarding"
-                            element={
-                              <ProtectedRoute>
-                                <OnboardingPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/quiz"
-                            element={
-                              <ProtectedRoute>
-                                <QuizPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/dynamic-onboarding"
-                            element={
-                              <ProtectedRoute>
-                                <DynamicOnboardingPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/results"
-                            element={
-                              <ProtectedRoute>
-                                <ResultsPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/resultaten"
-                            element={<Navigate to="/results" replace />}
-                          />
-                          <Route
-                            path="/dynamic-results"
-                            element={
-                              <ProtectedRoute>
-                                <DynamicResultsPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/enhanced-resultaten"
-                            element={
-                              <ProtectedRoute>
-                                <EnhancedResultsPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/dashboard"
-                            element={
-                              <ProtectedRoute>
-                                <DashboardPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/outfits"
-                            element={
-                              <ProtectedRoute>
-                                <OutfitsPage />
-                              </ProtectedRoute>
-                            }
-                          />
-                          <Route
-                            path="/saved"
-                            element={
-                              <ProtectedRoute>
-                                <SavedOutfitsPage />
-                              </ProtectedRoute>
-                            }
-                          />
+                            {/* Protected Routes */}
+                            <Route
+                              path="/onboarding"
+                              element={
+                                <ProtectedRoute>
+                                  <OnboardingPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/quiz"
+                              element={
+                                <ProtectedRoute>
+                                  <QuizPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/dynamic-onboarding"
+                              element={
+                                <ProtectedRoute>
+                                  <DynamicOnboardingPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/results"
+                              element={
+                                <ProtectedRoute>
+                                  <ResultsPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/resultaten"
+                              element={<Navigate to="/results" replace />}
+                            />
+                            <Route
+                              path="/dynamic-results"
+                              element={
+                                <ProtectedRoute>
+                                  <DynamicResultsPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/enhanced-resultaten"
+                              element={
+                                <ProtectedRoute>
+                                  <EnhancedResultsPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/dashboard"
+                              element={
+                                <ProtectedRoute>
+                                  <DashboardPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/outfits"
+                              element={
+                                <ProtectedRoute>
+                                  <OutfitsPage />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/saved"
+                              element={
+                                <ProtectedRoute>
+                                  <SavedOutfitsPage />
+                                </ProtectedRoute>
+                              }
+                            />
 
-                          {/* Informational Pages */}
-                          <Route
-                            path="/blog"
-                            element={
-                              <Suspense fallback={null}>
-                                <BlogIndexPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/blog/:slug"
-                            element={
-                              <Suspense fallback={null}>
-                                <BlogDetailPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/tribes"
-                            element={
-                              <Suspense fallback={null}>
-                                <TribesPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/tribes/:id"
-                            element={
-                              <Suspense fallback={null}>
-                                <TribeDetailPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/help"
-                            element={
-                              <Suspense fallback={null}>
-                                <HelpCenterPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/feedback"
-                            element={
-                              <Suspense fallback={null}>
-                                <FeedbackPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/succesverhalen"
-                            element={
-                              <Suspense fallback={null}>
-                                <SuccessStoriesPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/gamification"
-                            element={
-                              <Suspense fallback={null}>
-                                <GamificationPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/analytics"
-                            element={
-                              <Suspense fallback={null}>
-                                <AnalyticsPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/feed"
-                            element={
-                              <Suspense fallback={null}>
-                                <FeedPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/health"
-                            element={
-                              <Suspense fallback={null}>
-                                <HealthCheckPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/brand-safety"
-                            element={
-                              <Suspense fallback={null}>
-                                <BrandSafetyPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/disclosure"
-                            element={
-                              <Suspense fallback={null}>
-                                <DisclosurePage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/privacy"
-                            element={
-                              <Suspense fallback={null}>
-                                <PrivacyPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/cookies"
-                            element={
-                              <Suspense fallback={null}>
-                                <CookiesPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/ondersteuning"
-                            element={
-                              <Suspense fallback={null}>
-                                <SupportPage />
-                              </Suspense>
-                            }
-                          />
-                          <Route
-                            path="/juridisch"
-                            element={
-                              <Suspense fallback={null}>
-                                <LegalPage />
-                              </Suspense>
-                            }
-                          />
+                            {/* Informational Pages */}
+                            <Route
+                              path="/blog"
+                              element={
+                                <Suspense fallback={null}>
+                                  <BlogIndexPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/blog/:slug"
+                              element={
+                                <Suspense fallback={null}>
+                                  <BlogDetailPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/tribes"
+                              element={
+                                <Suspense fallback={null}>
+                                  <TribesPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/tribes/:id"
+                              element={
+                                <Suspense fallback={null}>
+                                  <TribeDetailPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/help"
+                              element={
+                                <Suspense fallback={null}>
+                                  <HelpCenterPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/feedback"
+                              element={
+                                <Suspense fallback={null}>
+                                  <FeedbackPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/succesverhalen"
+                              element={
+                                <Suspense fallback={null}>
+                                  <SuccessStoriesPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/gamification"
+                              element={
+                                <Suspense fallback={null}>
+                                  <GamificationPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/analytics"
+                              element={
+                                <Suspense fallback={null}>
+                                  <AnalyticsPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/feed"
+                              element={
+                                <Suspense fallback={null}>
+                                  <FeedPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/health"
+                              element={
+                                <Suspense fallback={null}>
+                                  <HealthCheckPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/brand-safety"
+                              element={
+                                <Suspense fallback={null}>
+                                  <BrandSafetyPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/disclosure"
+                              element={
+                                <Suspense fallback={null}>
+                                  <DisclosurePage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/privacy"
+                              element={
+                                <Suspense fallback={null}>
+                                  <PrivacyPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/cookies"
+                              element={
+                                <Suspense fallback={null}>
+                                  <CookiesPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/ondersteuning"
+                              element={
+                                <Suspense fallback={null}>
+                                  <SupportPage />
+                                </Suspense>
+                              }
+                            />
+                            <Route
+                              path="/juridisch"
+                              element={
+                                <Suspense fallback={null}>
+                                  <LegalPage />
+                                </Suspense>
+                              }
+                            />
 
-                          {/* Fallback - MUST BE LAST */}
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
+                            {/* Fallback - MUST BE LAST */}
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </Suspense>
 
-                      {/* Nova AI Chat - Always mounted with fail-safe */}
-                      {NOVA_ENABLED && (
-                        <>
-                          <Suspense fallback={null}>
-                            <NovaLauncher />
-                          </Suspense>
-                          <Suspense fallback={null}>
-                            <NovaBubble />
-                          </Suspense>
-                        </>
-                      )}
+                        {/* Nova AI Chat - Always mounted with fail-safe */}
+                        {NOVA_ENABLED && (
+                          <>
+                            <Suspense fallback={null}>
+                              <NovaLauncher />
+                            </Suspense>
+                            <Suspense fallback={null}>
+                              <NovaBubble />
+                            </Suspense>
+                          </>
+                        )}
 
-                      {/* Cookie Consent Banner */}
-                      <Suspense fallback={null}>
-                        <CookieBanner />
-                      </Suspense>
+                        {/* Cookie Consent Banner */}
+                        <Suspense fallback={null}>
+                          <CookieBanner />
+                        </Suspense>
 
-                      {/* Nova Login Prompt Host */}
-                      <NovaLoginPromptHost />
+                        {/* Nova Login Prompt Host */}
+                        <NovaLoginPromptHost />
 
-                      {/* Single App-Level Footer */}
-                      <PremiumFooter />
+                        {/* Single App-Level Footer */}
+                        <PremiumFooter />
 
-                      {/* Toast Notifications */}
-                      <Toaster
-                        position="top-center"
-                        toastOptions={{ duration: 2500 }}
-                      />
-                    </div>
-                  </Router>
-                </ErrorBoundary>
-              </OnboardingProvider>
-            </GamificationProvider>
-          </UserProvider>
+                        {/* Toast Notifications */}
+                        <Toaster
+                          position="top-center"
+                          toastOptions={{ duration: 2500 }}
+                        />
+                      </div>
+                    </Router>
+                  </ErrorBoundary>
+                </OnboardingProvider>
+              </GamificationProvider>
+            </UserProvider>
+          </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </CrashGate>

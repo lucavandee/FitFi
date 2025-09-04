@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, Crown } from 'lucide-react';
 import { useAuth } from '@/providers/AuthProvider';
+import { useAuth } from '@/context/AuthContext';
 import { useGamification } from '@/context/GamificationContext';
 import Logo from '@/components/ui/Logo';
 import { cn, toArray, joinClasses } from '@/utils/cn';
@@ -12,6 +13,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { user, tier } = useAuth();
   const { user, signOut } = useAuth();
   const { userStats } = useGamification();
 
