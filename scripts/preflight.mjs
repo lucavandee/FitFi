@@ -3,12 +3,10 @@ import fs from "fs";
 import path from "path";
 
 const fails = [];
+const exts = [".ts", ".tsx", ".js", ".jsx", ".css", ".html"];
 
-function r(p) { return path.resolve(process.cwd(), p); }
-
-function has(p) { return fs.existsSync(r(p)); }
-
-function read(p) { return fs.readFileSync(r(p), "utf8"); }
+const has = (p) => fs.existsSync(p);
+const read = (p) => fs.readFileSync(p, "utf8");
 
 if (!has("src/components/ErrorBoundary.tsx")) {
   fails.push("Missing src/components/ErrorBoundary.tsx");
@@ -21,24 +19,27 @@ if (!has("src/components/ErrorBoundary.tsx")) {
 
 try {
   const ts = JSON.parse(read("tsconfig.json"));
-  const okPath = ts?.compilerOptions?.paths?.["@/*"]?.[0] === "src/*";
-  if (!okPath) fails.push('tsconfig.json must set: "paths": { "@/*": ["src/*"] }');
+  const ok =
+    ts?.compilerOptions?.baseUrl === "." &&
+    Array.isArray(ts?.compilerOptions?.paths?.["@/*"]) &&
+    ts?.compilerOptions?.paths?.["@/*"][0] === "src/*";
+  if (!ok) fails.push('tsconfig.json must set: "baseUrl": ".", "paths": { "@/*": ["src/*"] }');
 } catch {
   fails.push("Missing or unreadable tsconfig.json");
 }
 
 const badImports = [];
 const ellipsis = [];
-const exts = [".ts", ".tsx", ".js", ".jsx", ".css", ".html"];
 
 function walk(dir) {
   for (const n of fs.readdirSync(dir)) {
     const p = path.join(dir, n);
     const s = fs.statSync(p);
     if (s.isDirectory()) walk(p);
-    else if (exts.some(e => p.endsWith(e))) {
-      const c = fs.readFileSync(p, "utf8");
-      if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c)) badImports.push(p);
+    else if (exts.some((e) => p.endsWith(e))) {
+      const c = read(p);
+      if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c))
+        badImports.push(p);
       if (/\.\.\./.test(c)) ellipsis.push(p);
     }
   }
