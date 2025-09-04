@@ -27,42 +27,33 @@ const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
-// ⚠️ Geen BrowserRouter/Router/RouterProvider hier
 export default function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<HomePage />} />
-
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
-
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
-
         <Route path="/blog" element={<BlogIndexPage />} />
         <Route path="/blog/:slug" element={<BlogDetailPage />} />
-
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
-
         <Route path="/tribes" element={<TribesPage />} />
         <Route path="/tribes/:id" element={<TribeDetailPage />} />
-
         <Route path="/saved" element={<SavedOutfitsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/help" element={<HelpCenterPage />} />
         <Route path="/success-stories" element={<SuccessStoriesPage />} />
-
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-
         <Route path="/__health" element={<div>OK</div>} />
         <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="*" element={<NotFoundPage />} />
