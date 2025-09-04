@@ -13,7 +13,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { user, tier } = useAuth();
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const { userStats } = useGamification();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Header() {
   const userNavigation = [
     { name: 'Dashboard', href: '/dashboard', icon: User },
     { name: 'Profiel', href: '/profile', icon: Settings },
-    { name: 'Uitloggen', href: '#', icon: LogOut, onClick: signOut },
+    { name: 'Uitloggen', href: '#', icon: LogOut, onClick: logout },
   ];
 
   const isActivePath = (path: string) => {
