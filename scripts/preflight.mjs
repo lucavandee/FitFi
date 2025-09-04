@@ -72,6 +72,27 @@ if (has("src")) walk("src");
 
 if (badImports.length) fails.push("Use default import for ErrorBoundary:\n  - " + badImports.join("\n  - "));
 if (badEllipsis.length) fails.push("Remove placeholder '...' (not spread/rest):\n  - " + badEllipsis.join("\n  - "));
+// Router guard - prevent nested routers outside main.tsx
+const routerHits = [];
+function scanRouters(dir) {
+  const fs = await import("fs");
+  const path = await import("path");
+  const re = /<(BrowserRouter|HashRouter|MemoryRouter|Router)\b|RouterProvider\b|createBrowserRouter\s*\(/g;
+  (function walk(d) {
+    for (const n of fs.readdirSync(d)) {
+      const p = path.join(d, n);
+      const s = fs.statSync(p);
+      if (s.isDirectory()) walk(p);
+      else if (/\.(t|j)sx?$/.test(p)) {
+        const c = fs.readFileSync(p, "utf8");
+        if (re.test(c) && !p.endsWith("src/main.tsx")) routerHits.push(p);
+      }
+    }
+  })("src");
+}
+await scanRouters("src");
+if (routerHits.length) fails.push("Nested router(s) found outside main.tsx:\n  - " + routerHits.join("\n  - "));
+
 
 if (fails.length) {
   console.error("✖ Preflight failed:\n- " + fails.join("\n- "));
