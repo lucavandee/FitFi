@@ -14,6 +14,9 @@ import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import FooterGuard from "@/components/layout/FooterGuard";
 
+// Helper to safely handle potentially undefined arrays
+const toArray = <T,>(v: T[] | undefined | null): T[] => (Array.isArray(v) ? v : []);
+
 const year = new Date().getFullYear();
 
 function ContactBlock() {
@@ -206,13 +209,13 @@ function PremiumFooterInner() {
           </div>
 
           {/* Footer Sections */}
-          {(enhancedColumns || []).map((section) => (
+          {toArray(enhancedColumns).map((section) => (
             <div key={section.title}>
               <h3 className="text-lg font-medium text-white mb-4">
                 {section.title}
               </h3>
               <ul className="space-y-3">
-                {(section.links || []).map((link) => (
+                {toArray(section.links).map((link) => (
                   <li key={link.label}>
                     {link.onClick ? (
                       <button
