@@ -75,3 +75,5 @@ export function useAuth() {
   if (!c) throw new Error('useAuth within AuthProvider');
   return c;
 }
+
+export default AuthProvider;
