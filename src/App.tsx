@@ -45,6 +45,7 @@ const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 export default function App() {
+    }
   return (
     <CrashGate>
       <AuthProvider>
@@ -104,3 +105,4 @@ export default function App() {
         </GamificationProvider>
       </BrowserRouter>
     </AuthProvider>
+  )
