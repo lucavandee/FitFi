@@ -37,6 +37,7 @@ const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const HowItWorksPage = lazy(() => import("@/pages/HowItWorksPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const HealthPage = lazy(() => import("@/pages/HealthPage"));
 
 export default function App() {
   return (
@@ -82,7 +83,7 @@ export default function App() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-                <Route path="/__health" element={<div>OK</div>} />
+                <Route path="/__health" element={<HealthPage />} />
                 <Route path="/index.html" element={<Navigate to="/" replace />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>

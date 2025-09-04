@@ -10,8 +10,9 @@
     "preflight": "node scripts/preflight.mjs",
     "check:imports": "node scripts/check-imports.mjs",
     "check:aliases": "node scripts/check-aliases.mjs",
+    "check:casing": "node scripts/check-casing.mjs",
     "check:env": "node scripts/check-env.mjs",
-    "codemod:supabase": "node scripts/codemods/ensure-supabase-imports.mjs",
+    "preflight": "node scripts/preflight.mjs && npm run check:imports && npm run check:aliases && npm run check:casing && npm run check:env",
     "prebuild": "npm run check:env && npm run preflight"
     "check:all": "npm run preflight && npm run check:imports && npm run check:aliases",
     "codemod:supabase": "node scripts/codemods/fix-supabase-callable.mjs",
