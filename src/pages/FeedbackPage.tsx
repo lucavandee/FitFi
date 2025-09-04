@@ -33,14 +33,14 @@ const FeedbackPage: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
-      ...prev,
+      /* placeholder removed */prev,
       [name]: value,
     }));
   };
 
   const handleRatingChange = (rating: number) => {
     setFormData((prev) => ({
-      ...prev,
+      /* placeholder removed */prev,
       rating,
     }));
   };
@@ -48,7 +48,7 @@ const FeedbackPage: React.FC = () => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setFormData((prev) => ({
-      ...prev,
+      /* placeholder removed */prev,
       [name]: checked,
     }));
   };
@@ -262,7 +262,7 @@ const FeedbackPage: React.FC = () => {
                         required
                         rows={5}
                         className="block w-full px-4 py-3 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 placeholder-gray-500 transition-all"
-                        placeholder="Deel je gedachten, suggesties of ervaringen met ons..."
+                        placeholder="Deel je gedachten, suggesties of ervaringen met ons/* placeholder removed */"
                       ></textarea>
                     </div>
 
@@ -308,7 +308,7 @@ const FeedbackPage: React.FC = () => {
                       iconPosition="right"
                       className="rounded-2xl shadow-sm px-6 py-3 transition-transform hover:scale-105 mt-2"
                     >
-                      {isSubmitting ? "Verzenden..." : "Feedback verzenden"}
+                      {isSubmitting ? "Verzenden/* placeholder removed */" : "Feedback verzenden"}
                     </Button>
                   </div>
                 </form>
@@ -380,7 +380,7 @@ const FeedbackPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-6 rounded-3xl shadow-sm">
                 <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[/* placeholder removed */Array(5)].map((_, i) => (
                     <Star
                       key={i}
                       className="text-yellow-400 fill-current"
@@ -409,7 +409,7 @@ const FeedbackPage: React.FC = () => {
 
               <div className="bg-white p-6 rounded-3xl shadow-sm">
                 <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[/* placeholder removed */Array(5)].map((_, i) => (
                     <Star
                       key={i}
                       className="text-yellow-400 fill-current"

@@ -59,7 +59,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = "" }) => {
               <div className="flex items-center mb-6">
                 <Quote className="text-[#bfae9f] mr-3" size={24} />
                 <div className="flex">
-                  {[...Array(testimonial.rating)].map((_, i) => (
+                  {[/* placeholder removed */Array(testimonial.rating)].map((_, i) => (
                     <Star
                       key={i}
                       className="text-yellow-400 fill-current"

@@ -188,7 +188,7 @@ const ForgotPasswordPage: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Verzenden...
+                    Verzenden/* placeholder removed */
                   </div>
                 ) : (
                   "Reset link verzenden"

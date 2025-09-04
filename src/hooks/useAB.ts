@@ -35,7 +35,7 @@ export function useABVariant(testName: string, userId?: string | null) {
         test_name: testName,
         variant,
         user_id: userId ?? "guest",
-        ...extra,
+        /* placeholder removed */extra,
       };
       // @ts-ignore
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
@@ -81,7 +81,7 @@ export function useABTesting(options: ABTestingOptions) {
       window.gtag("event", "ab_conversion", {
         test_name: options.testName,
         variant,
-        ...data,
+        /* placeholder removed */data,
       });
     }
   };

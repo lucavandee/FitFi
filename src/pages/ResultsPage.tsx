@@ -59,7 +59,7 @@ const ResultsPage: React.FC = () => {
   };
 
   if (userLoading || quizLoading) {
-    return <LoadingFallback fullScreen message="Resultaten laden..." />;
+    return <LoadingFallback fullScreen message="Resultaten laden/* placeholder removed */" />;
   }
 
   if (!user) {
@@ -82,7 +82,7 @@ const ResultsPage: React.FC = () => {
 
   // Don't show results if quiz not completed (will redirect)
   if (!isQuizCompleted()) {
-    return <LoadingFallback fullScreen message="Quiz controleren..." />;
+    return <LoadingFallback fullScreen message="Quiz controleren/* placeholder removed */" />;
   }
 
   if (!analysisComplete) {
@@ -93,7 +93,7 @@ const ResultsPage: React.FC = () => {
             <Sparkles className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-light text-gray-900 mb-4">
-            AI analyseert jouw stijl...
+            AI analyseert jouw stijl/* placeholder removed */
           </h2>
           <p className="text-gray-600 mb-6">
             We creëren jouw persoonlijke stijlprofiel op basis van je
@@ -303,7 +303,7 @@ const ResultsPage: React.FC = () => {
               {isResetting ? (
                 <div className="flex items-center justify-center">
                   <div className="w-4 h-4 border-2 border-[#bfae9f] border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Quiz resetten...
+                  Quiz resetten/* placeholder removed */
                 </div>
               ) : (
                 "Quiz Opnieuw Doen"
@@ -374,7 +374,7 @@ function getStyleTags(answers: any): string[] {
   const tags = answers.stylePreferences.map(
     (pref: string) => tagMap[pref] || pref,
   );
-  return [...tags, "Veelzijdig", "Authentiek"].slice(0, 4);
+  return [/* placeholder removed */tags, "Veelzijdig", "Authentiek"].slice(0, 4);
 }
 
 export default ResultsPage;

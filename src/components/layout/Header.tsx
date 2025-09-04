@@ -7,7 +7,7 @@ import { NAV_MAIN, NAV_CTA } from "@/constants/nav";
 import { lockBodyScroll, unlockBodyScroll } from "@/utils/scroll";
 import HeaderGuard from "./HeaderGuard";
 
-function cx(...classes: (string | false | undefined)[]): string {
+function cx(/* placeholder removed */classes: (string | false | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 

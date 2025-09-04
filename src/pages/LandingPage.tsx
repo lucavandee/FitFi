@@ -150,7 +150,7 @@ const LandingPage: React.FC = () => {
       <ErrorBoundary>
         <section className="section bg-white">
           <div className="container">
-            <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
+            <Suspense fallback={<LoadingFallback message="Preview laden/* placeholder removed */" />}>
               <PreviewCarousel />
             </Suspense>
           </div>
@@ -171,7 +171,7 @@ const LandingPage: React.FC = () => {
             </div>
             <div className="max-w-3xl mx-auto">
               <Suspense
-                fallback={<LoadingFallback message="Founders Club laden..." />}
+                fallback={<LoadingFallback message="Founders Club laden/* placeholder removed */" />}
               >
                 <FoundersBlock />
               </Suspense>
@@ -186,7 +186,7 @@ const LandingPage: React.FC = () => {
           <div className="container">
             <Suspense
               fallback={
-                <LoadingFallback message="Gebruikersverhalen laden..." />
+                <LoadingFallback message="Gebruikersverhalen laden/* placeholder removed */" />
               }
             >
               <UGCGallery />
@@ -200,7 +200,7 @@ const LandingPage: React.FC = () => {
         <section className="section bg-white">
           <div className="container">
             <Suspense
-              fallback={<LoadingFallback message="Laatste sectie laden..." />}
+              fallback={<LoadingFallback message="Laatste sectie laden/* placeholder removed */" />}
             >
               <ClosingCTA onCTAClick={handleCTAClick} />
             </Suspense>

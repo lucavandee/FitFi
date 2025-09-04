@@ -75,14 +75,14 @@ class NavigationService {
    * Get current navigation state
    */
   getState(): NavigationState {
-    return { ...this.state };
+    return { /* placeholder removed */this.state };
   }
 
   /**
    * Update state and notify listeners
    */
   private updateState(updates: Partial<NavigationState>) {
-    this.state = { ...this.state, ...updates };
+    this.state = { /* placeholder removed */this.state, /* placeholder removed */updates };
     this.listeners.forEach((listener) => listener(this.state));
   }
 
@@ -185,7 +185,7 @@ class NavigationService {
     const {
       delay = 300,
       showLoading = true,
-      loadingMessage = "Navigeren...",
+      loadingMessage = "Navigeren/* placeholder removed */",
       onStart,
       onComplete,
       analytics,
@@ -260,14 +260,14 @@ class NavigationService {
       "/results",
       {
         delay: 500,
-        loadingMessage: "Je stijlprofiel wordt gemaakt...",
+        loadingMessage: "Je stijlprofiel wordt gemaakt/* placeholder removed */",
         fallbackRoute: "/onboarding",
         analytics: {
           event: "navigate_to_results",
           category: "user_journey",
           label: "quiz_completion",
         },
-        ...options,
+        /* placeholder removed */options,
       },
       data ? { answers: data } : undefined,
     );
@@ -284,14 +284,14 @@ class NavigationService {
       "/results",
       {
         delay: 300,
-        loadingMessage: "Aanbevelingen worden geladen...",
+        loadingMessage: "Aanbevelingen worden geladen/* placeholder removed */",
         fallbackRoute: "/onboarding",
         analytics: {
           event: "navigate_to_enhanced_results",
           category: "user_journey",
           label: "onboarding_completion",
         },
-        ...options,
+        /* placeholder removed */options,
       },
       onboardingData ? { onboardingData } : undefined,
     );
@@ -305,13 +305,13 @@ class NavigationService {
   ): Promise<void> {
     return this.navigateTo("/onboarding", {
       delay: 200,
-      loadingMessage: "Onboarding laden...",
+      loadingMessage: "Onboarding laden/* placeholder removed */",
       analytics: {
         event: "navigate_to_onboarding",
         category: "user_journey",
         label: "restart_flow",
       },
-      ...options,
+      /* placeholder removed */options,
     });
   }
 
@@ -335,13 +335,13 @@ class NavigationService {
 
     return this.navigateTo(route, {
       delay: 200,
-      loadingMessage: `Naar ${step}...`,
+      loadingMessage: `Naar ${step}/* placeholder removed */`,
       analytics: {
         event: "navigate_onboarding_step",
         category: "onboarding",
         label: step,
       },
-      ...options,
+      /* placeholder removed */options,
     });
   }
 

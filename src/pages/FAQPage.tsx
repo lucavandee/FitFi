@@ -226,7 +226,7 @@ const FAQPage: React.FC = () => {
     if (openFAQs.includes(index)) {
       setOpenFAQs(openFAQs.filter((i) => i !== index));
     } else {
-      setOpenFAQs([...openFAQs, index]);
+      setOpenFAQs([/* placeholder removed */openFAQs, index]);
     }
   };
 
@@ -302,7 +302,7 @@ const FAQPage: React.FC = () => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Zoek in veelgestelde vragen..."
+                    placeholder="Zoek in veelgestelde vragen/* placeholder removed */"
                     className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] text-gray-900 placeholder-gray-500 transition-all"
                   />
                   <Search

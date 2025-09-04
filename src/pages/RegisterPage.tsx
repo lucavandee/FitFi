@@ -49,14 +49,14 @@ const RegisterPage: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
-      ...prev,
+      /* placeholder removed */prev,
       [name]: value,
     }));
 
     // Clear errors when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
-        ...prev,
+        /* placeholder removed */prev,
         [name]: undefined,
       }));
     }
@@ -147,7 +147,7 @@ const RegisterPage: React.FC = () => {
       <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#bfae9f] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Registreren...</p>
+          <p className="text-gray-600">Registreren/* placeholder removed */</p>
         </div>
       </div>
     );
@@ -370,7 +370,7 @@ const RegisterPage: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Account aanmaken...
+                    Account aanmaken/* placeholder removed */
                   </div>
                 ) : (
                   "Account aanmaken"

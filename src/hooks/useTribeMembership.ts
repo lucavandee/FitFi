@@ -46,7 +46,7 @@ export function useTribeMembership(tribeId: string, userId?: string) {
       joined_at: new Date().toISOString(),
     };
     setMembers((prev) =>
-      prev.some((m) => m.user_id === userId) ? prev : [optimistic, ...prev],
+      prev.some((m) => m.user_id === userId) ? prev : [optimistic, /* placeholder removed */prev],
     );
 
     try {

@@ -61,7 +61,7 @@ export function lt_joinTribe(tribeId: string, userId: string): boolean {
       joined_at: new Date().toISOString(),
     };
 
-    lt_setMembers(tribeId, [...members, newMember]);
+    lt_setMembers(tribeId, [/* placeholder removed */members, newMember]);
     return true;
   } catch (error) {
     console.error("[LocalTribeStore] Error joining tribe:", error);
@@ -124,7 +124,7 @@ export function lt_addPost(
   post: Omit<TribePost, "id" | "created_at" | "likes_count" | "comments_count">,
 ): TribePost {
   const newPost: TribePost = {
-    ...post,
+    /* placeholder removed */post,
     id: `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     created_at: new Date().toISOString(),
     likes_count: 0,
@@ -132,7 +132,7 @@ export function lt_addPost(
   };
 
   const posts = lt_getPosts(post.tribe_id || "");
-  lt_setPosts(post.tribe_id || "", [newPost, ...posts]);
+  lt_setPosts(post.tribe_id || "", [newPost, /* placeholder removed */posts]);
 
   return newPost;
 }
@@ -162,7 +162,7 @@ export function lt_togglePostLike(
     const newCount = liked ? currentLikes + 1 : Math.max(0, currentLikes - 1);
 
     posts[postIndex] = {
-      ...post,
+      /* placeholder removed */post,
       likes_count: newCount,
     };
 

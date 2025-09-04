@@ -79,7 +79,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
   };
 
   if (isLoading) {
-    return <LoadingFallback fullScreen message="Content laden..." />;
+    return <LoadingFallback fullScreen message="Content laden/* placeholder removed */" />;
   }
 
   if (error) {

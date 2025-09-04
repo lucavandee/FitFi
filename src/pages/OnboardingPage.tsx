@@ -19,7 +19,7 @@ const OnboardingPage: React.FC = () => {
   }, [quizLoading, isQuizCompleted, navigate]);
 
   if (userLoading || quizLoading) {
-    return <LoadingFallback fullScreen message="Onboarding laden..." />;
+    return <LoadingFallback fullScreen message="Onboarding laden/* placeholder removed */" />;
   }
 
   if (!user) {
@@ -53,7 +53,7 @@ const OnboardingPage: React.FC = () => {
   // Don't show onboarding if quiz completed (will redirect)
   if (isQuizCompleted()) {
     return (
-      <LoadingFallback fullScreen message="Doorsturen naar resultaten..." />
+      <LoadingFallback fullScreen message="Doorsturen naar resultaten/* placeholder removed */" />
     );
   }
 

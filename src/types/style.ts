@@ -8,7 +8,7 @@ export type ProductLike = {
   brand?: string;
   category?: string; // top/bottom/shoes/jacket/accessory
   colorTags?: string[]; // 'zwart','navy','wit','earth','contrast'
-  materialTags?: string[]; // 'katoen','wol','leer','tech','linnen',...
+  materialTags?: string[]; // 'katoen','wol','leer','tech','linnen',/* placeholder removed */
   silhouetteTags?: string[]; // 'slim','relaxed','boxy','tailored'
   formality?: number; // 0-100
   seasonTags?: string[]; // 'spring','summer','autumn','winter'

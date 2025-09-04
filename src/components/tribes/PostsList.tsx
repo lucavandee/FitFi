@@ -104,7 +104,7 @@ export const PostsList: React.FC<PostsListProps> = ({
   if (loading) {
     return (
       <div className={`space-y-6 ${className}`}>
-        {[...Array(3)].map((_, i) => (
+        {[/* placeholder removed */Array(3)].map((_, i) => (
           <div
             key={i}
             className="bg-white rounded-2xl p-6 shadow-sm animate-pulse"

@@ -143,7 +143,7 @@ export default function LoginPage() {
               {message && <p className="text-sm text-green-700">{message}</p>}
 
               <button type="submit" disabled={pending} className="btn btn-primary w-full py-3 text-lg font-semibold">
-                {pending ? "Bezig..." : mode === "login" ? "Inloggen" : "Account aanmaken"}
+                {pending ? "Bezig/* placeholder removed */" : mode === "login" ? "Inloggen" : "Account aanmaken"}
               </button>
             </form>
           )}
@@ -164,7 +164,7 @@ export default function LoginPage() {
 
               <div className="flex gap-2">
                 <button type="submit" disabled={pending} className="btn btn-primary flex-1 py-3">
-                  {pending ? "Bezig..." : "Stuur reset-link"}
+                  {pending ? "Bezig/* placeholder removed */" : "Stuur reset-link"}
                 </button>
                 <button type="button" className="btn btn-ghost flex-1 py-3" onClick={() => setMode("login")}>
                   Terug

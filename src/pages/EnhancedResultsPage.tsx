@@ -64,7 +64,7 @@ const EnhancedResultsPage: React.FC = () => {
 
   if (userLoading || quizLoading) {
     return (
-      <LoadingFallback fullScreen message="Enhanced resultaten laden..." />
+      <LoadingFallback fullScreen message="Enhanced resultaten laden/* placeholder removed */" />
     );
   }
 
@@ -88,7 +88,7 @@ const EnhancedResultsPage: React.FC = () => {
 
   // Don't show results if quiz not completed (will redirect)
   if (!isQuizCompleted()) {
-    return <LoadingFallback fullScreen message="Quiz controleren..." />;
+    return <LoadingFallback fullScreen message="Quiz controleren/* placeholder removed */" />;
   }
 
   if (!analysisComplete) {
@@ -99,7 +99,7 @@ const EnhancedResultsPage: React.FC = () => {
             <Sparkles className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-light text-gray-900 mb-4">
-            Enhanced AI analyseert jouw stijl...
+            Enhanced AI analyseert jouw stijl/* placeholder removed */
           </h2>
           <p className="text-gray-600 mb-6">
             We creëren jouw uitgebreide stijlprofiel met onboarding data.
@@ -308,7 +308,7 @@ const EnhancedResultsPage: React.FC = () => {
               {isResetting ? (
                 <div className="flex items-center justify-center">
                   <div className="w-4 h-4 border-2 border-[#89CFF0] border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Quiz resetten...
+                  Quiz resetten/* placeholder removed */
                 </div>
               ) : (
                 "Quiz Opnieuw Doen"
@@ -391,7 +391,7 @@ function getEnhancedStyleTags(quizAnswers: any, onboardingData: any): string[] {
   // Add onboarding tags
   if (onboardingData?.archetypes) {
     tags.push(
-      ...onboardingData.archetypes.map(
+      /* placeholder removed */onboardingData.archetypes.map(
         (arch: string) =>
           arch.charAt(0).toUpperCase() + arch.slice(1).replace("_", " "),
       ),

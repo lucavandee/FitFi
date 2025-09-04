@@ -32,7 +32,7 @@ const SuccessStoriesPage: React.FC = () => {
             <div className="md:w-1/2 p-8">
               <div className="flex items-center mb-4">
                 <div className="flex">
-                  {[...Array(5)].map((_, i) => (
+                  {[/* placeholder removed */Array(5)].map((_, i) => (
                     <Star
                       key={i}
                       className="text-yellow-400 fill-current"
@@ -98,7 +98,7 @@ const SuccessStoriesPage: React.FC = () => {
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -146,7 +146,7 @@ const SuccessStoriesPage: React.FC = () => {
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -194,7 +194,7 @@ const SuccessStoriesPage: React.FC = () => {
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -244,7 +244,7 @@ const SuccessStoriesPage: React.FC = () => {
             {/* Testimonial 1 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -279,7 +279,7 @@ const SuccessStoriesPage: React.FC = () => {
             {/* Testimonial 2 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -314,7 +314,7 @@ const SuccessStoriesPage: React.FC = () => {
             {/* Testimonial 3 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -349,7 +349,7 @@ const SuccessStoriesPage: React.FC = () => {
             {/* Testimonial 4 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
-                {[...Array(4)].map((_, i) => (
+                {[/* placeholder removed */Array(4)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -385,7 +385,7 @@ const SuccessStoriesPage: React.FC = () => {
             {/* Testimonial 5 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"
@@ -420,7 +420,7 @@ const SuccessStoriesPage: React.FC = () => {
             {/* Testimonial 6 */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
+                {[/* placeholder removed */Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className="text-yellow-400 fill-current"

@@ -107,7 +107,7 @@ export default function SmartImage({
         className ?? "", // backward compatibility
       ].join(" ")}
       // width/height attributen alleen meegeven wanneer géén aspect container gebruikt wordt
-      {...(!aspect ? { width, height } : {})}
+      {/* placeholder removed */(!aspect ? { width, height } : {})}
     />
   );
 

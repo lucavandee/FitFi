@@ -36,7 +36,7 @@ function readLocalStats(userId: string) {
 }
 function writeLocalStats(stats: UserStats) {
   lsWrite(LS_STATS(stats.user_id), {
-    ...stats,
+    /* placeholder removed */stats,
     updated_at: new Date().toISOString(),
     last_active: new Date().toISOString(),
   });

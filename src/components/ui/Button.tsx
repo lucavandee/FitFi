@@ -45,7 +45,7 @@ const Button: React.FC<ButtonProps> = ({
   "aria-busy": ariaBusy,
   "data-ab-variant": abVariant,
   title,
-  ...rest
+  /* placeholder removed */rest
 }) => {
   const baseClasses = [
     "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
@@ -97,12 +97,12 @@ const Button: React.FC<ButtonProps> = ({
     "aria-busy": ariaBusy || loading,
     "data-ab-variant": abVariant,
     title,
-    ...rest,
+    /* placeholder removed */rest,
   };
 
   if (as === "a") {
     return (
-      <a href={href} target={target} rel={rel} {...commonProps}>
+      <a href={href} target={target} rel={rel} {/* placeholder removed */commonProps}>
         {content}
       </a>
     );
@@ -110,14 +110,14 @@ const Button: React.FC<ButtonProps> = ({
 
   if (as === Link) {
     return (
-      <Link to={to || "/"} {...commonProps}>
+      <Link to={to || "/"} {/* placeholder removed */commonProps}>
         {content}
       </Link>
     );
   }
 
   return (
-    <button type={type} onClick={onClick} {...commonProps}>
+    <button type={type} onClick={onClick} {/* placeholder removed */commonProps}>
       {content}
     </button>
   );

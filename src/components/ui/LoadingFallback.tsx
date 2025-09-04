@@ -12,7 +12,7 @@ interface LoadingFallbackProps {
  * A reusable loading component with customizable size and message
  */
 const LoadingFallback: React.FC<LoadingFallbackProps> = ({
-  message = "Laden...",
+  message = "Laden/* placeholder removed */",
   size = "md",
   fullScreen = false,
   className = "",

@@ -24,7 +24,7 @@ export const GradientTextLine: React.FC<Props> = ({
   className,
 }) => {
   const rules = (accents ?? []).map((a) => ({
-    ...a,
+    /* placeholder removed */a,
     className: a.className ?? "text-gradient",
   }));
 

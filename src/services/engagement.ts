@@ -62,7 +62,7 @@ export function getSimilarOutfits(all: any[], base: any, count = 3) {
   const baseTags: string[] = base.tags || [];
   const baseArch = base.archetype || "";
   const score = (o: any) => {
-    const t = new Set([...(o.tags || [])]);
+    const t = new Set([/* placeholder removed */(o.tags || [])]);
     const inter = baseTags.filter((x) => t.has(x)).length;
     const arch = o.archetype === baseArch ? 2 : 0;
     return inter + arch;
@@ -81,9 +81,9 @@ export function getSimilarOutfits(all: any[], base: any, count = 3) {
  */
 type KV = Record<string, any>;
 
-function safeCall(fn?: (...a: any[]) => any, ...args: any[]) {
+function safeCall(fn?: (/* placeholder removed */a: any[]) => any, /* placeholder removed */args: any[]) {
   try {
-    return fn?.(...args);
+    return fn?.(/* placeholder removed */args);
   } catch {
     /* noop */
   }
@@ -97,7 +97,7 @@ export function trackProductClick(data: KV) {
   // datalayer
   ((window as any).dataLayer = (window as any).dataLayer || []).push({
     event: "product_click",
-    ...data,
+    /* placeholder removed */data,
   });
 }
 
@@ -106,7 +106,7 @@ export function trackShopCta(data: KV) {
   safeCall((window as any)?.plausible, "Shop CTA", { props: data });
   ((window as any).dataLayer = (window as any).dataLayer || []).push({
     event: "shop_cta",
-    ...data,
+    /* placeholder removed */data,
   });
 }
 
@@ -115,7 +115,7 @@ export function trackImpression(data: KV) {
   safeCall((window as any)?.plausible, "Product Impression", { props: data });
   ((window as any).dataLayer = (window as any).dataLayer || []).push({
     event: "product_impression",
-    ...data,
+    /* placeholder removed */data,
   });
 }
 

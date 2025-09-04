@@ -32,7 +32,7 @@ export function useSaveOutfit(userId?: string) {
       const prev = qc.getQueryData<any[]>(["saved-outfits", userId]) ?? [];
       qc.setQueryData(
         ["saved-outfits", userId],
-        [{ outfit_id: outfit.id, outfit_json: outfit }, ...prev],
+        [{ outfit_id: outfit.id, outfit_json: outfit }, /* placeholder removed */prev],
       );
       return { prev };
     },

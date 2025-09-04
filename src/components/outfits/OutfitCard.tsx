@@ -110,7 +110,7 @@ export default function OutfitCard({
   const handleMoreLikeThis = () => {
     if (isProcessing.like) return;
 
-    setIsProcessing((prev) => ({ ...prev, like: true }));
+    setIsProcessing((prev) => ({ /* placeholder removed */prev, like: true }));
 
     // Track similar request
     track("request_similar", {
@@ -123,14 +123,14 @@ export default function OutfitCard({
 
     // Re-enable button after 200ms
     setTimeout(() => {
-      setIsProcessing((prev) => ({ ...prev, like: false }));
+      setIsProcessing((prev) => ({ /* placeholder removed */prev, like: false }));
     }, 200);
   };
 
   const handleDislike = () => {
     if (isProcessing.dislike) return;
 
-    setIsProcessing((prev) => ({ ...prev, dislike: true }));
+    setIsProcessing((prev) => ({ /* placeholder removed */prev, dislike: true }));
 
     // Track dislike feedback
     track("feedback_dislike", {
@@ -143,14 +143,14 @@ export default function OutfitCard({
 
     // Re-enable button after 200ms
     setTimeout(() => {
-      setIsProcessing((prev) => ({ ...prev, dislike: false }));
+      setIsProcessing((prev) => ({ /* placeholder removed */prev, dislike: false }));
     }, 200);
   };
 
   const handleExplain = async () => {
     if (isProcessing.explain) return;
 
-    setIsProcessing((prev) => ({ ...prev, explain: true }));
+    setIsProcessing((prev) => ({ /* placeholder removed */prev, explain: true }));
 
     try {
       // Track explain request
@@ -204,7 +204,7 @@ export default function OutfitCard({
       toast.error("Kon uitleg niet genereren");
     } finally {
       setTimeout(() => {
-        setIsProcessing((prev) => ({ ...prev, explain: false }));
+        setIsProcessing((prev) => ({ /* placeholder removed */prev, explain: false }));
       }, 200);
     }
   };

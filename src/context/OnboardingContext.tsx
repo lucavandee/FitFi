@@ -56,7 +56,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Simple update function
   const updateAnswers = (newData: Partial<OnboardingData>) => {
-    setData((prev) => ({ ...prev, ...newData }));
+    setData((prev) => ({ /* placeholder removed */prev, /* placeholder removed */newData }));
   };
 
   // Reset function

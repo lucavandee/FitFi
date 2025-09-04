@@ -67,7 +67,7 @@ export function fusionScore(
     const contrib = (w[k] ?? 0) * score;
     byArchetype[k] = contrib;
     total += contrib;
-    signals.push(...ss.map((s) => `${ARCHETYPES[k].label}: ${s}`));
+    signals.push(/* placeholder removed */ss.map((s) => `${ARCHETYPES[k].label}: ${s}`));
   }
   return {
     totalScore: clamp01(total),

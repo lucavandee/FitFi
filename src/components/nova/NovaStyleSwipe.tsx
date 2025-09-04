@@ -26,13 +26,13 @@ export default function NovaStyleSwipe({ styles, onSwipe, onComplete }: NovaStyl
     onSwipe(currentStyle.id, liked);
     
     if (liked) {
-      setLikedStyles(prev => [...prev, currentStyle.id]);
+      setLikedStyles(prev => [/* placeholder removed */prev, currentStyle.id]);
     }
 
     if (currentIndex < styles.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      onComplete(liked ? [...likedStyles, currentStyle.id] : likedStyles);
+      onComplete(liked ? [/* placeholder removed */likedStyles, currentStyle.id] : likedStyles);
     }
   };
 

@@ -140,7 +140,7 @@ export const FOUNDERS_TIERS: FounderTier[] = [
 ];
 
 export function resolveTier(count: number) {
-  const tiers = [...FOUNDERS_TIERS].sort((a, b) => a.threshold - b.threshold);
+  const tiers = [/* placeholder removed */FOUNDERS_TIERS].sort((a, b) => a.threshold - b.threshold);
   let current = tiers[0];
   for (const t of tiers) if (count >= t.threshold) current = t;
   const idx = tiers.findIndex((t) => t.id === current.id);
@@ -155,7 +155,7 @@ export function resolveTier(count: number) {
 export function allPerksSorted() {
   return FOUNDERS_TIERS.flatMap((t) =>
     t.perks.map((p) => ({
-      ...p,
+      /* placeholder removed */p,
       tierId: t.id,
       tierName: t.name,
       tierThreshold: t.threshold,

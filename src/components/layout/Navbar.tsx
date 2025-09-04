@@ -18,7 +18,7 @@ export default function Navbar() {
           {/* Desktop Navigation */}
         {/* rechts: (houd je bestaande links/knoppen hier) */}
         <div className="flex items-center gap-6">
-          {/* ... jouw links ... */}
+          {/* /* placeholder removed */ jouw links /* placeholder removed */ */}
         </div>
         </div>
       </div>

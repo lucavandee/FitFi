@@ -28,7 +28,7 @@ export default function ImageWithFallback({
   // ⚠️ Let op: we hernoemen props lokaal om dubbele bindingen te voorkomen
   loading: loadingProp,
   decoding: decodingProp,
-  ...rest
+  /* placeholder removed */rest
 }: Props) {
   const [imgSrc, setImgSrc] = React.useState(src);
 
@@ -50,7 +50,7 @@ export default function ImageWithFallback({
       sizes={sizes}
       srcSet={srcSet}
       onError={onError}
-      {...rest}
+      {/* placeholder removed */rest}
     />
   );
 }

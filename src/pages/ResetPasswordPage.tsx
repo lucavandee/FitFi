@@ -46,14 +46,14 @@ const ResetPasswordPage: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
-      ...prev,
+      /* placeholder removed */prev,
       [name]: value,
     }));
 
     // Clear errors when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
-        ...prev,
+        /* placeholder removed */prev,
         [name]: undefined,
       }));
     }
@@ -369,7 +369,7 @@ const ResetPasswordPage: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Wachtwoord wijzigen...
+                    Wachtwoord wijzigen/* placeholder removed */
                   </div>
                 ) : (
                   "Wachtwoord wijzigen"

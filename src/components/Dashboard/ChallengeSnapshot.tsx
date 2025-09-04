@@ -58,7 +58,7 @@ export const ChallengeSnapshot: React.FC = () => {
         </div>
         <div className="text-center py-4">
           <p className="text-sm text-midnight/60 mb-3">
-            Challenge wordt geladen...
+            Challenge wordt geladen/* placeholder removed */
           </p>
           <a
             className="inline-block text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium"

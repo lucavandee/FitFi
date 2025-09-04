@@ -7,7 +7,7 @@ export type AnalyticsPayload = Record<string, any>;
 
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
+    gtag?: (/* placeholder removed */args: any[]) => void;
     plausible?: (event: string, opts?: { props?: Record<string, any> }) => void;
   }
 }
@@ -48,7 +48,7 @@ export function pageview(url: string, params: Record<string, any> = {}) {
         import.meta.env.VITE_GTAG_ID || "GA_MEASUREMENT_ID",
         {
           page_path: url,
-          ...params,
+          /* placeholder removed */params,
         },
       );
     }
@@ -100,7 +100,7 @@ export function trackEvent(
     event_category: category,
     event_label: label,
     value,
-    ...params,
+    /* placeholder removed */params,
   });
 }
 

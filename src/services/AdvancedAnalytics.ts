@@ -34,7 +34,7 @@ export class AdvancedAnalytics {
 
   /** Voeg globale context toe (samengevoegd met event-params) */
   setContext(ctx: Params) {
-    this.context = { ...this.context, ...ctx };
+    this.context = { /* placeholder removed */this.context, /* placeholder removed */ctx };
   }
 
   /** Track een custom event (stuurt naar gtag als beschikbaar) */
@@ -42,8 +42,8 @@ export class AdvancedAnalytics {
     if (!this.enabled) return;
     const payload = {
       user_id: this.userId ?? "guest",
-      ...this.context,
-      ...params,
+      /* placeholder removed */this.context,
+      /* placeholder removed */params,
     };
     try {
       gaEvent(name, payload);
@@ -62,7 +62,7 @@ export class AdvancedAnalytics {
   page(path: string, params: Params = {}) {
     if (!this.enabled) return;
     try {
-      gaPageview(path, { user_id: this.userId ?? "guest", ...params });
+      gaPageview(path, { user_id: this.userId ?? "guest", /* placeholder removed */params });
     } catch {
       /* no-op */
     }
@@ -98,5 +98,5 @@ const ADV_ENABLED =
 /** ▶ Named export die elders verwacht wordt */
 export const advancedAnalytics = new AdvancedAnalytics(ADV_ENABLED);
 
-/** ▶ Default export tbv. `import analytics from ...` */
+/** ▶ Default export tbv. `import analytics from /* placeholder removed */` */
 export default advancedAnalytics;

@@ -73,7 +73,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ /* placeholder removed */prev, [field]: value }));
   };
 
   return (
@@ -114,7 +114,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <textarea
               value={formData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
-              placeholder="Beschrijf wat deelnemers moeten doen..."
+              placeholder="Beschrijf wat deelnemers moeten doen/* placeholder removed */"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent resize-none"
               rows={4}
               required
@@ -240,7 +240,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             }
             loading={isSubmitting}
           >
-            {isSubmitting ? "Challenge Maken..." : "Maak Challenge"}
+            {isSubmitting ? "Challenge Maken/* placeholder removed */" : "Maak Challenge"}
           </Button>
         </div>
       </form>
