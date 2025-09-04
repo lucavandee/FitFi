@@ -1,0 +1,1 @@
+export function SEO({ title, description, keywords, image, url }: SEOProps) {
