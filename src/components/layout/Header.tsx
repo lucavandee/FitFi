@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, Crown } from 'lucide-react';
+// ✅ enkel vanuit context/AuthContext
 import { useAuth } from '@/context/AuthContext';
 import { useGamification } from '@/context/GamificationContext';
 import Logo from '@/components/ui/Logo';
 import { cn, toArray, joinClasses } from '@/utils/cn';
-  const { user, tier, logout } = useAuth();
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const { user, tier } = useAuth();
-  const { user, logout } = useAuth();
+  // ✅ één destructure, inclusief logout
+  const { user, tier, logout } = useAuth();
   const { userStats } = useGamification();
 
   useEffect(() => {
