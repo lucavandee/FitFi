@@ -1,21 +1,16 @@
+# Netlify config — minimal & parse-safe
+
 [build]
-  command = "npm run build"
-  publish = "dist"
+command = "npm run build"
+publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20.19.0"
+NODE_VERSION = "20.19.0"
 
-[context.production.environment]
-  NODE_VERSION = "20.19.0"
-
-[build.environment]
-  NODE_VERSION = "22.12.0"
-
+# If you use Netlify Functions in /netlify/functions (TypeScript/JS), keep this:
 [functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
+directory = "netlify/functions"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Optional: set the production context explicitly (mirrors defaults)
+[context.production.environment]
+NODE_VERSION = "20.19.0"
