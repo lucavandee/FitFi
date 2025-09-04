@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import Seo from "@/components/Seo";
 import { Search, Calendar, User, ArrowRight, Clock, Tag } from "lucide-react";
 import Button from "../components/ui/Button";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 interface BlogPost {
   id: string;
