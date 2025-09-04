@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useInRouterContext } from 'react-router-dom';
+import { ReactNode } from 'react';
 import { Menu, X, User, LogOut, Settings, Crown } from 'lucide-react';
 // ✅ enkel vanuit context/AuthContext
 import { useAuth } from '@/context/AuthContext';
 import { useGamification } from '@/context/GamificationContext';
 import Logo from '@/components/ui/Logo';
 import { cn, toArray, joinClasses } from '@/utils/cn';
+
+function SmartLink({ to, href, children, className }: { to?: string; href?: string; children: ReactNode; className?: string; }) {
+  const inRouter = useInRouterContext();
+  if (to && inRouter) return <Link to={to} className={className}>{children}</Link>;
+  return <a href={to || href || "#"} className={className}>{children}</a>;
+}
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,15 +59,15 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
+            <SmartLink to="/" className="flex items-center">
               <Logo className="h-8 w-auto" />
-            </Link>
+            </SmartLink>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {toArray(navigation).map((item) => (
-              <Link
+              <SmartLink
                 key={item.name}
                 to={item.href}
                 className={cn(
@@ -71,7 +78,7 @@ export default function Header() {
                 )}
               >
                 {item.name}
-              </Link>
+              </SmartLink>
             ))}
           </nav>
 
@@ -108,7 +115,7 @@ export default function Header() {
                   "transition-all duration-200 transform group-hover:translate-y-0 translate-y-1"
                 )}>
                   {toArray(userNavigation).map((item) => (
-                    <Link
+                    <SmartLink
                       key={item.name}
                       to={item.href}
                       onClick={item.onClick}
@@ -119,13 +126,13 @@ export default function Header() {
                     >
                       <item.icon className="w-4 h-4 mr-3" />
                       {item.name}
-                    </Link>
+                    </SmartLink>
                   ))}
                 </div>
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <Link
+                <SmartLink
                   to="/login"
                   className={cn(
                     "px-4 py-2 text-sm font-medium text-gray-700",
@@ -133,8 +140,8 @@ export default function Header() {
                   )}
                 >
                   Inloggen
-                </Link>
-                <Link
+                </SmartLink>
+                <SmartLink
                   to="/register"
                   className={cn(
                     "px-4 py-2 text-sm font-medium text-white",
@@ -143,7 +150,7 @@ export default function Header() {
                   )}
                 >
                   Registreren
-                </Link>
+                </SmartLink>
               </div>
             )}
           </div>
@@ -174,7 +181,7 @@ export default function Header() {
           )}>
             <div className="px-4 py-4 space-y-2">
               {toArray(navigation).map((item) => (
-                <Link
+                <SmartLink
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMenuOpen(false)}
@@ -187,14 +194,14 @@ export default function Header() {
                   )}
                 >
                   {item.name}
-                </Link>
+                </SmartLink>
               ))}
 
               {/* Mobile User Menu */}
               {user ? (
                 <div className="pt-4 border-t border-gray-200 space-y-2">
                   {toArray(userNavigation).map((item) => (
-                    <Link
+                    <SmartLink
                       key={item.name}
                       to={item.href}
                       onClick={(e) => {
@@ -212,12 +219,12 @@ export default function Header() {
                     >
                       <item.icon className="w-5 h-5 mr-3" />
                       {item.name}
-                    </Link>
+                    </SmartLink>
                   ))}
                 </div>
               ) : (
                 <div className="pt-4 border-t border-gray-200 space-y-2">
-                  <Link
+                  <SmartLink
                     to="/login"
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
@@ -226,8 +233,8 @@ export default function Header() {
                     )}
                   >
                     Inloggen
-                  </Link>
-                  <Link
+                  </SmartLink>
+                  <SmartLink
                     to="/register"
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
@@ -237,7 +244,7 @@ export default function Header() {
                     )}
                   >
                     Registreren
-                  </Link>
+                  </SmartLink>
                 </div>
               )}
             </div>
