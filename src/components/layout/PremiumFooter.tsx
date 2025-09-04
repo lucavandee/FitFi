@@ -206,13 +206,13 @@ function PremiumFooterInner() {
           </div>
 
           {/* Footer Sections */}
-          {enhancedColumns.map((section) => (
+          {(enhancedColumns || []).map((section) => (
             <div key={section.title}>
               <h3 className="text-lg font-medium text-white mb-4">
                 {section.title}
               </h3>
               <ul className="space-y-3">
-                {section.links.map((link) => (
+                {(section.links || []).map((link) => (
                   <li key={link.label}>
                     {link.onClick ? (
                       <button
