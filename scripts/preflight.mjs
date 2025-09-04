@@ -2,15 +2,28 @@
 import fs from "fs";
 import path from "path";
 
-const fails = [];
+/* ------------------------------ config ------------------------------ */
 const exts = [".ts", ".tsx", ".js", ".jsx", ".css", ".html"];
+const fails = [];
 
+/* ------------------------------ helpers ----------------------------- */
 const has = (p) => fs.existsSync(p);
 const read = (p) => fs.readFileSync(p, "utf8");
 
-function hasBadEllipsis(code) {
+function walk(dir, onFile) {
+  for (const name of fs.readdirSync(dir)) {
+    const p = path.join(dir, name);
+    const st = fs.statSync(p);
+    if (st.isDirectory()) walk(p, onFile);
+    else if (exts.some((e) => p.endsWith(e))) onFile(p);
+  }
+}
+
+/** Flag alleen ECHTE '...' placeholders; tolereer spreads/rest */
+function fileHasBadEllipsis(code) {
   const re = /\.\.\./g;
   let m;
+  let bad = false;
   while ((m = re.exec(code))) {
     const i = m.index;
     const before = code.slice(0, i).trimEnd();
@@ -22,14 +35,18 @@ function hasBadEllipsis(code) {
     const nextLooksLikeSpread = /[A-Za-z_$\{\[\(]/.test(next);
     const prevAllowsSpread = prev === "{" || prev === "[" || prev === "(";
 
-    if (nextLooksLikeSpread) return false;
-    if (prevAllowsSpread) return false;
-    return true;
+    // Spread/rest (allowed): {...x} [...x] (...args) or ...id
+    if (nextLooksLikeSpread || prevAllowsSpread) continue;
+
+    // Anders is dit hoogstwaarschijnlijk een placeholder in JSX/JS
+    bad = true;
+    break;
   }
-  return false;
+  return bad;
 }
 
-// ErrorBoundary default export check
+/* ------------------------------ checks ------------------------------ */
+// 1) ErrorBoundary default export aanwezig
 if (!has("src/components/ErrorBoundary.tsx")) {
   fails.push("Missing src/components/ErrorBoundary.tsx");
 } else {
@@ -39,7 +56,7 @@ if (!has("src/components/ErrorBoundary.tsx")) {
   }
 }
 
-// tsconfig alias sanity
+// 2) tsconfig alias
 try {
   const ts = JSON.parse(read("tsconfig.json"));
   const ok =
@@ -51,56 +68,55 @@ try {
   fails.push("Missing or unreadable tsconfig.json");
 }
 
-// scan repo
+// 3) scan source tree
 const badImports = [];
 const badEllipsis = [];
+const badClassesFilter = [];
+const nestedRouters = [];
 
-function walk(dir) {
-  for (const n of fs.readdirSync(dir)) {
-    const p = path.join(dir, n);
-    const s = fs.statSync(p);
-    if (s.isDirectory()) walk(p);
-    else if (exts.some((e) => p.endsWith(e))) {
-      const c = read(p);
-      if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c))
-        badImports.push(p);
-      if (hasBadEllipsis(c)) badEllipsis.push(p);
+if (has("src")) {
+  walk("src", (p) => {
+    const c = read(p);
+
+    // 3a) Verbied named import van ErrorBoundary
+    if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c)) {
+      badImports.push(p);
     }
-  }
-}
-if (has("src")) walk("src");
 
-if (badImports.length) fails.push("Use default import for ErrorBoundary:\n  - " + badImports.join("\n  - "));
-if (badEllipsis.length) fails.push("Remove placeholder '...' (not spread/rest):\n  - " + badEllipsis.join("\n  - "));
-// Detect nested routers outside main.tsx
-import fs from "fs";
-import path from "path";
-
-function scanRouters(dir, hits = []) {
-  const re = /<(BrowserRouter|HashRouter|MemoryRouter|Router)\b|RouterProvider\b|createBrowserRouter\s*\(/g;
-  for (const n of fs.readdirSync(dir)) {
-    const p = path.join(dir, n);
-    const s = fs.statSync(p);
-    if (s.isDirectory()) {
-      scanRouters(p, hits);
-    } else if (/\.(t|j)sx?$/.test(p)) {
-      const c = fs.readFileSync(p, "utf8");
-      if (re.test(c) && !p.endsWith("src/main.tsx")) {
-        hits.push(p);
-      }
+    // 3b) Ellipsis die geen spread/rest is
+    if (fileHasBadEllipsis(c)) {
+      badEllipsis.push(p);
     }
-  }
-  return hits;
+
+    // 3c) classes.filter(…) patronen (string/undefined → crash)
+    // let op: enkel heel gericht op variabele 'classes'
+    if (/(^|[^A-Za-z0-9_$])classes\s*\.\s*filter\s*\(/.test(c)) {
+      badClassesFilter.push(p);
+    }
+
+    // 3d) second routers buiten main.tsx
+    const routerRE = /<(BrowserRouter|HashRouter|MemoryRouter|Router)\b|RouterProvider\b|createBrowserRouter\s*\(/;
+    if (routerRE.test(c) && !p.endsWith(path.normalize("src/main.tsx"))) {
+      nestedRouters.push(p);
+    }
+  });
 }
 
-const routerHits = scanRouters("src");
-if (routerHits.length) {
-  fails.push(
-    "Nested router(s) found outside main.tsx:\n  - " + routerHits.join("\n  - ")
-  );
+// 4) verzamel fouten
+if (badImports.length) {
+  fails.push("Use default import for ErrorBoundary:\n  - " + badImports.join("\n  - "));
+}
+if (badEllipsis.length) {
+  fails.push("Remove placeholder '...' (not spread/rest):\n  - " + badEllipsis.join("\n  - "));
+}
+if (badClassesFilter.length) {
+  fails.push("Replace 'classes.filter(Boolean).join(\" \")' with a safe helper (joinClasses/cn):\n  - " + badClassesFilter.join("\n  - "));
+}
+if (nestedRouters.length) {
+  fails.push("Nested router(s) found outside src/main.tsx:\n  - " + nestedRouters.join("\n  - "));
 }
 
-
+// 5) resultaat
 if (fails.length) {
   console.error("✖ Preflight failed:\n- " + fails.join("\n- "));
   process.exit(1);
