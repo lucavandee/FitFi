@@ -1,79 +1,56 @@
-/* eslint-disable no-console */
+#!/usr/bin/env node
 import fs from "fs";
-const app = "src/App.tsx";
+import path from "path";
 
-function exists(p) {
-  try {
-    fs.accessSync(p);
-    return true;
-  } catch {
-    return false;
+const fails = [];
+
+function r(p) { return path.resolve(process.cwd(), p); }
+
+function has(p) { return fs.existsSync(r(p)); }
+
+function read(p) { return fs.readFileSync(r(p), "utf8"); }
+
+if (!has("src/components/ErrorBoundary.tsx")) {
+  fails.push("Missing src/components/ErrorBoundary.tsx");
+} else {
+  const eb = read("src/components/ErrorBoundary.tsx");
+  if (!/export\s+default\s+ErrorBoundary/.test(eb)) {
+    fails.push("ErrorBoundary.tsx must export default ErrorBoundary.");
   }
 }
 
-let ok = true;
-
-// (a) ensure no PremiumFooter outside App.tsx
-function scan(dir) {
-  const out = [];
-  if (!exists(dir)) return out;
-  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    const p = `${dir}/${e.name}`;
-    if (e.isDirectory()) out.push(...scan(p));
-    else if (/\.(tsx|ts|jsx|js)$/.test(p)) out.push(p);
-  }
-  return out;
+try {
+  const ts = JSON.parse(read("tsconfig.json"));
+  const okPath = ts?.compilerOptions?.paths?.["@/*"]?.[0] === "src/*";
+  if (!okPath) fails.push('tsconfig.json must set: "paths": { "@/*": ["src/*"] }');
+} catch {
+  fails.push("Missing or unreadable tsconfig.json");
 }
 
-const pages = [
-  ...scan("src/pages"),
-  ...scan("src/features"),
-  ...scan("src/sections"),
-];
-const offenders = [];
-for (const f of pages) {
-  const s = fs.readFileSync(f, "utf8");
-  if (s.match(/<\s*PremiumFooter\b/)) offenders.push(f);
-}
-if (offenders.length) {
-  ok = false;
-  console.error(
-    "❌ Page-level PremiumFooter usage found (should be only in App.tsx):",
-  );
-  offenders.forEach((o) => console.error("   -", o));
-}
+const badImports = [];
+const ellipsis = [];
+const exts = [".ts", ".tsx", ".js", ".jsx", ".css", ".html"];
 
-// (b) ensure wildcard route is last
-if (exists(app)) {
-  const s = fs.readFileSync(app, "utf8");
-  const routes = Array.from(s.matchAll(/<Route\s+path=("[^"]+"|'[^']+')/g)).map(
-    (m) => m[1].slice(1, -1),
-  );
-  const starIndex = routes.lastIndexOf("*");
-  if (starIndex !== -1 && starIndex !== routes.length - 1) {
-    ok = false;
-    console.error(
-      '❌ Wildcard 404 route (path="*") is not the last route in src/App.tsx',
-    );
+function walk(dir) {
+  for (const n of fs.readdirSync(dir)) {
+    const p = path.join(dir, n);
+    const s = fs.statSync(p);
+    if (s.isDirectory()) walk(p);
+    else if (exts.some(e => p.endsWith(e))) {
+      const c = fs.readFileSync(p, "utf8");
+      if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c)) badImports.push(p);
+      if (/\.\.\./.test(c)) ellipsis.push(p);
+    }
   }
 }
+if (has("src")) walk("src");
 
-// (c) ensure AffiliateDisclosureNote has import where used
-const adFiles = pages.filter((f) =>
-  /AffiliateDisclosureNote\b/.test(fs.readFileSync(f, "utf8")),
-);
-for (const f of adFiles) {
-  const s = fs.readFileSync(f, "utf8");
-  const hasImport =
-    /from\s+['"]@\/components\/legal\/AffiliateDisclosureNote['"]/.test(s);
-  if (!hasImport) {
-    ok = false;
-    console.error(`❌ Missing import for AffiliateDisclosureNote in ${f}`);
-  }
-}
+if (badImports.length) fails.push("Use default import for ErrorBoundary:\n  - " + badImports.join("\n  - "));
+if (ellipsis.length) fails.push("Remove '...' placeholders:\n  - " + ellipsis.join("\n  - "));
 
-if (!ok) {
-  console.error("\nPreflight failed. Fix issues above.");
-  process.exit(2);
+if (fails.length) {
+  console.error("✖ Preflight failed:\n- " + fails.join("\n- "));
+  process.exit(1);
+} else {
+  console.log("✔ Preflight OK");
 }
-console.log("✅ Preflight OK");
