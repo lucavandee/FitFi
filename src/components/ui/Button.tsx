@@ -108,13 +108,12 @@ const Button: React.FC<ButtonProps> = ({
     );
   }
 
-  if (as === Link) {
-    return (
-      <Link to={to || "/"} {/* placeholder removed */commonProps}>
-        {content}
-      </Link>
-    );
-  }
+  // Default button element
+  return (
+    <button type={type} disabled={disabled} {...commonProps}>
+      {content}
+    </button>
+  );
 
   return (
     <button type={type} onClick={onClick} {/* placeholder removed */commonProps}>
