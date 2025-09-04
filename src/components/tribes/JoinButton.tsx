@@ -20,7 +20,7 @@ export const JoinButton: React.FC<JoinButtonProps> = ({
   variant = "primary",
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { isMember, joinTribe, leaveTribe } = useTribeMembership(
+  const { isMember, onJoin, onLeave } = useTribeMembership(
     tribeId,
     userId,
   );

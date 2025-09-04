@@ -1,10 +1,14 @@
 import { Component, ErrorInfo, ReactNode } from "react";
 import ErrorFallback from "./ui/ErrorFallback";
 
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
 type Props = { children: ReactNode; fallback?: ReactNode; onError?: (e: Error, info: ErrorInfo) => void; };
 type State = { hasError: boolean; error: Error | null; info: ErrorInfo | null; };
 
-class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
   state: State = { hasError: false, error: null, info: null };
   static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
   componentDidCatch(error: Error, info: ErrorInfo) {

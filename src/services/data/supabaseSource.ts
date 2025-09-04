@@ -871,7 +871,10 @@ export async function getSbTribeChallenges(
     }
 
     const data = await executeSupabaseOperationSafe(
-      () => query,
+      async () => {
+        const result = await query;
+        return { data: result.data, error: result.error };
+      },
       "get_tribe_challenges",
       "tribe_challenges",
     );
