@@ -1,48 +1,23 @@
 import { Component, ErrorInfo, ReactNode } from "react";
 import ErrorFallback from "./ui/ErrorFallback";
 
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-}
-interface State {
-  hasError: boolean;
-  error: Error | null;
-  errorInfo: ErrorInfo | null;
-}
+type Props = { children: ReactNode; fallback?: ReactNode; onError?: (e: Error, info: ErrorInfo) => void; };
+type State = { hasError: boolean; error: Error | null; info: ErrorInfo | null; };
 
-export class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, error: null, errorInfo: null };
-
-  static getDerivedStateFromError(error: Error): Partial<State> {
-    return { hasError: true, error };
+class ErrorBoundary extends Component<Props, State> {
+  state: State = { hasError: false, error: null, info: null };
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    this.setState({ info }); this.props.onError?.(error, info);
+    if (import.meta.env.DEV) console.error("[ErrorBoundary]", error, info);
   }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ errorInfo });
-    this.props.onError?.(error, errorInfo);
-    // console logging only in dev
-    if (import.meta.env.DEV) console.error("[ErrorBoundary]", error, errorInfo);
-  }
-
-  handleReset = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
-  };
-
+  reset = () => this.setState({ hasError: false, error: null, info: null });
   render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) return this.props.fallback;
-      return (
-        <ErrorFallback
-          error={this.state.error as Error}
-          resetErrorBoundary={this.handleReset}
-          showDetails={import.meta.env.DEV}
-        />
-      );
-    }
+    if (this.state.hasError) return this.props.fallback ?? (
+      <ErrorFallback error={this.state.error || new Error("Onbekende fout")} resetErrorBoundary={this.reset} showDetails={import.meta.env.DEV} />
+    );
     return this.props.children;
   }
 }
-
 export default ErrorBoundary;
+export { ErrorBoundary }; // aanwezig, maar in alle code default import gebruiken
