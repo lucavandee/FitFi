@@ -34,3 +34,4 @@ function SmartLink({ to, href, children, className }: { to?: string; href?: stri
     </div>
   );
 }
+}
