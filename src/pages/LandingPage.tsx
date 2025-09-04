@@ -2,6 +2,19 @@ import React, { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { track } from "@/utils/analytics";
 import Seo from "@/components/Seo";
+
+// DEV-only component type
+type FC = React.FC<any>;
+
+// Null-component voor productie
+const NullComponent: FC = () => null;
+
+// Conditioneel laden: in DEV lazy import, anders noop
+const ConsoleInspector: FC =
+  import.meta.env.DEV
+    ? // @ts-expect-error – runtime only in DEV
+      lazy(() => import("@/components/dev/ConsoleInspector"))
+    : NullComponent;
 import ErrorBoundary from "@/components/ErrorBoundary";
 import LoadingFallback from "../components/ui/LoadingFallback";
 import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
@@ -207,6 +220,13 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
       </ErrorBoundary>
+
+      {/* Alleen in DEV tonen; in PROD is dit NullComponent en kost niets */}
+      {import.meta.env.DEV && (
+        <Suspense fallback={null}>
+          <ConsoleInspector />
+        </Suspense>
+      )}
     </div>
   );
 };
