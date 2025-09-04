@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "check:package": "node scripts/check-package-json.mjs",
     "preflight": "node scripts/preflight.mjs",
     "check:imports": "node scripts/check-imports.mjs",
     "check:aliases": "node scripts/check-aliases.mjs",
