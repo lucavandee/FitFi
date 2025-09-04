@@ -10,7 +10,7 @@ import LoadingFallback from "@/components/ui/LoadingFallback";
 // Shell components
 import Header from "@/components/layout/Header";
 import PremiumFooter from "@/components/layout/PremiumFooter";
-import ScrollToTop from "@/components/ScrollToTop";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { NavigationServiceInitializer } from "@/components/NavigationServiceInitializer";
 import CrashGate from "@/components/system/CrashGate";
 
