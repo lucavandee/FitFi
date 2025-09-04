@@ -1,24 +1,25 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-
-// Gebruik onze eigen ErrorBoundary component
-import ErrorBoundary from "@/components/ErrorBoundary";
-// Één CrashGate
-import CrashGate from "@/components/system/CrashGate";
-// Één HelmetProvider
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import App from "./App";
 import "./index.css";
 import AuthProvider from "@/context/AuthContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import CrashGate from "@/components/system/CrashGate";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const root = createRoot(document.getElementById("root")!);
+
+root.render(
   <React.StrictMode>
     <HelmetProvider>
-    <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </AuthProvider>
+      <ErrorBoundary>
+        <CrashGate>
+          <AuthProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AuthProvider>
         </CrashGate>
       </ErrorBoundary>
     </HelmetProvider>
