@@ -35,6 +35,7 @@ const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
+const HowItWorksPage = lazy(() => import("@/pages/HowItWorksPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 export default function App() {
@@ -74,6 +75,7 @@ export default function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/help" element={<HelpCenterPage />} />
                 <Route path="/success-stories" element={<SuccessStoriesPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
 
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
