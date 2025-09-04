@@ -2,6 +2,11 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoadingFallback from "@/components/ui/LoadingFallback";
 
+/* ✅ gebruik je bestaande componenten */
+import Header from "@/components/layout/Header";
+import PremiumFooter from "@/components/layout/PremiumFooter";
+
+/* pages (lazy) — laat je bestaande paden intact */
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
@@ -29,35 +34,55 @@ const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 export default function App() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/onboarding" element={<OnboardingPage />} />
-        <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
-        <Route path="/results" element={<ResultsPage />} />
-        <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
-        <Route path="/blog" element={<BlogIndexPage />} />
-        <Route path="/blog/:slug" element={<BlogDetailPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/feed" element={<FeedPage />} />
-        <Route path="/feedback" element={<FeedbackPage />} />
-        <Route path="/analytics" element={<AnalyticsPage />} />
-        <Route path="/tribes" element={<TribesPage />} />
-        <Route path="/tribes/:id" element={<TribeDetailPage />} />
-        <Route path="/saved" element={<SavedOutfitsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/help" element={<HelpCenterPage />} />
-        <Route path="/success-stories" element={<SuccessStoriesPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/__health" element={<div>OK</div>} />
-        <Route path="/index.html" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Suspense>
+    <>
+      {/* 🔙 Je oude header terug */}
+      <Header />
+
+      <main role="main" className="min-h-[60vh]">
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/home" element={<HomePage />} />
+
+            {/* Onboarding/Account routes blijven werken binnen deze shell.
+                Als je ze écht zonder header/footers wil, dan verhuizen we ze later naar een Minimal layout. */}
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
+
+            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
+
+            <Route path="/blog" element={<BlogIndexPage />} />
+            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/feed" element={<FeedPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+
+            <Route path="/tribes" element={<TribesPage />} />
+            <Route path="/tribes/:id" element={<TribeDetailPage />} />
+
+            <Route path="/saved" element={<SavedOutfitsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/help" element={<HelpCenterPage />} />
+            <Route path="/success-stories" element={<SuccessStoriesPage />} />
+
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+            <Route path="/__health" element={<div>OK</div>} />
+            <Route path="/index.html" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
+      </main>
+
+      {/* 🔙 Je oude footer terug */}
+      <PremiumFooter />
+    </>
   );
 }
