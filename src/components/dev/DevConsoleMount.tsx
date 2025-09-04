@@ -3,16 +3,22 @@
  * 
  * In productie rendert dit component null en doet niets.
  */
+import DevOnly from "@/components/dev/DevOnly";
 import { useEffect, useState } from "react";
 
 let Loaded: React.ComponentType | null = null;
 
 function DevConsoleMount() {
+  return (
+    <DevOnly>
+      <DevConsoleInner />
+    </DevOnly>
+  );
+}
+
+function DevConsoleInner() {
   const [ready, setReady] = useState(false);
-
-  // In productie: render niets
-  if (!import.meta.env.DEV) return null;
-
+  
   useEffect(() => {
     let cancelled = false;
 
