@@ -1,57 +1,38 @@
-import React from "react";
-import { joinClasses } from '@/utils/cn';
+import React, { useState, useImgError } from 'react';
 
-type Loading = "lazy" | "eager";
-type Decoding = "auto" | "sync" | "async";
-
-type Props = Omit<
-  React.ImgHTMLAttributes<HTMLImageElement>,
-  "src" | "alt" | "loading" | "decoding"
-> & {
+interface ImageWithFallbackProps {
   src: string;
   alt: string;
-  /** Optionele fallbackafbeelding als de hoofdbron faalt */
   fallbackSrc?: string;
-  /** Responsive images (optioneel) */
-  sizes?: string;
-  srcSet?: string;
-  /** Defaults: loading='lazy', decoding='async' */
-  loading?: Loading;
-  decoding?: Decoding;
-};
+  className?: string;
+  onError?: () => void;
+}
 
 export default function ImageWithFallback({
   src,
   alt,
-  fallbackSrc,
-  sizes,
-  srcSet,
-  // ⚠️ Let op: we hernoemen props lokaal om dubbele bindingen te voorkomen
-  loading: loadingProp,
-  decoding: decodingProp,
-  /* placeholder removed */rest
-}: Props) {
-  const [imgSrc, setImgSrc] = React.useState(src);
+  fallbackSrc = '/images/placeholder.jpg',
+  className = '',
+  onError
+}: ImageWithFallbackProps) {
+  const [imgSrc, setImgSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
 
-  const onError = React.useCallback(() => {
-    if (fallbackSrc && imgSrc !== fallbackSrc) {
+  const handleError = () => {
+    if (!hasError) {
+      setHasError(true);
       setImgSrc(fallbackSrc);
+      onError?.();
     }
-  }, [fallbackSrc, imgSrc]);
-
-  const loading: Loading = loadingProp ?? "lazy";
-  const decoding: Decoding = decodingProp ?? "async";
+  };
 
   return (
-      {...(props as any)}
+    <img
       src={imgSrc}
       alt={alt}
-      loading={loading}
-      decoding={decoding}
-      sizes={sizes}
-      srcSet={srcSet}
-      onError={onError}
-      {/* placeholder removed */rest}
+      className={className}
+      onError={handleError}
+      loading="lazy"
     />
   );
 }

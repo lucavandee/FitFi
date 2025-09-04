@@ -1,122 +1,147 @@
-import {
-  event as gaEvent,
-  pageview as gaPageview,
-  exception as gaException,
-} from "@/utils/analytics";
+import { supabase } from '@/lib/supabase';
 
-type Params = Record<string, any>;
+export interface AnalyticsEvent {
+  user_id?: string;
+  event_type: string;
+  event_data?: Record<string, any>;
+  session_id?: string;
+  page_url?: string;
+}
+
+export interface FunnelStep {
+  funnel_id: string;
+  user_id?: string;
+  session_id: string;
+  step_id: string;
+  step_name: string;
+  completed: boolean;
+  timestamp: number;
+  time_spent?: number;
+  exit_point?: boolean;
+  conversion_value?: number;
+  metadata?: Record<string, any>;
+}
+
+export interface HeatmapData {
+  page_url: string;
+  element_selector: string;
+  click_count?: number;
+  hover_count?: number;
+  scroll_depth?: number;
+  viewport_size?: string;
+  device_type?: 'mobile' | 'tablet' | 'desktop';
+  timestamp: number;
+  user_id?: string;
+  session_id: string;
+}
 
 export class AdvancedAnalytics {
-  private enabled: boolean;
-  private userId: string | null = null;
-  private context: Params = {};
-  private queue: Array<{ name: string; params: Params }> = [];
-  private flushTimer: number | null = null;
+  private sessionId: string;
+  private userId?: string;
 
-  constructor(enabled = true) {
-    this.enabled = enabled;
+  constructor(userId?: string) {
+    this.sessionId = this.generateSessionId();
+    this.userId = userId;
   }
 
-  /** Zet tracking aan (no-op als al aan) */
-  startTracking() {
-    this.enabled = true;
+  private generateSessionId(): string {
+    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  /** Zet tracking uit (events worden genegeerd) */
-  stopTracking() {
-    this.enabled = false;
-  }
-
-  /** Koppel een (anonieme) gebruiker voor consistente payloads */
-  identify(userId?: string | null) {
-    this.userId = userId ?? null;
-  }
-
-  /** Voeg globale context toe (samengevoegd met event-params) */
-  setContext(ctx: Params) {
-    this.context = { /* placeholder removed */this.context, /* placeholder removed */ctx };
-  }
-
-  /** Track een custom event (stuurt naar gtag als beschikbaar) */
-  track(name: string, params: Params = {}) {
-    if (!this.enabled) return;
-    const payload = {
-      user_id: this.userId ?? "guest",
-      /* placeholder removed */this.context,
-      /* placeholder removed */params,
-    };
+  async trackEvent(event: Omit<AnalyticsEvent, 'session_id'>): Promise<void> {
     try {
-      gaEvent(name, payload);
-    } catch {
-      // queue voor eventuele future server-side sync (nu niet gebruikt)
-      this.queue.push({ name, params: payload });
+      const { error } = await supabase
+        .from('analytics_events')
+        .insert({
+          ...event,
+          session_id: this.sessionId,
+          user_id: this.userId || event.user_id
+        });
+
+      if (error) {
+        console.error('Analytics tracking error:', error);
+      }
+    } catch (error) {
+      console.error('Failed to track analytics event:', error);
     }
   }
 
-  /** Alias voor track */
-  trackEvent(name: string, params: Params = {}) {
-    this.track(name, params);
-  }
-
-  /** Pageview helper */
-  page(path: string, params: Params = {}) {
-    if (!this.enabled) return;
+  async trackFunnelStep(step: Omit<FunnelStep, 'session_id' | 'user_id'>): Promise<void> {
     try {
-      gaPageview(path, { user_id: this.userId ?? "guest", /* placeholder removed */params });
-    } catch {
-      /* no-op */
+      const { error } = await supabase
+        .from('funnel_analytics')
+        .insert({
+          ...step,
+          session_id: this.sessionId,
+          user_id: this.userId
+        });
+
+      if (error) {
+        console.error('Funnel tracking error:', error);
+      }
+    } catch (error) {
+      console.error('Failed to track funnel step:', error);
     }
   }
 
-  /** Error helper */
-  error(description: string, fatal = false) {
-    if (!this.enabled) return;
+  async trackHeatmapData(data: Omit<HeatmapData, 'session_id' | 'user_id'>): Promise<void> {
     try {
-      gaException(description, fatal);
-    } catch {
-      /* no-op */
+      const { error } = await supabase
+        .from('heatmap_data')
+        .insert({
+          ...data,
+          session_id: this.sessionId,
+          user_id: this.userId
+        });
+
+      if (error) {
+        console.error('Heatmap tracking error:', error);
+      }
+    } catch (error) {
+      console.error('Failed to track heatmap data:', error);
     }
   }
 
-  /** (Voor later) verstuur gebufferde events naar backend */
-  flush() {
-    this.queue = [];
-    if (this.flushTimer) {
-      // @ts-ignore
-      clearTimeout(this.flushTimer);
-      this.flushTimer = null;
+  async getAnalyticsSummary(timeRange: 'day' | 'week' | 'month' = 'week') {
+    try {
+      const startDate = new Date();
+      switch (timeRange) {
+        case 'day':
+          startDate.setDate(startDate.getDate() - 1);
+          break;
+        case 'week':
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case 'month':
+          startDate.setMonth(startDate.getMonth() - 1);
+          break;
+      }
+
+      const { data, error } = await supabase
+        .from('analytics_events')
+        .select('event_type, event_data, created_at')
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Analytics summary error:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Failed to get analytics summary:', error);
+      return null;
     }
   }
 
-  // Predictive analytics
-  async predictChurnRisk(userId: string): Promise<number> {
-    const userBehavior = await this.getUserBehavior(userId);
-    // Simple churn prediction based on engagement
-    const daysSinceLastActivity = (Date.now() - userBehavior.lastActivity) / (1000 * 60 * 60 * 24);
-    return Math.min(daysSinceLastActivity / 30, 1); // 0-1 scale
+  setUserId(userId: string): void {
+    this.userId = userId;
   }
 
-  async predictPurchaseIntent(userId: string): Promise<number> {
-    const behavior = await this.getUserBehavior(userId);
-    // Simple purchase intent based on outfit saves and views
-    const intentScore = (behavior.outfitSaves * 0.4) + (behavior.outfitViews * 0.1);
-    return Math.min(intentScore / 10, 1); // Normalize to 0-1
-  }
-
-  private generateInsight(metric: string, value: number, trend: 'up' | 'down' | 'stable'): string {
-    const trendEmoji = trend === 'up' ? '📈' : trend === 'down' ? '📉' : '➡️';
-    return `${trendEmoji} ${metric}: ${value} (${trend})`;
+  getSessionId(): string {
+    return this.sessionId;
   }
 }
 
-// Feature-flag (optioneel): zet uit met VITE_ADVANCED_ANALYTICS=false
-const ADV_ENABLED =
-  (import.meta.env.VITE_ADVANCED_ANALYTICS ?? "true")
-    .toString()
-    .toLowerCase() !== "false";
-
-/** ▶ Named export die elders verwacht wordt */
-export const advancedAnalytics = new AdvancedAnalytics(ADV_ENABLED);
-
-/** ▶ Default export tbv. `import analytics from /* placeholder removed */` */
-export default advancedAnalytics;
+export const analytics = new AdvancedAnalytics();
