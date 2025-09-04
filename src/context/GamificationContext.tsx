@@ -48,6 +48,9 @@ interface GamificationState {
   nextLevel: NextLevel | null;
 }
 
+  userStats: UserStats | null;
+  currentLevel: CurrentLevel | null;
+  nextLevel: NextLevel | null;
 const GamificationContext = createContext<GamificationState>({
   points: 0,
   level: 1,
