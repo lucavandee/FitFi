@@ -3,11 +3,38 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import fs from "fs";
 
+function hasBadEllipsis(code: string): boolean {
+  // Flag alleen '...' die GEEN spread/rest is.
+  // - Sta toe: `{...id}`, `...id`, `(...args)`, `[...arr]`, `{ ...rest }`
+  // - Flag: '...' in comments/strings/losse triple dots
+  const re = /\.\.\./g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code))) {
+    const i = m.index;
+    const before = code.slice(0, i).trimEnd();
+    const after = code.slice(i + 3).trimStart();
+
+    const prev = before.slice(-1) || "";
+    const next = after[0] || "";
+
+    // heuristiek: als er een identifier of { [ ( volgt, beschouw als spread/rest
+    const nextLooksLikeSpread = /[A-Za-z_$\{\[\(]/.test(next);
+    const prevAllowsSpread = prev === "{" || prev === "[" || prev === "(";
+
+    // cases: `{...x}`, `[...x]`, `(...args)`, of zelfs direct `...x`
+    if (nextLooksLikeSpread) return false; // minimaal één geldige spread rest-hit -> niet flaggen
+    if (prevAllowsSpread) return false;
+    // anders: dit is een verdachte placeholder
+    return true;
+  }
+  return false;
+}
+
 function scanFiles() {
   const root = "src";
   const exts = [".ts", ".tsx", ".js", ".jsx", ".css", ".html"];
   const badImports: string[] = [];
-  const ellipsis: string[] = [];
+  const badEllipsis: string[] = [];
 
   function walk(dir: string) {
     for (const name of fs.readdirSync(dir)) {
@@ -16,12 +43,10 @@ function scanFiles() {
       if (st.isDirectory()) walk(p);
       else if (exts.some((e) => p.endsWith(e))) {
         const c = fs.readFileSync(p, "utf8");
-        // ❗ correct regex (escaped braces and slashes)
         if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c)) {
           badImports.push(p);
         }
-        // ❗ match literal "..."
-        if (/\.\.\./.test(c)) ellipsis.push(p);
+        if (hasBadEllipsis(c)) badEllipsis.push(p);
       }
     }
   }
@@ -29,9 +54,9 @@ function scanFiles() {
 
   const fails: string[] = [];
   if (badImports.length) fails.push(`Use default import for ErrorBoundary:\n  - ${badImports.join("\n  - ")}`);
-  if (ellipsis.length) fails.push(`Remove '...' placeholders:\n  - ${ellipsis.join("\n  - ")}`);
+  if (badEllipsis.length) fails.push(`Remove placeholder '...' (not spread/rest):\n  - ${badEllipsis.join("\n  - ")}`);
 
-  // ✅ tsconfig alias sanity
+  // tsconfig alias sanity
   try {
     const ts = JSON.parse(fs.readFileSync("tsconfig.json", "utf8"));
     const ok =
@@ -70,7 +95,6 @@ export default defineConfig(({ mode }) => {
     build: { target: "es2020", sourcemap: true, outDir: "dist", emptyOutDir: true },
     server: { port: 5173 },
     preview: { port: 4173 },
-    // houdt 'm zoals eerder: symbolische const is prima
     define: { __APP_ENV__: JSON.stringify(env.VITE_ENVIRONMENT || "development") },
   };
 });
