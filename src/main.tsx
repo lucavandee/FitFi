@@ -5,6 +5,7 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./index.css";
 import AuthProvider from "@/context/AuthContext";
+import { GamificationProvider } from "@/context/GamificationContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import CrashGate from "@/components/ui/CrashGate";
 
@@ -14,9 +15,11 @@ createRoot(document.getElementById("root")!).render(
       <ErrorBoundary>
         <CrashGate>
           <AuthProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
+            <GamificationProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </GamificationProvider>
           </AuthProvider>
         </CrashGate>
       </ErrorBoundary>
