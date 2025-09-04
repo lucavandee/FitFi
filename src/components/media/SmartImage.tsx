@@ -1,11 +1,12 @@
 import { ImgHTMLAttributes, useState } from "react";
+import { cn } from "@/utils/cn";
 
 type SmartImageProps = {
   src: string;
   alt?: string;
   width?: number;
   height?: number;
-  aspect?: string; // bv. "16/9" of "1/1" – als meegegeven, gebruiken we een aspect container
+  aspect?: string;
   className?: string;
   loading?: ImgHTMLAttributes<HTMLImageElement>["loading"];
   decoding?: ImgHTMLAttributes<HTMLImageElement>["decoding"];
@@ -16,21 +17,16 @@ type SmartImageProps = {
   onError?: () => void;
 };
 
-export default function SmartImage({
-  src,
-  alt = "",
-  width,
-  height,
-  aspect,
-  className = "",
-  loading = "lazy",
-  decoding = "async",
-  sizes,
-  srcSet,
-  onClick,
-  onLoad,
-  onError,
-}: SmartImageProps) {
+export default function SmartImage(props: SmartImageProps) {
+  const {
+    src, alt = "",
+    width, height, aspect,
+    className = "",
+    loading = "lazy", decoding = "async",
+    sizes, srcSet,
+    onClick, onLoad, onError,
+  } = props;
+
   const [ok, setOk] = useState(true);
 
   const img = (
@@ -43,15 +39,8 @@ export default function SmartImage({
       srcSet={srcSet}
       onClick={onClick}
       onLoad={onLoad}
-      onError={(e) => {
-        setOk(false);
-        onError?.();
-      }}
-      className={[
-        "object-cover bg-surface",
-        aspect ? "w-full h-full" : "",
-        className,
-      ].join(" ")}
+      onError={() => { setOk(false); onError?.(); }}
+      className={cn("object-cover bg-surface", aspect && "w-full h-full", className)}
       /* width/height alleen meegeven als er géén aspect container is */
       {...(!aspect ? { width, height } : {})}
     />
@@ -59,7 +48,6 @@ export default function SmartImage({
 
   if (!aspect) return img;
 
-  // aspect container
   return (
     <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: aspect }}>
       <div className="absolute inset-0">{img}</div>
