@@ -1,5 +1,6 @@
 import { FOOTER_COLUMNS, FOOTER_CTA, SOCIALS, BRAND } from "@/constants/footer";
 import { openCookieSettings } from "@/utils/cookies";
+import { toArray } from '@/utils/cn';
 import {
   Mail,
   Phone,
@@ -13,9 +14,6 @@ import {
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import FooterGuard from "@/components/layout/FooterGuard";
-
-// Helper to safely handle potentially undefined arrays
-const toArray = <T,>(v: T[] | undefined | null): T[] => (Array.isArray(v) ? v : []);
 
 const year = new Date().getFullYear();
 
