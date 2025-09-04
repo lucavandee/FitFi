@@ -42,6 +42,9 @@ interface NextLevel {
 interface GamificationState {
   loading: boolean;
   error: string | null;
+  userStats: UserStats | null;
+  currentLevel: CurrentLevel | null;
+  nextLevel: NextLevel | null;
   badges: any[];
   userStats: UserStats | null;
   currentLevel: CurrentLevel | null;
