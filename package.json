@@ -1,13 +1,8 @@
 {
   "name": "fitfi",
   "private": true,
-  "version": "1.7.1",
+  "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -17,6 +12,13 @@
   },
   "engines": {
     "node": ">=20.19 <23"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.4",
+    "react-router-dom": "^6.8.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",
@@ -31,6 +33,6 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite": "^5.1.4"
   }
 }
