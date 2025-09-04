@@ -1,11 +1,11 @@
-import { supabase } from "../lib/supabaseClient";
+import supabase from "../lib/supabaseClient";
 import { QuizAnswers, QuizSubmission } from "../types/quiz";
 import { quizSteps } from "../data/quizSteps";
 import { getQuizAnswer } from "./supabaseService";
 import { DATA_CONFIG } from "../config/dataConfig";
 
 // Get singleton client
-const sb = supabase();
+const sb = supabase;
 
 // Local storage keys for quiz data
 const QUIZ_KEYS = {
