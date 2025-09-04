@@ -1,9 +1,17 @@
 /**
- * useNav – centrale navigatie + analytics wrapper.
+ * useNav – centrale navigatie + analytics wrapper (uitgebreid).
  * 
- * Gebruik:
- * const nav = useNav();
- * nav.to("/", { source: "login" });
+ * Helpers:
+ * 
+ * to(path, meta?, replace?)
+ * 
+ * back()
+ * 
+ * toHome(meta?, replace?)
+ * 
+ * toDashboard(meta?, replace?)
+ * 
+ * toOnboarding(step?: string | number, meta?, replace?)
  */
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,5 +40,18 @@ export default function useNav() {
     navigate(-1);
   }, [navigate]);
 
-  return { to, back };
+  const toHome = useCallback((meta?: NavMeta, replace = false) => {
+    to("/", { source: "nav:home", ...(meta || {}) }, replace);
+  }, [to]);
+
+  const toDashboard = useCallback((meta?: NavMeta, replace = false) => {
+    to("/dashboard", { source: "nav:dashboard", ...(meta || {}) }, replace);
+  }, [to]);
+
+  const toOnboarding = useCallback((step?: string | number, meta?: NavMeta, replace = false) => {
+    const suffix = step !== undefined && step !== null ? `/${String(step)}` : "";
+    to(`/onboarding${suffix}`, { source: "nav:onboarding", step, ...(meta || {}) }, replace);
+  }, [to]);
+
+  return { to, back, toHome, toDashboard, toOnboarding };
 }

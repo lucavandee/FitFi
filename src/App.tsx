@@ -1,20 +1,20 @@
 /**
  * App root met BrowserRouter en lazy routes.
  * 
- * Voegt lazy route toe voor "/__health" → HealthPage (code-split).
+ * Lazy route voor "/__health" → HealthPage (code-split).
  * 
- * Behoudt alias @; default exports.
+ * Globale DEV-only console mount via <DevOnly><DevConsoleMount/></DevOnly>.
  * 
- * Let op: als je al een eigen routerbestand had, vervang dat door deze App of
- * exporteer onderstaande <App/> vanuit je bestaande entry.
+ * Behoudt alias @; default exports; Tailwind v3.
  */
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import DevOnly from "@/components/dev/DevOnly";
+import DevConsoleMount from "@/components/dev/DevConsoleMount";
 
 // Lazy pages
 const HealthPage = lazy(() => import("@/pages/HealthPage"));
-// Voeg hier evt. andere pages toe die al bestaan:
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
@@ -38,16 +38,18 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            {/* ✅ Nieuwe lazy route voor systeemstatus */}
             <Route path="/__health" element={<HealthPage />} />
-            {/* Auth routes (roepen service aan) */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            {/* 404 */}
             <Route path="*" element={<div className="p-10 text-center">Pagina niet gevonden</div>} />
           </Routes>
+
+          {/* DEV-only tools (worden niet gebundeld/gerenderd in productie) */}
+          <DevOnly>
+            <DevConsoleMount />
+          </DevOnly>
         </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
