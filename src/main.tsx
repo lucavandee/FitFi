@@ -8,9 +8,7 @@ import AuthProvider from "@/context/AuthContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import CrashGate from "@/components/system/CrashGate";
 
-const root = createRoot(document.getElementById("root")!);
-
-root.render(
+createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
       <ErrorBoundary>
