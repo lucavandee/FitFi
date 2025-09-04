@@ -11,7 +11,7 @@ import LoadingFallback from "@/components/ui/LoadingFallback";
 import Header from "@/components/layout/Header";
 import PremiumFooter from "@/components/layout/PremiumFooter";
 import ScrollToTop from "@/components/ScrollToTop";
-import NavigationServiceInitializer from "@/components/NavigationServiceInitializer";
+import { NavigationServiceInitializer } from "@/components/NavigationServiceInitializer";
 import CrashGate from "@/components/system/CrashGate";
 
 // Context Providers
