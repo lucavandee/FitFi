@@ -1,23 +1,37 @@
-import React from "react";
+import { Brain, Sparkles } from "lucide-react";
 
-export const NovaInsightCard: React.FC<{
-  text?: string;
-        <div className="flex items-center justify-between bg-light-gray rounded-lg p-3">
-          <span className="text-sm text-midnight/70">Stijl Confidence</span>
-          <span className="text-sm font-medium text-midnight">85%</span>
-          <div className="h-4 bg-white/20 rounded w-3/4"></div>
-          <div className="h-4 bg-white/20 rounded w-1/2"></div>
-        <div className="flex items-center gap-2 text-sm text-midnight/60">
-      </div>
-    );
-      <div className="bg-gradient-to-r from-turquoise/10 to-primary/10 rounded-lg p-4 mb-4 border border-turquoise/20">
-  }
+export default function NovaInsightCard() {
+  const insights = [
+    "Je stijl evolueert naar meer minimalistische looks",
+    "Casual outfits presteren 23% beter dan formele",
+    "Aardtinten passen perfect bij jouw seizoensvoorkeur"
+  ];
+
   return (
-      <button className="btn btn-secondary w-full mt-4">
-    <div className="ff-card">
-            <div className="text-sm text-midnight/70">
-        <h2 className="text-xl font-semibold text-midnight">Nova Insights</h2>
-  );
-};
+    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+          <Brain className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-semibold text-gray-900">Nova Insights</h3>
+        </div>
+        <Sparkles className="w-5 h-5 text-purple-500" />
+      </div>
 
+      <div className="space-y-3">
+        {insights.map((insight, index) => (
+          <div key={index} className="flex items-start space-x-3">
+            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+            <p className="text-sm text-gray-700 leading-relaxed">{insight}</p>
+          </div>
+        ))}
+      </div>
+
+      <button className="mt-4 w-full bg-white text-blue-600 border border-blue-200 rounded-lg px-4 py-2 text-sm font-medium hover:bg-blue-50 transition-colors">
+        <div className="flex items-center justify-center space-x-2">
+          <span>Meer insights</span>
+          <Brain className="w-4 h-4" />
+        </div>
+      </button>
+    </div>
+  );
 }

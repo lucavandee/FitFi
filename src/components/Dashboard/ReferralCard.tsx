@@ -1,91 +1,72 @@
-import React from "react";
-import { track } from "@/utils/analytics";
-import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
+import { Users, Gift, Copy, Check } from "lucide-react";
 
-export const ReferralCard: React.FC<{
-  codeUrl: string;
-  count: number;
-  goal?: number;
-}> = ({ codeUrl, count, goal = 3 }) => {
-  async function share() {
+export default function ReferralCard() {
+  const [copied, setCopied] = useState(false);
+  const referralCode = "FITFI2024";
+  const referralCount = 3;
+  const referralUrl = `https://fitfi.nl/join?ref=${referralCode}`;
+
+  const copyToClipboard = async () => {
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "Join FitFi",
-          text: "Word mijn stijl‑buddy op FitFi!",
-          url: codeUrl,
-        });
-        track("referral_share_native", {
-          method: "native_share",
-          url: codeUrl,
-        });
-      } else {
-        await navigator.clipboard.writeText(codeUrl);
-        track("referral_share_copy", { method: "clipboard", url: codeUrl });
-      }
-
-      // Track successful share
-      if (typeof window.gtag === "function") {
-        window.gtag("event", "referral_share", {
-          event_category: "engagement",
-          event_label: "dashboard_referral_card",
-          referral_count: count,
-          goal_progress: count / goal,
-        });
-      }
-
-      // Enhanced feedback with custom toast
-      const el = document.createElement("div");
-      el.textContent = "Invite link gedeeld/gekopieerd ✅";
-      el.className =
-        "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-50 animate-fade-in";
-      document.body.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = "0";
-        el.style.transform = "translate(-50%, 10px)";
-        setTimeout(() => el.remove(), 300);
-      }, 1600);
-    } catch (error) {
-      console.warn("Share failed:", error);
-      // Error feedback
-      const el = document.createElement("div");
-      el.textContent = "Share mislukt, probeer opnieuw";
-      el.className =
-        "fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-600 text-white text-sm px-3 py-2 rounded-full z-50 animate-fade-in";
-      document.body.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = "0";
-        el.style.transform = "translate(-50%, 10px)";
-        setTimeout(() => el.remove(), 300);
-      }, 1600);
+      await navigator.clipboard.writeText(referralUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
-  }
+  };
 
-      <div className="bg-gradient-to-r from-turquoise/10 to-primary/10 rounded-lg p-4 mb-4">
-        <div className="text-sm text-midnight/60 mb-1">Jouw referral code</div>
-        <div className="font-mono text-lg font-bold text-midnight">FITFI2024</div>
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold text-midnight">Referral Programma</h2>
-          <div className="text-sm text-gray-500">Jouw invite status</div>
-        <div className="text-center bg-light-gray rounded-lg p-3">
+  return (
+    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+          <Users className="w-5 h-5 text-green-600" />
+          <h3 className="text-lg font-semibold text-gray-900">Referrals</h3>
         </div>
-          <div className="text-lg font-bold text-midnight">3</div>
-          <div className="text-xs text-midnight/60">Uitnodigingen</div>
-      <div className="flex items-center justify-between mt-3">
-        <div className="text-xl font-semibold tabular-nums">
-        <div className="text-center bg-light-gray rounded-lg p-3">
+        <div className="flex items-center space-x-1">
+          <Gift className="w-4 h-4 text-green-500" />
+          <span className="text-sm font-medium text-green-600">{referralCount} vrienden</span>
         </div>
-          <div className="text-lg font-bold text-midnight">€45</div>
-          <div className="text-xs text-midnight/60">Verdiend</div>
-          className="px-4 py-2 rounded-full bg-[#89CFF0] text-white hover:bg-[#5FB7E6] transition-all btn-animate"
-        >
-          Deel invite
-      <button className="btn btn-primary w-full">
       </div>
-      <div className="text-xs text-gray-500 mt-2 break-all">{codeUrl}</div>
+
+      <div className="space-y-4">
+        <div>
+          <p className="text-sm text-gray-600 mb-2">Jouw referral code:</p>
+          <div className="flex items-center space-x-2">
+            <div className="flex-1 bg-white rounded-lg px-3 py-2 border border-gray-200">
+              <code className="text-sm font-mono text-gray-800">{referralCode}</code>
+            </div>
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center justify-center w-10 h-10 bg-green-100 hover:bg-green-200 rounded-lg transition-colors"
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-green-600" />
+              ) : (
+                <Copy className="w-4 h-4 text-green-600" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-4 border border-gray-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-900">Verdien rewards</p>
+              <p className="text-xs text-gray-500">Voor elke vriend die zich aanmeldt</p>
+            </div>
+            <div className="text-right">
+              <p className="text-lg font-bold text-green-600">+50 XP</p>
+              <p className="text-xs text-gray-500">per referral</p>
+            </div>
+          </div>
+        </div>
+
+        <button className="w-full bg-green-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-green-700 transition-colors">
+          Deel je link
+        </button>
+      </div>
     </div>
   );
-};
-
-}
 }
