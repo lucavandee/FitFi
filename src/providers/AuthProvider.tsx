@@ -10,6 +10,8 @@ type AuthCtx = {
   signOut: () => Promise<void>;
 };
 
+export default AuthProvider;
+
 const Ctx = createContext<AuthCtx | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
