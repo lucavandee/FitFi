@@ -16,7 +16,7 @@ import CrashGate from "@/components/system/CrashGate";
 
 // Context Providers
 import AuthProvider from "@/providers/AuthProvider";
-import GamificationProvider from "@/context/GamificationContext";
+import { GamificationProvider } from "@/context/GamificationContext";
 
 /* pages (lazy) — bestaande paden intact */
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
