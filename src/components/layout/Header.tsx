@@ -59,7 +59,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {navigation.map((item) => (
+            {toArray(navigation).map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -107,7 +107,7 @@ export default function Header() {
                   "group-hover:opacity-100 group-hover:visible",
                   "transition-all duration-200 transform group-hover:translate-y-0 translate-y-1"
                 )}>
-                  {userNavigation.map((item) => (
+                  {toArray(userNavigation).map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -173,7 +173,7 @@ export default function Header() {
             "absolute left-0 right-0 top-16 shadow-lg"
           )}>
             <div className="px-4 py-4 space-y-2">
-              {navigation.map((item) => (
+              {toArray(navigation).map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -193,7 +193,7 @@ export default function Header() {
               {/* Mobile User Menu */}
               {user ? (
                 <div className="pt-4 border-t border-gray-200 space-y-2">
-                  {userNavigation.map((item) => (
+                  {toArray(userNavigation).map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
