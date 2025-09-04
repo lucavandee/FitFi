@@ -43,7 +43,7 @@ export default function ImageWithFallback({
   const decoding: Decoding = decodingProp ?? "async";
 
   return (
-    <img
+      {...(props as any)}
       src={imgSrc}
       alt={alt}
       loading={loading}

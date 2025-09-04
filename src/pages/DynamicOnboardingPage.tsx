@@ -126,7 +126,7 @@ const DynamicOnboardingPage: React.FC = () => {
               /* placeholder removed */data,
               userId: user.id,
               completedAt: new Date().toISOString(),
-            });
+            hesitationTime: hesitationTime
           }
         }
       } catch (error) {

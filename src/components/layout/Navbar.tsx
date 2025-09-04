@@ -21,7 +21,7 @@ export default function Navbar() {
           {/* /* placeholder removed */ jouw links /* placeholder removed */ */}
         </div>
         </div>
-      </div>
+      navigate('/login?redirect=' + encodeURIComponent(location.pathname));
     }
     </header>
   );

@@ -87,6 +87,26 @@ export class AdvancedAnalytics {
       this.flushTimer = null;
     }
   }
+
+  // Predictive analytics
+  async predictChurnRisk(userId: string): Promise<number> {
+    const userBehavior = await this.getUserBehavior(userId);
+    // Simple churn prediction based on engagement
+    const daysSinceLastActivity = (Date.now() - userBehavior.lastActivity) / (1000 * 60 * 60 * 24);
+    return Math.min(daysSinceLastActivity / 30, 1); // 0-1 scale
+  }
+
+  async predictPurchaseIntent(userId: string): Promise<number> {
+    const behavior = await this.getUserBehavior(userId);
+    // Simple purchase intent based on outfit saves and views
+    const intentScore = (behavior.outfitSaves * 0.4) + (behavior.outfitViews * 0.1);
+    return Math.min(intentScore / 10, 1); // Normalize to 0-1
+  }
+
+  private generateInsight(metric: string, value: number, trend: 'up' | 'down' | 'stable'): string {
+    const trendEmoji = trend === 'up' ? '📈' : trend === 'down' ? '📉' : '➡️';
+    return `${trendEmoji} ${metric}: ${value} (${trend})`;
+  }
 }
 
 // Feature-flag (optioneel): zet uit met VITE_ADVANCED_ANALYTICS=false
