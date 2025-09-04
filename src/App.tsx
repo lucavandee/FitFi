@@ -2,9 +2,6 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoadingFallback from "@/components/ui/LoadingFallback";
 
-// ⚠️ Belangrijk: GEEN BrowserRouter/Router/RouterProvider hier!
-// Alleen routes. De router staat in src/main.tsx.
-
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
@@ -30,6 +27,7 @@ const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
+// ⚠️ Geen BrowserRouter/Router/RouterProvider hier
 export default function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
@@ -65,10 +63,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        {/* Health route */}
         <Route path="/__health" element={<div>OK</div>} />
-
-        {/* Redirects & 404 */}
         <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
