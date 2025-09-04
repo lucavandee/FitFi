@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
-type SeoProps = {
+interface SeoProps {
   title?: string;
   description?: string;
   canonical?: string;
@@ -10,7 +10,7 @@ type SeoProps = {
   keywords?: string;
   type?: "website" | "article";
   image?: string;
-};
+}
 
 const SITE_NAME = "FitFi";
 const ORIGIN =
