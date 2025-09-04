@@ -11,16 +11,13 @@ interface GradientWordProps {
 
 export default function GradientWord({ 
   children, 
-  className = '',
+  variant = "default",
+  className = "",
   gradient = 'from-blue-600 to-purple-600'
 }: GradientWordProps) {
   // Input hardening - ensure children is string-like
   const textContent = typeof children === 'string' ? children : String(children || '');
   
-  children,
-  variant = "default",
-  className = "",
-}) => {
   // Shared gradient stops (ink ↔ turquoise)
   const grad =
     variant === "fitfi"
@@ -51,7 +48,9 @@ export default function GradientWord({
 
   return (
     <>
-      className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold ${className}`}
+      <span
+        className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold ${className}`}
+      >
       <span
         className={`hidden supports-[background-clip:text]:inline ${className}`}
         style={style}
@@ -65,9 +64,9 @@ export default function GradientWord({
         style={fallbackStyle}
       >
         {children}
+      </span>
+      </span>
       {textContent}
     </>
   );
-};
-
-export default GradientWord;
+}
