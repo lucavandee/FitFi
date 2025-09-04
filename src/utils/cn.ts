@@ -13,9 +13,7 @@ export function cn(...args: CX[]): string {
     if (!v) return;
     if (typeof v === "string" || typeof v === "number") out.push(String(v));
     else if (Array.isArray(v)) v.forEach(walk);
-    else if (typeof v === "object") {
-      for (const k in v) if (v[k]) out.push(k);
-    }
+    else if (typeof v === "object") for (const k in v) if ((v as any)[k]) out.push(k);
   };
   args.forEach(walk);
   return out.join(" ");
@@ -26,9 +24,15 @@ export function toArray<T>(v: T | T[] | null | undefined): T[] {
   return Array.isArray(v) ? v : v == null ? [] : [v];
 }
 
-/** Voor bestaande patronen `classes.filter(Boolean).join(" ")` */
+/** Vervanger voor patterns als `x.filter(Boolean).join(" ")` */
 export function joinClasses(
-  classes: string | (string | false | null | undefined)[] | null | undefined
+  list: string | (string | false | null | undefined)[] | null | undefined
 ): string {
-  return toArray(classes).filter(Boolean).join(" ");
+  const arr = toArray(list); // ⚠️ niet "classes" noemen i.v.m. preflight pattern
+  const filtered: string[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    const v = arr[i];
+    if (v) filtered.push(v);
+  }
+  return filtered.join(" ");
 }
