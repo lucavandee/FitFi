@@ -55,7 +55,9 @@ const SafeWidget: React.FC<SafeWidgetProps> = ({
   );
 
   return (
-    <ErrorBoundary onError={handleError} fallback={fallback}>
+    <ErrorBoundary
+      fallback={<div className="p-4 text-center text-gray-500">Widget temporarily unavailable</div>}
+    >
       {children}
     </ErrorBoundary>
   );

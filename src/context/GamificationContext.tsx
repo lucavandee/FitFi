@@ -8,6 +8,32 @@ type GamificationState = {
   loading: boolean;
 };
 
+  userStats: {
+    level: number;
+    xp: number;
+    posts: number;
+    submissions: number;
+    wins: number;
+    invites: number;
+  } | null;
+  currentLevel: {
+    id: number;
+    level_name: string;
+    min_xp: number;
+    max_xp: number | null;
+    icon: string;
+    color: string;
+    perks: string[];
+  } | null;
+  nextLevel: {
+    id: number;
+    level_name: string;
+    min_xp: number;
+    max_xp: number | null;
+    icon: string;
+    color: string;
+    perks: string[];
+  } | null;
 const GamificationContext = createContext<GamificationState>({
   points: 0,
   level: 1,
