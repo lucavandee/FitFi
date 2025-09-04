@@ -5,8 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useGamification } from '@/context/GamificationContext';
 import Logo from '@/components/ui/Logo';
 import { cn, toArray, joinClasses } from '@/utils/cn';
-
-const cx = (...args: any[]) => cn(...(args as any));
+  const { user, tier, logout } = useAuth();
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
