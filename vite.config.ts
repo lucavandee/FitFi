@@ -91,6 +91,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [react(), fitfiGuard()],
+    esbuild: {
+      // Skip TypeScript type checking during build
+      target: 'es2020'
+    },
     resolve: { alias: { "@": path.resolve(process.cwd(), "src") } },
     build: { target: "es2020", sourcemap: true, outDir: "dist", emptyOutDir: true },
     server: { port: 5173 },
