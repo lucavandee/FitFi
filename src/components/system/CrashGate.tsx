@@ -1,115 +1,100 @@
-import React, { Component, ReactNode, useEffect, useState } from "react";
+import React from 'react';
 
-type BoundaryState = { error: Error | null };
+interface CrashGateProps {
+  children: React.ReactNode;
+}
 
-class ErrorBoundary extends Component<{ children: ReactNode }, BoundaryState> {
-  state: BoundaryState = { error: null };
-  static getDerivedStateFromError(error: Error) {
+interface CrashGateState {
+  error: Error | null;
+}
+
+interface CrashOverlayProps {
+  error: Error;
+  onRetry: () => void;
+}
+
+const CrashOverlay: React.FC<CrashOverlayProps> = ({ error, onRetry }) => (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+      <div className="mb-4">
+        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <h1 className="text-xl font-semibold text-gray-900 mb-2">Oops! Er ging iets mis</h1>
+        <p className="text-gray-600 mb-4">
+          We hebben een onverwachte fout ondervonden. Probeer het opnieuw of neem contact met ons op als het probleem aanhoudt.
+        </p>
+        {error && (
+          <details className="text-left mb-4">
+            <summary className="text-sm text-gray-500 cursor-pointer">Technische details</summary>
+            <pre className="text-xs text-gray-400 mt-2 p-2 bg-gray-50 rounded overflow-auto">
+              {error.message}
+            </pre>
+          </details>
+        )}
+      </div>
+      <button
+        onClick={onRetry}
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+      >
+        Probeer opnieuw
+      </button>
+    </div>
+  </div>
+);
+
+class ErrorBoundary extends React.Component<CrashGateProps, CrashGateState> {
+  constructor(props: CrashGateProps) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): CrashGateState {
     return { error };
   }
-  componentDidCatch(error: any, info: any) {
-    // Best-effort logging
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      try {
-        (window as any).gtag("event", "exception", {
-          description: String(error?.message ?? error),
-          fatal: false,
-        });
-      } catch {}
-    }
-    console.error("[CrashGate] boundary error", error, info);
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('CrashGate caught an error:', error, errorInfo);
   }
+
   render() {
-    if (this.state.error)
+    if (this.state.error) {
       return (
-        <CrashOverlay
-          error={this.state.error}
-          onRetry={() => this.setState({ error: null })}
+        <CrashOverlay 
+          error={this.state.error} 
+          onRetry={() => this.setState({ error: null })} 
         />
       );
+    }
+
     return this.props.children;
   }
 }
 
-function CrashOverlay({
-  error,
-  onRetry,
-}: {
-  error: Error;
-  onRetry: () => void;
-}) {
-  const [copied, setCopied] = useState(false);
-  const details = error.stack || error.message || String(error);
+// Runtime error detection
+let runtimeError: Error | null = null;
 
-  return (
-    <div className="fixed inset-0 z-[var(--ff-z-nova)] bg-[var(--ff-midnight-900)] text-white p-6 overflow-auto">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-6">
-          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[var(--ff-sky-300)]/15 text-[var(--ff-sky-300)]">
-            Nova • Crash Report
-          </div>
-          <h1 className="mt-3 text-2xl font-semibold">Er ging iets mis</h1>
-          <p className="mt-2 text-white/80">
-            We tonen de fout zodat je snel kunt herstellen in plaats van een wit
-            scherm.
-          </p>
-        </div>
-        <pre className="bg-black/30 rounded-[var(--ff-radius-xl)] p-4 text-sm whitespace-pre-wrap overflow-auto max-h-64">
-          {details}
-        </pre>
-        <div className="mt-4 flex gap-3">
-          <button
-            onClick={() => {
-              navigator.clipboard
-                ?.writeText(details)
-                .then(() => setCopied(true));
-            }}
-            className="px-4 py-2 rounded-full bg-white text-[var(--ff-midnight-900)] font-medium hover:bg-gray-100 transition-colors"
-          >
-            {copied ? "Gekopieerd ✓" : "Kopieer foutdetails"}
-          </button>
-          <button
-            onClick={onRetry}
-            className="px-4 py-2 rounded-full border border-white/30 hover:bg-white/10 transition-colors"
-          >
-            Probeer opnieuw
-          </button>
-          <a
-            href="/__health"
-            className="px-4 py-2 rounded-full border border-white/30 hover:bg-white/10 transition-colors"
-          >
-            Open HealthCheck
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
+const originalConsoleError = console.error;
+console.error = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('Error:') || message.includes('TypeError:') || message.includes('ReferenceError:')) {
+    runtimeError = new Error(message);
+  }
+  originalConsoleError.apply(console, args);
+};
 
-export function CrashGate({ children }: { children: ReactNode }) {
-  const [runtimeError, setRuntimeError] = useState<Error | null>(null);
+window.addEventListener('error', (event) => {
+  runtimeError = event.error || new Error(event.message);
+});
 
-  useEffect(() => {
-    const onErr = (e: ErrorEvent) =>
-      setRuntimeError(
-        e?.error ?? new Error(e?.message ?? "Unknown runtime error"),
-      );
-    const onRej = (e: PromiseRejectionEvent) => {
-      const reason = (e && (e as any).reason) ?? "Unhandled rejection";
-      setRuntimeError(
-        reason instanceof Error ? reason : new Error(String(reason)),
-      );
-    };
-    window.addEventListener("error", onErr);
-    window.addEventListener("unhandledrejection", onRej);
-    return () => {
-      window.removeEventListener("error", onErr);
-      window.removeEventListener("unhandledrejection", onRej);
-    };
-  }, []);
+window.addEventListener('unhandledrejection', (event) => {
+  runtimeError = new Error(`Unhandled promise rejection: ${event.reason}`);
+});
 
-  if (runtimeError) return <CrashOverlay error={runtimeError} onRetry={() => window.location.reload()} />;
+export default function CrashGate({ children }: CrashGateProps) {
+  if (runtimeError) return <CrashOverlay error={runtimeError} onRetry={() => { runtimeError = null; window.location.reload(); }} />;
+  
   return <ErrorBoundary>{children}</ErrorBoundary>;
 }
-
-export default CrashGate;
