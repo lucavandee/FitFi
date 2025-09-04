@@ -17,9 +17,7 @@ import CrashGate from "@/components/system/CrashGate";
 // Context Providers
 import AuthProvider from "@/providers/AuthProvider";
 import { GamificationProvider } from "@/context/GamificationContext";
-    <AuthProvider>
-      <BrowserRouter>
-        <GamificationProvider>
+
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const DynamicOnboardingPage = lazy(() => import("@/pages/DynamicOnboardingPage"));
@@ -43,9 +41,9 @@ const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
 
 export default function App() {
-    }
   return (
     <CrashGate>
       <AuthProvider>
@@ -102,7 +100,5 @@ export default function App() {
         </GamificationProvider>
       </AuthProvider>
     </CrashGate>
-        </GamificationProvider>
-      </BrowserRouter>
-    </AuthProvider>
-  )
+  );
+}
