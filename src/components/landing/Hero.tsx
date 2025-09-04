@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, Sparkles, CheckCircle } from "lucide-react";
+import { joinClasses } from "@/utils/cn";
 import { track } from "@/utils/analytics";
 import Button from "../ui/Button";
 import SmartImage from "@/components/media/SmartImage";

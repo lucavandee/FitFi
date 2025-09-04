@@ -1,5 +1,6 @@
 import React from "react";
 import { Sparkles, Star, Palette } from "lucide-react";
+import { joinClasses } from '@/utils/cn';
 import { QuizAnswers } from "../../types/quiz";
 
 interface StylePreviewProps {
