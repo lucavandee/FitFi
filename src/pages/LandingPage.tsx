@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { track } from "@/utils/analytics";
 import Seo from "@/components/Seo";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import LoadingFallback from "../components/ui/LoadingFallback";
 import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
 
