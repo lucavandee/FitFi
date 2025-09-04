@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Link, useInRouterContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { cn } from "@/utils/cn";
 
 type Props = {
@@ -11,8 +11,7 @@ type Props = {
 };
 
 function SmartLink({ to, href, children, className }: { to?: string; href?: string; children: ReactNode; className?: string }) {
-  const inRouter = useInRouterContext();
-  if (to && inRouter) return <Link to={to} className={className}>{children}</Link>;
+  if (to) return <Link to={to} className={className}>{children}</Link>;
   const url = to || href || "#";
   return <a href={url} className={className}>{children}</a>;
 }
