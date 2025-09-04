@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
-import { useAuth } from '@/context/UserContext';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 
 export default function Navbar() {

@@ -1,6 +1,6 @@
 import React from "react";
 
-type Notification = {
+import { useAuth } from "@/context/AuthContext";
   id: string;
   title: string;
   body?: string;

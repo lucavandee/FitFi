@@ -1,6 +1,6 @@
 import React from "react";
 import { track } from "@/utils/analytics";
-import FoundersTierBadge from "@/components/founders/FoundersTierBadge";
+import { useAuth } from "@/context/AuthContext";
 
 export const ReferralCard: React.FC<{
   codeUrl: string;

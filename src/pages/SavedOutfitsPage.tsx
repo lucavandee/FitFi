@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowLeft, Heart, Trash2, Share2, Filter } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import { useUser } from "../context/UserContext";
 import { listSaved, removeOutfit } from "@/services/saved/savedOutfitsService";
 import type { SavedOutfitRecord } from "@/services/saved/savedOutfitsService";

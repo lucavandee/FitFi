@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { useAuth } from "@/context/AuthContext";
+import { User, Mail, Calendar, Award, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button";
 import { useUser } from "../context/UserContext";
