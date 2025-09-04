@@ -102,7 +102,7 @@ const Button: React.FC<ButtonProps> = ({
 
   if (as === "a") {
     return (
-      <a href={href} target={target} rel={rel} {/* placeholder removed */commonProps}>
+      <a href={href} target={target} rel={rel} {...commonProps}>
         {content}
       </a>
     );

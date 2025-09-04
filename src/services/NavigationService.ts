@@ -75,7 +75,7 @@ class NavigationService {
    * Get current navigation state
    */
   getState(): NavigationState {
-    return { /* placeholder removed */this.state };
+    return this.state;
   }
 
   /**
