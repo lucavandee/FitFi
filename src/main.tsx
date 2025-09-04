@@ -1,16 +1,25 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import { HelmetProvider } from 'react-helmet-async'
-import App from './App.tsx'
-import './index.css'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import App from "./App";
+import "./index.css";
+import AuthProvider from "@/context/AuthContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import CrashGate from "@/components/ui/CrashGate";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ErrorBoundary>
+        <CrashGate>
+          <AuthProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AuthProvider>
+        </CrashGate>
+      </ErrorBoundary>
     </HelmetProvider>
-  </StrictMode>,
-)
+  </React.StrictMode>
+);
