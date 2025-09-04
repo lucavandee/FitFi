@@ -5,6 +5,11 @@ import { useUser } from "@/context/UserContext";
 import { useTribeChallenges } from "@/hooks/useTribeChallenges";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 
+interface Challenge {
+  id: string;
+  [key: string]: any;
+}
+
 export const ChallengeSnapshot: React.FC = () => {
   const { user } = useUser();
   const { best, loading } = useBestChallenge(user?.id);
@@ -48,7 +53,7 @@ export const ChallengeSnapshot: React.FC = () => {
   }
 
   const { data: list } = useTribeChallenges(best.tribeId);
-  const ch = (list ?? []).find((c) => c.id === best.challengeId);
+  const ch = (list ?? []).find((c: Challenge) => c.id === best.challengeId);
 
   if (!ch) {
     return (
@@ -82,7 +87,6 @@ export const ChallengeSnapshot: React.FC = () => {
             src={ch.image}
             alt={ch.title}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            componentName="ChallengeSnapshot"
           />
         </div>
       )}
