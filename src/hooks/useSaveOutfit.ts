@@ -36,7 +36,7 @@ export function useSaveOutfit(userId?: string) {
       );
       return { prev };
     },
-    onError: (_err, _vars, ctx) => {
+    onError: (_err: Error, _vars: any, ctx: any) => {
       if (ctx?.prev) qc.setQueryData(["saved-outfits", userId], ctx.prev);
     },
     onSettled: () => {

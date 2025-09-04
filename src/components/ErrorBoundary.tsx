@@ -13,6 +13,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
   static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
   componentDidCatch(error: Error, info: ErrorInfo) {
     this.setState({ info }); this.props.onError?.(error, info);
+    if (this.props.onError) {
+      this.props.onError(error, info);
+    }
     if (import.meta.env.DEV) console.error("[ErrorBoundary]", error, info);
   }
   reset = () => this.setState({ hasError: false, error: null, info: null });

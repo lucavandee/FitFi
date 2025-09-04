@@ -5,6 +5,7 @@ interface ImageWithFallbackProps {
   alt: string;
   fallbackSrc?: string;
   className?: string;
+  componentName?: string;
   onError?: () => void;
 }
 
