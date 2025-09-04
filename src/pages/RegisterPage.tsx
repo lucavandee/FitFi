@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { signUp } from "@/services/auth";
 import { validateEmail, validatePassword } from "@/utils/validation/auth";
+import { fieldA11y } from "@/utils/validation/forms";
 import useNav from "@/hooks/useNav";
 
 function RegisterPage() {
@@ -51,8 +52,7 @@ function RegisterPage() {
           <input
             type="email"
             required
-            aria-invalid={Boolean(fieldErr.email)}
-            aria-describedby={fieldErr.email ? "register-email-err" : undefined}
+            {...fieldA11y("register-email", fieldErr.email)}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="mt-1 w-full rounded-lg border border-surface px-3 py-2 outline-none focus:ring-2 focus:ring-accent"
@@ -70,8 +70,7 @@ function RegisterPage() {
             type="password"
             required
             minLength={8}
-            aria-invalid={Boolean(fieldErr.password)}
-            aria-describedby={fieldErr.password ? "register-password-err" : undefined}
+            {...fieldA11y("register-password", fieldErr.password)}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mt-1 w-full rounded-lg border border-surface px-3 py-2 outline-none focus:ring-2 focus:ring-accent"
