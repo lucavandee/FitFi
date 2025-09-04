@@ -38,7 +38,7 @@ import type { Tribe, TribeChallenge } from "../services/data/types";
 import Button from "../components/ui/Button";
 import ImageWithFallback from "../components/ui/ImageWithFallback";
 import LoadingFallback from "../components/ui/LoadingFallback";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundary";
 import toast from "react-hot-toast";
 
 // Helper component for challenge section
