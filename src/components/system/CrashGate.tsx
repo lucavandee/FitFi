@@ -34,25 +34,12 @@ class ErrorBoundary extends Component<{ children: ReactNode }, BoundaryState> {
 function CrashOverlay({
   error,
   onRetry,
-interface CrashGateProps {
-  children: React.ReactNode;
-}
-
-interface CrashGateState {
-  error: Error | null;
-}
-
 }: {
   error: Error;
   onRetry: () => void;
 }) {
   const [copied, setCopied] = useState(false);
-class ErrorBoundary extends React.Component<CrashGateProps, CrashGateState> {
-  constructor(props: CrashGateProps) {
-    super(props);
-    this.state = { error: null };
-  }
-
+  const details = error.stack || error.message || String(error);
 
   return (
     <div className="fixed inset-0 z-[var(--ff-z-nova)] bg-[var(--ff-midnight-900)] text-white p-6 overflow-auto">
