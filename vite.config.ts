@@ -2,7 +2,6 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
 
 function scanFiles() {
   const root = "src";
@@ -15,11 +14,13 @@ function scanFiles() {
       const p = `${dir}/${name}`;
       const st = fs.statSync(p);
       if (st.isDirectory()) walk(p);
-      else if (exts.some(e => p.endsWith(e))) {
+      else if (exts.some((e) => p.endsWith(e))) {
         const c = fs.readFileSync(p, "utf8");
+        // ❗ correct regex (escaped braces and slashes)
         if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c)) {
           badImports.push(p);
         }
+        // ❗ match literal "..."
         if (/\.\.\./.test(c)) ellipsis.push(p);
       }
     }
@@ -30,11 +31,14 @@ function scanFiles() {
   if (badImports.length) fails.push(`Use default import for ErrorBoundary:\n  - ${badImports.join("\n  - ")}`);
   if (ellipsis.length) fails.push(`Remove '...' placeholders:\n  - ${ellipsis.join("\n  - ")}`);
 
-  // Sanity on alias in tsconfig
+  // ✅ tsconfig alias sanity
   try {
     const ts = JSON.parse(fs.readFileSync("tsconfig.json", "utf8"));
-    const ok = ts?.compilerOptions?.paths?.["@/*"]?.[0] === "src/*";
-    if (!ok) fails.push(`tsconfig.json must contain: "paths": { "@/*": ["src/*"] }`);
+    const ok =
+      ts?.compilerOptions?.baseUrl === "." &&
+      Array.isArray(ts?.compilerOptions?.paths?.["@/*"]) &&
+      ts?.compilerOptions?.paths?.["@/*"][0] === "src/*";
+    if (!ok) fails.push(`tsconfig.json must contain: "baseUrl": ".", "paths": { "@/*": ["src/*"] }`);
   } catch {
     fails.push("Missing or unreadable tsconfig.json");
   }
@@ -51,11 +55,10 @@ function fitfiGuard() {
     buildStart() {
       scanFiles();
     },
-    configureServer(server: any) {
-      // also guard on dev server start
+    configureServer() {
       scanFiles();
       return () => {};
-    }
+    },
   };
 }
 
@@ -67,6 +70,7 @@ export default defineConfig(({ mode }) => {
     build: { target: "es2020", sourcemap: true, outDir: "dist", emptyOutDir: true },
     server: { port: 5173 },
     preview: { port: 4173 },
-    define: { __APP_ENV__: JSON.stringify(env.VITE_ENVIRONMENT || "development") }
+    // houdt 'm zoals eerder: symbolische const is prima
+    define: { __APP_ENV__: JSON.stringify(env.VITE_ENVIRONMENT || "development") },
   };
 });
