@@ -6,7 +6,6 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import CrashGate from "@/components/system/CrashGate";
 // HelmetProvider
 import { HelmetProvider } from "react-helmet-async";
-import AuthProvider from "@/providers/AuthProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,9 +13,7 @@ root.render(
     <HelmetProvider>
       <ErrorBoundary>
         <CrashGate>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <App />
         </CrashGate>
       </ErrorBoundary>
     </HelmetProvider>

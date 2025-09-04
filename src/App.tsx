@@ -3,21 +3,15 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
+  Navigate,
 } from "react-router-dom";
 import LoadingFallback from "@/components/ui/LoadingFallback";
-
-// Shell components
 import Header from "@/components/layout/Header";
 import PremiumFooter from "@/components/layout/PremiumFooter";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import { NavigationServiceInitializer } from "@/components/NavigationServiceInitializer";
-import CrashGate from "@/components/system/CrashGate";
+import AuthProvider from "@/context/AuthContext"; // ⬅️ BELANGRIJK
 
-// Context Providers
-import AuthProvider from "@/providers/AuthProvider";
-import { GamificationProvider } from "@/context/GamificationContext";
-
+// Pages (lazy)
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const DynamicOnboardingPage = lazy(() => import("@/pages/DynamicOnboardingPage"));
@@ -41,64 +35,58 @@ const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
-const LandingPage = lazy(() => import("@/pages/LandingPage"));
 
 export default function App() {
   return (
-    <CrashGate>
-      <AuthProvider>
-        <GamificationProvider>
-          <Router>
-            <NavigationServiceInitializer />
-            <ScrollToTop />
+    // ⬇️ Wrap de héle shell met AuthProvider
+    <AuthProvider>
+      <Router>
+        {/* Je oude shell: Header → Routes → Footer */}
+        <Header />
 
-            <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
-              <Header />
+        <main role="main" className="min-h-[60vh]">
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<HomePage />} />
 
-              <Suspense fallback={<LoadingFallback />}>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/home" element={<HomePage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
 
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
+              <Route path="/results" element={<ResultsPage />} />
+              <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
 
-                  <Route path="/results" element={<ResultsPage />} />
-                  <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
+              <Route path="/blog" element={<BlogIndexPage />} />
+              <Route path="/blog/:slug" element={<BlogDetailPage />} />
 
-                  <Route path="/blog" element={<BlogIndexPage />} />
-                  <Route path="/blog/:slug" element={<BlogDetailPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/feed" element={<FeedPage />} />
+              <Route path="/feedback" element={<FeedbackPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
 
-                  <Route path="/pricing" element={<PricingPage />} />
-                  <Route path="/faq" element={<FAQPage />} />
-                  <Route path="/feed" element={<FeedPage />} />
-                  <Route path="/feedback" element={<FeedbackPage />} />
-                  <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/tribes" element={<TribesPage />} />
+              <Route path="/tribes/:id" element={<TribeDetailPage />} />
 
-                  <Route path="/tribes" element={<TribesPage />} />
-                  <Route path="/tribes/:id" element={<TribeDetailPage />} />
+              <Route path="/saved" element={<SavedOutfitsPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/help" element={<HelpCenterPage />} />
+              <Route path="/success-stories" element={<SuccessStoriesPage />} />
 
-                  <Route path="/saved" element={<SavedOutfitsPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/help" element={<HelpCenterPage />} />
-                  <Route path="/success-stories" element={<SuccessStoriesPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/__health" element={<div>OK</div>} />
+              <Route path="/index.html" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </main>
 
-                  <Route path="/__health" element={<div>OK</div>} />
-                  <Route path="/index.html" element={<Navigate to="/" replace />} />
-                  <Route path="*" element={<NotFoundPage />} />
-                </Routes>
-              </Suspense>
-
-              <PremiumFooter />
-            </div>
-          </Router>
-        </GamificationProvider>
-      </AuthProvider>
-    </CrashGate>
+        <PremiumFooter />
+      </Router>
+    </AuthProvider>
   );
 }
