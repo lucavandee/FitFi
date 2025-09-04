@@ -8,13 +8,11 @@ type AuthCtx = {
   signUp: (email: string, password: string, data?: Record<string, any>) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-};
-
-export default AuthProvider;
+}
 
 const Ctx = createContext<AuthCtx | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthCtx['user']>(null);
   const [loading, setLoading] = useState(true);
   const [lastError, setLastError] = useState<string | null>(null);
