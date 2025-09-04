@@ -15,7 +15,7 @@
     "check:env": "node scripts/check-env.mjs",
     "fix:landing-console": "node scripts/codemods/fix-landing-console.mjs",
     "preflight": "node scripts/preflight.mjs && npm run check:imports && npm run check:aliases && npm run check:casing && npm run check:env",
-    "prebuild": "npm run check:env && npm run preflight"
+    "prebuild": "npm run check:env && npm run preflight",
     "check:all": "npm run preflight && npm run check:imports && npm run check:aliases",
     "codemod:supabase": "node scripts/codemods/fix-supabase-callable.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
