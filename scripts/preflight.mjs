@@ -8,6 +8,28 @@ const exts = [".ts", ".tsx", ".js", ".jsx", ".css", ".html"];
 const has = (p) => fs.existsSync(p);
 const read = (p) => fs.readFileSync(p, "utf8");
 
+function hasBadEllipsis(code) {
+  const re = /\.\.\./g;
+  let m;
+  while ((m = re.exec(code))) {
+    const i = m.index;
+    const before = code.slice(0, i).trimEnd();
+    const after = code.slice(i + 3).trimStart();
+
+    const prev = before.slice(-1) || "";
+    const next = after[0] || "";
+
+    const nextLooksLikeSpread = /[A-Za-z_$\{\[\(]/.test(next);
+    const prevAllowsSpread = prev === "{" || prev === "[" || prev === "(";
+
+    if (nextLooksLikeSpread) return false;
+    if (prevAllowsSpread) return false;
+    return true;
+  }
+  return false;
+}
+
+// ErrorBoundary default export check
 if (!has("src/components/ErrorBoundary.tsx")) {
   fails.push("Missing src/components/ErrorBoundary.tsx");
 } else {
@@ -17,6 +39,7 @@ if (!has("src/components/ErrorBoundary.tsx")) {
   }
 }
 
+// tsconfig alias sanity
 try {
   const ts = JSON.parse(read("tsconfig.json"));
   const ok =
@@ -28,8 +51,9 @@ try {
   fails.push("Missing or unreadable tsconfig.json");
 }
 
+// scan repo
 const badImports = [];
-const ellipsis = [];
+const badEllipsis = [];
 
 function walk(dir) {
   for (const n of fs.readdirSync(dir)) {
@@ -40,14 +64,14 @@ function walk(dir) {
       const c = read(p);
       if (/\bimport\s*\{\s*ErrorBoundary\s*\}\s*from\s*["'](@\/|(\.\.\/)*|\.\/)components\/ErrorBoundary["']/.test(c))
         badImports.push(p);
-      if (/\.\.\./.test(c)) ellipsis.push(p);
+      if (hasBadEllipsis(c)) badEllipsis.push(p);
     }
   }
 }
 if (has("src")) walk("src");
 
 if (badImports.length) fails.push("Use default import for ErrorBoundary:\n  - " + badImports.join("\n  - "));
-if (ellipsis.length) fails.push("Remove '...' placeholders:\n  - " + ellipsis.join("\n  - "));
+if (badEllipsis.length) fails.push("Remove placeholder '...' (not spread/rest):\n  - " + badEllipsis.join("\n  - "));
 
 if (fails.length) {
   console.error("✖ Preflight failed:\n- " + fails.join("\n- "));
