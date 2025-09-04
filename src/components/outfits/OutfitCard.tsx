@@ -16,6 +16,7 @@ import {
   generateNovaExplanation,
 } from "@/engine/explainOutfit";
 import { track } from "@/utils/telemetry";
+import { toArray } from "@/utils/cn";
 import { useUser } from "@/context/UserContext";
 import { useSaveOutfit } from "@/hooks/useSaveOutfit";
 import { buildAffiliateUrl, detectPartner } from "@/utils/deeplinks";
@@ -203,11 +204,12 @@ export default function OutfitCard({
 
       toast.error("Kon uitleg niet genereren");
     } finally {
-      setTimeout(() => {
+  const cardClassesList = toArray(`
         setIsProcessing((prev) => ({ /* placeholder removed */prev, explain: false }));
       }, 200);
     }
-  };
+  `);
+  const cardClasses = cardClassesList.filter(Boolean).join(" ");
 
   return (
     <article
