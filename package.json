@@ -10,7 +10,7 @@
     "check:package": "node scripts/check-package-json.mjs",
     "preflight": "node scripts/preflight.mjs",
     "check:imports": "node scripts/check-imports.mjs",
-    "check:aliases": "node scripts/check-aliases.mjs",
+    "check:all": "npm run preflight && npm run check:imports && npm run check:aliases && npm run check:casing && npm run check:package",
     "check:casing": "node scripts/check-casing.mjs",
     "check:env": "node scripts/check-env.mjs",
     "fix:landing-console": "node scripts/codemods/fix-landing-console.mjs",
