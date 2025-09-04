@@ -1,6 +1,12 @@
 import { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useInRouterContext } from "react-router-dom";
 import { cn } from "@/utils/cn";
+
+function SmartLink({ to, href, children, className }: { to?: string; href?: string; children: ReactNode; className?: string; }) {
+  const inRouter = useInRouterContext();
+  if (to && inRouter) return <Link to={to} className={className}>{children}</Link>;
+  return <a href={to || href || "#"} className={className}>{children}</a>;
+}
 
 type Props = {
   to?: string;          // interne route
@@ -13,19 +19,17 @@ type Props = {
 function SmartLink({ to, href, children, className }: { to?: string; href?: string; children: ReactNode; className?: string }) {
   if (to) return <Link to={to} className={className}>{children}</Link>;
   const url = to || href || "#";
-  return <a href={url} className={className}>{children}</a>;
-}
-
-// ⚠️ Geen BrowserRouter/Router/RouterProvider hier
-export default function StyleCard({ to, href, title, children, className }: Props) {
-  return (
-    <div className={cn("rounded-2xl p-4 bg-white shadow-sm", className)}>
-      <h3 className="font-heading text-xl mb-2">{title}</h3>
-      <div className="text-sm text-gray-600 mb-3">{children}</div>
-      {(to || href) && (
-        <SmartLink to={to} href={href} className="text-accent underline underline-offset-4">
-          Bekijk
-        </SmartLink>
+    <div
+      className={cn(
+        "bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform hover:scale-105",
+        className
+      )}
+      onClick={onClick}
+    >
+      <img src={imageUrl} alt={title} className="w-full h-48 object-cover" />
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+        <p className="text-gray-600 text-sm">{description}</p>
       )}
     </div>
   );
