@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { cn } from '@/utils/cn';
 import { Menu, X, User, LogOut } from "lucide-react";
 import Logo from '@/components/ui/Logo';
 import { useUser } from "@/context/UserContext";
@@ -78,10 +79,10 @@ function HeaderInner() {
   const filteredNavItems = NAV_MAIN.filter((item) => {
     // Hide login link if user is authenticated
     if (item.href === "/inloggen" && user) {
-      return false;
-    }
-    return true;
-  });
+  const headerClasses = cn(
+    'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+    isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-sm' : 'bg-transparent'
+  );
 
   return (
     <>
@@ -109,17 +110,9 @@ function HeaderInner() {
             <nav
               className="hidden md:flex items-center space-x-8"
               aria-label="Hoofdmenu"
-            >
+                    cn(
               {filteredNavItems.map((item) => (
-                <NavLink
-                  key={item.href}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    cx(
-                      "px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-lg",
-                      isActive
-                        ? "text-[#89CFF0] font-semibold bg-[#89CFF0]/10"
-                        : "text-slate-700 hover:text-[#89CFF0] hover:bg-slate-50",
+                      isActive ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
                     )
                   }
                   aria-current={isActiveLink(item.href) ? "page" : undefined}
@@ -163,9 +156,9 @@ function HeaderInner() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(true)}
-              className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-700 hover:text-[#89CFF0] hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#89CFF0] transition-colors"
-              aria-expanded={isOpen}
-              aria-label="Open menu"
+              className={cn(
+                isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
+              )}
               aria-controls="mobile-menu"
             >
               <Menu size={24} />
