@@ -1,94 +1,30 @@
-import React from "react";
+import { ReactNode } from "react";
+import { cn } from "@/utils/cn";
 
-type AccentRule = {
-  word: string; // exact match (case-insensitive)
-  className?: string; // default 'text-gradient'
-  onlyFirst?: boolean; // wrap alleen de eerste hit
-};
-
-type Props = {
-  text: string;
-  accents: AccentRule[];
+type GradientTextProps = {
+  text?: string | string[] | ReactNode;
   className?: string;
+  as?: keyof JSX.IntrinsicElements;
 };
 
-/**
- * Veilig, deterministisch wrapper:
- * - splitst op woordgrenzen zodat we losse spans per woord kunnen plaatsen
- * - respecteert onlyFirst
- * - voegt een defensieve inline backgroundImage toe voor gradient-classes
- */
-export const GradientTextLine: React.FC<Props> = ({
-  text,
-  accents,
-  className,
-}) => {
-  const rules = (accents ?? []).map((a) => ({
-    /* placeholder removed */a,
-    className: a.className ?? "text-gradient",
-  }));
-
-  const usedFirst: Record<string, boolean> = {};
-
-  // Splits per woordgrens; houdt spaties en leestekens als losse tokens in stand
-  const tokens = text.split(/(\b)/g);
-
-  const nodes = tokens.map((tok, i) => {
-    // leeg of alleen whitespace → direct teruggeven
-    if (!tok || !tok.trim())
-      return <React.Fragment key={i}>{tok}</React.Fragment>;
-
-    // Probeer elke accent-regel op dit token
-    for (const rule of rules) {
-      if (tok.toLowerCase() === rule.word.toLowerCase()) {
-        if (rule.onlyFirst && usedFirst[rule.word.toLowerCase()]) break;
-        usedFirst[rule.word.toLowerCase()] = true;
-
-        // Defensieve inline gradient — voorkomt "balken" bij CSS-order/minifier issues
-        const needsHardGradient = rule.className?.includes("text-gradient");
-        const isSoft = rule.className?.includes("text-gradient-soft");
-        const hardStyle = needsHardGradient
-          ? {
-              backgroundImage: isSoft
-                ? "linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)"
-                : "linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)",
-            }
-          : undefined;
-
-        return (
-          <span key={i} className={rule.className} style={hardStyle}>
-            {tok}
-          </span>
-        );
-      }
-    }
-
-    // Geen match → geef het token ongewijzigd terug
-    return <React.Fragment key={i}>{tok}</React.Fragment>;
-  });
-
-  return <span className={className}>{nodes}</span>;
-};
-
-interface GradientTextProps {
-  children: React.ReactNode;
-  className?: string;
-  gradient?: string;
+function toPlainString(v: unknown): string {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (Array.isArray(v)) return v.map(toPlainString).join(" ");
+  try { return String(v); } catch { return ""; }
 }
 
-export default function GradientText({ 
-  children, 
-  className = '',
-  gradient = 'from-blue-600 to-purple-600'
-}: GradientTextProps) {
-  // Input hardening - ensure children is string-like
-  const textContent = typeof children === 'string' ? children : String(children || '');
-  
+export default function GradientText({ text, className = "", as = "span" }: GradientTextProps) {
+  const Tag = as as any;
+  const content = toPlainString(text);
   return (
-    <span 
-      className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent ${className}`}
+    <Tag
+      className={cn(
+        "bg-gradient-to-r from-[#0D1B2A] via-[#89CFF0] to-[#0D1B2A] bg-clip-text text-transparent",
+        className
+      )}
     >
-      {textContent}
-    </span>
+      {content}
+    </Tag>
   );
 }
