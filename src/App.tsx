@@ -1,12 +1,24 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
 import LoadingFallback from "@/components/ui/LoadingFallback";
 
-/* ✅ gebruik je bestaande componenten */
+// Shell components
 import Header from "@/components/layout/Header";
 import PremiumFooter from "@/components/layout/PremiumFooter";
+import ScrollToTop from "@/components/ScrollToTop";
+import NavigationServiceInitializer from "@/components/NavigationServiceInitializer";
+import CrashGate from "@/components/system/CrashGate";
 
-/* pages (lazy) — laat je bestaande paden intact */
+// Context Providers
+import AuthProvider from "@/providers/AuthProvider";
+import GamificationProvider from "@/context/GamificationContext";
+
+/* pages (lazy) — bestaande paden intact */
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
@@ -34,55 +46,60 @@ const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 export default function App() {
   return (
-    <>
-      {/* 🔙 Je oude header terug */}
-      <Header />
+    <CrashGate>
+      <AuthProvider>
+        <GamificationProvider>
+          <Router>
+            <NavigationServiceInitializer />
+            <ScrollToTop />
 
-      <main role="main" className="min-h-[60vh]">
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/home" element={<HomePage />} />
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+              <Header />
 
-            {/* Onboarding/Account routes blijven werken binnen deze shell.
-                Als je ze écht zonder header/footers wil, dan verhuizen we ze later naar een Minimal layout. */}
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/home" element={<HomePage />} />
 
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
+                  <Route path="/onboarding/dynamic" element={<DynamicOnboardingPage />} />
 
-            <Route path="/blog" element={<BlogIndexPage />} />
-            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                  <Route path="/results" element={<ResultsPage />} />
+                  <Route path="/results/enhanced" element={<EnhancedResultsPage />} />
 
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/feed" element={<FeedPage />} />
-            <Route path="/feedback" element={<FeedbackPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
+                  <Route path="/blog" element={<BlogIndexPage />} />
+                  <Route path="/blog/:slug" element={<BlogDetailPage />} />
 
-            <Route path="/tribes" element={<TribesPage />} />
-            <Route path="/tribes/:id" element={<TribeDetailPage />} />
+                  <Route path="/pricing" element={<PricingPage />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/feed" element={<FeedPage />} />
+                  <Route path="/feedback" element={<FeedbackPage />} />
+                  <Route path="/analytics" element={<AnalyticsPage />} />
 
-            <Route path="/saved" element={<SavedOutfitsPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/help" element={<HelpCenterPage />} />
-            <Route path="/success-stories" element={<SuccessStoriesPage />} />
+                  <Route path="/tribes" element={<TribesPage />} />
+                  <Route path="/tribes/:id" element={<TribeDetailPage />} />
 
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
+                  <Route path="/saved" element={<SavedOutfitsPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/help" element={<HelpCenterPage />} />
+                  <Route path="/success-stories" element={<SuccessStoriesPage />} />
 
-            <Route path="/__health" element={<div>OK</div>} />
-            <Route path="/index.html" element={<Navigate to="/" replace />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </main>
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-      {/* 🔙 Je oude footer terug */}
-      <PremiumFooter />
-    </>
+                  <Route path="/__health" element={<div>OK</div>} />
+                  <Route path="/index.html" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Suspense>
+
+              <PremiumFooter />
+            </div>
+          </Router>
+        </GamificationProvider>
+      </AuthProvider>
+    </CrashGate>
   );
 }
