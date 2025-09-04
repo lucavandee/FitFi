@@ -1,50 +1,68 @@
-/**
- * Global type definitions for the application
- */
+// Global type definitions for FitFi
 
-// GTM DataLayer
+// Vite environment variables
+interface ImportMetaEnv {
+  readonly VITE_SUPABASE_URL: string;
+  readonly VITE_SUPABASE_ANON_KEY: string;
+  readonly VITE_ENVIRONMENT: string;
+  readonly VITE_SENTRY_DSN?: string;
+  readonly VITE_POSTHOG_KEY?: string;
+  readonly VITE_HOTJAR_ID?: string;
+  readonly VITE_GOOGLE_ANALYTICS_ID?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
+// Toast custom function typing
+declare module 'react-hot-toast' {
+  interface Toast {
+    id: string;
+    message: string;
+    type: 'success' | 'error' | 'loading' | 'blank' | 'custom';
+    position: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+    duration?: number;
+    visible: boolean;
+    height?: number;
+    createdAt: number;
+    pauseDuration: number;
+  }
+
+  interface ToastOptions {
+    id?: string;
+    duration?: number;
+    position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+    style?: React.CSSProperties;
+    className?: string;
+    icon?: React.ReactNode;
+    iconTheme?: {
+      primary: string;
+      secondary: string;
+    };
+    ariaProps?: {
+      role: 'status' | 'alert';
+      'aria-live': 'assertive' | 'off' | 'polite';
+    };
+  }
+
+  function custom(
+    jsx: (t: Toast) => React.ReactNode,
+    options?: ToastOptions
+  ): string;
+}
+
+// Window extensions
 declare global {
   interface Window {
+    gtag?: (...args: any[]) => void;
     dataLayer?: any[];
-    gtag?: (
-      command: string,
-      action: string,
-      params?: {
-        [key: string]: any;
-      },
-    ) => void;
+    hj?: (...args: any[]) => void;
+    _hjSettings?: {
+      hjid: number;
+      hjsv: number;
+    };
   }
 }
 
 export {};
-
-// Supabase types
-interface SupabaseError {
-  code: string;
-  details: string | null;
-  hint: string | null;
-  message: string;
-}
-
-// Toast notification
-declare module "react-hot-toast" {
-  interface ToastOptions {
-    id?: string;
-    icon?: React.ReactNode;
-    duration?: number;
-    position?:
-      | "top-left"
-      | "top-center"
-      | "top-right"
-      | "bottom-left"
-      | "bottom-center"
-      | "bottom-right";
-    style?: React.CSSProperties;
-    className?: string;
-    ariaProps?: {
-      role?: string;
-      "aria-live"?: "assertive" | "off" | "polite";
-      "aria-atomic"?: "true" | "false";
-    };
-  }
-}
