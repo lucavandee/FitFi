@@ -79,6 +79,11 @@ function HeaderInner() {
   const filteredNavItems = NAV_MAIN.filter((item) => {
     // Hide login link if user is authenticated
     if (item.href === "/inloggen" && user) {
+      return false;
+    }
+    return true;
+  });
+
   const headerClasses = cn(
     'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
     isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-sm' : 'bg-transparent'
@@ -88,10 +93,10 @@ function HeaderInner() {
     <>
       {/* Header */}
       <header
-        className={cx(
+        className={cx([
           "sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b transition-all duration-300",
           isScrolled ? "border-slate-200 shadow-sm" : "border-transparent",
-        )}
+        ])}
         role="banner"
         aria-label="Hoofdnavigatie"
       >
@@ -110,8 +115,14 @@ function HeaderInner() {
             <nav
               className="hidden md:flex items-center space-x-8"
               aria-label="Hoofdmenu"
-                    cn(
+            >
               {filteredNavItems.map((item) => (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    cn(
+                      'px-3 py-2 rounded-md text-sm font-medium transition-colors',
                       isActive ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
                     )
                   }
@@ -157,6 +168,7 @@ function HeaderInner() {
             <button
               onClick={() => setIsOpen(true)}
               className={cn(
+                'md:hidden p-2 rounded-md transition-colors',
                 isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
               )}
               aria-controls="mobile-menu"
@@ -169,29 +181,29 @@ function HeaderInner() {
 
       {/* Mobile Navigation Drawer */}
       <div
-        className={cx(
+        className={cx([
           "md:hidden fixed inset-0 z-50 transition-all duration-300",
           isOpen ? "pointer-events-auto" : "pointer-events-none",
-        )}
+        ])}
         aria-hidden={!isOpen}
         id="mobile-menu"
       >
         {/* Backdrop */}
         <div
-          className={cx(
+          className={cx([
             "absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300",
             isOpen ? "opacity-100" : "opacity-0",
-          )}
+          ])}
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
 
         {/* Drawer */}
         <div
-          className={cx(
+          className={cx([
             "absolute right-0 top-0 h-full w-[85%] max-w-[380px] bg-white shadow-2xl transition-transform duration-300 ease-out",
             isOpen ? "translate-x-0" : "translate-x-full",
-          )}
+          ])}
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-menu-title"
@@ -228,12 +240,12 @@ function HeaderInner() {
                     to={item.href}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      cx(
+                      cx([
                         "flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium transition-colors",
                         isActive
                           ? "bg-[#89CFF0]/10 text-[#89CFF0] font-semibold"
                           : "text-slate-700 hover:bg-slate-50 hover:text-[#89CFF0]",
-                      )
+                      ])
                     }
                   >
                     {item.icon && <item.icon size={20} />}
