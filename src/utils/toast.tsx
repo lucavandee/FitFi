@@ -1,44 +1,32 @@
-import { toast } from "react-hot-toast";
-import React from "react";
+import { toast } from "sonner";
+import type { ReactNode } from "react";
 
-export function toastSaved(onUndo?: () => void) {
-  if (!onUndo) return toast.success("Opgeslagen in favorieten ✓");
-  return toast.custom((t) => (
-    <div className="rounded-xl bg-white shadow-lg ring-1 ring-black/5 px-4 py-3 text-slate-900 flex items-center gap-3">
-      <span>Opgeslagen in favorieten ✓</span>
-      <button
-        onClick={() => {
-          try {
-            onUndo?.();
-          } finally {
-            toast.dismiss(t.id);
-          }
-        }}
-        className="ml-2 text-sm font-semibold text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg px-3 py-1.5"
-      >
-        Ongedaan maken
-      </button>
-    </div>
-  ));
-}
+export const showToast = {
+  success: (message: string) => {
+    toast.success(message);
+  },
+  
+  error: (message: string) => {
+    toast.error(message);
+  },
+  
+  custom: (content: React.ReactNode) => {
+    toast.custom((t: any): ReactNode => (
+      <div className="bg-white rounded-lg shadow-lg p-4 max-w-md">
+        {content}
+      </div>
+    ));
+  },
 
-export function toastRemoved(onUndo?: () => void) {
-  if (!onUndo) return toast("Verwijderd uit favorieten", { icon: "🗑️" });
-  return toast.custom((t) => (
-    <div className="rounded-xl bg-white shadow-lg ring-1 ring-black/5 px-4 py-3 text-slate-900 flex items-center gap-3">
-      <span>Verwijderd uit favorieten</span>
-      <button
-        onClick={() => {
-          try {
-            onUndo?.();
-          } finally {
-            toast.dismiss(t.id);
-          }
-        }}
-        className="ml-2 text-sm font-semibold text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg px-3 py-1.5"
-      >
-        Ongedaan maken
-      </button>
-    </div>
-  ));
-}
+  xp: (points: number, message?: string) => {
+    toast.custom((t: any): ReactNode => (
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-lg p-4 max-w-md flex items-center gap-3">
+        <div className="text-2xl">✨</div>
+        <div>
+          <div className="font-bold">+{points} XP</div>
+          {message && <div className="text-sm opacity-90">{message}</div>}
+        </div>
+      </div>
+    ));
+  }
+};
