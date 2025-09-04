@@ -10,8 +10,7 @@
     "preflight": "node scripts/preflight.mjs",
     "cleanup": "node scripts/cleanup-ellipsis.mjs",
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
     "typecheck": "tsc --noEmit --pretty",
     "build:strict": "npm run typecheck && vite build",
     "test": "vitest run --passWithNoTests"
