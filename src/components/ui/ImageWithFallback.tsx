@@ -1,4 +1,5 @@
 import React from "react";
+import { joinClasses } from '@/utils/cn';
 
 type Loading = "lazy" | "eager";
 type Decoding = "auto" | "sync" | "async";
