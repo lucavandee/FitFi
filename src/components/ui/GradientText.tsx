@@ -14,7 +14,12 @@ function toPlainString(v: unknown): string {
   try { return String(v); } catch { return ""; }
 }
 
-export default function GradientText({ text, className = "", as = "span" }: GradientTextProps) {
+/** Named export die legacy imports ondersteunt */
+export function GradientTextLine({
+  text,
+  className = "",
+  as = "span",
+}: GradientTextProps) {
   const Tag = as as any;
   const content = toPlainString(text);
   return (
@@ -27,4 +32,14 @@ export default function GradientText({ text, className = "", as = "span" }: Grad
       {content}
     </Tag>
   );
+}
+
+/** Named export voor wie `import { GradientText }` gebruikt */
+export function GradientText(props: GradientTextProps) {
+  return <GradientTextLine {...props} />;
+}
+
+/** Default export voor `import GradientText from ...` */
+export default function GradientTextDefault(props: GradientTextProps) {
+  return <GradientTextLine {...props} />;
 }
