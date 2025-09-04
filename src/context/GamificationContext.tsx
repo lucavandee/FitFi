@@ -1,13 +1,6 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import supabase from "@/lib/supabase";
+import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 
-type GamificationState = {
-  points: number;
-  level: number;
-  badges: string[];
-  loading: boolean;
-};
-
+// User stats interface
 interface UserStats {
   level: number;
   xp: number;
@@ -19,6 +12,7 @@ interface UserStats {
   updated_at: string;
 }
 
+// Current level interface
 interface CurrentLevel {
   id: number;
   level_name: string;
@@ -29,6 +23,7 @@ interface CurrentLevel {
   perks: string[];
 }
 
+// Next level interface
 interface NextLevel {
   id: number;
   level_name: string;
@@ -40,99 +35,84 @@ interface NextLevel {
 }
 
 interface GamificationState {
+  points: number;
+  level: string;
+  badges: string[];
+  streak: number;
   loading: boolean;
   error: string | null;
   userStats: UserStats | null;
   currentLevel: CurrentLevel | null;
   nextLevel: NextLevel | null;
-  badges: any[];
-  userStats: UserStats | null;
-  currentLevel: CurrentLevel | null;
-  nextLevel: NextLevel | null;
 }
 
-  userStats: UserStats | null;
-  currentLevel: CurrentLevel | null;
-  nextLevel: NextLevel | null;
-const GamificationContext = createContext<GamificationState>({
+type GamificationAction = 
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'SET_POINTS'; payload: number }
+  | { type: 'SET_LEVEL'; payload: string }
+  | { type: 'SET_BADGES'; payload: string[] }
+  | { type: 'SET_STREAK'; payload: number }
+  | { type: 'SET_USER_STATS'; payload: UserStats | null }
+  | { type: 'SET_CURRENT_LEVEL'; payload: CurrentLevel | null }
+  | { type: 'SET_NEXT_LEVEL'; payload: NextLevel | null };
+
+const initialState: GamificationState = {
   points: 0,
-  level: 1,
+  level: 'beginner',
   badges: [],
-  loading: true,
-});
+  streak: 0,
+  loading: false,
+  error: null,
+  userStats: null,
+  currentLevel: null,
+  nextLevel: null,
+};
 
-export function GamificationProvider({ children }: { children: React.ReactNode }) {
-  const [points, setPoints] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [badges, setBadges] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+function gamificationReducer(state: GamificationState, action: GamificationAction): GamificationState {
+  switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    case 'SET_POINTS':
+      return { ...state, points: action.payload };
+    case 'SET_LEVEL':
+      return { ...state, level: action.payload };
+    case 'SET_BADGES':
+      return { ...state, badges: action.payload };
+    case 'SET_STREAK':
+      return { ...state, streak: action.payload };
+    case 'SET_USER_STATS':
+      return { ...state, userStats: action.payload };
+    case 'SET_CURRENT_LEVEL':
+      return { ...state, currentLevel: action.payload };
+    case 'SET_NEXT_LEVEL':
+      return { ...state, nextLevel: action.payload };
+    default:
+      return state;
+  }
+}
 
-  useEffect(() => {
-    const sb = supabase; // ✅ client object — niet aanroepen
+const GamificationContext = createContext<{
+  state: GamificationState;
+  dispatch: React.Dispatch<GamificationAction>;
+} | null>(null);
 
-    let mounted = true;
-
-    async function bootstrap() {
-      setLoading(true);
-
-      // Haal huidige session op
-      const { data: { session } } = await sb.auth.getSession();
-      if (!mounted) return;
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        setPoints(0);
-        setLevel(1);
-        setBadges([]);
-        setLoading(false);
-        return;
-      }
-
-      // Pas tabel/kolommen aan aan jouw schema
-      const { data, error } = await sb
-        .from("user_gamification")
-        .select("points, level, badges")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (!mounted) return;
-
-      if (error) {
-        // zachte fallback
-        setPoints(0);
-        setLevel(1);
-        setBadges([]);
-      } else if (data) {
-        setPoints(Number(data.points ?? 0));
-        setLevel(Number(data.level ?? 1));
-        setBadges(Array.isArray(data.badges) ? data.badges : []);
-      }
-
-      setLoading(false);
-    }
-
-    // init + resubscribe bij auth changes
-    bootstrap();
-    const { data: sub } = sb.auth.onAuthStateChange(() => bootstrap());
-
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, []);
-
-  const value = useMemo(
-    () => ({ points, level, badges, loading }),
-    [points, level, badges, loading]
-  );
+export function GamificationProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(gamificationReducer, initialState);
 
   return (
-    <GamificationContext.Provider value={value}>
+    <GamificationContext.Provider value={{ state, dispatch }}>
       {children}
     </GamificationContext.Provider>
   );
 }
 
 export function useGamification() {
-  return useContext(GamificationContext);
+  const context = useContext(GamificationContext);
+  if (!context) {
+    throw new Error('useGamification must be used within a GamificationProvider');
+  }
+  return context.state;
 }
