@@ -70,4 +70,25 @@ export const GradientTextLine: React.FC<Props> = ({
   return <span className={className}>{nodes}</span>;
 };
 
-export default GradientTextLine;
+interface GradientTextProps {
+  children: React.ReactNode;
+  className?: string;
+  gradient?: string;
+}
+
+export default function GradientText({ 
+  children, 
+  className = '',
+  gradient = 'from-blue-600 to-purple-600'
+}: GradientTextProps) {
+  // Input hardening - ensure children is string-like
+  const textContent = typeof children === 'string' ? children : String(children || '');
+  
+  return (
+    <span 
+      className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent ${className}`}
+    >
+      {textContent}
+    </span>
+  );
+}

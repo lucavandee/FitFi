@@ -6,9 +6,17 @@ interface GradientWordProps {
   children: React.ReactNode;
   variant?: Variant;
   className?: string;
+  gradient?: string;
 }
 
-export const GradientWord: React.FC<GradientWordProps> = ({
+export default function GradientWord({ 
+  children, 
+  className = '',
+  gradient = 'from-blue-600 to-purple-600'
+}: GradientWordProps) {
+  // Input hardening - ensure children is string-like
+  const textContent = typeof children === 'string' ? children : String(children || '');
+  
   children,
   variant = "default",
   className = "",
@@ -43,7 +51,7 @@ export const GradientWord: React.FC<GradientWordProps> = ({
 
   return (
     <>
-      {/* Modern browsers with gradient support */}
+      className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold ${className}`}
       <span
         className={`hidden supports-[background-clip:text]:inline ${className}`}
         style={style}
@@ -57,7 +65,7 @@ export const GradientWord: React.FC<GradientWordProps> = ({
         style={fallbackStyle}
       >
         {children}
-      </span>
+      {textContent}
     </>
   );
 };
