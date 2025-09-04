@@ -20,7 +20,7 @@
     "codemod:supabase": "node scripts/codemods/fix-supabase-callable.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "typecheck": "tsc --noEmit",
-    "preflight": "node scripts/preflight.mjs"
+    "preflight": "node scripts/preflight.mjs",
   },
   "engines": {
     "node": ">=20.19 <23"
