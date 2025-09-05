@@ -1,100 +1,39 @@
-// Globale (tijdelijke) type-augmentaties om build-ruis te dempen.
-// Later kunnen we deze aanscherpen per module met echte schema's.
+// Globale, lichte shims – expliciet, geen 'any' waar het niet hoeft.
+declare module "*.svg" {
+  const content: React.FC<React.SVGProps<SVGSVGElement>>;
+  export default content;
+}
+declare module "*.png" { const src: string; export default src; }
+declare module "*.jpg" { const src: string; export default src; }
+declare module "*.jpeg" { const src: string; export default src; }
+declare module "*.webp" { const src: string; export default src; }
 
-type ID = string;
-
-declare global {
-  interface Product {
-    id?: ID;
-    name?: string;
-    brand?: string;
-    price?: number;
-    imageUrl?: string;
-    affiliateUrl?: string;
-    category?: string;
-    [k: string]: any;
-  }
-
-  interface Outfit {
-    id?: ID;
-    title?: string;
-    name?: string;
-    occasion?: string;
-    description?: string;
-    image?: string;
-    tags?: string[];
-    archetype?: string;
-    season?: "spring" | "summer" | "autumn" | "winter" | string;
-    items?: Product[];
-    products?: Product[];
-    matchPercentage?: number;
-    explanation?: string;
-    [k: string]: any;
-  }
-
-  interface Tribe {
-    id?: ID;
-    slug?: string;
-    title?: string;
-    name?: string;
-    description?: string;
-    cover_img?: string;
-    member_count?: number;
-    is_member?: boolean;
-    user_role?: "owner" | "moderator" | "member" | string | null;
-    [k: string]: any;
-  }
-
-  interface TribeChallenge {
-    id?: ID;
-    tribeId?: ID;
-    status?: string;
-    createdAt?: string;
-    title?: string;
-    [k: string]: any;
-  }
-
-  interface TribePost {
-    id: ID;
-    tribeId: ID;
-    userId: ID;
-    content?: string;
-    imageUrl?: string;
-    likesCount?: number;
-    commentsCount?: number;
-    createdAt: string;
-    [k: string]: any;
-  }
-
-  interface TribeMember {
-    userId: ID;
-    tribeId: ID;
-    role: "member" | "moderator" | "owner" | null;
-    [k: string]: any;
-  }
+// Basisdomein voor FitFi – licht gehouden om type-errors te voorkomen
+interface Product {
+  id: string;
+  title: string;
+  brand?: string;
+  imageUrl?: string;
+  price?: number;
+  url?: string;
+  tags?: string[];
+  gender?: "male" | "female" | "unisex";
+  color?: string;
+  type?: string; // e.g., "blazer", "jeans"
 }
 
-// Third-party / interne shims
-declare module "sonner" {
-  export const toast: {
-    success: (m: string) => void;
-    error: (m: string) => void;
-    info: (m: string) => void;
-    message: (m: string) => void;
-  };
-  export default toast;
+interface Outfit {
+  id: string;
+  name: string;
+  items: Product[];
+  score?: number; // 0-100
+  explanation?: string;
 }
 
-declare module "@/lib/nova" {
-  export type NovaMessage = any;
-  export type NovaMode = "default" | "explain" | "debug" | string;
-  export function streamNova(...args: any[]): AsyncGenerator<any>;
+interface Tribe {
+  id: string;
+  name: string;
+  description?: string;
 }
 
-declare module "@/lib/supabaseClient" {
-  const supabase: any;
-  export default supabase;
-  export { supabase };
-}
-
-export {};
+declare const __APP_ENV__: string;
