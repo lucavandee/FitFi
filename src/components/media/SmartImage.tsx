@@ -1,4 +1,4 @@
-import { ImgHTMLAttributes } from "react";
+import { ImgHTMLAttributes, CSSProperties } from "react";
 import clsx from "clsx";
 
 type Props = Omit<
@@ -9,14 +9,32 @@ type Props = Omit<
   alt: string;
   width?: number;
   height?: number;
-  aspect?: boolean;
+  /** true → container vult; string (bv "16/9") → aspect-ratio style */
+  aspect?: boolean | string;
   className?: string;
 };
 
-function SmartImage({ src, alt, width, height, aspect, className, ...rest }: Props) {
-  const imgClass = clsx("object-cover bg-surface", aspect && "w-full h-full", className);
+function SmartImage({ src, alt, width, height, aspect, className, style, ...rest }: Props) {
+  const withAspectString = typeof aspect === "string" && aspect.trim().length > 0;
+  const imgClass = clsx(
+    "object-cover bg-surface",
+    (aspect && !withAspectString) && "w-full h-full",
+    className
+  );
   const sizeProps = !aspect ? { width, height } : {};
-  return <img src={src} alt={alt} className={imgClass} loading="lazy" {...sizeProps} {...rest} />;
-}
+  const styleProps: CSSProperties = { ...(style || {}) };
+  if (withAspectString) styleProps.aspectRatio = aspect as string;
 
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={imgClass}
+      loading={rest.loading ?? "lazy"}
+      style={styleProps}
+      {...sizeProps}
+      {...rest}
+    />
+  );
+}
 export default SmartImage;

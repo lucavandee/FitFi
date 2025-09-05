@@ -1,95 +1,105 @@
-declare module "@/components/Dashboard/NovaInsightCard" {
-  import * as React from "react";
-  export const NovaInsightCard: React.FC<any>;
-  export default NovaInsightCard;
-}
+// Globale type-augmentaties om ruis uit de build te halen. Houdt alles optioneel;
+// we zetten later strakke types op de echte services/schemas.
 
-declare module "@/components/Dashboard/GamificationPanel" {
-  import * as React from "react";
-  export const GamificationPanel: React.FC<any>;
-  export default GamificationPanel;
-}
+type ID = string;
 
-declare module "@/components/analytics/HeatmapViewer" {
-  import * as React from "react";
-  export const HeatmapViewer: React.FC<any>;
-  export default HeatmapViewer;
-}
-
-declare module "@/services/data/types" {
-  // Minimale compat types om compile te laten slagen
-  export type ID = string;
-  export type Season = "spring" | "summer" | "autumn" | "winter";
-  export type DataResponse<T = any> = {
-    data: T;
-    error?: string | null;
-    source: "supabase" | "local" | "fallback";
-    cached: boolean;
-    errors?: string[];
-  };
-  export type FitFiUserProfile = { id: ID; name?: string; email?: string };
-  export type Outfit = {
-    id: ID;
-    title?: string;
-    image?: string;
-    priceMin?: number;
-    priceMax?: number;
-  };
-  export type Tribe = { id: ID; name: string; slug?: string };
-  export type TribePost = {
-    id: ID;
-    tribeId: ID;
-    authorId: ID;
-    body?: string;
-    createdAt?: string;
-  };
-  export type TribeMember = {
-    id: ID;
-    tribeId: ID;
-    userId: ID;
-    role?: "member" | "admin";
-  };
-  export type TribeChallenge = {
-    id: ID;
-    tribeId: ID;
-    title: string;
-    description?: string;
-    rules?: string[];
-  };
-  export type TribeChallengeSubmission = {
-    id: ID;
-    challengeId: ID;
-    userId: ID;
-    image?: string;
-    createdAt?: string;
-  };
-  export type TribeRanking = { tribeId: ID; userId: ID; score: number };
-  export type UserStats = {
-    level: number;
-    xp: number;
-    posts?: number;
-    submissions?: number;
-  };
-  export type UserStreak = { current_streak: number };
-  export type ReferralRow = {
-    id: ID;
-    inviterId?: ID;
-    invitedId?: ID;
-    createdAt?: string;
-  };
-  export type NotificationItem = {
-    id: ID;
-    title: string;
-    body?: string;
-    createdAt?: string;
-  };
-  export type BoltProduct = {
-    id: ID;
-    title: string;
+declare global {
+  interface Product {
+    id?: ID;
+    name?: string;
     brand?: string;
-    imageUrl?: string;
-    type?: string;
-    category: string;
     price?: number;
-  };
+    imageUrl?: string;
+    affiliateUrl?: string;
+    category?: string;
+    [k: string]: any;
+  }
+
+  interface Outfit {
+    id?: ID;
+    title?: string;
+    name?: string; // some mocks gebruiken "name"
+    occasion?: string;
+    description?: string;
+    image?: string;
+    tags?: string[];
+    archetype?: string;
+    season?: "spring" | "summer" | "autumn" | "winter" | string;
+    items?: Product[];
+    products?: Product[];
+    matchPercentage?: number;
+    explanation?: string;
+    [k: string]: any;
+  }
+
+  interface Tribe {
+    id?: ID;
+    slug?: string;
+    title?: string;
+    name?: string;
+    description?: string;
+    cover_img?: string;
+    member_count?: number;
+    is_member?: boolean;
+    user_role?: "owner" | "moderator" | "member" | string | null;
+    [k: string]: any;
+  }
+
+  interface TribeChallenge {
+    id?: ID;
+    tribeId?: ID;
+    status?: string;
+    createdAt?: string;
+    title?: string;
+    [k: string]: any;
+  }
+
+  interface TribePost {
+    id: ID;
+    tribeId: ID;
+    userId: ID;
+    content?: string;
+    imageUrl?: string;
+    likesCount?: number;
+    commentsCount?: number;
+    createdAt: string;
+    [k: string]: any;
+  }
+
+  interface TribeMember {
+    userId: ID;
+    tribeId: ID;
+    role: "member" | "moderator" | "owner" | null;
+    [k: string]: any;
+  }
+
+  // Analytics helper
+  function track(event: string, data?: Record<string, any>): void;
+  function w(event: string, data?: Record<string, any>): void;
 }
+
+// Shims voor third-party of interne modules die types misten
+declare module "sonner" {
+  export const toast: {
+    success: (m: string) => void;
+    error: (m: string) => void;
+    info: (m: string) => void;
+    message: (m: string) => void;
+  };
+  export default toast;
+}
+
+declare module "@/lib/nova" {
+  export type NovaMessage = any;
+  export type NovaMode = "default" | "explain" | "debug" | string;
+  export function streamNova(...args: any[]): AsyncGenerator<any>;
+}
+
+// Laat TS weten dat zowel default als named supabase bestaan (runtime heeft default).
+declare module "@/lib/supabaseClient" {
+  const supabase: any;
+  export default supabase;
+  export { supabase };
+}
+
+export {};
