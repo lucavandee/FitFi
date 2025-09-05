@@ -2,43 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brand tokens */
 :root {
-  --color-midnight: #0D1B2A;
-  --color-white: #FFFFFF;
-  --color-accent: #89CFF0;
-  --color-surface: #F6F6F6;
-  
-  --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
+  --ff-midnight: #0D1B2A;
+  --ff-turquoise: #89CFF0;
+  --ff-surface: #F6F6F6;
+  --ff-white: #FFFFFF;
 }
 
-@layer base {
-  html {
-    font-family: var(--font-body);
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    font-weight: 600;
-  }
-  
-  body {
-    @apply bg-white text-midnight antialiased;
-  }
-}
+html, body, #root { height: 100%; }
+body { font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
 
-@layer components {
-  .btn-primary {
-    @apply bg-midnight text-white px-6 py-3 rounded-2xl font-medium hover:opacity-90 transition-opacity;
-  }
-  
-  .btn-secondary {
-    @apply bg-surface text-midnight px-6 py-3 rounded-2xl font-medium hover:bg-white transition-colors;
-  }
-}
-
-@layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-midnight to-accent bg-clip-text text-transparent;
-  }
-}
+.ff-container { @apply max-w-5xl mx-auto px-4; }
+.ff-hero-title { @apply text-3xl sm:text-5xl font-bold text-[color:var(--ff-midnight)] font-heading; }
+.ff-subtle { @apply text-sm text-gray-500; }
+.ff-card { @apply bg-white rounded-2xl shadow-card p-6; }
