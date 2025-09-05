@@ -1,112 +1,149 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useState, useEffect } from "react";
+import supabase from "@/lib/supabaseClient";
 
-export type FitfiTier = "visitor" | "member" | "plus" | "founder";
-
-export type AuthUser = {
+export interface User {
   id: string;
-  email?: string;
-};
+  email: string;
+  name?: string;
+  avatar_url?: string;
+}
 
-export type AuthState = {
-  user: AuthUser | null;
-  tier: FitfiTier;
-  loading: boolean;
-};
+export interface AuthContextType {
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name?: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateProfile: (updates: Partial<User>) => Promise<void>;
+}
 
-type AuthContextValue = AuthState & {
-  login: (user: AuthUser, tier?: FitfiTier) => void;
-  logout: () => void;
-  setTier: (tier: FitfiTier) => void;
-};
+const AuthContext = createContext<AuthContextType | null>(null);
 
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-const LS_UID = "fitfi_uid";
-const LS_TIER = "fitfi_tier";
-
-function readLS(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
+export function useAuth(): AuthContextType {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-}
-function writeLS(key: string, value: string) {
-  try {
-    localStorage.setItem(key, value);
-  } catch {}
-}
-function removeLS(key: string) {
-  try {
-    localStorage.removeItem(key);
-  } catch {}
+  return context;
 }
 
-export default function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>(() => {
-    const uid = typeof window !== "undefined" ? readLS(LS_UID) : null;
-    const tier = (typeof window !== "undefined" ? (readLS(LS_TIER) as FitfiTier | null) : null) || "visitor";
-    return {
-      user: uid ? { id: uid } : null,
-      tier,
-      loading: false
-    };
-  });
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-  // hydrate uit LS (no-op als al aanwezig)
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    const uid = readLS(LS_UID);
-    const tier = (readLS(LS_TIER) as FitfiTier | null) || "visitor";
-    setState(prev => ({
-      user: uid ? { id: uid } : null,
-      tier,
-      loading: false
-    }));
+    // Check initial auth state
+    const checkAuth = async () => {
+      if (!supabase) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            name: session.user.user_metadata?.name,
+            avatar_url: session.user.user_metadata?.avatar_url
+          });
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    if (supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (session?.user) {
+            setUser({
+              id: session.user.id,
+              email: session.user.email || '',
+              name: session.user.user_metadata?.name,
+              avatar_url: session.user.user_metadata?.avatar_url
+            });
+          } else {
+            setUser(null);
+          }
+          setIsLoading(false);
+        }
+      );
+
+      return () => subscription.unsubscribe();
+    }
   }, []);
 
-  const login = useCallback((user: AuthUser, tier?: FitfiTier) => {
-    writeLS(LS_UID, user.id);
-    if (tier) writeLS(LS_TIER, tier);
-    setState({ user, tier: tier || state.tier || "member", loading: false });
-  }, [state.tier]);
+  const signIn = async (email: string, password: string) => {
+    if (!supabase) throw new Error('Supabase not available');
+    
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    
+    if (error) throw error;
+  };
 
-  const logout = useCallback(() => {
-    removeLS(LS_UID);
-    // tier blijft bestaan (gratis member unlocks kunnen persistent zijn)
-    setState(prev => ({ user: null, tier: prev.tier || "visitor", loading: false }));
-  }, []);
+  const signUp = async (email: string, password: string, name?: string) => {
+    if (!supabase) throw new Error('Supabase not available');
+    
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: name ? { name } : undefined
+      }
+    });
+    
+    if (error) throw error;
+  };
 
-  const setTier = useCallback((tier: FitfiTier) => {
-    writeLS(LS_TIER, tier);
-    setState(prev => ({ ...prev, tier }));
-  }, []);
+  const signOut = async () => {
+    if (!supabase) return;
+    
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  };
 
-  const value = useMemo<AuthContextValue>(() => ({
-    ...state,
-    login,
-    logout,
-    setTier
-  }), [state, login, logout, setTier]);
+  const updateProfile = async (updates: Partial<User>) => {
+    if (!supabase || !user) throw new Error('Not authenticated');
+    
+    const { error } = await supabase.auth.updateUser({
+      data: updates
+    });
+    
+    if (error) throw error;
+    
+    setUser(prev => prev ? { ...prev, ...updates } : null);
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const value: AuthContextType = {
+    user,
+    isLoading,
+    isAuthenticated: !!user,
+    signIn,
+    signUp,
+    signOut,
+    updateProfile
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-/**
- * Gebruik deze hook overal in de app. Gooi een heldere fout als er geen provider is.
- */
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    // Duidelijke developer error i.p.v. cryptische runtime
-    throw new Error("useAuth must be used within <AuthProvider>. Wrap your app (root) with AuthProvider.");
-  }
-  return ctx;
-}
-
-/**
- * Optioneel: helper voor route-bescherming.
- */
-export function requireTier(current: FitfiTier, required: FitfiTier): boolean {
-  const rank = (t: FitfiTier) => ({ visitor: 0, member: 1, plus: 2, founder: 3 }[t]);
-  return rank(current) >= rank(required);
-}
+export default AuthContext;

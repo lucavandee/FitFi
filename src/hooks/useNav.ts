@@ -1,56 +1,57 @@
-/**
- * useNav – centrale navigatie + analytics wrapper (uitgebreid met Nova/Results/Tribe).
- */
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 
-type NavMeta = Record<string, unknown>;
-
-export default function useNav() {
+/**
+ * Navigation hook voor consistente routing
+ */
+export function useNav() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const to = useCallback((path: string, meta?: NavMeta, replace?: boolean) => {
-    try {
-      // @ts-ignore project-brede helper
-      track?.("nav:to", { path, ...(meta || {}) });
-    } catch {}
-    if (replace) navigate(path, { replace: true });
-    else navigate(path);
+  const goTo = useCallback((path: string, options?: { replace?: boolean }) => {
+    navigate(path, options);
   }, [navigate]);
 
-  const back = useCallback(() => {
-    try {
-      // @ts-ignore
-      track?.("nav:back");
-    } catch {}
-    navigate(-1);
+  const goBack = useCallback(() => {
+    window.history.length > 1 ? navigate(-1) : navigate('/');
   }, [navigate]);
 
-  const toHome = useCallback((meta?: NavMeta, replace?: boolean) => {
-    to("/", { route: "home", ...(meta || {}) }, replace);
-  }, [to]);
+  const goHome = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
 
-  const toDashboard = useCallback((meta?: NavMeta, replace?: boolean) => {
-    to("/dashboard", { route: "dashboard", ...(meta || {}) }, replace);
-  }, [to]);
+  const goToDashboard = useCallback(() => {
+    navigate('/dashboard');
+  }, [navigate]);
 
-  const toOnboarding = useCallback((step?: string | number, meta?: NavMeta, replace?: boolean) => {
-    const suffix = step === undefined || step === null ? "" : `/${String(step)}`;
-    to(`/onboarding${suffix}`, { route: "onboarding", step, ...(meta || {}) }, replace);
-  }, [to]);
+  const goToOnboarding = useCallback(() => {
+    navigate('/onboarding');
+  }, [navigate]);
 
-  const toNova = useCallback((meta?: NavMeta, replace?: boolean) => {
-    to("/nova", { route: "nova", ...(meta || {}) }, replace);
-  }, [to]);
+  const goToResults = useCallback(() => {
+    navigate('/results');
+  }, [navigate]);
 
-  const toResults = useCallback((id?: string | number, meta?: NavMeta, replace?: boolean) => {
-    const path = id === undefined || id === null ? "/results" : `/results/${String(id)}`;
-    to(path, { route: "results", id, ...(meta || {}) }, replace);
-  }, [to]);
+  const isCurrentPath = useCallback((path: string) => {
+    return location.pathname === path;
+  }, [location.pathname]);
 
-  const toTribe = useCallback((id: string | number, meta?: NavMeta, replace?: boolean) => {
-    to(`/tribes/${String(id)}`, { route: "tribe", id, ...(meta || {}) }, replace);
-  }, [to]);
+  const isPathActive = useCallback((path: string) => {
+    return location.pathname.startsWith(path);
+  }, [location.pathname]);
 
-  return { to, back, toHome, toDashboard, toOnboarding, toNova, toResults, toTribe };
+  return {
+    goTo,
+    goBack,
+    goHome,
+    goToDashboard,
+    goToOnboarding,
+    goToResults,
+    isCurrentPath,
+    isPathActive,
+    currentPath: location.pathname,
+    location
+  };
 }
+
+export default useNav;
