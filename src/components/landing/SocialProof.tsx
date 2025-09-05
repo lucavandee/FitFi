@@ -1,5 +1,5 @@
-export default function SocialProof() {
-  return (
+export default function SocialProof(){
+  return(
     <section className="ff-card text-center">
       <p className="uppercase tracking-wide text-xs text-gray-500">Vertrouwd door vroege gebruikers</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm text-gray-700">
