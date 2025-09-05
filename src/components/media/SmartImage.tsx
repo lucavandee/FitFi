@@ -42,7 +42,7 @@ export default function SmartImage(props: SmartImageProps) {
       onError={() => { setOk(false); onError?.(); }}
       className={cn("object-cover bg-surface", aspect && "w-full h-full", className)}
       /* width/height alleen meegeven als er géén aspect container is */
-      {...(!aspect ? { width, height } : {})}
+      {/* placeholder removed */(!aspect ? { width, height } : {})}
     />
   );
 

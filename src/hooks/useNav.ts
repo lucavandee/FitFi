@@ -12,7 +12,7 @@ export default function useNav() {
   const to = useCallback((path: string, meta?: NavMeta, replace?: boolean) => {
     try {
       // @ts-ignore project-brede helper
-      track?.("nav:to", { path, ...(meta || {}) });
+      track?.("nav:to", { path, /* placeholder removed */(meta || {}) });
     } catch {}
     if (replace) navigate(path, { replace: true });
     else navigate(path);
@@ -27,29 +27,29 @@ export default function useNav() {
   }, [navigate]);
 
   const toHome = useCallback((meta?: NavMeta, replace?: boolean) => {
-    to("/", { route: "home", ...(meta || {}) }, replace);
+    to("/", { route: "home", /* placeholder removed */(meta || {}) }, replace);
   }, [to]);
 
   const toDashboard = useCallback((meta?: NavMeta, replace?: boolean) => {
-    to("/dashboard", { route: "dashboard", ...(meta || {}) }, replace);
+    to("/dashboard", { route: "dashboard", /* placeholder removed */(meta || {}) }, replace);
   }, [to]);
 
   const toOnboarding = useCallback((step?: string | number, meta?: NavMeta, replace?: boolean) => {
     const suffix = step === undefined || step === null ? "" : `/${String(step)}`;
-    to(`/onboarding${suffix}`, { route: "onboarding", step, ...(meta || {}) }, replace);
+    to(`/onboarding${suffix}`, { route: "onboarding", step, /* placeholder removed */(meta || {}) }, replace);
   }, [to]);
 
   const toNova = useCallback((meta?: NavMeta, replace?: boolean) => {
-    to("/nova", { route: "nova", ...(meta || {}) }, replace);
+    to("/nova", { route: "nova", /* placeholder removed */(meta || {}) }, replace);
   }, [to]);
 
   const toResults = useCallback((id?: string | number, meta?: NavMeta, replace?: boolean) => {
     const path = id === undefined || id === null ? "/results" : `/results/${String(id)}`;
-    to(path, { route: "results", id, ...(meta || {}) }, replace);
+    to(path, { route: "results", id, /* placeholder removed */(meta || {}) }, replace);
   }, [to]);
 
   const toTribe = useCallback((id: string | number, meta?: NavMeta, replace?: boolean) => {
-    to(`/tribes/${String(id)}`, { route: "tribe", id, ...(meta || {}) }, replace);
+    to(`/tribes/${String(id)}`, { route: "tribe", id, /* placeholder removed */(meta || {}) }, replace);
   }, [to]);
 
   return { to, back, toHome, toDashboard, toOnboarding, toNova, toResults, toTribe };

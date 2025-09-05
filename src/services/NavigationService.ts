@@ -34,7 +34,7 @@ export class NavigationService {
     this.updateState({
       path,
       params,
-      history: [...this.state.history, path],
+      history: [/* placeholder removed */this.state.history, path],
     });
   }
 
@@ -45,7 +45,7 @@ export class NavigationService {
 
   /** Interne merge + notify */
   private updateState(updates: Partial<NavigationState>) {
-    this.state = { ...this.state, ...updates };
+    this.state = { /* placeholder removed */this.state, /* placeholder removed */updates };
     this.listeners.forEach((listener) => listener(this.state));
   }
 }

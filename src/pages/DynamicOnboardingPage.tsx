@@ -123,7 +123,7 @@ const DynamicOnboardingPage: React.FC = () => {
           const agent = await loadNovaAgent();
           if (agent?.memory) {
             agent.memory.writeProfile({
-              /* placeholder removed */...data,
+              /* placeholder removed *//* placeholder removed */data,
               userId: user.id,
               completedAt: new Date().toISOString(),
             });
@@ -229,7 +229,7 @@ const DynamicOnboardingPage: React.FC = () => {
                     const current = data.archetypes || [];
                     const updated = current.includes(archetype)
                       ? current.filter((a) => a !== archetype)
-                      : [...current, archetype];
+                      : [/* placeholder removed */current, archetype];
                     updateAnswers({ archetypes: updated });
                   }}
                   className={`p-4 border rounded-2xl transition-colors ${
@@ -307,7 +307,7 @@ const DynamicOnboardingPage: React.FC = () => {
                       const current = data.occasions || [];
                       const updated = current.includes(occasion)
                         ? current.filter((o) => o !== occasion)
-                        : [...current, occasion];
+                        : [/* placeholder removed */current, occasion];
                       updateAnswers({ occasions: updated });
                     }}
                     className={`p-4 border rounded-2xl transition-colors ${
@@ -366,7 +366,7 @@ const DynamicOnboardingPage: React.FC = () => {
                     onChange={(e) =>
                       updateAnswers({
                         preferences: {
-                          ...data.preferences,
+                          /* placeholder removed */data.preferences,
                           [pref.key]: e.target.checked,
                         },
                       })

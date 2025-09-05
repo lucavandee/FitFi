@@ -34,14 +34,14 @@ export default function Button({
 
   if (as === "a") {
     return (
-      <a href={href} target={target} rel={rel} {...commonProps}>
+      <a href={href} target={target} rel={rel} {/* placeholder removed */commonProps}>
         {content}
       </a>
     );
   }
 
   return (
-    <button type="button" disabled={disabled} {...commonProps}>
+    <button type="button" disabled={disabled} {/* placeholder removed */commonProps}>
       {content}
     </button>
   );

@@ -72,23 +72,23 @@ const initialState: GamificationState = {
 function gamificationReducer(state: GamificationState, action: GamificationAction): GamificationState {
   switch (action.type) {
     case 'SET_LOADING':
-      return { ...state, loading: action.payload };
+      return { /* placeholder removed */state, loading: action.payload };
     case 'SET_ERROR':
-      return { ...state, error: action.payload };
+      return { /* placeholder removed */state, error: action.payload };
     case 'SET_POINTS':
-      return { ...state, points: action.payload };
+      return { /* placeholder removed */state, points: action.payload };
     case 'SET_LEVEL':
-      return { ...state, level: action.payload };
+      return { /* placeholder removed */state, level: action.payload };
     case 'SET_BADGES':
-      return { ...state, badges: action.payload };
+      return { /* placeholder removed */state, badges: action.payload };
     case 'SET_STREAK':
-      return { ...state, streak: action.payload };
+      return { /* placeholder removed */state, streak: action.payload };
     case 'SET_USER_STATS':
-      return { ...state, userStats: action.payload };
+      return { /* placeholder removed */state, userStats: action.payload };
     case 'SET_CURRENT_LEVEL':
-      return { ...state, currentLevel: action.payload };
+      return { /* placeholder removed */state, currentLevel: action.payload };
     case 'SET_NEXT_LEVEL':
-      return { ...state, nextLevel: action.payload };
+      return { /* placeholder removed */state, nextLevel: action.payload };
     default:
       return state;
   }

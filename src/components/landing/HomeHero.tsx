@@ -64,7 +64,7 @@ export default function HomeHero() {
             {/* CTA's */}
             <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
               <a
-                {...CTA_PRIMARY_ATTRS}
+                {/* placeholder removed */CTA_PRIMARY_ATTRS}
                 href={QUIZ_PATH}
                 className="group inline-flex items-center justify-center rounded-2xl px-8 py-4 font-bold text-slate-900 bg-[#89CFF0] hover:bg-[#7fc2e3] transition-all duration-300 shadow-[0_10px_30px_rgba(137,207,240,0.35)] hover:shadow-[0_15px_40px_rgba(137,207,240,0.45)] hover:scale-105 transform"
               >
@@ -74,7 +74,7 @@ export default function HomeHero() {
                 </svg>
               </a>
               <a
-                {...CTA_SECONDARY_ATTRS}
+                {/* placeholder removed */CTA_SECONDARY_ATTRS}
                 href="#voorbeeldrapport"
                 onClick={handleScrollToExample}
                 className="group inline-flex items-center justify-center rounded-2xl px-6 py-4 font-semibold text-white/90 ring-1 ring-white/25 hover:bg-white/10 hover:ring-white/40 transition-all duration-300"

@@ -35,7 +35,7 @@ function HealthPage() {
         if (!cancelled) {
           setRes(payload);
           setLoading(false);
-          // Analytics hook – vervang desgewenst door je helper w(...) of track(...)
+          // Analytics hook – vervang desgewenst door je helper w(/* placeholder removed */) of track(/* placeholder removed */)
           try {
             // @ts-ignore – helper bestaat project-breed
             track?.("health:check", { authSession, keySet, hasUrl: Boolean(url) });
