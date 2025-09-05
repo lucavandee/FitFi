@@ -1,5 +1,5 @@
-// Globale type-augmentaties om ruis uit de build te halen. Houdt alles optioneel;
-// we zetten later strakke types op de echte services/schemas.
+// Globale (tijdelijke) type-augmentaties om build-ruis te dempen.
+// Later kunnen we deze aanscherpen per module met echte schema's.
 
 type ID = string;
 
@@ -18,7 +18,7 @@ declare global {
   interface Outfit {
     id?: ID;
     title?: string;
-    name?: string; // some mocks gebruiken "name"
+    name?: string;
     occasion?: string;
     description?: string;
     image?: string;
@@ -72,13 +72,9 @@ declare global {
     role: "member" | "moderator" | "owner" | null;
     [k: string]: any;
   }
-
-  // Analytics helper
-  function track(event: string, data?: Record<string, any>): void;
-  function w(event: string, data?: Record<string, any>): void;
 }
 
-// Shims voor third-party of interne modules die types misten
+// Third-party / interne shims
 declare module "sonner" {
   export const toast: {
     success: (m: string) => void;
@@ -95,7 +91,6 @@ declare module "@/lib/nova" {
   export function streamNova(...args: any[]): AsyncGenerator<any>;
 }
 
-// Laat TS weten dat zowel default als named supabase bestaan (runtime heeft default).
 declare module "@/lib/supabaseClient" {
   const supabase: any;
   export default supabase;

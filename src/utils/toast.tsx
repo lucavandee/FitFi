@@ -1,9 +1,9 @@
 // Lokale toast wrapper; gebruikt 'sonner' indien aanwezig, valt terug op alert()
 let impl: any;
 try {
-  // dynamische import om bundling-problemen te vermijden als sonner niet is geïnstalleerd
   // @ts-ignore
-  impl = await import("sonner").then((m: any) => m.toast || m.default);
+  const sonner = await import("sonner");
+  impl = sonner.toast || sonner.default;
 } catch {
   impl = null;
 }

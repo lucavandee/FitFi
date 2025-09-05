@@ -2,9 +2,9 @@ import { ReactNode } from "react";
 
 type AuthProviderProps = { children: ReactNode };
 
-const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  // hier jouw bestaande auth-logica / context-provider
+function AuthProvider({ children }: AuthProviderProps) {
+  // Plaats hier je bestaande context/provider-implementatie
   return <>{children}</>;
-};
+}
 
 export default AuthProvider;

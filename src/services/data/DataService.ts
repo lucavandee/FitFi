@@ -1,2 +1,2 @@
-// Eenduidige re-export met consistente casing (voorkomt double-include op Linux/Netlify)
+// Houd één consistente export pad (voorkomt casing-conflict op Linux/Netlify)
 export * from "./dataService";

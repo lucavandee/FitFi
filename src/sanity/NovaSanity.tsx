@@ -3,7 +3,7 @@ import { novaStream, type NovaEvent } from "@/ai/nova/router";
 
 type Line = string;
 
-export default function NovaSanity() {
+function NovaSanity() {
   const [lines, setLines] = useState<Line[]>([]);
   useEffect(() => {
     const ctrl = new AbortController();
@@ -23,3 +23,5 @@ export default function NovaSanity() {
     </pre>
   );
 }
+
+export default NovaSanity;

@@ -15,8 +15,8 @@ type BaseProps = {
   "data-track"?: string;
 };
 
-/** Polymorphic props: ondersteunt <Button as="a">, <Button as={Link}>, <Button as="div">, etc. */
 type PolymorphicProps<E extends ElementType> = BaseProps & {
+  /** Render as another element/component, e.g. as={Link} or as="a" */
   as?: E;
 } & Omit<ComponentPropsWithoutRef<E>, keyof BaseProps | "as">;
 
@@ -75,7 +75,6 @@ function Button<E extends ElementType = "button">(props: PolymorphicProps<E>) {
     disabled: (Component === "button" ? disabled : undefined) as boolean | undefined,
   };
 
-  // Anchors: disabled → inert
   if (Component === "a" && disabled) {
     (rest as any).href = undefined;
     (rest as any).tabIndex = -1;
@@ -88,4 +87,5 @@ function Button<E extends ElementType = "button">(props: PolymorphicProps<E>) {
     </Component>
   );
 }
+
 export default Button;

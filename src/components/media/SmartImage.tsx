@@ -9,9 +9,10 @@ type Props = Omit<
   alt: string;
   width?: number;
   height?: number;
-  /** true → container vult; string (bv "16/9") → aspect-ratio style */
+  /** true → container-fill; string (bv "16/9") → CSS aspect-ratio */
   aspect?: boolean | string;
   className?: string;
+  style?: CSSProperties;
 };
 
 function SmartImage({ src, alt, width, height, aspect, className, style, ...rest }: Props) {
@@ -37,4 +38,5 @@ function SmartImage({ src, alt, width, height, aspect, className, style, ...rest
     />
   );
 }
+
 export default SmartImage;
