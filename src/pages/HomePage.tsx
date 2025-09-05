@@ -10,7 +10,7 @@ export default function HomePage() {
     <>
       <Helmet>
         <title>FitFi — AI-styling die bij je past</title>
-        <meta name="description" content="Krijg outfits die kloppen met AI-styling. Persoonlijk, snel en met uitleg bij elke look." />
+        <meta name="description" content="Krijg in 2 minuten een gepersonaliseerd AI-rapport dat laat zien hoe jouw kledingkeuzes je persoonlijkheid weerspiegelen — inclusief concrete outfits en shopbare aanbevelingen." />
       </Helmet>
       <div className="grid gap-8">
         <HomeHero />
