@@ -366,7 +366,7 @@ const DynamicOnboardingPage: React.FC = () => {
                     onChange={(e) =>
                       updateAnswers({
                         preferences: {
-                          /* placeholder removed */data.preferences,
+                          ...data.preferences,
                           [pref.key]: e.target.checked,
                         },
                       })

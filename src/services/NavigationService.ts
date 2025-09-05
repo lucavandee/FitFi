@@ -45,7 +45,7 @@ export class NavigationService {
 
   /** Interne merge + notify */
   private updateState(updates: Partial<NavigationState>) {
-    this.state = { /* placeholder removed */this.state, /* placeholder removed */updates };
+    this.state = { ...this.state, ...updates };
     this.listeners.forEach((listener) => listener(this.state));
   }
 }

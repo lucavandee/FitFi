@@ -1,9 +1,7 @@
 /**
- * Nova Router – client util voor SSE-gesprekken met de Netlify function.
+ * Nova Router – SSE client richting Netlify function.
  * 
- * POST naar /.netlify/functions/nova met verplichte headers.
- * Parse SSE en yield berichten als async iterator.
- * Ondersteunt FITFI_JSON-blokken tussen de markers: <<<FITFI_JSON>>> ... <<<END_FITFI_JSON>>>.
+ * Markers voor JSON-blokken: <<<FITFI_JSON>>> ... <<<END_FITFI_JSON>>>.
  */
 export type NovaTier = "visitor" | "member" | "plus" | "founder";
 
@@ -22,36 +20,19 @@ export type NovaRequest = {
   signal?: AbortSignal;
 };
 
-/**
- * Start een Nova-gesprek via SSE en yield events.
- * 
- * Voorbeeld:
- * ```ts
- * for await (const ev of novaStream({ prompt, context, tier, uid })) {
- *   // handle events
- * }
- * ```
- */
 export async function* novaStream(req: NovaRequest): AsyncGenerator<NovaEvent, void, unknown> {
-  const endpoint =
-    (import.meta.env.VITE_FITFI_NOVA_ENDPOINT as string) || "/.netlify/functions/nova";
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    "Accept": "text/event-stream",
+  const endpoint = (import.meta.env.VITE_FITFI_NOVA_ENDPOINT as string) || "/.netlify/functions/nova";
+  const headers: Record<string, string> = { 
+    "Content-Type": "application/json", 
+    Accept: "text/event-stream" 
   };
   if (req.tier) headers["x-fitfi-tier"] = req.tier;
   if (req.uid) headers["x-fitfi-uid"] = req.uid;
 
-  const body = JSON.stringify({
-    prompt: req.prompt,
-    context: req.context ?? {},
-  });
-
   const resp = await fetch(endpoint, {
     method: "POST",
     headers,
-    body,
+    body: JSON.stringify({ prompt: req.prompt, context: req.context ?? {} }),
     signal: req.signal,
   });
 
@@ -80,7 +61,6 @@ export async function* novaStream(req: NovaRequest): AsyncGenerator<NovaEvent, v
     for (const raw of lines) {
       const line = raw.trim();
 
-      // JSON markers
       if (line.includes("<<<FITFI_JSON>>>")) {
         inJsonBlock = true;
         jsonBuf = "";
@@ -91,13 +71,9 @@ export async function* novaStream(req: NovaRequest): AsyncGenerator<NovaEvent, v
         const trimmed = jsonBuf.trim();
         if (trimmed) {
           try {
-            const obj = JSON.parse(trimmed);
-            yield { type: "json", data: obj };
+            yield { type: "json", data: JSON.parse(trimmed) };
           } catch (e: any) {
-            yield {
-              type: "error",
-              error: `JSON parse error: ${e?.message || String(e)}`,
-            };
+            yield { type: "error", error: `JSON parse error: ${e?.message || String(e)}` };
           }
         }
         jsonBuf = "";
@@ -108,7 +84,6 @@ export async function* novaStream(req: NovaRequest): AsyncGenerator<NovaEvent, v
         continue;
       }
 
-      // Standaard SSE
       if (line.startsWith("data:")) {
         const text = line.slice(5).trim();
         if (text === "[DONE]") {
@@ -123,7 +98,6 @@ export async function* novaStream(req: NovaRequest): AsyncGenerator<NovaEvent, v
   yield { type: "done" };
 }
 
-/** Helper: haal volledige tekstrespons op (buffer alle text-events). */
 export async function novaAsk(req: NovaRequest): Promise<string> {
   const chunks: string[] = [];
   for await (const ev of novaStream(req)) {
