@@ -1,42 +1,48 @@
-import { ImgHTMLAttributes, CSSProperties } from "react";
-import clsx from "clsx";
+import React from "react";
+import cn from "@/utils/cn";
 
-type Props = Omit<
-  ImgHTMLAttributes<HTMLImageElement>,
-  "src" | "alt" | "width" | "height" | "className"
-> & {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  /** true → container-fill; string (bv "16/9") → CSS aspect-ratio */
-  aspect?: boolean | string;
+type Props = {
+  src?: string;
+  alt?: string;
+  ratio?: boolean | "1:1" | "3:4" | "4:3" | "16:9";
   className?: string;
-  style?: CSSProperties;
+  onErrorSrc?: string;
 };
 
-function SmartImage({ src, alt, width, height, aspect, className, style, ...rest }: Props) {
-  const withAspectString = typeof aspect === "string" && aspect.trim().length > 0;
-  const imgClass = clsx(
-    "object-cover bg-surface",
-    (aspect && !withAspectString) && "w-full h-full",
-    className
-  );
-  const sizeProps = !aspect ? { width, height } : {};
-  const styleProps: CSSProperties = { ...(style || {}) };
-  if (withAspectString) styleProps.aspectRatio = aspect as string;
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className={imgClass}
-      loading={rest.loading ?? "lazy"}
-      style={styleProps}
-      {...sizeProps}
-      {...rest}
-    />
-  );
+function ratioToClass(r: Props["ratio"]) {
+  if (r === true || r === "1:1") return "aspect-square";
+  if (r === "3:4") return "aspect-[3/4]";
+  if (r === "4:3") return "aspect-[4/3]";
+  if (r === "16:9") return "aspect-video";
+  return "";
 }
 
-export default SmartImage;
+export default function SmartImage({
+  src,
+  alt = "",
+  ratio,
+  className,
+  onErrorSrc,
+}: Props) {
+  const [broken, setBroken] = React.useState(false);
+  const finalSrc = !broken && src ? src : onErrorSrc || src;
+
+  return (
+    <div className={cn("overflow-hidden rounded-xl bg-gray-100", ratioToClass(ratio), className)}>
+      {finalSrc ? (
+        <img
+          src={finalSrc}
+          alt={alt}
+          className="w-full h-full object-cover"
+          onError={() => setBroken(true)}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div className="w-full h-full grid place-items-center text-xs text-gray-500">
+          No image
+        </div>
+      )}
+    </div>
+  );
+}
