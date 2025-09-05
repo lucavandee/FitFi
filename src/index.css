@@ -10,10 +10,38 @@
   --ff-white: #FFFFFF;
 }
 
-html, body, #root { height: 100%; }
-body { font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+/* Fonts (Montserrat headings, Lato body) */
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&family=Montserrat:wght@600;700;800&display=swap");
 
-.ff-container { @apply max-w-5xl mx-auto px-4; }
-.ff-hero-title { @apply text-3xl sm:text-5xl font-bold text-[color:var(--ff-midnight)] font-heading; }
+html, body, #root { height: 100%; }
+
+/* Body = Lato */
+body {
+  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background-color: var(--ff-surface);
+  color: #0b1220;
+}
+
+/* Headings = Montserrat */
+.font-heading {
+  font-family: Montserrat, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Re-usable helpers */
+.ff-container { @apply max-w-6xl mx-auto px-4; }
+.ff-card { @apply bg-white rounded-2xl p-6; box-shadow: 0 10px 30px rgba(13,27,42,0.06), 0 2px 10px rgba(13,27,42,0.04); }
+.ff-hero-title { @apply font-heading font-extrabold leading-tight; color: var(--ff-midnight); }
 .ff-subtle { @apply text-sm text-gray-500; }
-.ff-card { @apply bg-white rounded-2xl shadow-card p-6; }
+
+/* Buttons */
+.btn { @apply inline-flex items-center gap-2 rounded-2xl font-semibold transition px-4 py-2; }
+.btn-primary { background: var(--ff-turquoise); color: var(--ff-midnight); }
+.btn-primary:hover { filter: brightness(0.95); }
+.btn-ghost { @apply border border-black/10 bg-white; }
+.btn-ghost:hover { background: #f3f6f9; }
+
+/* Hero visual niceties */
+.ff-hero {
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(137,207,240,0.18), transparent 55%),
+              radial-gradient(900px 480px at 90% 0%, rgba(13,27,42,0.06), transparent 50%);
+}
