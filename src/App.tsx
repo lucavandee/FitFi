@@ -1,20 +1,24 @@
+import { Suspense, lazy } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import LandingPage from "@/pages/LandingPage";
-import OnboardingPage from "@/pages/OnboardingPage";
-import EnhancedResultsPage from "@/pages/EnhancedResultsPage";
-import NovaPage from "@/pages/NovaPage";
-import BlogPage from "@/pages/BlogPage";
-import TribesPage from "@/pages/TribesPage";
-import TribeDetailPage from "@/pages/TribeDetailPage";
-import PricingPage from "@/pages/PricingPage";
-import PrivacyPage from "@/pages/PrivacyPage";
-import TermsPage from "@/pages/TermsPage";
-import CookiesPage from "@/pages/CookiesPage";
-import HealthPage from "@/pages/HealthPage";
-import DashboardPage from "@/pages/DashboardPage";
-import FeedPage from "@/pages/FeedPage";
-import NotFoundPage from "@/pages/NotFoundPage";
+import LoadingFallback from "@/components/ui/LoadingFallback";
+
+// Route-level code splitting
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
+const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
+const EnhancedResultsPage = lazy(() => import("@/pages/EnhancedResultsPage"));
+const NovaPage = lazy(() => import("@/pages/NovaPage"));
+const BlogPage = lazy(() => import("@/pages/BlogPage"));
+const TribesPage = lazy(() => import("@/pages/TribesPage"));
+const TribeDetailPage = lazy(() => import("@/pages/TribeDetailPage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
+const TermsPage = lazy(() => import("@/pages/TermsPage"));
+const CookiesPage = lazy(() => import("@/pages/CookiesPage"));
+const HealthPage = lazy(() => import("@/pages/HealthPage"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const FeedPage = lazy(() => import("@/pages/FeedPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 export default function App() {
   return (
@@ -32,25 +36,29 @@ export default function App() {
             </div>
           </nav>
         </header>
+
         <main className="ff-container py-8">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/results" element={<EnhancedResultsPage />} />
-            <Route path="/nova" element={<NovaPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/tribes" element={<TribesPage />} />
-            <Route path="/tribes/:tribeId" element={<TribeDetailPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/cookies" element={<CookiesPage />} />
-            <Route path="/__health" element={<HealthPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/feed" element={<FeedPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/results" element={<EnhancedResultsPage />} />
+              <Route path="/nova" element={<NovaPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/tribes" element={<TribesPage />} />
+              <Route path="/tribes/:tribeId" element={<TribeDetailPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/cookies" element={<CookiesPage />} />
+              <Route path="/__health" element={<HealthPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/feed" element={<FeedPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
         </main>
+
         <footer className="ff-container py-8 text-center text-xs text-gray-500">
           © {new Date().getFullYear()} FitFi — Alle rechten voorbehouden.
         </footer>

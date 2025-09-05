@@ -61,7 +61,13 @@ export default defineConfig(({ mode }) => {
     resolve: { alias: { "@": path.resolve(process.cwd(), "src") } },
     server: { port: 5173 },
     preview: { port: 4173 },
-    build: { target: "es2020", sourcemap: true, outDir: "dist", emptyOutDir: true },
+    build: { 
+      target: "es2020", 
+      sourcemap: true, 
+      outDir: "dist", 
+      emptyOutDir: true,
+      chunkSizeWarningLimit: 900
+    },
     define: { __APP_ENV__: JSON.stringify(env.VITE_ENVIRONMENT || "development") },
   };
 });
