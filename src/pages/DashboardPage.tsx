@@ -1,58 +1,49 @@
-import React, { useEffect, useState } from "react";
-import supabase from "@/lib/supabase";
+import { Link } from 'react-router-dom'
 
-export default function DashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      setLoading(true);
-      const sb = supabase; // object (niet aanroepen)
-      const { data: { session } } = await sb.auth.getSession();
-      if (!mounted) return;
-      setEmail(session?.user?.email ?? null);
-      setLoading(false);
-    })();
-    return () => { mounted = false; };
-  }, []);
-
+function DashboardPage() {
   return (
-    <div className="min-h-screen bg-surface px-4 py-10">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <header>
-          <h1 className="text-3xl font-heading font-bold text-ink">
-            {loading ? "Dashboard" : `Welkom${email ? `, ${email}` : ""}`}
+    <div className="min-h-screen bg-surface">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-heading font-bold mb-8 text-midnight">
+            Dashboard
           </h1>
-          <p className="text-muted mt-1">Jouw persoonlijke stijl-overzicht</p>
-        </header>
-
-        <section className="grid gap-6 md:grid-cols-3">
-          <div className="ff-card p-6">
-            <div className="text-sm text-muted">Matchscore</div>
-            <div className="mt-2 text-4xl font-bold">95%</div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Jouw Stijl</h2>
+              <p className="text-gray-600 mb-4">
+                Bekijk en beheer jouw stijlprofiel
+              </p>
+              <Link to="/results" className="text-accent hover:underline">
+                Bekijk profiel →
+              </Link>
+            </div>
+            
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Nova AI</h2>
+              <p className="text-gray-600 mb-4">
+                Chat met onze AI styling assistant
+              </p>
+              <Link to="/nova" className="text-accent hover:underline">
+                Start chat →
+              </Link>
+            </div>
+            
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Communities</h2>
+              <p className="text-gray-600 mb-4">
+                Ontdek style tribes en trends
+              </p>
+              <Link to="/tribes" className="text-accent hover:underline">
+                Verken tribes →
+              </Link>
+            </div>
           </div>
-          <div className="ff-card p-6">
-            <div className="text-sm text-muted">Outfits bekeken</div>
-            <div className="mt-2 text-4xl font-bold">24</div>
-          </div>
-          <div className="ff-card p-6">
-            <div className="text-sm text-muted">Badges</div>
-            <div className="mt-2 text-4xl font-bold">3</div>
-          </div>
-        </section>
-
-        <section className="ff-card p-6">
-          <h2 className="text-lg font-semibold mb-2">Aan de slag</h2>
-          <p className="text-sm text-muted">
-            Doe de stijlscan en ontvang een uitleg + outfits op maat.
-          </p>
-          <div className="mt-4">
-            <a href="/onboarding" className="btn btn-primary">Start stijltest</a>
-          </div>
-        </section>
+        </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default DashboardPage

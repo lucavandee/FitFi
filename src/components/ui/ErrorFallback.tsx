@@ -1,75 +1,55 @@
-import React from "react";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
-import Button from "./Button";
+import { RefreshCw } from "lucide-react";
 
-interface ErrorFallbackProps {
+type Props = {
   error: Error;
   resetErrorBoundary: () => void;
   showDetails?: boolean;
-}
+};
 
-const ErrorFallback: React.FC<ErrorFallbackProps> = ({
-  error,
-  resetErrorBoundary,
-  showDetails = false,
-}) => {
-  const handleGoHome = () => {
-    window.location.href = "/";
-  };
-
+function ErrorFallback({ error, resetErrorBoundary, showDetails }: Props) {
   return (
-    <div className="min-h-screen bg-primary flex items-center justify-center p-4">
-      <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg max-w-md w-full text-center">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangle className="text-red-600" size={32} />
+    <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="max-w-md w-full mx-4 p-8 bg-white rounded-2xl shadow-lg text-center">
+        <div className="w-16 h-16 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
+          <RefreshCw className="w-8 h-8 text-red-600" />
         </div>
-
-        <h1 className="text-2xl font-bold text-red-600 mb-4">
-          Oeps! Er ging iets mis
+        
+        <h1 className="text-2xl font-heading font-semibold mb-4 text-midnight">
+          Er ging iets mis
         </h1>
-
+        
         <p className="text-gray-600 mb-6">
-          Er is een onverwachte fout opgetreden. Probeer de pagina te vernieuwen
-          of ga terug naar de homepage.
+          We hebben een onverwachte fout ondervonden. Probeer de pagina te vernieuwen.
         </p>
-
+        
+        <button
+          onClick={resetErrorBoundary}
+          className="btn-primary w-full mb-4"
+        >
+          Probeer opnieuw
+        </button>
+        
+        <button
+          onClick={() => window.location.href = '/'}
+          className="btn-secondary w-full"
+        >
+          Naar homepage
+        </button>
+        
         {showDetails && (
-          <div className="bg-gray-50 p-4 rounded-lg mb-6 text-left">
-            <h3 className="font-semibold text-sm mb-2">Technische details:</h3>
-            <p className="text-xs text-gray-600 font-mono break-all">
+          <details className="mt-6 text-left">
+            <summary className="cursor-pointer text-sm text-gray-500 mb-2">
+              Technische details
+            </summary>
+            <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto">
               {error.message}
-            </p>
-          </div>
+              {error.stack && `\n\n${error.stack}`}
+            </pre>
+          </details>
         )}
-
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button
-            variant="primary"
-            onClick={resetErrorBoundary}
-            icon={<RefreshCw size={16} />}
-            iconPosition="left"
-            className="flex-1"
-          >
-            Probeer opnieuw
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={handleGoHome}
-            icon={<Home size={16} />}
-            iconPosition="left"
-            className="flex-1"
-          >
-            Naar homepage
-          </Button>
-        </div>
-
-        <p className="text-xs text-gray-500 mt-4">
-          Als het probleem aanhoudt, neem dan contact op met onze support.
-        </p>
       </div>
     </div>
   );
-};
+}
 
 export default ErrorFallback;

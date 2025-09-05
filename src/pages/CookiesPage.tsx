@@ -1,44 +1,42 @@
-import React from "react";
-import Seo from "@/components/Seo";
-
-export default function CookiesPage() {
+function CookiesPage() {
   return (
-    <div className="section">
-      <Seo
-        title="Cookie Policy"
-        description="Informatie over cookies en jouw keuzes."
-        canonical="https://www.fitfi.ai/cookies"
-      />
-      <div className="container">
-        <h1 className="text-ink text-3xl md:text-4xl font-extrabold">
-          Cookie Policy
-        </h1>
-        <div className="prose max-w-3xl mt-6">
-          <p>
-            We gebruiken cookies voor (1) strikt noodzakelijke functies en (2)
-            optionele analytics/marketing (alleen met toestemming).
-          </p>
-          <h2>Jouw keuzes</h2>
-          <p>
-            Je kunt je voorkeuren beheren via de knop "Cookie-instellingen" in
-            de footer.
-          </p>
-          <h2>Types cookies</h2>
-          <ul>
-            <li>
-              <strong>Noodzakelijk</strong> – login, beveiliging, load
-              balancing.
-            </li>
-            <li>
-              <strong>Analytics</strong> – sitegebruik verbeteren (alleen met
-              toestemming).
-            </li>
-            <li>
-              <strong>Marketing</strong> – alleen indien expliciet ingeschakeld.
-            </li>
-          </ul>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-3xl font-heading font-bold mb-8 text-midnight">
+            Cookiebeleid
+          </h1>
+          
+          <div className="prose prose-lg max-w-none">
+            <p className="text-gray-600 mb-6">
+              Laatst bijgewerkt: {new Date().toLocaleDateString('nl-NL')}
+            </p>
+            
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Wat zijn cookies?</h2>
+              <p className="text-gray-600">
+                Cookies zijn kleine tekstbestanden die op jouw apparaat worden opgeslagen.
+              </p>
+            </section>
+            
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Hoe gebruiken wij cookies?</h2>
+              <p className="text-gray-600">
+                Wij gebruiken cookies om de functionaliteit van onze website te verbeteren.
+              </p>
+            </section>
+            
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Jouw keuzes</h2>
+              <p className="text-gray-600">
+                Je kunt cookies uitschakelen in je browserinstellingen.
+              </p>
+            </section>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default CookiesPage

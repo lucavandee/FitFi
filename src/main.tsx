@@ -1,21 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import ErrorBoundary from "@/components/ErrorBoundary";
-// CrashGate (systeem pad, niet ui/)
-import CrashGate from "@/components/system/CrashGate";
-// HelmetProvider
-import { HelmetProvider } from "react-helmet-async";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+import './index.css'
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const container = document.getElementById('root')
+if (!container) throw new Error('Root element not found')
+
+const root = createRoot(container)
 root.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <ErrorBoundary>
-        <CrashGate>
-          <App />
-        </CrashGate>
-      </ErrorBoundary>
-    </HelmetProvider>
-  </React.StrictMode>
-);
+  <StrictMode>
+    <App />
+  </StrictMode>
+)

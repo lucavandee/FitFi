@@ -2,9 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Brand utilities */
-.ff-brand{display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;background:transparent!important;padding:0;border-radius:0}
-.ff-brand-text{font-family:Montserrat,ui-sans-serif,system-ui,sans-serif;font-weight:800;font-size:1.25rem;line-height:1;color:#0D1B2A}
+:root {
+  --color-midnight: #0D1B2A;
+  --color-white: #FFFFFF;
+  --color-accent: #89CFF0;
+  --color-surface: #F6F6F6;
+  
+  --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
+}
 
-/* CSS safeguard voor brand blok */
-.ff-brand, .ff-brand * { background: transparent !important; box-shadow: none !important; }
+@layer base {
+  html {
+    font-family: var(--font-body);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  
+  body {
+    @apply bg-white text-midnight antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-midnight text-white px-6 py-3 rounded-2xl font-medium hover:opacity-90 transition-opacity;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface text-midnight px-6 py-3 rounded-2xl font-medium hover:bg-white transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-midnight to-accent bg-clip-text text-transparent;
+  }
+}

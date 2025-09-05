@@ -1,59 +1,55 @@
-/**
- * App root met BrowserRouter en lazy routes.
- * 
- * Lazy route voor "/__health" → HealthPage (code-split).
- * 
- * Globale DEV-only console mount via <DevOnly><DevConsoleMount/></DevOnly>.
- * 
- * Behoudt alias @; default exports; Tailwind v3.
- */
-import { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import DevOnly from "@/components/dev/DevOnly";
-import DevConsoleMount from "@/components/dev/DevConsoleMount";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Suspense, lazy } from 'react'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import LoadingFallback from '@/components/ui/LoadingFallback'
 
-// Lazy pages
-const HealthPage = lazy(() => import("@/pages/HealthPage"));
-const LandingPage = lazy(() => import("@/pages/LandingPage"));
-const LoginPage = lazy(() => import("@/pages/LoginPage"));
-const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
-const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
-const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
+// Lazy load pages
+const HomePage = lazy(() => import('@/pages/HomePage'))
+const LandingPage = lazy(() => import('@/pages/LandingPage'))
+const OnboardingPage = lazy(() => import('@/pages/OnboardingPage'))
+const EnhancedResultsPage = lazy(() => import('@/pages/EnhancedResultsPage'))
+const NovaPage = lazy(() => import('@/pages/NovaPage'))
+const BlogIndexPage = lazy(() => import('@/pages/BlogIndexPage'))
+const BlogDetailPage = lazy(() => import('@/pages/BlogDetailPage'))
+const TribesPage = lazy(() => import('@/pages/TribesPage'))
+const TribeDetailPage = lazy(() => import('@/pages/TribeDetailPage'))
+const PricingPage = lazy(() => import('@/pages/PricingPage'))
+const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'))
+const TermsPage = lazy(() => import('@/pages/TermsPage'))
+const CookiesPage = lazy(() => import('@/pages/CookiesPage'))
+const HealthPage = lazy(() => import('@/pages/HealthPage'))
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
+const FeedPage = lazy(() => import('@/pages/FeedPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function App() {
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
-        <Suspense
-          fallback={
-            <div className="p-6">
-              <div className="mx-auto max-w-xl animate-pulse space-y-3">
-                <div className="h-6 w-40 rounded bg-surface" />
-                <div className="h-4 w-64 rounded bg-surface" />
-                <div className="h-4 w-56 rounded bg-surface" />
-              </div>
-            </div>
-          }
-        >
+    <ErrorBoundary>
+      <Router>
+        <Suspense fallback={<LoadingFallback />}>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/results" element={<EnhancedResultsPage />} />
+            <Route path="/nova" element={<NovaPage />} />
+            <Route path="/blog" element={<BlogIndexPage />} />
+            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+            <Route path="/tribes" element={<TribesPage />} />
+            <Route path="/tribes/:slug" element={<TribeDetailPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/cookies" element={<CookiesPage />} />
             <Route path="/__health" element={<HealthPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="*" element={<div className="p-10 text-center">Pagina niet gevonden</div>} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/feed" element={<FeedPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
-
-          {/* DEV-only tools (worden niet gebundeld/gerenderd in productie) */}
-          <DevOnly>
-            <DevConsoleMount />
-          </DevOnly>
         </Suspense>
-      </ErrorBoundary>
-    </BrowserRouter>
-  );
+      </Router>
+    </ErrorBoundary>
+  )
 }
 
-export default App;
+export default App
