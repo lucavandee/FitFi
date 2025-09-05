@@ -1,11 +1,11 @@
 import { Helmet } from "react-helmet-async";
+import NovaChat from "@/components/ai/NovaChat";
 
-export default function Nova() {
+export default function NovaPage() {
   return (
-    <div className="ff-card">
+    <div className="grid gap-6">
       <Helmet><title>Nova — FitFi</title></Helmet>
-      <h1 className="ff-hero-title mb-3">Nova</h1>
-      <p className="text-midnight/70">Deze pagina is klaar voor integratie van de volledige functionaliteit. De codebase is opgeschoond zodat de build stabiel draait.</p>
+      <NovaChat />
     </div>
   );
 }
