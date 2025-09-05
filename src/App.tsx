@@ -1,9 +1,10 @@
 import { Suspense, lazy } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import LoadingFallback from "@/components/ui/LoadingFallback";
+import PremiumHeader from "@/components/layout/PremiumHeader";
+import PremiumFooter from "@/components/layout/PremiumFooter";
 
-// Route-level code splitting
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const EnhancedResultsPage = lazy(() => import("@/pages/EnhancedResultsPage"));
@@ -24,20 +25,8 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-[color:var(--ff-surface)]">
-        <header className="border-b bg-white">
-          <nav className="ff-container py-4 flex items-center justify-between">
-            <Link to="/" className="font-heading font-extrabold text-[color:var(--ff-midnight)]">FitFi</Link>
-            <div className="flex items-center gap-4 text-sm">
-              <Link to="/onboarding" className="hover:underline">Onboarding</Link>
-              <Link to="/results" className="hover:underline">Resultaten</Link>
-              <Link to="/nova" className="hover:underline">Nova</Link>
-              <Link to="/tribes" className="hover:underline">Tribes</Link>
-              <Link to="/pricing" className="hover:underline">Pricing</Link>
-            </div>
-          </nav>
-        </header>
-
-        <main className="ff-container py-8">
+        <PremiumHeader />
+        <main className="ff-container py-10">
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<LandingPage />} />
@@ -58,10 +47,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </main>
-
-        <footer className="ff-container py-8 text-center text-xs text-gray-500">
-          © {new Date().getFullYear()} FitFi — Alle rechten voorbehouden.
-        </footer>
+        <PremiumFooter />
       </div>
     </ErrorBoundary>
   );
