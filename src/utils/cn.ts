@@ -1,6 +1,6 @@
-// Utility: className joiner met simpele truthy filtering.
-export default function cn(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export { cn }
+export default function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
