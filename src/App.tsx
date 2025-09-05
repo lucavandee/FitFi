@@ -30,6 +30,7 @@ export default function App() {
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route path="/results" element={<EnhancedResultsPage />} />
               <Route path="/nova" element={<NovaPage />} />
