@@ -1,8 +1,19 @@
 import { ImgHTMLAttributes, useState } from "react";
 import { cn } from "@/utils/cn";
 
+/**
+ * SmartImage – eenvoudige afbeelding met optionele aspect-container ondersteuning.
+ * 
+ * Als aspect true is, vullen we de container (w-full h-full) en geven we geen width/height props door.
+ * 
+ * Als aspect falsey is, geven we (optioneel) width en height door voor betere layout-shifts.
+ */
+type SmartImageProps = {
   /** Alt-tekst (vereist voor a11y) */
+  alt: string;
   src: string;
+  width?: number;
+  height?: number;
   /** Breedte alleen meegeven als er géén aspect container is */
   /** Hoogte alleen meegeven als er géén aspect container is */
   /** Wanneer true, neemt het beeld de container (met aspect via wrapper) volledig in */
@@ -33,6 +44,9 @@ export default function SmartImage(props: SmartImageProps) {
     <img
       src={ok ? src : "/fallback.jpg"}
       alt={alt}
+      width={width}
+      height={height}
+      className={cn("object-cover", aspect ? "w-full h-full" : "", className)}
       loading={loading}
       decoding={decoding}
       sizes={sizes}
@@ -40,11 +54,8 @@ export default function SmartImage(props: SmartImageProps) {
       onClick={onClick}
       onLoad={onLoad}
       onError={() => { setOk(false); onError?.(); }}
- * SmartImage – eenvoudige afbeelding met optionele aspect-container ondersteuning.
- * 
- * Als aspect true is, vullen we de container (w-full h-full) en geven we geen width/height props door.
- * 
- * Als aspect falsey is, geven we (optioneel) width en height door voor betere layout-shifts.
+    />
+  );
 
   if (!aspect) return img;
 
@@ -52,14 +63,5 @@ export default function SmartImage(props: SmartImageProps) {
     <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: aspect }}>
       <div className="absolute inset-0">{img}</div>
     </div>
-  return (
-    <img 
-      src={src} 
-      alt={alt} 
-      className={imgClass} 
-      loading="lazy" 
-      {...sizeProps} 
-      {...rest} 
-    />
   );
 }
