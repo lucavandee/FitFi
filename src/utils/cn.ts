@@ -7,7 +7,7 @@ export type CX =
   | CX[]
   | Record<string, boolean | undefined | null>;
 
-export function cn(/* placeholder removed */args: CX[]): string {
+export function cn(...args: CX[]): string {
   const out: string[] = [];
   const walk = (v: CX) => {
     if (!v) return;

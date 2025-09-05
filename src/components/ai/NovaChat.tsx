@@ -30,7 +30,7 @@ import { Link } from "react-router-dom";
 
 // ADD bovenaan
 function mdLite(s: string) {
-  // \n\n -> paragrafen, */* placeholder removed */* -> em, **/* placeholder removed */** -> strong, - lijstjes
+  // \n\n -> paragrafen, ** -> em, **** -> strong, - lijstjes
   const esc = s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -289,7 +289,7 @@ const NovaChat: React.FC = () => {
       type: "text",
     };
 
-    setMessages((prev) => [/* placeholder removed */prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -333,7 +333,7 @@ const NovaChat: React.FC = () => {
       const assistantId = `assistant-${Date.now()}`;
       let acc = "";
       setMessages((prev) => [
-        /* placeholder removed */prev,
+        ...prev,
         {
           id: assistantId,
           role: "assistant",
@@ -348,7 +348,7 @@ const NovaChat: React.FC = () => {
       setIsTyping(true);
 
       try {
-        const history = [/* placeholder removed */messages, userMessage].map((m) => ({
+        const history = [...messages, userMessage].map((m) => ({
           role: m.role,
           content: m.content,
         }));
@@ -389,7 +389,7 @@ const NovaChat: React.FC = () => {
                   if (si >= 0 && ei > si) {
                     c = c.slice(0, si) + c.slice(ei + END.length);
                   }
-                  return { /* placeholder removed */m, content: c };
+                  return { ...m, content: c };
                 }),
               );
               conn.setStatus("done");
@@ -401,7 +401,7 @@ const NovaChat: React.FC = () => {
           acc += delta;
           setMessages((prev) =>
             prev.map((m) =>
-              m.id === assistantId ? { /* placeholder removed */m, content: acc } : m,
+              m.id === assistantId ? { ...m, content: acc } : m,
             ),
           );
           scrollToBottom();
@@ -420,7 +420,7 @@ const NovaChat: React.FC = () => {
         }
 
         setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { /* placeholder removed */m, content } : m)),
+          prev.map((m) => (m.id === assistantId ? { ...m, content } : m)),
         );
       } finally {
         setIsTyping(false);
@@ -592,7 +592,7 @@ const NovaChat: React.FC = () => {
           <div className="flex justify-start mb-4">
             <div className="bg-[var(--ff-panel)] text-ink border border-gray-100 rounded-2xl px-4 py-3 flex items-center space-x-2 shadow-[0_4px_20px_rgba(13,27,42,0.06)]">
               <Loader className="w-4 h-4 animate-spin text-[#89CFF0]" />
-              <span className="text-sm text-gray-600">Nova denkt na/* placeholder removed */</span>
+              <span className="text-sm text-gray-600">Nova denkt na</span>
             </div>
           </div>
         )}
@@ -677,7 +677,7 @@ const NovaChat: React.FC = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Vraag Nova om stijladvies/* placeholder removed */"
+            placeholder="Vraag Nova om stijladvies"
             className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm
                        text-ink placeholder-muted caret-ink outline-none
                        focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/30 focus:shadow-[0_4px_20px_rgba(137,207,240,0.15)]"

@@ -78,11 +78,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const setTier = useCallback((tier: FitfiTier) => {
     writeLS(LS_TIER, tier);
-    setState(prev => ({ /* placeholder removed */prev, tier }));
+    setState(prev => ({ ...prev, tier }));
   }, []);
 
   const value = useMemo<AuthContextValue>(() => ({
-    /* placeholder removed */state,
+    ...state,
     login,
     logout,
     setTier

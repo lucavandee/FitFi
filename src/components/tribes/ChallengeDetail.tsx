@@ -242,7 +242,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
                   <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="Beschrijf je submission/* placeholder removed */"
+                    placeholder="Beschrijf je submission"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-transparent resize-none"
                     rows={4}
                     required={
@@ -307,7 +307,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
                 disabled={isSubmitting || !canSubmit}
                 loading={isSubmitting}
               >
-                {isSubmitting ? "Versturen/* placeholder removed */" : "Verstuur Submission"}
+                {isSubmitting ? "Versturen" : "Verstuur Submission"}
               </Button>
             </div>
           </form>

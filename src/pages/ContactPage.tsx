@@ -37,14 +37,14 @@ const ContactPage: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
-      /* placeholder removed */prev,
+      ...prev,
       [name]: value,
     }));
 
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
-        /* placeholder removed */prev,
+        ...prev,
         [name]: "",
       }));
     }
@@ -276,7 +276,7 @@ const ContactPage: React.FC = () => {
                   className={`w-full px-4 py-3 border rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors resize-none ${
                     errors.message ? "border-red-300" : "border-gray-200"
                   }`}
-                  placeholder="Vertel ons meer over je vraag/* placeholder removed */"
+                  placeholder="Vertel ons meer over je vraag"
                 />
                 {errors.message && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -299,7 +299,7 @@ const ContactPage: React.FC = () => {
                 {isSubmitting ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Verzenden/* placeholder removed */
+                    Verzenden
                   </div>
                 ) : (
                   "Bericht verzenden"

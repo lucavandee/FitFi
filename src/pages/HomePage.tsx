@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
                       <Sparkles className="w-6 h-6 text-[#89CFF0] animate-pulse" />
                     </div>
                     <p className="text-gray-600">
-                      Nova bereidt je style preview voor/* placeholder removed */
+                      Nova bereidt je style preview voor
                     </p>
                   </div>
                 </div>
@@ -143,7 +143,7 @@ const HomePage: React.FC = () => {
                   <h3 className="font-medium text-[#0D1B2A] mb-2">
                     Blog teasers
                   </h3>
-                  <p className="text-gray-600 text-sm">Coming soon/* placeholder removed */</p>
+                  <p className="text-gray-600 text-sm">Coming soon</p>
                 </div>
               </div>
             </div>
@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
                   <h3 className="font-medium text-[#0D1B2A] mb-2">
                     Extra features
                   </h3>
-                  <p className="text-gray-600 text-sm">Coming soon/* placeholder removed */</p>
+                  <p className="text-gray-600 text-sm">Coming soon</p>
                 </div>
               </div>
             </div>

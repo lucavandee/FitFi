@@ -11,19 +11,19 @@ function ConsoleInspector() {
 
   const [open, setOpen] = useState(false);
   const [lines, setLines] = useState<string[]>([]);
-  const originalLog = useRef<(/* placeholder removed */args: any[]) => void>();
+  const originalLog = useRef<(...args: any[]) => void>();
 
   useEffect(() => {
     if (!import.meta.env.DEV) return;
     originalLog.current = console.log;
-    console.log = (/* placeholder removed */args: any[]) => {
+    console.log = (...args: any[]) => {
       try {
-        setLines((prev) => [/* placeholder removed */prev.slice(-49), args.map(String).join(" ")]);
+        setLines((prev) => [...prev.slice(-49), args.map(String).join(" ")]);
       } catch {
         // ignore
       }
       // forward to original
-      originalLog.current?.(/* placeholder removed */args);
+      originalLog.current?.(...args);
     };
     return () => {
       if (originalLog.current) console.log = originalLog.current;

@@ -86,7 +86,7 @@ const SavedOutfitsPage: React.FC = () => {
   };
 
   if (userLoading || loading) {
-    return <LoadingFallback fullScreen message="Favorieten laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Favorieten laden" />;
   }
 
   if (!user) {

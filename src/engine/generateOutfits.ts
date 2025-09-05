@@ -319,8 +319,8 @@ function generateOutfits(
     if (validPreferredOccasions.length > 0) {
       // Use preferred occasions first, then add others to reach the count
       occasions = [
-        /* placeholder removed */validPreferredOccasions,
-        /* placeholder removed */occasions.filter((occ) => !validPreferredOccasions.includes(occ)),
+        ...validPreferredOccasions,
+        ...occasions.filter((occ) => !validPreferredOccasions.includes(occ)),
       ];
 
       console.log("Using preferred occasions:", validPreferredOccasions);
@@ -448,9 +448,9 @@ function generateOutfitForOccasion(
 
   // Create a copy of the base structure to modify
   const outfitStructure = {
-    /* placeholder removed */baseOutfitStructure,
-    requiredCategories: [/* placeholder removed */baseOutfitStructure.requiredCategories],
-    optionalCategories: [/* placeholder removed */baseOutfitStructure.optionalCategories],
+    ...baseOutfitStructure,
+    requiredCategories: [...baseOutfitStructure.requiredCategories],
+    optionalCategories: [...baseOutfitStructure.optionalCategories],
   };
 
   // Add seasonal required categories if not already included
@@ -570,16 +570,16 @@ function generateOutfitForOccasion(
 
   // Then, add optional categories until we reach the max items
   // Prioritize seasonal categories if specified
-  let optionalCategories = [/* placeholder removed */outfitStructure.optionalCategories];
+  let optionalCategories = [...outfitStructure.optionalCategories];
 
   // Prioritize seasonal categories
   if (seasonalAdjustment.priorityCategories) {
     // Move priority categories to the front
     optionalCategories = [
-      /* placeholder removed */seasonalAdjustment.priorityCategories.filter((c) =>
+      ...seasonalAdjustment.priorityCategories.filter((c) =>
         optionalCategories.includes(c),
       ),
-      /* placeholder removed */optionalCategories.filter(
+      ...optionalCategories.filter(
         (c) => !seasonalAdjustment.priorityCategories?.includes(c),
       ),
     ];
@@ -886,7 +886,7 @@ function selectProductForCategory(
     mixFactor <= 0
   ) {
     // Sort products by match score
-    const sortedProducts = [/* placeholder removed */productsToUse].sort(
+    const sortedProducts = [...productsToUse].sort(
       (a, b) => (b.matchScore || 0) - (a.matchScore || 0),
     );
 
@@ -1071,12 +1071,12 @@ function generateTags(
 
   // Combine tags from archetypes, occasion, and season
   const rawTags = [
-    /* placeholder removed */primaryTags.slice(0, primaryCount),
-    /* placeholder removed */secondaryTags
+    ...primaryTags.slice(0, primaryCount),
+    ...secondaryTags
       .filter((tag) => !primaryTags.includes(tag)) // Ensure uniqueness
       .slice(0, secondaryCount),
-    /* placeholder removed */(occasionTags[occasion] ?? []),
-    /* placeholder removed */(seasonTags[season] ?? []),
+    (occasionTags[occasion] ?? []),
+    (seasonTags[season] ?? []),
     completenessTags[Math.floor(Math.random() * completenessTags.length)],
   ];
 

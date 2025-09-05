@@ -54,7 +54,7 @@ export function generateOutfitExplanation(
     const categories = outfit.products
       .map((p) => p.category || p.type)
       .filter(Boolean);
-    const uniqueCategories = [/* placeholder removed */new Set(categories)];
+    const uniqueCategories = [...new Set(categories)];
 
     if (uniqueCategories.length >= 3) {
       productInsights.push(
@@ -98,7 +98,7 @@ export function generateOutfitExplanation(
       "Deze outfit is zorgvuldig geselecteerd voor jouw unieke stijl.",
     occasionExplanations[occasion] ||
       "Deze combinatie is geschikt voor verschillende gelegenheden.",
-    /* placeholder removed */productInsights,
+    ...productInsights,
     seasonalNote,
   ].filter(Boolean);
 

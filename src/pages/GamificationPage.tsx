@@ -13,7 +13,7 @@ const GamificationPage: React.FC = () => {
   const { isLoading: gamificationLoading, error } = useGamification();
 
   if (userLoading || gamificationLoading) {
-    return <LoadingFallback fullScreen message="Gamification laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Gamification laden" />;
   }
 
   if (!user) {

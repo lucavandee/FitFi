@@ -69,7 +69,7 @@ export function filterAndSortProducts(
   const productsWithScores = validProducts.map((product) => {
     const matchScore = calculateMatchScore(product, user.stylePreferences);
     return {
-      /* placeholder removed */product,
+      ...product,
       matchScore,
     };
   });
@@ -264,13 +264,13 @@ export function getTopProductsByType(
     if (!typeProducts || typeProducts.length === 0) return;
 
     // Sort by match score within this type
-    const sorted = [/* placeholder removed */typeProducts].sort(
+    const sorted = [...typeProducts].sort(
       (a, b) => (b.matchScore || 0) - (a.matchScore || 0),
     );
 
     // Take top N
     const topProducts = sorted.slice(0, count);
-    result.push(/* placeholder removed */topProducts);
+    result.push(...topProducts);
 
     console.log(
       `[TopByType] ${type}: selected ${topProducts.length}/${typeProducts.length} products`,
@@ -312,13 +312,13 @@ export function getTopProductsByCategory(
     if (!categoryProducts || categoryProducts.length === 0) return;
 
     // Sort by match score within this category
-    const sorted = [/* placeholder removed */categoryProducts].sort(
+    const sorted = [...categoryProducts].sort(
       (a, b) => (b.matchScore || 0) - (a.matchScore || 0),
     );
 
     // Take top N
     const topProducts = sorted.slice(0, count);
-    result.push(/* placeholder removed */topProducts);
+    result.push(...topProducts);
 
     console.log(
       `[TopByCategory] ${category}: selected ${topProducts.length}/${categoryProducts.length} products`,

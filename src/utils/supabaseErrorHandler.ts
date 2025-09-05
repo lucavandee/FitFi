@@ -175,7 +175,7 @@ async function handleBatchErrors(
 
   // Handle each unique error
   for (const { error, context } of uniqueErrors.values()) {
-    await handleSupabaseError(error, context, { /* placeholder removed */options, showToast: false });
+    await handleSupabaseError(error, context, { ...options, showToast: false });
   }
 
   // Show single summary toast

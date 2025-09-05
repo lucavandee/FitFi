@@ -443,7 +443,7 @@ export async function getSbTribeBySlug(
           .single();
 
         return {
-          /* placeholder removed */tribe,
+          ...tribe,
           is_member: !!membership,
           user_role: membership?.role,
         } as Tribe;
@@ -515,7 +515,7 @@ export async function getSbTribePosts(
 
         // Enrich posts with like status
         return posts.map((post) => ({
-          /* placeholder removed */post,
+          ...post,
           is_liked_by_current_user: likedPostIds.has(post.id),
         })) as TribePost[];
       } catch (likesError) {
@@ -1030,7 +1030,7 @@ export async function getSbTribeRankings(options?: {
 
     // Add rank numbers
     const rankedData = (data || []).map((ranking: any, index: number) => ({
-      /* placeholder removed */ranking,
+      ...ranking,
       rank: index + 1,
     }));
 

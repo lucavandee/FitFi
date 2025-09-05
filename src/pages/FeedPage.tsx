@@ -47,7 +47,7 @@ const FeedPage: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingFallback fullScreen message="Feed laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Feed laden" />;
   }
 
   return (

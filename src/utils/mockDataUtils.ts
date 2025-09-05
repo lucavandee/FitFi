@@ -98,7 +98,7 @@ export const generateMockOutfits = (count: number = 3) => {
 
   // Generate variations
   const outfits = Array.from({ length: count }, (_, i) => ({
-    /* placeholder removed */baseOutfit,
+    ...baseOutfit,
     id: `outfit_00${i + 1}`,
     matchPercentage: Math.floor(Math.random() * 15) + 85, // 85-99%
     title:

@@ -103,7 +103,7 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
 
         {step >= 2 && (
           <p className="text-lg text-gray-600 animate-fade-in">
-            Je stijlprofiel wordt nu gegenereerd/* placeholder removed */
+            Je stijlprofiel wordt nu gegenereerd
           </p>
         )}
 
@@ -116,7 +116,7 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
               ></div>
             </div>
             <p className="text-sm text-gray-500">
-              AI analyseert jouw antwoorden/* placeholder removed */
+              AI analyseert jouw antwoorden
             </p>
           </div>
         )}

@@ -123,7 +123,7 @@ const DynamicOnboardingPage: React.FC = () => {
           const agent = await loadNovaAgent();
           if (agent?.memory) {
             agent.memory.writeProfile({
-              /* placeholder removed *//* placeholder removed */data,
+              ...data,
               userId: user.id,
               completedAt: new Date().toISOString(),
             });
@@ -136,7 +136,7 @@ const DynamicOnboardingPage: React.FC = () => {
 
       // Navigate to enhanced results
       await navigationService.navigateToEnhancedResults(data, {
-        loadingMessage: "Enhanced aanbevelingen genereren/* placeholder removed */",
+        loadingMessage: "Enhanced aanbevelingen genereren",
         delay: 500,
       });
     } catch (error) {
@@ -149,7 +149,7 @@ const DynamicOnboardingPage: React.FC = () => {
   };
 
   if (userLoading) {
-    return <LoadingFallback fullScreen message="Dynamic onboarding laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Dynamic onboarding laden" />;
   }
 
   if (!user) {
@@ -229,7 +229,7 @@ const DynamicOnboardingPage: React.FC = () => {
                     const current = data.archetypes || [];
                     const updated = current.includes(archetype)
                       ? current.filter((a) => a !== archetype)
-                      : [/* placeholder removed */current, archetype];
+                      : [...current, archetype];
                     updateAnswers({ archetypes: updated });
                   }}
                   className={`p-4 border rounded-2xl transition-colors ${
@@ -307,7 +307,7 @@ const DynamicOnboardingPage: React.FC = () => {
                       const current = data.occasions || [];
                       const updated = current.includes(occasion)
                         ? current.filter((o) => o !== occasion)
-                        : [/* placeholder removed */current, occasion];
+                        : [...current, occasion];
                       updateAnswers({ occasions: updated });
                     }}
                     className={`p-4 border rounded-2xl transition-colors ${
@@ -438,7 +438,7 @@ const DynamicOnboardingPage: React.FC = () => {
   const progressPercentage = (getStepNumber() / totalSteps) * 100;
 
   if (userLoading) {
-    return <LoadingFallback fullScreen message="Dynamic onboarding laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Dynamic onboarding laden" />;
   }
 
   return (
@@ -486,7 +486,7 @@ const DynamicOnboardingPage: React.FC = () => {
               className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
             >
               {isSubmitting
-                ? "Genereren/* placeholder removed */"
+                ? "Genereren"
                 : "Genereer Enhanced Aanbevelingen"}
             </Button>
           ) : (

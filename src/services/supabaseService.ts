@@ -161,7 +161,7 @@ export async function updateUserGamification(
       .from("user_gamification")
       .upsert({
         user_id: userId,
-        /* placeholder removed */updates,
+        ...updates,
         updated_at: new Date().toISOString(),
       })
       .select()

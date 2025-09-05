@@ -38,8 +38,8 @@ export default function CookieBanner() {
     setOpen(false);
   };
   const save = () => {
-    setPrefs({ /* placeholder removed */prefs, consented: true });
-    writePrefs({ /* placeholder removed */prefs, consented: true });
+    setPrefs({ ...prefs, consented: true });
+    writePrefs({ ...prefs, consented: true });
     setOpen(false);
   };
 
@@ -67,7 +67,7 @@ export default function CookieBanner() {
               type="checkbox"
               checked={prefs.analytics}
               onChange={(e) =>
-                setPrefs((p) => ({ /* placeholder removed */p, analytics: e.target.checked }))
+                setPrefs((p) => ({ ...p, analytics: e.target.checked }))
               }
             />{" "}
             Analytics
@@ -77,7 +77,7 @@ export default function CookieBanner() {
               type="checkbox"
               checked={prefs.marketing}
               onChange={(e) =>
-                setPrefs((p) => ({ /* placeholder removed */p, marketing: e.target.checked }))
+                setPrefs((p) => ({ ...p, marketing: e.target.checked }))
               }
             />{" "}
             Marketing

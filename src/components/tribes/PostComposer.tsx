@@ -15,7 +15,7 @@ interface PostComposerProps {
 export const PostComposer: React.FC<PostComposerProps> = ({
   tribeId,
   userId,
-  placeholder = "Deel iets met de tribe/* placeholder removed */",
+  placeholder = "Deel iets met de tribe",
   className = "",
   onPostCreated,
 }) => {
@@ -181,7 +181,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             iconPosition="right"
             className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
           >
-            {isSubmitting ? "Delen/* placeholder removed */" : "Deel post"}
+            {isSubmitting ? "Delen" : "Deel post"}
           </Button>
         </div>
       </form>

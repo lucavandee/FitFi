@@ -11,7 +11,7 @@ export default function NovaSanity(){
 
   async function send(){
     if (!input.trim() || busy) return;
-    setBusy(true); setLines(ls=>[/* placeholder removed */ls, `> ${input}`]);
+    setBusy(true); setLines(ls=>[...ls, `> ${input}`]);
     abortRef.current?.abort(); abortRef.current = new AbortController();
     const tier = localStorage.getItem('fitfi_tier') || 'visitor';
     const uid  = localStorage.getItem('fitfi_uid')  || 'dev';
@@ -23,8 +23,8 @@ export default function NovaSanity(){
         signal: abortRef.current.signal,
         baseUrl: '',
       });
-      for await (const d of gen) setLines(ls=>[/* placeholder removed */ls, d]);
-    }catch(e:any){ setLines(ls=>[/* placeholder removed */ls, `! ${e?.message||e}`]); }
+      for await (const d of gen) setLines(ls=>[...ls, d]);
+    }catch(e:any){ setLines(ls=>[...ls, `! ${e?.message||e}`]); }
     finally{ setBusy(false); setInput(''); }
   }
 

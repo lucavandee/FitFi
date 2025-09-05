@@ -20,8 +20,8 @@ export function NovaConnectionProvider({
 }) {
   const [state, setState] = useState<Conn>({
     status: "idle",
-    setStatus: (s) => setState((prev) => ({ /* placeholder removed */prev, status: s })),
-    setMeta: (m) => setState((prev) => ({ /* placeholder removed */prev, /* placeholder removed */m })),
+    setStatus: (s) => setState((prev) => ({ ...prev, status: s })),
+    setMeta: (m) => setState((prev) => ({ ...prev, ...m })),
   });
   return <Ctx.Provider value={state}>{children}</Ctx.Provider>;
 }

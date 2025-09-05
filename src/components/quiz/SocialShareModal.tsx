@@ -62,7 +62,7 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
 
   const generateShareImage = () => {
     // In a real app, this would generate a custom image with the user's style profile
-    toast.success("Share image wordt gegenereerd/* placeholder removed */");
+    toast.success("Share image wordt gegenereerd");
   };
 
   return (

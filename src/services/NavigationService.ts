@@ -34,7 +34,7 @@ export class NavigationService {
     this.updateState({
       path,
       params,
-      history: [/* placeholder removed */this.state.history, path],
+      history: [...this.state.history, path],
     });
   }
 

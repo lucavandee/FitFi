@@ -80,7 +80,7 @@ const ChallengeSection: React.FC<{
               : payload.linkUrl
                 ? "link"
                 : "text",
-        /* placeholder removed */payload,
+        ...payload,
       });
 
       // Award XP for challenge participation
@@ -214,7 +214,7 @@ const TribeDetailPage: React.FC = () => {
     // React Query will automatically refetch
   };
   if (tribesLoading) {
-    return <LoadingFallback fullScreen message="Tribe laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Tribe laden" />;
   }
 
   if (!tribe) {
@@ -352,7 +352,7 @@ const TribeDetailPage: React.FC = () => {
 
             {challengesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[/* placeholder removed */Array(4)].map((_, i) => (
+                {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
                     className="bg-white rounded-2xl p-6 animate-pulse"
@@ -446,7 +446,7 @@ const TribeDetailPage: React.FC = () => {
           <PostComposer
             tribeId={tribe.id}
             className="shadow-sm"
-            placeholder={`Deel iets met ${tribe.name}/* placeholder removed */`}
+            placeholder={`Deel iets met ${tribe.name}`}
           />
         </div>
 

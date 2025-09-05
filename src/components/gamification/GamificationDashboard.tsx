@@ -249,7 +249,7 @@ const GamificationDashboard: React.FC = () => {
     useGamification();
 
   if (isLoading) {
-    return <LoadingFallback message="Dashboard laden/* placeholder removed */" />;
+    return <LoadingFallback message="Dashboard laden" />;
   }
 
   if (error) {

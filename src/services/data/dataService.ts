@@ -472,7 +472,7 @@ export async function fetchTribeBySlug(
                 .single();
 
               tribeWithMembership = {
-                /* placeholder removed */tribe,
+                ...tribe,
                 is_member: !!membership,
                 user_role: membership?.role,
               };

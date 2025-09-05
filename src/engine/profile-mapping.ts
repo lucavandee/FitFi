@@ -309,8 +309,8 @@ function getCombinedStyleKeywords(
 
   // Get unique keywords from both archetypes
   const combinedKeywords = [
-    /* placeholder removed */primaryKeywords.slice(0, primaryCount),
-    /* placeholder removed */secondaryKeywords
+    ...primaryKeywords.slice(0, primaryCount),
+    ...secondaryKeywords
       .filter((keyword) => !primaryKeywords.includes(keyword)) // Ensure uniqueness
       .slice(0, secondaryCount),
   ];

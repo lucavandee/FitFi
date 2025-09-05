@@ -60,7 +60,7 @@ const mockTribePostsService = {
       commentsCount: 0,
       authorId: input.user_id,
       authorName: `User ${input.user_id.slice(-4)}`,
-      /* placeholder removed */input,
+      ...input,
     };
     return newPost;
   },
@@ -99,7 +99,7 @@ export function useTribePosts(tribeId: string) {
       const saved = await mockTribePostsService.createTribePost(input);
 
       // Add to top of list
-      setPosts((prev) => (prev ? [saved, /* placeholder removed */prev] : [saved]));
+      setPosts((prev) => (prev ? [saved, ...prev] : [saved]));
 
       return saved;
     } catch (e) {

@@ -29,7 +29,7 @@ const AnalyticsPage: React.FC = () => {
   >("overview");
 
   if (userLoading) {
-    return <LoadingFallback fullScreen message="Analytics laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Analytics laden" />;
   }
 
   if (!user) {

@@ -79,7 +79,7 @@ export const JoinButton: React.FC<JoinButtonProps> = ({
       }
       iconPosition="left"
     >
-      {isLoading ? "Bezig/* placeholder removed */" : isMember ? "Verlaten" : "Lid worden"}
+      {isLoading ? "Bezig" : isMember ? "Verlaten" : "Lid worden"}
     </Button>
   );
 };

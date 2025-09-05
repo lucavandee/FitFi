@@ -32,7 +32,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">Submissions</h3>
         <div className="grid gap-4">
-          {[/* placeholder removed */Array(3)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <div
               key={i}
               className="bg-white rounded-xl p-4 border border-gray-200 animate-pulse"

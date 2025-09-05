@@ -79,7 +79,7 @@ const TribesPage: React.FC = () => {
   }
 
   if (isLoading) {
-    return <LoadingFallback fullScreen message="Style Tribes laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Style Tribes laden" />;
   }
 
   return (
@@ -125,7 +125,7 @@ const TribesPage: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Zoek tribes/* placeholder removed */"
+                  placeholder="Zoek tribes"
                   className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] text-gray-900 placeholder-gray-500 transition-all"
                 />
                 <Search

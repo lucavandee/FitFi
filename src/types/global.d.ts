@@ -55,9 +55,9 @@ declare module 'react-hot-toast' {
 // Window extensions
 declare global {
   interface Window {
-    gtag?: (/* placeholder removed */args: any[]) => void;
+    gtag?: (...args: any[]) => void;
     dataLayer?: any[];
-    hj?: (/* placeholder removed */args: any[]) => void;
+    hj?: (...args: any[]) => void;
     _hjSettings?: {
       hjid: number;
       hjsv: number;

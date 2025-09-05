@@ -136,8 +136,8 @@ export function calculateOutfitSimilarity(
   if (outfit1.tags && outfit2.tags) {
     const tags1 = new Set(outfit1.tags);
     const tags2 = new Set(outfit2.tags);
-    const intersection = new Set([/* placeholder removed */tags1].filter((x) => tags2.has(x)));
-    const union = new Set([/* placeholder removed */tags1, /* placeholder removed */tags2]);
+    const intersection = new Set([...tags1].filter((x) => tags2.has(x)));
+    const union = new Set([...tags1, ...tags2]);
 
     if (union.size > 0) {
       similarity += (intersection.size / union.size) * 0.4;
@@ -200,7 +200,7 @@ export function updatePreferencesFromFeedback(
     tags?: string[];
   }>,
 ): StylePreferences {
-  const updatedPreferences = { /* placeholder removed */currentPreferences };
+  const updatedPreferences = {...currentPreferences};
 
   feedback.forEach(({ outfit, liked, tags }) => {
     const relevantTags = tags || outfit.tags || [];

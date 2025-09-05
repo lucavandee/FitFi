@@ -55,7 +55,7 @@ const BlogDetailPage: React.FC = () => {
         // Extract excerpt from first paragraph
         const excerptMatch = content.match(/\n\n([^#\n]+)/);
         const excerpt = excerptMatch?.[1]
-          ? excerptMatch[1].substring(0, 160) + "/* placeholder removed */"
+          ? excerptMatch[1].substring(0, 160) + ""
           : "";
 
         setPost({
@@ -121,7 +121,7 @@ const BlogDetailPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <LoadingFallback fullScreen message="Artikel laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Artikel laden" />;
   }
 
   if (error || !post) {

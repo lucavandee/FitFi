@@ -30,7 +30,7 @@ const DynamicResultsPage: React.FC = () => {
   }, []);
 
   if (userLoading) {
-    return <LoadingFallback fullScreen message="Dynamic resultaten laden/* placeholder removed */" />;
+    return <LoadingFallback fullScreen message="Dynamic resultaten laden" />;
   }
 
   if (!user) {
@@ -59,7 +59,7 @@ const DynamicResultsPage: React.FC = () => {
             <Sparkles className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-light text-gray-900 mb-4">
-            Dynamic AI analyseert jouw stijl/* placeholder removed */
+            Dynamic AI analyseert jouw stijl
           </h2>
           <p className="text-gray-600 mb-6">
             We creëren jouw dynamic stijlprofiel met real-time data.
@@ -298,7 +298,7 @@ function getDynamicStyleTags(data: any): string[] {
 
   if (data?.archetypes) {
     tags.push(
-      /* placeholder removed */data.archetypes.map(
+      ...data.archetypes.map(
         (arch: string) =>
           arch.charAt(0).toUpperCase() + arch.slice(1).replace("_", " "),
       ),

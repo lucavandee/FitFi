@@ -53,7 +53,7 @@ export class AdvancedAnalytics {
       const { error } = await supabase
         .from('analytics_events')
         .insert({
-          /* placeholder removed */event,
+          ...event,
           session_id: this.sessionId,
           user_id: this.userId || event.user_id
         });
@@ -71,7 +71,7 @@ export class AdvancedAnalytics {
       const { error } = await supabase
         .from('funnel_analytics')
         .insert({
-          /* placeholder removed */step,
+          ...step,
           session_id: this.sessionId,
           user_id: this.userId
         });
@@ -89,7 +89,7 @@ export class AdvancedAnalytics {
       const { error } = await supabase
         .from('heatmap_data')
         .insert({
-          /* placeholder removed */data,
+          ...data,
           session_id: this.sessionId,
           user_id: this.userId
         });

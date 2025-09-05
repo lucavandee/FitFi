@@ -346,7 +346,7 @@ export async function createLocalChallengeSubmission(
 ): Promise<TribeChallengeSubmission> {
   try {
     const newSubmission: TribeChallengeSubmission = {
-      /* placeholder removed */submission,
+      ...submission,
       id: `local_submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       createdAt: new Date().toISOString(),
     };
@@ -497,7 +497,7 @@ export async function preloadLocalData(): Promise<{
   user: FitFiUserProfile;
 }> {
   try {
-    console.log("[LocalSource] Preloading all local data/* placeholder removed */");
+    console.log("[LocalSource] Preloading all local data");
 
     const [products, outfits, user] = await Promise.all([
       getLocalProducts(),

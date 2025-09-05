@@ -14,7 +14,7 @@ export default function FunnelVisualizer({ data = [] }: Props) {
         { label: "Report bekeken", value: 260 },
         { label: "Klik naar shop", value: 120 },
       ];
-  const max = Math.max(1, /* placeholder removed */items.map((i) => i.value));
+  const max = Math.max(1, ...items.map((i) => i.value));
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">

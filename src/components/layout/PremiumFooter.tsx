@@ -157,7 +157,7 @@ function SocialLinks() {
 
 function PremiumFooterInner() {
   const enhancedColumns = useMemo(() => {
-    const columns = [/* placeholder removed */FOOTER_COLUMNS];
+    const columns = [...FOOTER_COLUMNS];
 
     // Add Cookie-instellingen to Legal section if not already present
     const legalColumn = columns.find((col) => col.title === "Juridisch");
