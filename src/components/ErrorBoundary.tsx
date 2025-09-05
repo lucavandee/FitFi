@@ -1,46 +1,31 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import ErrorFallback from "@/components/ui/ErrorFallback";
+import React from "react";
 
-type Props = { 
-  children: ReactNode; 
-  fallback?: ReactNode; 
-  onError?: (e: Error, info: ErrorInfo) => void; 
-};
+type Props = { children: React.ReactNode };
+type State = { hasError: boolean; error?: any };
 
-type State = { 
-  hasError: boolean; 
-  error: Error | null; 
-  info: ErrorInfo | null; 
-};
+export default class ErrorBoundary extends React.Component<Props, State> {
+  state: State = { hasError: false };
 
-class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, error: null, info: null };
-
-  static getDerivedStateFromError(error: Error) { 
-    return { hasError: true, error }; 
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    this.setState({ info }); 
-    this.props.onError?.(error, info);
-    if (import.meta.env.DEV) console.error("[ErrorBoundary]", error, info);
+  componentDidCatch(error: any, info: any) {
+    // eslint-disable-next-line no-console
+    console.error("[ErrorBoundary]", error, info);
   }
-
-  reset = () => this.setState({ hasError: false, error: null, info: null });
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ?? (
-        <ErrorFallback 
-          error={this.state.error || new Error("Onbekende fout")} 
-          resetErrorBoundary={this.reset} 
-          showDetails={import.meta.env.DEV} 
-        />
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-[color:var(--ff-surface)]">
+          <div className="ff-card text-center">
+            <h1 className="text-xl font-semibold text-[color:var(--ff-midnight)] mb-2">Er ging iets mis</h1>
+            <p className="ff-subtle">Herlaad de pagina of ga terug naar de homepagina.</p>
+          </div>
+        </div>
       );
     }
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;
-export { ErrorBoundary };
