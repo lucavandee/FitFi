@@ -1,0 +1,10 @@
+{
+  "name": "FitFi — Node 20.19.0",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "20.19.0" },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "corepack enable && npm ci",
+  "customizations": { "vscode": { "extensions": ["esbenp.prettier-vscode","dbaeumer.vscode-eslint"] } }
+}
