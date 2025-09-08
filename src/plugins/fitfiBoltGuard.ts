@@ -1,5 +1,4 @@
 import fs from "node:fs";
-
 const MUST_EXIST = [
   "src/main.tsx",
   "index.html",
@@ -8,12 +7,10 @@ const MUST_EXIST = [
   "src/providers/AuthProvider.tsx",
   "src/pages/RegisterPage.tsx"
 ];
-
 export default function fitfiBoltGuard() {
   const strict = process.env.VITE_FITFI_GUARD_STRICT === "true";
   const warn = (m: string) => console.warn(`⚠️ FitFi Guard: ${m}`);
   const fail = (m: string) => { if (strict) throw new Error(m); else warn(m); };
-
   return {
     name: "fitfi-bolt-guard",
     buildStart() {

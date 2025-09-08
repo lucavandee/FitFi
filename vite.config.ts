@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const disableThird = String(env.VITE_DISABLE_THIRD_PARTY ?? 'true').toLowerCase() === 'true';
   
   return {
-    plugins: [react(), fitfiBoltGuard()react()],
+    plugins: [react(), fitfiBoltGuard()],
     base: '/',
     resolve: {
       dedupe: ['react', 'react-dom', 'react-helmet-async'],

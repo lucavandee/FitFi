@@ -23,12 +23,12 @@ for (const p of must) {
 // Ellipses-scan (afgebroken content)
 let cnt = 0;
 const scan = (dir) => {
-  for (const e of fs.readdirSync(dir, {withFileTypes:true})) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (["node_modules",".git","dist",".bolt"].includes(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) scan(p);
     else if (/\.(tsx?|jsx?|json|html|toml|md)$/.test(p)) {
-      const s=fs.readFileSync(p,"utf8");
+      const s = fs.readFileSync(p,"utf8");
       if (/\.\.\.(\s*[\n\r]|$)/g.test(s)) { cnt++; warn(`Ellipses mogelijk afgebroken: ${p}`); }
     }
   }
