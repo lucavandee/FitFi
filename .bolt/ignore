@@ -1,0 +1,62 @@
+# === Always exclude ===
+.git/
+node_modules/
+dist/
+coverage/
+tmp/
+.vscode/
+.github/
+.eslintcache
+*.log
+
+# Archives & binaries
+*.zip
+*.tar
+*.tgz
+*.7z
+*.rar
+*.psd
+*.ai
+*.sketch
+*.fig
+*.pdf
+*.mov
+*.mp4
+*.webm
+*.mp3
+*.wav
+*.heic
+*.heif
+*.raw
+
+# Tests, stories, docs
+tests/**
+__tests__/**
+cypress/**
+e2e/**
+.storybook/**
+docs/**
+design/**
+drafts/**
+
+# Maps & debug
+**/*.map
+
+# === Public media policy ===
+public/_raw/**
+public/videos/**
+public/uploads/**
+public/screenshots/**
+public/tmp/**
+public/**/*.zip
+public/**/*.pdf
+
+# === Always include (do NOT ignore) ===
+!public/favicon.*
+!public/manifest.webmanifest
+!public/icons/**
+!public/logo*
+!public/og*.png
+!public/*.png
+!public/*.jpg
+!public/*.webp
