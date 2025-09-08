@@ -1,4 +1,3 @@
-# === Always exclude ===
 .git/
 node_modules/
 dist/
@@ -8,28 +7,16 @@ tmp/
 .github/
 .eslintcache
 *.log
+**/*.map
 
-# Archives & binaries
-*.zip
-*.tar
-*.tgz
-*.7z
-*.rar
-*.psd
-*.ai
-*.sketch
-*.fig
-*.pdf
-*.mov
-*.mp4
-*.webm
-*.mp3
-*.wav
-*.heic
-*.heif
-*.raw
+public/_raw/**
+public/**/*.zip
+public/**/*.pdf
+public/videos/**
+public/uploads/**
+public/screenshots/**
+public/tmp/**
 
-# Tests, stories, docs
 tests/**
 __tests__/**
 cypress/**
@@ -39,19 +26,7 @@ docs/**
 design/**
 drafts/**
 
-# Maps & debug
-**/*.map
-
-# === Public media policy ===
-public/_raw/**
-public/videos/**
-public/uploads/**
-public/screenshots/**
-public/tmp/**
-public/**/*.zip
-public/**/*.pdf
-
-# === Always include (do NOT ignore) ===
+# Altijd meenemen (witte lijst)
 !public/favicon.*
 !public/manifest.webmanifest
 !public/icons/**
