@@ -1,42 +1,24 @@
 import React from "react";
 import { cn } from "@/utils/cn";
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "elevated" | "outlined";
-  padding?: "none" | "sm" | "md" | "lg";
+type SectionProps = React.HTMLAttributes<HTMLDivElement>;
+
+function Card(props: React.HTMLAttributes<HTMLDivElement>) {
+  const { className, ...rest } = props;
+  return <div className={cn("bg-surface border border-border rounded-lg shadow-md", className)} {...rest} />;
 }
 
-const variants = {
-  default: "bg-surface border border-border",
-  elevated: "bg-surface shadow-md border border-border",
-  outlined: "bg-transparent border-2 border-border"
-};
-
-const paddings = {
-  none: "",
-  sm: "p-4",
-  md: "p-6",
-  lg: "p-8"
-};
-
-export default function Card({ 
-  className, 
-  variant = "default", 
-  padding = "md", 
-  children, 
-  ...props 
-}: CardProps) {
-  return (
-    <div
-      className={cn(
-        "rounded-md transition-colors duration-150",
-        variants[variant],
-        paddings[padding],
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
+function CardHeader({ className, ...rest }: SectionProps) {
+  return <div className={cn("px-5 pt-5 pb-3", className)} {...rest} />;
 }
+
+function CardContent({ className, ...rest }: SectionProps) {
+  return <div className={cn("px-5 pb-5", className)} {...rest} />;
+}
+
+function CardFooter({ className, ...rest }: SectionProps) {
+  return <div className={cn("px-5 pb-5 pt-3 border-t border-border", className)} {...rest} />;
+}
+
+const _Card = Object.assign(Card, { Header: CardHeader, Content: CardContent, Footer: CardFooter });
+export default _Card;
