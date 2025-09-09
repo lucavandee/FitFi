@@ -1,40 +1,6 @@
-# Historie & tooling
-.git/
-node_modules/
-dist/
-coverage/
-tmp/
-.vscode/
-.github/
-.eslintcache
-*.log
-**/*.map
-
-# Zware publieke assets
-public/_raw/**
-public/**/*.zip
-public/**/*.pdf
-public/videos/**
-public/uploads/**
-public/screenshots/**
-public/tmp/**
-
-# Tests/docs/demo
-tests/**
-__tests__/**
-cypress/**
-e2e/**
-.storybook/**
-docs/**
-design/**
-drafts/**
-
-# Altijd meenemen (icons/og/meta)
-!public/favicon.*
-!public/manifest.webmanifest
-!public/icons/**
-!public/logo*
-!public/og*.png
-!public/*.png
-!public/*.jpg
-!public/*.webp
+# default: alles weg
+/*
+# maar houd deze paden:
+!.bolt/
+!bolt/**
+!README.md
