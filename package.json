@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "dev:netlify": "netlify dev",
-    "preinstall": "node ./scripts/print-env.js",
+    "preinstall": "node scripts/bolt-install.mjs",
     "typecheck": "tsc --noEmit --pretty",
     "build:strict": "npm run typecheck && vite build",
     "test": "vitest",
@@ -54,5 +54,6 @@
       "stylelint --fix",
       "git add"
     ]
-  }
+  },
+  "packageManager": "npm@10"
 }
