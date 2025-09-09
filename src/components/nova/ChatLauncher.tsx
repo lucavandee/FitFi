@@ -10,8 +10,12 @@ function ChatLauncher() {
   return (
     <div
       data-testid="nova-chat-launcher"
-      className="fixed right-6 z-[10000] pointer-events-none"
-      style={{ bottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}
+      className="fixed right-6 pointer-events-none"
+      style={{
+        bottom: "calc(1.5rem + env(safe-area-inset-bottom))",
+        zIndex: 2147483647, // boven elke CMP/overlay
+        isolation: "isolate"
+      }}
     >
       <Button
         aria-label="Open Nova chat"
