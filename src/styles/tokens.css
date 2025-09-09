@@ -51,3 +51,8 @@
   --ff-text-2xl: 28px;
   --ff-text-3xl: 32px;
 }
+
+/* Hide legacy Nova dock if present */
+.nova-dock, .nova-chatbar, #nova-bottom-bar { 
+  display: none !important; 
+}
