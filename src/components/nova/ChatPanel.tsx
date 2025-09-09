@@ -3,6 +3,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { X } from "lucide-react";
 import { useNovaChat } from "./NovaChatProvider";
+import { track } from "@/utils/telemetry";
 
 function ChatPanel() {
   const { open, setOpen, messages, send, busy } = useNovaChat();
@@ -10,9 +11,21 @@ function ChatPanel() {
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+      track("nova:panel-open");
+    } else {
+      document.body.style.overflow = "";
+      track("nova:panel-close");
+    }
+    
     if (open && listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
+    
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open, messages.length]);
 
   if (!open) return null;
@@ -22,6 +35,7 @@ function ChatPanel() {
     const text = input.trim();
     if (!text) return;
     setInput("");
+    track("nova:send-message", { messageLength: text.length });
     send(text);
   };
 
