@@ -1,21 +1,29 @@
 /* FitFi Design Tokens */
-
-/* Colors */
 :root {
+  /* Colors */
   --color-midnight: #0D1B2A;
   --color-white: #FFFFFF;
   --color-accent: #89CFF0;
   --color-surface: #F6F6F6;
-}
-
-/* Typography */
-:root {
+  
+  /* Typography */
   --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
 }
 
 /* Hide legacy Nova dock if present */
 .nova-dock, .nova-chatbar, #nova-bottom-bar { display: none !important; }
-
-/* Ensure our new launcher is never affected by legacy hiding rules */
-[data-testid="nova-chat-launcher"] { display: block !important; }
+/* Niets toevoegen dat .fixed of hoge z-index elementen globaal verbergt */
