@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CrashGate from '@/components/system/CrashGate';
 import { lazyAny } from '@/utils/lazyPage';
@@ -163,11 +163,7 @@ const App: React.FC = () => {
                               <DynamicOnboardingPage />
                             </ProtectedRoute>
                           } />
-                          <Route path="/results" element={
-                            <ProtectedRoute>
-                              <ResultsPage />
-                            </ProtectedRoute>
-                          } />
+                          <Route path="/results" element={<EnhancedResultsPage />} />
                           <Route path="/resultaten" element={<Navigate to="/results" replace />} />
                           <Route path="/dynamic-results" element={
                             <ProtectedRoute>
