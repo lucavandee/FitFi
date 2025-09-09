@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Seo from "@/components/Seo";
 import ResultSkeleton from "@/components/system/ResultSkeleton";
 import ErrorFallback from "@/components/system/ErrorFallback";
 import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
@@ -58,6 +59,10 @@ function EnhancedResultsPage() {
 
   return (
     <div className="space-y-4">
+      <Seo 
+        title="Jouw Stijlanalyse - FitFi"
+        description="Ontdek je perfecte outfit met AI-gestuurde stijladvies. Persoonlijke aanbevelingen op basis van jouw unieke profiel."
+      />
       <Card className="p-5">
         <div className="flex items-center justify-between">
           <h2 className="text-xl text-text">Onze aanbeveling</h2>
