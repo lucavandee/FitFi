@@ -49,7 +49,8 @@ export function openNovaStream(
     }
   };
 
-  ev.onerror = () => {
+  ev.onerror = (e) => {
+    console.error("🔴 Nova EventSource error", e);
     onError?.({ type: "FITFI_JSON", phase: "error", ts: Date.now(), error: { message: "stream-error" } });
     close();
   };
