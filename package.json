@@ -21,7 +21,7 @@
     "test:smoke": "playwright test tests/visual/nova-sse-health.spec.ts --headed",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
-    "prepare": "echo 'husky skipped'",
+    "prepare": "echo 'husky skipped (Bolt)'",
     "doctor": "node scripts/doctor.mjs",
     "predev": "npm run doctor",
     "prebuild": "npm run doctor"
