@@ -4,10 +4,5 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-  },
-  // geen css.postcss configuratie; Vite laadt niets extra
+  resolve: { alias: { "@": path.resolve(__dirname, "src") } },
 });

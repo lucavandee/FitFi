@@ -24,7 +24,8 @@
     "prepare": "echo 'husky skipped (Bolt)'",
     "doctor": "node scripts/doctor.mjs",
     "predev": "npm run doctor",
-    "prebuild": "npm run doctor"
+    "prebuild": "npm run doctor",
+    "start": "vite"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -36,8 +37,8 @@
     "react-helmet-async": "^2.0.4",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.22.3",
-    "vite": "^5.2.0",
-    "@vitejs/plugin-react": "^4.2.1"
+    "vite": "^5.4.0",
+    "@vitejs/plugin-react": "^4.3.0"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

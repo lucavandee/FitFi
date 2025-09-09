@@ -1,3 +1,4 @@
+# Historie & tooling
 .git/
 node_modules/
 dist/
@@ -9,6 +10,7 @@ tmp/
 *.log
 **/*.map
 
+# Zware publieke assets
 public/_raw/**
 public/**/*.zip
 public/**/*.pdf
@@ -17,6 +19,7 @@ public/uploads/**
 public/screenshots/**
 public/tmp/**
 
+# Tests/docs/demo
 tests/**
 __tests__/**
 cypress/**
@@ -26,7 +29,7 @@ docs/**
 design/**
 drafts/**
 
-# Altijd meenemen
+# Altijd meenemen (icons/og/meta)
 !public/favicon.*
 !public/manifest.webmanifest
 !public/icons/**
