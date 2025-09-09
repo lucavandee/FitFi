@@ -16,5 +16,11 @@ export default defineConfig({
       "lucide-react": path.resolve(__dirname, "src/ui/icons/lucide-shim.tsx"),
     },
   },
+  build: {
+    sourcemap: true,
+  },
+  esbuild: {
+    sourcemap: true,
+  },
   server: { port: 3000, strictPort: true },
 });
