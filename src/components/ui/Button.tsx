@@ -1,135 +1,56 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { ElementType, forwardRef } from "react";
+import { cn } from "@/utils/cn";
 
-export interface ButtonProps {
-  children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  fullWidth?: boolean;
-  disabled?: boolean;
+type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "danger";
+type ButtonSize = "sm" | "md" | "lg";
+
+type Props<T extends ElementType> = {
+  as?: T;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   loading?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
-  className?: string;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-  as?: 'button' | 'a' | typeof Link;
-  to?: string;
-  href?: string;
-  target?: string;
-  rel?: string;
-  'aria-label'?: string;
-  'aria-busy'?: boolean;
-  'data-ab-variant'?: string;
-  title?: string;
-}
+} & Omit<React.ComponentPropsWithoutRef<T>, "as" | "size">;
 
-const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = 'primary',
-  size = 'md',
-  fullWidth = false,
-  disabled = false,
-  loading = false,
-  icon,
-  iconPosition = 'left',
-  className = '',
-  onClick,
-  type = 'button',
-  as = 'button',
-  to,
-  href,
-  target,
-  rel,
-  'aria-label': ariaLabel,
-  'aria-busy': ariaBusy,
-  'data-ab-variant': abVariant,
-  title,
-  ...rest
-}) => {
-  const baseClasses = [
-    'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white',
-    'disabled:opacity-50 disabled:cursor-not-allowed',
-    fullWidth ? 'w-full' : '',
-    className
-  ].filter(Boolean).join(' ');
-
-  const variantClasses = {
-    primary: 'bg-[#89CFF0] text-white hover:bg-[#5FB7E6] shadow-[0_10px_30px_rgba(137,207,240,0.35)] btn-animate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white',
-    secondary: 'bg-[#0D1B2A] hover:bg-[#14243A] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white btn-animate',
-    outline: 'border border-[#89CFF0] bg-white hover:bg-[#89CFF0]/10 text-[#0D1B2A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white btn-animate',
-    ghost: 'bg-transparent hover:bg-[#89CFF0]/10 text-[#0D1B2A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ff-ring)] focus-visible:ring-offset-white btn-animate',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500 focus-visible:ring-red-500'
-  };
-
-  const sizeClasses = {
-    sm: 'px-3 py-2 text-sm rounded-xl',
-    md: 'px-4 py-2 text-base rounded-2xl',
-    lg: 'px-6 py-3 text-lg rounded-2xl'
-  };
-
-  const classes = [
-    baseClasses,
-    variantClasses[variant],
-    sizeClasses[size]
-  ].join(' ');
-
-  const content = (
-    <>
-      {icon && iconPosition === 'left' && (
-        <span className="mr-2">{icon}</span>
-      )}
-      {children}
-      {icon && iconPosition === 'right' && (
-        <span className="ml-2">{icon}</span>
-      )}
-    </>
-  );
-
-  const commonProps = {
-    className: classes,
-    disabled: disabled || loading,
-    'aria-label': ariaLabel,
-    'aria-busy': ariaBusy || loading,
-    'data-ab-variant': abVariant,
-    title,
-    ...rest
-  };
-
-  if (as === 'a') {
-    return (
-      <a
-        href={href}
-        target={target}
-        rel={rel}
-        {...commonProps}
-      >
-        {content}
-      </a>
-    );
-  }
-
-  if (as === Link) {
-    return (
-      <Link
-        to={to || '/'}
-        {...commonProps}
-      >
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      {...commonProps}
-    >
-      {content}
-    </button>
-  );
+const variants: Record<ButtonVariant, string> = {
+  primary: "bg-primary text-white hover:bg-primary-600 focus:ring-2 focus:ring-primary/40",
+  secondary: "bg-surface text-text border border-border hover:bg-[#1b1f35] focus:ring-2 focus:ring-primary/20",
+  ghost: "bg-transparent text-text hover:bg-[#1b1f35] focus:ring-2 focus:ring-primary/20",
+  outline: "bg-transparent text-text border border-border hover:bg-[#1b1f35] focus:ring-2 focus:ring-primary/20",
+  danger: "bg-danger text-white hover:opacity-90 focus:ring-2 focus:ring-danger/40"
 };
 
+const sizes: Record<ButtonSize, string> = {
+  sm: "h-9 px-3 text-sm rounded-sm",
+  md: "h-11 px-4 text-base rounded-md",
+  lg: "h-12 px-6 text-md rounded-lg"
+};
+
+function _Button<T extends ElementType = "button">(
+  { as, className, variant = "primary", size = "md", loading = false, children, ...rest }: Props<T>,
+  ref: React.Ref<any>
+) {
+  const Comp: ElementType = as ?? "button";
+  return (
+    <Comp
+      ref={ref}
+      className={cn(
+        "inline-flex items-center justify-center gap-2 transition-colors duration-150 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed shadow-sm",
+        variants[variant],
+        sizes[size],
+        className
+      )}
+      aria-busy={loading || undefined}
+      {...rest}
+    >
+      {loading ? (
+        <span className="animate-pulse" aria-hidden>
+          •••
+        </span>
+      ) : null}
+      <span>{children}</span>
+    </Comp>
+  );
+}
+
+const Button = forwardRef(_Button) as <T extends ElementType = "button">(p: Props<T> & { ref?: React.Ref<any> }) => JSX.Element;
 export default Button;

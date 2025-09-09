@@ -1,53 +1,80 @@
-import React from 'react';
+import React, { useState, useCallback } from "react";
+import { cn } from "@/utils/cn";
 
-type Loading = 'lazy' | 'eager';
-type Decoding = 'auto' | 'sync' | 'async';
-
-type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'loading' | 'decoding'> & {
-  src: string;
-  alt: string;
-  /** Optionele fallbackafbeelding als de hoofdbron faalt */
+interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
-  /** Responsive images (optioneel) */
-  sizes?: string;
-  srcSet?: string;
-  /** Defaults: loading='lazy', decoding='async' */
-  loading?: Loading;
-  decoding?: Decoding;
+  fallbackText?: string;
+  aspectRatio?: "square" | "video" | "portrait" | "auto";
+  loading?: "lazy" | "eager";
+}
+
+const aspectRatios = {
+  square: "aspect-square",
+  video: "aspect-video", 
+  portrait: "aspect-[3/4]",
+  auto: ""
 };
 
 export default function ImageWithFallback({
   src,
-  alt,
-  fallbackSrc,
-  sizes,
-  srcSet,
-  // ⚠️ Let op: we hernoemen props lokaal om dubbele bindingen te voorkomen
-  loading: loadingProp,
-  decoding: decodingProp,
-  ...rest
-}: Props) {
-  const [imgSrc, setImgSrc] = React.useState(src);
+  alt = "",
+  fallbackSrc = "/images/fallbacks/default.jpg",
+  fallbackText,
+  aspectRatio = "auto",
+  className,
+  loading = "lazy",
+  onError,
+  ...props
+}: ImageWithFallbackProps) {
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const onError = React.useCallback(() => {
-    if (fallbackSrc && imgSrc !== fallbackSrc) {
-      setImgSrc(fallbackSrc);
+  const handleError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!hasError && currentSrc !== fallbackSrc) {
+      setHasError(true);
+      setCurrentSrc(fallbackSrc);
     }
-  }, [fallbackSrc, imgSrc]);
+    onError?.(e);
+  }, [hasError, currentSrc, fallbackSrc, onError]);
 
-  const loading: Loading = loadingProp ?? 'lazy';
-  const decoding: Decoding = decodingProp ?? 'async';
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  if (!currentSrc && fallbackText) {
+    return (
+      <div 
+        className={cn(
+          "flex items-center justify-center bg-surface text-muted text-sm border border-border rounded-md",
+          aspectRatios[aspectRatio],
+          className
+        )}
+        role="img"
+        aria-label={alt}
+      >
+        {fallbackText}
+      </div>
+    );
+  }
 
   return (
-    <img
-      src={imgSrc}
-      alt={alt}
-      loading={loading}
-      decoding={decoding}
-      sizes={sizes}
-      srcSet={srcSet}
-      onError={onError}
-      {...rest}
-    />
+    <div className={cn("relative overflow-hidden", aspectRatios[aspectRatio], className)}>
+      {isLoading && (
+        <div className="absolute inset-0 bg-surface animate-pulse rounded-md" />
+      )}
+      <img
+        src={currentSrc}
+        alt={alt}
+        loading={loading}
+        onError={handleError}
+        onLoad={handleLoad}
+        className={cn(
+          "w-full h-full object-cover transition-opacity duration-200",
+          isLoading ? "opacity-0" : "opacity-100"
+        )}
+        {...props}
+      />
+    </div>
   );
 }

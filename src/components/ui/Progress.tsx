@@ -1,28 +1,65 @@
-import React from 'react';
+import React from "react";
+import { cn } from "@/utils/cn";
 
-type Props = {
-  value: number; // 0..1
+interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: number;
+  max?: number;
+  size?: "sm" | "md" | "lg";
+  variant?: "default" | "success" | "warning" | "danger";
+  showLabel?: boolean;
   label?: string;
-  className?: string;
+}
+
+const sizes = {
+  sm: "h-1",
+  md: "h-2",
+  lg: "h-3"
 };
 
-export default function Progress({ value, label, className }: Props) {
-  const pct = Math.max(0, Math.min(1, value)) * 100;
+const variants = {
+  default: "bg-primary",
+  success: "bg-success",
+  warning: "bg-warning",
+  danger: "bg-danger"
+};
+
+export default function Progress({ 
+  className,
+  value,
+  max = 100,
+  size = "md",
+  variant = "default",
+  showLabel = false,
+  label,
+  ...props 
+}: ProgressProps) {
+  const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+  
   return (
-    <div className={`w-full ${className ?? ''}`}>
-      {label && <div className="text-xs text-gray-500 mb-1">{label}</div>}
-      <div className="h-2 w-full rounded-full bg-gray-100">
+    <div className={cn("w-full", className)} {...props}>
+      {showLabel && (
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm text-text">{label}</span>
+          <span className="text-sm text-muted">{Math.round(percentage)}%</span>
+        </div>
+      )}
+      <div 
+        className={cn(
+          "w-full bg-border rounded-full overflow-hidden",
+          sizes[size]
+        )}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-label={label}
+      >
         <div
-          className="h-2 rounded-full transition-all"
-          style={{
-            width: `${pct}%`,
-            background:
-              'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)'
-          }}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(pct)}
-          role="progressbar"
+          className={cn(
+            "h-full transition-all duration-300 ease-out rounded-full",
+            variants[variant]
+          )}
+          style={{ width: `${percentage}%` }}
         />
       </div>
     </div>
