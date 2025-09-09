@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import LoadingFallback from '../components/ui/LoadingFallback';
+import Seo from '../components/Seo';
 
 const OnboardingPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
@@ -69,6 +70,10 @@ const OnboardingPage: React.FC = () => {
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0]">
+      <Seo 
+        title="Stijlprofiel opstellen - FitFi"
+        description="Vertel ons over jouw stijlvoorkeuren zodat we de perfecte outfit aanbevelingen voor je kunnen maken."
+      />
       <div className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="w-20 h-20 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">

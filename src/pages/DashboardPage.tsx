@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Seo from "@/components/Seo";
 import { 
   User, 
   Settings, 
@@ -95,6 +96,10 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 pb-20 md:pb-8">
+      <Seo 
+        title="Dashboard - FitFi"
+        description="Jouw persoonlijke stijldashboard met outfit geschiedenis, aanbevelingen en styling insights."
+      />
       <Helmet>
         <title>Dashboard - Jouw Stijlcentrum | FitFi</title>
         <meta name="description" content="Bekijk je stijlprofiel, outfits, challenges en voortgang op je persoonlijke FitFi dashboard." />
