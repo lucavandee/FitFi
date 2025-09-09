@@ -4,5 +4,5 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [react()],
-  resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+  resolve: { alias: {  "@": path.resolve(__dirname, "src")  , "lucide-react": require("node:path").resolve(__dirname, "src/ui/icons/lucide-shim.tsx") } },
 });
