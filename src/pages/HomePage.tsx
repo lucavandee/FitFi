@@ -24,8 +24,8 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Seo 
-        title="FitFi - AI-Powered Personal Styling Platform"
-        description="Ontdek jouw perfecte stijl met AI-powered personal styling. Gepersonaliseerde outfit aanbevelingen, stijlquiz en fashion advies."
+        title="FitFi - AI Styling voor jouw perfecte outfit"
+        description="Ontdek jouw unieke stijl met AI-powered outfit aanbevelingen. Persoonlijke styling advies op basis van jouw voorkeuren en lichaamsbouw."
         canonical="https://fitfi.app/home"
         keywords="AI personal stylist, outfit aanbevelingen, stijl quiz, fashion advies, Nederlandse mode platform"
         jsonLd={{
