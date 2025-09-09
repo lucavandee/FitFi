@@ -49,5 +49,13 @@
       "git add"
     ]
   },
-  "packageManager": "npm@10"
+  "packageManager": "npm@10",
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.4.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0"
+  }
 }
