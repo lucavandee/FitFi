@@ -1,10 +1,12 @@
-import React, { lazy, Suspense } from 'react';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import { lazy, Suspense } from "react";
+import ErrorBoundary from "@/components/ErrorBoundary";
+// LET OP: exact dit pad — jouw error toonde dit bestand al.
+import { NovaConnectionProvider } from "./NovaConnection";
 
-// Lichtgewicht fallback spinner
+// Lichtgewicht fallback; vervang evt. door je eigen Loading component
 function InlineSpinner() {
   return (
-    <div className="p-4 text-sm opacity-70" role="status" aria-live="polite">
+    <div className="p-3 text-sm opacity-70" role="status" aria-live="polite">
       Nova laden…
     </div>
   );
@@ -12,23 +14,22 @@ function InlineSpinner() {
 
 /**
  * Belangrijk:
- * - Relatieve import naar ./NovaChat (geen leading slash, geen .tsx-extensie)
- * - Dit laat Vite resolven en voorkomt fetch van rauwe .tsx via netwerk
+ * - Relatieve lazy import (géén /src/… en géén .tsx extensie)
+ * - Dit voorkomt "Failed to fetch dynamically imported module … .tsx"
  */
-const NovaChat = lazy(() => import('./NovaChat'));
+const NovaChat = lazy(() => import("./NovaChat"));
 
-type Props = {
-  // geef mee wat je normaal ook doorzet (session, user, etc.)
-  [key: string]: unknown;
-};
+type Props = Record<string, unknown>;
 
 export default function NovaLauncher(props: Props) {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<InlineSpinner />}>
-        {/* @ts-expect-error - NovaChat kan extra props accepteren */}
-        <NovaChat {...props} />
-      </Suspense>
+      <NovaConnectionProvider>
+        <Suspense fallback={<InlineSpinner />}>
+          {/* @ts-expect-error: NovaChat kan extra props accepteren */}
+          <NovaChat {...props} />
+        </Suspense>
+      </NovaConnectionProvider>
     </ErrorBoundary>
   );
 }
