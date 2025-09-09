@@ -8,7 +8,6 @@ import ChatPanel from "@/components/nova/ChatPanel";
 import App from "@/App";
 
 if (import.meta.env.PROD) {
-  // Helpt ons verifiëren dat de launcher in PROD is gemount
   console.info("✅ FitFi: NovaChat root mounted (prod)");
 }
 
