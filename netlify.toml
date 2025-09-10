@@ -1,5 +1,8 @@
 [build]
   command = "npm run build"
+
+[build.environment]
+  VITE_BUILD_TAG = "2025-01-15T10:30Z-nova-prod"
   environment = { NODE_VERSION = "20.19.0", VITE_BUILD_TAG = "2025-01-15T10:30Z-nova-prod" }
   publish = "dist"
 
