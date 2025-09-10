@@ -1,82 +1,52 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useEffect, useState } from "react";
+
+type Row = { label: string; value: string; ok: boolean };
 
 export default function HealthPage() {
-  const buildTag = import.meta.env.VITE_BUILD_TAG ?? "dev";
-  const chatStyle = import.meta.env.VITE_CHAT_STYLE ?? "normal";
-  const telemetryEnabled = import.meta.env.VITE_ENABLE_TELEMETRY ?? "1";
+  const [rows, setRows] = useState<Row[]>([
+    { label: "Build tag", value: "-", ok: false },
+    { label: "Nova mount aanwezig", value: "-", ok: false },
+    { label: "SSE endpoint", value: "-", ok: false },
+  ]);
+
+  useEffect(() => {
+    const buildTag = import.meta.env.VITE_BUILD_TAG ?? "dev";
+    const hasMount = !!document.body?.getAttribute("data-nova-mount");
+
+    const update = (idx: number, value: string, ok: boolean) =>
+      setRows((r) => r.map((x, i) => (i === idx ? { ...x, value, ok } : x)));
+
+    update(0, buildTag, buildTag !== "dev");
+
+    update(1, hasMount ? "gevonden" : "niet gevonden", hasMount);
+
+    // SSE ping
+    fetch("/.netlify/functions/nova", { method: "GET" })
+      .then((res) => {
+        const ok = res.ok && res.headers.get("content-type")?.includes("text/event-stream");
+        update(2, ok ? "200 / event-stream" : `${res.status} / ${res.headers.get("content-type")}`, !!ok);
+      })
+      .catch((e) => update(2, `fout: ${e?.message ?? "onbekend"}`, false));
+  }, []);
 
   return (
-    <>
-      <Helmet>
-        <title>Health Check - FitFi</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-surface p-8">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-heading font-bold text-midnight mb-8">
-            System Health Check
-          </h1>
-          
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-xl font-heading font-semibold text-midnight mb-4">
-                Build Information
-              </h2>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Build Tag:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-midnight">
-                    {buildTag}
-                  </code>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Chat Style:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-midnight">
-                    {chatStyle}
-                  </code>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Telemetry:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-midnight">
-                    {telemetryEnabled === "1" ? "enabled" : "disabled"}
-                  </code>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-xl font-heading font-semibold text-midnight mb-4">
-                Nova Chat Status
-              </h2>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Mount Status:</span>
-                  <span className="text-green-600 font-medium">
-                    {document.body?.getAttribute("data-nova-mount") === "true" ? "✅ Mounted" : "❌ Not Mounted"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Environment:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-midnight">
-                    {import.meta.env.MODE}
-                  </code>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-xl font-heading font-semibold text-midnight mb-4">
-                System Status
-              </h2>
-              <div className="text-green-600 font-medium">
-                ✅ All systems operational
-              </div>
+    <main className="px-6 py-8">
+      <h1 className="text-2xl font-semibold mb-4">FitFi • Health</h1>
+      <div className="max-w-xl divide-y divide-gray-800 border border-gray-800 rounded-lg">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between px-4 py-3">
+            <div>{r.label}</div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-400">{r.value}</span>
+              <span
+                aria-label={r.ok ? "ok" : "fout"}
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ background: r.ok ? "#00D2B8" : "#F97316" }}
+              />
             </div>
           </div>
-        </div>
+        ))}
       </div>
-    </>
+    </main>
   );
 }
