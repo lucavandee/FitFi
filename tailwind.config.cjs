@@ -4,6 +4,11 @@ module.exports = {
     "./index.html",
     "./src/**/*.{ts,tsx,js,jsx}"
   ],
+  safelist: [
+    // Launcher container + button
+    "fixed","right-6","pointer-events-none","rounded-full","h-14","w-14","p-0",
+    "shadow-lg","pointer-events-auto","z-[10000]","z-[2147483647]"
+  ],
   theme: {
     container: {
       center: true,
