@@ -1,5 +1,35 @@
 # 🚀 Complete Deployment Guide for FitFi
 
+## Nova Productie Release Checklist
+
+### 1. Pre-deployment verificatie
+- [ ] Alle Nova bestanden gecommit: `src/main.tsx`, `src/components/nova/**`, `netlify/functions/nova.ts`
+- [ ] package-lock.json aanwezig (geen pnpm)
+- [ ] Node versie 20.19.0 in .nvmrc
+- [ ] Build lokaal succesvol: `npm run build`
+
+### 2. Netlify Environment Variables (verplicht)
+```
+VITE_CHAT_STYLE=pro
+VITE_BUILD_TAG=2025-01-15T16:30Z-nova-prod
+NODE_VERSION=20.19.0
+```
+
+### 3. Deploy proces
+1. Push naar main branch (enige productie branch)
+2. Netlify → Site → Deploys → "Clear cache and deploy site"
+3. Wacht op functions bundling in deploy log
+4. Verificatie na deploy:
+   - Console: `✅ FitFi build=2025-01-15T16:30Z-nova-prod | NovaChat root mounted (prod)`
+   - Network: `/.netlify/functions/nova` → Status 200, Content-Type text/event-stream
+   - DOM: Nova chat launcher zichtbaar, geen legacy bars
+
+### 4. Troubleshooting
+- **Geen BUILD_TAG in console**: Verkeerde build live, check branch/cache
+- **SSE functie 404**: Functions niet gebundeld, check netlify.toml
+- **Chat niet zichtbaar**: VITE_CHAT_STYLE ontbreekt in Netlify env
+- **Legacy overlap**: CSS kill-switch niet actief, check src/index.css
+
 ## Nova Chat Deployment Checklist
 
 ### Pre-deployment Verificatie
