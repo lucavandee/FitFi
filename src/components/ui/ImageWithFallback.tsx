@@ -1,31 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { cn } from "@/utils/cn";
 
-type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
+type RatioKey = "square" | "portrait" | "landscape" | "wide";
+
+type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> & {
+  src?: string;
   fallback?: string;
-  ratio?: "square" | "portrait" | "landscape" | "wide" | boolean;
+  ratio?: RatioKey | boolean;
+  /** Alleen diagnostisch; niet in de DOM-attributes doorgestuurd */
+  componentName?: string;
+  containerClassName?: string;
+  imgClassName?: string;
 };
 
-const ratios = {
-  square: "aspect-[1/1]",
+const RATIOS: Record<RatioKey, string> = {
+  square: "aspect-square",
   portrait: "aspect-[3/4]",
   landscape: "aspect-[4/3]",
-  wide: "aspect-[16/9]"
+  wide: "aspect-[16/9]",
 };
 
-function ImageWithFallback({ className, src, alt, fallback, ratio = false, ...rest }: Props) {
-  const [error, setError] = useState(false);
-  const showSrc = !error && src ? String(src) : fallback || "/fallback.jpg";
+function ImageWithFallback({
+  className,
+  containerClassName,
+  imgClassName,
+  src,
+  alt,
+  fallback = "/placeholder.png",
+  ratio = false,
+  componentName, // eslint-disable-line @typescript-eslint/no-unused-vars
+  onError,
+  ...rest
+}: Props) {
+  const [failed, setFailed] = useState(false);
+  const showSrc = failed ? fallback : (src || fallback);
+
+  const wrapperRatioClass = useMemo(() => {
+    if (!ratio) return null;
+    if (ratio === true) return RATIOS.square;
+    return RATIOS[String(ratio) as RatioKey] ?? null;
+  }, [ratio]);
+
+  const imgEl = (
+    <img
+      src={showSrc}
+      alt={alt ?? ""}
+      className={cn("h-full w-full object-cover", imgClassName || className)}
+      onError={(e) => {
+        setFailed(true);
+        onError?.(e);
+      }}
+      loading="lazy"
+      {...rest}
+    />
+  );
+
+  if (!wrapperRatioClass) {
+    return imgEl;
+  }
+
   return (
-    <div className={cn("relative overflow-hidden rounded-md bg-[#111527]", ratio ? ratios[String(ratio) as keyof typeof ratios] : null)}>
-      <img
-        src={showSrc}
-        alt={alt ?? ""}
-        className={cn("h-full w-full object-cover", className)}
-        onError={() => setError(true)}
-        loading="lazy"
-        {...rest}
-      />
+    <div className={cn("relative overflow-hidden rounded-md bg-gray-100", wrapperRatioClass, containerClassName)}>
+      {imgEl}
     </div>
   );
 }
