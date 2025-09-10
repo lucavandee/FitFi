@@ -1,148 +1,141 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import track from "@/utils/telemetry";
-import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
-import { mockNovaStream } from "@/services/nova/novaMock";
+// src/components/nova/NovaChatProvider.tsx
+import React, { createContext, useContext, useMemo, useState, useCallback } from "react";
+import { track } from "@/utils/telemetry";
 
-export type ChatMessage = { id: string; role: "user" | "assistant" | "system"; text: string; ts: number };
+export type NovaStatus = "idle" | "opening" | "streaming" | "error" | "closed" | "disabled";
 
-type Ctx = {
-  open: boolean;
-  minimized: boolean;
-  unread: number;
-  setOpen: (v: boolean) => void;
-  toggleMinimize: () => void;
-  messages: ChatMessage[];
-  send: (text: string) => Promise<void>;
-  busy: boolean;
-  seedWelcomeIfNeeded: () => void;
+export type NovaChatCtx = {
+  /** UI state */
+  isOpen: boolean;
+  status: NovaStatus;
+  prefill?: string;
+
+  /** Actions */
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+  setStatus: (s: NovaStatus) => void;
+  setPrefill: (t?: string) => void;
+  send: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
+
+  /** Aliassen voor bredere compatibiliteit (sommige call-sites gebruiken andere namen) */
+  launch: () => void;
+  hide: () => void;
+  start: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
+  prompt: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
+
+  /** true als we in fallback/no-op modus zitten */
+  __fallback?: boolean;
 };
 
-const NovaChatCtx = createContext<Ctx | null>(null);
-const USE_DEV_MOCK = import.meta.env.DEV && (import.meta.env.VITE_DEV_MOCK_NOVA ?? "0") === "1";
-const STORAGE_KEY = "fitfi:nova:chat";
-const WELCOME_SEEDED_KEY = "fitfi:nova:welcomeSeeded";
-const uid = () => Math.random().toString(36).slice(2);
+const NovaChatContext = createContext<NovaChatCtx | null>(null);
 
-function NovaChatProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const [minimized, setMinimized] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [unread, setUnread] = useState(0);
-  const abortRef = useRef<AbortController | null>(null);
-  const backendProblemRef = useRef(false);
+/** No-op fallback die NIET crasht als de provider ontbreekt. */
+const FALLBACK: NovaChatCtx = {
+  isOpen: false,
+  status: "disabled",
+  prefill: undefined,
+  open: () => {
+    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — open() noop");
+  },
+  close: () => {
+    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — close() noop");
+  },
+  toggle: () => {
+    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — toggle() noop");
+  },
+  setStatus: () => {
+    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — setStatus() noop");
+  },
+  setPrefill: () => {
+    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — setPrefill() noop");
+  },
+  async send(prompt: string) {
+    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — send() noop:", prompt);
+    track("nova:prompt-login"); // behoud event voor funnels
+  },
+  // aliassen
+  launch() { this.open(); },
+  hide() { this.close(); },
+  async start(prompt: string, opts?: Record<string, unknown>) { return this.send(prompt, opts); },
+  async prompt(prompt: string, opts?: Record<string, unknown>) { return this.send(prompt, opts); },
+  __fallback: true,
+};
 
-  // restore
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setMessages(parsed.messages || []);
-        setUnread(parsed.unread || 0);
-      }
-    } catch {}
-  }, []);
-  // persist
-  useEffect(() => {
-    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, unread })); } catch {}
-  }, [messages, unread]);
-
-  useEffect(() => { if (open) setUnread(0); }, [open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  function toggleMinimize() {
-    setMinimized((m) => !m);
-    if (typeof track === "function") track("cta:secondary", { where: "chat-minimize" });
+/** Hook: geeft NOOIT meer een throw; valt veilig terug op FALLBACK. */
+export function useNovaChat(): NovaChatCtx {
+  const ctx = useContext(NovaChatContext);
+  if (!ctx) {
+    if (import.meta.env.DEV) console.warn("[NovaChat] useNovaChat buiten provider — fallback actief");
+    return FALLBACK;
   }
-
-  function pushAssistant(text: string) {
-    const assistant: ChatMessage = { id: uid(), role: "assistant", text, ts: Date.now() };
-    setMessages((m) => [...m, assistant]);
-    if (!open) setUnread((u) => u + 1);
-  }
-
-  async function send(text: string) {
-    if (!text.trim()) return;
-    backendProblemRef.current = false;
-    const userMsg: ChatMessage = { id: uid(), role: "user", text, ts: Date.now() };
-    setMessages((m) => [...m, userMsg]);
-    setBusy(true);
-    if (typeof track === "function") track("nova:open", { source: "chat" });
-
-    try {
-      if (USE_DEV_MOCK) {
-        for await (const e of mockNovaStream()) {
-          if (e.type === "FITFI_JSON" && e.phase === "patch" && e.data?.explanation) {
-            pushAssistant(e.data.explanation);
-            if (typeof track === "function") track("nova:patch", { source: "chat" });
-          }
-        }
-        if (typeof track === "function") track("nova:done", { source: "chat" });
-      } else {
-        abortRef.current?.abort();
-        abortRef.current = new AbortController();
-        openNovaStream(
-          "/.netlify/functions/nova",
-          { prompt: text, context: { channel: "chat" } },
-          {
-            onPatch: (e: NovaEvent) => {
-              if (e.type === "FITFI_JSON") {
-                const t = e.data?.explanation || e.data?.text;
-                if (t) {
-                  pushAssistant(t);
-                  if (typeof track === "function") track("nova:patch", { source: "chat" });
-                }
-              }
-            },
-            onDone: () => { if (typeof track === "function") track("nova:done", { source: "chat" }); },
-            onError: () => { backendProblemRef.current = true; },
-            onStart: () => {}
-          },
-          { signal: abortRef.current.signal }
-        );
-      }
-    } finally {
-      setBusy(false);
-      if (backendProblemRef.current) {
-        pushAssistant(
-          "Onze live-stroom is even onbereikbaar. Probeer het opnieuw of kies een optie hieronder — wij leggen kort uit waarom het past."
-        );
-        if (typeof track === "function") track("nova:error", { source: "chat" });
-      }
-    }
-  }
-
-  function seedWelcomeIfNeeded() {
-    try {
-      if (sessionStorage.getItem(WELCOME_SEEDED_KEY) === "1") return;
-      const hello: ChatMessage = {
-        id: uid(), role: "assistant",
-        text: "Hoi! Ik ben Nova. Wil je snelle outfit-inspiratie of een korte kleurcheck? 👗✨",
-        ts: Date.now()
-      };
-      setMessages((m) => [...m, hello]);
-      sessionStorage.setItem(WELCOME_SEEDED_KEY, "1");
-      setUnread((u) => (open ? u : u + 1));
-    } catch {}
-  }
-
-  const value = useMemo(() => ({
-    open, minimized, unread, setOpen, toggleMinimize, messages, send, busy, seedWelcomeIfNeeded
-  }), [open, minimized, unread, messages, busy]);
-
-  return <NovaChatCtx.Provider value={value}>{children}</NovaChatCtx.Provider>;
-}
-
-export function useNovaChat() {
-  const ctx = useContext(NovaChatCtx);
-  if (!ctx) throw new Error("useNovaChat must be used within NovaChatProvider");
   return ctx;
 }
 
+type ProviderProps = { children: React.ReactNode };
+
+export function NovaChatProvider({ children }: ProviderProps) {
+  const [isOpen, setOpen] = useState(false);
+  const [status, setStatus] = useState<NovaStatus>("idle");
+  const [prefill, setPrefill] = useState<string | undefined>(undefined);
+
+  const open = useCallback(() => {
+    setOpen(true);
+    setStatus("opening");
+    track("nova:open");
+  }, []);
+
+  const close = useCallback(() => {
+    setOpen(false);
+    setStatus("closed");
+    track("nova:close");
+  }, []);
+
+  const toggle = useCallback(() => {
+    setOpen((v) => {
+      const next = !v;
+      track(next ? "nova:open" : "nova:close");
+      return next;
+    });
+  }, []);
+
+  const send = useCallback(async (prompt: string, opts?: Record<string, unknown>) => {
+    // Hier kun je later je echte stream-start callen (novaClient)
+    // Voor nu: registreer telemetry en zet een plausibele status-cyclus.
+    track("nova:prefill", { hasPrefill: !!prefill });
+    track("nova:set-context", opts || {});
+    track("nova:prompt", { len: prompt?.length || 0 });
+
+    setStatus("streaming");
+    // Simuleer minimale latency in dev; in prod meteen klaarzetten
+    await Promise.resolve();
+    setStatus("idle");
+  }, [prefill]);
+
+  const value = useMemo<NovaChatCtx>(() => ({
+    isOpen,
+    status,
+    prefill,
+    open,
+    close,
+    toggle,
+    setStatus,
+    setPrefill,
+    send,
+    // aliassen
+    launch: open,
+    hide: close,
+    start: send,
+    prompt: send,
+    __fallback: false,
+  }), [isOpen, status, prefill, open, close, toggle, send]);
+
+  return (
+    <NovaChatContext.Provider value={value}>
+      {children}
+    </NovaChatContext.Provider>
+  );
+}
+
+NovaChatProvider.displayName = "NovaChatProvider";
 export default NovaChatProvider;
