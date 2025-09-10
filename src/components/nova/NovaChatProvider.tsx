@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { track } from "@/utils/telemetry";
+import { track } from "@/utils/analytics";
 import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
 import { mockNovaStream } from "@/services/nova/novaMock";
 
@@ -71,6 +71,7 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
 
   async function send(text: string) {
     if (!text.trim()) return;
+    track("nova:message-attempt", { messageLength: text.length });
     const userMsg: ChatMessage = { id: uid(), role: "user", text, ts: Date.now() };
     setMessages((m) => [...m, userMsg]);
     setBusy(true);
@@ -114,6 +115,16 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
           { signal: abortRef.current.signal }
         );
       }
+      track("nova:message-success", { responseLength: messages[messages.length - 1]?.text?.length || 0 });
+    } catch (error) {
+      track("nova:message-error", { error: error instanceof Error ? error.message : "Unknown error" });
+      const errorMsg: ChatMessage = { 
+        id: uid(), 
+        role: "assistant", 
+        text: "Sorry, ik kan je vraag nu niet beantwoorden. Probeer het later opnieuw of kies een van de suggesties hieronder.", 
+        ts: Date.now() 
+      };
+      setMessages((m) => [...m, errorMsg]);
     } finally {
       setBusy(false);
     }
