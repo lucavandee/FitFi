@@ -1,4 +1,4 @@
-export type Season = "spring" | "summer" | "autumn" | "winter";
+export type Season = "spring" | "summer" | "autumn" | "winter" | "all_season";
 
 export type Product = {
   id: string;
