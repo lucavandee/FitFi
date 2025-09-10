@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import ResultSkeleton from "@/components/system/ResultSkeleton";
 import ErrorFallback from "@/components/system/ErrorFallback";
 import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
-import Card from "@/components/ui/Card";
-import Chip from "@/components/ui/Chip";
 import Button from "@/components/ui/Button";
 import { track } from "@/utils/telemetry";
 
@@ -24,10 +22,10 @@ function EnhancedResultsPage() {
 
     if (USE_DEV_MOCK) {
       setTimeout(() => {
-        setPatch({ explanation: "We kozen voor een cleane, smart-casual look: nette jeans, crispy witte sneaker en een licht overshirt. Dit matcht met jouw voorkeur voor minimalistisch en comfortabel." });
+        setPatch({ explanation: "We kozen voor een cleane, smart-casual look: nette jeans, witte sneaker en licht overshirt — minimalistisch en comfortabel." });
         setLoading(false);
         track("nova:done");
-      }, 300);
+      }, 250);
       return;
     }
 
@@ -62,17 +60,14 @@ function EnhancedResultsPage() {
 
   return (
     <div className="mx-auto max-w-4xl p-4 md:p-8">
-      <Card className="p-6 md:p-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl text-[#0D1B2A]">Onze aanbeveling</h2>
-          <Chip tone="accent">Explainability</Chip>
-        </div>
+      <div className="p-6 md:p-8 rounded-2xl bg-white shadow-sm">
+        <h2 className="text-xl text-[#0D1B2A]">Onze aanbeveling</h2>
         <p className="text-gray-600 mt-3">{patch.explanation}</p>
         <div className="mt-4 flex gap-2">
           <Button onClick={() => track("cta:primary", { where: "results" })}>Shop deze look</Button>
           <Button variant="secondary" onClick={() => track("cta:secondary", { where: "results" })}>Nieuwe analyse</Button>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
