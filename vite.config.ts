@@ -9,6 +9,17 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          nova: ['@/components/nova/NovaChatProvider', '@/components/nova/ChatLauncherPro']
+        }
+      }
+    }
+  },
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },

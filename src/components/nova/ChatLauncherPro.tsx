@@ -1,7 +1,7 @@
 import React from "react";
 import Portal from "@/components/system/Portal";
 import { useNovaChat } from "./NovaChatProvider";
-import { track } from '@/utils/analytics';
+import track from "@/utils/telemetry";
 
 interface ChatLauncherProProps {
   isOpen: boolean;
@@ -17,7 +17,9 @@ export default function ChatLauncherPro({ isOpen, onToggle, isPanelVisible = fal
   const handleToggle = () => {
     track('nova:launcher-toggle', { 
       action: isOpen ? 'close' : 'open',
-      panel_visible: isPanelVisible 
+    if (typeof track === 'function') {
+      track("nova:launcher-toggle", { state: newState ? "open" : "closed" });
+    }
     });
     onToggle();
   };
