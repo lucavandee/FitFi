@@ -44,22 +44,51 @@ VITE_DEV_MOCK_NOVA=0
 NODE_VERSION=20.19.0
 ```
 
-### Post-deployment Verificatie
-1. **Health check**: Ga naar `https://fitfi.ai/__health`
-   - Nova Chat: ✅ Mounted
-   - SSE Stream: ✅ Available
-   - Chat Style: "pro"
-   - Mock Mode: ✅ Disabled
+### Post-deployment Verification (Critical)
 
-2. **Visual check**: 
-   - Nova launcher zichtbaar (gradient button rechtsonder)
-   - Klikbaar en opent glassy panel
-   - Geen legacy chatbar elementen
+**Automated Check:** Open console op fitfi.ai en run `window.novaChecks()`
 
-3. **Functional check**:
-   - Chat opent/sluit smooth
-   - SSE stream werkt (geen "Bad response")
-   - Analytics events worden getriggerd
+**Manual 5-Point Checklist:**
+
+1. **Console Build Tag**
+   ```
+   ✅ FitFi build=2025-01-15T16:30Z-nova-prod | NovaChat root mounted (prod)
+   ```
+
+2. **Environment Variables**
+   - Open DevTools → Application → Local Storage
+   - Should show: `chatStyle: "pro"`, `mockMode: false`
+
+3. **SSE Stream Health**
+   - Network tab → `/.netlify/functions/nova`
+   - Status: 200, Type: `text/event-stream`
+   - Response shows: `data: {"type":"ping","timestamp":...}`
+
+4. **DOM Elements**
+   - Nova launcher visible (gradient button bottom-right)
+   - No legacy chatbar elements (`#chatbar-container` should be hidden)
+   - CSS kill-switch active: `.legacy-chat { display: none !important; }`
+
+5. **Functional Test**
+   - Click Nova launcher → Panel opens smoothly
+   - Type message → SSE response received
+   - Launcher should disappear when panel opens
+   - No overlap with "Verstuur" button
+
+**Health Endpoint:** 
+- Visit `fitfi.ai/__health` for automated Nova checks
+- All Nova production checks should show ✅ status
+
+**Debug Console Commands:**
+- `window.novaChecks()` - Full verification with async SSE check
+- `window.novaQuickCheck()` - Quick sync checks only
+
+If any check fails, you know exactly where the issue is:
+- Build: Environment variables or build process
+- ENV: Missing VITE_CHAT_STYLE or VITE_BUILD_TAG
+- SSE: Functions deployment or CORS issues
+- DOM: CSS conflicts or mount failures
+- Functional: JavaScript errors or event handling
 
 ### Troubleshooting
 
