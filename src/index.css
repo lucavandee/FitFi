@@ -3,6 +3,7 @@
 @import "./tw-input.css";
 @import "./styles/main.css";
 @import "./styles/animations.css";
+@import "./styles/tokens.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
