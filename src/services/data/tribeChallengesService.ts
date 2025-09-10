@@ -10,6 +10,9 @@ import type {
 const LS_CHALLENGES = "fitfi.tc.challenges"; // Record<string(tribeId|_) , TribeChallenge[]>
 const LS_SUBS       = "fitfi.tc.submissions"; // Record<string(challengeId), TribeChallengeSubmission[]>
 
+type ChallengeBuckets = Record<string, TribeChallenge[]>;
+type SubmissionBuckets = Record<string, TribeChallengeSubmission[]>;
+
 function safeRead<T>(key: string, fallback: T): T {
   try {
     if (typeof window === "undefined") return fallback;
@@ -30,13 +33,13 @@ function safeWrite<T>(key: string, value: T) {
 
 function bucketKey(tribeId?: ID) { return tribeId || "_"; }
 
-/* --------------------------------- seeds ---------------------------------- */
-
 function isoPlusDays(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
   return d.toISOString();
 }
+
+/* --------------------------------- seeds ---------------------------------- */
 
 // Eén open + één closed als basis; tribe_id wordt bij injectie gezet.
 const BASE_CHALLENGES: Omit<TribeChallenge, "id">[] = [
@@ -68,7 +71,7 @@ function seedWithIds(tribeId?: ID): TribeChallenge[] {
 
 export async function getTribeChallenges(tribeId?: ID): Promise<TribeChallenge[]> {
   const key = bucketKey(tribeId);
-  const store = safeRead<Record<string, TribeChallenge[]>>(LS_CHALLENGES, {});
+  const store = safeRead<ChallengeBuckets>(LS_CHALLENGES, {});
   const list = store[key];
   if (Array.isArray(list) && list.length) return list;
 
@@ -90,11 +93,11 @@ export async function createTribeChallenge(input: Omit<TribeChallenge, "id">): P
   const id = crypto.randomUUID();
   const item: TribeChallenge = {
     id,
-    status: "open",
+    status: (input as any).status ?? "open",
     ...input,
   };
   const key = bucketKey(item.tribe_id);
-  const store = safeRead<Record<string, TribeChallenge[]>>(LS_CHALLENGES, {});
+  const store = safeRead<ChallengeBuckets>(LS_CHALLENGES, {});
   const cur = store[key] ?? [];
   store[key] = [item, ...cur];
   safeWrite(LS_CHALLENGES, store);
@@ -104,7 +107,7 @@ export async function createTribeChallenge(input: Omit<TribeChallenge, "id">): P
 /* --------------------------- submissions & ranking ------------------------- */
 
 export async function getChallengeSubmissions(challengeId: ID): Promise<TribeChallengeSubmission[]> {
-  const all = safeRead<Record<string, TribeChallengeSubmission[]>>(LS_SUBS, {});
+  const all = safeRead<SubmissionBuckets>(LS_SUBS, {});
   return all[challengeId] ?? [];
 }
 
@@ -115,8 +118,8 @@ export async function createChallengeSubmission(
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   const submission: TribeChallengeSubmission = { id, createdAt, ...input };
-  const store = safeRead<Record<string, TribeChallengeSubmission[]>>(LS_SUBS, {});
-  const key = input.challenge_id || input.challengeId || "";
+  const store = safeRead<SubmissionBuckets>(LS_SUBS, {});
+  const key = (input as any).challenge_id || (input as any).challengeId || "";
   const cur = store[key] ?? [];
   store[key] = [submission, ...cur];
   safeWrite(LS_SUBS, store);
@@ -126,14 +129,14 @@ export async function createChallengeSubmission(
 export async function getTribeRanking(tribeId: ID): Promise<TribeRanking[]> {
   // Ranking op basis van #submissions per user binnen challenges van deze tribe.
   const challenges = await getTribeChallenges(tribeId);
-  const subStore = safeRead<Record<string, TribeChallengeSubmission[]>>(LS_SUBS, {});
+  const subStore = safeRead<SubmissionBuckets>(LS_SUBS, {});
   const counts = new Map<string, number>();
 
   for (const ch of challenges) {
     const cid = ch.id;
     const subs = subStore[cid] ?? [];
     for (const s of subs) {
-      const uid = s.user_id || s.userId || "anon";
+      const uid = (s as any).user_id || (s as any).userId || "anon";
       counts.set(uid, (counts.get(uid) ?? 0) + 1);
     }
   }
@@ -143,6 +146,62 @@ export async function getTribeRanking(tribeId: ID): Promise<TribeRanking[]> {
     .sort((a, b) => b.score - a.score);
 
   return result;
+}
+
+/* ----------------------------- update status API --------------------------- */
+
+type ChallengeStatus = "draft" | "open" | "closed" | "archived";
+
+/**
+ * Update de status van een challenge op basis van `challengeId`.
+ * Zoekt in alle tribe-buckets; past `status` (en logisch `ends_at`) aan en retourneert de bijgewerkte challenge.
+ */
+export async function updateTribeChallengeStatus(
+  challengeId: ID,
+  nextStatus: ChallengeStatus
+): Promise<TribeChallenge | null> {
+  const store = safeRead<ChallengeBuckets>(LS_CHALLENGES, {});
+  let updated: TribeChallenge | null = null;
+
+  for (const key of Object.keys(store)) {
+    const list = store[key] ?? [];
+    const idx = list.findIndex(c => c.id === challengeId);
+    if (idx === -1) continue;
+
+    const prev = list[idx];
+    const patch: Partial<TribeChallenge> = { status: nextStatus };
+
+    // Logica: bij sluiten → zet ends_at = nu als die ontbreekt;
+    // bij openen → verleng korte events indien al voorbij.
+    const now = new Date();
+    if (nextStatus === "closed") {
+      if (!prev.ends_at) patch.ends_at = now.toISOString();
+    } else if (nextStatus === "open") {
+      const ends = prev.ends_at ? new Date(prev.ends_at) : null;
+      if (ends && ends < now) {
+        const extend = new Date();
+        extend.setDate(extend.getDate() + 7);
+        patch.ends_at = extend.toISOString();
+      }
+    }
+
+    const merged: TribeChallenge = { ...prev, ...patch };
+    list[idx] = merged;
+    store[key] = list;
+    updated = merged;
+    break;
+  }
+
+  if (updated) safeWrite(LS_CHALLENGES, store);
+  return updated;
+}
+
+/** Eventuele alias die elders kan voorkomen. */
+export async function updateChallengeStatus(
+  challengeId: ID,
+  nextStatus: ChallengeStatus
+): Promise<TribeChallenge | null> {
+  return updateTribeChallengeStatus(challengeId, nextStatus);
 }
 
 /* ------------------------------ fetch aliases ------------------------------ */
@@ -165,4 +224,6 @@ export default {
   createChallengeSubmission,
   getTribeRanking,
   fetchTribeRanking,
+  updateTribeChallengeStatus,
+  updateChallengeStatus,
 };
