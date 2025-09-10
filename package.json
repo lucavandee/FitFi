@@ -5,12 +5,13 @@
   "type": "module",
   "packageManager": "pnpm@9.12.0",
   "engines": {
-    "node": "20.x"
+    "node": ">=20.19.0 <=22"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "build:prod": "NODE_ENV=production vite build",
     "dev:netlify": "netlify dev",
     "preinstall": "node scripts/bolt-install.mjs",
     "typecheck": "tsc --noEmit --pretty",
