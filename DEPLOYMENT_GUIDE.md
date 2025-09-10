@@ -1,5 +1,57 @@
 # 🚀 Complete Deployment Guide for FitFi
 
+## Nova Chat Deployment Checklist
+
+### Pre-deployment Verificatie
+1. **Lokale test**: Nova chat werkt in development
+2. **Build test**: `npm run build` succesvol zonder errors
+3. **Health check**: `/__health` toont alle checks groen
+
+### Netlify Environment Variables (KRITIEK)
+```
+VITE_CHAT_STYLE=pro
+VITE_DEV_MOCK_NOVA=0
+NODE_VERSION=20.19.0
+```
+
+### Post-deployment Verificatie
+1. **Health check**: Ga naar `https://fitfi.ai/__health`
+   - Nova Chat: ✅ Mounted
+   - SSE Stream: ✅ Available
+   - Chat Style: "pro"
+   - Mock Mode: ✅ Disabled
+
+2. **Visual check**: 
+   - Nova launcher zichtbaar (gradient button rechtsonder)
+   - Klikbaar en opent glassy panel
+   - Geen legacy chatbar elementen
+
+3. **Functional check**:
+   - Chat opent/sluit smooth
+   - SSE stream werkt (geen "Bad response")
+   - Analytics events worden getriggerd
+
+### Troubleshooting
+
+**Nova niet zichtbaar**:
+- Check Netlify env vars (VITE_CHAT_STYLE=pro)
+- Clear browser cache (Ctrl+Shift+R)
+- Check console voor mount errors
+
+**SSE "Bad response"**:
+- Verify `netlify/functions/nova.ts` deployed
+- Check function logs in Netlify dashboard
+- Test endpoint: `curl -H "Accept: text/event-stream" https://fitfi.ai/.netlify/functions/nova`
+
+**Legacy chatbar visible**:
+- Check CSS kill-switch in ChatTheme.css
+- Verify NovaChatMount useKillLegacyDocks() active
+- Force refresh to clear cached CSS
+
+## Standard Deployment Process
+
+### 1. Pre-deployment Checks
+
 ## Current Status
 ✅ **Production Build Ready** - All files optimized and built
 ✅ **Netlify Configuration** - Complete netlify.toml setup
