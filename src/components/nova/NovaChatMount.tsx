@@ -1,15 +1,24 @@
 import React from "react";
-import ChatLauncher from "@/components/nova/ChatLauncher";          // jouw normale (Tailwind) variant
-import ChatLauncherHard from "@/components/nova/ChatLauncherHard"; // pure inline variant
-import ChatPanel from "@/components/nova/ChatPanel";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
+import ChatLauncherPro from "@/components/nova/ChatLauncherPro";
+import ChatPanelPro from "@/components/nova/ChatPanelPro";
+import ChatLauncher from "@/components/nova/ChatLauncher"; // fallback
+import ChatPanel from "@/components/nova/ChatPanel";       // fallback
 
-const HARD = (import.meta.env.VITE_CHAT_LAUNCHER_MODE ?? "normal") === "hard";
+const STYLE = (import.meta.env.VITE_CHAT_STYLE ?? "pro") as "pro" | "normal";
 
 export default function NovaChatMount() {
+  if (STYLE === "pro") {
+    return (
+      <NovaChatProvider>
+        <ChatLauncherPro />
+        <ChatPanelPro />
+      </NovaChatProvider>
+    );
+  }
   return (
     <NovaChatProvider>
-      {HARD ? <ChatLauncherHard /> : <ChatLauncher />}
+      <ChatLauncher />
       <ChatPanel />
     </NovaChatProvider>
   );
