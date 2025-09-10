@@ -5,6 +5,9 @@
 [build.environment]
   NODE_VERSION = "20.19.0"
   NPM_FLAGS = "--no-audit --no-fund"
+  VITE_ENABLE_TELEMETRY = "1"
+  VITE_CHAT_STYLE = "pro"
+  VITE_BUILD_TAG = "2025-01-15T12:00Z-stable"
   VITE_CHAT_STYLE = "pro"
   VITE_BUILD_TAG = "2025-01-15T16:30Z-nova-prod"
 
