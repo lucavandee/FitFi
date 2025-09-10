@@ -1,4 +1,25 @@
-// Minimale types zodat imports bestaan; vervang later met echte engine-exports.
 export type Season = "spring" | "summer" | "autumn" | "winter";
-export type Product = { id: string; title: string };
-export type Outfit = { id: string; products?: Product[] };
+
+export type Product = {
+  id: string;
+  title: string;
+  name?: string;
+  brand?: string;
+  price?: number;
+  original_price?: number;
+  imageUrl?: string;
+  url?: string;
+  retailer?: string;
+  category?: string;
+  description?: string;
+  tags?: string[];
+};
+
+export type Outfit = {
+  id: string;
+  title?: string;
+  products?: Product[];
+  image?: string;
+  tags?: string[];
+  season?: Season;
+};
