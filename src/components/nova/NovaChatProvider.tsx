@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { track } from "@/utils/telemetry";
+import track from "@/utils/telemetry";
 import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
 import { mockNovaStream } from "@/services/nova/novaMock";
 
@@ -56,7 +56,10 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  function toggleMinimize() { setMinimized((m) => !m); track("cta:secondary", { where: "chat-minimize" }); }
+  function toggleMinimize() {
+    setMinimized((m) => !m);
+    if (typeof track === "function") track("cta:secondary", { where: "chat-minimize" });
+  }
 
   function pushAssistant(text: string) {
     const assistant: ChatMessage = { id: uid(), role: "assistant", text, ts: Date.now() };
@@ -70,17 +73,17 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
     const userMsg: ChatMessage = { id: uid(), role: "user", text, ts: Date.now() };
     setMessages((m) => [...m, userMsg]);
     setBusy(true);
-    track("nova:open", { source: "chat" });
+    if (typeof track === "function") track("nova:open", { source: "chat" });
 
     try {
       if (USE_DEV_MOCK) {
         for await (const e of mockNovaStream()) {
           if (e.type === "FITFI_JSON" && e.phase === "patch" && e.data?.explanation) {
             pushAssistant(e.data.explanation);
-            track("nova:patch", { source: "chat" });
+            if (typeof track === "function") track("nova:patch", { source: "chat" });
           }
         }
-        track("nova:done", { source: "chat" });
+        if (typeof track === "function") track("nova:done", { source: "chat" });
       } else {
         abortRef.current?.abort();
         abortRef.current = new AbortController();
@@ -93,11 +96,11 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
                 const t = e.data?.explanation || e.data?.text;
                 if (t) {
                   pushAssistant(t);
-                  track("nova:patch", { source: "chat" });
+                  if (typeof track === "function") track("nova:patch", { source: "chat" });
                 }
               }
             },
-            onDone: () => track("nova:done", { source: "chat" }),
+            onDone: () => { if (typeof track === "function") track("nova:done", { source: "chat" }); },
             onError: () => { backendProblemRef.current = true; },
             onStart: () => {}
           },
@@ -108,10 +111,9 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
       setBusy(false);
       if (backendProblemRef.current) {
         pushAssistant(
-          "⚠️ Onze live-stream is tijdelijk niet bereikbaar. " +
-          "Hier is alvast een tip: combineer neutrale basics met één statement piece. 👕✨"
+          "Onze live-stroom is even onbereikbaar. Probeer het opnieuw of kies een optie hieronder — wij leggen kort uit waarom het past."
         );
-        track("nova:error", { source: "chat" });
+        if (typeof track === "function") track("nova:error", { source: "chat" });
       }
     }
   }
