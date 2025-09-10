@@ -6,6 +6,7 @@ import ChatLauncher from "@/components/nova/ChatLauncher"; // fallback
 import ChatPanel from "@/components/nova/ChatPanel";       // fallback
 
 const STYLE = (import.meta.env.VITE_CHAT_STYLE ?? "pro") as "pro" | "normal";
+const BUILD_TAG = import.meta.env.VITE_BUILD_TAG ?? 'dev';
 
 import { track } from '@/utils/analytics';
 /**
@@ -49,10 +50,26 @@ function useKillLegacyDocks() {
 export default function NovaChatMount() {
   useKillLegacyDocks(); // <- verwijdert de horizontale balk onderaan
 
+  useEffect(() => {
+    // Mount verification logging
+    if (import.meta.env.PROD) {
+      console.info(`🚀 Nova mount verified | build=${BUILD_TAG} | style=${STYLE}`);
+    }
+    
+    track('nova:mount', { 
+      style: STYLE,
+      timestamp: Date.now(),
+      build: BUILD_TAG
+    });
+  }, [STYLE]);
+
   if (STYLE === "pro") {
     return (
-        <ChatLauncherPro />
-        <ChatPanelPro />
+      <NovaChatProvider>
+        <div className="nova-chat-mount" data-nova-build={BUILD_TAG} data-nova-style={STYLE}>
+          <ChatLauncherPro />
+          <ChatPanelPro />
+        </div>
       </NovaChatProvider>
     );
   }
