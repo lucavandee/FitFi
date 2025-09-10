@@ -4,41 +4,13 @@ import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
   plugins: [react()],
-  define: {
-    'import.meta.env.VITE_BUILD_TIME': JSON.stringify(new Date().toISOString()),
-  },
-  resolve: {
-    alias: {
-  build: {
-    sourcemap: true,
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          nova: ['@/components/nova/NovaChatProvider', '@/components/nova/ChatLauncherPro']
-        }
-      }
-    }
-  },
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
+  resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
   server: {
     fs: { strict: true },
     watch: {
-      // voorkom dat Vite/Chokidar in serverless of build-artifacts gaat neuzen
-      ignored: [
-        "**/netlify/**",
-        "**/functions/**",
-        "**/.netlify/**",
-        "**/dist/**",
-      ],
-    },
+      ignored: ["**/netlify/**", "**/.netlify/**", "**/dist/**"]
+    }
   },
-  optimizeDeps: {
-    // forceer een smalle entry zodat pre-transform stabiel blijft
-    entries: ["index.html"],
-  },
-  clearScreen: false,
+  optimizeDeps: { entries: ["index.html"] },
+  build: { sourcemap: true }
 });
