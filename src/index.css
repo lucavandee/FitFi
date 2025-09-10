@@ -9,6 +9,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Kill-switch legacy / third-party chat docks */
+#nova-bottom-bar, .nova-dock, .nova-chatbar, [data-nova-dock], [data-widget="nova-chatbar"], .chatbar {
+  display: none !important; visibility: hidden !important; pointer-events: none !important;
+}
+
 @import './styles/tokens.css';
 
 :root { color-scheme: light dark; }

@@ -1,9 +1,15 @@
 import React from "react";
 import Portal from "@/components/system/Portal";
 import { useNovaChat } from "./NovaChatProvider";
+import { track } from "@/utils/analytics";
 
 export default function ChatLauncherPro() {
   const { open, setOpen, unread } = useNovaChat();
+
+  const handleOpen = () => {
+    track("nova:launcher-click", { style: "pro", unread });
+    setOpen(true);
+  };
 
   return (
     <Portal id="fitfi-portal-launcher-pro" z={2147483647}>
@@ -20,7 +26,7 @@ export default function ChatLauncherPro() {
         <button
           aria-label="Open Nova chat"
           title="Open Nova chat"
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           style={{
             position: "relative",
             width: 60,
@@ -32,6 +38,7 @@ export default function ChatLauncherPro() {
             color: "#fff",
             boxShadow: "0 18px 36px rgba(0,0,0,.35)",
             outline: "none",
+            animation: unread > 0 ? "nvPulse 2s infinite" : "none",
             transition: "transform .12s ease",
           }}
           onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
@@ -40,7 +47,7 @@ export default function ChatLauncherPro() {
           {/* Glow ring */}
           <span aria-hidden style={{
             position: "absolute", inset: -6, borderRadius: 9999,
-            background: "radial-gradient(60% 60% at 50% 50%, rgba(43,106,243,.35), transparent)",
+            background: unread > 0 ? "radial-gradient(60% 60% at 50% 50%, rgba(0,210,184,.45), transparent)" : "radial-gradient(60% 60% at 50% 50%, rgba(43,106,243,.35), transparent)",
             filter: "blur(10px)"
           }} />
           {/* Chat glyph */}
