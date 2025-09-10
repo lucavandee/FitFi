@@ -4,6 +4,12 @@ module.exports = {
   safelist: [
     "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
     "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
+    "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2",
+    "flex","items-end","justify-end"
+  ],
+  safelist: [
+    "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
+    "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
     "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2","flex","items-end","justify-end"
   ],
     "./index.html",
