@@ -57,7 +57,7 @@ const _Button = <T extends ElementType = "button">(
     <Comp
       ref={ref}
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+        "inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         variants[variant],
         sizes[size],
         className
@@ -65,11 +65,7 @@ const _Button = <T extends ElementType = "button">(
       aria-busy={loading || undefined}
       {...(rest as any)}
     >
-      {loading ? (
-        <span className="animate-pulse" aria-hidden>
-          ···
-        </span>
-      ) : null}
+      {loading ? <span className="animate-pulse" aria-hidden>···</span> : null}
       {icon && iconPosition === "left" ? (
         <span className="mr-2 inline-flex items-center">{icon}</span>
       ) : null}
