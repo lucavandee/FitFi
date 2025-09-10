@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import './utils/productionChecks'
 import { HelmetProvider } from "react-helmet-async";
 import GlobalErrorBoundary from "@/components/system/GlobalErrorBoundary";
 import NovaChatMount from '@/components/nova/NovaChatMount'
