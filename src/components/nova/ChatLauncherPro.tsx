@@ -1,13 +1,19 @@
 import React from "react";
 import Portal from "@/components/system/Portal";
 import { useNovaChat } from "./NovaChatProvider";
+import { track } from '@/utils/analytics';
 
-export default function ChatLauncherPro() {
+interface ChatLauncherProProps {
+  isOpen: boolean;
+  onToggle: () => void;
+  isPanelVisible?: boolean;
+}
+
+export default function ChatLauncherPro({ isOpen, onToggle, isPanelVisible = false }: ChatLauncherProProps) {
   const { open, setOpen, unread } = useNovaChat();
 
   if (open) return null; // <- niet tonen tijdens open panel
 
-export default function ChatLauncherPro({ isOpen, onToggle, isPanelVisible = false }: ChatLauncherProProps) {
   const handleToggle = () => {
     track('nova:launcher-toggle', { 
       action: isOpen ? 'close' : 'open',
@@ -21,17 +27,19 @@ export default function ChatLauncherPro({ isOpen, onToggle, isPanelVisible = fal
     return null;
   }
 
+  return (
     <Portal id="fitfi-portal-launcher-pro" z={2147483647}>
       <div
         data-testid="nova-chat-launcher"
         onClick={handleToggle}
+        style={{
           position: "fixed",
-        data-nova-launcher="pro"
           right: "24px",
           bottom: "calc(24px + env(safe-area-inset-bottom))",
           zIndex: 2147483647,
           isolation: "isolate"
         }}
+        data-nova-launcher="pro"
       >
         <button
           aria-label="Open Nova chat"
@@ -69,10 +77,8 @@ export default function ChatLauncherPro({ isOpen, onToggle, isPanelVisible = fal
               background: "var(--nv-accent, #00D2B8)", boxShadow: "0 0 0 2px var(--nv-surface, #15192C)"
             }}
           />
-import { track } from '@/utils/analytics';
         ) : null}
       </div>
     </Portal>
   );
-  isPanelVisible?: boolean;
 }
