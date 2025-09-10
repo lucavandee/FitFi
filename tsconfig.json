@@ -1,17 +1,11 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ],
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "jsx": "react-jsx",
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+    "paths": { "@/*": ["src/*"] }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "netlify", "functions", ".netlify"]
 }

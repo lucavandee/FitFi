@@ -1,26 +1,29 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, URL } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// ESM-only; géén require() gebruiken
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      // Routeert alle imports van 'lucide-react' naar onze lichte shim
-      "lucide-react": path.resolve(__dirname, "src/ui/icons/lucide-shim.tsx"),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  build: {
-    sourcemap: true,
+  server: {
+    fs: { strict: true },
+    watch: {
+      // voorkom dat Vite/Chokidar in serverless of build-artifacts gaat neuzen
+      ignored: [
+        "**/netlify/**",
+        "**/functions/**",
+        "**/.netlify/**",
+        "**/dist/**",
+      ],
+    },
   },
-  esbuild: {
-    sourcemap: true,
+  optimizeDeps: {
+    // forceer een smalle entry zodat pre-transform stabiel blijft
+    entries: ["index.html"],
   },
-  server: { port: 3000, strictPort: true },
+  clearScreen: false,
 });
