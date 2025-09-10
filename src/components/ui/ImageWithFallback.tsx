@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
 
 type RatioKey = "square" | "portrait" | "landscape" | "wide";
@@ -7,8 +7,7 @@ type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> & {
   src?: string;
   fallback?: string;
   ratio?: RatioKey | boolean;
-  /** Alleen diagnostisch; niet in de DOM-attributes doorgestuurd */
-  componentName?: string;
+  componentName?: string; // alleen logging; niet naar DOM
   containerClassName?: string;
   imgClassName?: string;
 };
@@ -55,9 +54,7 @@ function ImageWithFallback({
     />
   );
 
-  if (!wrapperRatioClass) {
-    return imgEl;
-  }
+  if (!wrapperRatioClass) return imgEl;
 
   return (
     <div className={cn("relative overflow-hidden rounded-md bg-gray-100", wrapperRatioClass, containerClassName)}>
