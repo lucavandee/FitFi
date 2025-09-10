@@ -1,67 +1,30 @@
 import React, { useEffect } from "react";
-import NovaChatProvider from "@/components/nova/NovaChatProvider";
-import ChatLauncherPro from "@/components/nova/ChatLauncherPro";
-import ChatPanelPro from "@/components/nova/ChatPanelPro";
-import ChatLauncher from "@/components/nova/ChatLauncher"; // fallback
-import ChatPanel from "@/components/nova/ChatPanel";       // fallback
-
-const STYLE = (import.meta.env.VITE_CHAT_STYLE ?? "pro") as "pro" | "normal";
+import NovaChatProvider from "./NovaChatProvider";
+import ChatLauncherPro from "./ChatLauncherPro";
+import ChatPanelPro from "./ChatPanelPro";
 
 /**
- * Kill-switch voor oude/dubbele chat docks die buiten React om geïnjecteerd worden.
- * Werkt op statische nodes + dynamisch via MutationObserver.
- * Zet bovendien een data-flag op <body> voor simpele healthchecks.
+ * Nova Chat mount component
+ * Zorgt voor clean mounting en unmounting van Nova chat systeem
  */
-function useKillLegacyDocks() {
-  useEffect(() => {
-    // markeer dat de mount actief is (healthcheck)
-    if (typeof document !== "undefined" && document.body) {
-      document.body.setAttribute("data-nova-mount", "true");
-    }
-
-    const SELECTORS = [
-      "#nova-bottom-bar",
-      ".nova-dock",
-      ".nova-chatbar",
-      "[data-nova-dock]",
-      "[data-widget='nova-chatbar']",
-      ".chatbar",
-    ];
-
-    const hideAll = () => {
-      SELECTORS.forEach((sel) => {
-        document.querySelectorAll<HTMLElement>(sel).forEach((el) => {
-          el.style.setProperty("display", "none", "important");
-          el.style.setProperty("visibility", "hidden", "important");
-          el.style.setProperty("pointerEvents", "none", "important");
-        });
-      });
-    };
-
-    hideAll();
-    const mo = new MutationObserver(hideAll);
-    mo.observe(document.documentElement, { childList: true, subtree: true });
-    return () => mo.disconnect();
-  }, []);
-}
-
 export default function NovaChatMount() {
-  useKillLegacyDocks();
+  useEffect(() => {
+    // Mount flag voor health checks
+    document.body.setAttribute("data-nova-mount", "true");
+    
+    // Console log voor deployment verificatie
+    const buildTag = import.meta.env.VITE_BUILD_TAG ?? "dev";
+    console.log(`✅ FitFi build=${buildTag} | NovaChat root mounted (${import.meta.env.MODE})`);
+    
+    return () => {
+      document.body.removeAttribute("data-nova-mount");
+    };
+  }, []);
 
-  if (STYLE === "pro") {
-    return (
-      <NovaChatProvider>
-        <ChatLauncherPro />
-        <ChatPanelPro />
-      </NovaChatProvider>
-    );
-  }
-
-  // fallback (normal style)
   return (
     <NovaChatProvider>
-      <ChatLauncher />
-      <ChatPanel />
+      <ChatLauncherPro />
+      <ChatPanelPro />
     </NovaChatProvider>
   );
 }
