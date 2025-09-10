@@ -1,9 +1,4 @@
-// Export all engine functionality from a single entry point
-export * from './types';
-export * from './filterAndSortProducts';
-export { default as generateOutfits } from './generateOutfits';
-export * from './generateOutfitDescriptions';
-export * from './explainOutfit';
-export * from './profile-mapping';
-export * from './recommendationEngine';
-export * from './helpers';
+// Minimale types zodat imports bestaan; vervang later met echte engine-exports.
+export type Season = "spring" | "summer" | "autumn" | "winter";
+export type Product = { id: string; title: string };
+export type Outfit = { id: string; products?: Product[] };
