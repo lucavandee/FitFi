@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Portal from "@/components/system/Portal";
 import { useNovaChat } from "./NovaChatProvider";
 import Button from "@/components/ui/Button";
-import { track } from "@/utils/analytics";
 
 const SUGGESTIONS = [
   "Tip een outfit voor vrijdagavond",
@@ -24,12 +23,8 @@ function TypingDots() {
 export default function ChatPanelPro() {
   const { open, minimized, toggleMinimize, setOpen, messages, send, busy } = useNovaChat();
   const [input, setInput] = useState("");
+  const [hadBackendError, setHadBackendError] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (open) track("nova:panel-open", { style: "pro", messageCount: messages.length });
-    if (!open && minimized) track("nova:panel-minimize", { style: "pro" });
-  }, [open, minimized, messages.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -41,30 +36,23 @@ export default function ChatPanelPro() {
     if (open && listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [open, messages.length, busy]);
 
+  useEffect(() => {
+    // heuristiek: als laatste assistant-bericht onze error-copy bevat, markeer we backendError
+    const last = [...messages].reverse().find(m => m.role === "assistant");
+    if (last?.text?.toLowerCase?.().includes("er ging iets mis")) setHadBackendError(true);
+  }, [messages]);
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text || busy) return;
+    if (!text) return;
     setInput("");
-    track("nova:message-send", { style: "pro", messageLength: text.length });
+    setHadBackendError(false);
     send(text);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    track("nova:suggestion-click", { style: "pro", suggestion });
-    send(suggestion);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      e.preventDefault();
-      setOpen(false);
-    }
   };
 
   if (!open) return null;
 
-  // Minimized tray
   if (minimized) {
     return (
       <Portal id="fitfi-portal-chat">
@@ -72,12 +60,12 @@ export default function ChatPanelPro() {
           <div style={{
             background:"var(--nv-bg)", backdropFilter:`blur(var(--nv-blur))`,
             border:`1px solid var(--nv-border)`, boxShadow:"var(--nv-shadow)",
-            borderRadius:14, padding:12, animation:"nvFadeIn .18s ease"
+            borderRadius:14, padding:12
           }}>
             <div style={{ color:"var(--nv-text)", fontSize:14, marginBottom:8 }}>Praat met Nova</div>
             <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
               {SUGGESTIONS.slice(0,2).map((s) => (
-                <Button key={s} variant="outline" size="sm" onClick={() => handleSuggestionClick(s)}>{s}</Button>
+                <Button key={s} variant="outline" size="sm" onClick={() => send(s)}>{s}</Button>
               ))}
               <Button size="sm" onClick={toggleMinimize}>Open</Button>
             </div>
@@ -89,18 +77,16 @@ export default function ChatPanelPro() {
 
   return (
     <Portal id="fitfi-portal-chat">
-      <div role="dialog" aria-modal="true" aria-label="Nova chat" 
-           onKeyDown={handleKeyDown}
+      <div role="dialog" aria-modal="true" aria-label="Nova chat"
            className="z-[2147483647]" style={{ position:"fixed", inset:0, display:"flex", alignItems:"flex-end", justifyContent:"flex-end", padding:24 }}>
-        <div aria-hidden onClick={() => setOpen(false)} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.4)" }} />
+        <div aria-hidden onClick={() => setOpen(false)} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.42)" }} />
         <div style={{
           position:"relative",
           width:"100%", maxWidth:420,
           background:"var(--nv-bg)", color:"var(--nv-text)",
           backdropFilter:`blur(var(--nv-blur))`,
-          border:`1px solid var(--nv-border-strong)`,
-          borderRadius:18, boxShadow:"var(--nv-shadow)", overflow:"hidden",
-          animation:"nvFadeIn .18s ease"
+          border:`1px solid var(--nv-border)`,
+          borderRadius:18, boxShadow:"var(--nv-shadow)", overflow:"hidden"
         }}>
           {/* Header */}
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
@@ -108,7 +94,7 @@ export default function ChatPanelPro() {
             <div style={{ display:"flex", alignItems:"center", gap:10 }}>
               <div style={{
                 width:28, height:28, borderRadius:9999,
-                background:"linear-gradient(135deg, var(--nv-primary), var(--nv-accent))",
+                background:"linear-gradient(180deg, var(--nv-primary), var(--nv-primary-2))",
                 boxShadow:"var(--nv-ring)"
               }} />
               <div>
@@ -125,17 +111,13 @@ export default function ChatPanelPro() {
           {/* Thread */}
           <div ref={listRef} style={{ padding:"14px 16px", maxHeight:"60vh", overflowY:"auto" }}>
             {messages.length === 0 ? (
-              <div style={{ 
-                fontSize:14, color:"var(--nv-muted)", textAlign:"center", 
-                padding:"20px 0", lineHeight:1.5 
-              }}>
+              <div style={{ fontSize:14, color:"var(--nv-muted)" }}>
                 Stel je vraag of kies een optie hieronder — wij geven direct advies met een korte uitleg waarom het past.
               </div>
             ) : (
               messages.map((m) => (
                 <div key={m.id} style={{ display:"flex", justifyContent: m.role==="user" ? "flex-end" : "flex-start", marginBottom:10 }}>
                   <div style={{
-                    position:"relative",
                     maxWidth:"85%",
                     borderRadius:16,
                     padding:"8px 12px",
@@ -143,22 +125,24 @@ export default function ChatPanelPro() {
                     background: m.role==="user" ? "var(--nv-primary)" : "#1b2138",
                     color: m.role==="user" ? "#fff" : "var(--nv-text)"
                   }}>
-                    {m.role === "assistant" && (
-                      <div style={{ fontSize:10, color:"var(--nv-muted)", marginBottom:4 }}>Nova</div>
-                    )}
                     {m.text}
                   </div>
                 </div>
               ))
             )}
             {busy ? <div style={{ color:"var(--nv-muted)", fontSize:14 }}><TypingDots /></div> : null}
+            {hadBackendError ? (
+              <div style={{ marginTop:10, fontSize:13, color:"var(--nv-muted)" }}>
+                Onze live-stroom is even onbereikbaar. Probeer één van de opties hieronder of stuur je vraag nogmaals.
+              </div>
+            ) : null}
           </div>
 
           {/* Composer */}
           <div style={{ padding:"10px 16px 14px", borderTop:`1px solid var(--nv-border)` }}>
             <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:10 }}>
               {SUGGESTIONS.map((s) => (
-                <Button key={s} variant="outline" size="sm" onClick={() => handleSuggestionClick(s)} disabled={busy}>{s}</Button>
+                <Button key={s} variant="outline" size="sm" onClick={() => send(s)}>{s}</Button>
               ))}
             </div>
             <form onSubmit={onSubmit} style={{ display:"flex", gap:8 }}>
@@ -167,7 +151,6 @@ export default function ChatPanelPro() {
                 background:"#101525", border:`1px solid var(--nv-border)`,
                 borderRadius:10, height:44, padding:"0 12px"
               }}>
-                {/* prefix icon */}
                 <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" width="18" height="18" aria-hidden
                      style={{ opacity:.7, marginRight:8 }}>
                   <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
@@ -176,7 +159,6 @@ export default function ChatPanelPro() {
                   aria-label="Typ je bericht aan Nova"
                   placeholder="Stel je vraag, wij helpen je met stijl"
                   value={input}
-                  disabled={busy}
                   onChange={(e)=>setInput(e.target.value)}
                   style={{
                     flex:1, height:"100%", background:"transparent", border:"0", outline:"none",
@@ -184,7 +166,7 @@ export default function ChatPanelPro() {
                   }}
                 />
               </div>
-              <Button type="submit" disabled={!input.trim() || busy}>{busy ? "Bezig..." : "Verstuur"}</Button>
+              <Button type="submit" disabled={!input.trim()}>{busy ? "Bezig" : "Verstuur"}</Button>
             </form>
           </div>
         </div>
