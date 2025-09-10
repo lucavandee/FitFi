@@ -1,68 +1,72 @@
-import type { TribeChallenge, TribeChallengeSubmission, TribeRanking } from "./types";
+import type {
+  TribeChallenge,
+  TribeChallengeSubmission,
+  TribeRanking,
+  ID,
+} from "./types";
 
-export async function getTribeChallenges(_tribeId?: string): Promise<TribeChallenge[]> {
-  return [
-    { 
-      id: "c-1", 
-      title: "Monochrome Week", 
-      description: "Zwart-wit looks 7 dagen lang",
-      tribe_id: _tribeId || "t-1",
-      created_by: "u-1",
-      start_date: new Date().toISOString(),
-      end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      status: "active" as const,
-      submission_count: 0
-    },
-    {
-      id: "c-2",
-      title: "Sustainable Style",
-      description: "Outfits met alleen duurzame merken",
-      tribe_id: _tribeId || "t-1", 
-      created_by: "u-1",
-      start_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-      status: "upcoming" as const,
-      submission_count: 0
-    }
-  ];
+function isoPlusDays(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString();
 }
 
-export async function getChallengeSubmissions(_challengeId: string): Promise<TribeChallengeSubmission[]> {
-  return [
-    {
-      id: "s-1",
-      challenge_id: _challengeId,
-      user_id: "u-1",
-      image_url: "/images/fallbacks/default.jpg",
-      description: "Mijn monochrome look voor vandaag",
-      created_at: new Date().toISOString(),
-      likes_count: 3,
-      comments_count: 1
-    }
-  ];
+// Slanke, consistente fallbacks met één gegarandeerd "open" item
+const BASE_CHALLENGES: Omit<TribeChallenge, "id">[] = [
+  {
+    title: "Monochrome Week",
+    description: "Zwart-wit looks 7 dagen lang.",
+    starts_at: isoPlusDays(-2),
+    ends_at: isoPlusDays(5),
+    status: "open",
+  },
+  {
+    title: "Sneaker Sunday",
+    description: "Jouw beste sneaker-fit.",
+    starts_at: isoPlusDays(-10),
+    ends_at: isoPlusDays(-3),
+    status: "closed",
+  },
+];
+
+function withIds(tribeId?: ID): TribeChallenge[] {
+  return BASE_CHALLENGES.map((c, i) => ({
+    id: `c-${i + 1}`,
+    tribe_id: tribeId,
+    ...c,
+  }));
 }
 
-export async function getTribeRanking(_tribeId: string): Promise<TribeRanking[]> {
-  return [
-    {
-      id: "r-1",
-      tribe_id: _tribeId,
-      user_id: "u-1",
-      username: "StyleMaven",
-      points: 150,
-      rank: 1,
-      challenges_completed: 3,
-      submissions_count: 5
-    },
-    {
-      id: "r-2", 
-      tribe_id: _tribeId,
-      user_id: "u-2",
-      username: "MinimalChic",
-      points: 120,
-      rank: 2,
-      challenges_completed: 2,
-      submissions_count: 4
-    }
-  ];
+/** Voor bestaande imports in je codebase */
+export async function getTribeChallenges(tribeId?: ID): Promise<TribeChallenge[]> {
+  return withIds(tribeId);
 }
+
+/** Gevraagde named export door challengeDiscovery.ts */
+export async function fetchTribeChallenges(tribeId?: ID): Promise<TribeChallenge[]> {
+  return getTribeChallenges(tribeId);
+}
+
+export async function getChallengeSubmissions(_challengeId: ID): Promise<TribeChallengeSubmission[]> {
+  return [];
+}
+export async function fetchChallengeSubmissions(challengeId: ID): Promise<TribeChallengeSubmission[]> {
+  return getChallengeSubmissions(challengeId);
+}
+
+export async function getTribeRanking(_tribeId: ID): Promise<TribeRanking[]> {
+  return [];
+}
+export async function fetchTribeRanking(tribeId: ID): Promise<TribeRanking[]> {
+  return getTribeRanking(tribeId);
+}
+
+/** Optionele default voor brede compatibiliteit */
+export default {
+  getTribeChallenges,
+  fetchTribeChallenges,
+  getChallengeSubmissions,
+  fetchChallengeSubmissions,
+  getTribeRanking,
+  fetchTribeRanking,
+};
