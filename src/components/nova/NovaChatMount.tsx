@@ -4,7 +4,7 @@ import ChatLauncherHard from "@/components/nova/ChatLauncherHard"; // pure inlin
 import ChatPanel from "@/components/nova/ChatPanel";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
 
-const HARD = (import.meta.env.VITE_CHAT_LAUNCHER_MODE ?? "hard") === "hard";
+const HARD = (import.meta.env.VITE_CHAT_LAUNCHER_MODE ?? "normal") === "hard";
 
 export default function NovaChatMount() {
   return (
