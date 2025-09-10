@@ -9,6 +9,11 @@ if (import.meta.env.PROD) {
   console.info("✅ FitFi: NovaChat root mounted (prod)");
 }
 
+const BUILD_TAG = import.meta.env.VITE_BUILD_TAG ?? 'dev';
+if (import.meta.env.PROD) {
+  console.info(`✅ FitFi build=${BUILD_TAG} | NovaChat root mounted (prod)`);
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
