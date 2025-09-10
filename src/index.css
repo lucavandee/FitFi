@@ -8,6 +8,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "@/components/nova/ChatTheme.css";
 
 /* Kill-switch legacy / third-party chat docks */
 #nova-bottom-bar, .nova-dock, .nova-chatbar, [data-nova-dock], [data-widget="nova-chatbar"], .chatbar {
