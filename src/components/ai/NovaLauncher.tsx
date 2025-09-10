@@ -1,35 +1,33 @@
-import { lazy, Suspense } from "react";
-import ErrorBoundary from "@/components/ErrorBoundary";
-// LET OP: exact dit pad — jouw error toonde dit bestand al.
-import { NovaConnectionProvider } from "./NovaConnection";
+import React from "react";
+import { useNovaChat } from "@/components/nova/NovaChatProvider";
 
-// Lichtgewicht fallback; vervang evt. door je eigen Loading component
-function InlineSpinner() {
+export default function NovaLauncher() {
+  const { setOpen } = useNovaChat();
+
   return (
-    <div className="p-3 text-sm opacity-70" role="status" aria-live="polite">
-      Nova laden…
-    </div>
-  );
-}
-
-/**
- * Belangrijk:
- * - Relatieve lazy import (géén /src/… en géén .tsx extensie)
- * - Dit voorkomt "Failed to fetch dynamically imported module … .tsx"
- */
-const NovaChat = lazy(() => import("./NovaChat"));
-
-type Props = Record<string, unknown>;
-
-export default function NovaLauncher(props: Props) {
-  return (
-    <ErrorBoundary>
-      <NovaConnectionProvider>
-        <Suspense fallback={<InlineSpinner />}>
-          {/* @ts-expect-error: NovaChat kan extra props accepteren */}
-          <NovaChat {...props} />
-        </Suspense>
-      </NovaConnectionProvider>
-    </ErrorBoundary>
+    <button
+      aria-label="Open Nova chat"
+      onClick={() => setOpen(true)}
+      className="fixed bottom-6 right-6 z-[2147483647] rounded-full shadow-lg"
+      style={{
+        width: 56,
+        height: 56,
+        background:
+          "linear-gradient(180deg, var(--nv-primary,#2B6AF3), var(--nv-primary-2,#244cc0))",
+        color: "#fff",
+      }}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        fill="none"
+        strokeWidth="2"
+        width="22"
+        height="22"
+        aria-hidden
+      >
+        <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" />
+      </svg>
+    </button>
   );
 }
