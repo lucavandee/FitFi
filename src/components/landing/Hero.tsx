@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
-import { track } from '@/utils/analytics';
+import track from '@/utils/telemetry';
 import Button from '../ui/Button';
 import SmartImage from '@/components/media/SmartImage';
 import HeroTitle from '../marketing/HeroTitle';
@@ -12,7 +12,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
   const handleCTAClick = () => {
-    track('cta_click', { loc: 'home_hero', cta: 'start_style_report' });
+    if (typeof track === 'function') track('cta_click', { loc: 'home_hero', cta: 'start_style_report' });
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'cta_click', { location: 'home_hero' });
     }

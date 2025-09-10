@@ -5,7 +5,7 @@ import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/n
 import { mdNova } from '@/components/ai/markdown';
 import { useNovaConn } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
-import { track } from '@/utils/analytics';
+import track from '@/utils/telemetry';
 import toast from 'react-hot-toast';
 import OutfitCards from '@/components/ai/OutfitCards';
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
@@ -82,7 +82,7 @@ const NovaChat: React.FC = () => {
         handleSubmit(new Event('submit') as any);
         
         // Track stream completion
-        track('nova_stream_done', {
+        if (typeof track === 'function') track('nova_stream_done', {
           event_category: 'ai_interaction',
           event_label: 'stream_completed',
           user_id: user?.id,
@@ -132,7 +132,7 @@ const NovaChat: React.FC = () => {
       setIsInitialized(true);
       
       // Track Nova initialization
-      track('nova_chat_initialized', {
+      if (typeof track === 'function') track('nova_chat_initialized', {
         event_category: 'ai_interaction',
         event_label: 'greeting_sent',
         user_id: user?.id
@@ -202,10 +202,10 @@ const NovaChat: React.FC = () => {
 
     // Fire analytics + bubble state
     window.dispatchEvent(new CustomEvent('nova:message', { detail: { role: 'user' } }));
-    track('nova_message_send', { context: contextMode });
+    if (typeof track === 'function') track('nova_message_send', { context: contextMode });
 
     // Track user message
-    track('nova_user_message', {
+    if (typeof track === 'function') track('nova_user_message', {
       event_category: 'ai_interaction',
       event_label: 'message_sent',
       message_length: userMessage.content.length,
@@ -294,7 +294,7 @@ const NovaChat: React.FC = () => {
       }
       
       // Track Nova response
-      track('nova_response_generated', {
+      if (typeof track === 'function') track('nova_response_generated', {
         event_category: 'ai_interaction',
         event_label: 'streaming_complete',
         response_length: acc.length,
@@ -305,7 +305,7 @@ const NovaChat: React.FC = () => {
       setIsLoading(false);
       
       // Track stream completion
-      track('nova_stream_done', {
+      if (typeof track === 'function') track('nova_stream_done', {
         event_category: 'ai_interaction',
         event_label: 'stream_completed',
         user_id: user?.id,
@@ -340,7 +340,7 @@ const NovaChat: React.FC = () => {
       toast.success('Antwoord gekopieerd!', { duration: 2000 });
       
       // Track copy action
-      track('nova_message_copied', {
+      if (typeof track === 'function') track('nova_message_copied', {
         event_category: 'ai_interaction',
         event_label: 'copy_response',
         content_length: content.length,
