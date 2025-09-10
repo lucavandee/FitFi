@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
   build: {
     sourcemap: true,
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
