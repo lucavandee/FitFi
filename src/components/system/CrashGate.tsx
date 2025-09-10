@@ -1,40 +1,49 @@
 import React from "react";
-import ErrorBoundary from "@/components/ErrorBoundary";
 
-type Props = {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-};
-
-/**
- * Top-level crash gate voor de hele app
- * Voorkomt white screen of death
- */
-export default function CrashGate({ children, fallback }: Props) {
+function CrashOverlay({ error, onRetry }: { error: Error; onRetry: () => void }) {
   return (
-    <ErrorBoundary
-      fallback={
-        fallback || (
-          <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="text-center p-8">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Er ging iets mis
-              </h1>
-              <p className="text-gray-600 mb-6">
-                We hebben een onverwachte fout gedetecteerd. Probeer de pagina te verversen.
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Pagina verversen
-              </button>
-            </div>
-          </div>
-        )
-      }
-    >
-      {children}
-    </ErrorBoundary>
+    <div className="fixed inset-0 z-[2147483647] bg-[#0b1120] text-[#E6E7EA] p-6 overflow-auto">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-3 text-sm opacity-80">Nova • Crash Report</div>
+        <h2 className="text-2xl font-semibold mb-4">Er ging iets mis</h2>
+        <pre className="bg-[#0f172a] border border-[#1f2937] rounded-lg p-4 whitespace-pre-wrap text-sm overflow-auto">
+          {String(error?.stack || error?.message || error)}
+        </pre>
+        <div className="mt-4 flex gap-2">
+          <button
+            className="px-3 h-9 rounded-md border border-[#243040] hover:bg-[#11182a]"
+            onClick={onRetry}
+          >
+            Opnieuw proberen
+          </button>
+        </div>
+      </div>
+    </div>
   );
+}
+
+type CrashGateState = { error: Error | null };
+
+export default class CrashGate extends React.Component<React.PropsWithChildren, CrashGateState> {
+  state: CrashGateState = { error: null };
+
+  static getDerivedStateFromError(error: Error): CrashGateState {
+    return { error };
+  }
+
+  componentDidCatch(error: Error) {
+    // nooit throwen; eventueel: console.error(error);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <CrashOverlay
+          error={this.state.error}
+          onRetry={() => this.setState({ error: null })}
+        />
+      );
+    }
+    return this.props.children;
+  }
 }
