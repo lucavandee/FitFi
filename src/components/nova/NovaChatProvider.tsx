@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { track } from "@/utils/analytics";
+import { track } from "@/utils/telemetry";
 import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
 import { mockNovaStream } from "@/services/nova/novaMock";
 
@@ -18,12 +18,10 @@ type Ctx = {
 };
 
 const NovaChatCtx = createContext<Ctx | null>(null);
-
-const USE_DEV_MOCK = import.meta.env.DEV && (import.meta.env.VITE_DEV_MOCK_NOVA ?? "1") === "1";
+const USE_DEV_MOCK = import.meta.env.DEV && (import.meta.env.VITE_DEV_MOCK_NOVA ?? "0") === "1";
 const STORAGE_KEY = "fitfi:nova:chat";
 const WELCOME_SEEDED_KEY = "fitfi:nova:welcomeSeeded";
-
-function uid() { return Math.random().toString(36).slice(2); }
+const uid = () => Math.random().toString(36).slice(2);
 
 function NovaChatProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -32,8 +30,9 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [unread, setUnread] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
+  const backendProblemRef = useRef(false);
 
-  // restore session
+  // restore
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -44,44 +43,34 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {}
   }, []);
-
   // persist
   useEffect(() => {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, unread }));
-    } catch {}
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, unread })); } catch {}
   }, [messages, unread]);
 
-  // unread logic
-  useEffect(() => {
-    if (open) setUnread(0);
-  }, [open]);
+  useEffect(() => { if (open) setUnread(0); }, [open]);
 
-  // ESC to close
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  function toggleMinimize() {
-    setMinimized((m) => !m);
-    track("cta:secondary", { where: "chat-minimize", to: !minimized });
+  function toggleMinimize() { setMinimized((m) => !m); track("cta:secondary", { where: "chat-minimize" }); }
+
+  function pushAssistant(text: string) {
+    const assistant: ChatMessage = { id: uid(), role: "assistant", text, ts: Date.now() };
+    setMessages((m) => [...m, assistant]);
+    if (!open) setUnread((u) => u + 1);
   }
 
   async function send(text: string) {
     if (!text.trim()) return;
-    track("nova:message-attempt", { messageLength: text.length });
+    backendProblemRef.current = false;
     const userMsg: ChatMessage = { id: uid(), role: "user", text, ts: Date.now() };
     setMessages((m) => [...m, userMsg]);
     setBusy(true);
     track("nova:open", { source: "chat" });
-
-    const pushAssistant = (t: string) => {
-      const assistant: ChatMessage = { id: uid(), role: "assistant", text: t, ts: Date.now() };
-      setMessages((m) => [...m, assistant]);
-      if (!open) setUnread((u) => u + 1);
-    };
 
     try {
       if (USE_DEV_MOCK) {
@@ -100,43 +89,36 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
           { prompt: text, context: { channel: "chat" } },
           {
             onPatch: (e: NovaEvent) => {
-              if (e.type === "FITFI_JSON" && (e.data?.explanation || e.data?.text)) {
-                pushAssistant(e.data.explanation || e.data.text);
-                track("nova:patch", { source: "chat" });
+              if (e.type === "FITFI_JSON") {
+                const t = e.data?.explanation || e.data?.text;
+                if (t) {
+                  pushAssistant(t);
+                  track("nova:patch", { source: "chat" });
+                }
               }
             },
             onDone: () => track("nova:done", { source: "chat" }),
-            onError: (e) => {
-              pushAssistant("Er ging iets mis. Probeer het nogmaals of specificeer je vraag.");
-              track("nova:error", { source: "chat", message: e?.error?.message });
-            },
+            onError: () => { backendProblemRef.current = true; },
             onStart: () => {}
           },
           { signal: abortRef.current.signal }
         );
       }
-      track("nova:message-success", { responseLength: messages[messages.length - 1]?.text?.length || 0 });
-    } catch (error) {
-      track("nova:message-error", { error: error instanceof Error ? error.message : "Unknown error" });
-      const errorMsg: ChatMessage = { 
-        id: uid(), 
-        role: "assistant", 
-        text: "Sorry, ik kan je vraag nu niet beantwoorden. Probeer het later opnieuw of kies een van de suggesties hieronder.", 
-        ts: Date.now() 
-      };
-      setMessages((m) => [...m, errorMsg]);
     } finally {
       setBusy(false);
+      // Eén nette fallback i.p.v. meerdere error-bubbels
+      if (backendProblemRef.current) {
+        pushAssistant("Onze live-stroom is even onbereikbaar. Probeer het opnieuw of kies een optie hieronder — wij leggen kort uit waarom het past.");
+        track("nova:error", { source: "chat" });
+      }
     }
   }
 
-  // seed welcome once per session
   function seedWelcomeIfNeeded() {
     try {
       if (sessionStorage.getItem(WELCOME_SEEDED_KEY) === "1") return;
       const hello: ChatMessage = {
-        id: uid(),
-        role: "assistant",
+        id: uid(), role: "assistant",
         text: "Hoi! Ik ben Nova. Wil je snelle outfit-inspiratie of een korte kleurcheck? 👗✨",
         ts: Date.now()
       };
@@ -146,7 +128,7 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }
 
-  const value = useMemo<Ctx>(() => ({
+  const value = useMemo(() => ({
     open, minimized, unread, setOpen, toggleMinimize, messages, send, busy, seedWelcomeIfNeeded
   }), [open, minimized, unread, messages, busy]);
 
