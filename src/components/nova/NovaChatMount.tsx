@@ -46,11 +46,21 @@ function useKillLegacyDocks() {
 
     const newState = !isOpen;
     setIsOpen(newState);
+import { track } from '@/utils/analytics';
     track(newState ? 'nova:open' : 'nova:close');
 export default function NovaChatMount() {
   useKillLegacyDocks(); // <- verwijdert de horizontale balk onderaan
 
   useEffect(() => {
+    // Force mount verificatie
+    if (import.meta.env.PROD) {
+      console.info('🚀 NovaChatMount: Force-mounted at application root');
+      track('nova:force-mount', { 
+        build: import.meta.env.VITE_BUILD_TAG,
+        style: import.meta.env.VITE_CHAT_STYLE 
+      });
+    }
+
     // Mount verification logging
     if (import.meta.env.PROD) {
       console.info(`🚀 Nova mount verified | build=${BUILD_TAG} | style=${STYLE}`);
