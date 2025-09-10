@@ -106,9 +106,11 @@ function NovaChatProvider({ children }: { children: React.ReactNode }) {
       }
     } finally {
       setBusy(false);
-      // Eén nette fallback i.p.v. meerdere error-bubbels
       if (backendProblemRef.current) {
-        pushAssistant("Onze live-stroom is even onbereikbaar. Probeer het opnieuw of kies een optie hieronder — wij leggen kort uit waarom het past.");
+        pushAssistant(
+          "⚠️ Onze live-stream is tijdelijk niet bereikbaar. " +
+          "Hier is alvast een tip: combineer neutrale basics met één statement piece. 👕✨"
+        );
         track("nova:error", { source: "chat" });
       }
     }
