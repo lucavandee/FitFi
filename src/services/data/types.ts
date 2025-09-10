@@ -1,4 +1,3 @@
-// src/services/data/types.ts
 export type ID = string;
 export type DataSource = 'supabase' | 'local' | 'fallback';
 
@@ -97,6 +96,7 @@ export type TribeChallenge = {
   rules?: string[];
   starts_at?: string;
   ends_at?: string;
+  status?: "draft" | "open" | "closed" | "archived";
 };
 
 export type TribeChallengeSubmission = {
