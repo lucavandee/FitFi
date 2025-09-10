@@ -14,6 +14,12 @@ module.exports = {
     "fixed","right-6","pointer-events-none","rounded-full","h-14","w-14","p-0",
     "shadow-lg","pointer-events-auto","z-[10000]","z-[2147483647]"
   ],
+  safelist: [
+    "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
+    "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
+    "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2",
+    "flex","items-end","justify-end"
+  ],
   theme: {
     container: {
       center: true,
