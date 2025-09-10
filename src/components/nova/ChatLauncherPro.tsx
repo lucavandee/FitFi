@@ -7,12 +7,26 @@ export default function ChatLauncherPro() {
 
   if (open) return null; // <- niet tonen tijdens open panel
 
-  return (
+export default function ChatLauncherPro({ isOpen, onToggle, isPanelVisible = false }: ChatLauncherProProps) {
+  const handleToggle = () => {
+    track('nova:launcher-toggle', { 
+      action: isOpen ? 'close' : 'open',
+      panel_visible: isPanelVisible 
+    });
+    onToggle();
+  };
+
+  // Verberg launcher als panel zichtbaar is (voorkom overlap)
+  if (isPanelVisible) {
+    return null;
+  }
+
     <Portal id="fitfi-portal-launcher-pro" z={2147483647}>
       <div
         data-testid="nova-chat-launcher"
-        style={{
+        onClick={handleToggle}
           position: "fixed",
+        data-nova-launcher="pro"
           right: "24px",
           bottom: "calc(24px + env(safe-area-inset-bottom))",
           zIndex: 2147483647,
@@ -55,8 +69,10 @@ export default function ChatLauncherPro() {
               background: "var(--nv-accent, #00D2B8)", boxShadow: "0 0 0 2px var(--nv-surface, #15192C)"
             }}
           />
+import { track } from '@/utils/analytics';
         ) : null}
       </div>
     </Portal>
   );
+  isPanelVisible?: boolean;
 }

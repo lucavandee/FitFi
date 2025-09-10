@@ -66,11 +66,57 @@ export default function NovaChatMount() {
       console.info(`🚀 Nova mount verified | build=${BUILD_TAG} | style=${STYLE}`);
     }
     
+    // Legacy kill switch - MutationObserver voor blijvende cleanup
+    const killLegacyElements = () => {
+      const selectors = [
+        '#nova-bottom-bar',
+        '.nova-dock', 
+        '.nova-chatbar',
+        '[data-nova-dock]',
+        '[data-widget="nova-chatbar"]',
+        '.chatbar',
+        '.nova-legacy-bar',
+        '.nova-old-launcher'
+      ];
+      
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          if (el instanceof HTMLElement) {
+            el.style.display = 'none';
+            el.style.visibility = 'hidden';
+            el.style.pointerEvents = 'none';
+            el.style.opacity = '0';
+            el.style.zIndex = '-9999';
+          }
+        });
+      });
+    };
+
+    // Initiële cleanup
+    killLegacyElements();
+
+    // MutationObserver voor dynamische cleanup
+    const observer = new MutationObserver(() => {
+      killLegacyElements();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'id', 'data-nova-dock', 'data-widget']
+    });
+
     track('nova:mount', { 
       style: STYLE,
       timestamp: Date.now(),
       build: BUILD_TAG
     });
+
+    return () => {
+      observer.disconnect();
+    };
   }, [STYLE]);
 
   if (STYLE === "pro") {

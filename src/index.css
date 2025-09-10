@@ -15,6 +15,22 @@
   display: none !important; visibility: hidden !important; pointer-events: none !important;
 }
 
+/* Nova Legacy Kill Switch - Blijvend actief in productie */
+#nova-bottom-bar, 
+.nova-dock, 
+.nova-chatbar, 
+[data-nova-dock], 
+[data-widget="nova-chatbar"], 
+.chatbar,
+.nova-legacy-bar,
+.nova-old-launcher {
+  display: none !important; 
+  visibility: hidden !important; 
+  pointer-events: none !important;
+  opacity: 0 !important;
+  z-index: -9999 !important;
+}
+
 @import './styles/tokens.css';
 
 :root { color-scheme: light dark; }
