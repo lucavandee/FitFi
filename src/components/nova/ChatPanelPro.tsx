@@ -1,176 +1,145 @@
-import React, { useEffect, useRef, useState } from "react";
-import Portal from "@/components/system/Portal";
-import { useNovaChat } from "./NovaChatProvider";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Send } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useNovaChat } from "@/components/nova/NovaChatProvider";
+import { track } from "@/utils/telemetry";
+import { cn } from "@/utils/cn";
 
-const SUGGESTIONS = [
-  "Tip een outfit voor vrijdagavond",
-  "Welke kleuren flatteren mij?",
-  "Maak deze look compleet",
-  "Casual maar netjes voor werk"
-];
+type MsgRole = "user" | "assistant" | "system";
+type Msg = { id: string; role: MsgRole; content: string; ts: string };
 
-function TypingDots() {
-  return (
-    <span aria-label="Nova typt…" role="status" style={{ display:"inline-flex", gap:6 }}>
-      <span style={{ width:6, height:6, borderRadius:6, background:"var(--nv-muted)", animation:"nvTyping 1.1s infinite" }} />
-      <span style={{ width:6, height:6, borderRadius:6, background:"var(--nv-muted)", animation:"nvTyping 1.1s infinite .12s" }} />
-      <span style={{ width:6, height:6, borderRadius:6, background:"var(--nv-muted)", animation:"nvTyping 1.1s infinite .24s" }} />
-    </span>
-  );
+function nowISO() {
+  return new Date().toISOString();
 }
 
 export default function ChatPanelPro() {
-  const { open, minimized, toggleMinimize, setOpen, messages, send, busy } = useNovaChat();
-  const [input, setInput] = useState("");
-  const [hadBackendError, setHadBackendError] = useState(false);
-  const listRef = useRef<HTMLDivElement | null>(null);
+  // Provider is nu always-safe (fallback in Provider), maar we guarden tóch
+  const nova = useNovaChat();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
+  // Lokale buffer zodat UI altijd werkt, ook als de provider in fallback staat
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (open && listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [open, messages.length, busy]);
+  const status = nova?.status ?? "disabled";
+  const isOpen = nova?.isOpen ?? true; // paneel mag renderen; je kunt hem visueel verbergen in de caller
+  const prefill = nova?.prefill ?? "";
 
-  useEffect(() => {
-    // heuristiek: als laatste assistant-bericht onze error-copy bevat, markeer we backendError
-    const last = [...messages].reverse().find(m => m.role === "assistant");
-    if (last?.text?.toLowerCase?.().includes("er ging iets mis")) setHadBackendError(true);
-  }, [messages]);
+  // Veilig aantal berichten (nooit undefined)
+  const count = (messages ?? []).length;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const canType = useMemo(() => status !== "streaming" && status !== "opening", [status]);
+
+  const send = useCallback(async (text: string) => {
+    const trimmed = String(text || "").trim();
+    if (!trimmed) return;
+
+    setError(null);
+    setPending(true);
+
+    const userMsg: Msg = { id: crypto.randomUUID(), role: "user", content: trimmed, ts: nowISO() };
+    setMessages(prev => [...prev, userMsg]);
+
+    try {
+      // Probeer echte Nova-call; in fallback is dit een no-op
+      await nova?.start(trimmed, { source: "ChatPanelPro" });
+
+      // Simuleer minimaal assistent-antwoord als provider in fallback staat
+      if (nova?.__fallback) {
+        const assistant: Msg = {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: "We analyseren jouw stijl en bouwen een cleane, smart-casual outfit die past bij je voorkeuren.",
+          ts: nowISO(),
+        };
+        setMessages(prev => [...prev, assistant]);
+      }
+
+      track("nova:prompt", { source: "ChatPanelPro", len: trimmed.length });
+    } catch (e: any) {
+      const msg = e?.message || "Kon je bericht niet verzenden.";
+      setError(String(msg));
+      track("nova:error", { where: "ChatPanelPro", message: String(msg) });
+    } finally {
+      setPending(false);
+      inputRef.current && (inputRef.current.value = "");
+    }
+  }, [nova]);
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    const text = input.trim();
-    if (!text) return;
-    setInput("");
-    setHadBackendError(false);
-    send(text);
-  };
-
-  if (!open) return null;
-
-  if (minimized) {
-    return (
-      <Portal id="fitfi-portal-chat">
-        <div className="z-[2147483647]" style={{ position:"fixed", right:24, bottom:"calc(24px + env(safe-area-inset-bottom))" }}>
-          <div style={{
-            background:"var(--nv-bg)", backdropFilter:`blur(var(--nv-blur))`,
-            border:`1px solid var(--nv-border)`, boxShadow:"var(--nv-shadow)",
-            borderRadius:14, padding:12
-          }}>
-            <div style={{ color:"var(--nv-text)", fontSize:14, marginBottom:8 }}>Praat met Nova</div>
-            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-              {SUGGESTIONS.slice(0,2).map((s) => (
-                <Button key={s} variant="outline" size="sm" onClick={() => send(s)}>{s}</Button>
-              ))}
-              <Button size="sm" onClick={toggleMinimize}>Open</Button>
-            </div>
-          </div>
-        </div>
-      </Portal>
-    );
-  }
+    const value = inputRef.current?.value ?? "";
+    void send(value);
+  }, [send]);
 
   return (
-    <Portal id="fitfi-portal-chat">
-      <div role="dialog" aria-modal="true" aria-label="Nova chat"
-           className="z-[2147483647]" style={{ position:"fixed", inset:0, display:"flex", alignItems:"flex-end", justifyContent:"flex-end", padding:24 }}>
-        <div aria-hidden onClick={() => setOpen(false)} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.42)" }} />
-        <div style={{
-          position:"relative",
-          width:"100%", maxWidth:420,
-          background:"var(--nv-bg)", color:"var(--nv-text)",
-          backdropFilter:`blur(var(--nv-blur))`,
-          border:`1px solid var(--nv-border)`,
-          borderRadius:18, boxShadow:"var(--nv-shadow)", overflow:"hidden"
-        }}>
-          {/* Header */}
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
-                        padding:"14px 16px", borderBottom:`1px solid var(--nv-border)` }}>
-            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-              <div style={{
-                width:28, height:28, borderRadius:9999,
-                background:"linear-gradient(180deg, var(--nv-primary), var(--nv-primary-2))",
-                boxShadow:"var(--nv-ring)"
-              }} />
-              <div>
-                <div style={{ fontWeight:600, lineHeight:1 }}>Nova</div>
-                <div style={{ fontSize:12, color:"var(--nv-muted)", lineHeight:1 }}>Jouw stylist</div>
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:8 }}>
-              <Button variant="secondary" size="sm" onClick={toggleMinimize} aria-label="Minimaliseer chat">Minimaliseer</Button>
-              <Button variant="ghost" size="sm" onClick={() => setOpen(false)} aria-label="Sluit chat">Sluiten</Button>
-            </div>
-          </div>
-
-          {/* Thread */}
-          <div ref={listRef} style={{ padding:"14px 16px", maxHeight:"60vh", overflowY:"auto" }}>
-            {messages.length === 0 ? (
-              <div style={{ fontSize:14, color:"var(--nv-muted)" }}>
-                Stel je vraag of kies een optie hieronder — wij geven direct advies met een korte uitleg waarom het past.
-              </div>
-            ) : (
-              messages.map((m) => (
-                <div key={m.id} style={{ display:"flex", justifyContent: m.role==="user" ? "flex-end" : "flex-start", marginBottom:10 }}>
-                  <div style={{
-                    maxWidth:"85%",
-                    borderRadius:16,
-                    padding:"8px 12px",
-                    fontSize:14,
-                    background: m.role==="user" ? "var(--nv-primary)" : "#1b2138",
-                    color: m.role==="user" ? "#fff" : "var(--nv-text)"
-                  }}>
-                    {m.text}
-                  </div>
-                </div>
-              ))
-            )}
-            {busy ? <div style={{ color:"var(--nv-muted)", fontSize:14 }}><TypingDots /></div> : null}
-            {hadBackendError ? (
-              <div style={{ marginTop:10, fontSize:13, color:"var(--nv-muted)" }}>
-                Onze live-stroom is even onbereikbaar. Probeer één van de opties hieronder of stuur je vraag nogmaals.
-              </div>
-            ) : null}
-          </div>
-
-          {/* Composer */}
-          <div style={{ padding:"10px 16px 14px", borderTop:`1px solid var(--nv-border)` }}>
-            <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:10 }}>
-              {SUGGESTIONS.map((s) => (
-                <Button key={s} variant="outline" size="sm" onClick={() => send(s)}>{s}</Button>
-              ))}
-            </div>
-            <form onSubmit={onSubmit} style={{ display:"flex", gap:8 }}>
-              <div style={{
-                position:"relative", flex:1, display:"flex", alignItems:"center",
-                background:"#101525", border:`1px solid var(--nv-border)`,
-                borderRadius:10, height:44, padding:"0 12px"
-              }}>
-                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" width="18" height="18" aria-hidden
-                     style={{ opacity:.7, marginRight:8 }}>
-                  <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
-                </svg>
-                <input
-                  aria-label="Typ je bericht aan Nova"
-                  placeholder="Stel je vraag, wij helpen je met stijl"
-                  value={input}
-                  onChange={(e)=>setInput(e.target.value)}
-                  style={{
-                    flex:1, height:"100%", background:"transparent", border:"0", outline:"none",
-                    color:"var(--nv-text)", fontSize:14
-                  }}
-                />
-              </div>
-              <Button type="submit" disabled={!input.trim()}>{busy ? "Bezig" : "Verstuur"}</Button>
-            </form>
-          </div>
+    <div className={cn(
+      "flex h-full flex-col rounded-2xl bg-white shadow-sm ring-1 ring-black/5",
+      !isOpen && "opacity-90"
+    )}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-black/5">
+        <div className="flex items-center gap-2">
+          <span className="inline-block h-2 w-2 rounded-full bg-[#2B6AF3]" />
+          <h3 className="text-sm font-medium text-[#0D1B2A]">FitFi Nova</h3>
+        </div>
+        <div className="text-xs text-gray-500">
+          {status === "streaming" ? "Bezig met analyseren…" : status === "opening" ? "Opstarten…" : "Klaar"}
         </div>
       </div>
-    </Portal>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-auto px-4 py-3">
+        {count === 0 ? (
+          <div className="text-sm text-gray-500">
+            Stel je stijlvraag of plak je outfit-briefing. Wij geven direct een heldere uitleg en shoppable look.
+          </div>
+        ) : (
+          <ul className="space-y-3">
+            {(messages ?? []).map(m => (
+              <li key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
+                <div
+                  className={cn(
+                    "max-w-[80%] rounded-2xl px-3 py-2 text-sm",
+                    m.role === "user" ? "bg-[#2B6AF3] text-white" : "bg-gray-100 text-[#0D1B2A]"
+                  )}
+                >
+                  {m.content}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Error */}
+      {error ? (
+        <div className="px-4 pb-2 text-xs text-red-600">{error}</div>
+      ) : null}
+
+      {/* Composer */}
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 border-t border-black/5">
+        <input
+          ref={inputRef}
+          defaultValue={prefill || ""}
+          placeholder="Beschrijf je stijl of gelegenheid…"
+          className="flex-1 h-11 rounded-2xl border border-black/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[#2B6AF3]/30"
+          disabled={!canType || pending}
+          aria-label="Nova chat invoer"
+        />
+        <Button
+          type="submit"
+          size="md"
+          variant="primary"
+          icon={<Send size={16} />}
+          iconPosition="right"
+          loading={pending}
+          disabled={!canType || pending}
+        >
+          Verstuur
+        </Button>
+      </form>
+    </div>
   );
 }
