@@ -1,5 +1,5 @@
 // src/components/nova/ChatPanelPro.tsx
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Send, Sparkles, Wand2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useNovaChat } from "@/components/nova/NovaChatProvider";
@@ -29,15 +29,28 @@ export default function ChatPanelPro() {
   const [error, setError] = useState<string | null>(null);
 
   const canType = useMemo(() => nova.status !== "streaming", [nova.status]);
+  const count = (messages ?? []).length;
+
+  // Abonneer op provider patches (assistant tekst)
+  useEffect(() => {
+    const unsub = nova.events.subscribe((m) => {
+      if (m.role !== "assistant" || !m.content) return;
+      setMessages((prev) => {
+        // Als laatste bericht assistant is, update i.p.v. dupliceren (streaming patches)
+        const last = prev[prev.length - 1];
+        if (last && last.role === "assistant") {
+          const next = [...prev];
+          next[next.length - 1] = { ...last, content: m.content };
+          return next;
+        }
+        return [...prev, { id: crypto.randomUUID(), role: "assistant", content: m.content, ts: nowISO() }];
+      });
+    });
+    return unsub;
+  }, [nova.events]);
 
   const addAssistant = useCallback((content: string) => {
-    const assistant: Msg = {
-      id: crypto.randomUUID(),
-      role: "assistant",
-      content,
-      ts: nowISO(),
-    };
-    setMessages((p) => [...p, assistant]);
+    setMessages((p) => [...p, { id: crypto.randomUUID(), role: "assistant", content, ts: nowISO() }]);
   }, []);
 
   const send = useCallback(
@@ -48,19 +61,15 @@ export default function ChatPanelPro() {
       setError(null);
       setPending(true);
 
-      const userMsg: Msg = {
-        id: crypto.randomUUID(),
-        role: "user",
-        content: trimmed,
-        ts: nowISO(),
-      };
+      const userMsg: Msg = { id: crypto.randomUUID(), role: "user", content: trimmed, ts: nowISO() };
       setMessages((prev) => [...prev, userMsg]);
 
       try {
         track("nova:prompt", { len: trimmed.length, source: "ChatPanelPro" });
         await nova.start(trimmed, { ui: "pro-panel" });
 
-        // Fallback demo-antwoord als de echte stream niet actief is
+        // In fallback voegt provider al een assistant toe,
+        // maar voor de zekerheid geven we 1 hard antwoord.
         if (nova.__fallback) {
           addAssistant(
             "We kozen voor een cleane, smart-casual look: nette jeans, frisse witte sneaker en een licht overshirt. Minimalistisch, comfortabel en direct shoppable."
@@ -95,8 +104,6 @@ export default function ChatPanelPro() {
     },
     [send]
   );
-
-  const count = (messages ?? []).length;
 
   return (
     <div className="flex h-full flex-col">
