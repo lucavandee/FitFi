@@ -74,23 +74,16 @@ export default function ChatPanelPro() {
   }, [send]);
 
   return (
-    <div className={cn(
-      "flex h-full flex-col rounded-2xl bg-white shadow-sm ring-1 ring-black/5",
-      !isOpen && "opacity-90"
-    )}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-black/5">
-        <div className="flex items-center gap-2">
-          <span className="inline-block h-2 w-2 rounded-full bg-[#2B6AF3]" />
-          <h3 className="text-sm font-medium text-[#0D1B2A]">FitFi Nova</h3>
-        </div>
+    <div className="flex h-full flex-col">
+      {/* Status indicator */}
+      <div className="flex items-center justify-center pb-2">
         <div className="text-xs text-gray-500">
           {status === "streaming" ? "Bezig met analyseren…" : status === "opening" ? "Opstarten…" : "Klaar"}
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-auto px-4 py-3">
+      <div className="flex-1 overflow-auto py-2">
         {count === 0 ? (
           <div className="text-sm text-gray-500">
             Stel je stijlvraag of plak je outfit-briefing. Wij geven direct een heldere uitleg en shoppable look.
@@ -115,22 +108,22 @@ export default function ChatPanelPro() {
 
       {/* Error */}
       {error ? (
-        <div className="px-4 pb-2 text-xs text-red-600">{error}</div>
+        <div className="pb-2 text-xs text-red-600">{error}</div>
       ) : null}
 
       {/* Composer */}
-      <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 border-t border-black/5">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-3 border-t border-black/5">
         <input
           ref={inputRef}
           defaultValue={prefill || ""}
           placeholder="Beschrijf je stijl of gelegenheid…"
-          className="flex-1 h-11 rounded-2xl border border-black/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[#2B6AF3]/30"
+          className="flex-1 h-10 rounded-xl border border-black/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[#2B6AF3]/30"
           disabled={!canType || pending}
           aria-label="Nova chat invoer"
         />
         <Button
           type="submit"
-          size="md"
+          size="sm"
           variant="primary"
           icon={<Send size={16} />}
           iconPosition="right"

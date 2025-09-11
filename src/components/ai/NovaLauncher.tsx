@@ -17,17 +17,7 @@ export default function NovaLauncher() {
         color: "#fff",
       }}
     >
-      <svg
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        fill="none"
-        strokeWidth="2"
-        width="22"
-        height="22"
-        aria-hidden
-      >
-        <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" />
-      </svg>
-    </button>
-  );
+  // Deze component is vervangen door NovaChatMount
+  // Render niets om layout-shift te voorkomen
+  return null;
 }
