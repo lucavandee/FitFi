@@ -1,7 +1,7 @@
 // src/components/nova/NovaChatProvider.tsx
 import React, { createContext, useContext, useMemo, useRef, useState, useCallback } from "react";
 import { streamChat, type ChatMessage, type NovaMode, type NovaStreamEvent } from "@/services/ai/novaService";
-import type { RailProduct } from "@/services/shop/types";
+import type { Product } from "@/types/product";
 
 export type NovaStatus = "idle" | "opening" | "streaming" | "error" | "closed" | "disabled";
 export type NovaMessage = { role: "assistant" | "system"; content: string };
@@ -16,25 +16,25 @@ export type NovaChatCtx = {
   toggle: () => void;
   setStatus: (s: NovaStatus) => void;
   setPrefill: (t?: string) => void;
-  send: (prompt: string, opts?: { mode?: NovaMode; context?: Record<string, unknown> }) => Promise<void>;
 
+  send: (prompt: string, opts?: { mode?: NovaMode; context?: Record<string, unknown> }) => Promise<void>;
   launch: () => void;
   hide: () => void;
   start: (prompt: string, opts?: { mode?: NovaMode; context?: Record<string, unknown> }) => Promise<void>;
   prompt: (prompt: string, opts?: { mode?: NovaMode; context?: Record<string, unknown> }) => Promise<void>;
 
   events: { subscribe: (fn: (m: NovaMessage) => void) => () => void };
-  products: { subscribe: (fn: (items: RailProduct[]) => void) => () => void; get: () => RailProduct[] };
+  products: { subscribe: (fn: (items: Product[]) => void) => () => void };
 
   __fallback?: boolean;
 };
 
 const NovaChatContext = createContext<NovaChatCtx | null>(null);
-const msgListeners: Set<(m: NovaMessage) => void> = new Set();
-const prodListeners: Set<(p: RailProduct[]) => void> = new Set();
+const textListeners: Set<(m: NovaMessage) => void> = new Set();
+const productListeners: Set<(items: Product[]) => void> = new Set();
 
-function emitMsg(m: NovaMessage) { for (const fn of Array.from(msgListeners)) try { fn(m); } catch {} }
-function emitProds(p: RailProduct[]) { for (const fn of Array.from(prodListeners)) try { fn(p); } catch {} }
+function emitText(m: NovaMessage) { for (const fn of Array.from(textListeners)) try { fn(m); } catch {} }
+function emitProducts(items: Product[]) { for (const fn of Array.from(productListeners)) try { fn(items); } catch {} }
 
 const FALLBACK: NovaChatCtx = {
   isOpen: false, status: "disabled",
@@ -43,8 +43,8 @@ const FALLBACK: NovaChatCtx = {
   async send() {}, launch() { this.open(); }, hide() { this.close(); },
   start(prompt, opts) { return this.send(prompt, opts); },
   prompt(prompt, opts) { return this.send(prompt, opts); },
-  events: { subscribe: (fn) => { msgListeners.add(fn); return () => msgListeners.delete(fn); } },
-  products: { subscribe: (fn) => { prodListeners.add(fn); return () => prodListeners.delete(fn); }, get: () => [] },
+  events: { subscribe: (fn) => { textListeners.add(fn); return () => textListeners.delete(fn); } },
+  products: { subscribe: (fn) => { productListeners.add(fn); return () => productListeners.delete(fn); } },
   __fallback: true,
 };
 
@@ -58,7 +58,6 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
   const [status, setStatus] = useState<NovaStatus>("idle");
   const [prefill, setPrefill] = useState<string | undefined>(undefined);
   const [isFallback, setIsFallback] = useState(false);
-  const lastProductsRef = useRef<RailProduct[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 
   const open = useCallback(() => setOpen(true), []);
@@ -71,11 +70,12 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
 
     setStatus("opening");
     setIsFallback(false);
+
     abortRef.current?.abort();
     abortRef.current = new AbortController();
 
     const messages: ChatMessage[] = [
-      { role: "system", content: "Nova van FitFi: kort, helder, menselijk. Encodeer {explanation, products[]} tussen markers." },
+      { role: "system", content: "Nova van FitFi: kort, helder, menselijk. Geef een beknopte uitleg én, indien geschikt, een JSON-blok met products[]." },
       { role: "user", content: text }
     ];
 
@@ -89,22 +89,25 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
         signal: abortRef.current.signal,
         onEvent: (evt: NovaStreamEvent) => {
           if (evt.type === "json" && evt.data) {
-            const exp = typeof evt.data.explanation === "string" ? evt.data.explanation : "";
-            const prods: RailProduct[] = Array.isArray(evt.data.products) ? evt.data.products : [];
-            if (exp) { acc = exp; emitMsg({ role: "assistant", content: acc }); }
-            if (prods.length) { lastProductsRef.current = prods; emitProds(prods); }
+            if (typeof evt.data.explanation === "string") {
+              acc = evt.data.explanation;
+              emitText({ role: "assistant", content: acc });
+            }
+            if (Array.isArray(evt.data.products) && evt.data.products.length) {
+              emitProducts(evt.data.products as Product[]);
+            }
           }
         }
       })) {
         acc += delta;
-        emitMsg({ role: "assistant", content: acc });
+        emitText({ role: "assistant", content: acc });
       }
 
       setStatus("idle");
     } catch {
       setStatus("error");
       setIsFallback(true);
-      emitMsg({
+      emitText({
         role: "assistant",
         content: "Kleine hapering in de stream. Toch een voorstel: smart-casual met nette jeans, witte sneaker en licht overshirt — rustig, modern en shoppable."
       });
@@ -117,11 +120,8 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
     isOpen, status, prefill,
     open, close, toggle, setStatus, setPrefill,
     send, launch: open, hide: close, start: send, prompt: send,
-    events: { subscribe: (fn) => { msgListeners.add(fn); return () => msgListeners.delete(fn); } },
-    products: {
-      subscribe: (fn) => { prodListeners.add(fn); return () => prodListeners.delete(fn); },
-      get: () => lastProductsRef.current
-    },
+    events: { subscribe: (fn) => { textListeners.add(fn); return () => textListeners.delete(fn); } },
+    products: { subscribe: (fn) => { productListeners.add(fn); return () => productListeners.delete(fn); } },
     __fallback: isFallback,
   }), [isOpen, status, prefill, open, close, toggle, send, isFallback]);
 
