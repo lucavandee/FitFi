@@ -21,3 +21,5 @@ export default function NovaLauncher() {
   // Render niets om layout-shift te voorkomen
   return null;
 }
+  )
+}
