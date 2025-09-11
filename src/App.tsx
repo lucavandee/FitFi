@@ -9,6 +9,7 @@ import { GamificationProvider } from '@/context/GamificationContext';
 import { OnboardingProvider } from '@/context/OnboardingContext';
 import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import NovaChatMount from '@/components/nova/NovaChatMount';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -104,7 +105,7 @@ const App: React.FC = () => {
                   <Router>
                     <NavigationServiceInitializer />
                     <ScrollToTop />
-                    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+                    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 relative">
                       <Navbar />
                       <Suspense fallback={<div className="p-8">Loading…</div>}>
                         <Routes>
@@ -232,6 +233,7 @@ const App: React.FC = () => {
                       
                       {/* Nova Login Prompt Host */}
                       <NovaLoginPromptHost />
+                      <NovaChatMount />
                     </div>
                   </Router>
                 </ErrorBoundary>
