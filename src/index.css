@@ -1,39 +1,29 @@
-/* FitFi — minimal CSS; Tailwind komt via CDN (zie index.html) */
-@import "./styles/tokens.css";
+/* @import ALTIJD eerst: */
 @import "@/components/nova/ChatTheme.css";
-@import "./tw-input.css";
-@import "./styles/main.css";
-@import "./styles/animations.css";
 @import "./styles/tokens.css";
+
+/* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "@/components/nova/ChatTheme.css";
 
 /* Kill-switch legacy / third-party chat docks */
-#nova-bottom-bar, .nova-dock, .nova-chatbar, [data-nova-dock], [data-widget="nova-chatbar"], .chatbar {
-  display: none !important; visibility: hidden !important; pointer-events: none !important;
+:root {
+  color-scheme: light dark;
 }
 
-/* Nova Legacy Kill Switch - Blijvend actief in productie */
-#nova-bottom-bar, 
-.nova-dock, 
-.nova-chatbar, 
-[data-nova-dock], 
-[data-widget="nova-chatbar"], 
-.chatbar,
-.nova-legacy-bar,
-.nova-old-launcher {
-  display: none !important; 
-  visibility: hidden !important; 
-  pointer-events: none !important;
-  opacity: 0 !important;
-  z-index: -9999 !important;
+/* (optioneel) centrering safeguards – behoudt je premium grid */
+.container,
+.page-wrap,
+.main-wrap {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80rem; /* ~1280px (max-w-7xl) */
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
-@import './styles/tokens.css';
-
-:root { color-scheme: light dark; }
-* { box-sizing: border-box; }
-html, body, #root { height: 100%; }
-body { margin: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* Zorg dat body nooit horizontaal scrollt door FAB/rail */
+html, body {
+  overflow-x: hidden;
+}
