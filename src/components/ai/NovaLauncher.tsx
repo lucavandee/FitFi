@@ -1,25 +1,25 @@
+// src/components/ai/NovaLauncher.tsx
 import React from "react";
+import Button from "@/components/ui/Button";
 import { useNovaChat } from "@/components/nova/NovaChatProvider";
+import { MessageCircle } from "lucide-react";
 
-export default function NovaLauncher() {
-  const { setOpen } = useNovaChat();
+/**
+ * Standaard renderen we GEEN inline knop meer (voorkomt horizontale balken).
+ * Gebruik <NovaLauncher inline /> als je bewust een knop in content wilt tonen.
+ */
+export default function NovaLauncher({ inline = false }: { inline?: boolean }) {
+  const nova = useNovaChat();
+  if (!inline) return null;
 
   return (
-    <button
-      aria-label="Open Nova chat"
-      onClick={() => setOpen(true)}
-      className="fixed bottom-6 right-6 z-[2147483647] rounded-full shadow-lg"
-      style={{
-        width: 56,
-        height: 56,
-        background:
-          "linear-gradient(180deg, var(--nv-primary,#2B6AF3), var(--nv-primary-2,#244cc0))",
-        color: "#fff",
-      }}
+    <Button
+      variant="primary"
+      icon={<MessageCircle size={16} />}
+      iconPosition="left"
+      onClick={nova.open}
     >
-  // Deze component is vervangen door NovaChatMount
-  // Render niets om layout-shift te voorkomen
-  return null;
-}
-  )
+      Open Nova
+    </Button>
+  );
 }
