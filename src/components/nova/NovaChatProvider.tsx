@@ -1,5 +1,7 @@
+// src/components/nova/NovaChatProvider.tsx
 import React, { createContext, useContext, useMemo, useRef, useState, useCallback } from "react";
 import { streamChat, type ChatMessage, type NovaMode, type NovaStreamEvent } from "@/services/ai/novaService";
+import type { RailProduct } from "@/services/shop/types";
 
 export type NovaStatus = "idle" | "opening" | "streaming" | "error" | "closed" | "disabled";
 export type NovaMessage = { role: "assistant" | "system"; content: string };
@@ -22,21 +24,27 @@ export type NovaChatCtx = {
   prompt: (prompt: string, opts?: { mode?: NovaMode; context?: Record<string, unknown> }) => Promise<void>;
 
   events: { subscribe: (fn: (m: NovaMessage) => void) => () => void };
+  products: { subscribe: (fn: (items: RailProduct[]) => void) => () => void; get: () => RailProduct[] };
+
   __fallback?: boolean;
 };
 
 const NovaChatContext = createContext<NovaChatCtx | null>(null);
-const listeners: Set<(m: NovaMessage) => void> = new Set();
-function emit(m: NovaMessage) { for (const fn of Array.from(listeners)) try { fn(m); } catch {} }
+const msgListeners: Set<(m: NovaMessage) => void> = new Set();
+const prodListeners: Set<(p: RailProduct[]) => void> = new Set();
+
+function emitMsg(m: NovaMessage) { for (const fn of Array.from(msgListeners)) try { fn(m); } catch {} }
+function emitProds(p: RailProduct[]) { for (const fn of Array.from(prodListeners)) try { fn(p); } catch {} }
 
 const FALLBACK: NovaChatCtx = {
   isOpen: false, status: "disabled",
   open: () => {}, close: () => {}, toggle: () => {},
   setStatus: () => {}, setPrefill: () => {},
-  async send() { /* noop */ }, launch() { this.open(); }, hide() { this.close(); },
+  async send() {}, launch() { this.open(); }, hide() { this.close(); },
   start(prompt, opts) { return this.send(prompt, opts); },
   prompt(prompt, opts) { return this.send(prompt, opts); },
-  events: { subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); } },
+  events: { subscribe: (fn) => { msgListeners.add(fn); return () => msgListeners.delete(fn); } },
+  products: { subscribe: (fn) => { prodListeners.add(fn); return () => prodListeners.delete(fn); }, get: () => [] },
   __fallback: true,
 };
 
@@ -50,9 +58,10 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
   const [status, setStatus] = useState<NovaStatus>("idle");
   const [prefill, setPrefill] = useState<string | undefined>(undefined);
   const [isFallback, setIsFallback] = useState(false);
+  const lastProductsRef = useRef<RailProduct[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 
-  const open = useCallback(() => { setOpen(true); }, []);
+  const open = useCallback(() => setOpen(true), []);
   const close = useCallback(() => { setOpen(false); setStatus("closed"); }, []);
   const toggle = useCallback(() => (isOpen ? close() : open()), [isOpen, open, close]);
 
@@ -62,12 +71,11 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
 
     setStatus("opening");
     setIsFallback(false);
-
     abortRef.current?.abort();
     abortRef.current = new AbortController();
 
     const messages: ChatMessage[] = [
-      { role: "system", content: "Nova van FitFi: kort, helder, menselijk. Leg keuze menselijk uit." },
+      { role: "system", content: "Nova van FitFi: kort, helder, menselijk. Encodeer {explanation, products[]} tussen markers." },
       { role: "user", content: text }
     ];
 
@@ -80,21 +88,23 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
         messages,
         signal: abortRef.current.signal,
         onEvent: (evt: NovaStreamEvent) => {
-          if (evt.type === "json" && evt.data && typeof evt.data.explanation === "string") {
-            acc = evt.data.explanation;
-            emit({ role: "assistant", content: acc });
+          if (evt.type === "json" && evt.data) {
+            const exp = typeof evt.data.explanation === "string" ? evt.data.explanation : "";
+            const prods: RailProduct[] = Array.isArray(evt.data.products) ? evt.data.products : [];
+            if (exp) { acc = exp; emitMsg({ role: "assistant", content: acc }); }
+            if (prods.length) { lastProductsRef.current = prods; emitProds(prods); }
           }
         }
       })) {
         acc += delta;
-        emit({ role: "assistant", content: acc });
+        emitMsg({ role: "assistant", content: acc });
       }
 
       setStatus("idle");
-    } catch (e: any) {
+    } catch {
       setStatus("error");
       setIsFallback(true);
-      emit({
+      emitMsg({
         role: "assistant",
         content: "Kleine hapering in de stream. Toch een voorstel: smart-casual met nette jeans, witte sneaker en licht overshirt — rustig, modern en shoppable."
       });
@@ -107,7 +117,11 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
     isOpen, status, prefill,
     open, close, toggle, setStatus, setPrefill,
     send, launch: open, hide: close, start: send, prompt: send,
-    events: { subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); } },
+    events: { subscribe: (fn) => { msgListeners.add(fn); return () => msgListeners.delete(fn); } },
+    products: {
+      subscribe: (fn) => { prodListeners.add(fn); return () => prodListeners.delete(fn); },
+      get: () => lastProductsRef.current
+    },
     __fallback: isFallback,
   }), [isOpen, status, prefill, open, close, toggle, send, isFallback]);
 
