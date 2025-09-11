@@ -1,82 +1,132 @@
-// src/components/nova/ProductRail.tsx
 import React from "react";
-import type { Product } from "@/types/product";
+import { ExternalLink, ShoppingBag } from "lucide-react";
+import ImageWithFallback from "@/components/media/ImageWithFallback";
 import { track } from "@/utils/telemetry";
 import { cn } from "@/utils/cn";
+import type { Product } from "@/types/product";
 
-type Props = {
+interface ProductRailProps {
   items: Product[];
   loading?: boolean;
-};
-
-function toRedirectUrl(p: Product) {
-  // We leiden via serverless redirect voor attributie.
-  const encoded = typeof window !== 'undefined' ? btoa(p.url) : '';
-  return `/shop/${encodeURIComponent(p.retailer)}/${encodeURIComponent(p.id)}?u=${encodeURIComponent(encoded)}`;
 }
 
-function Price({ price, currency }: { price: Product['price']; currency: string }) {
+function generateShopUrl(product: Product): string {
+  if (!product.url) return "#";
+  
+  // Encode target URL as base64 for shop-redirect
+  const encoded = Buffer.from(product.url).toString("base64");
+  return `/shop/${product.retailer}/${product.id}?u=${encoded}`;
+}
+
+function ProductSkeleton() {
   return (
-    <div className="mt-1 text-[13px]">
-      {price.original && price.original > price.current ? (
-        <div className="flex items-center gap-2">
-          <span className="line-through opacity-60">{price.original.toFixed(2)} {currency}</span>
-          <span className="font-semibold">{price.current.toFixed(2)} {currency}</span>
-        </div>
-      ) : (
-        <span className="font-semibold">{price.current.toFixed(2)} {currency}</span>
-      )}
+    <div className="flex-shrink-0 w-48 bg-white rounded-xl border border-gray-100 overflow-hidden animate-pulse">
+      <div className="aspect-[3/4] bg-gray-200" />
+      <div className="p-3 space-y-2">
+        <div className="h-4 bg-gray-200 rounded w-3/4" />
+        <div className="h-3 bg-gray-200 rounded w-1/2" />
+        <div className="h-4 bg-gray-200 rounded w-1/3" />
+      </div>
     </div>
   );
 }
 
-export default function ProductRail({ items, loading }: Props) {
+function ProductCard({ product }: { product: Product }) {
+  const handleClick = () => {
+    track("nova:product-click", {
+      productId: product.id,
+      retailer: product.retailer,
+      price: product.price?.current,
+    });
+  };
+
+  return (
+    <a
+      href={generateShopUrl(product)}
+      target="_blank"
+      rel="noopener noreferrer nofollow sponsored"
+      onClick={handleClick}
+      className={cn(
+        "flex-shrink-0 w-48 bg-white rounded-xl border border-gray-100",
+        "hover:border-[#2B6AF3]/30 hover:shadow-md transition-all duration-200",
+        "overflow-hidden group"
+      )}
+    >
+      <div className="aspect-[3/4] relative overflow-hidden">
+        <ImageWithFallback
+          src={product.image}
+          alt={product.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        {product.badges?.[0] && (
+          <div className="absolute top-2 left-2 bg-[#2B6AF3] text-white text-xs px-2 py-1 rounded-full">
+            {product.badges[0]}
+          </div>
+        )}
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <ExternalLink size={16} className="text-white drop-shadow-md" />
+        </div>
+      </div>
+      
+      <div className="p-3">
+        <h3 className="font-medium text-sm text-[#0D1B2A] line-clamp-2 mb-1">
+          {product.title}
+        </h3>
+        
+        {product.reason && (
+          <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+            {product.reason}
+          </p>
+        )}
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            {product.price?.original && product.price.original > product.price.current && (
+              <span className="text-xs text-gray-400 line-through">
+                €{product.price.original}
+              </span>
+            )}
+            <span className="font-semibold text-sm text-[#0D1B2A]">
+              €{product.price?.current}
+            </span>
+          </div>
+          <ShoppingBag size={14} className="text-gray-400" />
+        </div>
+      </div>
+    </a>
+  );
+}
+
+export default function ProductRail({ items, loading }: ProductRailProps) {
   if (loading) {
     return (
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-black/10 p-2">
-            <div className="aspect-[4/5] rounded-xl bg-gray-200 animate-pulse" />
-            <div className="mt-2 h-3 w-3/4 rounded bg-gray-200 animate-pulse" />
-            <div className="mt-1 h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
-          </div>
-        ))}
+      <div className="mt-4">
+        <div className="flex items-center gap-2 mb-3">
+          <ShoppingBag size={16} className="text-gray-600" />
+          <span className="text-sm font-medium text-gray-600">Producten laden...</span>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ProductSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
 
-  if (!items || items.length === 0) return null;
+  if (!items?.length) return null;
 
   return (
-    <div className="mt-3">
-      <div className="mb-2 text-xs font-medium text-[#0D1B2A]">Aanbevolen items</div>
-      <div className="grid grid-cols-2 gap-3">
-        {items.slice(0, 4).map((p) => (
-          <a
-            key={`${p.retailer}:${p.id}`}
-            href={toRedirectUrl(p)}
-            onClick={() => track('nova:rail-click', { retailer: p.retailer, id: p.id })}
-            className={cn(
-              "rounded-2xl border border-black/10 p-2 hover:shadow-sm transition",
-              p.availability === 'out_of_stock' && "opacity-60 pointer-events-none"
-            )}
-            rel="nofollow sponsored"
-          >
-            <div className="aspect-[4/5] overflow-hidden rounded-xl bg-gray-50">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.image}
-                alt={p.title}
-                className="h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="mt-2 line-clamp-2 text-[13px] font-medium text-[#0D1B2A]">{p.title}</div>
-            <div className="text-[11px] text-gray-500">{p.retailer}</div>
-            <Price price={p.price} currency={p.currency || 'EUR'} />
-            {p.reason ? <div className="mt-1 text-[11px] text-gray-600">{p.reason}</div> : null}
-          </a>
+    <div className="mt-4">
+      <div className="flex items-center gap-2 mb-3">
+        <ShoppingBag size={16} className="text-[#2B6AF3]" />
+        <span className="text-sm font-medium text-[#0D1B2A]">
+          Shoppable look ({items.length} items)
+        </span>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {items.slice(0, 4).map((product) => (
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>
