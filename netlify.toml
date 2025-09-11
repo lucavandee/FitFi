@@ -18,14 +18,14 @@
   timeout = 10
   memory  = 256
 
-# Short route voor shop redirect
+# ✅ Shop redirect naar function (toegestaan)
 [[redirects]]
   from = "/shop/:merchant/:id"
   to   = "/.netlify/functions/shop-redirect/:merchant/:id"
   status = 200
   force = true
 
-# SPA fallback
+# ✅ SPA fallback
 [[redirects]]
   from = "/*"
   to   = "/index.html"
