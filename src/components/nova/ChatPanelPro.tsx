@@ -23,6 +23,7 @@ function nowISO() {
 export default function ChatPanelPro() {
   const nova = useNovaChat();
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [pending, setPending] = useState(false);
@@ -30,6 +31,11 @@ export default function ChatPanelPro() {
 
   const canType = useMemo(() => nova.status !== "streaming", [nova.status]);
   const count = (messages ?? []).length;
+
+  // Auto-scroll naar nieuwe berichten
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   // Abonneer op provider patches (assistant tekst)
   useEffect(() => {
@@ -49,10 +55,6 @@ export default function ChatPanelPro() {
     return unsub;
   }, [nova.events]);
 
-  const addAssistant = useCallback((content: string) => {
-    setMessages((p) => [...p, { id: crypto.randomUUID(), role: "assistant", content, ts: nowISO() }]);
-  }, []);
-
   const send = useCallback(
     async (text: string) => {
       const trimmed = (text || "").trim();
@@ -67,14 +69,6 @@ export default function ChatPanelPro() {
       try {
         track("nova:prompt", { len: trimmed.length, source: "ChatPanelPro" });
         await nova.start(trimmed, { ui: "pro-panel" });
-
-        // In fallback voegt provider al een assistant toe,
-        // maar voor de zekerheid geven we 1 hard antwoord.
-        if (nova.__fallback) {
-          addAssistant(
-            "We kozen voor een cleane, smart-casual look: nette jeans, frisse witte sneaker en een licht overshirt. Minimalistisch, comfortabel en direct shoppable."
-          );
-        }
       } catch (e: any) {
         const msg = e?.message || "Verzenden mislukt.";
         setError(String(msg));
@@ -84,7 +78,7 @@ export default function ChatPanelPro() {
         if (inputRef.current) inputRef.current.value = "";
       }
     },
-    [nova, addAssistant]
+    [nova]
   );
 
   const handleSubmit = useCallback(
@@ -160,7 +154,7 @@ export default function ChatPanelPro() {
                 </div>
               </li>
             ))}
-            {pending ? (
+            {pending || nova.status === "streaming" ? (
               <li className="flex justify-start">
                 <div className="max-w-[82%] rounded-2xl px-3 py-2 text-sm bg-white border border-black/10 text-[#0D1B2A] shadow-sm">
                   <span className="inline-flex items-center gap-2">
@@ -170,6 +164,7 @@ export default function ChatPanelPro() {
                 </div>
               </li>
             ) : null}
+            <div ref={messagesEndRef} />
           </ul>
         )}
       </div>
@@ -196,7 +191,7 @@ export default function ChatPanelPro() {
           variant="primary"
           icon={<Send size={16} />}
           iconPosition="right"
-          loading={pending}
+          loading={pending || nova.status === "streaming"}
           disabled={!canType || pending}
           className="rounded-full px-5"
         >

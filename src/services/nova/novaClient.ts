@@ -1,123 +1,178 @@
+// src/services/nova/novaClient.ts
 export type NovaEvent =
-  | { type: "FITFI_JSON"; phase: "start" | "patch" | "done" | "error"; ts: number; data?: any; error?: any }
-  | { type: "heartbeat"; ts: number };
+  | { type: "heartbeat"; ts: number }
+  | { type: "meta"; model: string; traceId: string }
+  | { type: "chunk"; delta: string }
+  | { type: "done"; data?: any }
+  | { type: "error"; message: string; detail?: string; traceId?: string };
 
 export type NovaHandlers = {
-  onStart?: (e: NovaEvent) => void;
-  onPatch?: (e: NovaEvent) => void;
-  onDone?: (e: NovaEvent) => void;
-  onError?: (e: NovaEvent) => void;
-  onHeartbeat?: (e: NovaEvent) => void;
+  onStart?: () => void;
+  onMeta?: (e: NovaEvent & { type: "meta" }) => void;
+  onChunk?: (e: NovaEvent & { type: "chunk" }) => void;
+  onDone?: (e?: NovaEvent) => void;
+  onError?: (e: NovaEvent & { type: "error" }) => void;
+  onHeartbeat?: (e: NovaEvent & { type: "heartbeat" }) => void;
 };
 
-export function openNovaStream(
+const START_MARKER = '<<<FITFI_JSON>>>';
+const END_MARKER = '<<<END_FITFI_JSON>>>';
+
+export async function openNovaStream(
   endpoint: string,
-  payload: Record<string, any>,
+  payload: { mode?: string; messages?: Array<{ role: string; content: string }> },
   handlers: NovaHandlers,
-  opts: { signal?: AbortSignal } = {}
+  fetchInit?: RequestInit & { signal?: AbortSignal }
 ) {
-  const { onStart, onPatch, onDone, onError, onHeartbeat } = handlers;
-
   const ctrl = new AbortController();
-  const signal = opts.signal ?? ctrl.signal;
+  const signal = fetchInit?.signal ?? ctrl.signal;
 
-  const ev = new EventSourcePolyfill(endpoint, {
-    headers: { "Content-Type": "application/json" },
-    payload: JSON.stringify(payload),
-    method: "POST",
-    withCredentials: false
-  });
+  const uid = getOrCreateUid();
+  const tier = (import.meta.env.VITE_FITFI_TIER || "free").toString();
 
-  function close() {
-    try { ev.close(); } catch {}
-    try { ctrl.abort(); } catch {}
-  }
+  handlers.onStart?.();
 
-  ev.onmessage = (msg: MessageEvent) => {
-    try {
-      const data = JSON.parse(msg.data) as NovaEvent;
-      if (data.type === "FITFI_JSON") {
-        if (data.phase === "start") onStart?.(data);
-        else if (data.phase === "patch") onPatch?.(data);
-        else if (data.phase === "done") onDone?.(data);
-        else if (data.phase === "error") onError?.(data);
-      } else if (data.type === "heartbeat") {
-        onHeartbeat?.(data);
-      }
-    } catch (e) {
-      // Swallow JSON parse errors silently
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "text/event-stream",
+        "x-fitfi-tier": tier,
+        "x-fitfi-uid": uid,
+      },
+      body: JSON.stringify(payload || {}),
+      signal,
+      ...fetchInit,
+    });
+
+    const ctype = (res.headers.get("content-type") || "").toLowerCase();
+
+    // Fallback: geen SSE? Dan 1x JSON lezen
+    if (!ctype.includes("text/event-stream")) {
+      const data = await res.json().catch(() => ({}));
+      handlers.onChunk?.({ type: "chunk", delta: data.content || "Nova (fallback): geen streaming beschikbaar." });
+      handlers.onDone?.({ type: "done", data: { ok: true, mode: "json" } });
+      return () => ctrl.abort();
     }
-  };
 
-  ev.onerror = (e) => {
-    console.error("🔴 Nova EventSource error", e);
-    onError?.({ type: "FITFI_JSON", phase: "error", ts: Date.now(), error: { message: "stream-error" } });
-    close();
-  };
+    const reader = res.body!.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+    let fullText = "";
 
-  signal.addEventListener("abort", () => {
-    close();
-  });
+    const flushBlocks = () => {
+      const parts = buffer.split("\n\n");
+      buffer = parts.pop() || "";
+      for (const block of parts) {
+        const ev = parseSSEBlock(block);
+        if (!ev) continue;
 
-  return { close };
-}
-
-/**
- * Super-small EventSource polyfill that supports POST by upgrading via fetch.
- * If your environment already has an EventSource that supports POST, replace this.
- */
-class EventSourcePolyfill {
-  private url: string;
-  private opts: any;
-  private controller: AbortController;
-  private reader?: ReadableStreamDefaultReader<Uint8Array>;
-  public onmessage: (ev: MessageEvent) => void = () => {};
-  public onerror: (ev?: any) => void = () => {};
-
-  constructor(url: string, opts: any) {
-    this.url = url;
-    this.opts = opts;
-    this.controller = new AbortController();
-    this.start();
-  }
-
-  private async start() {
-    try {
-      const res = await fetch(this.url, {
-        method: this.opts.method || "POST",
-        headers: this.opts.headers || {},
-        body: this.opts.payload || undefined,
-        signal: this.controller.signal
-      });
-      if (!res.ok || !res.body) {
-        this.onerror(new Error("Bad response"));
-        return;
-      }
-      this.reader = res.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let buffer = "";
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const chunk = await this.reader.read();
-        if (chunk.done) break;
-        buffer += decoder.decode(chunk.value, { stream: true });
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() || "";
-        for (const part of parts) {
-          const line = part.trim();
-          if (line.startsWith("data:")) {
-            const data = line.slice(5).trim();
-            this.onmessage(new MessageEvent("message", { data }));
-          }
+        switch (ev.type) {
+          case "heartbeat":
+            handlers.onHeartbeat?.(ev);
+            break;
+          case "meta":
+            handlers.onMeta?.(ev);
+            break;
+          case "chunk":
+            fullText += ev.delta;
+            handlers.onChunk?.(ev);
+            // Check voor FITFI_JSON markers in de volledige tekst
+            checkForStructuredData(fullText, handlers);
+            break;
+          case "done":
+            handlers.onDone?.(ev);
+            break;
+          case "error":
+            handlers.onError?.(ev);
+            break;
         }
       }
-    } catch (e) {
-      this.onerror(e);
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      flushBlocks();
+    }
+
+    // closing tail
+    if (buffer) {
+      buffer += "\n\n";
+      flushBlocks();
+    }
+
+    handlers.onDone?.({ type: "done", data: { ok: true, mode: "sse" } });
+  } catch (err: any) {
+    handlers.onError?.({ type: "error", message: err?.message || "SSE-verbinding mislukt" });
+  }
+
+  return () => ctrl.abort();
+}
+
+function parseSSEBlock(block: string): NovaEvent | null {
+  const lines = block.split("\n").map((l) => l.trim());
+  let ev = "message";
+  const data: string[] = [];
+
+  for (const line of lines) {
+    if (!line) continue;
+    if (line.startsWith(":")) continue; // comment/heartbeat
+    if (line.startsWith("event:")) {
+      ev = line.slice(6).trim();
+    } else if (line.startsWith("data:")) {
+      data.push(line.slice(5).trim());
     }
   }
 
-  public close() {
-    try { this.reader?.cancel(); } catch {}
-    try { this.controller.abort(); } catch {}
+  const raw = data.join("\n");
+  let json: any = {};
+  try {
+    json = raw ? JSON.parse(raw) : {};
+  } catch {
+    json = { text: raw };
+  }
+
+  if (ev === "heartbeat") return { type: "heartbeat", ts: Number(json?.ts ?? Date.now()) };
+  
+  // Parse verschillende event types
+  if (json.type === "meta") return { type: "meta", model: json.model, traceId: json.traceId };
+  if (json.type === "chunk") return { type: "chunk", delta: json.delta || "" };
+  if (json.type === "done") return { type: "done", data: json };
+  if (json.type === "error") return { type: "error", message: json.message || "Onbekende fout", detail: json.detail, traceId: json.traceId };
+
+  return null;
+}
+
+function checkForStructuredData(fullText: string, handlers: NovaHandlers) {
+  const startIdx = fullText.indexOf(START_MARKER);
+  const endIdx = fullText.indexOf(END_MARKER);
+  
+  if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+    const jsonStr = fullText.slice(startIdx + START_MARKER.length, endIdx);
+    try {
+      const parsed = JSON.parse(jsonStr);
+      // Emit als chunk voor backwards compatibility
+      if (parsed.explanation) {
+        handlers.onChunk?.({ type: "chunk", delta: `\n\n[Structured] ${parsed.explanation}` });
+      }
+    } catch (e) {
+      // Ignore parsing errors
+    }
+  }
+}
+
+function getOrCreateUid(): string {
+  try {
+    const KEY = "fitfi.uid";
+    const cur = localStorage.getItem(KEY);
+    if (cur) return cur;
+    const uid = crypto.randomUUID();
+    localStorage.setItem(KEY, uid);
+    return uid;
+  } catch {
+    return "anon";
   }
 }

@@ -24,7 +24,7 @@ export type NovaChatCtx = {
   start: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
   prompt: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
 
-  /** PubSub voor inkomende AI-teksten (ChatPanel kan subscriben) */
+  /** PubSub voor inkomende AI-teksten */
   events: {
     subscribe: (fn: (m: NovaMessage) => void) => () => void;
   };
@@ -77,6 +77,7 @@ export default function NovaChatProvider({ children }: ProviderProps) {
   const [isFallback, setIsFallback] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
+  const currentTextRef = useRef<string>("");
 
   const open = useCallback(() => {
     setOpen(true);
@@ -97,38 +98,41 @@ export default function NovaChatProvider({ children }: ProviderProps) {
     setIsFallback(false);
     abortRef.current?.abort();
     abortRef.current = new AbortController();
+    currentTextRef.current = "";
 
     // Track + context
     track("nova:prefill", { hasPrefill: !!prefill });
     track("nova:set-context", ctx || {});
     track("nova:prompt", { len: text.length });
 
+    // Converteer naar messages format
+    const messages = [{ role: "user", content: text }];
+
     // Start SSE
     await openNovaStream(
       "/.netlify/functions/nova",
-      { prompt: text, context: ctx || {} },
+      { mode: "outfits", messages },
       {
         onStart: () => setStatus("streaming"),
         onHeartbeat: () => {},
-        onPatch: (e: NovaEvent) => {
-          // Verwacht: e.data.explanation
-          const exp = (e as any)?.data?.explanation;
-          if (typeof exp === "string" && exp.trim()) {
-            emit({ role: "assistant", content: exp });
-          }
+        onMeta: (e) => {
+          if (import.meta.env.DEV) console.log("[Nova] Meta:", e.model, e.traceId);
+        },
+        onChunk: (e) => {
+          currentTextRef.current += e.delta;
+          emit({ role: "assistant", content: currentTextRef.current });
         },
         onDone: () => {
           setStatus("idle");
           track("nova:done");
         },
         onError: (e) => {
-          const msg = (e as any)?.error?.message || "Stream-fout";
+          const msg = e.message || "Stream-fout";
           setStatus("error");
           setIsFallback(true);
           emit({
             role: "assistant",
-            content:
-              "Kleine hapering in de stream. Toch een voorstel: ga voor een cleane, smart-casual look met nette jeans, witte sneakers en een licht overshirt.",
+            content: "Kleine hapering in de stream. Toch een voorstel: ga voor een cleane, smart-casual look met nette jeans, witte sneakers en een licht overshirt.",
           });
           track("nova:error", { message: msg });
         },

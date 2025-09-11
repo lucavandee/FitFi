@@ -1,124 +1,177 @@
 // netlify/functions/nova.ts
-/**
- * Nova SSE Function
- * - POST /.netlify/functions/nova
- * - Headers: x-fitfi-tier, x-fitfi-uid
- * - Response: text/event-stream (fallback: JSON)
- *
- * Geen externe API nodig: we genereren een plausibele uitleg on-the-fly.
- */
+import type { Handler } from '@netlify/functions';
+import { randomUUID } from 'crypto';
 
-type ReqBody = { prompt?: string; context?: Record<string, unknown> };
+type Mode = 'outfits' | 'archetype' | 'shop';
+type Role = 'system' | 'user' | 'assistant';
+type Msg = { role: Role; content: string };
 
-const encoder = new TextEncoder();
+const ORIGINS = ['https://www.fitfi.ai','https://fitfi.ai','http://localhost:5173'];
 
-function sseChunk(event: string, data: any) {
-  return encoder.encode(`event: ${event}\n` + `data: ${JSON.stringify(data)}\n\n`);
+// Marker-based structured JSON in the text stream
+const START = '<<<FITFI_JSON>>>';
+const END   = '<<<END_FITFI_JSON>>>';
+
+function okOrigin(o?: string) { return !!o && ORIGINS.includes(o); }
+function routeModel(mode: Mode) {
+  if (mode === 'outfits')   return process.env.NOVA_MODEL_OUTFITS   || 'gpt-4o';
+  if (mode === 'archetype') return process.env.NOVA_MODEL_ARCHETYPE || 'gpt-4o-mini';
+  return                      process.env.NOVA_MODEL_SHOP           || 'gpt-4o-mini';
 }
 
-function craftExplanation(prompt?: string, ctx?: Record<string, unknown>) {
-  const gender = (ctx?.["gender"] as string) || "";
-  const base =
-    "We kozen voor een cleane, smart-casual look: nette jeans, frisse witte sneaker en een licht overshirt. Minimalistisch, comfortabel en direct shoppable.";
-
-  const twist =
-    typeof prompt === "string" && prompt.length > 0
-      ? ` Je vraag "${prompt.slice(0, 120)}${prompt.length > 120 ? "…" : ""}" vertalen we naar stille luxe: rustige kleuren, goede pasvorm, en materialen met structuur.`
-      : "";
-
-  const g =
-    gender === "female"
-      ? " Subtiel vrouwelijk accent met een getailleerd silhouet en zachte tinten."
-      : gender === "male"
-      ? " Strak mannelijk silhouet met nette verhoudingen."
-      : "";
-
-  return base + twist + g;
+function systemPrompt(mode: Mode) {
+  if (mode === 'outfits') {
+    return [
+      "Je bent Nova, de AI-stylist van FitFi. Antwoord kort, helder en menselijk.",
+      "Geef eerst een mini-uitleg (2-3 zinnen).",
+      `Wanneer je outfit-voorstellen klaar hebt, encodeer een JSON-blok tussen ${START} en ${END} met { "explanation": string } (later voegen we producten toe).`,
+      "Geen omlijnde codeblokken, geen extra mark-up buiten de markers."
+    ].join(' ');
+  }
+  if (mode === 'archetype') {
+    return "Je bent Nova. Vat iemands stijl-archetype beknopt samen (2-3 zinnen).";
+  }
+  return "Je bent Nova. Help kort met shoppen en stylingtips.";
 }
 
-export async function handler(event: any) {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+// Minimal content filter tegen lege prompts
+function normalizeMessages(messages: Msg[]): Msg[] {
+  const safe = Array.isArray(messages) ? messages : [];
+  const hasUser = safe.some(m => m?.role === 'user' && String(m.content || '').trim());
+  if (!hasUser) {
+    return [{ role: 'user', content: 'Maak een smart-casual outfit onder €200 met uitleg.' }];
   }
+  return safe.slice(0, 40);
+}
 
-  let body: ReqBody = {};
-  try {
-    body = JSON.parse(event.body || "{}");
-  } catch {
-    body = {};
-  }
+export const handler: Handler = async (event) => {
+  const origin = event.headers.origin || (event.headers as any).Origin;
+  const acceptsSSE = /text\/event-stream/i.test(event.headers.accept || '');
+  const traceId = randomUUID();
 
-  const wantsSSE =
-    (event.headers?.accept || "").toLowerCase().includes("text/event-stream") &&
-    typeof (globalThis as any).ReadableStream !== "undefined";
-
-  const explanation = craftExplanation(body.prompt, body.context || {});
-  const uid = event.headers?.["x-fitfi-uid"] || "anon";
-
-  // Fallback naar 1x JSON als SSE niet kan
-  if (!wantsSSE) {
+  // CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
     return {
-      statusCode: 200,
+      statusCode: 204,
       headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-cache",
-        "access-control-allow-origin": "*",
+        'Access-Control-Allow-Origin': okOrigin(origin) ? origin! : ORIGINS[0],
+        'Access-Control-Allow-Headers': 'content-type, x-fitfi-tier, x-fitfi-uid',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
       },
-      body: JSON.stringify({ explanation, uid, mode: "json" }),
+      body: ''
     };
   }
 
-  const stream = new ReadableStream({
-    start(controller) {
-      // Handshake heartbeat
-      controller.enqueue(sseChunk("heartbeat", { ts: Date.now() }));
+  try {
+    if (!okOrigin(origin)) return { statusCode: 403, body: 'Forbidden' };
+    if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-      // Eerste patch
-      controller.enqueue(sseChunk("FITFI_JSON", { explanation }));
+    const { mode, messages } = JSON.parse(event.body || '{}') as { mode?: Mode; messages?: Msg[] };
+    const safeMode: Mode = (['outfits','archetype','shop'] as Mode[]).includes(mode as Mode) ? (mode as Mode) : 'outfits';
+    const model = routeModel(safeMode);
+    const serverMessages: Msg[] = [{ role: 'system', content: systemPrompt(safeMode) }, ...normalizeMessages(messages || [])];
 
-      // Een korte "narrowing" patch (simuleer model dat verfijnt)
-      const refine = setTimeout(() => {
-        controller.enqueue(
-          sseChunk("FITFI_JSON", {
-            explanation:
-              explanation +
-              " We kozen zachte contrasten (ecru, steengrijs) en schoenen met een strakke zool voor een moderne, verfijnde look.",
-          })
-        );
-      }, 350);
+    // Fallback naar éénmalige JSON als geen SSE gewenst/ondersteund
+    if (!acceptsSSE || !process.env.OPENAI_API_KEY) {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': okOrigin(origin) ? origin! : ORIGINS[0],
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          model,
+          content: "Nova (fallback): streaming is niet actief. Zet OPENAI_API_KEY en deploy functions.",
+          traceId
+        })
+      };
+    }
 
-      // Hartslag elke 10s (failsafe)
-      const hb = setInterval(() => {
-        try {
-          controller.enqueue(sseChunk("heartbeat", { ts: Date.now() }));
-        } catch {
-          clearInterval(hb);
+    // SSE stream naar client
+    const stream = new ReadableStream({
+      async start(controller) {
+        const enc = new TextEncoder();
+        const ping = () => controller.enqueue(enc.encode(`event: heartbeat\ndata: {"ts": ${Date.now()}}\n\n`));
+        const send = (obj: any) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
+
+        // Meta
+        send({ type: 'meta', model, traceId });
+
+        // Upstream OpenAI stream
+        const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY || ''}`
+          },
+          body: JSON.stringify({
+            model,
+            messages: serverMessages,
+            stream: true,
+            temperature: 0.7
+          }),
+          // @ts-ignore Node hint for streaming
+          duplex: 'half'
+        });
+
+        if (!upstream.ok || !upstream.body) {
+          const txt = await upstream.text().catch(()=> '');
+          send({ type:'error', message:'upstream error', detail: txt.slice(0,300), traceId });
+          send({ type:'done' });
+          controller.close(); return;
         }
-      }, 10000);
 
-      // Afronden
-      const done = setTimeout(() => {
-        controller.enqueue(sseChunk("done", { ok: true }));
-        clearInterval(hb);
-        clearTimeout(refine);
-        controller.close();
-      }, 900);
+        const reader = upstream.body.getReader();
+        const dec = new TextDecoder();
+        let hb = setInterval(ping, 15000);
 
-      // Als de client afbreekt
-      (event as any).rawUrl && (event as any).isBase64Encoded; // no-op to keep bundlers from pruning
-    },
-    cancel() {
-      // nothing required; timers cleared in normal path
-    },
-  });
+        try {
+          for (;;) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            const chunk = dec.decode(value);
+            // OpenAI chunked lines "data: ..."
+            const lines = chunk.split('\n').map(x => x.trim()).filter(Boolean);
+            for (const line of lines) {
+              if (!line.startsWith('data:')) continue;
+              const data = line.slice(5).trim();
+              if (data === '[DONE]') continue;
+              let json: any = null;
+              try { json = JSON.parse(data); } catch { json = null; }
+              const delta = json?.choices?.[0]?.delta?.content ?? '';
 
-  return new Response(stream as any, {
-    headers: {
-      "content-type": "text/event-stream; charset=utf-8",
-      "cache-control": "no-cache, no-transform",
-      connection: "keep-alive",
-      "access-control-allow-origin": "*",
-    },
-    status: 200,
-  } as any);
-}
+              if (delta) {
+                // stuur deeltekst naar client
+                send({ type: 'chunk', delta });
+              }
+            }
+          }
+          // klaar
+          send({ type: 'done' });
+        } catch (e: any) {
+          send({ type: 'error', message: e?.message || 'stream error', traceId });
+        } finally {
+          clearInterval(hb);
+          controller.close();
+        }
+      }
+    });
+
+    return new Response(stream as any, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': okOrigin(origin) ? origin! : ORIGINS[0],
+      }
+    } as any);
+  } catch (e) {
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ error: 'nova function error', traceId: randomUUID() })
+    };
+  }
+};
