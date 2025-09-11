@@ -1,16 +1,17 @@
 // src/components/nova/NovaChatProvider.tsx
-import React, { createContext, useContext, useMemo, useState, useCallback } from "react";
+import React, { createContext, useContext, useMemo, useRef, useState, useCallback } from "react";
 import { track } from "@/utils/telemetry";
+import { openNovaStream, NovaEvent } from "@/services/nova/novaClient";
 
 export type NovaStatus = "idle" | "opening" | "streaming" | "error" | "closed" | "disabled";
 
+export type NovaMessage = { role: "assistant" | "system"; content: string };
+
 export type NovaChatCtx = {
-  /** UI state */
   isOpen: boolean;
   status: NovaStatus;
   prefill?: string;
 
-  /** Actions */
   open: () => void;
   close: () => void;
   toggle: () => void;
@@ -18,98 +19,122 @@ export type NovaChatCtx = {
   setPrefill: (t?: string) => void;
   send: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
 
-  /** Aliassen voor bredere compatibiliteit (sommige call-sites gebruiken andere namen) */
   launch: () => void;
   hide: () => void;
   start: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
   prompt: (prompt: string, opts?: Record<string, unknown>) => Promise<void>;
 
-  /** true als we in fallback/no-op modus zitten */
+  /** PubSub voor inkomende AI-teksten (ChatPanel kan subscriben) */
+  events: {
+    subscribe: (fn: (m: NovaMessage) => void) => () => void;
+  };
+
+  /** true = fallback/demo; false = live */
   __fallback?: boolean;
 };
 
 const NovaChatContext = createContext<NovaChatCtx | null>(null);
 
-/** No-op fallback die NIET crasht als de provider ontbreekt. */
+const listeners: Set<(m: NovaMessage) => void> = new Set();
+function emit(m: NovaMessage) {
+  for (const fn of Array.from(listeners)) {
+    try { fn(m); } catch {}
+  }
+}
+
 const FALLBACK: NovaChatCtx = {
   isOpen: false,
   status: "disabled",
-  prefill: undefined,
-  open: () => {
-    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — open() noop");
-  },
-  close: () => {
-    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — close() noop");
-  },
-  toggle: () => {
-    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — toggle() noop");
-  },
-  setStatus: () => {
-    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — setStatus() noop");
-  },
-  setPrefill: () => {
-    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — setPrefill() noop");
-  },
+  open: () => (import.meta.env.DEV ? console.warn("[NovaChat] open() noop") : undefined),
+  close: () => (import.meta.env.DEV ? console.warn("[NovaChat] close() noop") : undefined),
+  toggle: () => (import.meta.env.DEV ? console.warn("[NovaChat] toggle() noop") : undefined),
+  setStatus: () => {},
+  setPrefill: () => {},
   async send(prompt: string) {
-    if (import.meta.env.DEV) console.warn("[NovaChat] Provider ontbreekt — send() noop:", prompt);
-    track("nova:prompt-login"); // behoud event voor funnels
+    if (import.meta.env.DEV) console.warn("[NovaChat] send() noop:", prompt);
+    track("nova:prompt-login");
   },
-  // aliassen
   launch() { this.open(); },
   hide() { this.close(); },
-  async start(prompt: string, opts?: Record<string, unknown>) { return this.send(prompt, opts); },
-  async prompt(prompt: string, opts?: Record<string, unknown>) { return this.send(prompt, opts); },
+  start(prompt: string, opts?: Record<string, unknown>) { return this.send(prompt, opts); },
+  prompt(prompt: string, opts?: Record<string, unknown>) { return this.send(prompt, opts); },
+  events: { subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); } },
   __fallback: true,
 };
 
-/** Hook: geeft NOOIT meer een throw; valt veilig terug op FALLBACK. */
 export function useNovaChat(): NovaChatCtx {
   const ctx = useContext(NovaChatContext);
-  if (!ctx) {
-    if (import.meta.env.DEV) console.warn("[NovaChat] useNovaChat buiten provider — fallback actief");
-    return FALLBACK;
-  }
+  if (!ctx) return FALLBACK;
   return ctx;
 }
 
 type ProviderProps = { children: React.ReactNode };
 
-export function NovaChatProvider({ children }: ProviderProps) {
+export default function NovaChatProvider({ children }: ProviderProps) {
   const [isOpen, setOpen] = useState(false);
   const [status, setStatus] = useState<NovaStatus>("idle");
   const [prefill, setPrefill] = useState<string | undefined>(undefined);
+  const [isFallback, setIsFallback] = useState(false);
+
+  const abortRef = useRef<AbortController | null>(null);
 
   const open = useCallback(() => {
     setOpen(true);
-    setStatus("opening");
     track("nova:open");
   }, []);
-
   const close = useCallback(() => {
     setOpen(false);
     setStatus("closed");
     track("nova:close");
   }, []);
+  const toggle = useCallback(() => (isOpen ? close() : open()), [isOpen, open, close]);
 
-  const toggle = useCallback(() => {
-    setOpen((v) => {
-      const next = !v;
-      track(next ? "nova:open" : "nova:close");
-      return next;
-    });
-  }, []);
+  const send = useCallback(async (prompt: string, ctx?: Record<string, unknown>) => {
+    const text = String(prompt || "").trim();
+    if (!text) return;
 
-  const send = useCallback(async (prompt: string, opts?: Record<string, unknown>) => {
-    // Hier kun je later je echte stream-start callen (novaClient)
-    // Voor nu: registreer telemetry en zet een plausibele status-cyclus.
+    setStatus("opening");
+    setIsFallback(false);
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
+    // Track + context
     track("nova:prefill", { hasPrefill: !!prefill });
-    track("nova:set-context", opts || {});
-    track("nova:prompt", { len: prompt?.length || 0 });
+    track("nova:set-context", ctx || {});
+    track("nova:prompt", { len: text.length });
 
-    setStatus("streaming");
-    // Simuleer minimale latency in dev; in prod meteen klaarzetten
-    await Promise.resolve();
-    setStatus("idle");
+    // Start SSE
+    await openNovaStream(
+      "/.netlify/functions/nova",
+      { prompt: text, context: ctx || {} },
+      {
+        onStart: () => setStatus("streaming"),
+        onHeartbeat: () => {},
+        onPatch: (e: NovaEvent) => {
+          // Verwacht: e.data.explanation
+          const exp = (e as any)?.data?.explanation;
+          if (typeof exp === "string" && exp.trim()) {
+            emit({ role: "assistant", content: exp });
+          }
+        },
+        onDone: () => {
+          setStatus("idle");
+          track("nova:done");
+        },
+        onError: (e) => {
+          const msg = (e as any)?.error?.message || "Stream-fout";
+          setStatus("error");
+          setIsFallback(true);
+          emit({
+            role: "assistant",
+            content:
+              "Kleine hapering in de stream. Toch een voorstel: ga voor een cleane, smart-casual look met nette jeans, witte sneakers en een licht overshirt.",
+          });
+          track("nova:error", { message: msg });
+        },
+      },
+      { signal: abortRef.current.signal }
+    );
   }, [prefill]);
 
   const value = useMemo<NovaChatCtx>(() => ({
@@ -122,13 +147,18 @@ export function NovaChatProvider({ children }: ProviderProps) {
     setStatus,
     setPrefill,
     send,
-    // aliassen
     launch: open,
     hide: close,
     start: send,
     prompt: send,
-    __fallback: false,
-  }), [isOpen, status, prefill, open, close, toggle, send]);
+    events: {
+      subscribe: (fn: (m: NovaMessage) => void) => {
+        listeners.add(fn);
+        return () => listeners.delete(fn);
+      }
+    },
+    __fallback: isFallback,
+  }), [isOpen, status, prefill, open, close, toggle, send, isFallback]);
 
   return (
     <NovaChatContext.Provider value={value}>
@@ -136,6 +166,3 @@ export function NovaChatProvider({ children }: ProviderProps) {
     </NovaChatContext.Provider>
   );
 }
-
-NovaChatProvider.displayName = "NovaChatProvider";
-export default NovaChatProvider;
