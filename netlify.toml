@@ -18,12 +18,6 @@
   timeout = 10
   memory  = 256
 
-# Laat Functions ongemoeid door SPA-rewrite
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to   = "/.netlify/functions/:splat"
-  status = 200
-
 # Short route voor shop redirect
 [[redirects]]
   from = "/shop/:merchant/:id"

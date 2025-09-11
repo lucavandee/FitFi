@@ -53,7 +53,7 @@ export function useNovaChat(): NovaChatCtx {
   return ctx || FALLBACK;
 }
 
-export default function NovaChatProvider({ children }: { children: React.ReactNode }) {
+function NovaChatProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false);
   const [status, setStatus] = useState<NovaStatus>("idle");
   const [prefill, setPrefill] = useState<string | undefined>(undefined);
@@ -127,3 +127,6 @@ export default function NovaChatProvider({ children }: { children: React.ReactNo
 
   return <NovaChatContext.Provider value={value}>{children}</NovaChatContext.Provider>;
 }
+
+export default NovaChatProvider;
+export { NovaChatProvider }; // <-- named export toegevoegd
