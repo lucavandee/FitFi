@@ -1,4 +1,3 @@
-// src/components/nova/NovaChatMount.tsx
 import React, { useEffect } from "react";
 import { X, MessageCircle } from "lucide-react";
 import { createPortal } from "react-dom";
@@ -27,7 +26,7 @@ export default function NovaChatMount() {
       aria-label="Open Nova chat"
       onClick={nova.open}
       className={cn(
-        "fixed z-40 bottom-6 right-6 h-12 w-12 rounded-full shadow-lg",
+        "fixed z-[1000] bottom-6 right-6 h-12 w-12 rounded-full shadow-lg",
         "bg-[#2B6AF3] text-white hover:bg-[#1f56d6] transition-colors",
         "flex items-center justify-center"
       )}
@@ -37,9 +36,12 @@ export default function NovaChatMount() {
   ) : null;
 
   const panel = nova.isOpen ? (
-    <div className="fixed inset-0 z-50 pointer-events-none">
-      {/* Subtle backdrop zonder scroll-lock */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] pointer-events-auto" onClick={nova.close} />
+    <div className="fixed inset-0 z-[1000] pointer-events-none">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/30 backdrop-blur-[2px] pointer-events-auto"
+        onClick={nova.close}
+      />
       <div className="absolute bottom-6 right-6 w-[min(92vw,420px)] h-[min(80vh,640px)] pointer-events-auto">
         <div className="h-full w-full rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col">
           <div className="flex items-center justify-between px-4 py-2 border-b border-black/5">
