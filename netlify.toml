@@ -1,5 +1,3 @@
-# netlify.toml — FitFi
-
 [build]
   command   = "npm run build"
   publish   = "dist"
@@ -11,29 +9,30 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = []
-  included_files = []
 
-# Per-function settings (SSE nova)
 [functions."nova"]
   timeout = 30
   memory  = 1024
 
-# Zorg dat Functions niet door de SPA-rewrite worden opgeslokt
+[functions."shop-redirect"]
+  timeout = 10
+  memory  = 256
+
+# Laat Functions ongemoeid door SPA-rewrite
 [[redirects]]
-  from   = "/.netlify/functions/*"
-  to     = "/.netlify/functions/:splat"
+  from = "/.netlify/functions/*"
+  to   = "/.netlify/functions/:splat"
   status = 200
 
-# Single Page App fallback
+# Short route voor shop redirect
 [[redirects]]
-  from   = "/*"
-  to     = "/index.html"
+  from = "/shop/:merchant/:id"
+  to   = "/.netlify/functions/shop-redirect/:merchant/:id"
   status = 200
+  force = true
 
-# Extra headers voor SSE endpoint (Content-Type zet je in de functie zelf)
-[[headers]]
-  for = "/.netlify/functions/nova"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Cache-Control = "no-cache"
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
