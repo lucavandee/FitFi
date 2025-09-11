@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lato:wght@300;400;500;600&display=swap');
+@import './tokens.css';
+@import './animations.css';
+@import './utilities/typography.css';
+@import './components/images.css';
+@import './components/pricing.css';
 
 /* CSS Variables for consistent header height */
 :root {
