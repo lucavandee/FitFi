@@ -5,6 +5,8 @@ import Button from "@/components/ui/Button";
 import { useNovaChat } from "@/components/nova/NovaChatProvider";
 import { track } from "@/utils/telemetry";
 import { cn } from "@/utils/cn";
+import type { Product } from "@/types/product";
+import ProductRail from "./ProductRail";
 
 type MsgRole = "user" | "assistant";
 type Msg = { id: string; role: MsgRole; content: string; ts: string };
@@ -16,92 +18,91 @@ const SUGGESTIONS: string[] = [
   "Street luxe fit met witte sneakers",
 ];
 
-function nowISO() {
-  return new Date().toISOString();
-}
+function nowISO() { return new Date().toISOString(); }
 
 export default function ChatPanelPro() {
   const nova = useNovaChat();
   const inputRef = useRef<HTMLInputElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[] | null>(null);
 
   const canType = useMemo(() => nova.status !== "streaming", [nova.status]);
   const count = (messages ?? []).length;
 
-  // Auto-scroll naar nieuwe berichten
+  // Tekst patches
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  // Abonneer op provider patches (assistant tekst)
-  useEffect(() => {
-    const unsub = nova.events.subscribe((m) => {
-      if (m.role !== "assistant" || !m.content) return;
+    return nova.events.subscribe((m) => {
+      if (!m?.content) return;
       setMessages((prev) => {
-        // Als laatste bericht assistant is, update i.p.v. dupliceren (streaming patches)
         const last = prev[prev.length - 1];
         if (last && last.role === "assistant") {
           const next = [...prev];
-          next[next.length - 1] = { ...last, content: m.content };
+          next[next.length - 1] = { ...last, content: m.content, ts: nowISO() };
           return next;
         }
         return [...prev, { id: crypto.randomUUID(), role: "assistant", content: m.content, ts: nowISO() }];
       });
     });
-    return unsub;
   }, [nova.events]);
 
-  const send = useCallback(
-    async (text: string) => {
-      const trimmed = (text || "").trim();
-      if (!trimmed) return;
+  // Product patches
+  useEffect(() => {
+    return nova.products.subscribe((items) => {
+      if (!Array.isArray(items)) return;
+      setProducts(items);
+    });
+  }, [nova.products]);
 
-      setError(null);
-      setPending(true);
+  const addAssistant = useCallback((content: string) => {
+    setMessages((p) => [...p, { id: crypto.randomUUID(), role: "assistant", content, ts: nowISO() }]);
+  }, []);
 
-      const userMsg: Msg = { id: crypto.randomUUID(), role: "user", content: trimmed, ts: nowISO() };
-      setMessages((prev) => [...prev, userMsg]);
+  const send = useCallback(async (text: string) => {
+    const trimmed = (text || "").trim();
+    if (!trimmed) return;
+    setError(null);
+    setPending(true);
+    setProducts(null);
 
-      try {
-        track("nova:prompt", { len: trimmed.length, source: "ChatPanelPro" });
-        await nova.start(trimmed, { ui: "pro-panel" });
-      } catch (e: any) {
-        const msg = e?.message || "Verzenden mislukt.";
-        setError(String(msg));
-        track("nova:error", { where: "ChatPanelPro", message: String(msg) });
-      } finally {
-        setPending(false);
-        if (inputRef.current) inputRef.current.value = "";
+    const userMsg: Msg = { id: crypto.randomUUID(), role: "user", content: trimmed, ts: nowISO() };
+    setMessages((prev) => [...prev, userMsg]);
+
+    try {
+      track("nova:prompt", { len: trimmed.length, source: "ChatPanelPro" });
+      await nova.start(trimmed, { ui: "pro-panel" });
+      if (nova.__fallback) {
+        addAssistant(
+          "We kozen voor een cleane, smart-casual look: nette jeans, frisse witte sneaker en een licht overshirt. Minimalistisch, comfortabel en direct shoppable."
+        );
       }
-    },
-    [nova]
-  );
+    } catch (e: any) {
+      const msg = e?.message || "Verzenden mislukt.";
+      setError(String(msg));
+      track("nova:error", { where: "ChatPanelPro", message: String(msg) });
+    } finally {
+      setPending(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }, [nova, addAssistant]);
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      const value = inputRef.current?.value ?? "";
-      void send(value);
-    },
-    [send]
-  );
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    const value = inputRef.current?.value ?? "";
+    void send(value);
+  }, [send]);
 
-  const onSuggestion = useCallback(
-    (s: string) => {
-      if (!inputRef.current) return;
-      inputRef.current.value = s;
-      void send(s);
-    },
-    [send]
-  );
+  const onSuggestion = useCallback((s: string) => {
+    if (!inputRef.current) return;
+    inputRef.current.value = s;
+    void send(s);
+  }, [send]);
 
   return (
     <div className="flex h-full flex-col">
-      {/* Hero intro (alleen wanneer leeg) */}
+      {/* Intro */}
       {count === 0 ? (
         <div className="mb-3 rounded-2xl border border-black/5 bg-gradient-to-b from-[#F7FAFF] to-white p-4">
           <div className="flex items-center gap-2 text-[#0D1B2A]">
@@ -111,21 +112,14 @@ export default function ChatPanelPro() {
           <p className="mt-2 text-sm text-gray-600">
             Stel je stijlvraag of plak je outfit-briefing. Wij geven direct een heldere uitleg en shoppable look.
           </p>
-
           <div className="mt-3 flex flex-wrap gap-2">
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
-                className={cn(
-                  "group rounded-full border border-black/10 bg-white px-3 py-1.5 text-xs",
-                  "text-[#0D1B2A] hover:bg-black/5 transition"
-                )}
+                className={cn("group rounded-full border border-black/10 bg-white px-3 py-1.5 text-xs","text-[#0D1B2A] hover:bg-black/5 transition")}
                 onClick={() => onSuggestion(s)}
               >
-                <span className="inline-flex items-center gap-1">
-                  <Wand2 size={14} className="opacity-70" />
-                  {s}
-                </span>
+                <span className="inline-flex items-center gap-1"><Wand2 size={14} className="opacity-70" />{s}</span>
               </button>
             ))}
           </div>
@@ -142,19 +136,14 @@ export default function ChatPanelPro() {
           <ul className="space-y-3">
             {(messages ?? []).map((m) => (
               <li key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
-                <div
-                  className={cn(
-                    "max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-relaxed shadow-sm",
-                    m.role === "user"
-                      ? "bg-[#2B6AF3] text-white"
-                      : "bg-white text-[#0D1B2A] border border-black/10"
-                  )}
-                >
+                <div className={cn("max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-relaxed shadow-sm",
+                  m.role === "user" ? "bg-[#2B6AF3] text-white" : "bg-white text-[#0D1B2A] border border-black/10"
+                )}>
                   {m.content}
                 </div>
               </li>
             ))}
-            {pending || nova.status === "streaming" ? (
+            {pending ? (
               <li className="flex justify-start">
                 <div className="max-w-[82%] rounded-2xl px-3 py-2 text-sm bg-white border border-black/10 text-[#0D1B2A] shadow-sm">
                   <span className="inline-flex items-center gap-2">
@@ -164,9 +153,11 @@ export default function ChatPanelPro() {
                 </div>
               </li>
             ) : null}
-            <div ref={messagesEndRef} />
           </ul>
         )}
+
+        {/* Product rail */}
+        <ProductRail items={products || []} loading={pending && !products} />
       </div>
 
       {/* Error */}
@@ -178,29 +169,15 @@ export default function ChatPanelPro() {
           ref={inputRef}
           defaultValue={nova.prefill || ""}
           placeholder="Beschrijf je stijl of gelegenheid…"
-          className={cn(
-            "flex-1 h-12 rounded-full border border-black/10 bg-white px-4 text-sm outline-none",
-            "focus:ring-2 focus:ring-[#2B6AF3]/30"
-          )}
+          className={cn("flex-1 h-12 rounded-full border border-black/10 bg-white px-4 text-sm outline-none","focus:ring-2 focus:ring-[#2B6AF3]/30")}
           disabled={!canType || pending}
           aria-label="Nova chat invoer"
         />
-        <Button
-          type="submit"
-          size="lg"
-          variant="primary"
-          icon={<Send size={16} />}
-          iconPosition="right"
-          loading={pending || nova.status === "streaming"}
-          disabled={!canType || pending}
-          className="rounded-full px-5"
-        >
+        <Button type="submit" size="lg" variant="primary" icon={<Send size={16} />} iconPosition="right" loading={pending} disabled={!canType || pending} className="rounded-full px-5">
           Verstuur
         </Button>
       </form>
-      <div className="mt-2 text-[11px] text-gray-500">
-        Tip: druk op <span className="font-medium">Enter</span> om te verzenden.
-      </div>
+      <div className="mt-2 text-[11px] text-gray-500">Tip: druk op <span className="font-medium">Enter</span> om te verzenden.</div>
     </div>
   );
 }
