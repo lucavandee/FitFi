@@ -1,23 +1,25 @@
+// src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
-import GlobalErrorBoundary from "@/components/system/GlobalErrorBoundary";
-import App from "@/App";
-import NovaChatMount from "@/components/nova/NovaChatMount";
+import App from "./App";
+import "./index.css";
 
-// Build-tag voor release verificatie in productie
-const BUILD_TAG = import.meta.env.VITE_BUILD_TAG ?? "dev";
-if (import.meta.env.PROD) {
-  console.info(`✅ FitFi build=${BUILD_TAG} | NovaChat root mounted (prod)`);
-}
+// Nova (provider + floating mount)
+import NovaChatProvider from "@/components/nova/NovaChatProvider";
+import NovaChatMount from "@/components/nova/NovaChatMount";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <HelmetProvider>
-      <GlobalErrorBoundary>
-        <App />
-        <NovaChatMount />
-      </GlobalErrorBoundary>
-    </HelmetProvider>
+    <NovaChatProvider>
+      {/* Global centering wrapper — uniform op alle routes */}
+      <div className="min-h-screen bg-[#F6F6F6]">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+          <App />
+        </div>
+      </div>
+
+      {/* Floating FAB + Panel (rechtsonder, overlay) */}
+      <NovaChatMount />
+    </NovaChatProvider>
   </React.StrictMode>
 );
