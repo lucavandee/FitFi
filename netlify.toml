@@ -1,29 +1,39 @@
+# netlify.toml — FitFi
+
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command   = "npm run build"
+  publish   = "dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20.19.0"
-  NPM_FLAGS = "--no-audit --no-fund"
-  VITE_ENABLE_TELEMETRY = "1"
-  VITE_CHAT_STYLE = "pro"
-  VITE_BUILD_TAG = "2025-01-15T12:00Z-stable"
-  VITE_CHAT_STYLE = "pro"
-  VITE_BUILD_TAG = "2025-01-15T16:30Z-nova-prod"
+  NPM_FLAGS    = "--no-audit --no-fund"
 
 [functions]
-  directory = "netlify/functions"
   node_bundler = "esbuild"
+  external_node_modules = []
+  included_files = []
 
+# Per-function settings (SSE nova)
+[functions."nova"]
+  timeout = 30
+  memory  = 1024
+
+# Zorg dat Functions niet door de SPA-rewrite worden opgeslokt
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from   = "/.netlify/functions/*"
+  to     = "/.netlify/functions/:splat"
   status = 200
 
+# Single Page App fallback
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# Extra headers voor SSE endpoint (Content-Type zet je in de functie zelf)
 [[headers]]
   for = "/.netlify/functions/nova"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type, x-fitfi-tier, x-fitfi-uid"
-    Cache-Control = "no-cache, no-store, must-revalidate"
+    Cache-Control = "no-cache"
