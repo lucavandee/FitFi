@@ -1,6 +1,9 @@
 import { track } from "@/utils/telemetry";
 import type { Product } from "@/types/product";
 
+// Environment check for Nova SSE availability
+const NOVA_SSE_ACTIVE = import.meta.env.VITE_NOVA_SSE_ACTIVE !== 'false';
+
 const START_MARKER = '<<<FITFI_JSON>>>';
 const END_MARKER = '<<<END_FITFI_JSON>>>';
 
@@ -38,7 +41,19 @@ export async function* streamChat({
   messages,
   onEvent,
 }: StreamChatParams): AsyncGenerator<NovaEvent, void, unknown> {
+  // Check if Nova SSE is active
+  if (!NOVA_SSE_ACTIVE) {
+    track('nova:sse-inactive');
+    onEvent?.({ type: 'error' });
+    throw new Error('Nova chat is momenteel niet beschikbaar');
+  }
+
   try {
+    track('nova:request-start', { 
+      messageCount: validMessages.length,
+      mode 
+    });
+
     // Validate messages before sending
     if (!validateMessages(messages)) {
       const error = new Error("Ongeldige berichten: alle berichten moeten niet-lege content hebben");
@@ -57,6 +72,10 @@ export async function* streamChat({
     });
 
     if (!response.ok) {
+      track('nova:request-failed', { 
+        status: response.status,
+        statusText: response.statusText 
+      });
       const errorText = await response.text();
       const error = new Error(`Nova API fout: ${response.status} - ${errorText}`);
       onEvent?.({ type: "error" });
@@ -65,6 +84,7 @@ export async function* streamChat({
     }
 
     if (!response.body) {
+      track('nova:no-response-body');
       const error = new Error("Geen response body ontvangen van Nova API");
       onEvent?.({ type: "error" });
       return;
@@ -119,8 +139,14 @@ export async function* streamChat({
         }
       }
     }
+    
+    track('nova:stream-complete');
   } catch (error) {
     onEvent?.({ type: "error" });
+    track('nova:stream-error', { 
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+    track('nova:invalid-messages', { messageCount: messages.length });
     track("nova:stream_error", { message: (error as Error)?.message });
     console.error("Nova streaming fout:", error);
   }

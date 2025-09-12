@@ -165,8 +165,11 @@ export default function ChatPanelPro() {
             <button
               key={s}
               onClick={() => submit(s)}
+              className={`px-3 py-2 text-xs rounded-full transition-colors ${
+                pending
                   ? "bg-blue-600 text-white"
                   : "bg-white text-gray-800 shadow-sm border border-gray-100"
+              }`}
               type="button"
             >
               <Wand2 size={14} className="inline-block mr-1" />
@@ -175,17 +178,6 @@ export default function ChatPanelPro() {
           ))}
         </div>
 
-        {isStreaming && (
-          <div className="flex justify-start">
-            <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-100 max-w-[85%]">
-              <div className="nova-typing">
-                <div className="nova-typing-dot"></div>
-                <div className="nova-typing-dot"></div>
-                <div className="nova-typing-dot"></div>
-              </div>
-            </div>
-          </div>
-        )}
         {error && <div className="mt-2 text-[13px] text-red-600">{error}</div>}
       </div>
     </div>
