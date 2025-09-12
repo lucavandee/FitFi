@@ -7,6 +7,7 @@ import Logo from '../ui/Logo';
 import { NAV_ITEMS } from '../../constants/nav';
 import MobileNavDrawer from './MobileNavDrawer';
 import { scrollToHash } from '../../utils/scrollUtils';
+import { trackNavCTA } from '@/hooks/useABTesting';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -139,6 +140,7 @@ const Navbar: React.FC = () => {
                     to="/registreren"
                     variant="primary"
                     size="sm"
+                    onClick={trackNavCTA}
                   >
                     Gratis starten
                   </Button>

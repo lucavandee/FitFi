@@ -4,6 +4,7 @@ import track from '@/utils/telemetry';
 import Button from '../ui/Button';
 import SmartImage from '@/components/media/SmartImage';
 import HeroTitle from '../marketing/HeroTitle';
+import { useABTesting, trackHeroCTA } from '@/hooks/useABTesting';
 
 interface HeroProps {
   onCTAClick?: () => void;
@@ -11,7 +12,12 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
+  const { heroCTA } = useABTesting();
+  
+  const ctaText = heroCTA === 'ai-style-report' ? 'Ontvang je AI Style Report' : 'Ja, geef mij mijn gratis AI Style Report';
+  
   const handleCTAClick = () => {
+    trackHeroCTA(heroCTA);
     if (typeof track === 'function') track('cta_click', { loc: 'home_hero', cta: 'start_style_report' });
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'cta_click', { location: 'home_hero' });
@@ -80,7 +86,7 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 className="ff-cta cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                 aria-label="Start je gratis AI Style Report"
               >
-                Ja, geef mij mijn gratis AI Style Report
+                {ctaText}
               </Button>
               
               <p className="text-sm text-gray-500">
