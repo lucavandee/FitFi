@@ -3,6 +3,8 @@
 @import "./styles/tokens.css";
 
 /* Tailwind layers */
+@import "./components/nova/ChatTheme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
