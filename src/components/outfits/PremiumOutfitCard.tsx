@@ -12,6 +12,8 @@ interface OutfitItem {
   image: string;
   category: string;
 }
+import { trackOutfitExplain } from '@/hooks/useABTesting';
+import { useEffect, useRef } from 'react';
 
 interface PremiumOutfitCardProps {
   outfit: {
@@ -28,6 +30,25 @@ interface PremiumOutfitCardProps {
 }
 
 export default function PremiumOutfitCard({ 
+  const explainRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          trackOutfitExplain(outfit.id);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (explainRef.current) {
+      observer.observe(explainRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [outfit.id]);
+
   outfit, 
   onSave, 
   onShare 
@@ -136,7 +157,7 @@ export default function PremiumOutfitCard({
       </div>
       
       <div className="explain">
-        Waarom dit werkt: de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
+      <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
       </div>
     </PremiumCard>
   );

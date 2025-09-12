@@ -9,6 +9,8 @@ import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
 import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
+import { trackOutfitExplain } from '@/hooks/useABTesting';
+import { useEffect, useRef } from 'react';
 
 interface OutfitCardProps {
   outfit: {
@@ -55,6 +57,25 @@ export default function OutfitCard({
     dislike: false,
     explain: false
   });
+
+  const explainRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          trackOutfitExplain(outfit.id);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (explainRef.current) {
+      observer.observe(explainRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [outfit.id]);
 
   const handleSave = () => {
     if (isProcessing.save || saveOutfit.isPending) return;
@@ -434,8 +455,8 @@ export default function OutfitCard({
         </div>
       </div>
       
-      <div className="explain">
-        Waarom dit werkt: de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
+      <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+        <strong>Waarom dit werkt:</strong> de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
     </article>
   );

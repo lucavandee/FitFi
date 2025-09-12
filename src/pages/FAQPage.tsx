@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { trackFAQOpen } from '@/hooks/useABTesting';
 
 interface FAQItem {
   question: string;
@@ -192,11 +193,16 @@ const FAQPage: React.FC = () => {
     }
   ];
 
+  const handleFAQOpen = (question: string) => {
+    trackFAQOpen(question);
+  };
+
   const toggleFAQ = (index: number) => {
     if (openFAQs.includes(index)) {
       setOpenFAQs(openFAQs.filter(i => i !== index));
     } else {
       setOpenFAQs([...openFAQs, index]);
+      handleFAQOpen(faqData[index].question);
     }
   };
 
