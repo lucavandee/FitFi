@@ -11,6 +11,10 @@
 
 /* Import FitFi Theme */
 @import './styles/fitfi-theme.css';
+@import './styles/animations.css';
+@import './styles/components/images.css';
+@import './styles/components/pricing.css';
+@import './styles/polish.css';
 
 /* Kill-switch legacy / third-party chat docks */
 :root {
