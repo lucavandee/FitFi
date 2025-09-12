@@ -1,21 +1,18 @@
 // src/components/nova/NovaChatMount.tsx
 import React, { Suspense, useEffect, useMemo, useState } from "react";
-import NovaChatProvider, { useNovaChat } from "./NovaChatProvider";
+import { useNovaChat } from "./NovaChatProvider";
 import NovaLauncher from "./NovaLauncher";
 import ChatPanelPro from "./ChatPanelPro";
 
-/**
- * We forceren zichtbaarheid; zet HIDE_ON leeg zolang QA loopt.
- * Als je bepaalde routes wilt verbergen, vul dit later aan.
- */
-const HIDE_ON: string[] = []; // bijv. ["/login", "/register"]
+/** Tijdens QA nergens verbergen; later kun je beperken. */
+const HIDE_ON: string[] = []; // bv. ["/login", "/register"]
 
 function getPath(): string {
   if (typeof window === "undefined" || !window.location) return "/";
   return window.location.pathname || "/";
 }
 
-/** SPA-vriendelijke pathname zónder react-router hooks */
+/** SPA-pathname zónder react-router hooks */
 function usePathname(): string {
   const [path, setPath] = useState<string>(() => getPath());
   useEffect(() => {
@@ -55,13 +52,11 @@ function NovaOverlay() {
 
   return (
     <>
-      {/* Dimmer */}
       <div
         className="fixed inset-0 z-[9997] bg-black/40 backdrop-blur-[2px]"
         onClick={nova.hide}
         aria-hidden
       />
-      {/* Panel */}
       <div
         role="dialog"
         aria-label="Nova chat"
@@ -99,18 +94,13 @@ export default function NovaChatMount() {
   const hideFab = useMemo(() => HIDE_ON.some((p) => pathname.startsWith(p)), [pathname]);
 
   return (
-    <NovaChatProvider>
-      {/* FAB altijd renderen; z-index superhoog zodat niets het bedekt */}
+    <>
       {!hideFab && <NovaLauncher />}
-
-      {/* Optionele portal-target (niet gebruikt, maar veilig om te laten staan) */}
       <div className="fixed inset-x-0 bottom-0 z-[9996] hidden" aria-hidden />
       <Suspense fallback={null}>
         <div id="nova-chat-mount" className="hidden" />
       </Suspense>
-
-      {/* Overlay paneel */}
       <NovaOverlay />
-    </NovaChatProvider>
+    </>
   );
 }
