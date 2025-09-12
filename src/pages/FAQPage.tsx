@@ -237,7 +237,7 @@ const FAQPage: React.FC = () => {
             "@type": "Question",
             "name": faq.question,
             "acceptedAnswer": {
-          <div className="max-w-3xl mx-auto space-y-4" data-kind="faq">
+              "@type": "Answer",
               "text": faq.answer
             }
           }))
@@ -295,7 +295,7 @@ const FAQPage: React.FC = () => {
                 }`}
               >
                 <div className={`p-2 rounded-full mb-2 ${
-                  <ChevronDown className="w-5 h-5 text-gray-500 chev" />
+                  activeCategory === category.id
                     ? 'bg-[#bfae9f]/30 text-[#bfae9f]' 
                     : 'bg-gray-100 text-gray-500'
                 }`}>
@@ -319,7 +319,7 @@ const FAQPage: React.FC = () => {
             </h2>
             
             {filteredFAQs.length > 0 ? (
-              <div className="space-y-4">
+              <div className="max-w-3xl mx-auto space-y-4" data-kind="faq">
                 {filteredFAQs.map((faq, index) => (
                   <div 
                     key={index} 
