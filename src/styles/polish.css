@@ -13,15 +13,25 @@
   background-color: var(--glass-surface) !important;
   border-bottom: 1px solid var(--glass-border) !important;
   box-shadow: 0 2px 16px rgba(0,0,0,.04);
+  /* FIX: underline mag niet 'lekken' naar de hero */
+  overflow: hidden;
+  z-index: 40;
 }
 [data-fitfi="navbar"].is-scrolled{ box-shadow: 0 8px 24px rgba(0,0,0,.08); }
 
-/* Actieve nav-underline (vereist class .nav-link en .is-active op de huidige link) */
+/* Actieve nav-underline (precies onder de link, binnen de navbar) */
 [data-fitfi="navbar"] .nav-link{
-  position: relative; padding-block: .875rem;
+  position: relative;
+  display: inline-flex;          /* stabiele box voor pseudo-element */
+  align-items: center;
+  gap: .375rem;
+  padding-block: .875rem;        /* verticale klikzone */
+  line-height: 1;
 }
 [data-fitfi="navbar"] .nav-link.is-active::after{
-  content:""; position:absolute; left:0; right:0; bottom:-1px; height:3px;
+  content:"";
+  position:absolute; left:0; right:0; bottom:0; /* FIX: niet onder de navbar */
+  height: 2px;
   border-radius: var(--radius-full);
   background: var(--ff-color-primary);
 }
@@ -142,7 +152,7 @@ section[aria-labelledby="hero-heading"]::before,
 .ff-input::placeholder, .ff-textarea::placeholder{ color: color-mix(in srgb, var(--color-text) 40%, #fff 60%); }
 .ff-input:focus, .ff-select:focus, .ff-textarea:focus{ box-shadow: var(--shadow-ring); border-color: var(--ff-color-primary); }
 
-/* ====== OUTFIT EXPLAINABILITY (verplicht) ====== */
+/* ====== OUTFIT EXPLAINABILITY ====== */
 [data-kind="outfit-card"] .explain{
   margin-top:.75rem; padding:.75rem; border-radius:.75rem;
   background: color-mix(in srgb, var(--color-accent) 12%, #fff 88%);
