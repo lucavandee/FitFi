@@ -4,9 +4,12 @@ import NovaChatProvider, { useNovaChat } from "./NovaChatProvider";
 import NovaLauncher from "./NovaLauncher";
 import ChatPanelPro from "./ChatPanelPro";
 
-const HIDE_ON: string[] = ["/login", "/register", "/reset-password", "/legal"];
+/**
+ * We forceren zichtbaarheid; zet HIDE_ON leeg zolang QA loopt.
+ * Als je bepaalde routes wilt verbergen, vul dit later aan.
+ */
+const HIDE_ON: string[] = []; // bijv. ["/login", "/register"]
 
-// Huidige path zonder Router-context
 function getPath(): string {
   if (typeof window === "undefined" || !window.location) return "/";
   return window.location.pathname || "/";
@@ -19,7 +22,6 @@ function usePathname(): string {
     if (typeof window === "undefined") return;
     const update = () => setPath(getPath());
 
-    // Patch history zodat client-side navigatie events triggert
     const origPush = history.pushState;
     const origReplace = history.replaceState;
     try {
@@ -31,7 +33,7 @@ function usePathname(): string {
         origReplace.apply(this, args as any);
         window.dispatchEvent(new Event("popstate"));
       } as typeof history.replaceState;
-    } catch { /* noop */ }
+    } catch {}
 
     window.addEventListener("popstate", update);
     update();
@@ -41,7 +43,7 @@ function usePathname(): string {
       try {
         history.pushState = origPush;
         history.replaceState = origReplace;
-      } catch { /* noop */ }
+      } catch {}
     };
   }, []);
   return path;
@@ -49,14 +51,13 @@ function usePathname(): string {
 
 function NovaOverlay() {
   const nova = useNovaChat();
-
   if (!nova.isOpen) return null;
 
   return (
     <>
-      {/* Dim background */}
+      {/* Dimmer */}
       <div
-        className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-[2px]"
+        className="fixed inset-0 z-[9997] bg-black/40 backdrop-blur-[2px]"
         onClick={nova.hide}
         aria-hidden
       />
@@ -65,14 +66,13 @@ function NovaOverlay() {
         role="dialog"
         aria-label="Nova chat"
         aria-modal="true"
-        className="fixed z-[81] right-4 md:right-6 bottom-[max(1rem,env(safe-area-inset-bottom))]
+        className="fixed right-4 md:right-6 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[9998]
                    w-[min(100vw-2rem,520px)] h-[72vh] max-h-[80vh]"
       >
         <div
           className="flex h-full flex-col rounded-2xl border border-black/10 bg-white shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
           <div className="flex items-center justify-between px-3 py-2 border-b border-black/10">
             <div className="text-sm font-medium text-[#0D1B2A]">Nova</div>
             <button
@@ -85,7 +85,6 @@ function NovaOverlay() {
               </svg>
             </button>
           </div>
-          {/* Body */}
           <div className="min-h-0 flex-1 p-3">
             <ChatPanelPro />
           </div>
@@ -101,16 +100,16 @@ export default function NovaChatMount() {
 
   return (
     <NovaChatProvider>
-      {/* Launcher (FAB) */}
+      {/* FAB altijd renderen; z-index superhoog zodat niets het bedekt */}
       {!hideFab && <NovaLauncher />}
 
-      {/* Mount target (optioneel voor portals) */}
-      <div className="fixed inset-x-0 bottom-0 z-[60] hidden" aria-hidden />
+      {/* Optionele portal-target (niet gebruikt, maar veilig om te laten staan) */}
+      <div className="fixed inset-x-0 bottom-0 z-[9996] hidden" aria-hidden />
       <Suspense fallback={null}>
         <div id="nova-chat-mount" className="hidden" />
       </Suspense>
 
-      {/* Overlay met panel */}
+      {/* Overlay paneel */}
       <NovaOverlay />
     </NovaChatProvider>
   );
