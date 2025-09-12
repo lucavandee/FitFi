@@ -1,29 +1,20 @@
 import React from "react";
-import { cn } from "@/utils/cn";
 
-type ChipProps = React.HTMLAttributes<HTMLSpanElement> & {
-  tone?: "neutral" | "accent" | "success" | "warning" | "danger";
+type Props = {
+  children: React.ReactNode;
+  selected?: boolean;
+  onClick?: () => void;
+  className?: string;
 };
 
-const tones = {
-  neutral: "bg-[#1b2138] text-text border border-border",
-  accent: "bg-accent/15 text-accent",
-  success: "bg-success/15 text-success",
-  warning: "bg-warning/15 text-warning",
-  danger: "bg-danger/15 text-danger"
-};
-
-function Chip({ className, tone = "neutral", ...rest }: ChipProps) {
+export default function Chip({ children, selected, onClick, className = "" }: Props) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-sm px-2.5 py-1 text-sm font-medium",
-        tones[tone],
-        className
-      )}
-      {...rest}
-    />
+    <button
+      type="button"
+      onClick={onClick}
+      className={`ff-chip ${selected ? "outline outline-2 outline-[var(--fitfi-primary)]" : ""} ${className}`}
+    >
+      {children}
+    </button>
   );
 }
-
-export default Chip;

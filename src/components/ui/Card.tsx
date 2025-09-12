@@ -1,24 +1,29 @@
 import React from "react";
-import { cn } from "@/utils/cn";
 
-type SectionProps = React.HTMLAttributes<HTMLDivElement>;
+type Props = {
+  className?: string;
+  children: React.ReactNode;
+};
 
-function Card(props: React.HTMLAttributes<HTMLDivElement>) {
-  const { className, ...rest } = props;
-  return <div className={cn("bg-surface border border-border rounded-lg shadow-md", className)} {...rest} />;
+function Root({ className = "", children }: Props) {
+  return <div className={`ff-card ${className}`}>{children}</div>;
 }
 
-function CardHeader({ className, ...rest }: SectionProps) {
-  return <div className={cn("px-5 pt-5 pb-3", className)} {...rest} />;
+function Header({ className = "", children }: Props) {
+  return (
+    <div className={`px-5 py-4 flex items-center justify-between border-b border-white/10 ${className}`}>
+      {children}
+    </div>
+  );
 }
 
-function CardContent({ className, ...rest }: SectionProps) {
-  return <div className={cn("px-5 pb-5", className)} {...rest} />;
+function Body({ className = "", children }: Props) {
+  return <div className={`px-5 py-4 ${className}`}>{children}</div>;
 }
 
-function CardFooter({ className, ...rest }: SectionProps) {
-  return <div className={cn("px-5 pb-5 pt-3 border-t border-border", className)} {...rest} />;
+function Footer({ className = "", children }: Props) {
+  return <div className={`px-5 py-4 border-t border-white/10 ${className}`}>{children}</div>;
 }
 
-const _Card = Object.assign(Card, { Header: CardHeader, Content: CardContent, Footer: CardFooter });
-export default _Card;
+const Card = Object.assign(Root, { Header, Body, Footer });
+export default Card;
