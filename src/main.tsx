@@ -1,10 +1,12 @@
+// /src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
 import App from "./App";
-import NovaChatProvider from "@/components/nova/NovaChatProvider";
+// ⬇️ Named import omdat NovaChatProvider geen default export heeft
+import { NovaChatProvider } from "@/components/nova/NovaChatProvider";
 import NovaChatMount from "@/components/nova/NovaChatMount";
 
 import "./index.css";
