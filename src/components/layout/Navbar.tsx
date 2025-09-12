@@ -63,8 +63,8 @@ const Navbar: React.FC = () => {
           isScrolled 
             ? 'shadow-sm' 
             : ''
+        }`}
         data-fitfi="navbar"
-        className={`sticky top-0 z-40 bg-transparent backdrop-blur transition-all duration-300 ${isScrolled ? 'is-scrolled' : ''}`}
         role="navigation"
         aria-label="Hoofdnavigatie"
       >
