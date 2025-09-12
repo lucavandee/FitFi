@@ -7,7 +7,6 @@ import Logo from "../ui/Logo";
 import { NAV_ITEMS } from "../../constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
 import { scrollToHash } from "../../utils/scrollUtils";
-import { track } from "../../utils/analytics";
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,14 +21,12 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Sluit mobiel menu bij route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
   const isActiveLink = (href: string) => {
     if (href === "/") return location.pathname === "/";
-    // hash-links niet als active markeren op andere routes
     if (href.startsWith("#")) return false;
     return location.pathname.startsWith(href);
   };
@@ -64,7 +61,7 @@ const Navbar: React.FC = () => {
                     e.preventDefault();
                     scrollToHash(item.href);
                   }}
-                  className={`nav-link text-sm font-medium transition-colors hover:text-primary ${
+                  className={`nav-link text-sm font-medium transition-colors ${
                     active ? "is-active" : ""
                   }`}
                 >
@@ -76,7 +73,7 @@ const Navbar: React.FC = () => {
               <Link
                 key={item.href}
                 to={item.href}
-                className={`nav-link text-sm font-medium transition-colors hover:text-primary ${
+                className={`nav-link text-sm font-medium transition-colors ${
                   active ? "is-active" : ""
                 }`}
               >
@@ -110,18 +107,14 @@ const Navbar: React.FC = () => {
               >
                 Inloggen
               </Link>
-              <Link 
-                to="/get-started" 
-                className="ff-cta px-4 py-2 text-sm"
-                onClick={() => track('nav:cta-click', { location: 'navbar' })}
-              >
+              <Link to="/get-started" className="ff-cta px-4 py-2 text-sm">
                 Gratis starten
               </Link>
             </>
           )}
         </div>
 
-        {/* Mobile: menu button (FIX: aria-label als los attribuut, niet in className) */}
+        {/* Mobile: menu button */}
         <button
           type="button"
           className="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-border transition-colors"
