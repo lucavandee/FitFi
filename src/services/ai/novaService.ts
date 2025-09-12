@@ -1,127 +1,127 @@
 import { track } from "@/utils/telemetry";
+import type { Product } from "@/types/product";
 
-export interface NovaMessage {
+const START_MARKER = '<<<FITFI_JSON>>>';
+const END_MARKER = '<<<END_FITFI_JSON>>>';
+
+export type NovaMode = "outfits" | "chat";
+
+export type NovaMessage = {
   role: "user" | "assistant" | "system";
   content: string;
-}
+};
 
-export interface NovaRequest {
+export type NovaEvent = 
+  | { type: "content"; content: string }
+  | { type: "products"; products: Product[] }
+  | { type: "done" }
+  | { type: "error" };
+
+export type StreamChatParams = {
+  mode?: NovaMode;
   messages: NovaMessage[];
-  mode?: string;
-  context?: Record<string, any>;
+  onEvent?: (event: NovaEvent) => void;
+};
+
+function validateMessages(messages: NovaMessage[]): boolean {
+  if (!Array.isArray(messages) || messages.length === 0) return false;
+  return messages.every(msg => 
+    msg && 
+    typeof msg.role === 'string' && 
+    typeof msg.content === 'string' && 
+    msg.content.trim().length > 0
+  );
 }
 
-export interface NovaResponse {
-  content: string;
-  products?: any[];
-  done?: boolean;
-}
+export async function* streamChat({
+  mode = "outfits",
+  messages,
+  onEvent,
+}: StreamChatParams): AsyncGenerator<NovaEvent, void, unknown> {
+  try {
+    // Validate messages before sending
+    if (!validateMessages(messages)) {
+      const error = new Error("Ongeldige berichten: alle berichten moeten niet-lege content hebben");
+      onEvent?.({ type: "error" });
+      return;
+    }
 
-export class NovaService {
-  private baseUrl: string;
-
-  constructor(baseUrl = "/.netlify/functions") {
-    this.baseUrl = baseUrl;
-  }
-
-  async streamChat(request: NovaRequest): Promise<ReadableStream<NovaResponse>> {
-    track("nova:stream-start", { 
-      messageCount: request.messages.length,
-      mode: request.mode 
-    });
-
-    const response = await fetch(`${this.baseUrl}/nova`, {
+    const response = await fetch("/.netlify/functions/nova", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-fitfi-tier": "visitor",
         "x-fitfi-uid": "anonymous"
       },
-      body: JSON.stringify({ prompt, context: context || {}, mode: opts?.mode || "outfits" }),
+      body: JSON.stringify({ messages, mode }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Nova API error: ${response.status} - ${errorText || response.statusText}`);
-      track("nova:stream-error", { 
-        status: response.status,
-        error: errorText 
-      });
-      throw new Error(`Nova API error: ${response.status} ${errorText}`);
+      const error = new Error(`Nova API fout: ${response.status} - ${errorText}`);
+      onEvent?.({ type: "error" });
+      track("nova:error", { status: response.status, message: errorText });
+      return;
     }
 
     if (!response.body) {
-      throw new Error("No response body received from Nova API");
+      const error = new Error("Geen response body ontvangen van Nova API");
+      onEvent?.({ type: "error" });
+      return;
     }
 
-    return new ReadableStream({
-      start(controller) {
-        const reader = response.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        function pump(): Promise<void> {
-          return reader.read().then(({ done, value }) => {
-            if (done) {
-              controller.close();
-              track("nova:stream-complete");
-              return;
-            }
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || "";
-
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
-                if (data === "[DONE]") {
-                  controller.close();
-                  return;
-                }
-
-                try {
-                  const parsed = JSON.parse(data);
-                  controller.enqueue(parsed);
-                } catch (e) {
-                  console.warn("Failed to parse SSE data:", data);
-                }
-              }
-            }
-
-            return pump();
-          });
-        }
-
-        return pump();
-      }
-    });
-  }
-
-  async sendMessage(prompt: string, options?: { mode?: string }): Promise<NovaResponse> {
-    if (!prompt.trim()) {
-      throw new Error("Prompt cannot be empty");
-    }
-
-    const request: NovaRequest = {
-      messages: [
-        { role: "user", content: prompt.trim() }
-      ],
-      mode: options?.mode || "outfits"
-    };
-
-    const stream = await this.streamChat(request);
-    const reader = stream.getReader();
-    let lastResponse: NovaResponse = { content: "" };
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
-      lastResponse = value;
-    }
+      
+      if (done) {
+        onEvent?.({ type: "done" });
+        yield { type: "done" };
+        break;
+      }
 
-    return lastResponse;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const data = line.slice(6);
+          
+          if (data.includes(START_MARKER)) {
+            const start = data.indexOf(START_MARKER) + START_MARKER.length;
+            const end = data.indexOf(END_MARKER);
+            
+            if (end > start) {
+              try {
+                const jsonStr = data.slice(start, end);
+                const parsed = JSON.parse(jsonStr);
+                
+                if (parsed.products && Array.isArray(parsed.products)) {
+                  const event = { type: "products" as const, products: parsed.products };
+                  onEvent?.(event);
+                  yield event;
+                }
+              } catch (parseError) {
+                console.warn("JSON parse fout:", parseError);
+                onEvent?.({ type: "error" });
+                track("nova:parse_error", { data: data.slice(0, 100) });
+              }
+            }
+          } else {
+            const event = { type: "content" as const, content: data };
+            onEvent?.(event);
+            yield event;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    onEvent?.({ type: "error" });
+    track("nova:stream_error", { message: (error as Error)?.message });
+    console.error("Nova streaming fout:", error);
   }
 }
-
-export const novaService = new NovaService();

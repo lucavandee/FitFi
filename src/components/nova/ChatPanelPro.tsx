@@ -67,6 +67,12 @@ export default function ChatPanelPro() {
 
   const submit = useCallback(async (raw?: string) => {
     const value = (raw ?? inputRef.current?.value ?? "").trim();
+    
+    // Prevent empty submissions
+    if (!value && !raw) {
+      return;
+    }
+    
     const prompt = value || "Maak een smart-casual outfit onder €200";
     setError(null);
 
@@ -79,7 +85,8 @@ export default function ChatPanelPro() {
       track("nova:send", { len: prompt.length });
       await nova.send(prompt, { mode: "outfits" });
     } catch (e: any) {
-      setError(e?.message || "Onbekende fout");
+      setError("Er ging iets mis bij het stylen. Probeer het opnieuw.");
+      track("nova:submit_error", { hasMessage: !!e?.message });
       setPending(false);
     } finally {
       if (inputRef.current) inputRef.current.value = "";
