@@ -30,6 +30,10 @@ interface PremiumOutfitCardProps {
 }
 
 export default function PremiumOutfitCard({ 
+  outfit, 
+  onSave, 
+  onShare 
+}: PremiumOutfitCardProps) {
   const explainRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,11 +53,8 @@ export default function PremiumOutfitCard({
     return () => observer.disconnect();
   }, [outfit.id]);
 
-  outfit, 
-  onSave, 
-  onShare 
-}: PremiumOutfitCardProps) {
   return (
+    <PremiumCard>
     <div 
       className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
       data-kind="outfit-card"
@@ -159,6 +160,8 @@ export default function PremiumOutfitCard({
       <div className="explain">
       <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
       </div>
+      </div>
+    </div>
     </PremiumCard>
   );
 }
