@@ -1,63 +1,23 @@
-import { track } from "@/utils/telemetry";
-import type { Product } from "@/types/product";
-
-// Environment check for Nova SSE availability
-const NOVA_SSE_ACTIVE = import.meta.env.VITE_NOVA_SSE_ACTIVE !== 'false';
-
-const START_MARKER = '<<<FITFI_JSON>>>';
-const END_MARKER = '<<<END_FITFI_JSON>>>';
-
-export type NovaMode = "outfits" | "chat";
-
-export type NovaMessage = {
-  role: "user" | "assistant" | "system";
-  content: string;
-};
-
 export type NovaEvent = 
-  | { type: "content"; content: string }
-  | { type: "products"; products: Product[] }
+  | { type: "delta"; text?: string }
   | { type: "done" }
-  | { type: "error" };
+  | { type: "error"; message?: string };
 
-export type StreamChatParams = {
-  mode?: NovaMode;
-  messages: NovaMessage[];
+export type NovaStreamOpts = {
+  mode: "style" | "general";
+  messages: Array<{ role: string; content: string }>;
+  signal?: AbortSignal;
   onEvent?: (event: NovaEvent) => void;
 };
 
-function validateMessages(messages: NovaMessage[]): boolean {
-  if (!Array.isArray(messages) || messages.length === 0) return false;
-  return messages.every(msg => 
-    msg && 
-    typeof msg.role === 'string' && 
-    typeof msg.content === 'string' && 
-    msg.content.trim().length > 0
-  );
-}
-
-export async function* streamChat({
-  mode = "outfits",
-  messages,
-  onEvent,
-}: StreamChatParams): AsyncGenerator<NovaEvent, void, unknown> {
-  // Check if Nova SSE is active
-  if (!NOVA_SSE_ACTIVE) {
-    track('nova:sse-inactive');
-    onEvent?.({ type: 'error' });
-    throw new Error('Nova chat is momenteel niet beschikbaar');
-  }
-
+export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, void, unknown> {
+  const { messages, signal, onEvent } = opts;
+  
   try {
-    track('nova:request-start', { 
-      messageCount: validMessages.length,
-      mode 
-    });
-
-    // Validate messages before sending
-    if (!validateMessages(messages)) {
-      const error = new Error("Ongeldige berichten: alle berichten moeten niet-lege content hebben");
-      onEvent?.({ type: "error" });
+    // Check if Nova SSE is available
+    const sseActive = import.meta.env.VITE_NOVA_SSE_ACTIVE === "true";
+    if (!sseActive) {
+      onEvent?.({ type: "error", message: "Nova chat is momenteel niet beschikbaar" });
       return;
     }
 
@@ -65,89 +25,69 @@ export async function* streamChat({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-fitfi-tier": "visitor",
-        "x-fitfi-uid": "anonymous"
+        "x-fitfi-tier": localStorage.getItem("fitfi.user.tier") || "visitor",
+        "x-fitfi-uid": localStorage.getItem("fitfi.user.id") || "anonymous",
       },
-      body: JSON.stringify({ messages, mode }),
+      body: JSON.stringify({ messages }),
+      signal,
     });
 
     if (!response.ok) {
-      track('nova:request-failed', { 
-        status: response.status,
-        statusText: response.statusText 
-      });
-      const errorText = await response.text();
-      const error = new Error(`Nova API fout: ${response.status} - ${errorText}`);
-      onEvent?.({ type: "error" });
-      track("nova:error", { status: response.status, message: errorText });
-      return;
+      throw new Error(`HTTP ${response.status}`);
     }
 
     if (!response.body) {
-      track('nova:no-response-body');
-      const error = new Error("Geen response body ontvangen van Nova API");
-      onEvent?.({ type: "error" });
-      return;
+      throw new Error("No response body");
     }
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
 
-    while (true) {
-      const { done, value } = await reader.read();
-      
-      if (done) {
-        onEvent?.({ type: "done" });
-        yield { type: "done" };
-        break;
-      }
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const data = line.slice(6);
-          
-          if (data.includes(START_MARKER)) {
-            const start = data.indexOf(START_MARKER) + START_MARKER.length;
-            const end = data.indexOf(END_MARKER);
-            
-            if (end > start) {
-              try {
-                const jsonStr = data.slice(start, end);
-                const parsed = JSON.parse(jsonStr);
-                
-                if (parsed.products && Array.isArray(parsed.products)) {
-                  const event = { type: "products" as const, products: parsed.products };
-                  onEvent?.(event);
-                  yield event;
-                }
-              } catch (parseError) {
-                console.warn("JSON parse fout:", parseError);
-                onEvent?.({ type: "error" });
-                track("nova:parse_error", { data: data.slice(0, 100) });
-              }
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") {
+              onEvent?.({ type: "done" });
+              return;
             }
-          } else {
-            const event = { type: "content" as const, content: data };
-            onEvent?.(event);
-            yield event;
+
+            // Check for JSON blocks
+            if (data.includes("<<<FITFI_JSON>>>")) {
+              const jsonMatch = data.match(/<<<FITFI_JSON>>>(.*?)<<<END_FITFI_JSON>>>/);
+              if (jsonMatch) {
+                try {
+                  const jsonData = JSON.parse(jsonMatch[1]);
+                  // Handle product data or other structured responses
+                  onEvent?.({ type: "delta", text: `\n[Producten gevonden: ${jsonData.products?.length || 0}]\n` });
+                } catch (e) {
+                  console.warn("Failed to parse JSON block:", e);
+                }
+              }
+            } else if (data.trim()) {
+              onEvent?.({ type: "delta", text: data });
+              yield data;
+            }
           }
         }
       }
+    } finally {
+      reader.releaseLock();
     }
-    
-    track('nova:stream-complete');
   } catch (error) {
-    onEvent?.({ type: "error" });
-    track('nova:stream-error', { 
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-    track('nova:invalid-messages', { messageCount: messages.length });
-    track("nova:stream_error", { message: (error as Error)?.message });
-    console.error("Nova streaming fout:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      return;
+    }
+    onEvent?.({ type: "error", message: "Verbinding onderbroken" });
+    throw error;
   }
 }

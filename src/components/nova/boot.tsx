@@ -1,10 +1,21 @@
-import React from "react";
-import NovaChatMount from "./NovaChatMount";
+// Nova Chat initialization
+// This file is imported in main.tsx to ensure Nova globals are available
 
-/**
- * Nova Chat Boot Component
- * Renders the Nova chat interface with proper error boundaries
- */
-export default function NovaBoot() {
-  return <NovaChatMount />;
+declare global {
+  interface Window {
+    NovaChat?: {
+      version: string;
+      initialized: boolean;
+    };
+  }
 }
+
+// Initialize Nova globals
+if (typeof window !== "undefined") {
+  window.NovaChat = {
+    version: "1.0.0",
+    initialized: true,
+  };
+}
+
+export {};

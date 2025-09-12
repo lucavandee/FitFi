@@ -1,124 +1,139 @@
-// src/components/nova/ChatPanelPro.tsx
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Send, Sparkles, Wand2 } from "lucide-react";
-import Button from "@/components/ui/Button";
+import React, { useEffect, useRef, useState } from "react";
+import { X, Send, RotateCcw } from "lucide-react";
 import { useNovaChat } from "@/components/nova/NovaChatProvider";
-import { track } from "@/utils/telemetry";
-import type { Product } from "@/types/product";
-import ProductRail from "./ProductRail";
+import { track } from "@/utils/analytics";
 
-type MsgRole = "user" | "assistant";
-type Msg = { id: string; role: MsgRole; content: string; ts: string };
-
-const SUGGESTIONS: string[] = [
-  "Maak een smart-casual outfit onder €200",
-  "Capsule wardrobe voor 10 dagen citytrip",
-  "Business casual, geen blazer",
-  "Street luxe fit met witte sneakers",
+const SUGGESTION_CHIPS = [
+  "Smart casual < €200",
+  "Citytrip capsule", 
+  "Business casual (geen blazer)",
+  "Street luxe + witte sneakers"
 ];
 
-function uuid() {
-  try {
-    return crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
-  } catch {
-    return Math.random().toString(36).slice(2);
-  }
-}
-function nowISO() { return new Date().toISOString(); }
-
 export default function ChatPanelPro() {
-  const nova = useNovaChat();
+  const { setOpen, sending, error, messages, send, reset } = useNovaChat();
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [messages, setMessages] = useState<Msg[]>([
-    { id: uuid(), role: "assistant", content: "Hi! Waarmee zal ik je stylen? 👋", ts: nowISO() }
-  ]);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[] | null>(null);
-
-  const canType = useMemo(
-    () => nova.status !== "opening" && nova.status !== "streaming",
-    [nova.status]
-  );
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   useEffect(() => {
-    const unsub = nova.events.subscribe((m) => {
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last && last.role === "assistant") {
-          const merged = prev.slice(0, -1).concat([{ ...last, content: m.content, ts: nowISO() }]);
-          return merged;
-        }
-        return prev.concat({ id: uuid(), role: "assistant", content: m.content, ts: nowISO() });
-      });
-    });
-    return () => unsub();
-  }, [nova.events]);
+    // Focus input when panel opens
+    inputRef.current?.focus();
+  }, []);
 
-  useEffect(() => {
-    const unsub = nova.products.subscribe((items) => setProducts(items ?? null));
-    return () => unsub();
-  }, [nova.products]);
+  const handleClose = () => {
+    track("nova:close", { messageCount: messages.length });
+    setOpen(false);
+  };
 
-  useEffect(() => {
-    setPending(nova.status === "opening" || nova.status === "streaming");
-  }, [nova.status]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text || sending) return;
 
-  const welcomeMessage = "Hi! Zullen we je stijl scherp zetten? 👋 Vertel: voor welke situatie zoeken we een outfit?";
-  const suggestionChips = [
-    "Smart casual < €200",
-    "Citytrip capsule", 
-    "Business casual (geen blazer)",
-    "Street luxe + witte sneakers"
-  ];
+    track("nova:send", { messageLength: text.length });
+    setInput("");
+    await send(text);
+  };
 
-  const submit = useCallback(async (raw?: string) => {
-    const value = (raw ?? inputRef.current?.value ?? "").trim();
-    
-    // Prevent empty submissions
-    if (!value && !raw) {
-      return;
-    }
-    
-    const prompt = value || "Maak een smart-casual outfit onder €200";
-    setError(null);
+  const handleChipClick = (chip: string) => {
+    track("nova:chip-click", { chip });
+    setInput(chip);
+    inputRef.current?.focus();
+  };
 
-    setMessages((prev) => prev.concat({ id: uuid(), role: "user", content: prompt, ts: nowISO() }));
-    setMessages((prev) => prev.concat({ id: uuid(), role: "assistant", content: "…", ts: nowISO() }));
-    setPending(true);
-    setProducts(null);
-
-    try {
-      track("nova:send", { len: prompt.length });
-      await nova.send(prompt, { mode: "outfits" });
-    } catch (e: any) {
-      setError("Er ging iets mis bij het stylen. Probeer het opnieuw.");
-      track("nova:submit_error", { hasMessage: !!e?.message });
-      setPending(false);
-    } finally {
-      if (inputRef.current) inputRef.current.value = "";
-    }
-  }, [nova]);
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setInput(suggestion);
+  const handleReset = () => {
+    track("nova:reset", { messageCount: messages.length });
+    reset();
   };
 
   return (
-    <div className="flex h-full flex-col" style={{ fontSize: '14px', lineHeight: '20px' }}>
-      <div className="flex-1 overflow-y-auto space-y-4 p-4" aria-live="polite">
-        {messages.length === 0 && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 max-w-[85%]">
-              <p className="text-gray-800">{welcomeMessage}</p>
+    <div className="fixed inset-0 z-40 flex items-end justify-end p-4 pointer-events-none">
+      <div className="nova-panel pointer-events-auto w-full max-w-md h-[600px] bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+              <span className="text-white text-sm font-medium">N</span>
             </div>
+            <div>
+              <h3 className="font-medium text-gray-900">Nova</h3>
+              <p className="text-xs text-gray-500">Jouw AI stylist</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleReset}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Reset chat"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleClose}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Sluit chat"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4" aria-live="polite">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm leading-relaxed ${
+                  msg.role === "user"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-900"
+                }`}
+              >
+                {msg.content}
+              </div>
+            </div>
+          ))}
+          
+          {sending && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 px-4 py-2 rounded-2xl">
+                <div className="nova-typing flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex justify-center">
+              <div className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm">
+                {error}
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Suggestion chips (only show when no user messages yet) */}
+        {messages.length === 1 && messages[0].role === "assistant" && (
+          <div className="px-4 pb-2">
             <div className="flex flex-wrap gap-2">
-              {suggestionChips.map((chip, index) => (
+              {SUGGESTION_CHIPS.map((chip) => (
                 <button
-                  key={index}
-                  onClick={() => handleSuggestionClick(chip)}
-                  className="px-3 py-2 text-xs bg-blue-50 text-blue-700 rounded-full border border-blue-200 hover:bg-blue-100 transition-colors"
+                  key={chip}
+                  onClick={() => handleChipClick(chip)}
+                  className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
                 >
                   {chip}
                 </button>
@@ -126,59 +141,29 @@ export default function ChatPanelPro() {
             </div>
           </div>
         )}
-        {messages.map((m) => (
-          <div
-            key={m.id}
-            className={
-              m.role === "user"
-                ? "ml-auto max-w-[85%] rounded-xl px-3 py-2 text-[14px] leading-5 bg-[#F2F5FF] text-[#0D1B2A]"
-                : "max-w-[85%] rounded-xl px-3 py-2 text-[14px] leading-5 bg-white border border-gray-100 text-[#0D1B2A] shadow-sm"
-            }
-          >
-            {m.content}
-          </div>
-        ))}
-        {products && <ProductRail items={products} />}
-      </div>
 
-      <div className="border-t border-gray-200 p-2">
-        <div className="flex items-center gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Beschrijf je style of gelegenheid…"
-            className="flex-1 h-11 rounded-xl border border-gray-300 bg-white px-3 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#2B6AF3]/30"
-            onKeyDown={(e) => { if (e.key === "Enter" && canType) submit(); }}
-            disabled={!canType}
-          />
-          <Button onClick={() => submit()} disabled={!canType} className="h-11 px-4">
-            {pending ? (
-              <span className="inline-flex items-center gap-2"><Sparkles size={16}/>Stylen…</span>
-            ) : (
-              <span className="inline-flex items-center gap-2"><Send size={16}/>Verstuur</span>
-            )}
-          </Button>
-        </div>
-
-        <div className="mt-2 flex flex-wrap gap-2">
-          {SUGGESTIONS.map((s) => (
+        {/* Input */}
+        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Beschrijf je stijlwens..."
+              className="flex-1 px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm"
+              disabled={sending}
+            />
             <button
-              key={s}
-              onClick={() => submit(s)}
-              className={`px-3 py-2 text-xs rounded-full transition-colors ${
-                pending
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-800 shadow-sm border border-gray-100"
-              }`}
-              type="button"
+              type="submit"
+              disabled={!input.trim() || sending}
+              className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              aria-label="Verstuur bericht"
             >
-              <Wand2 size={14} className="inline-block mr-1" />
-              {s}
+              <Send className="h-4 w-4" />
             </button>
-          ))}
-        </div>
-
-        {error && <div className="mt-2 text-[13px] text-red-600">{error}</div>}
+          </div>
+        </form>
       </div>
     </div>
   );
