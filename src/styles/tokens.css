@@ -6,18 +6,20 @@
   --color-surface: #FFFFFF;      /* kaarten / surfaces */
   --color-text: #1E2333;         /* inkt/donkergrijs voor uitstekende leesbaarheid */
   --color-muted: #6B7280;        /* subtiele grijs voor secundaire tekst */
-  --color-primary: #9A7B4F;      /* warm taupe/goudbruin – hoofdaccent/CTA */
-  --color-accent: #D2BFA3;       /* licht beige accent (chips/badges) */
-  --color-border: rgba(30,35,51,0.08); /* subtiele border op licht thema */
 
-  /* Success/Status */
+  /* >>> MERK: primair bruin/taupe (afgestemd op je referentiebeeld) <<< */
+  --color-primary: #A6886A;      /* hoofdaccent/CTA */
+  --color-accent:  #D8CABA;      /* licht beige accent voor chips/badges */
+
+  --color-border: rgba(30,35,51,0.08); /* subtiele border op licht thema */
   --color-success: #16A34A;
   --color-warning: #D97706;
   --color-danger:  #DC2626;
 
   /* ===== Overlay/Alpha tokens (voor gradients/glas) ===== */
-  --overlay-primary-12a: rgba(154,123,79,0.12);  /* afgeleid van --color-primary */
-  --overlay-accent-08a:  rgba(210,191,163,0.10); /* afgeleid van --color-accent */
+  /* Afgeleid van primary/accent – geen random blauw meer */
+  --overlay-primary-12a: rgba(166,136,106,0.12);
+  --overlay-accent-08a:  rgba(216,202,186,0.10);
 
   /* ===== Typography ===== */
   --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
@@ -31,7 +33,7 @@
   --radius-full: 9999px;
 
   --shadow-soft: 0 8px 30px rgba(0,0,0,.08);
-  --shadow-ring: 0 0 0 3px rgba(154,123,79,.35); /* focus-ring in warme primaire tint */
+  --shadow-ring: 0 0 0 3px rgba(166,136,106,.35); /* focus-ring in warme primaire tint */
 
   /* ===== Glass tokens (light theme) ===== */
   --glass-surface: rgba(255,255,255,.72);      /* semi-transparant wit */
@@ -45,11 +47,6 @@
   --spacing-lg: 1.50rem;
   --spacing-xl: 2.00rem;
 
-  /* ===== Legacy aliases (compat) ===== */
-  --color-midnight: #0D1B2A;     /* niet gebruiken in licht thema, alleen voor fallback */
-  --color-white: #FFFFFF;
-  --color-surface-light: #FFFFFF;
-
   /* ===== Tailwind extension mapping (compat met tailwind.config.cjs) ===== */
   --ff-color-bg:       var(--color-bg);
   --ff-color-surface:  var(--color-surface);
@@ -61,8 +58,8 @@
   --ff-color-danger:   var(--color-danger);
 
   --ff-color-primary:        var(--color-primary);
-  --ff-color-primary-600:    #876A41; /* iets donkerder voor hover */
-  --ff-color-primary-700:    #6F5535; /* nog een stap donkerder */
+  --ff-color-primary-600:    #8F7459; /* hover: iets donkerder */
+  --ff-color-primary-700:    #7A614A; /* active: nog een stap */
 
   /* Fonts voor Tailwind theme.sans */
   --ff-font-sans: var(--font-body);
