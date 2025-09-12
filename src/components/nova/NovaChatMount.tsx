@@ -2,6 +2,7 @@ import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useNovaChat } from "./NovaChatProvider";
 import NovaLauncher from "./NovaLauncher";
 import ChatPanelPro from "./ChatPanelPro";
+import { track } from '@/utils/analytics';
 
 const HIDE_ON_PATHS: string[] = []; // Tijdens QA nergens verbergen
 
