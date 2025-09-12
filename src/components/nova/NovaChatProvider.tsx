@@ -262,3 +262,6 @@ export function useNovaChat(): NovaChatContextType {
   }
   return context;
 }
+
+// Default export conform FitFi guardrails
+export { NovaChatProvider as default };
