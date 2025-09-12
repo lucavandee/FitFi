@@ -24,11 +24,11 @@ export default function ChatLauncher() {
         fixed z-[9999] right-4 md:right-6
         bottom-[max(1rem,env(safe-area-inset-bottom))]
         inline-flex items-center justify-center
-        w-14 h-14 rounded-full
+        inline-flex items-center justify-center
         bg-[#2B6AF3] text-white
         shadow-lg shadow-black/20
         hover:bg-[#245de0] hover:scale-105
-        active:scale-95
+        hover:bg-[#245de0] hover:scale-105 active:scale-[0.98]
         focus:outline-none focus:ring-2 focus:ring-[#2B6AF3]/30
         transition-all duration-200
       "

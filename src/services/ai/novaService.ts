@@ -37,11 +37,12 @@ export class NovaService {
         "x-fitfi-tier": "visitor",
         "x-fitfi-uid": "anonymous"
       },
-      body: JSON.stringify(request)
+      body: JSON.stringify({ prompt, context: context || {}, mode: opts?.mode || "outfits" }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      throw new Error(`Nova API error: ${response.status} - ${errorText || response.statusText}`);
       track("nova:stream-error", { 
         status: response.status,
         error: errorText 
