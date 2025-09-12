@@ -9,9 +9,10 @@ export default function ChatLauncher() {
   const handleClick = () => {
     track("nova:launcher-click", { wasOpen: nova.isOpen });
     if (nova.isOpen) {
-      nova.hide();
-    } else {
-      nova.open();
+      className="fixed bottom-6 right-6 z-[9999] nova-launcher
+                 h-14 w-14 rounded-full text-white
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                 inline-flex items-center justify-center"
     }
   };
 

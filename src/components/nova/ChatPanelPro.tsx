@@ -65,6 +65,14 @@ export default function ChatPanelPro() {
     setPending(nova.status === "opening" || nova.status === "streaming");
   }, [nova.status]);
 
+  const welcomeMessage = "Hi! Zullen we je stijl scherp zetten? 👋 Vertel: voor welke situatie zoeken we een outfit?";
+  const suggestionChips = [
+    "Smart casual < €200",
+    "Citytrip capsule", 
+    "Business casual (geen blazer)",
+    "Street luxe + witte sneakers"
+  ];
+
   const submit = useCallback(async (raw?: string) => {
     const value = (raw ?? inputRef.current?.value ?? "").trim();
     
@@ -93,9 +101,31 @@ export default function ChatPanelPro() {
     }
   }, [nova]);
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
+  };
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-3 p-2">
+    <div className="flex h-full flex-col" style={{ fontSize: '14px', lineHeight: '20px' }}>
+      <div className="flex-1 overflow-y-auto space-y-4 p-4" aria-live="polite">
+        {messages.length === 0 && (
+          <div className="space-y-4">
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 max-w-[85%]">
+              <p className="text-gray-800">{welcomeMessage}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {suggestionChips.map((chip, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(chip)}
+                  className="px-3 py-2 text-xs bg-blue-50 text-blue-700 rounded-full border border-blue-200 hover:bg-blue-100 transition-colors"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {messages.map((m) => (
           <div
             key={m.id}
@@ -135,8 +165,8 @@ export default function ChatPanelPro() {
             <button
               key={s}
               onClick={() => submit(s)}
-              className="rounded-full border border-gray-300 bg-white px-3 py-1 text-[12px] hover:border-gray-400"
-              disabled={!canType}
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-800 shadow-sm border border-gray-100"
               type="button"
             >
               <Wand2 size={14} className="inline-block mr-1" />
@@ -145,6 +175,17 @@ export default function ChatPanelPro() {
           ))}
         </div>
 
+        {isStreaming && (
+          <div className="flex justify-start">
+            <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-100 max-w-[85%]">
+              <div className="nova-typing">
+                <div className="nova-typing-dot"></div>
+                <div className="nova-typing-dot"></div>
+                <div className="nova-typing-dot"></div>
+              </div>
+            </div>
+          </div>
+        )}
         {error && <div className="mt-2 text-[13px] text-red-600">{error}</div>}
       </div>
     </div>

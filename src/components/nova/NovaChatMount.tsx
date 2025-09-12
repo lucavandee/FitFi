@@ -79,10 +79,10 @@ function NovaOverlay() {
         aria-label="Nova chat"
         aria-modal="true"
         className="fixed right-4 md:right-6 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[9998]
-                   w-[min(100vw-2rem,520px)] h-[72vh] max-h-[80vh]"
+                   w-[min(100vw-2rem,480px)] h-[72vh] max-h-[80vh]"
       >
         <div
-          className="flex h-full flex-col rounded-2xl border border-black/10 bg-white shadow-2xl"
+          className="flex h-full flex-col rounded-2xl nova-panel"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
