@@ -7,6 +7,7 @@ import "./index.css";
 import { HelmetProvider } from "react-helmet-async";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import NovaChatMount from "@/components/nova/NovaChatMount";
+import './components/nova/boot.tsx'
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
