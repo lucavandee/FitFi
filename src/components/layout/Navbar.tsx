@@ -73,9 +73,9 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link 
-                to="/" 
+                className={`nav-link text-sm font-medium transition-colors hover:text-primary ${
                 className="flex items-center space-x-2 group"
-                aria-label="FitFi homepage"
+                } ${isActiveLink('/about') ? 'is-active' : ''}`}
               >
                 <Logo className="h-8 w-auto" textColor="text-[#0D1B2A]" />
               </Link>
@@ -151,9 +151,9 @@ const Navbar: React.FC = () => {
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:text-brandPurple hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brandPurple transition-colors"
-                aria-expanded={isMobileMenuOpen}
+                className={`nav-link text-sm font-medium transition-colors hover:text-primary ${
                 aria-label="Open menu"
-                aria-controls="mobile-menu"
+                } ${isActiveLink('/pricing') ? 'is-active' : ''}`}
               >
                 <Menu size={24} />
               </button>
