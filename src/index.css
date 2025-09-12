@@ -9,6 +9,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import FitFi Theme */
+@import './styles/fitfi-theme.css';
+
 /* Kill-switch legacy / third-party chat docks */
 :root {
   color-scheme: light dark;
