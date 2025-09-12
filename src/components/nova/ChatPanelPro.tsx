@@ -4,7 +4,6 @@ import { Send, Sparkles, Wand2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useNovaChat } from "@/components/nova/NovaChatProvider";
 import { track } from "@/utils/telemetry";
-import { cn } from "@/utils/cn";
 import type { Product } from "@/types/product";
 import ProductRail from "./ProductRail";
 
@@ -19,8 +18,11 @@ const SUGGESTIONS: string[] = [
 ];
 
 function uuid() {
-  try { return crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2); }
-  catch { return Math.random().toString(36).slice(2); }
+  try {
+    return crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+  } catch {
+    return Math.random().toString(36).slice(2);
+  }
 }
 function nowISO() { return new Date().toISOString(); }
 
@@ -35,9 +37,11 @@ export default function ChatPanelPro() {
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[] | null>(null);
 
-  const canType = useMemo(() => nova.status !== "opening" && nova.status !== "streaming", [nova.status]);
+  const canType = useMemo(
+    () => nova.status !== "opening" && nova.status !== "streaming",
+    [nova.status]
+  );
 
-  // Ontvang streamende tekst
   useEffect(() => {
     const unsub = nova.events.subscribe((m) => {
       setMessages((prev) => {
@@ -52,18 +56,13 @@ export default function ChatPanelPro() {
     return () => unsub();
   }, [nova.events]);
 
-  // Ontvang producten
   useEffect(() => {
-    const unsub = nova.products.subscribe((items) => {
-      setProducts(items ?? null);
-    });
+    const unsub = nova.products.subscribe((items) => setProducts(items ?? null));
     return () => unsub();
   }, [nova.products]);
 
-  // Sync pending-status met provider
   useEffect(() => {
-    if (nova.status === "streaming" || nova.status === "opening") setPending(true);
-    else setPending(false);
+    setPending(nova.status === "opening" || nova.status === "streaming");
   }, [nova.status]);
 
   const submit = useCallback(async (raw?: string) => {
@@ -71,9 +70,7 @@ export default function ChatPanelPro() {
     const prompt = value || "Maak een smart-casual outfit onder €200";
     setError(null);
 
-    // append user msg
     setMessages((prev) => prev.concat({ id: uuid(), role: "user", content: prompt, ts: nowISO() }));
-    // placeholder assistant bubble voor streaming
     setMessages((prev) => prev.concat({ id: uuid(), role: "assistant", content: "…", ts: nowISO() }));
     setPending(true);
     setProducts(null);
@@ -91,22 +88,22 @@ export default function ChatPanelPro() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* messages */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-3 p-2">
         {messages.map((m) => (
-          <div key={m.id} className={cn("max-w-[85%] rounded-xl px-3 py-2 text-[14px] leading-5", {
-            "bg-[#F2F5FF] text-[#0D1B2A] ml-auto": m.role === "user",
-            "bg-white border border-gray-100 text-[#0D1B2A] shadow-sm": m.role === "assistant",
-          })}>
+          <div
+            key={m.id}
+            className={
+              m.role === "user"
+                ? "ml-auto max-w-[85%] rounded-xl px-3 py-2 text-[14px] leading-5 bg-[#F2F5FF] text-[#0D1B2A]"
+                : "max-w-[85%] rounded-xl px-3 py-2 text-[14px] leading-5 bg-white border border-gray-100 text-[#0D1B2A] shadow-sm"
+            }
+          >
             {m.content}
           </div>
         ))}
-
-        {/* product rail */}
         {products && <ProductRail items={products} />}
       </div>
 
-      {/* composer */}
       <div className="border-t border-gray-200 p-2">
         <div className="flex items-center gap-2">
           <input
@@ -118,11 +115,14 @@ export default function ChatPanelPro() {
             disabled={!canType}
           />
           <Button onClick={() => submit()} disabled={!canType} className="h-11 px-4">
-            {pending ? <span className="inline-flex items-center gap-2"><Sparkles size={16}/>Stylen…</span> : <span className="inline-flex items-center gap-2"><Send size={16}/>Verstuur</span>}
+            {pending ? (
+              <span className="inline-flex items-center gap-2"><Sparkles size={16}/>Stylen…</span>
+            ) : (
+              <span className="inline-flex items-center gap-2"><Send size={16}/>Verstuur</span>
+            )}
           </Button>
         </div>
 
-        {/* quick suggestions */}
         <div className="mt-2 flex flex-wrap gap-2">
           {SUGGESTIONS.map((s) => (
             <button
