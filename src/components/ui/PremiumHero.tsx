@@ -19,7 +19,7 @@ export default function PremiumHero({
   secondaryCtaLink = "/how-it-works"
 }: PremiumHeroProps) {
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
+    <section className="relative py-20 md:py-32 overflow-hidden ff-hero-card">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#2B6AF3]/10 via-transparent to-[#67E8F9]/5"></div>
       
