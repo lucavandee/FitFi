@@ -6,28 +6,43 @@ type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
   ratio?: "square" | "portrait" | "landscape" | "wide" | boolean;
 };
 
-const ratios = {
+const ratios: Record<string, string> = {
   square: "aspect-[1/1]",
   portrait: "aspect-[3/4]",
   landscape: "aspect-[4/3]",
-  wide: "aspect-[16/9]"
+  wide: "aspect-[16/9]",
 };
 
-function ImageWithFallback({ className, src, alt, fallback, ratio = false, ...rest }: Props) {
+export default function ImageWithFallback({
+  className,
+  src,
+  alt,
+  fallback,
+  ratio = false,
+  ...rest
+}: Props) {
   const [error, setError] = useState(false);
-  const showSrc = !error && src ? String(src) : fallback || "/fallback.jpg";
+  const showSrc = !error && src ? String(src) : (fallback || "/images/placeholder.jpg");
+  const ratioClass =
+    ratio === false ? "" : typeof ratio === "string" ? ratios[ratio] || "" : "aspect-[1/1]";
+
   return (
-    <div className={cn("relative overflow-hidden rounded-md bg-[#111527]", ratio ? ratios[String(ratio) as keyof typeof ratios] : null)}>
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-md bg-gray-50",
+        ratioClass,
+        className
+      )}
+    >
       <img
         src={showSrc}
         alt={alt ?? ""}
-        className={cn("h-full w-full object-cover")}
+        className="h-full w-full object-cover"
         onError={() => setError(true)}
         loading="lazy"
+        decoding="async"
         {...rest}
       />
     </div>
   );
 }
-
-export default ImageWithFallback;
