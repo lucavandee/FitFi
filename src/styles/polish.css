@@ -13,27 +13,29 @@
   background-color: var(--glass-surface) !important;
   border-bottom: 1px solid var(--glass-border) !important;
   box-shadow: 0 2px 16px rgba(0,0,0,.04);
-  /* FIX: underline mag niet 'lekken' naar de hero */
+  /* Fixes: niets mag buiten de navbar "lekken" */
   overflow: hidden;
   z-index: 40;
 }
 [data-fitfi="navbar"].is-scrolled{ box-shadow: 0 8px 24px rgba(0,0,0,.08); }
 
-/* Actieve nav-underline (precies onder de link, binnen de navbar) */
+/* === Nav links (chip i.p.v. underline – stabieler) === */
 [data-fitfi="navbar"] .nav-link{
-  position: relative;
-  display: inline-flex;          /* stabiele box voor pseudo-element */
+  display: inline-flex;
   align-items: center;
   gap: .375rem;
-  padding-block: .875rem;        /* verticale klikzone */
-  line-height: 1;
-}
-[data-fitfi="navbar"] .nav-link.is-active::after{
-  content:"";
-  position:absolute; left:0; right:0; bottom:0; /* FIX: niet onder de navbar */
-  height: 2px;
+  padding: .5rem .625rem;        /* klikzone */
   border-radius: var(--radius-full);
-  background: var(--ff-color-primary);
+  line-height: 1;
+  transition: background-color .2s ease, color .2s ease;
+}
+[data-fitfi="navbar"] .nav-link:hover{
+  background: color-mix(in srgb, var(--color-accent) 28%, #fff 72%);
+}
+[data-fitfi="navbar"] .nav-link.is-active{
+  background: color-mix(in srgb, var(--color-accent) 42%, #fff 58%);
+  /* subtiele rand om active chip */
+  box-shadow: inset 0 0 0 1px var(--color-border);
 }
 
 /* ====== HERO CARD SHELL (auto + opt-in) ====== */
