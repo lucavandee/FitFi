@@ -1,7 +1,7 @@
 /* src/styles/polish.css — NON-invasive visual polish layer
    - Geen router/providers/auth wijzigingen
-   - Geen inline hex kleuren; alles via tokens
-   - Importeer ONDERAAN index.css
+   - Geen inline hex in componenten; styles via tokens
+   - Wordt als LAATSTE CSS geïmporteerd in main.tsx
 */
 
 /* ====== NAVBAR (glass) ====== */
@@ -10,21 +10,32 @@
   top: 0;
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  background-color: var(--glass-surface) !important;
+  background-color: var(--glass-surface) !important; /* overrul bg-white utilities */
   border-bottom: 1px solid var(--glass-border) !important;
   box-shadow: 0 2px 20px rgba(0,0,0,.10);
 }
-[data-fitfi="navbar"].is-scrolled{
-  box-shadow: 0 8px 30px rgba(0,0,0,.18);
-}
+[data-fitfi="navbar"].is-scrolled{ box-shadow: 0 8px 30px rgba(0,0,0,.18); }
 
 /* ====== HERO CARD SHELL ====== */
+/* Activeer automatisch op de landing hero zonder component-edit */
+section[aria-labelledby="hero-heading"],
 .ff-hero-card,
 [data-fitfi="hero-card"]{
+  position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-soft);
+}
+section[aria-labelledby="hero-heading"]::before,
+.ff-hero-card::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  /* subtiele lichtvlekken; veilig met rgba */
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(43,106,243,0.12), transparent 60%),
+    radial-gradient(900px 500px at 90% 85%, rgba(137,207,240,0.08), transparent 60%);
 }
 
 /* ====== GENERIC CARD / SURFACE UTILS ====== */
@@ -35,19 +46,33 @@
   box-shadow: var(--shadow-soft);
 }
 .ff-surface-1{ background: var(--color-surface); }
-.ff-surface-2{ background: rgba(255,255,255,.03); } /* subtle elev on dark */
+.ff-surface-2{ background: rgba(255,255,255,.03); } /* subtle elev op dark */
 .ff-surface-3{ background: rgba(255,255,255,.06); }
 
 /* ====== CTA & INTERACTION ====== */
 .ff-cta, button, [role="button"]{
   transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
 }
-.ff-cta:hover, button:hover{
-  transform: translateY(-1px) scale(1.01);
+.ff-cta{
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-weight: 600;
 }
-.ff-cta:active, button:active{
-  transform: translateY(0) scale(.995);
+.ff-cta:hover, button:hover{ transform: translateY(-1px) scale(1.01); }
+.ff-cta:active, button:active{ transform: translateY(0) scale(.995); }
+.ff-cta:disabled, .ff-cta[aria-disabled="true"]{ opacity:.6; cursor:not-allowed; filter:grayscale(.1); }
+
+.ff-ghost{
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-weight: 600;
 }
+.ff-ghost:hover{ border-color: var(--color-accent); }
 
 /* Focus rings (a11y) */
 :where(a, button, input, textarea, select, .ff-cta, .ff-ghost):focus-visible{
@@ -56,13 +81,8 @@
 }
 
 /* ====== LINKS ====== */
-a{
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1.25px;
-}
-a:hover{
-  text-decoration: underline;
-}
+a{ text-underline-offset: 4px; text-decoration-thickness: 1.25px; }
+a:hover{ text-decoration: underline; }
 
 /* ====== SKELETONS ====== */
 .skeleton{
@@ -78,9 +98,7 @@ a:hover{
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
   animation: ff-shimmer 1.4s infinite;
 }
-@keyframes ff-shimmer{
-  100%{ transform: translateX(100%); }
-}
+@keyframes ff-shimmer{ 100%{ transform: translateX(100%); } }
 
 /* ====== ACCESSIBILITY ====== */
 .visually-hidden{
