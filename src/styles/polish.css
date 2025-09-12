@@ -10,8 +10,8 @@
   top: 0;
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  background-color: var(--glass-surface);
-  border-bottom: 1px solid var(--glass-border);
+  background-color: var(--glass-surface) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
   box-shadow: 0 2px 20px rgba(0,0,0,.10);
 }
 [data-fitfi="navbar"].is-scrolled{
