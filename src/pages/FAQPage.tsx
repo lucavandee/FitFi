@@ -237,7 +237,7 @@ const FAQPage: React.FC = () => {
             "@type": "Question",
             "name": faq.question,
             "acceptedAnswer": {
-              "@type": "Answer",
+          <div className="max-w-3xl mx-auto space-y-4" data-kind="faq">
               "text": faq.answer
             }
           }))
@@ -295,7 +295,7 @@ const FAQPage: React.FC = () => {
                 }`}
               >
                 <div className={`p-2 rounded-full mb-2 ${
-                  activeCategory === category.id 
+                  <ChevronDown className="w-5 h-5 text-gray-500 chev" />
                     ? 'bg-[#bfae9f]/30 text-[#bfae9f]' 
                     : 'bg-gray-100 text-gray-500'
                 }`}>
