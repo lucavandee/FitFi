@@ -1,21 +1,12 @@
-// Nova Chat initialization
-// This file is imported in main.tsx to ensure Nova globals are available
-
+// Klein, idempotent boot-script (kan veilig meeliften in main.tsx)
 declare global {
   interface Window {
-    NovaChat?: {
-      version: string;
-      initialized: boolean;
-    };
+    __fitfi_boot?: boolean;
   }
 }
 
-// Initialize Nova globals
-if (typeof window !== "undefined") {
-  window.NovaChat = {
-    version: "1.0.0",
-    initialized: true,
-  };
+if (typeof window !== "undefined" && !window.__fitfi_boot) {
+  window.__fitfi_boot = true;
+  // Event stubs – integreer met je analytics layer indien gewenst
+  // track("nova:boot");
 }
-
-export {};

@@ -10,6 +10,7 @@ import NovaChatMount from "@/components/nova/NovaChatMount";
 
 import "./index.css";
 import "./components/nova/boot.tsx";
+import './components/nova/boot.tsx'
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
