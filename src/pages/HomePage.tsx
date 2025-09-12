@@ -115,6 +115,11 @@ const HomePage: React.FC = () => {
         </div>
       </div>
     </div>
+    
+    {/* Sticky Mobile CTA */}
+    <div className="ff-sticky-cta md:hidden">
+      <a href="/get-started" className="ff-cta" data-analytics="sticky-cta">Start gratis</a>
+    </div>
     </>
   );
 };
