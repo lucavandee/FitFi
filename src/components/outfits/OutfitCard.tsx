@@ -198,7 +198,10 @@ export default function OutfitCard({
   };
 
   return (
-    <article 
+    <div 
+      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+      data-kind="outfit-card"
+    >
       className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-[#89CFF0] focus-within:ring-offset-2"
       role="article"
       aria-labelledby={titleId}
@@ -429,6 +432,10 @@ export default function OutfitCard({
             </button>
           </RequireAuth>
         </div>
+      </div>
+      
+      <div className="explain">
+        {outfit.explanation || "Deze outfit combineert klassieke silhouetten met moderne kleuren, perfect voor een veelzijdige en stijlvolle look."}
       </div>
     </article>
   );

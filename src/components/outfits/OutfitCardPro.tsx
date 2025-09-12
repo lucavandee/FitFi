@@ -28,7 +28,10 @@ export default function OutfitCardPro({ outfit }: Props) {
   const mp = typeof outfit.matchPercent === "number" ? Math.max(0, Math.min(100, outfit.matchPercent)) : undefined;
 
   return (
-    <Card className="overflow-hidden">
+    <div 
+      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+      data-kind="outfit-card"
+    >
       <Card.Header>
         <div className="flex items-center gap-3">
           <strong className="text-white">{outfit.title}</strong>
@@ -73,6 +76,10 @@ export default function OutfitCardPro({ outfit }: Props) {
           </div>
         </div>
       </Card.Body>
+      
+      <div className="explain">
+        {outfit.explanation || "Deze stijlkeuze balanceert comfort en elegantie, met materialen en kleuren die perfect aansluiten bij jouw persoonlijke stijl."}
+      </div>
     </Card>
   );
 }

@@ -33,7 +33,10 @@ export default function PremiumOutfitCard({
   onShare 
 }: PremiumOutfitCardProps) {
   return (
-    <PremiumCard hover className="group">
+    <div 
+      className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      data-kind="outfit-card"
+    >
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -130,6 +133,10 @@ export default function PremiumOutfitCard({
             Delen
           </PremiumButton>
         </div>
+      </div>
+      
+      <div className="explain">
+        {outfit.explanation || "Deze premium selectie combineert hoogwaardige materialen met tijdloze vormen, speciaal samengesteld voor jouw unieke stijlprofiel."}
       </div>
     </PremiumCard>
   );
