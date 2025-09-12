@@ -1,7 +1,7 @@
-/* src/styles/polish.css — NON-invasive visual polish layer
-   - Geen router/providers/auth wijzigingen
-   - Geen inline hex in componenten; styles via tokens
-   - Wordt als LAATSTE CSS geïmporteerd in main.tsx
+/* src/styles/polish.css — NON-invasive visual polish layer (light/beige)
+   - Alleen CSS; geen router/providers/auth wijzigingen
+   - Tokens-first: géén hard-coded hex buiten tokens.css
+   - Importeer als laatste (index.css óf main.tsx)
 */
 
 /* ====== NAVBAR (glass) ====== */
@@ -10,14 +10,15 @@
   top: 0;
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  background-color: var(--glass-surface) !important; /* overrul bg-white utilities */
+  background-color: var(--glass-surface) !important;
   border-bottom: 1px solid var(--glass-border) !important;
-  box-shadow: 0 2px 20px rgba(0,0,0,.10);
+  box-shadow: 0 2px 16px rgba(0,0,0,.04);
 }
-[data-fitfi="navbar"].is-scrolled{ box-shadow: 0 8px 30px rgba(0,0,0,.18); }
+[data-fitfi="navbar"].is-scrolled{
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
 
-/* ====== HERO CARD SHELL ====== */
-/* Activeer automatisch op de landing hero zonder component-edit */
+/* ====== HERO CARD SHELL (auto + opt-in) ====== */
 section[aria-labelledby="hero-heading"],
 .ff-hero-card,
 [data-fitfi="hero-card"]{
@@ -30,12 +31,10 @@ section[aria-labelledby="hero-heading"],
 section[aria-labelledby="hero-heading"]::before,
 .ff-hero-card::before{
   content:"";
-  position:absolute; inset:0;
-  pointer-events:none;
-  /* subtiele lichtvlekken; veilig met rgba */
+  position:absolute; inset:0; pointer-events:none;
   background:
-    radial-gradient(1200px 600px at 10% 10%, rgba(43,106,243,0.12), transparent 60%),
-    radial-gradient(900px 500px at 90% 85%, rgba(137,207,240,0.08), transparent 60%);
+    radial-gradient(1200px 600px at 10% 10%, var(--overlay-primary-12a), transparent 60%),
+    radial-gradient(900px 500px at 90% 85%, var(--overlay-accent-08a), transparent 60%);
 }
 
 /* ====== GENERIC CARD / SURFACE UTILS ====== */
@@ -46,23 +45,24 @@ section[aria-labelledby="hero-heading"]::before,
   box-shadow: var(--shadow-soft);
 }
 .ff-surface-1{ background: var(--color-surface); }
-.ff-surface-2{ background: rgba(255,255,255,.03); } /* subtle elev op dark */
-.ff-surface-3{ background: rgba(255,255,255,.06); }
+.ff-surface-2{ background: rgba(30,35,51,.02); } /* subtiele elev op licht */
+.ff-surface-3{ background: rgba(30,35,51,.04); }
 
 /* ====== CTA & INTERACTION ====== */
 .ff-cta, button, [role="button"]{
-  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease, color .2s ease;
 }
 .ff-cta{
   background: var(--color-primary);
-  color: var(--color-white);
+  color: #FFFFFF;
   border-radius: var(--radius-lg);
   display: inline-flex; align-items: center; gap: .5rem;
   font-weight: 600;
+  padding-inline: 1rem; padding-block: .75rem;
 }
-.ff-cta:hover, button:hover{ transform: translateY(-1px) scale(1.01); }
-.ff-cta:active, button:active{ transform: translateY(0) scale(.995); }
-.ff-cta:disabled, .ff-cta[aria-disabled="true"]{ opacity:.6; cursor:not-allowed; filter:grayscale(.1); }
+.ff-cta:hover{ transform: translateY(-1px) scale(1.01); background: var(--ff-color-primary-600); }
+.ff-cta:active{ transform: translateY(0) scale(.995); background: var(--ff-color-primary-700); }
+.ff-cta:disabled, .ff-cta[aria-disabled="true"]{ opacity:.6; cursor:not-allowed; filter:grayscale(.05); }
 
 .ff-ghost{
   background: transparent;
@@ -71,8 +71,9 @@ section[aria-labelledby="hero-heading"]::before,
   border-radius: var(--radius-lg);
   display: inline-flex; align-items: center; gap: .5rem;
   font-weight: 600;
+  padding-inline: 1rem; padding-block: .75rem;
 }
-.ff-ghost:hover{ border-color: var(--color-accent); }
+.ff-ghost:hover{ border-color: var(--color-primary); }
 
 /* Focus rings (a11y) */
 :where(a, button, input, textarea, select, .ff-cta, .ff-ghost):focus-visible{
@@ -81,21 +82,17 @@ section[aria-labelledby="hero-heading"]::before,
 }
 
 /* ====== LINKS ====== */
-a{ text-underline-offset: 4px; text-decoration-thickness: 1.25px; }
+a{ color: inherit; text-underline-offset: 4px; text-decoration-thickness: 1.25px; }
 a:hover{ text-decoration: underline; }
 
 /* ====== SKELETONS ====== */
 .skeleton{
-  position: relative;
-  overflow: hidden;
-  background: rgba(255,255,255,.06);
+  position: relative; overflow: hidden; background: rgba(30,35,51,.05);
   border-radius: .75rem;
 }
 .skeleton::after{
-  content:"";
-  position:absolute; inset:0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+  content:""; position:absolute; inset:0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(30,35,51,.06), transparent);
   animation: ff-shimmer 1.4s infinite;
 }
 @keyframes ff-shimmer{ 100%{ transform: translateX(100%); } }
