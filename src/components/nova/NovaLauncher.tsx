@@ -4,11 +4,7 @@ import { useNovaChat } from "./NovaChatProvider";
 
 export default function NovaLauncher() {
   const nova = useNovaChat();
-
-  const onClick = () => {
-    if (nova.isOpen) nova.hide();
-    else nova.open();
-  };
+  const onClick = () => (nova.isOpen ? nova.hide() : nova.open());
 
   return (
     <button
