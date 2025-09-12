@@ -1,93 +1,103 @@
-export type NovaEvent = 
+export type Role = "user" | "assistant" | "system";
+export type Message = { role: Role; content: string };
+
+export type NovaEvent =
   | { type: "delta"; text?: string }
   | { type: "done" }
   | { type: "error"; message?: string };
 
 export type NovaStreamOpts = {
-  mode: "style" | "general";
-  messages: Array<{ role: string; content: string }>;
+  mode: "style";
+  messages: Message[];
+  onEvent?: (e: NovaEvent) => void;
   signal?: AbortSignal;
-  onEvent?: (event: NovaEvent) => void;
 };
 
+const START_JSON = "<<<FITFI_JSON>>>";
+const END_JSON = "<<<END_FITFI_JSON>>>";
+
+/**
+ * Server-Sent Events streamer naar Netlify function.
+ * Verwacht text/event-stream; individuele regels kunnen 'data: {json}' bevatten.
+ */
 export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, void, unknown> {
-  const { messages, signal, onEvent } = opts;
-  
+  const { messages, onEvent, signal } = opts;
+
+  // Validatie: minimaal één non-empty user message.
+  const hasUser = messages.some((m) => m.role === "user" && (m.content ?? "").trim().length > 0);
+  if (!hasUser) {
+    onEvent?.({ type: "error", message: "Lege gebruikersinvoer." });
+    throw new Error("Empty user content not allowed");
+  }
+
+  const res = await fetch("/.netlify/functions/nova", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
+      "x-fitfi-uid": (import.meta as any).env?.VITE_FITFI_UID ?? "anon",
+    },
+    body: JSON.stringify({
+      mode: opts.mode,
+      messages,
+      expected_markers: { start: START_JSON, end: END_JSON },
+    }),
+    signal,
+  });
+
+  if (!res.ok || !res.body) {
+    onEvent?.({ type: "error", message: "SSE niet beschikbaar." });
+    throw new Error(`SSE failed: ${res.status}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+
   try {
-    // Check if Nova SSE is available
-    const sseActive = import.meta.env.VITE_NOVA_SSE_ACTIVE === "true";
-    if (!sseActive) {
-      onEvent?.({ type: "error", message: "Nova chat is momenteel niet beschikbaar" });
-      return;
-    }
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
 
-    const response = await fetch("/.netlify/functions/nova", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-fitfi-tier": localStorage.getItem("fitfi.user.tier") || "visitor",
-        "x-fitfi-uid": localStorage.getItem("fitfi.user.id") || "anonymous",
-      },
-      body: JSON.stringify({ messages }),
-      signal,
-    });
+      // Parse per lijn
+      let idx: number;
+      while ((idx = buffer.indexOf("\n")) >= 0) {
+        const line = buffer.slice(0, idx).trim();
+        buffer = buffer.slice(idx + 1);
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    if (!response.body) {
-      throw new Error("No response body");
-    }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6);
-            if (data === "[DONE]") {
-              onEvent?.({ type: "done" });
-              return;
+        if (line.startsWith("data:")) {
+          const data = line.slice(5).trim();
+          if (data === "[DONE]") {
+            onEvent?.({ type: "done" });
+            yield "";
+            return;
+          }
+          try {
+            const payload = JSON.parse(data) as { type: string; text?: string };
+            if (payload.type === "delta") {
+              onEvent?.({ type: "delta", text: payload.text ?? "" });
+              yield payload.text ?? "";
+            } else if (payload.type === "error") {
+              onEvent?.({ type: "error", message: "Stream error" });
             }
-
-            // Check for JSON blocks
-            if (data.includes("<<<FITFI_JSON>>>")) {
-              const jsonMatch = data.match(/<<<FITFI_JSON>>>(.*?)<<<END_FITFI_JSON>>>/);
-              if (jsonMatch) {
-                try {
-                  const jsonData = JSON.parse(jsonMatch[1]);
-                  // Handle product data or other structured responses
-                  onEvent?.({ type: "delta", text: `\n[Producten gevonden: ${jsonData.products?.length || 0}]\n` });
-                } catch (e) {
-                  console.warn("Failed to parse JSON block:", e);
-                }
-              }
-            } else if (data.trim()) {
+          } catch {
+            // Niet-JSON (kan plain text zijn)
+            if (data) {
               onEvent?.({ type: "delta", text: data });
               yield data;
             }
           }
         }
       }
-    } finally {
-      reader.releaseLock();
     }
-  } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") {
-      return;
-    }
-    onEvent?.({ type: "error", message: "Verbinding onderbroken" });
-    throw error;
+    onEvent?.({ type: "done" });
+  } catch (e) {
+    onEvent?.({ type: "error", message: "Stream interrupted" });
+    throw e;
+  } finally {
+    reader.releaseLock?.();
   }
 }
+
+export const NovaMarkers = { START_JSON, END_JSON };
