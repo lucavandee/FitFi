@@ -1,10 +1,10 @@
-/* src/styles/polish.css — NON-invasive visual polish layer (light/beige)
-   - Alleen CSS; geen router/providers/auth wijzigingen
-   - Tokens-first: géén hard-coded hex buiten tokens.css
-   - Importeer als laatste (index.css óf main.tsx)
+/* src/styles/polish.css — NON-invasive visual polish layer (Light/Beige)
+   - Geen router/providers/auth wijzigingen
+   - Géén hex in componenten; uitsluitend tokens uit tokens.css
+   - Importeer als laatste (onderaan index.css of in main.tsx na index.css)
 */
 
-/* ====== NAVBAR (glass) ====== */
+/* ====== NAVBAR (glass, hardened) ====== */
 [data-fitfi="navbar"]{
   position: sticky;
   top: 0;
@@ -32,28 +32,18 @@ section[aria-labelledby="hero-heading"]::before,
 .ff-hero-card::before{
   content:"";
   position:absolute; inset:0; pointer-events:none;
+  /* Zachte, warme gloed — uitsluitend via overlay tokens */
   background:
-    radial-gradient(1200px 600px at 10% 10%, var(--overlay-primary-12a), transparent 60%),
-    radial-gradient(900px 500px at 90% 85%, var(--overlay-accent-08a), transparent 60%);
+    radial-gradient(1200px 600px at 10% 12%, var(--overlay-primary-12a), transparent 60%),
+    radial-gradient(900px 500px at 88% 85%, var(--overlay-accent-08a), transparent 60%);
 }
-
-/* ====== GENERIC CARD / SURFACE UTILS ====== */
-.ff-card{ 
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-}
-.ff-surface-1{ background: var(--color-surface); }
-.ff-surface-2{ background: rgba(30,35,51,.02); } /* subtiele elev op licht */
-.ff-surface-3{ background: rgba(30,35,51,.04); }
 
 /* ====== CTA & INTERACTION ====== */
 .ff-cta, button, [role="button"]{
-  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease, color .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
 }
 .ff-cta{
-  background: var(--color-primary);
+  background: var(--ff-color-primary);
   color: #FFFFFF;
   border-radius: var(--radius-lg);
   display: inline-flex; align-items: center; gap: .5rem;
@@ -73,13 +63,43 @@ section[aria-labelledby="hero-heading"]::before,
   font-weight: 600;
   padding-inline: 1rem; padding-block: .75rem;
 }
-.ff-ghost:hover{ border-color: var(--color-primary); }
+.ff-ghost:hover{ border-color: var(--ff-color-primary); }
 
 /* Focus rings (a11y) */
 :where(a, button, input, textarea, select, .ff-cta, .ff-ghost):focus-visible{
   outline: none;
   box-shadow: var(--shadow-ring);
 }
+
+/* ====== BADGES / CHIPS / METRICS ====== */
+.ff-badge{
+  display:inline-flex; align-items:center; gap:.375rem;
+  padding:.375rem .625rem;
+  font-size:.8125rem; line-height:1;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-accent) 16%, #fff 84%);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+.ff-metric{
+  display:flex; align-items:center; gap:.5rem;
+  padding:.375rem .5rem; border-radius: .75rem;
+  background: #fff; border:1px solid var(--color-border);
+}
+.ff-metric .dot{ width:.5rem; height:.5rem; border-radius:9999px; background: var(--color-success); }
+.ff-metric .label{ font-size:.9375rem; color: var(--color-text); }
+.ff-metric .sub{ font-size:.75rem; color: var(--color-muted); }
+
+/* ====== GENERIC CARD / SURFACE UTILS ====== */
+.ff-card{ 
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.ff-surface-1{ background: var(--color-surface); }
+.ff-surface-2{ background: rgba(30,35,51,.02); } /* subtiele elev op licht */
+.ff-surface-3{ background: rgba(30,35,51,.04); }
 
 /* ====== LINKS ====== */
 a{ color: inherit; text-underline-offset: 4px; text-decoration-thickness: 1.25px; }
