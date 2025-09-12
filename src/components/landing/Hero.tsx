@@ -104,30 +104,34 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                   aspect="7/10"
                   imgClassName="img-fit"
                   priority
-        <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 leading-tight">
-          Jouw persoonlijke stylist
-          <span className="block text-accent mt-2">— aangedreven door AI</span>
+                />
+              </div>
               
               {/* Floating Elements */}
-        <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            <h3 className="text-lg font-semibold mb-2">Outfits met uitleg</h3>
-            <p className="text-gray-400">Begrijp waarom iets werkt</p>
-                  <div className="text-xs text-gray-600">Match</div>
+              <div className="absolute -top-4 -right-4 shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4 animate-fade-in">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <CheckCircle size={16} className="text-green-600" />
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900 text-sm">95% Match</div>
+                    <div className="text-xs text-gray-600">Match</div>
+                  </div>
                 </div>
               </div>
               
               <div className="absolute -bottom-4 -left-4 shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4 animate-fade-in">
                 <div className="flex items-center space-x-3">
-            <h3 className="text-lg font-semibold mb-2">Eerlijke selectie</h3>
-            <p className="text-gray-400">Geen pay-to-play, wel partners achteraf disclosed</p>
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Sparkles size={16} className="text-purple-600" />
                   </div>
                   <div>
                     <div className="font-medium text-gray-900 text-sm">Nova AI</div>
                     <div className="text-xs text-gray-600">Jouw stylist</div>
                   </div>
                 </div>
-            <h3 className="text-lg font-semibold mb-2">Capsule-denkend</h3>
-            <p className="text-gray-400">Minder items, meer combinaties</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
