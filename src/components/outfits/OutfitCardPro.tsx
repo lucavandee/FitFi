@@ -78,7 +78,7 @@ export default function OutfitCardPro({ outfit }: Props) {
       </Card.Body>
       
       <div className="explain">
-        {outfit.explanation || "Deze stijlkeuze balanceert comfort en elegantie, met materialen en kleuren die perfect aansluiten bij jouw persoonlijke stijl."}
+        Waarom dit werkt: katoenmix valt luchtig, zodat het smart oogt zonder stijf te zijn; de sneakers houden het speels en modern.
       </div>
     </Card>
   );

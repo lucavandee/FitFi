@@ -435,7 +435,7 @@ export default function OutfitCard({
       </div>
       
       <div className="explain">
-        {outfit.explanation || "Deze outfit combineert klassieke silhouetten met moderne kleuren, perfect voor een veelzijdige en stijlvolle look."}
+        Waarom dit werkt: de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
     </article>
   );

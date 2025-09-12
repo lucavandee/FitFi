@@ -136,7 +136,7 @@ export default function PremiumOutfitCard({
       </div>
       
       <div className="explain">
-        {outfit.explanation || "Deze premium selectie combineert hoogwaardige materialen met tijdloze vormen, speciaal samengesteld voor jouw unieke stijlprofiel."}
+        Waarom dit werkt: de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
     </PremiumCard>
   );
