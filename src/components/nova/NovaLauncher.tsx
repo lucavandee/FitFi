@@ -16,7 +16,7 @@ export default function NovaLauncher() {
       onClick={onClick}
       aria-label={nova.isOpen ? "Sluit Nova" : "Open Nova"}
       className="
-        fixed z-[85]
+        fixed z-[9999]
         right-4 md:right-6
         bottom-[max(1rem,env(safe-area-inset-bottom))]
         inline-flex items-center gap-2
@@ -29,7 +29,10 @@ export default function NovaLauncher() {
       "
     >
       <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="opacity-90">
-        <path d="M12 3a9 9 0 00-9 9c0 1.98.64 3.8 1.73 5.27L3 21l3.86-1.67A8.96 8.96 0 0012 21a9 9 0 100-18z" fill="currentColor" />
+        <path
+          d="M12 3a9 9 0 00-9 9c0 1.98.64 3.8 1.73 5.27L3 21l3.86-1.67A8.96 8.96 0 0012 21a9 9 0 100-18z"
+          fill="currentColor"
+        />
       </svg>
       <span className="text-sm font-medium">{nova.isOpen ? "Sluiten" : "Chatten"}</span>
     </button>
