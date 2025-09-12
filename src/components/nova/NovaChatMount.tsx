@@ -1,62 +1,79 @@
-// src/components/nova/NovaChatMount.tsx
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useNovaChat } from "./NovaChatProvider";
 import NovaLauncher from "./NovaLauncher";
 import ChatPanelPro from "./ChatPanelPro";
 
-/** Tijdens QA nergens verbergen; later kun je beperken. */
-const HIDE_ON: string[] = []; // bv. ["/login", "/register"]
+const HIDE_ON_PATHS: string[] = []; // Tijdens QA nergens verbergen
 
-function getPath(): string {
+function getCurrentPath(): string {
   if (typeof window === "undefined" || !window.location) return "/";
   return window.location.pathname || "/";
 }
 
-/** SPA-pathname zónder react-router hooks */
-function usePathname(): string {
-  const [path, setPath] = useState<string>(() => getPath());
+function useCurrentPathname(): string {
+  const [pathname, setPathname] = useState<string>(() => getCurrentPath());
+
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const update = () => setPath(getPath());
 
-    const origPush = history.pushState;
-    const origReplace = history.replaceState;
+    const updatePathname = () => {
+      const newPath = getCurrentPath();
+      setPathname(newPath);
+    };
+
+    // Patch history methods to trigger updates
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
     try {
-      history.pushState = function (...args: any[]) {
-        origPush.apply(this, args as any);
-        window.dispatchEvent(new Event("popstate"));
-      } as typeof history.pushState;
-      history.replaceState = function (...args: any[]) {
-        origReplace.apply(this, args as any);
-        window.dispatchEvent(new Event("popstate"));
-      } as typeof history.replaceState;
-    } catch {}
+      history.pushState = function(...args: any[]) {
+        originalPushState.apply(this, args as [any, string, string?]);
+        setTimeout(updatePathname, 0);
+      };
 
-    window.addEventListener("popstate", update);
-    update();
+      history.replaceState = function(...args: any[]) {
+        originalReplaceState.apply(this, args as [any, string, string?]);
+        setTimeout(updatePathname, 0);
+      };
+    } catch (error) {
+      console.warn("[NovaChatMount] Could not patch history methods:", error);
+    }
+
+    // Listen for popstate events
+    window.addEventListener("popstate", updatePathname);
+    
+    // Initial update
+    updatePathname();
 
     return () => {
-      window.removeEventListener("popstate", update);
+      window.removeEventListener("popstate", updatePathname);
       try {
-        history.pushState = origPush;
-        history.replaceState = origReplace;
-      } catch {}
+        history.pushState = originalPushState;
+        history.replaceState = originalReplaceState;
+      } catch (error) {
+        console.warn("[NovaChatMount] Could not restore history methods:", error);
+      }
     };
   }, []);
-  return path;
+
+  return pathname;
 }
 
 function NovaOverlay() {
   const nova = useNovaChat();
+
   if (!nova.isOpen) return null;
 
   return (
     <>
+      {/* Backdrop */}
       <div
         className="fixed inset-0 z-[9997] bg-black/40 backdrop-blur-[2px]"
         onClick={nova.hide}
-        aria-hidden
+        aria-hidden="true"
       />
+      
+      {/* Modal */}
       <div
         role="dialog"
         aria-label="Nova chat"
@@ -68,19 +85,30 @@ function NovaOverlay() {
           className="flex h-full flex-col rounded-2xl border border-black/10 bg-white shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between px-3 py-2 border-b border-black/10">
-            <div className="text-sm font-medium text-[#0D1B2A]">Nova</div>
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-[#00D2B8] rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-[#0D1B2A]">Nova</span>
+            </div>
             <button
               onClick={nova.hide}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-black/20"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2B6AF3]/30 transition-colors"
               aria-label="Sluit chat"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path 
+                  d="M18 6L6 18M6 6l12 12" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                />
               </svg>
             </button>
           </div>
-          <div className="min-h-0 flex-1 p-3">
+          
+          {/* Chat Content */}
+          <div className="min-h-0 flex-1">
             <ChatPanelPro />
           </div>
         </div>
@@ -90,16 +118,22 @@ function NovaOverlay() {
 }
 
 export default function NovaChatMount() {
-  const pathname = usePathname();
-  const hideFab = useMemo(() => HIDE_ON.some((p) => pathname.startsWith(p)), [pathname]);
+  const pathname = useCurrentPathname();
+  const shouldHideFab = useMemo(() => {
+    return HIDE_ON_PATHS.some(path => pathname.startsWith(path));
+  }, [pathname]);
 
   return (
     <>
-      {!hideFab && <NovaLauncher />}
-      <div className="fixed inset-x-0 bottom-0 z-[9996] hidden" aria-hidden />
+      {/* FAB Launcher */}
+      {!shouldHideFab && <NovaLauncher />}
+      
+      {/* Portal Mount Point */}
       <Suspense fallback={null}>
-        <div id="nova-chat-mount" className="hidden" />
+        <div id="nova-chat-mount" className="hidden" aria-hidden="true" />
       </Suspense>
+      
+      {/* Chat Overlay */}
       <NovaOverlay />
     </>
   );

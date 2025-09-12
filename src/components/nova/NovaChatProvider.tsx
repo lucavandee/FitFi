@@ -1,178 +1,264 @@
-import React, { createContext, useContext, useState, useCallback, useRef, ReactNode } from "react";
+import React, { createContext, useContext, useCallback, useEffect, useRef, useState, ReactNode } from "react";
 import { track } from "@/utils/telemetry";
+import type { Product } from "@/types/product";
 
-export type NovaStatus = "idle" | "opening" | "streaming" | "error";
+type NovaStatus = "idle" | "opening" | "streaming" | "error" | "closed";
 
-export interface NovaEvent {
-  type: "message" | "products" | "error" | "done";
+interface NovaMessage {
+  id: string;
+  content: string;
+  timestamp: string;
+}
+
+interface NovaEvent {
+  type: "message" | "products" | "error" | "complete";
   content?: string;
-  products?: any[];
+  products?: Product[];
   error?: string;
 }
 
-export interface NovaMessage {
-  content: string;
-  products?: any[];
+interface NovaEventBus {
+  subscribe: (callback: (event: NovaEvent) => void) => () => void;
+  emit: (event: NovaEvent) => void;
 }
 
-export interface NovaChatContext {
+interface NovaProductBus {
+  subscribe: (callback: (products: Product[] | null) => void) => () => void;
+  emit: (products: Product[] | null) => void;
+}
+
+interface NovaChatContextType {
   isOpen: boolean;
   status: NovaStatus;
-  open: () => void;
+  show: () => void;
   hide: () => void;
-  send: (prompt: string, options?: { mode?: string }) => Promise<void>;
-  events: {
-    subscribe: (callback: (message: NovaMessage) => void) => () => void;
-  };
-  products: {
-    subscribe: (callback: (products: any[] | null) => void) => () => void;
+  send: (message: string, options?: { mode?: string }) => Promise<void>;
+  events: NovaEventBus;
+  products: NovaProductBus;
+}
+
+const NovaChatContext = createContext<NovaChatContextType | null>(null);
+
+function createEventBus(): NovaEventBus {
+  const listeners = new Set<(event: NovaEvent) => void>();
+  
+  return {
+    subscribe: (callback) => {
+      listeners.add(callback);
+      return () => listeners.delete(callback);
+    },
+    emit: (event) => {
+      listeners.forEach(listener => {
+        try {
+          listener(event);
+        } catch (error) {
+          console.error("[NovaEventBus] Listener error:", error);
+        }
+      });
+    }
   };
 }
 
-const Context = createContext<NovaChatContext | null>(null);
+function createProductBus(): NovaProductBus {
+  const listeners = new Set<(products: Product[] | null) => void>();
+  
+  return {
+    subscribe: (callback) => {
+      listeners.add(callback);
+      return () => listeners.delete(callback);
+    },
+    emit: (products) => {
+      listeners.forEach(listener => {
+        try {
+          listener(products);
+        } catch (error) {
+          console.error("[NovaProductBus] Listener error:", error);
+        }
+      });
+    }
+  };
+}
 
-export function useNovaChat(): NovaChatContext {
-  const ctx = useContext(Context);
-  if (!ctx) {
-    throw new Error("useNovaChat must be used within NovaChatProvider");
+function generateId(): string {
+  try {
+    return crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+  } catch {
+    return Math.random().toString(36).slice(2);
   }
-  return ctx;
+}
+
+function validateMessage(message: string): string {
+  const trimmed = message.trim();
+  if (!trimmed) {
+    return "Maak een smart-casual outfit onder €200";
+  }
+  return trimmed;
+}
+
+async function streamNovaChat(message: string, options: { mode?: string } = {}): Promise<void> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const response = await fetch("/.netlify/functions/nova", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-fitfi-tier": "member",
+        "x-fitfi-uid": generateId(),
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: "Je bent Nova, FitFi's AI styling assistent. Geef outfit aanbevelingen in het Nederlands." },
+          { role: "user", content: validateMessage(message) }
+        ],
+        mode: options.mode || "outfits"
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Nova API error: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body from Nova API");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (data.content) {
+              window.dispatchEvent(new CustomEvent('nova-message', { detail: data }));
+            }
+            if (data.products) {
+              window.dispatchEvent(new CustomEvent('nova-products', { detail: data.products }));
+            }
+          } catch (error) {
+            console.warn("[Nova] Failed to parse SSE data:", error);
+          }
+        }
+      }
+    }
+
+    window.dispatchEvent(new CustomEvent('nova-complete'));
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error("Nova request timeout");
+    }
+    throw new Error(error.message || "Nova connection failed");
+  }
 }
 
 interface NovaChatProviderProps {
   children: ReactNode;
 }
 
-export default function NovaChatProvider({ children }: NovaChatProviderProps) {
+export function NovaChatProvider({ children }: NovaChatProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<NovaStatus>("idle");
-  
-  const eventSubscribers = useRef<Set<(message: NovaMessage) => void>>(new Set());
-  const productSubscribers = useRef<Set<(products: any[] | null) => void>>(new Set());
+  const eventsRef = useRef<NovaEventBus>(createEventBus());
+  const productsRef = useRef<NovaProductBus>(createProductBus());
 
-  const open = useCallback(() => {
-    track("nova:open");
+  const show = useCallback(() => {
     setIsOpen(true);
+    track("nova:open");
   }, []);
 
   const hide = useCallback(() => {
-    track("nova:hide");
     setIsOpen(false);
+    setStatus("idle");
+    track("nova:close");
   }, []);
 
-  const send = useCallback(async (prompt: string, options?: { mode?: string }) => {
-    if (!prompt.trim()) {
-      throw new Error("Prompt mag niet leeg zijn");
-    }
-
-    setStatus("opening");
-    track("nova:send", { promptLength: prompt.length, mode: options?.mode });
-
+  const send = useCallback(async (message: string, options: { mode?: string } = {}) => {
+    const validatedMessage = validateMessage(message);
+    
     try {
-      const response = await fetch("/.netlify/functions/nova", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-fitfi-tier": "visitor",
-          "x-fitfi-uid": "anonymous"
-        },
-        body: JSON.stringify({
-          messages: [
-            { role: "user", content: prompt }
-          ],
-          mode: options?.mode || "outfits"
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      if (!response.body) {
-        throw new Error("Geen response body ontvangen");
-      }
-
+      setStatus("opening");
+      track("nova:send", { length: validatedMessage.length, mode: options.mode });
+      
       setStatus("streaming");
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6);
-            if (data === "[DONE]") {
-              setStatus("idle");
-              return;
-            }
-
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.content) {
-                const message: NovaMessage = {
-                  content: parsed.content,
-                  products: parsed.products
-                };
-                
-                eventSubscribers.current.forEach(callback => callback(message));
-                
-                if (parsed.products) {
-                  productSubscribers.current.forEach(callback => callback(parsed.products));
-                }
-              }
-            } catch (e) {
-              console.warn("Failed to parse SSE data:", data);
-            }
-          }
-        }
-      }
-
+      await streamNovaChat(validatedMessage, options);
       setStatus("idle");
-    } catch (error) {
+    } catch (error: any) {
       setStatus("error");
-      track("nova:error", { error: error instanceof Error ? error.message : "Unknown error" });
+      eventsRef.current.emit({
+        type: "error",
+        error: error.message || "Onbekende fout bij Nova"
+      });
       throw error;
     }
   }, []);
 
-  const events = {
-    subscribe: useCallback((callback: (message: NovaMessage) => void) => {
-      eventSubscribers.current.add(callback);
-      return () => {
-        eventSubscribers.current.delete(callback);
-      };
-    }, [])
-  };
+  useEffect(() => {
+    const handleMessage = (event: CustomEvent) => {
+      eventsRef.current.emit({
+        type: "message",
+        content: event.detail.content || ""
+      });
+    };
 
-  const products = {
-    subscribe: useCallback((callback: (products: any[] | null) => void) => {
-      productSubscribers.current.add(callback);
-      return () => {
-        productSubscribers.current.delete(callback);
-      };
-    }, [])
-  };
+    const handleProducts = (event: CustomEvent) => {
+      const products = Array.isArray(event.detail) ? event.detail : [];
+      productsRef.current.emit(products);
+      eventsRef.current.emit({
+        type: "products",
+        products
+      });
+    };
 
-  const value: NovaChatContext = {
+    const handleComplete = () => {
+      setStatus("idle");
+      eventsRef.current.emit({ type: "complete" });
+    };
+
+    window.addEventListener('nova-message', handleMessage as EventListener);
+    window.addEventListener('nova-products', handleProducts as EventListener);
+    window.addEventListener('nova-complete', handleComplete);
+
+    return () => {
+      window.removeEventListener('nova-message', handleMessage as EventListener);
+      window.removeEventListener('nova-products', handleProducts as EventListener);
+      window.removeEventListener('nova-complete', handleComplete);
+    };
+  }, []);
+
+  const contextValue: NovaChatContextType = {
     isOpen,
     status,
-    open,
+    show,
     hide,
     send,
-    events,
-    products
+    events: eventsRef.current,
+    products: productsRef.current
   };
 
   return (
-    <Context.Provider value={value}>
+    <NovaChatContext.Provider value={contextValue}>
       {children}
-    </Context.Provider>
+    </NovaChatContext.Provider>
   );
+}
+
+export function useNovaChat(): NovaChatContextType {
+  const context = useContext(NovaChatContext);
+  if (!context) {
+    throw new Error("useNovaChat must be used within NovaChatProvider");
+  }
+  return context;
 }
