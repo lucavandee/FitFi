@@ -1,21 +1,26 @@
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 
-interface PortalProps {
-  children: React.ReactNode;
-  container?: Element;
-}
-
-export default function Portal({ children, container }: PortalProps) {
+export default function Portal({ children }: { children: React.ReactNode }) {
+  const elRef = useRef<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
 
+  if (!elRef.current && typeof document !== "undefined") {
+    elRef.current = document.createElement("div");
+    elRef.current.setAttribute("id", "nv-portal");
+  }
+
   useEffect(() => {
+    if (!elRef.current || typeof document === "undefined") return;
+    document.body.appendChild(elRef.current);
     setMounted(true);
-    return () => setMounted(false);
+    return () => {
+      if (elRef.current?.parentElement) {
+        elRef.current.parentElement.removeChild(elRef.current);
+      }
+    };
   }, []);
 
-  if (!mounted) return null;
-
-  const target = container || document.body;
-  return createPortal(children, target);
+  if (!mounted || !elRef.current) return null;
+  return ReactDOM.createPortal(children, elRef.current);
 }
