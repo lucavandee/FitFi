@@ -1,61 +1,69 @@
-/* FitFi Design Tokens — Light / Neutral Beige (canonical) */
+/* FitFi Design Tokens — Light / Neutral Beige (canonical)
+Componenten gebruiken uitsluitend tokens; geen hex/rgb in componenten. */
 :root {
-  --color-bg: #F7F3EC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E2333;
-  --color-muted: #6B7280;
+/* ===== Core Colors ===== */
+--color-bg: #F7F3EC; /* warm cream achtergrond */
+--color-surface: #FFFFFF; /* kaarten / surfaces */
+--color-text: #1E2333; /* inkt/donker voor uitstekende leesbaarheid */
+--color-muted: #6B7280; /* secundaire tekst */
 
-  /* Brand taupe */
-  --color-primary: #A6886A;      /* merk */
-  --ff-color-primary-600: #8F7459;/* hover */
-  --ff-color-primary-700: #7A614A;/* active + CTA-bg (AA) */
+/* ===== Brand Taupe ===== */
+/* Let op: CTA gebruikt de donkere taupe (700) voor AA met witte tekst. */
+--color-primary: #A6886A; /* taupe (merk) */
+--ff-color-primary-600: #8F7459;/* hover */
+--ff-color-primary-700: #7A614A;/* active/CTA-bg (AA met #fff) */
 
-  --color-accent: #D8CABA;
-  --color-border: rgba(30,35,51,0.08);
+/* Accent voor chips/badges (géén CTA) */
+--color-accent: #D8CABA;
 
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger:  #DC2626;
+--color-border: rgba(30,35,51,0.08);
+--color-success: #16A34A;
+--color-warning: #D97706;
+--color-danger: #DC2626;
 
-  /* Overlays (gradients/glas) */
-  --overlay-primary-12a: rgba(166,136,106,0.12);
-  --overlay-accent-08a:  rgba(216,202,186,0.10);
+/* Overlays (gradients/glas) — afgeleid van merk */
+--overlay-primary-12a: rgba(166,136,106,0.12);
+--overlay-accent-08a: rgba(216,202,186,0.10);
 
-  /* Typografie */
-  --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-  --font-body:    'Lato',       ui-sans-serif, system-ui, sans-serif;
+/* ===== CTA tokens (taupe) ===== */
+--ff-cta-bg: var(--ff-color-primary-700);
+--ff-cta-bg-hover: var(--ff-color-primary-600);
+--ff-cta-bg-active: var(--ff-color-primary-700);
+--ff-cta-foreground: #FFFFFF; /* wit voor AA op taupe-700 */
 
-  /* Radii & Shadows */
-  --radius-sm: 0.25rem; --radius-md: .5rem; --radius-lg: 1rem; --radius-2xl: 1.25rem; --radius-full: 9999px;
-  --shadow-soft: 0 8px 30px rgba(0,0,0,.08);
-  --shadow-ring: 0 0 0 3px rgba(166,136,106,.35);
+/* ===== Typography ===== */
+--font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+--font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
 
-  /* Glass (light) */
-  --glass-surface: rgba(255,255,255,.72);
-  --glass-border:  rgba(30,35,51,.08);
-  --glass-blur:    10px;
+/* ===== Radii & Shadows ===== */
+--radius-sm: 0.25rem;
+--radius-md: 0.50rem;
+--radius-lg: 1.00rem;
+--radius-2xl: 1.25rem;
+--radius-full: 9999px;
 
-  /* ===== CTA (licht accent i.p.v. bruin) =====
-  Keuze: zachte beige knop met donkere tekst — vriendelijker, minder "bruin",
-  en AA-contrast (≈ 7:1) t.o.v. --color-text. */
-  --ff-cta-bg: #D8CABA; /* basis (gelijk aan accent) */
-  --ff-cta-bg-hover: #CCBBA4; /* ~10–12% donkerder */
-  --ff-cta-bg-active: #BFAE97; /* ~20% donkerder */
-  --ff-cta-foreground: #1E2333; /* donkere tekst voor maximaal contrast */
+--shadow-soft: 0 8px 30px rgba(0,0,0,.08);
+--shadow-ring: 0 0 0 3px rgba(166,136,106,.35); /* warme focus */
 
-  /* Tailwind mapping (compat) */
-  --ff-color-bg: var(--color-bg);
-  --ff-color-surface: var(--color-surface);
-  --ff-color-text: var(--color-text);
-  --ff-color-muted: var(--color-muted);
-  --ff-color-border: var(--color-border);
-  --ff-color-success: var(--color-success);
-  --ff-color-warning: var(--color-warning);
-  --ff-color-danger:  var(--color-danger);
+/* ===== Glass tokens (light theme) ===== */
+--glass-surface: rgba(255,255,255,.72);
+--glass-border: rgba(30,35,51,.08);
+--glass-blur: 10px;
 
-  --ff-font-sans: var(--font-body);
-  --ff-text-xs:.75rem; --ff-text-sm:.875rem; --ff-text-base:1rem; --ff-text-md:1.0625rem;
-  --ff-text-lg:1.125rem; --ff-text-xl:1.25rem; --ff-text-2xl:1.5rem; --ff-text-3xl:1.875rem;
+/* ===== Tailwind mapping (compat) ===== */
+--ff-color-bg: var(--color-bg);
+--ff-color-surface: var(--color-surface);
+--ff-color-text: var(--color-text);
+--ff-color-muted: var(--color-muted);
+--ff-color-border: var(--color-border);
+--ff-color-success: var(--color-success);
+--ff-color-warning: var(--color-warning);
+--ff-color-danger: var(--color-danger);
+
+--ff-font-sans: var(--font-body);
+--ff-text-xs:.75rem; --ff-text-sm:.875rem; --ff-text-base:1rem; --ff-text-md:1.0625rem;
+--ff-text-lg:1.125rem; --ff-text-xl:1.25rem; --ff-text-2xl:1.5rem; --ff-text-3xl:1.875rem;
 }
+
 html { font-family: var(--font-body); }
 .nova-dock, .nova-chatbar, #nova-bottom-bar { display: none !important; }
