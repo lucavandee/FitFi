@@ -35,6 +35,14 @@
   --glass-border:  rgba(30,35,51,.08);
   --glass-blur:    10px;
 
+  /* ===== CTA (licht accent i.p.v. bruin) =====
+  Keuze: zachte beige knop met donkere tekst — vriendelijker, minder "bruin",
+  en AA-contrast (≈ 7:1) t.o.v. --color-text. */
+  --ff-cta-bg: #D8CABA; /* basis (gelijk aan accent) */
+  --ff-cta-bg-hover: #CCBBA4; /* ~10–12% donkerder */
+  --ff-cta-bg-active: #BFAE97; /* ~20% donkerder */
+  --ff-cta-foreground: #1E2333; /* donkere tekst voor maximaal contrast */
+
   /* Tailwind mapping (compat) */
   --ff-color-bg: var(--color-bg);
   --ff-color-surface: var(--color-surface);

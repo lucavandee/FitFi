@@ -67,8 +67,8 @@ section[aria-labelledby="hero-heading"]::before,
 .ff-cta, button, [role="button"]{
   transition: transform .2s ease, box-shadow .2s ease, filter .2s ease,
               background-color .2s ease, color .2s ease, border-color .2s ease;
-}
-.ff-cta{
+background-color: var(--ff-cta-bg) !important; /* zachte beige knop */
+color: var(--ff-cta-foreground) !important; /* donkere tekst */
   background-color: var(--ff-color-primary-700) !important; /* AA */
   color: #FFFFFF !important;
   opacity: 1 !important;
@@ -77,12 +77,11 @@ section[aria-labelledby="hero-heading"]::before,
   display: inline-flex; align-items: center; gap: .5rem;
   font-weight: 700; padding-inline: 1rem; padding-block: .75rem;
   text-decoration: none !important;
-}
+text-decoration: none !important; border: 1px solid var(--color-border);
 .ff-cta *{ color: inherit !important; } /* spans/strongs etc. */
 .ff-cta svg{ color: currentColor; stroke: currentColor; fill: none; }
-
-.ff-cta:hover{ transform: translateY(-1px) scale(1.01); background-color: var(--ff-color-primary-600) !important; }
-.ff-cta:active{ transform: translateY(0) scale(.995); background-color: var(--ff-color-primary-700) !important; filter: brightness(.98); }
+.ff-cta:hover{ transform: translateY(-1px) scale(1.01); background-color: var(--ff-cta-bg-hover) !important; }
+.ff-cta:active{ transform: translateY(0) scale(.995); background-color: var(--ff-cta-bg-active) !important; filter: brightness(.98); }
 .ff-cta:disabled, .ff-cta[aria-disabled="true"]{ opacity:.6 !important; cursor:not-allowed; filter:grayscale(.05); }
 
 /* Secondary / Ghost */
