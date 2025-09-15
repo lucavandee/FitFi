@@ -1,15 +1,16 @@
+/* src/index.css */
+
+/* 1) Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "./styles/main.css";
-@import "./styles/polish.css";
-@import "./styles/fitfi-theme.css";
-@import "./styles/animations.css";
-@import "./styles/polish.css";
-@import "./styles/components/images.css";
-@import "./styles/components/pricing.css";
-@import "./styles/utilities/typography.css";
-@import "./styles/polish.css";
+/* 2) Design tokens (bron van waarheid) */
 @import "./styles/tokens.css";
+
+/* 3) (optioneel) extra basis utilties/animaties
+   @import "./styles/animations.css";
+*/
+
+/* 4) UI Polish — ALTIJD als laatste, geen duplicaten */
 @import "./styles/polish.css";
