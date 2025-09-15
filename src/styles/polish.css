@@ -1,7 +1,7 @@
 /* src/styles/polish.css */
 /* UI-Polish: subtiele verbeteringen, ALLEEN tokens gebruiken (geen hex/rgb buiten tokens) */
 
-/* App-utilities (vervangt legacy grijs/hex classes) */
+/* ====== App utilities (tokens) ====== */
 .bg-app { background-color: var(--color-bg); }
 .surface { background-color: var(--color-surface); }
 .text-ink { color: var(--color-text); }
@@ -12,99 +12,7 @@
 .ring-brand { --tw-ring-color: var(--ff-color-primary-600); }
 .ring-offset-surface { --tw-ring-offset-color: var(--color-surface); }
 
-/* === NAVBAR glass + alignment === */
-[data-fitfi="navbar"]{
-  position: sticky; top: 0; z-index: 40;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background-color: var(--glass-surface, rgba(255,255,255,.72));
-  border-bottom: 1px solid var(--glass-border, rgba(30,35,51,.08));
-}
-[data-fitfi="navbar"] .ff-container,
-[data-fitfi="navbar"] .container{
-  height: 64px;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-}
-
-/* Nav link + active chip (ondersteunt 'active' en 'is-active') */
-[data-fitfi="navbar"] .nav-link{
-  display: inline-flex; align-items: center;
-  line-height: 1; padding: .50rem .625rem; border-radius: 9999px;
-  color: var(--color-text, #1E2333);
-  transition: background-color .2s ease, color .2s ease, opacity .2s ease;
-  opacity: .92;
-}
-[data-fitfi="navbar"] .nav-link:hover{ opacity: 1; }
-[data-fitfi="navbar"] .nav-link.is-active,
-[data-fitfi="navbar"] .nav-link.active{
-  background: color-mix(in srgb, var(--color-accent, #D8CABA) 42%, #FFFFFF 58%);
-  box-shadow: inset 0 0 0 1px var(--color-border, rgba(30,35,51,.08));
-  opacity: 1;
-}
-
-/* Nav CTA pill (taupe) */
-[data-fitfi="navbar"] .nav-cta,
-[data-fitfi="navbar"] [data-cta="primary"]{
-  --ff-cta-bg: var(--ff-color-primary-600, var(--color-primary));
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  color: #FFFFFF !important;
-  border: 1px solid transparent !important;
-  padding: .60rem 1rem; border-radius: 9999px; font-weight: 700;
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-  transition: transform .15s ease, background-color .15s ease;
-}
-[data-fitfi="navbar"] .nav-cta:hover,
-[data-fitfi="navbar"] [data-cta="primary"]:hover{
-  background: var(--ff-color-primary-700, var(--color-primary)) !important;
-  transform: translateY(-1px);
-}
-
-/* === CTA hardening (wint van .bg-white & gradients) === */
-.ff-cta,
-.ff-cta.ff-cta, /* specificity bump */
-[data-cta="primary"],
-.cta-primary,
-.btn-primary{
-  --ff-cta-bg: var(--ff-color-primary-600, var(--color-primary));
-  --ff-cta-bg-hover: var(--ff-color-primary-700, var(--color-primary));
-
-  /* overschrijf shorthands én gradients */
-  background: var(--ff-cta-bg) !important;
-  background-color: var(--ff-cta-bg) !important;
-  background-image: none !important;
-
-  color: #FFFFFF !important;
-  border-color: transparent !important;
-  opacity: 1 !important; mix-blend-mode: normal !important;
-
-  display: inline-flex; align-items: center; gap: .5rem;
-  padding: .75rem 1rem; font-weight: 700; border-radius: var(--radius-lg, 1rem);
-  text-decoration: none !important;
-  transition: transform .2s ease, background-color .2s ease, color .2s ease;
-}
-.ff-cta:hover,
-[data-cta="primary"]:hover,
-.cta-primary:hover,
-.btn-primary:hover{
-  background: var(--ff-cta-bg-hover) !important;
-}
-
-/* Als er tóch een bg-utility op de CTA staat (zoals bg-white), forceren we alsnog taupe */
-.ff-cta[class*="bg-"],
-[data-cta="primary"][class*="bg-"],
-.cta-primary[class*="bg-"],
-.btn-primary[class*="bg-"]{
-  background: var(--ff-cta-bg) !important;
-  background-color: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  color: #FFFFFF !important;
-}
-
-/* Children erven de tekstkleur → nooit meer "witte tekst op witte knop" */
-.ff-cta *, [data-cta="primary"] *{ color: inherit !important; }
-
-/* Glas-header (mag, conform polish-kaders) */
+/* Glas-header (conform polish-kaders) */
 .glass-header {
   -webkit-backdrop-filter: saturate(180%) blur(12px);
   backdrop-filter: saturate(180%) blur(12px);
@@ -136,8 +44,122 @@ a:hover { text-decoration: underline; text-underline-offset: 4px; }
   box-shadow: var(--shadow-ring);
 }
 
-/* Legacy cleanup hooks: gebruik dit om snel stone/amber-gradients te neutraliseren */
+/* Neutraliseer legacy gradients snel waar nodig */
 .bg-neutral-app {
   background: var(--color-bg) !important;
   background-image: none !important;
+}
+
+/* =========================================================
+   CANONIEKE CTA-BUTTONS (dekking voor alle varianten/legacy)
+   - Werkt voor: <Button/>, .btn, .button, [data-variant], .primary-cta
+   - Altijd AA-contrast, tokens-only
+   ========================================================= */
+
+/* Basis */
+.btn, .button, button,
+a.btn, a.button, [role="button"] {
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  text-decoration: none;
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease, opacity .2s ease;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* Maten */
+.btn-sm { height: 2.25rem; padding: .5rem .75rem; font-size: .875rem; }
+.btn-md { height: 2.5rem;  padding: .625rem 1rem; font-size: 1rem; }
+.btn-lg { height: 3rem;    padding: 0 1.25rem;   font-size: 1.125rem; }
+
+/* Primaire CTA (solid) — altijd leesbare tekst */
+.primary-cta,
+[data-variant="primary"],
+.btn-primary {
+  background: var(--ff-color-primary-700);
+  color: var(--color-surface);
+  border-color: transparent;
+}
+.primary-cta:hover,
+[data-variant="primary"]:hover,
+.btn-primary:hover {
+  background: var(--ff-color-primary-600);
+}
+
+/* Secundair (ghost) */
+.ghost-cta,
+[data-variant="ghost"],
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.ghost-cta:hover,
+[data-variant="ghost"]:hover,
+.btn-ghost:hover {
+  border-color: var(--color-primary);
+}
+
+/* Status */
+.btn-success { background: var(--color-success); color: var(--color-surface); border-color: transparent; }
+.btn-success:hover { opacity: .92; }
+.btn-danger { background: var(--color-danger); color: var(--color-surface); border-color: transparent; }
+.btn-danger:hover { opacity: .92; }
+
+/* Focus (tokens) */
+.btn:focus-visible,
+.button:focus-visible,
+button:focus-visible,
+a.btn:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+}
+
+/* Disabled → nog steeds goed leesbaar (maar duidelijk gedeactiveerd) */
+:root { --btn-disabled-opacity: 0.72; }
+.btn:disabled,
+.button:disabled,
+button:disabled,
+a.btn[aria-disabled="true"],
+[role="button"][aria-disabled="true"] {
+  opacity: var(--btn-disabled-opacity);
+  cursor: not-allowed;
+  filter: none;
+  color: var(--color-surface); /* blijft leesbaar op primary bg */
+}
+
+/* ==============================================
+   NAV: actieve link als chip (accent-tint)
+   ============================================== */
+.nav-link {
+  color: var(--color-text);
+  text-decoration: none;
+  padding: .375rem .75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+.nav-link.is-active {
+  background-color: color-mix(in srgb, var(--color-surface) 58%, var(--color-accent) 42%);
+  border-color: var(--color-border);
+}
+
+/* Zorg dat auth-CTA rechts nooit "ghost" wordt door overerving */
+[data-fitfi="navbar"] .auth-cta .btn,
+[data-fitfi="navbar"] .auth-cta button,
+[data-fitfi="navbar"] .auth-cta .primary-cta {
+  background: var(--ff-color-primary-700);
+  color: var(--color-surface);
+  border-color: transparent;
+}
+[data-fitfi="navbar"] .auth-cta .btn:hover,
+[data-fitfi="navbar"] .auth-cta button:hover,
+[data-fitfi="navbar"] .auth-cta .primary-cta:hover {
+  background: var(--ff-color-primary-600);
 }
