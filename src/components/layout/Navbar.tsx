@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useUser } from "../../context/UserContext";
-import Button from "../ui/Button";
 import Logo from "../ui/Logo";
 import { NAV_ITEMS } from "../../constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
-import { scrollToHash } from "../../utils/scrollUtils";
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,56 +50,42 @@ const Navbar: React.FC = () => {
             const active = isActiveLink(item.href);
             if (item.href.startsWith("#")) {
               return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToHash(item.href);
-                  }}
-                  className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}
-                >
+                <a key={item.href} href={item.href}
+                   className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}>
                   {item.label}
                 </a>
               );
             }
             return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}
-              >
+              <Link key={item.href} to={item.href}
+                    className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}>
                 {item.label}
               </Link>
             );
           })}
         </div>
 
-        {/* Right: Auth actions (exact één "Inloggen" indien niet ingelogd) */}
-        <div className="hidden items-center gap-3 md:flex">
+        {/* Right: Auth actions — exact één CTA */}
+        <div className="auth-cta hidden items-center gap-3 md:flex">
           {!user && (
-            <Link to="/inloggen" className="inline-flex">
-              <Button variant="primary" size="md" aria-label="Inloggen">
-                Inloggen
-              </Button>
+            <Link to="/inloggen" className="btn btn-primary btn-md" aria-label="Inloggen" data-variant="primary">
+              Inloggen
             </Link>
           )}
-
           {user && (
             <>
-              <Link to="/dashboard" className="inline-flex">
-                <Button variant="ghost" size="md" aria-label="Naar dashboard">
-                  Dashboard
-                </Button>
+              <Link to="/dashboard" className="btn btn-ghost btn-md" aria-label="Naar dashboard" data-variant="ghost">
+                Dashboard
               </Link>
-              <Button
-                variant="ghost"
-                size="md"
-                aria-label="Uitloggen"
+              <button
+                type="button"
                 onClick={logout}
+                className="btn btn-ghost btn-md"
+                aria-label="Uitloggen"
+                data-variant="ghost"
               >
                 Uitloggen
-              </Button>
+              </button>
             </>
           )}
         </div>
@@ -120,10 +104,7 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Mobile Drawer */}
-      <MobileNavDrawer
-        open={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-      />
+      <MobileNavDrawer open={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
     </nav>
   );
 };
