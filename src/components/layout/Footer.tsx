@@ -1,200 +1,82 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
-import Logo from '@/components/ui/Logo';
+import React from "react";
+import { Link } from "react-router-dom";
+import Logo from "../ui/Logo";
+import Button from "../ui/Button";
+import { Instagram, Youtube, Twitter, Linkedin } from "lucide-react";
 
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
-
-  const footerLinks = {
-    product: [
-      { name: 'Hoe het werkt', href: '/hoe-het-werkt' },
-      { name: 'Prijzen', href: '/prijzen' },
-      { name: 'Nova AI', href: '/nova' },
-      { name: 'Blog', href: '/blog' },
-    ],
-    company: [
-      { name: 'Over ons', href: '/over-ons' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Pers', href: '/pers' },
-    ],
-    support: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'FAQ', href: '/faq' },
-      { name: 'Support', href: '/support' },
-      { name: 'Status', href: '/status' },
-    ],
-    legal: [
-      { name: 'Privacy', href: '/privacy' },
-      { name: 'Voorwaarden', href: '/voorwaarden' },
-      { name: 'Cookies', href: '/cookies' },
-      { name: 'Disclaimer', href: '/disclaimer' },
-    ],
-  };
-
-  const socialLinks = [
-    { name: 'Facebook', href: 'https://facebook.com/fitfi', icon: Facebook },
-    { name: 'Twitter', href: 'https://twitter.com/fitfi', icon: Twitter },
-    { name: 'Instagram', href: 'https://instagram.com/fitfi', icon: Instagram },
-    { name: 'LinkedIn', href: 'https://linkedin.com/company/fitfi', icon: Linkedin },
-  ];
-
   return (
-    <footer className="bg-[color:var(--color-bg)] border-t border-[color:var(--color-border)]">
+    <footer className="bg-[color:var(--color-bg)] border-t border-[color:var(--color-border)] mt-16" role="contentinfo">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Main footer content */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-          {/* Brand section */}
-          <div className="lg:col-span-2">
-            <div className="mb-4">
-              <Logo />
-            </div>
-            <p className="text-[color:var(--color-muted)] text-sm leading-relaxed max-w-md">
-              FitFi helpt je ontdekken wat jouw unieke stijl over je zegt. Met AI-powered styling krijg je gepersonaliseerde outfit aanbevelingen die perfect bij je passen.
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div>
+            <Link to="/" className="inline-flex items-center" aria-label="FitFi home">
+              <Logo className="h-7 w-auto" />
+            </Link>
+            <p className="text-[color:var(--color-muted)] mt-3 max-w-xs">
+              Wij helpen je met stijl — met AI, uitleg en outfits die bij je silhouet passen.
             </p>
-            
-            {/* Contact info */}
-            <div className="mt-6 space-y-2">
-              <div className="flex items-center gap-2 text-sm text-[color:var(--color-muted)]">
-                <Mail size={16} />
-                <a href="mailto:hello@fitfi.ai" className="hover:text-[color:var(--color-primary)] transition-colors">
-                  hello@fitfi.ai
-                </a>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[color:var(--color-muted)]">
-                <Phone size={16} />
-                <a href="tel:+31202345678" className="hover:text-[color:var(--color-primary)] transition-colors">
-                  +31 20 234 5678
-                </a>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[color:var(--color-muted)]">
-                <MapPin size={16} />
-                <span>Amsterdam, Nederland</span>
-              </div>
+            <div className="mt-4 flex items-center gap-3">
+              <a href="https://www.instagram.com/" aria-label="Instagram" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="https://www.youtube.com/" aria-label="YouTube" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Youtube className="h-5 w-5" />
+              </a>
+              <a href="https://twitter.com/" aria-label="Twitter" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a href="https://www.linkedin.com/" aria-label="LinkedIn" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Linkedin className="h-5 w-5" />
+              </a>
             </div>
           </div>
 
-          {/* Links sections */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-3 lg:grid-cols-4">
-            <div>
-              <h3 className="text-sm font-semibold text-[color:var(--color-text)] mb-4">Product</h3>
-              <ul className="space-y-3">
-                {footerLinks.product.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-sm text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Snel naar */}
+          <div>
+            <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold">Snel naar</h3>
+            <ul className="mt-3 space-y-2">
+              <li><Link to="/hoe-het-werkt" className="text-[color:var(--color-text)] hover:underline">Hoe het werkt</Link></li>
+              <li><Link to="/prijzen" className="text-[color:var(--color-text)] hover:underline">Prijzen</Link></li>
+              <li><Link to="/feed" className="text-[color:var(--color-text)] hover:underline">Feed</Link></li>
+              <li><Link to="/blog" className="text-[color:var(--color-text)] hover:underline">Blog</Link></li>
+            </ul>
+          </div>
 
-            <div>
-              <h3 className="text-sm font-semibold text-[color:var(--color-text)] mb-4">Bedrijf</h3>
-              <ul className="space-y-3">
-                {footerLinks.company.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-sm text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Juridisch */}
+          <div>
+            <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold">Juridisch</h3>
+            <ul className="mt-3 space-y-2">
+              <li><Link to="/privacy" className="text-[color:var(--color-text)] hover:underline">Privacy</Link></li>
+              <li><Link to="/cookies" className="text-[color:var(--color-text)] hover:underline">Cookies</Link></li>
+              <li><Link to="/voorwaarden" className="text-[color:var(--color-text)] hover:underline">Algemene voorwaarden</Link></li>
+              <li><Link to="/affiliate-disclosure" className="text-[color:var(--color-text)] hover:underline">Affiliate Disclosure</Link></li>
+            </ul>
+          </div>
 
-            <div>
-              <h3 className="text-sm font-semibold text-[color:var(--color-text)] mb-4">Support</h3>
-              <ul className="space-y-3">
-                {footerLinks.support.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-sm text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-[color:var(--color-text)] mb-4">Juridisch</h3>
-              <ul className="space-y-3">
-                {footerLinks.legal.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-sm text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          {/* Contact */}
+          <div>
+            <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold">Contact</h3>
+            <ul className="mt-3 space-y-2">
+              <li><Link to="/contact" className="text-[color:var(--color-text)] hover:underline">Contactformulier</Link></li>
+              <li><a href="mailto:hi@fitfi.ai" className="text-[color:var(--color-text)] hover:underline">hi@fitfi.ai</a></li>
+            </ul>
+            <div className="mt-4">
+              <Button as={Link} to="/onboarding" variant="primary" size="md">
+                Start gratis
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Newsletter signup */}
-        <div className="mt-12 border-t border-[color:var(--color-border)] pt-8">
-          <div className="bg-[color:var(--color-surface)] rounded-[var(--radius-lg)] border border-[color:var(--color-border)] p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-semibold text-[color:var(--color-text)] mb-1">
-                  Blijf op de hoogte
-                </h3>
-                <p className="text-sm text-[color:var(--color-muted)]">
-                  Ontvang styling tips en nieuwe features als eerste
-                </p>
-              </div>
-              <div className="flex gap-2 sm:min-w-80">
-                <input
-                  type="email"
-                  placeholder="je@email.com"
-                  className="flex-1 px-3 py-2 text-sm border border-[color:var(--color-border)] rounded-lg bg-[color:var(--color-surface)] text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] focus-visible:ring-2 ring-[color:var(--color-primary)] ring-offset-2 ring-offset-[color:var(--color-surface)] transition-colors"
-                />
-                <button className="px-4 py-2 text-sm font-medium bg-[color:var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[color:var(--ff-color-primary-600)] transition-colors">
-                  Aanmelden
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom section */}
-        <div className="mt-8 border-t border-[color:var(--color-border)] pt-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <p className="text-sm text-[color:var(--color-muted)]">
-              © {currentYear} FitFi. Alle rechten voorbehouden.
-            </p>
-            
-            {/* Social links */}
-            <div className="flex items-center gap-4">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] transition-colors"
-                    aria-label={`Volg ons op ${social.name}`}
-                  >
-                    <Icon size={20} />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
+        <div className="mt-10 border-t border-[color:var(--color-border)] pt-6 text-sm text-[color:var(--color-muted)] flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} FitFi. Alle rechten voorbehouden.</p>
+          <p>
+            Transparantie: sommige links op deze site zijn <strong>affiliate links</strong>.
+            Als je via deze links shopt, kan FitFi een commissie ontvangen — zonder extra kosten voor jou.
+            Meer info in onze <Link to="/affiliate-disclosure" className="hover:underline">Affiliate Disclosure</Link>.
+          </p>
         </div>
       </div>
     </footer>
