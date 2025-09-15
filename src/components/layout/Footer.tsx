@@ -77,14 +77,14 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-[#0D1B2A] text-white" role="contentinfo">
+    <footer className="surface border-t border-ui" role="contentinfo">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
           <div>
             <Logo className="h-8 w-auto mb-4" textColor="text-white" />
-            <p className="text-gray-300 mb-6 leading-relaxed">
+            <p className="text-muted mb-6 leading-relaxed">
               FitFi helpt je ontdekken wat jouw stijl over je zegt en hoe je dit kunt gebruiken 
               om jouw doelen te bereiken.
             </p>
@@ -123,7 +123,7 @@ const Footer: React.FC = () => {
           {/* Footer Sections */}
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="text-lg font-medium text-white mb-4">
+              <h3 className="text-lg font-medium text-ink mb-4">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -134,14 +134,14 @@ const Footer: React.FC = () => {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-300 hover:text-[#89CFF0] transition-colors"
+                        className="text-muted hover:text-ink transition-colors"
                       >
                         {link.label}
                       </a>
                     ) : (
                       <Link
                         to={link.href}
-                        className="text-gray-300 hover:text-[#89CFF0] transition-colors"
+                        className="text-muted hover:text-ink transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -153,7 +153,7 @@ const Footer: React.FC = () => {
               {/* Cookie Settings Button for Legal & Trust section */}
               {section.title === 'Legal & Trust' && (
                 <div className="mt-3">
-                  <CookieSettingsButton className="text-gray-300 hover:text-[#89CFF0] transition-colors underline" />
+                  <CookieSettingsButton className="text-muted hover:text-ink transition-colors underline" />
                 </div>
               )}
             </div>
@@ -161,7 +161,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Social Media & Bottom Section */}
-        <div className="pt-8 border-t border-gray-700">
+        <div className="pt-8 border-t border-ui">
           <div className="flex flex-col md:flex-row justify-between items-center">
             {/* Social Links */}
             <div className="flex items-center space-x-6 mb-6 md:mb-0">
@@ -182,7 +182,7 @@ const Footer: React.FC = () => {
 
             {/* Copyright */}
             <div className="text-center md:text-right">
-              <p className="text-gray-300 text-sm">
+              <p className="text-muted text-sm">
                 © {currentYear} FitFi. Alle rechten voorbehouden.
               </p>
               <p className="text-gray-400 text-xs mt-1">
@@ -193,7 +193,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Newsletter Signup */}
-        <div className="mt-8 pt-8 border-t border-gray-700">
+        <div className="mt-8 pt-8 border-t border-ui">
           <div className="max-w-md mx-auto text-center">
             <h3 className="text-lg font-medium text-white mb-2">
               Blijf op de hoogte
