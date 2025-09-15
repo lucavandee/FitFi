@@ -205,6 +205,7 @@ const App: React.FC = () => {
                           <Route path="/tribes/:slug" element={
                             <ProtectedRoute>
                               <TribeDetailPage />
+                            </ProtectedRoute>
                           } />
                           <Route path="/tribes/id/:tribeId" element={
                             <ProtectedRoute>
@@ -245,6 +246,6 @@ const App: React.FC = () => {
     </div>
     </>
   );
-}
+};
 
 export default App;
