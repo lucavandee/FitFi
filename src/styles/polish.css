@@ -296,7 +296,6 @@ a:hover{ text-decoration: underline; }
 [data-fitfi="navbar"] [data-cta="primary"]:hover{
   background: var(--ff-color-primary-700, var(--color-primary)) !important;
   transform: translateY(-1px);
-}
 
 /* ===== CTA — TAUPE (wint van .bg-white & gradients) ===== */
 /* Gebruik echte specificiteit (geen :where) en kill shorthands/gradients. */
