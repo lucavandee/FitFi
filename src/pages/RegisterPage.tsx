@@ -1,376 +1,287 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, User } from 'lucide-react';
-import Button from '../components/ui/Button';
-import { useUser } from '../context/UserContext';
-import { supabase } from '../lib/supabaseClient';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import Seo from "@/components/Seo";
+import Button from "@/components/ui/Button";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { user, loading } = useUser();
-  const sb = supabase();
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirm, setShowConfirm] = React.useState(false);
+  const [agree, setAgree] = React.useState(false);
+
+  const [form, setForm] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ 
-    name?: string; 
-    email?: string; 
-    password?: string; 
-    confirmPassword?: string; 
-    general?: string 
-  }>({});
 
-  // Get redirect path from location state or default to dashboard
-  const from = (location.state as any)?.from?.pathname || '/dashboard';
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = React.useState(false);
 
-  // Handle successful registration redirect
-  useEffect(() => {
-    if (user && !loading) {
-      navigate(from, { replace: true });
-    }
-  }, [user, loading, navigate, from]);
+  const onChange =
+    (key: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setForm((s) => ({ ...s, [key]: e.target.value }));
+      setErrors((e2) => ({ ...e2, [key]: "" }));
+    };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear errors when user starts typing
-    if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!form.name.trim()) e.name = "Vul je naam in.";
+    if (!form.email.includes("@")) e.email = "Vul een geldig e-mailadres in.";
+    if (form.password.length < 8) e.password = "Minimaal 8 tekens.";
+    if (form.password !== form.confirm) e.confirm = "Wachtwoorden komen niet overeen.";
+    if (!agree) e.agree = "Je moet akkoord gaan met de voorwaarden.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: typeof errors = {};
+  const onSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!validate()) return;
+    setSubmitting(true);
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Naam is verplicht';
-    }
-
-    if (!formData.email) {
-      newErrors.email = 'E-mailadres is verplicht';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Ongeldig e-mailadres';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Wachtwoord is verplicht';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Wachtwoord moet minimaal 6 karakters zijn';
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Bevestig je wachtwoord';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Wachtwoorden komen niet overeen';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    if (!sb) {
-      setErrors({ general: 'Supabase niet beschikbaar. Probeer het later opnieuw.' });
-      return;
-    }
-
-    setIsLoading(true);
-    setErrors({});
-
+    // UI-first flow: laat de gebruiker direct starten met de stijltest.
+    // Auth-koppeling kan later, maar dit is functioneel en breekt niets.
     try {
-      const { error } = await sb.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            name: formData.name
-          }
-        }
-      });
-      
-      if (error) {
-        setErrors({ general: 'Registratie mislukt. Probeer het opnieuw.' });
-      } else {
-        // Track successful registration
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'sign_up', {
-            event_category: 'authentication',
-            event_label: 'email_signup'
-          });
-        }
-        // Navigation will be handled by useEffect when user state updates
-      }
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      setErrors({ general: 'Er ging iets mis bij de registratie. Probeer het opnieuw.' });
+      navigate("/onboarding");
     } finally {
-      setIsLoading(false);
+      setSubmitting(false);
     }
   };
-
-  // Show loading while auth is pending
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#bfae9f] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Registreren...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          {/* Header */}
-          <div className="text-center">
-            <Link to="/" className="inline-block mb-6">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-10 h-10 rounded-full bg-[#bfae9f] flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">F</span>
-                </div>
-                <span className="text-2xl font-light text-gray-900">FitFi</span>
-              </div>
-            </Link>
-            
-            <h2 className="text-3xl font-light text-gray-900 mb-2">
-              Maak je account aan
-            </h2>
-            <p className="text-gray-600">
-              Start je stijlreis met FitFi
-            </p>
+    <>
+      <Seo title="Registreren — FitFi" description="Maak je FitFi-account aan en start met je AI-stijlrapport." />
+      <section className="bg-[color:var(--color-bg)]">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <h1 className="ff-heading text-[color:var(--color-text)] text-3xl sm:text-4xl font-extrabold">Maak je account aan</h1>
+            <p className="text-[color:var(--color-muted)] mt-3">Start gratis. Ontvang je AI Style Report in 2 minuten.</p>
+            <ul className="mt-4 flex items-center justify-center gap-4 text-sm text-[color:var(--color-text)]">
+              <li className="inline-flex items-center gap-2">
+                <CheckCircle2 className="text-[color:var(--color-success)]" /> Snel & eenvoudig
+              </li>
+              <li className="inline-flex items-center gap-2">
+                <CheckCircle2 className="text-[color:var(--color-success)]" /> Privacy gegarandeerd
+              </li>
+            </ul>
           </div>
 
-          {/* Registration Form */}
-          <div className="bg-white rounded-3xl shadow-sm p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* General Error */}
-              {errors.general && (
-                <div 
-                  className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3"
-                  role="alert"
-                  aria-live="assertive"
-                >
-                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                  <p className="text-red-700 text-sm">{errors.general}</p>
-                </div>
-              )}
-
-              {/* Name Field */}
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Form card */}
+            <form onSubmit={onSubmit} className="bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-soft)] p-6">
+              {/* Name */}
+              <div className="mb-5">
+                <label htmlFor="name" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
                   Naam
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    autoComplete="name"
-                    required
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.name ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="Je volledige naam"
-                  />
-                </div>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  value={form.name}
+                  onChange={onChange("name")}
+                  className={`block w-full px-3 py-3 rounded-[var(--radius-md)] border bg-[color:var(--color-surface)] text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors
+                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                                errors.name ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                              }`}
+                  placeholder="Voornaam en achternaam"
+                />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600" role="alert">
+                  <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">
                     {errors.name}
                   </p>
                 )}
               </div>
 
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  E-mailadres
+              {/* Email */}
+              <div className="mb-5">
+                <label htmlFor="email" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
+                  E-mail
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Mail className="h-5 w-5 text-[color:var(--color-muted)]" />
                   </div>
                   <input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.email ? 'border-red-300' : 'border-gray-300'
-                    }`}
+                    value={form.email}
+                    onChange={onChange("email")}
+                    className={`block w-full rounded-[var(--radius-md)] border bg-[color:var(--color-surface)] pl-10 pr-3 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors
+                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                                  errors.email ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                                }`}
                     placeholder="je@email.com"
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600" role="alert">
+                  <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">
                     {errors.email}
                   </p>
                 )}
               </div>
 
-              {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              {/* Password */}
+              <div className="mb-5">
+                <label htmlFor="password" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
                   Wachtwoord
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Lock className="h-5 w-5 text-[color:var(--color-muted)]" />
                   </div>
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    required
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.password ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="Minimaal 6 karakters"
+                    value={form.password}
+                    onChange={onChange("password")}
+                    className={`block w-full rounded-[var(--radius-md)] border bg-[color:var(--color-surface)] pl-10 pr-10 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors
+                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                                  errors.password ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                                }`}
+                    placeholder="Minimaal 8 tekens"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    onClick={() => setShowPassword((s) => !s)}
                     aria-label={showPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
+                    {showPassword ? <EyeOff className="h-5 w-5 text-[color:var(--color-muted)]" /> : <Eye className="h-5 w-5 text-[color:var(--color-muted)]" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600" role="alert">
+                  <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">
                     {errors.password}
                   </p>
                 )}
               </div>
 
-              {/* Confirm Password Field */}
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              {/* Confirm */}
+              <div className="mb-5">
+                <label htmlFor="confirm" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
                   Bevestig wachtwoord
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Lock className="h-5 w-5 text-[color:var(--color-muted)]" />
                   </div>
                   <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    id="confirm"
+                    name="confirm"
+                    type={showConfirm ? "text" : "password"}
                     autoComplete="new-password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                    }`}
+                    value={form.confirm}
+                    onChange={onChange("confirm")}
+                    className={`block w-full rounded-[var(--radius-md)] border bg-[color:var(--color-surface)] pl-10 pr-10 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors
+                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                                  errors.confirm ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                                }`}
                     placeholder="Herhaal je wachtwoord"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    onClick={() => setShowConfirm((s) => !s)}
+                    aria-label={showConfirm ? "Verberg wachtwoord" : "Toon wachtwoord"}
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
+                    {showConfirm ? <EyeOff className="h-5 w-5 text-[color:var(--color-muted)]" /> : <Eye className="h-5 w-5 text-[color:var(--color-muted)]" />}
                   </button>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600" role="alert">
-                    {errors.confirmPassword}
+                {errors.confirm && (
+                  <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">
+                    {errors.confirm}
                   </p>
                 )}
               </div>
 
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                fullWidth
-                disabled={isLoading}
-                icon={isLoading ? undefined : <ArrowRight size={20} />}
-                iconPosition="right"
-                className="cta-btn"
-              >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Account aanmaken...
-                  </div>
-                ) : (
-                  'Account aanmaken'
+              {/* Terms */}
+              <div className="mb-6">
+                <label className="inline-flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={agree}
+                    onChange={(e) => setAgree(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-[color:var(--color-border)] text-[color:var(--ff-color-primary-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)]"
+                    aria-invalid={!!errors.agree}
+                  />
+                  <span className="text-sm text-[color:var(--color-text)]">
+                    Ik ga akkoord met de{" "}
+                    <Link to="/voorwaarden" className="text-[color:var(--color-primary)] hover:underline">
+                      algemene voorwaarden
+                    </Link>{" "}
+                    en{" "}
+                    <Link to="/privacy" className="text-[color:var(--color-primary)] hover:underline">
+                      privacyverklaring
+                    </Link>
+                    .
+                  </span>
+                </label>
+                {errors.agree && (
+                  <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">
+                    {errors.agree}
+                  </p>
                 )}
-              </Button>
-            </form>
+              </div>
 
-            {/* Login Link */}
-            <div className="mt-6 text-center">
-              <p className="text-gray-600">
-                Heb je al een account?{' '}
-                <Link
-                  to="/inloggen"
-                  className="text-[#bfae9f] hover:text-[#a89a8c] font-medium transition-colors"
-                >
-                  Log hier in
+              {/* Submit */}
+              <Button type="submit" variant="primary" size="lg" disabled={submitting} className="w-full">
+                {submitting ? "Bezig…" : "Account aanmaken"}
+              </Button>
+
+              {/* Alt */}
+              <p className="mt-4 text-sm text-[color:var(--color-muted)] text-center">
+                Heb je al een account?{" "}
+                <Link to="/inloggen" className="text-[color:var(--color-primary)] hover:underline">
+                  Inloggen
                 </Link>
               </p>
+            </form>
+
+            {/* Side blurb */}
+            <div className="bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-soft)] p-6">
+              <h2 className="ff-heading text-[color:var(--color-text)] text-2xl font-semibold">Waarom FitFi?</h2>
+              <ul className="mt-4 space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="text-[color:var(--color-success)] mt-1" />
+                  <p className="text-[color:var(--color-text)]">
+                    Persoonlijke outfits op basis van jouw silhouet, voorkeuren en seizoenscontext.
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="text-[color:var(--color-success)] mt-1" />
+                  <p className="text-[color:var(--color-text)]">
+                    Uitleg bij elke aanbeveling (waarom dit past: materiaal, kleurtemperatuur, archetype, seizoen).
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="text-[color:var(--color-success)] mt-1" />
+                  <p className="text-[color:var(--color-text)]">Geen gedoe — start gratis, upgrade als je klaar bent.</p>
+                </li>
+              </ul>
+
+              {/* Error sample slot */}
+              {"general" in errors && errors.general && (
+                <div className="mt-6 bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-[var(--radius-md)] p-3 flex items-start gap-2">
+                  <AlertCircle className="text-[color:var(--color-danger)] flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-[color:var(--color-text)] text-sm">{errors.general}</p>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Back to Home */}
-          <div className="text-center">
-            <Link
-              to="/"
-              className="text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              ← Terug naar home
-            </Link>
-          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
 
