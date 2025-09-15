@@ -44,13 +44,21 @@ export default function Button({
   size = "md",
   icon,
   iconPosition = "left",
-  className = "",
+  className,
   children,
   ...rest
 }: Props) {
+  // Zet className VOOR variant/size zodat polish.css tokens altijd winnen
+  const classes = [
+    BASE,
+    className,
+    VARIANTS[variant],
+    SIZES[size]
+  ].filter(Boolean).join(' ');
+
   return (
     <button
-      className={`${BASE} ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      className={classes}
       {...rest}
     >
       {icon && iconPosition === "left" && <span className="mr-2">{icon}</span>}

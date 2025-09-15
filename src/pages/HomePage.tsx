@@ -5,8 +5,7 @@ import Seo from '@/components/Seo';
 import Button from '../components/ui/Button';
 import HeroTitle from '@/components/marketing/HeroTitle';
 import Chip from '@/components/ui/Chip';
-import { useUser } from '../context/UserContext';
-import { trackStickyCTA } from '@/hooks/useABTesting';
+import Hero from "../components/sections/Hero";
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
@@ -69,53 +68,9 @@ const HomePage: React.FC = () => {
         {/* Trust Indicators */}
         <div className="flex flex-wrap justify-center gap-3 mt-4 mb-8">
           <Chip>100% Gratis</Chip>
-          <Chip>2 Minuten</Chip>
-          <Chip>Direct Resultaat</Chip>
-        </div>
-        
-        <div className="space-y-4">
-          {user ? (
-            <>
-              <Button 
-                as={Link}
-                to="/dashboard" 
-                variant="primary"
-                size="lg"
-                icon={<ArrowRight size={20} />}
-                iconPosition="right"
-                data-ff-event="cta_click"
-                data-ff-loc="home_hero"
-              >
-                Ga naar Dashboard
-              </Button>
-              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
-                Welkom terug, {user.name}!
-              </p>
-            </>
-          ) : (
-            <>
-              <Button 
-                as={Link}
-                to="/registreren" 
-                onClick={handleStartQuiz}
-                variant="primary"
-                size="lg"
-                icon={<ArrowRight size={20} />}
-                iconPosition="right"
-                className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
-                data-ff-event="cta_click"
-                data-ff-loc="home_hero"
-              >
-                Start nu gratis
-              </Button>
-              <p className="text-sm text-gray-500 mt-4">
-                Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten gegenereerd
-              </p>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+    <main className="bg-app">
+      <Hero />
+    </main>
     
     {/* Sticky Mobile CTA */}
     <div className="ff-sticky-cta md:hidden">
