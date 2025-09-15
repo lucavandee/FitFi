@@ -1,346 +1,185 @@
-/* src/styles/polish.css */
+/* src/styles/polish.css
+   FitFi UI Polish — tokens-only
+   - Glass header + nav active chip
+   - Buttons, cards, chips, inputs
+   - Plan cards (pricing)
+   - Focus ring
+*/
 
-/* =============================================================================
-   FITFI POLISH LAYER
-   Toegestane UI-polish voor navbar, hero, buttons, cards, focus-states
-   ============================================================================= */
-
-/* -----------------------------------------------------------------------------
-   GLASS NAVBAR
-   ----------------------------------------------------------------------------- */
-.navbar {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.85);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+/* ---------- Core ---------- */
+:root {
+  /* shadows via tokens */
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.06);
+  --shadow-ring: 0 0 0 3px rgba(166,136,106,0.24); /* warm primary alpha */
 }
 
-/* Nav links - zichtbaar in idle state */
+/* Global focus ring */
+:where(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: 12px;
+}
+
+/* ---------- Header (glass) ---------- */
+.header-glass {
+  backdrop-filter: saturate(180%) blur(10px);
+  background: color-mix(in oklab, var(--color-surface), transparent 6%);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+/* Nav links */
 .nav-link {
   color: var(--color-text);
-  transition: all 0.2s ease;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  padding: 8px 12px;
+  border-radius: 999px;
   text-decoration: none;
 }
-
-.nav-link:hover {
-  color: var(--color-primary);
-  background: var(--color-accent);
-}
-
-/* Active nav link als chip (accent-tint) */
+.nav-link:hover { text-decoration: underline; text-underline-offset: 4px; }
 .nav-link.is-active {
-  background: var(--color-accent);
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-/* -----------------------------------------------------------------------------
-   HERO SECTION
-   ----------------------------------------------------------------------------- */
-.hero-section {
-  border-radius: 24px;
+  background: color-mix(in oklab, var(--color-accent), white 58%);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  background: var(--color-surface);
-  position: relative;
-  overflow: hidden;
 }
 
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(166, 136, 106, 0.05) 0%, rgba(216, 202, 186, 0.05) 100%);
-  pointer-events: none;
+/* ---------- Buttons ---------- */
+.btn {
+  --btn-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border-radius: var(--btn-radius);
+  padding: .75rem 1rem;
+  font-weight: 600;
+  line-height: 1.1;
+  border: 1px solid transparent;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease;
+  user-select: none;
+  cursor: pointer;
 }
+.btn:active { transform: translateY(1px); }
 
-/* -----------------------------------------------------------------------------
-   BUTTONS
-   ----------------------------------------------------------------------------- */
 .btn-primary {
   background: var(--ff-color-primary-700);
-  color: #ffffff;
-  font-weight: 700;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
+  color: #fff;
 }
-
-.btn-primary:hover {
-  background: var(--ff-color-primary-600);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(166, 136, 106, 0.3);
-}
-
-.btn-primary:focus {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-.btn-secondary {
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 600;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.btn-secondary:hover {
-  background: var(--color-accent);
-  border-color: var(--color-primary);
-}
-
-.btn-secondary:focus {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
+.btn-primary:hover { background: var(--ff-color-primary-600); }
 
 .btn-ghost {
   background: transparent;
+  border-color: var(--color-border);
   color: var(--color-text);
-  font-weight: 500;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
 }
+.btn-ghost:hover { border-color: var(--color-primary); }
 
-.btn-ghost:hover {
-  background: var(--color-accent);
-  color: var(--color-primary);
-}
-
-.btn-ghost:focus {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-/* -----------------------------------------------------------------------------
-   CARDS
-   ----------------------------------------------------------------------------- */
+/* ---------- Cards ---------- */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
 }
+.card-inner { padding: 1.25rem; }
+@media (min-width: 640px) { .card-inner { padding: 1.5rem; } }
 
-.card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
-}
-
-.card-premium {
-  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-accent) 100%);
-  border: 1px solid var(--color-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.card-premium::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-primary) 0%, var(--ff-color-primary-600) 100%);
-}
-
-/* -----------------------------------------------------------------------------
-   BADGES & CHIPS
-   ----------------------------------------------------------------------------- */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: var(--color-accent);
-  color: var(--color-primary);
-  border: 1px solid var(--color-border);
-}
-
-.badge-success {
-  background: rgba(34, 197, 94, 0.1);
-  color: rgb(34, 197, 94);
-  border-color: rgba(34, 197, 94, 0.2);
-}
-
-.badge-warning {
-  background: rgba(245, 158, 11, 0.1);
-  color: rgb(245, 158, 11);
-  border-color: rgba(245, 158, 11, 0.2);
-}
-
-.badge-error {
-  background: rgba(239, 68, 68, 0.1);
-  color: rgb(239, 68, 68);
-  border-color: rgba(239, 68, 68, 0.2);
-}
-
-/* -----------------------------------------------------------------------------
-   FOCUS STATES (A11Y)
-   ----------------------------------------------------------------------------- */
-.focus-ring:focus {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-/* Interactive elements focus */
-button:focus,
-input:focus,
-textarea:focus,
-select:focus,
-a:focus {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-/* -----------------------------------------------------------------------------
-   SKELETON LOADING (PREMIUM SHIMMER)
-   ----------------------------------------------------------------------------- */
-.skeleton {
-  background: linear-gradient(90deg, var(--color-accent) 25%, rgba(255, 255, 255, 0.5) 50%, var(--color-accent) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 0.5rem;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.skeleton-text {
-  height: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.skeleton-text:last-child {
-  margin-bottom: 0;
-  width: 60%;
-}
-
-.skeleton-avatar {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-}
-
-.skeleton-card {
-  height: 12rem;
-  width: 100%;
-}
-
-/* -----------------------------------------------------------------------------
-   MICRO-INTERACTIONS
-   ----------------------------------------------------------------------------- */
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.hover-scale {
-  transition: transform 0.2s ease;
-}
-
-.hover-scale:hover {
-  transform: scale(1.02);
-}
-
-/* -----------------------------------------------------------------------------
-   FORM ELEMENTS
-   ----------------------------------------------------------------------------- */
-.form-input {
+.subcard {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  color: var(--color-text);
-  transition: all 0.2s ease;
-  width: 100%;
+  border-radius: 14px;
 }
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-ring);
+.subcard-inner { padding: 1rem; }
+.subcard-title {
+  font-weight: 700;
 }
-
-.form-input::placeholder {
+.subcard-text {
   color: var(--color-muted);
+  margin-top: .25rem;
 }
 
-/* -----------------------------------------------------------------------------
-   LISTS & NAVIGATION
-   ----------------------------------------------------------------------------- */
-.nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* ---------- Chips / badges ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  height: 32px;
+  padding: 0 .75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-accent), white 70%);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: .875rem;
+  font-weight: 600;
+}
+.chip svg { width: 16px; height: 16px; }
+
+.chip-accent {
+  background: color-mix(in oklab, var(--color-accent), white 58%);
 }
 
-.nav-item {
-  margin-bottom: 0.25rem;
+/* ---------- Typo helpers ---------- */
+.card-title {
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+.card-text {
+  color: var(--color-muted);
+  margin-top: .25rem;
 }
 
-.nav-item:last-child {
-  margin-bottom: 0;
+.step-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-primary), white 78%);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-weight: 700;
+  margin-bottom: .75rem;
 }
 
-/* -----------------------------------------------------------------------------
-   RESPONSIVE UTILITIES
-   ----------------------------------------------------------------------------- */
-@media (max-width: 768px) {
-  .navbar {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-  
-  .hero-section {
-    border-radius: 16px;
-  }
-  
-  .btn-primary,
-  .btn-secondary {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.875rem;
-  }
+/* ---------- Inputs ---------- */
+.input {
+  width: 100%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: .625rem .75rem;
+}
+.range {
+  width: 100%;
+  accent-color: var(--ff-color-primary-700);
 }
 
-/* -----------------------------------------------------------------------------
-   DARK MODE SUPPORT (FUTURE-READY)
-   ----------------------------------------------------------------------------- */
-@media (prefers-color-scheme: dark) {
-  .navbar {
-    background: rgba(13, 27, 42, 0.85);
-  }
-  
-  .skeleton {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
-    background-size: 200% 100%;
-  }
+/* ---------- Pricing ---------- */
+.plan-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+.plan-card .plan-inner { padding: 1.25rem; }
+@media (min-width: 640px) { .plan-card .plan-inner { padding: 1.5rem; } }
+
+.plan-card--highlight {
+  outline: 2px solid color-mix(in oklab, var(--color-primary), white 30%);
+  outline-offset: 0;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.plan-title {
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+.plan-price {
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* ---------- Utility ---------- */
+.why {
+  margin-top: .5rem;
+  color: var(--color-text);
 }
