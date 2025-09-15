@@ -255,6 +255,49 @@ a:hover{ text-decoration: underline; }
   color: #fff !important;
 }
 
+/* ===== NAVBAR GLASS + ALIGN ===== */
+[data-fitfi="navbar"]{
+  position: sticky; top:0; z-index:40;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  background-color: var(--glass-surface);
+  border-bottom: 1px solid var(--glass-border);
+}
+[data-fitfi="navbar"] .container, [data-fitfi="navbar"] .ff-container{
+  height: 64px; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+
+/* Nav chip (actieve link) */
+[data-fitfi="navbar"] .nav-link{
+  display:inline-flex; align-items:center; line-height:1;
+  padding:.5rem .625rem; border-radius:9999px; color:var(--color-text);
+  transition: background-color .2s ease, color .2s ease, opacity .2s ease;
+  opacity:.9;
+}
+[data-fitfi="navbar"] .nav-link:hover{ opacity:1; }
+[data-fitfi="navbar"] .nav-link.is-active{
+  background: color-mix(in srgb, var(--color-accent) 42%, #fff 58%);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  opacity:1;
+}
+
+/* Navbar CTA pill (taupe) */
+[data-fitfi="navbar"] .nav-cta,
+[data-fitfi="navbar"] [data-cta="primary"]{
+  --ff-cta-bg: var(--ff-color-primary-600, var(--color-primary));
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
+  color:#fff !important;
+  border:1px solid transparent !important;
+  padding:.6rem 1rem; border-radius:9999px; font-weight:700;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  transition: transform .15s ease, background-color .15s ease;
+}
+[data-fitfi="navbar"] .nav-cta:hover,
+[data-fitfi="navbar"] [data-cta="primary"]:hover{
+  background: var(--ff-color-primary-700, var(--color-primary)) !important;
+  transform: translateY(-1px);
+}
+
 /* ===== CTA — TAUPE, WINT VAN .bg-white ===== */
 .ff-cta,
 [data-cta="primary"],
