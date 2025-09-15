@@ -1,40 +1,36 @@
-import type { Config } from 'tailwindcss';
+// tailwind.config.ts
+import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        'montserrat': ['Montserrat', 'system-ui', 'sans-serif'],
-        'lato': ['Lato', 'system-ui', 'sans-serif'],
-      },
       colors: {
-        // Design tokens mapping - sync met tokens.css
-        'bg': 'var(--color-bg)',
-        'surface': 'var(--color-surface)',
-        'text': 'var(--color-text)',
-        'muted': 'var(--color-muted)',
-        'primary': 'var(--color-primary)',
-        'accent': 'var(--color-accent)',
-        'border': 'var(--color-border)',
-        'success': 'var(--color-success)',
-        'warning': 'var(--color-warning)',
-        'danger': 'var(--color-danger)',
-        // FitFi primaire CTA kleuren
-        'ff-primary-600': 'var(--ff-color-primary-600)',
-        'ff-primary-700': 'var(--ff-color-primary-700)',
+        bg: "var(--color-bg)",
+        surface: "var(--color-surface)",
+        text: "var(--color-text)",
+        muted: "var(--color-muted)",
+        primary: "var(--color-primary)",
+        primary600: "var(--ff-color-primary-600)",
+        primary700: "var(--ff-color-primary-700)",
+        accent: "var(--color-accent)",
+        border: "var(--color-border)",
+        success: "var(--color-success)",
+        warning: "var(--color-warning)",
+        danger: "var(--color-danger)",
+      },
+      fontFamily: {
+        heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       borderRadius: {
-        'lg': 'var(--radius-lg)',
-        'xl': 'var(--radius-xl)',
-        '2xl': 'var(--radius-2xl)',
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
       },
       boxShadow: {
-        'soft': 'var(--shadow-soft)',
-        'ring': 'var(--shadow-ring)',
+        soft: "var(--shadow-soft)",
+        ring: "var(--shadow-ring)",
       },
     },
   },
