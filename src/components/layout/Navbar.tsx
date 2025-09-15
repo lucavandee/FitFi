@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import Button from "../ui/Button";
 import Logo from "../ui/Logo";
@@ -36,19 +36,18 @@ const Navbar: React.FC = () => {
       data-fitfi="navbar"
       role="navigation"
       aria-label="Hoofdnavigatie"
-      className={`sticky top-0 z-40 bg-transparent backdrop-blur transition-all duration-300 ${
-        isScrolled ? "is-scrolled" : ""
-      }`}
+      className={`sticky top-0 z-40 transition-all ${isScrolled ? "glass-header" : "bg-transparent"}`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Left: brand */}
         <div className="flex items-center gap-3">
-          <Link to="/" aria-label="Home">
-            <Logo className="h-7 w-auto" />
+          <Link to="/" aria-label="Ga naar home" className="inline-flex items-center">
+            <Logo className="h-6 w-auto" />
           </Link>
         </div>
 
         {/* Center: Desktop nav */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden items-center gap-6 md:flex">
           {NAV_ITEMS.map((item) => {
             const active = isActiveLink(item.href);
             if (item.href.startsWith("#")) {
@@ -60,9 +59,7 @@ const Navbar: React.FC = () => {
                     e.preventDefault();
                     scrollToHash(item.href);
                   }}
-                  className={`nav-link text-sm font-medium transition-colors ${
-                    active ? "is-active" : ""
-                  }`}
+                  className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}
                 >
                   {item.label}
                 </a>
@@ -72,9 +69,7 @@ const Navbar: React.FC = () => {
               <Link
                 key={item.href}
                 to={item.href}
-                className={`nav-link text-sm font-medium transition-colors ${
-                  active ? "is-active" : ""
-                }`}
+                className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}
               >
                 {item.label}
               </Link>
@@ -82,37 +77,31 @@ const Navbar: React.FC = () => {
           })}
         </div>
 
-        {/* Right: Auth / CTA (desktop) */}
-        <div className="hidden md:flex items-center gap-3">
-          {user ? (
+        {/* Right: Auth actions (exact één "Inloggen" indien niet ingelogd) */}
+        <div className="hidden items-center gap-3 md:flex">
+          {!user && (
+            <Link to="/inloggen" className="inline-flex">
+              <Button variant="primary" size="md" aria-label="Inloggen">
+                Inloggen
+              </Button>
+            </Link>
+          )}
+
+          {user && (
             <>
-              <Link
-                to="/dashboard"
-                className="text-sm opacity-90 hover:opacity-100 flex items-center gap-2"
-              >
-                <User className="w-4 h-4" aria-hidden="true" />
-                Dashboard
+              <Link to="/dashboard" className="inline-flex">
+                <Button variant="ghost" size="md" aria-label="Naar dashboard">
+                  Dashboard
+                </Button>
               </Link>
-              <Button variant="ghost" onClick={logout} aria-label="Uitloggen">
-                <LogOut className="w-4 h-4" aria-hidden="true" />
+              <Button
+                variant="ghost"
+                size="md"
+                aria-label="Uitloggen"
+                onClick={logout}
+              >
                 Uitloggen
               </Button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="text-sm opacity-90 hover:opacity-100"
-              >
-                Inloggen
-              </Link>
-              <Link
-                to="/get-started"
-                className="nav-cta ff-cta px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors font-medium"
-                data-cta="primary"
-              >
-                Gratis starten
-              </Link>
             </>
           )}
         </div>
@@ -120,17 +109,13 @@ const Navbar: React.FC = () => {
         {/* Mobile: menu button */}
         <button
           type="button"
-          className="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-border transition-colors"
+          className="inline-flex items-center justify-center rounded-[var(--radius-lg)] border border-ui p-2 transition-colors md:hidden"
           aria-label={isMobileMenuOpen ? "Sluit menu" : "Open menu"}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-menu"
           onClick={() => setIsMobileMenuOpen((s) => !s)}
         >
-          {isMobileMenuOpen ? (
-            <X className="w-5 h-5" aria-hidden="true" />
-          ) : (
-            <Menu className="w-5 h-5" aria-hidden="true" />
-          )}
+          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 

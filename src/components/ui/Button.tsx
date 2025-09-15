@@ -6,46 +6,56 @@ type Size = "sm" | "md" | "lg";
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
   size?: Size;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
 };
 
-function classes(variant: Variant, size: Size, disabled?: boolean) {
-  const base = "inline-flex items-center justify-center rounded-xl border transition-all focus-visible:outline-none";
-  const sizes: Record<Size, string> = {
-    sm: "h-9 px-3 text-sm",
-    md: "h-11 px-4 text-[15px]",
-    lg: "h-12 px-5 text-base",
-  };
-  const v: Record<Variant, string> = {
-    primary:
-      "bg-[var(--fitfi-primary)] border-white/10 text-white hover:translate-y-[-1px] hover:shadow-xl hover:shadow-[rgba(43,106,243,.35)] active:translate-y-0",
-    ghost:
-      "bg-transparent border-white/15 text-white hover:bg-white/10",
-    danger:
-      "bg-[var(--fitfi-danger)] border-white/10 text-white hover:brightness-110",
-    success:
-      "bg-[var(--fitfi-success)] border-white/10 text-white hover:brightness-110",
-  };
-  const state = disabled ? "opacity-60 cursor-not-allowed" : "";
-  return `${base} ${sizes[size]} ${v[variant]} ${state}`;
-}
+const BASE =
+  "inline-flex select-none items-center justify-center rounded-[var(--radius-lg)] border transition-colors " +
+  "focus-visible:outline-none focus-visible:ring-2 ring-brand ring-offset-2 ring-offset-surface " +
+  "disabled:opacity-60 disabled:cursor-not-allowed";
+
+const VARIANTS: Record<Variant, string> = {
+  // Primaire CTA (solid): bg --ff-color-primary-700, text = surface (wit), hover = --ff-color-primary-600
+  primary:
+    "bg-[color:var(--ff-color-primary-700)] text-[color:var(--color-surface)] border-transparent " +
+    "hover:bg-[color:var(--ff-color-primary-600)]",
+
+  // Secundair (ghost): transparant, border = --color-border, tekst = --color-text, hover border = --color-primary
+  ghost:
+    "bg-transparent text-[color:var(--color-text)] border-[color:var(--color-border)] " +
+    "hover:border-[color:var(--color-primary)]",
+
+  // Statusvarianten, netjes via tokens
+  danger:
+    "bg-[color:var(--color-danger)] text-[color:var(--color-surface)] border-transparent hover:opacity-90",
+  success:
+    "bg-[color:var(--color-success)] text-[color:var(--color-surface)] border-transparent hover:opacity-90",
+};
+
+const SIZES: Record<Size, string> = {
+  sm: "h-9 px-3 text-sm",
+  md: "h-10 px-4 text-base",
+  lg: "h-12 px-6 text-lg",
+};
 
 export default function Button({
   variant = "primary",
   size = "md",
-  leftIcon,
-  rightIcon,
-  disabled,
+  icon,
+  iconPosition = "left",
   className = "",
   children,
   ...rest
 }: Props) {
   return (
-    <button className={`${classes(variant, size, disabled)} ${className}`} disabled={disabled} {...rest}>
-      {leftIcon && <span className="mr-2">{leftIcon}</span>}
+    <button
+      className={`${BASE} ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      {...rest}
+    >
+      {icon && iconPosition === "left" && <span className="mr-2">{icon}</span>}
       <span>{children}</span>
-      {rightIcon && <span className="ml-2">{rightIcon}</span>}
+      {icon && iconPosition === "right" && <span className="ml-2">{icon}</span>}
     </button>
   );
 }
