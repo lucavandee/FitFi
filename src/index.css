@@ -1,41 +1,12 @@
-/* @import ALTIJD eerst: */
-@import "@/components/nova/ChatTheme.css";
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Lato:wght@300;400;500;600;700&display=swap');
-@import "./styles/tokens.css";
-@import "./styles/main.css";
-
-/* Tailwind layers */
-
 @tailwind base;
 @tailwind components;
-@import "./styles/polish.css";
 @tailwind utilities;
 
-/* Import FitFi Theme */
-@import './styles/animations.css';
-@import './styles/fitfi-theme.css';
-@import './styles/components/images.css';
-@import './styles/components/pricing.css';
-@import './styles/utilities/typography.css';
-@import './styles/polish.css';
-
-/* Kill-switch legacy / third-party chat docks */
-:root {
-  color-scheme: light dark;
-}
-
-/* (optioneel) centrering safeguards – behoudt je premium grid */
-.container,
-.page-wrap,
-.main-wrap {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 80rem; /* ~1280px (max-w-7xl) */
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-/* Zorg dat body nooit horizontaal scrollt door FAB/rail */
-html, body {
-  overflow-x: hidden;
-}
+@import "./styles/main.css";
+@import "./styles/fitfi-theme.css";
+@import "./styles/animations.css";
+@import "./styles/components/images.css";
+@import "./styles/components/pricing.css";
+@import "./styles/utilities/typography.css";
+@import "./styles/tokens.css";
+@import "./styles/polish.css";
