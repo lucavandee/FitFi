@@ -298,6 +298,46 @@ a:hover{ text-decoration: underline; }
   transform: translateY(-1px);
 }
 
+/* ===== CTA — TAUPE (wint van .bg-white & gradients) ===== */
+/* Gebruik echte specificiteit (geen :where) en kill shorthands/gradients. */
+.ff-cta,
+.ff-cta.ff-cta,                 /* specificity bump */
+[data-cta="primary"],
+.cta-primary,
+.btn-primary{
+  --ff-cta-bg: var(--ff-color-primary-600, var(--color-primary));
+  --ff-cta-bg-hover: var(--ff-color-primary-700, var(--color-primary));
+
+  background: var(--ff-cta-bg) !important;
+  background-color: var(--ff-cta-bg) !important;
+  background-image: none !important;
+
+  color:#fff !important; border-color:transparent !important;
+  opacity:1 !important; mix-blend-mode:normal !important;
+
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.75rem 1rem; font-weight:700; border-radius: var(--radius-lg);
+  text-decoration:none !important;
+  transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+.ff-cta:hover,
+[data-cta="primary"]:hover,
+.cta-primary:hover,
+.btn-primary:hover{ background:var(--ff-cta-bg-hover) !important; }
+
+/* Als er tóch een bg-utility op de CTA staat (zoals bg-white): alsnog forceren */
+.ff-cta[class*="bg-"],
+[data-cta="primary"][class*="bg-"],
+.cta-primary[class*="bg-"],
+.btn-primary[class*="bg-"]{
+  background:var(--ff-cta-bg) !important;
+  background-color:var(--ff-cta-bg) !important;
+  background-image:none !important;
+  color:#fff !important;
+}
+
+/* Zorg dat child tekst/icoontjes niet 'wegvallen' */
+.ff-cta *, [data-cta="primary"] *{ color:inherit !important; }
 /* ===== CTA — TAUPE, WINT VAN .bg-white ===== */
 .ff-cta,
 [data-cta="primary"],
