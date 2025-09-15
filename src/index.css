@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import "./styles/main.css";
+@import "./styles/polish.css";
 @import "./styles/fitfi-theme.css";
 @import "./styles/animations.css";
 @import "./styles/polish.css";
