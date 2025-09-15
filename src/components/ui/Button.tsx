@@ -16,17 +16,12 @@ const BASE =
   "disabled:opacity-60 disabled:cursor-not-allowed";
 
 const VARIANTS: Record<Variant, string> = {
-  // Primaire CTA (solid): bg --ff-color-primary-700, text = surface (wit), hover = --ff-color-primary-600
   primary:
     "bg-[color:var(--ff-color-primary-700)] text-[color:var(--color-surface)] border-transparent " +
     "hover:bg-[color:var(--ff-color-primary-600)]",
-
-  // Secundair (ghost): transparant, border = --color-border, tekst = --color-text, hover border = --color-primary
   ghost:
     "bg-transparent text-[color:var(--color-text)] border-[color:var(--color-border)] " +
     "hover:border-[color:var(--color-primary)]",
-
-  // Statusvarianten, netjes via tokens
   danger:
     "bg-[color:var(--color-danger)] text-[color:var(--color-surface)] border-transparent hover:opacity-90",
   success:
@@ -44,23 +39,13 @@ export default function Button({
   size = "md",
   icon,
   iconPosition = "left",
-  className,
+  className = "",
   children,
   ...rest
 }: Props) {
-  // Zet className VOOR variant/size zodat polish.css tokens altijd winnen
-  const classes = [
-    BASE,
-    className,
-    VARIANTS[variant],
-    SIZES[size]
-  ].filter(Boolean).join(' ');
-
+  // Belangrijk: className VOOROP -> variant-styling komt als laatste en wint van lokale overrides.
   return (
-    <button
-      className={classes}
-      {...rest}
-    >
+    <button className={`${className} ${BASE} ${SIZES[size]} ${VARIANTS[variant]}`} {...rest}>
       {icon && iconPosition === "left" && <span className="mr-2">{icon}</span>}
       <span>{children}</span>
       {icon && iconPosition === "right" && <span className="ml-2">{icon}</span>}
