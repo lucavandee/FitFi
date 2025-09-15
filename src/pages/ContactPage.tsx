@@ -1,405 +1,231 @@
-import React, { useState } from 'react';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Send, 
-  MessageSquare,
-  Clock,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
-import Button from '../components/ui/Button';
-import { supabase } from '../lib/supabaseClient';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-
-// Get singleton client
-const sb = supabase();
+import React from "react";
+import { Link } from "react-router-dom";
+import Seo from "@/components/Seo";
+import Button from "@/components/ui/Button";
+import { Mail, MessageSquare, User, CheckCircle2 } from "lucide-react";
 
 const ContactPage: React.FC = () => {
-  const navigate = useNavigate();
-  const sb = supabase();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    type: 'general'
+  const [form, setForm] = React.useState({
+    name: "",
+    email: "",
+    topic: "vraag",
+    message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [sent, setSent] = React.useState(false);
+  const [sending, setSending] = React.useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
+  const onChange =
+    (key: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      setForm((s) => ({ ...s, [key]: e.target.value }));
+      setErrors((e2) => ({ ...e2, [key]: "" }));
+    };
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!form.name.trim()) e.name = "Vul je naam in.";
+    if (!form.email.includes("@")) e.email = "Vul een geldig e-mailadres in.";
+    if (form.message.trim().length < 10) e.message = "Je bericht is te kort.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Naam is verplicht';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'E-mailadres is verplicht';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Ongeldig e-mailadres';
-    }
-
-    if (!formData.subject.trim()) {
-      newErrors.subject = 'Onderwerp is verplicht';
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = 'Bericht is verplicht';
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Bericht moet minimaal 10 karakters zijn';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      try {
-        if (!sb) {
-          throw new Error('Supabase niet beschikbaar');
-        }
-        
-        // Try Supabase first
-        const { error } = await sb.rpc('submit_contact', {
-          contact_name: formData.name,
-          contact_email: formData.email,
-          contact_subject: formData.subject,
-          contact_message: formData.message,
-          contact_type: formData.type
-        });
-
-        if (error) {
-          throw error;
-        }
-      } catch (supabaseError) {
-        console.warn('Supabase failed, using mailto fallback:', supabaseError);
-        
-        // Fallback to mailto
-        const mailtoUrl = `mailto:info@fitfi.ai?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
-          `Naam: ${formData.name}\nE-mail: ${formData.email}\nType: ${formData.type}\n\nBericht:\n${formData.message}`
-        )}`;
-        
-        window.location.href = mailtoUrl;
-      }
-
-      toast.success('Bedankt voor je bericht! We reageren binnen 24 uur.');
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        type: 'general'
-      });
-      
-      // Redirect to thank you page
-      setTimeout(() => navigate('/bedankt'), 1500);
-    } catch (error) {
-      console.error('Error submitting contact form:', error);
-      toast.error('Er ging iets mis bij het verzenden. Probeer het opnieuw.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const onSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!validate()) return;
+    setSending(true);
+    // In deze fase geen backend-call; we tonen een nette bevestiging en sturen gebruikers verder de funnel in.
+    setTimeout(() => {
+      setSending(false);
+      setSent(true);
+    }, 450);
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F6F6]">
-      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-light text-[#0D1B2A] mb-6">
-            Neem contact op
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Heb je een vraag of wil je partner worden? Wij reageren binnen één werkdag.
-          </p>
-        </div>
+    <>
+      <Seo
+        title="Contact — FitFi"
+        description="Neem contact op met FitFi. Heb je een vraag over je AI Style Report, je account of samenwerkingen? We helpen je graag."
+      />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <div className="bg-white rounded-3xl shadow-sm p-8">
-            <h2 className="text-2xl font-medium text-[#0D1B2A] mb-6">
-              Stuur ons een bericht
-            </h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Naam *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors ${
-                      errors.name ? 'border-red-300' : 'border-gray-200'
-                    }`}
-                    placeholder="Je volledige naam"
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center">
-                      <AlertCircle size={14} className="mr-1" />
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    E-mailadres *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors ${
-                      errors.email ? 'border-red-300' : 'border-gray-200'
-                    }`}
-                    placeholder="je@email.com"
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center">
-                      <AlertCircle size={14} className="mr-1" />
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-              </div>
-              
-              <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-2">
-                  Type vraag
-                </label>
-                <select
-                  id="type"
-                  name="type"
-                  value={formData.type}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
-                >
-                  <option value="general">Algemene vraag</option>
-                  <option value="support">Technische ondersteuning</option>
-                  <option value="business">Zakelijke samenwerking</option>
-                  <option value="press">Pers & Media</option>
-                  <option value="feedback">Feedback</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                  Onderwerp *
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors ${
-                    errors.subject ? 'border-red-300' : 'border-gray-200'
-                  }`}
-                  placeholder="Waar gaat je bericht over?"
-                />
-                {errors.subject && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle size={14} className="mr-1" />
-                    {errors.subject}
-                  </p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Bericht *
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={5}
-                  className={`w-full px-4 py-3 border rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors resize-none ${
-                    errors.message ? 'border-red-300' : 'border-gray-200'
-                  }`}
-                  placeholder="Vertel ons meer over je vraag..."
-                />
-                {errors.message && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle size={14} className="mr-1" />
-                    {errors.message}
-                  </p>
-                )}
-              </div>
-              
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                fullWidth
-                disabled={isSubmitting}
-                icon={isSubmitting ? undefined : <Send size={20} />}
-                iconPosition="right"
-                className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Verzenden...
+      <section className="bg-[color:var(--color-bg)]">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <h1 className="ff-heading text-[color:var(--color-text)] text-3xl sm:text-4xl font-extrabold">Contact</h1>
+            <p className="text-[color:var(--color-muted)] mt-3">
+              Stel je vraag of deel je idee. We reageren doorgaans binnen 1–2 werkdagen.
+            </p>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Form */}
+            <form onSubmit={onSubmit} className="ff-card p-6" noValidate>
+              {!sent ? (
+                <>
+                  <div className="grid gap-5">
+                    {/* Naam */}
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
+                        Naam
+                      </label>
+                      <div className="relative">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <User className="h-5 w-5 text-[color:var(--color-muted)]" />
+                        </div>
+                        <input
+                          id="name"
+                          name="name"
+                          type="text"
+                          value={form.name}
+                          onChange={onChange("name")}
+                          className={`block w-full rounded-lg border bg-[color:var(--color-surface)] pl-10 pr-3 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors
+                            focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                              errors.name ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                            }`}
+                          placeholder="Jouw naam"
+                          required
+                        />
+                      </div>
+                      {errors.name && <p className="mt-1 text-sm text-[color:var(--color-danger)]">{errors.name}</p>}
+                    </div>
+
+                    {/* E-mail */}
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
+                        E-mail
+                      </label>
+                      <div className="relative">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <Mail className="h-5 w-5 text-[color:var(--color-muted)]" />
+                        </div>
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
+                          autoComplete="email"
+                          value={form.email}
+                          onChange={onChange("email")}
+                          className={`block w-full rounded-lg border bg-[color:var(--color-surface)] pl-10 pr-3 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors
+                            focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                              errors.email ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                            }`}
+                          placeholder="je@email.com"
+                          required
+                        />
+                      </div>
+                      {errors.email && <p className="mt-1 text-sm text-[color:var(--color-danger)]">{errors.email}</p>}
+                    </div>
+
+                    {/* Onderwerp */}
+                    <div>
+                      <label htmlFor="topic" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
+                        Onderwerp
+                      </label>
+                      <select
+                        id="topic"
+                        name="topic"
+                        value={form.topic}
+                        onChange={onChange("topic")}
+                        className="block w-full rounded-lg border bg-[color:var(--color-surface)] px-3 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] border-[color:var(--color-border)]"
+                        aria-label="Kies onderwerp"
+                      >
+                        <option value="vraag">Vraag</option>
+                        <option value="feedback">Feedback</option>
+                        <option value="samenwerking">Samenwerking</option>
+                        <option value="support">Support</option>
+                      </select>
+                    </div>
+
+                    {/* Bericht */}
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">
+                        Bericht
+                      </label>
+                      <div className="relative">
+                        <div className="pointer-events-none absolute left-0 top-3 pl-3">
+                          <MessageSquare className="h-5 w-5 text-[color:var(--color-muted)]" />
+                        </div>
+                        <textarea
+                          id="message"
+                          name="message"
+                          rows={6}
+                          value={form.message}
+                          onChange={onChange("message")}
+                          className={`block w-full rounded-lg border bg-[color:var(--color-surface)] pl-10 pr-3 py-3 text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)] transition-colors resize-y
+                            focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] ${
+                              errors.message ? "border-[color:var(--color-danger)]" : "border-[color:var(--color-border)]"
+                            }`}
+                          placeholder="Vertel kort waar we je mee kunnen helpen"
+                          required
+                        />
+                      </div>
+                      {errors.message && <p className="mt-1 text-sm text-[color:var(--color-danger)]">{errors.message}</p>}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3">
+                      <Button type="submit" variant="primary" size="lg" disabled={sending}>
+                        {sending ? "Verzenden…" : "Bericht verzenden"}
+                      </Button>
+                      <Button
+                        as="a"
+                        variant="ghost"
+                        size="lg"
+                        href="mailto:hi@fitfi.ai?subject=FitFi%20contact"
+                      >
+                        Of mail ons direct
+                      </Button>
+                    </div>
                   </div>
-                ) : (
-                  'Bericht verzenden'
-                )}
-              </Button>
+                </>
+              ) : (
+                <div className="text-center py-10">
+                  <CheckCircle2 style={{ color: "var(--color-success)" }} className="mx-auto h-10 w-10" />
+                  <h2 className="ff-heading text-[color:var(--color-text)] text-2xl font-semibold mt-3">Bedankt voor je bericht!</h2>
+                  <p className="text-[color:var(--color-muted)] mt-2">We komen bij je terug. Intussen kun je alvast starten met je stijltest.</p>
+                  <div className="mt-6">
+                    <Button as={Link} to="/onboarding" variant="primary" size="lg">
+                      Start de stijltest
+                    </Button>
+                  </div>
+                </div>
+              )}
             </form>
-          </div>
 
-          {/* Contact Information */}
-          <div className="space-y-8">
-            {/* Contact Details */}
-            <div className="bg-white rounded-3xl shadow-sm p-8">
-              <h3 className="text-xl font-medium text-[#0D1B2A] mb-6">
-                Contactgegevens
-              </h3>
-              
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Mail className="text-[#89CFF0]" size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-[#0D1B2A] mb-1">E-mail</h4>
-                    <p className="text-gray-600">info@fitfi.ai</p>
-                    <p className="text-sm text-gray-500">Voor algemene vragen</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="text-[#89CFF0]" size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-[#0D1B2A] mb-1">Support</h4>
-                    <p className="text-gray-600">support@fitfi.ai</p>
-                    <p className="text-sm text-gray-500">Voor technische ondersteuning</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Phone className="text-[#89CFF0]" size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-[#0D1B2A] mb-1">Telefoon</h4>
-                    <p className="text-gray-600">+31 20 123 4567</p>
-                    <p className="text-sm text-gray-500">Ma-Vr 9:00-17:00</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-[#89CFF0]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MapPin className="text-[#89CFF0]" size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-[#0D1B2A] mb-1">Adres</h4>
-                    <p className="text-gray-600">
-                      Marktstraat 15D<br />
-                      7551 DR Hengelo<br />
-                      Nederland
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Response Times */}
-            <div className="bg-white rounded-3xl shadow-sm p-8">
-              <h3 className="text-xl font-medium text-[#0D1B2A] mb-6">
-                Reactietijden
-              </h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="text-green-600" size={20} />
-                    <span className="font-medium text-green-800">Algemene vragen</span>
-                  </div>
-                  <span className="text-green-600 font-medium">{"< 24 uur"}</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <Clock className="text-blue-600" size={20} />
-                    <span className="font-medium text-blue-800">Technische support</span>
-                  </div>
-                  <span className="text-blue-600 font-medium">{"< 4 uur"}</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <MessageSquare className="text-purple-600" size={20} />
-                    <span className="font-medium text-purple-800">Zakelijke vragen</span>
-                  </div>
-                  <span className="text-purple-600 font-medium">{"< 2 uur"}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* FAQ Link */}
-            <div className="bg-gradient-to-r from-[#89CFF0] to-blue-500 rounded-3xl shadow-sm p-8 text-center">
-              <h3 className="text-xl font-medium text-white mb-4">
-                Veelgestelde vragen
-              </h3>
-              <p className="text-white/90 mb-6">
-                Misschien staat je vraag al beantwoord in onze FAQ sectie.
+            {/* Info card */}
+            <div className="ff-card p-6 bg-[color:var(--color-surface)]">
+              <h2 className="ff-heading text-[color:var(--color-text)] text-2xl font-semibold">Veelgestelde vragen</h2>
+              <p className="text-[color:var(--color-muted)] mt-2">
+                Misschien staat je antwoord al klaar. Bekijk onze FAQ of lees hoe FitFi werkt.
               </p>
-              <Button
-                as="a"
-                href="/faq"
-                variant="secondary"
-                className="bg-white text-[#89CFF0] hover:bg-gray-100"
-              >
-                Bekijk FAQ
-              </Button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button as={Link} to="/veelgestelde-vragen" variant="ghost" size="md">
+                  Naar FAQ
+                </Button>
+                <Button as={Link} to="/hoe-het-werkt" variant="ghost" size="md">
+                  Hoe het werkt
+                </Button>
+              </div>
+
+              <div className="mt-8">
+                <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold">Snelle feiten</h3>
+                <ul className="mt-3 space-y-2 text-[color:var(--color-text)]">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 style={{ color: "var(--color-success)" }} className="mt-0.5" /> Privacy gegarandeerd
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 style={{ color: "var(--color-success)" }} className="mt-0.5" /> 10.000+ rapporten gegenereerd
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 style={{ color: "var(--color-success)" }} className="mt-0.5" /> Start gratis, upgrade wanneer je wilt
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
 
