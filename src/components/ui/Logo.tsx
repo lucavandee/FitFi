@@ -5,6 +5,7 @@ interface LogoProps {
     default: "text-[color:var(--ff-color-primary-700)]",
     light: "text-[color:var(--ff-color-accent)]", 
     dark: "text-[color:var(--ff-color-primary-600)]",
+}
 
 const Logo: React.FC<LogoProps> = ({ className = 'h-8 w-auto', textColor = 'text-white' }) => {
   return (
