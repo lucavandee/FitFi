@@ -254,3 +254,68 @@ a:hover{ text-decoration: underline; }
   background-color: var(--ff-cta-bg) !important;
   color: #fff !important;
 }
+
+/* ===== CTA — TAUPE, WINT VAN .bg-white ===== */
+.ff-cta,
+[data-cta="primary"],
+.cta-primary,
+.btn-primary {
+  /* lokale token, geen lekken van parents */
+  --ff-cta-bg: var(--ff-color-primary-600);
+
+  /* overschrijf alle eerdere backgrounds (ook shorthands/gradients) */
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
+  background-color: var(--ff-cta-bg) !important;
+
+  color: #FFFFFF !important;            /* zichtbare tekst */
+  border-color: transparent !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .75rem 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-lg);
+  text-decoration: none !important;
+  transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+/* Als er tóch bg-utilities op de CTA staan: forceer onze kleur alsnog */
+.ff-cta[class*="bg-"],
+[data-cta="primary"][class*="bg-"],
+.cta-primary[class*="bg-"],
+.btn-primary[class*="bg-"] {
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
+  background-color: var(--ff-cta-bg) !important;
+  color: #FFFFFF !important;
+}
+.ff-cta:hover,
+[data-cta="primary"]:hover,
+.cta-primary:hover,
+.btn-primary:hover { background: var(--ff-color-primary-700) !important; }
+.ff-cta:active,
+[data-cta="primary"]:active,
+.cta-primary:active,
+.btn-primary:active { background: var(--ff-color-primary-700) !important; filter: brightness(.98); }
+
+/* ===== HEADER ALIGNMENT (vertical center, geen verschuiving) ===== */
+header[role="banner"], [data-fitfi="navbar"] {
+  position: sticky; top: 0; z-index: 40;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background-color: var(--glass-surface);
+  border-bottom: 1px solid var(--glass-border);
+}
+header[role="banner"] .container,
+[data-fitfi="navbar"] .container,
+header[role="banner"] .ff-container {
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+}
+header[role="banner"] nav a,
+[data-fitfi="navbar"] .nav-link {
+  display: inline-flex; align-items: center; line-height: 1;
+  padding: .5rem .625rem; border-radius: var(--radius-full);
+}
