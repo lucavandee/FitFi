@@ -263,3 +263,5 @@ export default function OutfitCard({
             aria-label={`Match percentage: ${Math.round(outfit.matchPercentage || 75)} procent`}
           >
             Match {Math.round(outfit.matchPercentage || 75)}%
+  )
+}
