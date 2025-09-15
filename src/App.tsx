@@ -205,7 +205,6 @@ const App: React.FC = () => {
                           <Route path="/tribes/:slug" element={
                             <ProtectedRoute>
                               <TribeDetailPage />
-                            </ProtectedRoute>
                           } />
                           <Route path="/tribes/id/:tribeId" element={
                             <ProtectedRoute>
@@ -244,7 +243,6 @@ const App: React.FC = () => {
         </ThemeProvider>
       </QueryClientProvider>
     </div>
-    </CrashGate>
     </>
   );
 }
