@@ -264,6 +264,12 @@ export default function OutfitCard({
           >
             Match {Math.round(outfit.matchPercentage || 75)}%
           </span>
+        )}
+      </div>
+    </div>
+  );
+};
+          </span>
   )
 }
   )
