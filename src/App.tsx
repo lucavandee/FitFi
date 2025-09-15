@@ -242,6 +242,7 @@ const App: React.FC = () => {
           </UserProvider>
         </ThemeProvider>
       </QueryClientProvider>
+    </div>
     </CrashGate>
   );
 }
