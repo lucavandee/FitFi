@@ -108,7 +108,7 @@ const Navbar: React.FC = () => {
               </Link>
               <Link
                 to="/get-started"
-                className="nav-cta ff-cta px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                className="nav-cta ff-cta px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors font-medium"
                 data-cta="primary"
               >
                 Gratis starten
