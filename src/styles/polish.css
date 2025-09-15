@@ -14,54 +14,38 @@
 
 /* Glas-header (conform polish-kaders) */
 .glass-header {
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
   backdrop-filter: saturate(180%) blur(12px);
-  background-color: color-mix(in srgb, var(--color-surface) 86%, var(--overlay-primary-12a) 14%);
+  background: color-mix(in oklab, var(--color-surface) 78%, transparent);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 2px 12px rgba(30, 35, 51, 0.04);
 }
 
-/* Hero-card shell */
-.hero-shell {
-  background: var(--color-surface);
+/* Actieve nav-chip (accent tint) */
+.nav-chip {
+  background: color-mix(in oklab, var(--color-accent) 42%, #fff);
+  color: var(--color-text);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-soft);
+  border-radius: 9999px;
+  padding: .375rem .75rem;
+  font-weight: 600;
 }
 
-/* Badges/metrics (lichte tints) */
-.badge-accent { background-color: color-mix(in srgb, var(--color-surface) 88%, var(--color-accent) 12%); color: var(--color-text); }
-.badge-success { background-color: color-mix(in srgb, var(--color-surface) 90%, var(--color-success) 10%); color: var(--color-text); }
-.badge-warn    { background-color: color-mix(in srgb, var(--color-surface) 90%, var(--color-warning) 10%); color: var(--color-text); }
-.badge-danger  { background-color: color-mix(in srgb, var(--color-surface) 90%, var(--color-danger) 10%); color: var(--color-text); }
-
-/* Links: hover-underline met offset */
+/* Linkstijl */
+a { color: var(--color-text); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-/* Focus-ring consistent (fallback voor non-TW context) */
-.ff-focus-visible:focus-visible {
-  outline: 0;
-  box-shadow: var(--shadow-ring);
-}
-
-/* Neutraliseer legacy gradients snel waar nodig */
-.bg-neutral-app {
-  background: var(--color-bg) !important;
-  background-image: none !important;
-}
-
-/* =========================================================
-   CANONIEKE CTA-BUTTONS (dekking voor alle varianten/legacy)
-   - Werkt voor: <Button/>, .btn, .button, [data-variant], .primary-cta
-   - Altijd AA-contrast, tokens-only
-   ========================================================= */
-
-/* Basis */
-.btn, .button, button,
-a.btn, a.button, [role="button"] {
-  font-weight: 600;
+/* Buttons */
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-text);
+  --btn-bd: var(--color-border);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-bd);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -72,94 +56,35 @@ a.btn, a.button, [role="button"] {
   -webkit-font-smoothing: antialiased;
   user-select: none;
 }
-
-/* Maten */
 .btn-sm { height: 2.25rem; padding: .5rem .75rem; font-size: .875rem; }
 .btn-md { height: 2.5rem;  padding: .625rem 1rem; font-size: 1rem; }
-.btn-lg { height: 3rem;    padding: 0 1.25rem;   font-size: 1.125rem; }
+.btn-lg { height: 3rem;    padding: .75rem 1.25rem; font-size: 1.0625rem; }
 
-/* Primaire CTA (solid) — altijd leesbare tekst */
-.primary-cta,
-[data-variant="primary"],
-.btn-primary {
-  background: var(--ff-color-primary-700);
-  color: var(--color-surface);
-  border-color: transparent;
-}
-.primary-cta:hover,
-[data-variant="primary"]:hover,
-.btn-primary:hover {
-  background: var(--ff-color-primary-600);
-}
+.btn-primary { --btn-bg: var(--ff-color-primary-700); --btn-fg: #fff; --btn-bd: var(--ff-color-primary-700); }
+.btn-primary:hover { --btn-bg: var(--ff-color-primary-600); --btn-bd: var(--ff-color-primary-600); }
 
-/* Secundair (ghost) */
-.ghost-cta,
-[data-variant="ghost"],
-.btn-ghost {
-  background: transparent;
-  color: var(--color-text);
-  border-color: var(--color-border);
-}
-.ghost-cta:hover,
-[data-variant="ghost"]:hover,
-.btn-ghost:hover {
-  border-color: var(--color-primary);
-}
+.btn-ghost { --btn-bg: transparent; }
+.btn-ghost:hover { --btn-bd: var(--color-primary); }
 
-/* Status */
-.btn-success { background: var(--color-success); color: var(--color-surface); border-color: transparent; }
-.btn-success:hover { opacity: .92; }
-.btn-danger { background: var(--color-danger); color: var(--color-surface); border-color: transparent; }
-.btn-danger:hover { opacity: .92; }
+/* Cards & badges */
+.card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); }
+.badge { display: inline-flex; align-items: center; gap: .375rem; padding: .25rem .5rem; border-radius: 9999px; border: 1px solid var(--color-border); }
+.badge-accent { background: var(--overlay-accent-08a); }
+.badge-success { background: color-mix(in oklab, var(--color-success) 12%, #fff); }
+.badge-warn { background: color-mix(in oklab, var(--color-warning) 12%, #fff); }
+.badge-danger { background: color-mix(in oklab, var(--color-danger) 12%, #fff); }
 
-/* Focus (tokens) */
-.btn:focus-visible,
-.button:focus-visible,
-button:focus-visible,
-a.btn:focus-visible,
-[role="button"]:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
+/* Hero card shell */
+.hero-card { border: 1px solid var(--color-border); border-radius: var(--radius-2xl); background: var(--color-surface); box-shadow: var(--shadow-soft); }
 
-/* Disabled → nog steeds goed leesbaar (maar duidelijk gedeactiveerd) */
-:root { --btn-disabled-opacity: 0.72; }
-.btn:disabled,
-.button:disabled,
-button:disabled,
-a.btn[aria-disabled="true"],
-[role="button"][aria-disabled="true"] {
-  opacity: var(--btn-disabled-opacity);
-  cursor: not-allowed;
-  filter: none;
-  color: var(--color-surface); /* blijft leesbaar op primary bg */
-}
+/* Focus ring util */
+.focus-ring { outline: none !important; box-shadow: var(--shadow-ring); }
 
-/* ==============================================
-   NAV: actieve link als chip (accent-tint)
-   ============================================== */
-.nav-link {
-  color: var(--color-text);
-  text-decoration: none;
-  padding: .375rem .75rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
+/* Skeleton shimmer */
+.skeleton { position: relative; overflow: hidden; background: color-mix(in oklab, var(--color-text) 6%, var(--color-surface)); }
+.skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-text) 8%, var(--color-surface)), transparent);
+  animation: shine 1.2s infinite;
 }
-.nav-link.is-active {
-  background-color: color-mix(in srgb, var(--color-surface) 58%, var(--color-accent) 42%);
-  border-color: var(--color-border);
-}
-
-/* Zorg dat auth-CTA rechts nooit "ghost" wordt door overerving */
-[data-fitfi="navbar"] .auth-cta .btn,
-[data-fitfi="navbar"] .auth-cta button,
-[data-fitfi="navbar"] .auth-cta .primary-cta {
-  background: var(--ff-color-primary-700);
-  color: var(--color-surface);
-  border-color: transparent;
-}
-[data-fitfi="navbar"] .auth-cta .btn:hover,
-[data-fitfi="navbar"] .auth-cta button:hover,
-[data-fitfi="navbar"] .auth-cta .primary-cta:hover {
-  background: var(--ff-color-primary-600);
-}
+@keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
