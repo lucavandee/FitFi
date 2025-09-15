@@ -95,6 +95,7 @@ const NotFound: React.FC = () => (
 
 const App: React.FC = () => {
   return (
+    <>
     <div className="min-h-screen bg-[color:var(--color-bg)]">
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
@@ -244,6 +245,7 @@ const App: React.FC = () => {
       </QueryClientProvider>
     </div>
     </CrashGate>
+    </>
   );
 }
 
