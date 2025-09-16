@@ -9,6 +9,12 @@ import { UserProvider } from "@/context/UserContext";
 import { GamificationProvider } from "@/context/GamificationContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 
+// System
+import MetaBase from "@/components/system/MetaBase";
+import GlobalHandlers from "@/components/system/GlobalHandlers";
+import RouteChangeTracker from "@/components/system/RouteChangeTracker";
+import ErrorBoundary from "@/components/ErrorBoundary";
+
 // Shell
 import Navbar from "@/components/layout/Navbar";
 
@@ -40,20 +46,24 @@ const Providers: React.FC<React.PropsWithChildren> = ({ children }) => (
 const App: React.FC = () => (
   <BrowserRouter>
     <Providers>
-      {/* exact één header */}
-      <Navbar />
-      <React.Suspense fallback={<div className="container section">Laden…</div>}>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/over-ons" element={<AboutPage />} />
-          <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-          <Route path="/prijzen" element={<PricingPage />} />
-          <Route path="/blog" element={<BlogIndexPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/veelgestelde-vragen" element={<FAQPage />} />
-          <Route path="/feed" element={<FeedPage />} />
-        </Routes>
-      </React.Suspense>
+      <MetaBase />
+      <GlobalHandlers />
+      <RouteChangeTracker />
+      <ErrorBoundary>
+        <Navbar />
+        <React.Suspense fallback={<div className="container section">Laden…</div>}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/over-ons" element={<AboutPage />} />
+            <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+            <Route path="/prijzen" element={<PricingPage />} />
+            <Route path="/blog" element={<BlogIndexPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+            <Route path="/feed" element={<FeedPage />} />
+          </Routes>
+        </React.Suspense>
+      </ErrorBoundary>
     </Providers>
   </BrowserRouter>
 );
