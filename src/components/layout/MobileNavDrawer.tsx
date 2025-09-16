@@ -48,7 +48,9 @@ const MobileNavDrawer: React.FC<Props> = ({ open, onClose }) => {
             className="btn btn-ghost btn-sm"
             data-variant="ghost"
           >
+          <button className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)]" onClick={onClose} aria-label="Sluit menu">
             <X className="h-4 w-4" />
+          </button>
           </button>
         </div>
 
@@ -67,9 +69,10 @@ const MobileNavDrawer: React.FC<Props> = ({ open, onClose }) => {
           </ul>
         </nav>
 
-        <div className="mt-auto p-4 border-t border-ui">
+        <div className="border-t border-[color:var(--color-border)]" style={{ padding: 'var(--space-3)' }}>
           {!user ? (
-            <Link to="/inloggen" className="btn btn-primary btn-lg w-full" data-variant="primary" aria-label="Inloggen">
+            <Link to="/login" className="btn btn-primary btn-lg w-full" data-variant="primary" aria-label="Inloggen">
+              <div style={{ height: 'var(--space-2)' }} />
               Inloggen
             </Link>
           ) : (

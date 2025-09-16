@@ -11,13 +11,13 @@ const Hero: React.FC = () => {
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Copy */}
-          <div>
+            <div className="inline-flex items-center gap-2 chip mb-4">
             <div className="hero__eyebrow">
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               <span>AI-Powered Styling</span>
             </div>
 
-            <h1
+            <p className="lead mt-4 max-w-2xl">
               id="hero-heading"
               className="hero__title text-[clamp(2.25rem,5.5vw,3.4rem)]"
             >
@@ -28,16 +28,16 @@ const Hero: React.FC = () => {
               Van persoonlijkheidstest tot gepersonaliseerde outfits — inclusief korte uitleg
               waarom het bij je silhouet, materialen en kleurtemperatuur past.
             </p>
-
+            <ul className="mt-6 flex flex-col gap-3">
             <ul className="hero__benefits mt-5">
               {["Gratis persoonlijkheidstest","AI-gepersonaliseerde outfits","Nederlandse merken"].map((s)=>(
                 <li key={s} className="flex items-center gap-2 text-sm">
-                  <CheckCircle className="w-4 h-4 text-[color:var(--color-success)]" />
+                <li key={t} className="inline-flex items-center gap-3 text-sm">
                   <span>{s}</span>
                 </li>
               ))}
             </ul>
-
+            <div className="mt-8 flex flex-wrap items-center gap-4">
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <button onClick={start} className="btn btn-primary btn-lg" aria-label="Start AI Style Report">
                 Ja, geef mij mijn gratis AI Style Report
@@ -72,6 +72,9 @@ const Hero: React.FC = () => {
           </div>
         </div>
       </div>
+    )
+    )
+    }
     </section>
   );
 };
