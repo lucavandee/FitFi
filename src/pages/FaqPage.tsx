@@ -1,9 +1,13 @@
 // src/pages/FaqPage.tsx
 import React from "react";
+import { ChevronDown } from "lucide-react";
 
 const QA = ({ q, a }: { q: string; a: string }) => (
   <details>
-    <summary>{q}</summary>
+    <summary>
+      <span>{q}</span>
+      <ChevronDown className="chev w-4 h-4" aria-hidden="true" />
+    </summary>
     <div className="faq__content">{a}</div>
   </details>
 );
@@ -31,5 +35,4 @@ const FaqPage: React.FC = () => {
     </main>
   );
 };
-
 export default FaqPage;
