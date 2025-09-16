@@ -12,9 +12,9 @@ const Hero: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Copy */}
             <div className="inline-flex items-center gap-2 chip mb-4">
-            <div className="hero__eyebrow">
+            <div className="chip mb-3">
               <Sparkles className="w-4 h-4" aria-hidden="true" />
-              <span>AI-Powered Styling</span>
+              AI-Powered Styling
             </div>
 
             <p className="lead mt-4 max-w-2xl">
@@ -24,7 +24,7 @@ const Hero: React.FC = () => {
               Ontdek jouw perfecte stijl met AI
             </h1>
 
-            <p className="hero__lead mt-4">
+            <p className="lead mt-3 max-w-2xl">
               Van persoonlijkheidstest tot gepersonaliseerde outfits — inclusief korte uitleg
               waarom het bij je silhouet, materialen en kleurtemperatuur past.
             </p>
