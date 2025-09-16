@@ -3,7 +3,7 @@ import { CheckCircle2, Sparkles, ArrowRight, Users, Star, TrendingUp } from "luc
 import Button from "@/components/ui/Button";
 import SmartImage from "@/components/media/SmartImage";
 import Seo from "@/components/Seo";
-import { Link } from "react-router-dom";
+import { w } from "@/utils/analytics";
 import { track } from "@/utils/analytics";
 
 const Hero: React.FC = () => {

@@ -5,7 +5,7 @@ import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
 import { NAV_ITEMS } from "@/constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
-import { track } from "@/utils/analytics";
+import { w } from "@/utils/analytics";
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
