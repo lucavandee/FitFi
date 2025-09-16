@@ -9,6 +9,8 @@ import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
 import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
+import { trackOutfitExplain } from '@/hooks/useABTesting';
+import { useEffect, useRef } from 'react';
 
 interface OutfitCardProps {
   outfit: {
@@ -55,6 +57,25 @@ export default function OutfitCard({
     dislike: false,
     explain: false
   });
+
+  const explainRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          trackOutfitExplain(outfit.id);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (explainRef.current) {
+      observer.observe(explainRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [outfit.id]);
 
   const handleSave = () => {
     if (isProcessing.save || saveOutfit.isPending) return;
@@ -198,7 +219,10 @@ export default function OutfitCard({
   };
 
   return (
-    <article 
+    <div 
+      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+      data-kind="outfit-card"
+    >
       className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-[#89CFF0] focus-within:ring-offset-2"
       role="article"
       aria-labelledby={titleId}
@@ -429,6 +453,10 @@ export default function OutfitCard({
             </button>
           </RequireAuth>
         </div>
+      </div>
+      
+      <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+        <strong>Waarom dit werkt:</strong> de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
     </article>
   );

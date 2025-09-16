@@ -6,6 +6,7 @@ import Button from '../components/ui/Button';
 import HeroTitle from '@/components/marketing/HeroTitle';
 import Chip from '@/components/ui/Chip';
 import { useUser } from '../context/UserContext';
+import { trackStickyCTA } from '@/hooks/useABTesting';
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
@@ -114,6 +115,11 @@ const HomePage: React.FC = () => {
           )}
         </div>
       </div>
+    </div>
+    
+    {/* Sticky Mobile CTA */}
+    <div className="ff-sticky-cta md:hidden">
+      <a href="/get-started" className="ff-cta" data-analytics="sticky-cta" onClick={trackStickyCTA}>Start gratis</a>
     </div>
     </>
   );

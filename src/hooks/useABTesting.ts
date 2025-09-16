@@ -1,80 +1,45 @@
-import { useMemo, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { track } from '@/utils/analytics';
 
-export type Variant = 'control' | 'v1' | 'v2';
-
-/** Dependency-loze hash (djb2-variant), deterministisch en snel */
-function djb2Hash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
-  }
-  return hash >>> 0; // forceer positief
+export interface ABVariants {
+  heroCTA: 'start-gratis' | 'ai-style-report';
+  pricingHighlight: 'enabled' | 'disabled';
 }
 
-function pickVariant(seed: string): Variant {
-  const n = djb2Hash(seed) % 3;
-  return n === 0 ? 'control' : n === 1 ? 'v1' : 'v2';
+export function useABTesting(): ABVariants {
+  const [variants, setVariants] = useState<ABVariants>({
+    heroCTA: 'start-gratis',
+    pricingHighlight: 'enabled'
+  });
+
+  useEffect(() => {
+    // Simple A/B split based on user session
+    const userId = localStorage.getItem('fitfi.user.id') || 'anonymous';
+    const hash = userId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    const heroCTA = Math.abs(hash) % 2 === 0 ? 'start-gratis' : 'ai-style-report';
+    const pricingHighlight = Math.abs(hash) % 3 === 0 ? 'disabled' : 'enabled';
+
+    setVariants({ heroCTA, pricingHighlight });
+
+    // Track A/B assignment
+    track('ab:assigned', {
+      heroCTA,
+      pricingHighlight,
+      userId: userId.substring(0, 8) // Privacy-safe partial ID
+    });
+  }, []);
+
+  return variants;
 }
 
-/**
- * Pure client-side A/B:
- * - Geen DB calls.
- * - Deterministisch per (testName,userId).
- * - trackClick/markExposure sturen naar gtag als beschikbaar; anders console.debug (no-crash).
- */
-export function useABVariant(testName: string, userId?: string | null) {
-  const variant = useMemo<Variant>(() => {
-    const seed = `${testName}:${userId ?? 'guest'}`;
-    return pickVariant(seed);
-  }, [testName, userId]);
-
-  const trackClick = useCallback(
-    (label: string, extra?: Record<string, any>) => {
-      const payload = { label, test_name: testName, variant, user_id: userId ?? 'guest', ...extra };
-      // @ts-ignore
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        // @ts-ignore
-        window.gtag('event', 'cta_click', payload);
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('[ab/cta_click]', payload);
-      }
-    },
-    [testName, userId, variant]
-  );
-
-  const markExposure = useCallback(() => {
-    const payload = { test_name: testName, variant, user_id: userId ?? 'guest' };
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      // @ts-ignore
-      window.gtag('event', 'ab_exposure', payload);
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug('[ab/exposure]', payload);
-    }
-  }, [testName, userId, variant]);
-
-  return { variant, trackClick, markExposure };
-}
-
-interface ABTestingOptions {
-  testName: string;
-  variants: Array<{ name: string; weight: number }>;
-}
-
-export function useABTesting(options: ABTestingOptions) {
-  const variant = useABVariant(options.testName);
-  
-  const trackConversion = (data?: any) => {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'ab_conversion', {
-        test_name: options.testName,
-        variant,
-        ...data
-      });
-    }
-  };
-  
-  return { variant, trackConversion };
-}
+// Analytics event helpers
+export const trackNavCTA = () => track('nav:cta-click');
+export const trackHeroCTA = (variant: string) => track('hero:cta-click', { variant });
+export const trackStickyCTA = () => track('sticky-cta:click');
+export const trackPricingPopular = () => track('pricing:popular-select');
+export const trackFAQOpen = (question: string) => track('faq:open', { question });
+export const trackOutfitExplain = (outfitId?: string) => track('outfit:explain-view', { outfitId });

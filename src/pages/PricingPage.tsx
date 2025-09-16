@@ -5,8 +5,15 @@ import Seo from '@/components/Seo';
 import { Check, Star, ArrowRight, Sparkles, Crown, Zap } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { useABTesting, trackPricingPopular } from '@/hooks/useABTesting';
 
 const PricingPage: React.FC = () => {
+  const { pricingHighlight } = useABTesting();
+  
+  const handlePopularSelect = () => {
+    trackPricingPopular();
+  };
+
   const plans = [
     {
       id: 'basic',
@@ -120,15 +127,16 @@ const PricingPage: React.FC = () => {
 
         {/* Pricing Cards */}
         <ErrorBoundary>
-          <div className="pricing-scroll flex gap-6 sm:hidden mb-16">
+          <div className="pricing-scroll flex gap-6 sm:hidden mb-16" data-kind="pricing">
             {plans.map((plan) => (
               <div 
                 key={plan.id} 
                 className={`flex flex-col rounded-3xl shadow-lg/10 ring-1 ring-gray-100 bg-white px-8 py-10 gap-6 grow min-w-[88%] scroll-snap-align-center relative ${
                   plan.highlight ? 'ring-2 ring-[#89CFF0]/20 shadow-lg scale-105' : ''
                 }`}
+                data-plan={pricingHighlight === 'enabled' ? 'popular' : undefined}
               >
-                {plan.popular && (
+                {pricingHighlight === 'enabled' && (
                   <div className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-[#89CFF0] px-4 py-1 text-xs font-medium text-white shadow-md">
                     <Star size={14} className="mr-1" />
                     Populairste keuze
@@ -165,6 +173,7 @@ const PricingPage: React.FC = () => {
                   size="lg"
                   fullWidth
                   className="cta-btn"
+                  onClick={plan.popular ? handlePopularSelect : undefined}
                 >
                   {plan.cta}
                 </Button>
@@ -172,15 +181,16 @@ const PricingPage: React.FC = () => {
             ))}
           </div>
           
-          <div className="hidden sm:grid max-w-5xl mx-auto sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 mb-16">
+          <div className="hidden sm:grid max-w-5xl mx-auto sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 mb-16" data-kind="pricing">
             {plans.map((plan) => (
               <div 
                 key={plan.id} 
                 className={`flex flex-col rounded-3xl shadow-lg/10 ring-1 ring-gray-100 bg-white px-8 py-10 gap-6 grow relative transition-all hover:shadow-lg ${
                   plan.highlight ? 'ring-2 ring-[#89CFF0]/20 shadow-lg scale-105' : ''
                 }`}
+                data-plan={pricingHighlight === 'enabled' ? 'popular' : undefined}
               >
-                {plan.popular && (
+                {pricingHighlight === 'enabled' && (
                   <div className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-[#89CFF0] px-4 py-1 text-xs font-medium text-white shadow-md">
                     <Star size={14} className="mr-1" />
                     Populairste keuze
@@ -216,6 +226,7 @@ const PricingPage: React.FC = () => {
                   size="lg"
                   fullWidth
                   className="cta-btn"
+                  onClick={plan.popular ? handlePopularSelect : undefined}
                 >
                   {plan.cta}
                 </Button>
