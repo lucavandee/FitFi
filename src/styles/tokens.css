@@ -1,29 +1,52 @@
-/* FitFi Design Tokens */
+/* FitFi Design Tokens (canonical) */
 :root {
-  /* Colors */
+  /* ===== Colors (tokens-first) ===== */
+  /* Map naar bestaande FitFi theme vars wanneer beschikbaar (voorkomt regressies) */
+  --color-bg: var(--fitfi-bg, #0D1B2A);
+  --color-surface: var(--fitfi-surface, #12172A);
+  --color-text: var(--fitfi-text, #E6E9F2);
+  --color-muted: var(--fitfi-muted, #AAB0C0);
+  --color-primary: var(--fitfi-primary, #2B6AF3);
+  --color-accent: var(--fitfi-accent, #89CFF0);
+  --color-border: var(--fitfi-border, rgba(255,255,255,.10));
+
+  /* Legacy aliases (backward compat) */
   --color-midnight: #0D1B2A;
   --color-white: #FFFFFF;
-  --color-accent: #89CFF0;
-  --color-surface: #F6F6F6;
-  
-  /* Typography */
+  --color-surface-light: #F6F6F6;
+
+  /* ===== Typography ===== */
   --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
-  
-  /* Spacing */
+
+  /* ===== Radii & Shadows ===== */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-full: 9999px;
+
+  --shadow-soft: 0 8px 30px rgba(0,0,0,.10);
+  --shadow-ring: 0 0 0 3px rgba(137,207,240,.40); /* accent focus ring */
+
+  /* ===== Glass tokens ===== */
+  --glass-surface: rgba(18, 23, 42, .72);   /* semi-trans surface */
+  --glass-border: rgba(255,255,255,.12);
+  --glass-blur: 12px;
+
+  /* ===== Spacing scale ===== */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
-  
-  /* Border radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-full: 9999px;
 }
 
-/* Hide legacy Nova dock if present */
+/* Global font application (non-invasive) */
+html {
+  font-family: var(--font-body);
+}
+
+/* Hide legacy Nova dock if present (safe) */
 .nova-dock, .nova-chatbar, #nova-bottom-bar { display: none !important; }
 /* Niets toevoegen dat .fixed of hoge z-index elementen globaal verbergt */

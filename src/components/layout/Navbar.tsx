@@ -64,6 +64,7 @@ const Navbar: React.FC = () => {
             ? 'shadow-sm' 
             : ''
         }`}
+        data-fitfi="navbar"
         role="navigation"
         aria-label="Hoofdnavigatie"
       >
