@@ -123,7 +123,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
                         </div>
                       </div>
                     </div>
-                  <p className="subcard__kicker"><em>Waarom dit werkt:</em> {p.why}</p>
+                  </div>
                 </div>
               ))}
             </div>
