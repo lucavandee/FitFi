@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Seo from '@/components/Seo';
-import { Search, Calendar, ArrowRight, Clock, Tag, TrendingUp, BookOpen, Users } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import { track } from '@/utils/analytics';
+import { 
+  Search, 
+  Calendar, 
+  User, 
+  ArrowRight, 
+  Clock,
+  Tag
+} from 'lucide-react';
+import Button from '../components/ui/Button';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 interface BlogPost {
   id: string;
@@ -16,412 +23,224 @@ interface BlogPost {
   category: string;
   imageUrl: string;
   slug: string;
-  views?: number;
-  featured?: boolean;
 }
 
-const MOCK: BlogPost[] = [
-  {
-    id: '1',
-    title: 'De Psychologie Achter Jouw Kledingkeuzes',
-    excerpt: 'Wat je stijlvoorkeuren over je persoonlijkheid vertellen — en hoe je dit benut.',
-    author: 'Dr. Sarah van der Berg',
-    date: '2024-12-15',
-    readTime: '5 min',
-    category: 'Psychologie',
-    imageUrl: '/images/blog/psychologie.jpg',
-    slug: 'psychologie-achter-kledingkeuzes',
-    views: 2847,
-    featured: true
-  },
-  {
-    id: '2',
-    title: '5 Stijlregels Die Je Kunt Breken in 2025',
-    excerpt: 'Wanneer "regels" je beperken — en hoe je ze slim doorbreekt zonder je stijl te verliezen.',
-    author: 'Nova (AI)',
-    date: '2025-01-02',
-    readTime: '4 min',
-    category: 'Stijlregels',
-    imageUrl: '/images/blog/regles-breken.jpg',
-    slug: 'stijlregels-breken-2025',
-    views: 1923
-  },
-  {
-    id: '3',
-    title: 'Capsule Wardrobe: Minder Spullen, Meer Stijl',
-    excerpt: 'De bouwstenen van een garderobe die jarenlang werkt — voor elk seizoen.',
-    author: 'Team FitFi',
-    date: '2025-02-10',
-    readTime: '6 min',
-    category: 'Capsule',
-    imageUrl: '/images/blog/capsule.jpg',
-    slug: 'capsule-wardrobe-gids',
-    views: 3156,
-    featured: true
-  },
-  {
-    id: '4',
-    title: 'AI vs Personal Shopper: Wat Werkt Beter?',
-    excerpt: 'Een eerlijke vergelijking tussen AI-styling en traditioneel stylingadvies.',
-    author: 'Team FitFi',
-    date: '2025-01-20',
-    readTime: '7 min',
-    category: 'AI & Tech',
-    imageUrl: '/images/blog/ai-vs-human.jpg',
-    slug: 'ai-vs-personal-shopper',
-    views: 1654
-  },
-  {
-    id: '5',
-    title: 'Duurzame Mode: Kwaliteit Herkennen',
-    excerpt: 'Hoe je kledingstukken kiest die jaren meegaan — materialen, merken en tips.',
-    author: 'Emma Sustainable',
-    date: '2025-01-15',
-    readTime: '8 min',
-    category: 'Duurzaamheid',
-    imageUrl: '/images/blog/sustainable-fashion.jpg',
-    slug: 'duurzame-mode-kwaliteit',
-    views: 2341
-  },
-  {
-    id: '6',
-    title: 'Kleuranalyse: Vind Jouw Perfecte Palette',
-    excerpt: 'Welke kleuren laten jouw huid stralen? Een praktische gids voor kleurtemperatuur.',
-    author: 'Color Expert Lisa',
-    date: '2025-01-08',
-    readTime: '6 min',
-    category: 'Kleur & Stijl',
-    imageUrl: '/images/blog/color-analysis.jpg',
-    slug: 'kleuranalyse-perfecte-palette',
-    views: 2789
-  }
-];
-
-const CATEGORIES = ['Alle', 'Psychologie', 'Stijlregels', 'Capsule', 'AI & Tech', 'Duurzaamheid', 'Kleur & Stijl'];
-
 const BlogIndexPage: React.FC = () => {
-  const [q, setQ] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Alle');
-  const [sortBy, setSortBy] = useState<'date' | 'views' | 'featured'>('featured');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  useEffect(() => {
-    try {
-      track('page_view', {
-        page: 'blog_index',
-        path: '/blog',
-        title: 'Blog Index'
-      });
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
+  const blogPosts: BlogPost[] = [
+    {
+      id: '1',
+      title: 'De Psychologie Achter Jouw Kledingkeuzes',
+      excerpt: 'Ontdek wat jouw stijlvoorkeuren vertellen over jouw persoonlijkheid en hoe je dit kunt gebruiken om je doelen te bereiken.',
+      author: 'Dr. Sarah van der Berg',
+      date: '2024-12-15',
+      readTime: '5 min',
+      category: 'Psychologie',
+      imageUrl: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'psychologie-achter-kledingkeuzes'
+    },
+    {
+      id: '2',
+      title: '5 Stijlregels Die Je Kunt Breken in 2025',
+      excerpt: 'Mode-regels zijn er om gebroken te worden. Leer welke traditionele stijlregels je veilig kunt negeren voor een modernere look.',
+      author: 'Emma Styling',
+      date: '2024-12-12',
+      readTime: '7 min',
+      category: 'Trends',
+      imageUrl: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'stijlregels-breken-2025'
+    },
+    {
+      id: '3',
+      title: 'Capsule Wardrobe: Minder is Meer',
+      excerpt: 'Hoe je met 30 items een complete garderobe creëert die altijd werkt. Tips voor het bouwen van een duurzame, veelzijdige kledingkast.',
+      author: 'Lisa Minimalist',
+      date: '2024-12-10',
+      readTime: '6 min',
+      category: 'Lifestyle',
+      imageUrl: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=2',
+      slug: 'capsule-wardrobe-gids'
     }
-  }, []);
+  ];
 
-  const handleSearch = (value: string) => {
-    setQ(value);
-    try {
-      track('blog_search', {
-        query: value,
-        results_count: filtered.length
-      });
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
-    }
-  };
+  const categories = ['Alle', 'Psychologie', 'Trends', 'Lifestyle'];
 
-  const handleCategoryFilter = (category: string) => {
-    setSelectedCategory(category);
-    try {
-      track('blog_filter', {
-        filter_type: 'category',
-        filter_value: category,
-        results_count: filtered.length
-      });
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
-    }
-  };
-
-  const handleSortChange = (sort: 'date' | 'views' | 'featured') => {
-    setSortBy(sort);
-    try {
-      track('blog_sort', {
-        sort_by: sort
-      });
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
-    }
-  };
-
-  const handlePostClick = (post: BlogPost) => {
-    try {
-      track('blog_post_click', {
-        post_id: post.id,
-        post_title: post.title,
-        post_category: post.category,
-        post_author: post.author,
-        from_page: 'blog_index'
-      });
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
-    }
-  };
-
-  let filtered = MOCK.filter(p => {
-    const matchesSearch = [p.title, p.excerpt, p.author, p.category].join(' ').toLowerCase().includes(q.toLowerCase());
-    const matchesCategory = selectedCategory === 'Alle' || p.category === selectedCategory;
+  const filteredPosts = blogPosts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || selectedCategory === 'Alle' || post.category === selectedCategory;
+    
     return matchesSearch && matchesCategory;
   });
 
-  // Sort posts
-  filtered = [...filtered].sort((a, b) => {
-    if (sortBy === 'featured') {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    }
-    if (sortBy === 'views') {
-      return (b.views || 0) - (a.views || 0);
-    }
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
-
-  const featuredPosts = MOCK.filter(p => p.featured);
-  const totalViews = MOCK.reduce((sum, p) => sum + (p.views || 0), 0);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
 
   return (
-    <ErrorBoundary>
-      <Seo
-        title="Blog — Stijl, psychologie & AI-advies"
-        description="Korte, toepasbare stukken over stijlpsychologie, capsules en AI-styling."
-        canonical="https://www.fitfi.ai/blog"
+    <div className="min-h-screen bg-[#F6F6F6]">
+      <Seo 
+        title="Blog - Styling Tips & Mode Trends"
+        description="Ontdek de laatste styling tips, mode trends en persoonlijke groei-inzichten op de FitFi blog. Van psychologie tot praktische stijladvies."
+        canonical="https://fitfi.app/blog"
+        image="https://fitfi.app/og-blog.jpg"
+        keywords="styling tips, mode trends, fashion blog, stijl advies, persoonlijke groei, mode psychologie"
+        type="website"
       />
-      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Hero Section */}
-        <section className="section" style={{ background: 'linear-gradient(135deg, var(--color-bg) 0%, var(--color-surface) 100%)' }}>
-          <div className="container">
-            <header className="max-w-3xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-white" />
-                </div>
-                <span className="chip">Kennis & Inspiratie</span>
-              </div>
-              <h1 className="hero__title">Blog</h1>
-              <p className="lead mt-2">Praktische inzichten over stijl, psychologie en AI-advies.</p>
-            </header>
-
-            {/* Stats */}
-            <div className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-              <div className="text-center">
-                <div className="metric__value text-lg">{MOCK.length}</div>
-                <div className="metric__label">Artikelen</div>
-              </div>
-              <div className="text-center">
-                <div className="metric__value text-lg">{Math.round(totalViews / 1000)}k</div>
-                <div className="metric__label">Views</div>
-              </div>
-              <div className="text-center">
-                <div className="metric__value text-lg">{featuredPosts.length}</div>
-                <div className="metric__label">Featured</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Filters & Search */}
-        <section className="section pt-0">
-          <div className="container">
-            {/* Search */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[color:var(--color-muted)]" aria-hidden="true" />
+        <ErrorBoundary>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-light text-[#0D1B2A] mb-6">
+            FitFi Blog
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+            Ontdek de laatste trends, styling tips en inzichten over mode, persoonlijkheid en zelfexpressie.
+          </p>
+          
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <form onSubmit={handleSearch}>
+              <div className="relative">
                 <input
-                  aria-label="Zoek in blog"
-                  placeholder="Zoek artikelen…"
-                  className="input__field pl-9 w-full"
-                  value={q}
-                  onChange={(e) => handleSearch(e.target.value)}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Zoek artikelen..."
+                  className="w-full px-4 py-3 pl-12 border border-gray-200 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] text-gray-900 placeholder-gray-500 transition-all"
+                />
+                <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-2.5 bg-[#89CFF0] text-white px-4 py-1 rounded-xl hover:bg-[#89CFF0]/90 transition-colors"
+                >
+                  Zoeken
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        </ErrorBoundary>
+
+        {/* Categories */}
+        <ErrorBoundary>
+        <div className="mb-12">
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category === 'Alle' ? null : category)}
+                className={`px-6 py-2 rounded-full transition-colors ${
+                  (selectedCategory === category) || (selectedCategory === null && category === 'Alle')
+                    ? 'bg-[#89CFF0] text-[#0D1B2A] font-medium'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+        </ErrorBoundary>
+
+        {/* Blog Posts Grid */}
+        <ErrorBoundary>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {filteredPosts.map((post) => (
+            <article key={post.id} className="bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="aspect-video overflow-hidden">
+                <img 
+                  src={post.imageUrl} 
+                  alt={post.title}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
               
-              <div className="flex items-center gap-3">
-                {/* Sort */}
-                <select 
-                  value={sortBy} 
-                  onChange={(e) => handleSortChange(e.target.value as 'date' | 'views' | 'featured')}
-                  className="input__field text-sm"
-                  aria-label="Sorteer artikelen"
-                >
-                  <option value="featured">Featured eerst</option>
-                  <option value="date">Nieuwste eerst</option>
-                  <option value="views">Meest gelezen</option>
-                </select>
+              <div className="p-6">
+                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                  <div className="flex items-center space-x-1">
+                    <Calendar size={14} />
+                    <span>{new Date(post.date).toLocaleDateString('nl-NL')}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Clock size={14} />
+                    <span>{post.readTime}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Tag size={14} />
+                    <span>{post.category}</span>
+                  </div>
+                </div>
                 
-                <Button 
-                  as={Link as any} 
-                  to="/feed" 
-                  variant="ghost"
-                  onClick={() => track('cta_click', { cta_text: 'Naar feed', location: 'blog_header' })}
-                >
-                  <Users className="w-4 h-4" />
-                  Naar feed
-                </Button>
-              </div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {CATEGORIES.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryFilter(category)}
-                  className={`chip transition-all hover:scale-105 ${
-                    selectedCategory === category 
-                      ? 'bg-[color:var(--color-primary)] text-white border-[color:var(--color-primary)]' 
-                      : 'hover:border-[color:var(--color-primary)]'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-
-            {/* Results count */}
-            {q && (
-              <div className="mt-4 text-sm text-[color:var(--color-muted)]">
-                {filtered.length} resultaten voor "{q}"
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Blog Grid */}
-        <section className="section pt-0">
-          <div className="container">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((post) => (
-                <article 
-                  key={post.id} 
-                  className="card interactive-elevate h-full group cursor-pointer"
-                  onClick={() => handlePostClick(post)}
-                >
-                  <div className="card__media relative overflow-hidden">
-                    <img 
-                      src={post.imageUrl} 
-                      alt="" 
-                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" 
-                      loading="lazy" 
-                      decoding="async" 
-                    />
-                    {post.featured && (
-                      <div className="absolute top-3 left-3">
-                        <span className="chip bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] text-white border-0">
-                          <TrendingUp className="w-3 h-3" />
-                          Featured
-                        </span>
-                      </div>
-                    )}
-                    {post.views && (
-                      <div className="absolute top-3 right-3">
-                        <span className="chip bg-black/20 backdrop-blur-sm text-white border-0 text-xs">
-                          {post.views > 1000 ? `${Math.round(post.views / 1000)}k` : post.views} views
-                        </span>
-                      </div>
-                    )}
+                <h2 className="text-xl font-semibold text-[#0D1B2A] mb-3 leading-tight">
+                  {post.title}
+                </h2>
+                
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  {post.excerpt}
+                </p>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <User size={16} className="text-gray-400" />
+                    <span className="text-sm text-gray-600">{post.author}</span>
                   </div>
                   
-                  <div className="card__inner">
-                    <div className="flex items-center gap-3 text-xs text-[color:var(--color-muted)]">
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(post.date).toLocaleDateString('nl-NL', { 
-                          day: 'numeric', 
-                          month: 'short' 
-                        })}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {post.readTime}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Tag className="w-3 h-3" />
-                        {post.category}
-                      </span>
-                    </div>
-                    
-                    <h2 className="card__title mt-2 group-hover:text-[color:var(--color-primary)] transition-colors">
-                      {post.title}
-                    </h2>
-                    <p className="mt-1 text-sm opacity-90">{post.excerpt}</p>
-                    
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-sm text-[color:var(--color-muted)]">Door {post.author}</span>
-                      <Link 
-                        to={`/blog/${post.slug}`} 
-                        className="btn btn-ghost text-sm inline-flex items-center gap-1 group-hover:text-[color:var(--color-primary)] transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePostClick(post);
-                        }}
-                      >
-                        Lees meer 
-                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {filtered.length === 0 && (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] flex items-center justify-center">
-                  <Search className="w-8 h-8 text-white" />
+                  <Button
+                    as={Link}
+                    to={`/blog/${post.slug}`}
+                    variant="ghost"
+                    size="sm"
+                    icon={<ArrowRight size={16} />}
+                    iconPosition="right"
+                    className="text-[#89CFF0] hover:bg-[#89CFF0]/10"
+                  >
+                    Lees meer
+                  </Button>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Geen artikelen gevonden</h3>
-                <p className="text-[color:var(--color-muted)] mb-4">
-                  Probeer een andere zoekterm of filter.
-                </p>
-                <Button 
-                  variant="ghost" 
-                  onClick={() => {
-                    setQ('');
-                    setSelectedCategory('Alle');
-                  }}
+              </div>
+            </article>
+          ))}
+        </div>
+        </ErrorBoundary>
+
+        {/* Newsletter Signup */}
+        <ErrorBoundary>
+        <div className="bg-gradient-to-r from-[#89CFF0] to-blue-500 rounded-3xl shadow-sm overflow-hidden">
+          <div className="p-8 md:p-12 text-center">
+            <h2 className="text-3xl font-light text-white mb-4">
+              Blijf op de hoogte
+            </h2>
+            <p className="text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Ontvang wekelijks de nieuwste styling tips, trends en persoonlijke groei-inzichten direct in je inbox.
+            </p>
+            
+            <div className="max-w-md mx-auto">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  placeholder="Je e-mailadres"
+                  className="flex-1 px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-white/50 text-gray-900"
+                />
+                <Button
+                  variant="secondary"
+                  className="bg-white text-[#89CFF0] hover:bg-gray-100 px-6 py-3"
                 >
-                  Reset filters
+                  Aanmelden
                 </Button>
               </div>
-            )}
-          </div>
-        </section>
-
-        {/* Bottom CTA */}
-        <section className="section" style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)' }}>
-          <div className="container text-center">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold text-white mb-3">
-                Klaar voor persoonlijk stijladvies?
-              </h2>
-              <p className="text-white/90 mb-6">
-                Ontdek outfits die perfect bij jou passen — met uitleg waarom ze werken.
+              <p className="text-white/80 text-sm mt-3">
+                Geen spam, alleen waardevolle content. Uitschrijven kan altijd.
               </p>
-              <Button 
-                as={Link as any} 
-                to="/registreren" 
-                variant="ghost"
-                size="lg"
-                className="bg-white text-[color:var(--color-primary)] hover:bg-white/90"
-                onClick={() => track('cta_click', { cta_text: 'Start gratis', location: 'blog_bottom' })}
-              >
-                <ArrowRight className="w-5 h-5" />
-                Start gratis
-              </Button>
             </div>
           </div>
-        </section>
-      </main>
-    </ErrorBoundary>
+        </div>
+        </ErrorBoundary>
+      </div>
+    </div>
   );
 };
 

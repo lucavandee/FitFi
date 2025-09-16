@@ -7,9 +7,9 @@
   --color-text: #1E2333;
   --color-muted: #6B7280;
 
-  --color-primary: #9B8A7A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #857568;   /* hover */
-  --ff-color-primary-700: #6F6156;   /* active + CTA-bg (AA) */
+  --color-primary: #A6886A;          /* brand taupe (semantisch) */
+  --ff-color-primary-600: #8F7459;   /* hover */
+  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
 
   --color-accent: #D8CABA;
   --color-border: rgba(30, 35, 51, 0.08);

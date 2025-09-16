@@ -1,190 +1,97 @@
-import React from "react";
-import { CheckCircle2, Sparkles, ArrowRight, Users, Star, TrendingUp } from "lucide-react";
-import Button from "@/components/ui/Button";
-import SmartImage from "@/components/media/SmartImage";
-import Seo from "@/components/Seo";
-import { Link } from "react-router-dom";
-import { track } from "@/utils/analytics";
+import React from 'react';
+import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { track } from '@/utils/analytics';
 
-const Hero: React.FC = () => {
-  const handleCTAClick = (action: string) => {
-    track('hero_cta_click', {
-      action,
-      section: 'hero',
-      timestamp: Date.now()
-    });
-  };
-
-  const handleFeatureClick = (feature: string) => {
-    track('hero_feature_click', {
-      feature,
-      section: 'hero',
-      timestamp: Date.now()
-    });
+export default function Hero() {
+  const handleCTAClick = () => {
+    track('cta_click', { location: 'hero', action: 'start_quiz' });
   };
 
   return (
-    <>
-      <Seo
-        title="Ontdek jouw perfecte stijl met AI — FitFi"
-        description="Van korte test naar outfits met uitleg. Koel-taupe design, premium ervaring, privacy-first."
-        canonical="https://fitfi.ai/"
-      />
-      <section id="main" className="section relative overflow-hidden" aria-labelledby="hero-title">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--color-bg)] via-[color:var(--color-surface)] to-[color:var(--overlay-accent-08a)] opacity-60" />
-        
-        <div className="container relative z-10">
-          {/* Stats bar */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-8 text-sm text-[color:var(--color-muted)]">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-[color:var(--color-primary)]" />
-              <span>25.000+ gebruikers</span>
+    <section className="relative py-20 lg:py-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Content */}
+          <div className="text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-text)] text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4" />
+              AI-Powered Styling
             </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-[color:var(--color-primary)]" />
-              <span>4.8/5 sterren</span>
+            
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[color:var(--color-text)] mb-6 leading-tight">
+              Ontdek jouw perfecte
+              <span className="block text-[color:var(--color-primary)]">
+                stijl met AI
+              </span>
+            </h1>
+            
+            <p className="text-xl text-[color:var(--color-muted)] mb-8 max-w-2xl mx-auto lg:mx-0">
+              Van persoonlijkheidstest tot gepersonaliseerde outfits. 
+              Laat onze AI je helpen om je unieke stijl te ontdekken.
+            </p>
+
+            {/* Benefits */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center lg:justify-start">
+              <div className="flex items-center gap-2 text-[color:var(--color-success)]">
+                <CheckCircle className="w-5 h-5" />
+                <span className="text-sm font-medium">Gratis persoonlijkheidstest</span>
+              </div>
+              <div className="flex items-center gap-2 text-[color:var(--color-success)]">
+                <CheckCircle className="w-5 h-5" />
+                <span className="text-sm font-medium">AI-gepersonaliseerde outfits</span>
+              </div>
+              <div className="flex items-center gap-2 text-[color:var(--color-success)]">
+                <CheckCircle className="w-5 h-5" />
+                <span className="text-sm font-medium">Nederlandse merken</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[color:var(--color-primary)]" />
-              <span>95% tevreden</span>
+
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link
+                to="/quiz"
+                onClick={handleCTAClick}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[color:var(--ff-color-primary-700)] text-white font-bold rounded-lg hover:bg-[color:var(--ff-color-primary-600)] transition-colors duration-200 shadow-lg"
+              >
+                Start je stijlreis
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                to="/how-it-works"
+                className="inline-flex items-center justify-center px-8 py-4 border-2 border-[color:var(--color-border)] text-[color:var(--color-text)] font-semibold rounded-lg hover:bg-[color:var(--color-accent)] transition-colors duration-200"
+              >
+                Hoe werkt het?
+              </Link>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 items-center">
-            {/* Copy */}
-            <div className="lg:col-span-7 flex flex-col justify-center">
-              <div className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted)] mb-4 animate-fadeIn">
-                <div className="w-2 h-2 bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] rounded-full animate-pulse" />
-                <Sparkles className="w-4 h-4 text-[color:var(--color-primary)]" aria-hidden="true" />
-                <span className="font-medium">AI-Powered Styling</span>
-              </div>
-              
-              <h1 id="hero-title" className="hero__title animate-fadeIn" style={{ animationDelay: '0.1s' }}>
-                Ontdek jouw{' '}
-                <span className="bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--ff-color-primary-600)] bg-clip-text text-transparent">
-                  perfecte stijl
-                </span>{' '}
-                met AI
-              </h1>
-              
-              <p className="lead mt-4 max-w-2xl animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-                Persoonlijk stijlrapport met outfits en korte uitleg waarom het werkt bij jouw silhouet, materialen en kleurtemperatuur.
-              </p>
-
-              <ul className="mt-6 flex flex-col gap-3 text-sm animate-fadeIn" style={{ animationDelay: '0.3s' }}>
-                {[
-                  { text: "Gratis persoonlijkheidstest", feature: "personality_test" },
-                  { text: "AI-gepersonaliseerde outfits", feature: "ai_outfits" },
-                  { text: "Nederlandse merken", feature: "dutch_brands" }
-                ].map((item) => (
-                  <li 
-                    key={item.text} 
-                    className="inline-flex items-center gap-3 cursor-pointer hover:text-[color:var(--color-primary)] transition-colors duration-200"
-                    onClick={() => handleFeatureClick(item.feature)}
-                  >
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r from-[color:var(--color-success)] to-emerald-400 flex items-center justify-center">
-                      <CheckCircle2 className="h-3 w-3 text-white" />
-                    </div>
-                    <span className="font-medium">{item.text}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8 flex flex-wrap items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-                <Button 
-                  as={Link as any} 
-                  to="/registreren" 
-                  variant="primary" 
-                  size="lg" 
-                  className="group relative overflow-hidden"
-                  onClick={() => handleCTAClick('start_free')}
-                  aria-label="Start gratis AI Style Report"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Ja, geef mij mijn gratis AI Style Report
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ff-color-primary-600)] to-[color:var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                </Button>
-                
-                <Button 
-                  as={Link as any} 
-                  to="/hoe-het-werkt" 
-                  variant="ghost" 
-                  size="lg"
-                  className="group"
-                  onClick={() => handleCTAClick('how_it_works')}
-                  aria-label="Hoe werkt het?"
-                >
-                  <span>Hoe werkt het?</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                </Button>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-[color:var(--color-muted)] animate-fadeIn" style={{ animationDelay: '0.5s' }}>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full" />
-                  <span>Geen creditcard vereist</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full" />
-                  <span>Privacy-first</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full" />
-                  <span>GDPR compliant</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Visual */}
-            <div className="lg:col-span-5 animate-fadeIn" style={{ animationDelay: '0.6s' }}>
-              <div className="hero__card relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--overlay-primary-12a)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                <SmartImage
-                  src="/images/hero/nova-hero.jpg"
-                  alt="Nova AI — jouw stylist"
-                  loading="eager"
-                  decoding="async"
-                  className="block h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+          {/* Visual */}
+          <div className="relative">
+            <div className="relative bg-[color:var(--color-surface)] rounded-3xl border border-[color:var(--color-border)] shadow-2xl overflow-hidden">
+              <div className="aspect-[4/5] bg-gradient-to-br from-[color:var(--color-accent)] to-[color:var(--color-primary)] p-8 flex items-center justify-center">
+                <img
+                  src="/images/nova.svg"
+                  alt="FitFi Nova AI Assistant"
+                  className="w-32 h-32 object-contain"
                 />
-                
-                <div className="hero__card-footer relative z-10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-[color:var(--color-muted)]">Voorproefje van je rapport</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full animate-pulse" />
-                      <span className="text-xs text-[color:var(--color-success)]">Live</span>
-                    </div>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="chip bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] text-white">
-                      Taupe • Smart casual
-                    </span>
-                    <div className="flex -space-x-1">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="w-6 h-6 rounded-full bg-[color:var(--color-surface)] border-2 border-[color:var(--color-bg)] flex items-center justify-center">
-                          <Star className="w-3 h-3 text-[color:var(--color-primary)]" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating elements */}
-                <div className="absolute top-4 right-4 bg-[color:var(--color-surface)] rounded-full p-2 shadow-lg animate-bounce" style={{ animationDelay: '2s' }}>
-                  <Sparkles className="w-4 h-4 text-[color:var(--color-primary)]" />
-                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-[color:var(--color-text)] mb-2">
+                  Nova AI Assistant
+                </h3>
+                <p className="text-[color:var(--color-muted)] text-sm">
+                  Jouw persoonlijke styling-expert die je helpt bij elke outfit keuze.
+                </p>
               </div>
             </div>
+            
+            {/* Floating elements */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-[color:var(--color-primary)] rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-[color:var(--color-accent)] rounded-full opacity-30 animate-pulse delay-1000"></div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
-};
-
-export default Hero;
+}
