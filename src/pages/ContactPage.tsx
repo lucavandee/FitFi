@@ -69,7 +69,7 @@ const ContactPage: React.FC = () => {
   return (
     <>
       <Seo title="Contact — FitFi" description="Stel je vraag of vraag een demo aan." canonical="https://www.fitfi.ai/contact" />
-      <main>
+      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
         <section className="section">
           <div className="container max-w-3xl">
             <h1 className="hero__title">Contact</h1>
