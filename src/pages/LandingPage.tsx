@@ -3,13 +3,14 @@ import React from "react";
 import Hero from "@/components/landing/Hero";
 import { CheckCircle } from "lucide-react";
 import BrandStrip from "@/components/brand/BrandStrip";
+import HowItWorksRail from "@/components/home/HowItWorksRail";
 
 const LandingPage: React.FC = () => {
   return (
     <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
       <Hero />
 
-      {/* Brand strip (zonder externe assets) */}
+      {/* Brand strip */}
       <BrandStrip />
 
       {/* Proof strip */}
@@ -34,6 +35,9 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* How it works rail (swipe) */}
+      <HowItWorksRail />
+
       {/* Waarom het werkt */}
       <section className="section">
         <div className="container grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
@@ -41,7 +45,7 @@ const LandingPage: React.FC = () => {
             <div className="card__inner">
               <h2 className="card__title">Waarom dit werkt</h2>
               <p className="card__text">
-                We combineren jouw silhouet, kleurtemperatuur en stijlvoorkeuren. Per outfit krijg je
+                We combineren je silhouet, kleurtemperatuur en stijlvoorkeuren. Per outfit krijg je
                 1–2 zinnen uitleg — precies genoeg om zelfverzekerd te kiezen.
               </p>
               <ul className="mt-4 space-y-2 text-sm">
@@ -77,5 +81,4 @@ const LandingPage: React.FC = () => {
     </main>
   );
 };
-
 export default LandingPage;
