@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { w as track } from "@/utils";
 import { useUser } from "@/context/UserContext";
 import { w } from "@/utils/analytics";
-
+import { w as track } from "@/utils/analytics";
 interface MobileNavDrawerProps {
   open: boolean;
   onClose: () => void;
