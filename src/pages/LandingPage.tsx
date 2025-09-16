@@ -2,11 +2,15 @@
 import React from "react";
 import Hero from "@/components/landing/Hero";
 import { CheckCircle } from "lucide-react";
+import BrandStrip from "@/components/brand/BrandStrip";
 
 const LandingPage: React.FC = () => {
   return (
     <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
       <Hero />
+
+      {/* Brand strip (zonder externe assets) */}
+      <BrandStrip />
 
       {/* Proof strip */}
       <section className="section">
@@ -17,7 +21,7 @@ const LandingPage: React.FC = () => {
               { v: "2 min", l: "van test naar stijlprofiel" },
               { v: "10+", l: "outfits met uitleg in Pro" },
             ].map((m) => (
-              <div key={m.l} className="card">
+              <div key={m.l} className="card interactive-elevate">
                 <div className="card__inner">
                   <div className="metric">
                     <div className="metric__value">{m.v}</div>
@@ -33,7 +37,7 @@ const LandingPage: React.FC = () => {
       {/* Waarom het werkt */}
       <section className="section">
         <div className="container grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-          <div className="card">
+          <div className="card interactive-elevate">
             <div className="card__inner">
               <h2 className="card__title">Waarom dit werkt</h2>
               <p className="card__text">
