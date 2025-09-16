@@ -1,23 +1,17 @@
-// src/pages/ContactPage.tsx
 import React from "react";
+import Seo from "@/components/Seo";
 import { CheckCircle, AlertTriangle } from "lucide-react";
 
 type FormData = { name: string; email: string; message: string };
 type Errors = Partial<Record<keyof FormData, string>>;
 
-const emailOk = (v: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
 const ContactPage: React.FC = () => {
   const [data, setData] = React.useState<FormData>({ name: "", email: "", message: "" });
   const [errors, setErrors] = React.useState<Errors>({});
   const [submitting, setSubmitting] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
-
-  const setField = (k: keyof FormData, v: string) => {
-    setData((d) => ({ ...d, [k]: v }));
-    setErrors((e) => ({ ...e, [k]: undefined })); // clear field error on change
-  };
 
   const validate = (): boolean => {
     const e: Errors = {};
@@ -34,7 +28,6 @@ const ContactPage: React.FC = () => {
     ev.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
-    // Simulatie van submit; vervang later met echte API-call.
     setTimeout(() => {
       setSubmitting(false);
       setSuccess(true);
@@ -43,142 +36,118 @@ const ContactPage: React.FC = () => {
 
   if (success) {
     return (
-      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
-        <section className="section" aria-labelledby="contact-done-title">
-          <div className="container max-w-3xl">
-            <div className="card card--elevated">
-              <div className="card__inner">
-                <div className="alert alert--success">
-                  <CheckCircle className="w-5 h-5" aria-hidden="true" />
-                  <div>
-                    <h1 id="contact-done-title" className="hero__title text-[clamp(1.6rem,4.5vw,2.2rem)]">
-                      Bericht verzonden — dank je!
-                    </h1>
-                    <p className="lead mt-2">
-                      We reageren snel via <strong>{data.email.trim()}</strong>. Je kunt dit venster sluiten
-                      of terug naar de veelgestelde vragen.
-                    </p>
+      <>
+        <Seo title="Contact — Bedankt" description="We hebben je bericht ontvangen en reageren snel." canonical="https://www.fitfi.ai/contact" />
+        <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+          <section className="section">
+            <div className="container max-w-3xl">
+              <div className="card card--elevated">
+                <div className="card__inner">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-[color:var(--color-success)]" aria-hidden="true" />
+                    <div>
+                      <h1 className="hero__title text-[clamp(1.6rem,4.5vw,2.2rem)]">Bericht verzonden — dank je!</h1>
+                      <p className="lead mt-2">
+                        We reageren snel via <strong>{data.email.trim()}</strong>. Je kunt dit venster sluiten
+                        of terug naar de veelgestelde vragen.
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/veelgestelde-vragen" className="btn btn-ghost">Naar FAQ</a>
-                  <button className="btn btn-primary" onClick={() => setSuccess(false)}>
-                    Nieuw bericht
-                  </button>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <a href="/veelgestelde-vragen" className="btn btn-ghost">Naar FAQ</a>
+                    <button className="btn btn-primary" onClick={() => setSuccess(false)}>Nieuw bericht</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
-      <section className="section" aria-labelledby="contact-title">
-        <div className="container grid lg:grid-cols-3 gap-8 items-start">
-          <header className="lg:col-span-1">
-            <h1 id="contact-title" className="hero__title text-[clamp(2rem,5vw,2.6rem)]">Contact</h1>
-            <p className="lead mt-3">Vragen, ideeën of zakelijk samenwerken? Stuur een bericht — we reageren snel.</p>
-            <div className="mt-6 subcard">
-              <div className="subcard__inner">
-                <div className="text-sm">
-                  <strong>Support</strong><br/>
-                  <span className="muted">Binnen 24 uur reactie</span>
-                </div>
-                <div className="mt-3 text-sm">
-                  <strong>Zakelijk</strong><br/>
-                  <span className="muted">Partnerships & affiliates</span>
-                </div>
-              </div>
-            </div>
-          </header>
+    <>
+      <Seo title="Contact — FitFi" description="Stel je vraag of vraag een demo aan." canonical="https://www.fitfi.ai/contact" />
+      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+        <section className="section">
+          <div className="container max-w-3xl">
+            <h1 className="hero__title">Contact</h1>
+            <p className="lead mt-2">We helpen je graag — gemiddeld binnen 1 werkdag reactie.</p>
 
-          <form className="lg:col-span-2 card" aria-describedby="contact-help" onSubmit={onSubmit} noValidate>
-            <div className="card__inner grid sm:grid-cols-2 gap-4">
-              {/* Live error region (summary) */}
-              {Object.keys(errors).length > 0 && (
-                <div className="sm:col-span-2 alert alert--danger" role="alert" aria-live="assertive">
-                  <AlertTriangle className="w-5 h-5" aria-hidden="true" />
-                  <div>
-                    <strong>Even checken:</strong> corrigeer de gemarkeerde velden en probeer opnieuw.
-                  </div>
-                </div>
-              )}
-
-              {/* Naam */}
-              <div>
-                <label className="block">
-                  <span className="text-sm">Naam</span>
-                  <input
-                    className={`input mt-2 ${errors.name ? "input--error" : ""}`}
-                    placeholder="Jouw naam"
-                    aria-label="Naam"
-                    aria-invalid={!!errors.name}
-                    aria-describedby={errors.name ? "err-name" : undefined}
-                    value={data.name}
-                    onChange={(e) => setField("name", e.target.value)}
-                  />
-                </label>
+            <form onSubmit={onSubmit} className="mt-6 space-y-4" aria-label="Contactformulier">
+              <div className="input">
+                <label htmlFor="name" className="input__label">Naam</label>
+                <input 
+                  id="name" 
+                  className="input__field" 
+                  value={data.name} 
+                  onChange={(e) => setData({ ...data, name: e.target.value })}
+                  aria-describedby={errors.name ? "name-error" : undefined}
+                  aria-invalid={!!errors.name}
+                />
                 {errors.name && (
-                  <p id="err-name" className="help-error" role="status" aria-live="polite">{errors.name}</p>
+                  <div id="name-error" className="input__error" role="alert">
+                    <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                    {errors.name}
+                  </div>
                 )}
               </div>
-
-              {/* E-mail */}
-              <div>
-                <label className="block">
-                  <span className="text-sm">E-mail</span>
-                  <input
-                    type="email"
-                    className={`input mt-2 ${errors.email ? "input--error" : ""}`}
-                    placeholder="naam@voorbeeld.nl"
-                    aria-label="E-mail"
-                    aria-invalid={!!errors.email}
-                    aria-describedby={errors.email ? "err-email" : undefined}
-                    value={data.email}
-                    onChange={(e) => setField("email", e.target.value)}
-                  />
-                </label>
+              
+              <div className="input">
+                <label htmlFor="email" className="input__label">E-mail</label>
+                <input 
+                  id="email" 
+                  type="email"
+                  inputMode="email" 
+                  className="input__field" 
+                  value={data.email} 
+                  onChange={(e) => setData({ ...data, email: e.target.value })}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-invalid={!!errors.email}
+                />
                 {errors.email && (
-                  <p id="err-email" className="help-error" role="status" aria-live="polite">{errors.email}</p>
+                  <div id="email-error" className="input__error" role="alert">
+                    <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                    {errors.email}
+                  </div>
                 )}
               </div>
-
-              {/* Bericht */}
-              <div className="sm:col-span-2">
-                <label className="block">
-                  <span className="text-sm">Bericht</span>
-                  <textarea
-                    className={`textarea mt-2 ${errors.message ? "textarea--error" : ""}`}
-                    placeholder="Waarmee kunnen we je helpen?"
-                    aria-label="Bericht"
-                    aria-invalid={!!errors.message}
-                    aria-describedby={errors.message ? "err-message" : undefined}
-                    value={data.message}
-                    onChange={(e) => setField("message", e.target.value)}
-                  />
-                </label>
+              
+              <div className="input">
+                <label htmlFor="message" className="input__label">Bericht</label>
+                <textarea 
+                  id="message" 
+                  rows={5} 
+                  className="input__field" 
+                  value={data.message} 
+                  onChange={(e) => setData({ ...data, message: e.target.value })}
+                  aria-describedby={errors.message ? "message-error" : undefined}
+                  aria-invalid={!!errors.message}
+                />
                 {errors.message && (
-                  <p id="err-message" className="help-error" role="status" aria-live="polite">{errors.message}</p>
+                  <div id="message-error" className="input__error" role="alert">
+                    <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                    {errors.message}
+                  </div>
                 )}
               </div>
 
-              <div className="sm:col-span-2">
-                <button type="submit" className="btn btn-primary" disabled={submitting} aria-busy={submitting}>
-                  {submitting ? "Versturen…" : "Verstuur"}
+              <div className="pt-2">
+                <button 
+                  type="submit"
+                  className="btn btn-primary btn-lg" 
+                  disabled={submitting} 
+                  aria-busy={submitting}
+                >
+                  {submitting ? "Verzenden…" : "Verstuur bericht"}
                 </button>
               </div>
-            </div>
-
-            <p id="contact-help" className="text-xs muted px-6 pb-6">
-              We gebruiken je gegevens uitsluitend om op je bericht te reageren.
-            </p>
-          </form>
-        </div>
-      </section>
-    </main>
+            </form>
+          </div>
+        </section>
+      </main>
+    </>
   );
 };
 
