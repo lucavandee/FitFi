@@ -61,7 +61,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
   };
 
   return (
-    <section className={`py-20 bg-gray-50 ${className}`} aria-labelledby="preview-heading">
+    <section className={`section bg-[color:var(--color-bg)] ${className}`} aria-labelledby="preview-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 id="preview-heading" className="text-3xl md:text-4xl font-light text-gray-900 mb-6">
@@ -123,7 +123,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
                         </div>
                       </div>
                     </div>
-                  </div>
+                  <p className="subcard__kicker"><em>Waarom dit werkt:</em> {p.why}</p>
                 </div>
               ))}
             </div>
