@@ -35,44 +35,55 @@ border:1px solid var(--color-border); border-radius: var(--radius-2xl);
 box-shadow: var(--shadow-soft);
 Pak alle CTA-varianten en forceer taupe door backgrounds te neutraliseren */
 :where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary){
-  /* Zet tokens lokaal zodat parent-overschrijvingen niet lekken */
-  --ff-cta-bg: var(--ff-color-primary-600) !important;
-  --ff-cta-foreground: #fff !important;
+/* ===== CTA — TAUPE (final override, beats Tailwind utilities) ===== */
 
-  /* 1) Eerst alle eerdere backgrounds neutraliseren */
-  background: none !important;
+/* 1) Gebruik selectors met echte specificiteit (geen :where) */
+.ff-cta,
+[data-cta="primary"],
+.cta-primary,
+.btn-primary {
+  /* lokale token zodat parent-overschrijvingen niet lekken */
+  --ff-cta-bg: var(--ff-color-primary-600);
 
-  /* 2) Dan onze kleur op zowel shorthand als background-color */
-  background: var(--ff-cta-bg) !important;       /* wint van eerdere 'background' regels */
-  background-color: var(--ff-cta-bg) !important; /* extra safety */
+  /* 2) Schrijf zowel background als background-image zodat gradients/utilities verliezen */
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
 
-  color: var(--ff-cta-foreground) !important;
-  border: 1px solid transparent;
-  border-radius: var(--radius-lg);
+  color: #FFFFFF !important;
+  border-color: transparent !important;
   opacity: 1 !important;
   mix-blend-mode: normal !important;
+
+  border-radius: var(--radius-lg);
   display: inline-flex; align-items: center; gap: .5rem;
   font-weight: 700; padding: .75rem 1rem;
   text-decoration: none !important;
   transition: transform .2s ease, background-color .2s ease, color .2s ease;
 }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary) * { color: inherit !important; }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary) svg{ color: currentColor; stroke: currentColor; fill: none; }
 
-/* Hover/active states */
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):hover{
-  transform: translateY(-1px) scale(1.01);
+.ff-cta:hover,
+[data-cta="primary"]:hover,
+.cta-primary:hover,
+.btn-primary:hover {
   background: var(--ff-color-primary-700) !important;
-  background-color: var(--ff-color-primary-700) !important;
 }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):active{
-  transform: translateY(0) scale(.995);
+.ff-cta:active,
+[data-cta="primary"]:active,
+.cta-primary:active,
+.btn-primary:active {
   background: var(--ff-color-primary-700) !important;
-  background-color: var(--ff-color-primary-700) !important;
   filter: brightness(.98);
 }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary)[aria-disabled="true"],
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):disabled{
+
+/* 3) Als er een utility .bg-white op de CTA staat, forceer onze kleur alsnog */
+.ff-cta.bg-white,
+[data-cta="primary"].bg-white,
+.cta-primary.bg-white,
+.btn-primary.bg-white {
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+}
   opacity:.6 !important; cursor:not-allowed; filter:grayscale(.05);
 .ff-cta:hover{ 
 transform: translateY(-1px) scale(1.01); 
