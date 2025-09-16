@@ -1,63 +1,69 @@
-/* src/styles/tokens.css */
-/* FitFi vNext — Light/Neutral Beige — CANONIEK */
+/* FitFi Design Tokens — Light / Neutral Beige (canonical)
+Componenten gebruiken uitsluitend tokens; geen hex/rgb in componenten. */
 :root {
-  /* Palet */
-  --color-bg: #F7F3EC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E2333;
-  --color-muted: #6B7280;
+/* ===== Core Colors ===== */
+--color-bg: #F7F3EC; /* warm cream achtergrond */
+--color-surface: #FFFFFF; /* kaarten / surfaces */
+--color-text: #1E2333; /* inkt/donker voor uitstekende leesbaarheid */
+--color-muted: #6B7280; /* secundaire tekst */
 
-  --color-primary: #A6886A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #8F7459;   /* hover */
-  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+/* ===== Brand Taupe ===== */
+/* Let op: CTA gebruikt de donkere taupe (700) voor AA met witte tekst. */
+--color-primary: #A6886A; /* taupe (merk) */
+--ff-color-primary-600: #8F7459;/* hover */
+--ff-color-primary-700: #7A614A;/* active/CTA-bg (AA met #fff) */
 
-  --color-accent: #D8CABA;
-  --color-border: rgba(30, 35, 51, 0.08);
+/* Accent voor chips/badges (géén CTA) */
+--color-accent: #D8CABA;
 
-  /* Status */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger:  #DC2626;
+--color-border: rgba(30,35,51,0.08);
+--color-success: #16A34A;
+--color-warning: #D97706;
+--color-danger: #DC2626;
 
-  /* Overlays */
-  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
-  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
+/* Overlays (gradients/glas) — afgeleid van merk */
+--overlay-primary-12a: rgba(166,136,106,0.12);
+--overlay-accent-08a: rgba(216,202,186,0.10);
 
-  /* Radii */
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
+/* ===== CTA tokens (taupe) ===== */
+--ff-cta-bg: var(--ff-color-primary-700);
+--ff-cta-bg-hover: var(--ff-color-primary-600);
+--ff-cta-bg-active: var(--ff-color-primary-700);
+--ff-cta-foreground: #FFFFFF; /* wit voor AA op taupe-700 */
 
-  /* Shadows */
-  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
-  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
+/* ===== Typography ===== */
+--font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+--font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
 
-  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
-  font-synthesis-weight: none;
+/* ===== Radii & Shadows ===== */
+--radius-sm: 0.25rem;
+--radius-md: 0.50rem;
+--radius-lg: 1.00rem;
+--radius-2xl: 1.25rem;
+--radius-full: 9999px;
+
+--shadow-soft: 0 8px 30px rgba(0,0,0,.08);
+--shadow-ring: 0 0 0 3px rgba(166,136,106,.35); /* warme focus */
+
+/* ===== Glass tokens (light theme) ===== */
+--glass-surface: rgba(255,255,255,.72);
+--glass-border: rgba(30,35,51,.08);
+--glass-blur: 10px;
+
+/* ===== Tailwind mapping (compat) ===== */
+--ff-color-bg: var(--color-bg);
+--ff-color-surface: var(--color-surface);
+--ff-color-text: var(--color-text);
+--ff-color-muted: var(--color-muted);
+--ff-color-border: var(--color-border);
+--ff-color-success: var(--color-success);
+--ff-color-warning: var(--color-warning);
+--ff-color-danger: var(--color-danger);
+
+--ff-font-sans: var(--font-body);
+--ff-text-xs:.75rem; --ff-text-sm:.875rem; --ff-text-base:1rem; --ff-text-md:1.0625rem;
+--ff-text-lg:1.125rem; --ff-text-xl:1.25rem; --ff-text-2xl:1.5rem; --ff-text-3xl:1.875rem;
 }
 
-/* Basiselementen */
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Cards */
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-}
-
-/* CTA – solid (AA) */
-.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
-.ff-cta:hover { background: var(--ff-color-primary-600); }
-
-/* Focus-ring tokenized */
-.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
-
-/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
+html { font-family: var(--font-body); }
+.nova-dock, .nova-chatbar, #nova-bottom-bar { display: none !important; }
