@@ -1,83 +1,50 @@
-/**
- * Analytics utilities for FitFi
- * Provides safe, fail-safe analytics tracking
- */
+// Analytics — safe, multi-provider + legacy alias `w`
+export type Props = Record<string, unknown>;
 
-/**
- * Track a pageview
- */
-export function pageview(url: string, params: Record<string, any> = {}) {
-  try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('config', import.meta.env.VITE_GTAG_ID || 'GA_MEASUREMENT_ID', {
-        page_path: url,
-        ...params
-      });
-    }
-  } catch (error) {
-    console.debug('[Analytics] Pageview failed:', error);
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+    plausible?: (event: string, opts?: { props?: Props }) => void;
+    umami?: { track: (event: string, props?: Props) => void; trackView?: (url?: string, ref?: string) => void };
+    fathom?: { trackEvent?: (event: string, value?: number, opts?: any) => void };
   }
 }
 
-/**
- * Track an event
- */
-export function event(name: string, params: Record<string, any> = {}) {
+const safe = (fn: unknown, ...args: any[]) => {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', name, params);
-    }
-  } catch (error) {
-    console.debug('[Analytics] Event failed:', error);
+    if (typeof fn === "function") (fn as any)(...args);
+  } catch {
+    /* no-op */
   }
+};
+
+export function initAnalytics(): void {
+  // plaats voor init if needed (consent, etc.)
 }
 
-/**
- * Generic track function (alias for event)
- */
-export function track(event: string, data?: Record<string, any>) {
-  try { (window as any).gtag?.('event', event, data ?? {}); } catch {}
-  try { (window as any).analytics?.track?.(event, data); } catch {}
+export function track(event: string, props: Props = {}): void {
+  safe(window.gtag, "event", event, props);
+  safe(window.plausible, event, { props });
+  if (window.umami?.track) safe(window.umami.track, event, props);
+  if (window.fathom?.trackEvent) safe(window.fathom.trackEvent, event);
 }
 
-/**
- * Track an exception
- */
-export function exception(description: string, fatal: boolean = false) {
-  try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'exception', {
-        description,
-        fatal
-      });
-    }
-  } catch (error) {
-    console.debug('[Analytics] Exception failed:', error);
-  }
-}
-
-/**
- * Generic track function (alias for event)
- */
-
-/**
- * Track event with category and label (legacy format)
- */
-export function trackEvent(
-  action: string,
-  category: string = 'general',
-  label?: string,
-  value?: number,
-  params: Record<string, any> = {}
-) {
-  return event(action, {
-    event_category: category,
-    event_label: label,
-    value,
-    ...params
+export function pageview(path?: string): void {
+  const url = path ?? (typeof location !== "undefined" ? location.pathname + location.search : "/");
+  safe(window.gtag, "event", "page_view", {
+    page_location: typeof location !== "undefined" ? location.href : undefined,
+    page_path: url,
   });
+  safe(window.plausible, "pageview", { props: { url } });
+  if (window.umami?.trackView) safe(window.umami.trackView, url, typeof document !== "undefined" ? document.referrer : "");
 }
 
-// Default export
-const analytics = { pageview, event, exception, track, trackEvent };
+export function identify(userId: string, traits: Props = {}): void {
+  safe(window.gtag, "set", "user_properties", { user_id: userId, ...traits });
+}
+
+/** 🔑 Legacy alias (breaks fix): sommige bestanden importeren `{ w }` of `{ w as track }` */
+export const w = track;
+
+const analytics = { initAnalytics, track, pageview, identify, w };
 export default analytics;
