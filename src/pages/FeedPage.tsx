@@ -17,7 +17,7 @@ const FeedPage: React.FC = () => {
   return (
     <ErrorBoundary>
       <Seo title="Feed — Outfit inspiratie" description="Swipe door outfits die passen bij seizoen en gelegenheid." canonical="https://www.fitfi.ai/feed" />
-      <main>
+      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
         <section className="section" aria-labelledby="feed-title">
           <div className="container">
             <header className="flex items-end justify-between gap-4">

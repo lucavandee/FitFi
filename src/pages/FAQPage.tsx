@@ -27,7 +27,7 @@ const FAQPage: React.FC = () => {
         canonical="https://www.fitfi.ai/veelgestelde-vragen" 
       />
       <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
-        <section>
+        <section className="section">
           <div className="container max-w-3xl">
             <header className="text-center">
               <h1 className="hero__title">Veelgestelde vragen</h1>
