@@ -1,6 +1,7 @@
 // vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import path from 'path';
 
 export default defineConfig(({ command }) => {
   const isDev = command === "serve";
@@ -51,7 +52,7 @@ export default defineConfig(({ command }) => {
     ].filter(Boolean),
     resolve: {
       alias: {
-        "@": new URL("./src", import.meta.url).pathname
+        "@": path.resolve(__dirname, "src")
       }
     },
     server: { port: 5173, strictPort: false },
