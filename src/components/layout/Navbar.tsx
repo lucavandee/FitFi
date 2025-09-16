@@ -26,13 +26,10 @@ const Navbar: React.FC = () => {
         {/* Center: Desktop nav */}
         <div className="hidden items-center gap-6 md:flex">
           {NAV_ITEMS.map((item) => (
-              <a key={n.href} href={n.href} className={`nav-link ${isActive(n.href) ? "is-active" : ""}`}>{n.label}</a>
-              <a key={item.href} href={item.href}
-                 className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}>
-                {item.label}
-              </a>
+            item.external ? (
+              <a key={item.href} href={item.href} className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}>{item.label}</a>
             ) : (
-              <Link key={n.href} to={n.href} className={`nav-link ${isActive(n.href) ? "is-active" : ""}`}>{n.label}</Link>
+              <Link key={item.href} to={item.href}
                     className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}>
                 {item.label}
               </Link>
