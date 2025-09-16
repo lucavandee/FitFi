@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { trackOutfitExplain } from '@/hooks/useABTesting';
 
 export type OutfitItem = {
   id: string;
@@ -26,32 +25,10 @@ type Props = {
 };
 
 export default function OutfitCardPro({ outfit }: Props) {
-  const explainRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          trackOutfitExplain(outfit.id);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (explainRef.current) {
-      observer.observe(explainRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [outfit.id]);
-
   const mp = typeof outfit.matchPercent === "number" ? Math.max(0, Math.min(100, outfit.matchPercent)) : undefined;
 
   return (
-    <div 
-      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-      data-kind="outfit-card"
-    >
+    <Card className="overflow-hidden">
       <Card.Header>
         <div className="flex items-center gap-3">
           <strong className="text-white">{outfit.title}</strong>
@@ -96,10 +73,6 @@ export default function OutfitCardPro({ outfit }: Props) {
           </div>
         </div>
       </Card.Body>
-      
-      <div ref={explainRef} className="explain">
-        Waarom dit werkt: katoenmix valt luchtig, zodat het smart oogt zonder stijf te zijn; de sneakers houden het speels en modern.
-      </div>
     </Card>
   );
 }

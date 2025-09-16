@@ -1,183 +1,560 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import NovaMessageList from "./NovaMessageList";
-import { useNovaSSE } from "./useNovaSSE";
-import type { ChatMessage, NovaEvent } from "./types";
-import { track } from "./types";
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
+import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
+import { mdNova } from '@/components/ai/markdown';
+import { useNovaConn } from '@/components/ai/NovaConnection';
+import TypingSkeleton from '@/components/ai/TypingSkeleton';
+import track from '@/utils/telemetry';
+import toast from 'react-hot-toast';
+import OutfitCards from '@/components/ai/OutfitCards';
+import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
+import QuotaModal from './QuotaModal';
+import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
+import { generateNovaExplanation } from '@/engine/explainOutfit';
 
-type Props = {
-  uid?: string;            // optioneel: doorgeven van (pseudo) user-id
-  tier?: string;           // optioneel: "free" | "plus" | ...
-  initialContext?: Record<string, unknown>;
-  className?: string;
-};
+// ADD bovenaan
+function mdLite(s:string){
+  // \n\n -> paragrafen, *...* -> em, **...** -> strong, - lijstjes
+  const esc = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const strong = esc.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const em = strong.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  const lists = em.replace(/(?:^|\n)- (.+)/g, '\n• $1');
+  return lists.replace(/\n/g,'<br/>');
+}
 
-const makeId = () => Math.random().toString(36).slice(2);
+const URL_RE = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
 
-const NovaChat: React.FC<Props> = ({ uid, tier, initialContext, className }) => {
-  const { start, stop, isLoading, lastError } = useNovaSSE("/.netlify/functions/nova");
+function renderContentWithLinks(content:string){
+  const parts = content.split(URL_RE);
+  return parts.map((part,i)=>{
+    if(URL_RE.test(part)){
+      return <a key={`url-${i}`} href={part} target="_blank" rel="nofollow noopener noreferrer"
+        className="underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80">{part}</a>;
+    }
+    return <span key={`t-${i}`}>{part}</span>;
+  });
+}
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [streaming, setStreaming] = useState<string>("");
-  const [input, setInput] = useState<string>("");
+const URL_RE2 = /(https?:\/\/[^\s)]+)(?=\)|\s|$)/g;
 
-  const listRef = useRef<HTMLDivElement>(null);
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: number;
+  type?: 'text' | 'tips' | 'outfits';
+  data?: any;
+}
 
-  const headers = useMemo(
-    () => ({
-      "x-fitfi-uid": uid || (typeof localStorage !== "undefined" ? localStorage.getItem("fitfi_uid") || undefined : undefined),
-      "x-fitfi-tier": tier || (typeof localStorage !== "undefined" ? localStorage.getItem("fitfi_tier") || undefined : undefined),
-    }),
-    [uid, tier]
-  );
+const NovaChat: React.FC = () => {
+  const { user } = useUser();
+  const conn = useNovaConn();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [contextMode, setContextMode] = useState<'outfits'|'archetype'|'shop'>('outfits');
+  const [isTyping, setIsTyping] = useState(false);
+  const [showTypingDelay, setShowTypingDelay] = useState(false);
+  const [cards, setCards] = useState<NovaOutfitsPayload | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const [quotaOpen, setQuotaOpen] = useState(false);
+  const userTier = getUserTier();
 
-  const append = useCallback((role: "user" | "assistant", content: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: makeId(),
-        role,
-        content,
-        ts: Date.now(),
-      },
-    ]);
-    // auto-scroll
-    requestAnimationFrame(() => {
-      listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-    });
+  // Initialize Nova with greeting
+  useEffect(() => {
+    if (!isInitialized && user?.name) {
+      initializeNova();
+    }
+  }, [user?.name, isInitialized]);
+
+  // Listen to prefill and context events
+  useEffect(() => {
+    const onPrefill = (e: any) => {
+      const { prompt, submit } = e.detail || {};
+      if (!prompt) return;
+      setInput(prompt);
+      if (submit && typeof handleSubmit === 'function') {
+        handleSubmit(new Event('submit') as any);
+        
+        // Track stream completion
+        if (typeof track === 'function') track('nova_stream_done', {
+          event_category: 'ai_interaction',
+          event_label: 'stream_completed',
+          user_id: user?.id,
+          context: contextMode
+        });
+      }
+    };
+    const onSetCtx = (e: any) => {
+      const m = e.detail?.mode;
+      if (m) setContextMode(m);
+    };
+    window.addEventListener('nova:prefill', onPrefill as any);
+    window.addEventListener('nova:set-context', onSetCtx as any);
+    return () => {
+      window.removeEventListener('nova:prefill', onPrefill as any);
+      window.removeEventListener('nova:set-context', onSetCtx as any);
+    };
   }, []);
 
-  const onEvent = useCallback(
-    (e: NovaEvent) => {
-      if (e.type === "delta") {
-        setStreaming((s) => (s ? s + e.delta : e.delta));
-      } else if (e.type === "complete") {
-        // finalize current assistant message
-        const finalText = e.message || streaming;
-        if (finalText && finalText.trim().length > 0) {
-          append("assistant", finalText);
+  // Auto-scroll to bottom
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const initializeNova = async () => {
+    try {
+      const agent = await loadNovaAgent();
+      const greeting = await agent.greet(user?.name || 'daar');
+      
+      setMessages([{
+        id: 'greeting',
+        role: 'assistant',
+        content: greeting,
+        timestamp: Date.now(),
+        type: 'text'
+      }]);
+      
+      setIsInitialized(true);
+      
+      // Track Nova initialization
+      if (typeof track === 'function') track('nova_chat_initialized', {
+        event_category: 'ai_interaction',
+        event_label: 'greeting_sent',
+        user_id: user?.id
+      });
+    } catch (error) {
+      console.warn('[NovaChat] Initialization failed:', error);
+      
+      // Fallback greeting
+      setMessages([{
+        id: 'fallback-greeting',
+        role: 'assistant',
+        content: `Hoi ${user?.name || 'daar'}! Ik ben Nova, je AI-stylist. Waar kan ik je mee helpen?`,
+        timestamp: Date.now(),
+        type: 'text'
+      }]);
+      
+      setIsInitialized(true);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!input.trim() || isLoading) return;
+
+    // Check quota before making request
+    const tier = getUserTier();
+    const userId = user?.id || 'anon';
+    
+    if (!checkQuotaLimit(tier, userId)) {
+      setQuotaOpen(true);
+      return;
+    }
+
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: input.trim(),
+      timestamp: Date.now(),
+      type: 'text'
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+    
+    // Clear previous cards for new conversation
+    setCards(null);
+    
+    // Show typing delay first (600-1200ms)
+    const typingDelay = 600 + Math.random() * 600;
+    setShowTypingDelay(true);
+    
+    setTimeout(() => {
+      setShowTypingDelay(false);
+      setIsTyping(true);
+    }, typingDelay);
+    
+    // Create abort controller for this request
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+    
+    // Set connection status and start timing
+    conn.setStatus('connecting');
+    const tStart = performance.now();
+    let firstChunkAt: number | null = null;
+
+    // Fire analytics + bubble state
+    window.dispatchEvent(new CustomEvent('nova:message', { detail: { role: 'user' } }));
+    if (typeof track === 'function') track('nova_message_send', { context: contextMode });
+
+    // Track user message
+    if (typeof track === 'function') track('nova_user_message', {
+      event_category: 'ai_interaction',
+      event_label: 'message_sent',
+      message_length: userMessage.content.length,
+      user_id: user?.id
+    });
+
+    try {
+      // Create assistant message placeholder
+      const assistantId = `assistant-${Date.now()}`;
+      let acc = '';
+      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '', timestamp: Date.now(), type: 'text' }]);
+      
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+      setIsTyping(true);
+      
+      try {
+        const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
+        for await (const delta of streamChat({ 
+          mode: contextMode as NovaMode, 
+          messages: history, 
+          signal: abortRef.current.signal,
+          onEvent: (evt) => {
+            if (evt.type === 'json' && evt.data?.type === 'outfits') {
+              setCards(evt.data);
+            }
+            if (evt.type === 'meta') {
+              if (evt.model) conn.setMeta({ model: evt.model });
+              if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
+            } else if (evt.type === 'error') {
+              // quota signal vanuit server
+              if ((evt as any).code === 'quota_exceeded') {
+                setQuotaOpen(true);
+              }
+            } else if (evt.type === 'chunk') {
+              if (!firstChunkAt) {
+                firstChunkAt = performance.now();
+                conn.setMeta({ ttfbMs: Math.max(0, Math.round(firstChunkAt - tStart)) });
+                conn.setStatus('streaming');
+              }
+            } else if (evt.type === 'done') {
+              // failsafe: verwijder eventuele JSON markers uit de laatste assistant content
+              setMessages(prev => prev.map(m => {
+                if (m.id !== assistantId) return m;
+                const START = '<<<FITFI_JSON>>>';
+                const END = '<<<END_FITFI_JSON>>>';
+                let c = m.content || '';
+                const si = c.indexOf(START);
+                const ei = c.indexOf(END, si + START.length);
+                if (si >= 0 && ei > si) {
+                  c = c.slice(0, si) + c.slice(ei + END.length);
+                }
+                return { ...m, content: c };
+              }));
+              conn.setStatus('done');
+            } else if (evt.type === 'error') {
+              conn.setStatus('error');
+            }
+          }
+        })) {
+          acc += delta;
+          setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
+          scrollToBottom();
         }
-        setStreaming("");
-        track("nova:complete", { len: finalText?.length || 0, usage: (e as any).usage });
-      } else if (e.type === "error") {
-        track("nova:error", { message: e.message, code: e.code });
-      } else if (e.type === "nova:prompt-login") {
-        track("nova:prompt-login");
+        
+        // Increment usage on successful completion
+        incrementUsage(getUserTier(), user?.id || 'anon');
+      } catch (e: any) {
+        conn.setStatus('error');
+        const errorMsg = e?.message || String(e);
+        let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
+        
+        if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
+          content = 'Nova is nog niet actief (SSE/OpenAI). Zet OPENAI_API_KEY in Netlify en deploy de function.';
+        }
+        
+        setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content } : m));
+      } finally {
+        setIsTyping(false);
+        abortRef.current = null;
+        
+        // Set final status if not already error
+        if (conn.status !== 'error') {
+          conn.setStatus('done');
+        }
       }
-    },
-    [append, streaming]
-  );
+      
+      // Track Nova response
+      if (typeof track === 'function') track('nova_response_generated', {
+        event_category: 'ai_interaction',
+        event_label: 'streaming_complete',
+        response_length: acc.length,
+        user_id: user?.id
+      });
 
-  const handleSend = useCallback(async () => {
-    const trimmed = input.trim();
-    if (!trimmed || isLoading) return;
+    } finally {
+      setIsLoading(false);
+      
+      // Track stream completion
+      if (typeof track === 'function') track('nova_stream_done', {
+        event_category: 'ai_interaction',
+        event_label: 'stream_completed',
+        user_id: user?.id,
+        context: contextMode
+      });
+    }
+  };
 
-    append("user", trimmed);
-    setInput("");
-    setStreaming("");
+  const handleAbort = () => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      toast.success('Nova gestopt', { duration: 1500 });
+    }
+  };
 
-    const ctx: Record<string, unknown> = { ...(initialContext || {}) };
-    const history = messages
-      .slice(-10)
-      .map((m) => ({ role: m.role, content: m.content }));
+  const getReplyContent = (reply: NovaReply): string => {
+    switch (reply.type) {
+      case 'text':
+        return reply.message;
+      case 'tips':
+        return `${reply.title}\n\n${reply.bullets.map(bullet => `• ${bullet}`).join('\n')}`;
+      case 'outfits':
+        return `${reply.title}\n\n${reply.items.map(item => `• ${item.name}: ${item.description}${item.price ? ` (€${item.price})` : ''}`).join('\n')}`;
+      default:
+        return 'Nova heeft een antwoord gestuurd.';
+    }
+  };
 
-    await start(
-      {
-        prompt: trimmed,
-        context: ctx,
-        messages: history,
-      },
-      headers,
-      onEvent
+  const handleCopyMessage = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      toast.success('Antwoord gekopieerd!', { duration: 2000 });
+      
+      // Track copy action
+      if (typeof track === 'function') track('nova_message_copied', {
+        event_category: 'ai_interaction',
+        event_label: 'copy_response',
+        content_length: content.length,
+        user_id: user?.id
+      });
+    } catch (error) {
+      console.warn('Copy failed:', error);
+      toast.error('Kopiëren mislukt');
+    }
+  };
+  const renderMessage = (message: Message) => {
+    const isUser = message.role === 'user';
+    
+    return (
+      <div
+        key={message.id}
+        className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}
+      >
+        <div
+          className={[
+            'max-w-[85%] rounded-2xl px-3 py-2 shadow-sm',
+            isUser ? 'ml-auto bg-[var(--ff-bubble-user)] text-ink shadow-[0_2px_12px_rgba(13,27,42,0.04)]'
+                   : 'mr-auto bg-[var(--ff-panel)] text-ink shadow-[0_4px_20px_rgba(13,27,42,0.06)]'
+          ].join(' ')}
+        >
+          {/* Assistant message header with copy button */}
+          {!isUser && (
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-5 h-5 bg-[#89CFF0] rounded-full flex items-center justify-center">
+                  <Bot className="w-3 h-3 text-white" />
+                </div>
+                <span className="text-sm font-medium text-[#89CFF0]">Nova</span>
+                <span className="px-2 py-0.5 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+                  AI
+                </span>
+              </div>
+              
+              <button
+                onClick={() => handleCopyMessage(message.content)}
+                className="p-1 rounded hover:bg-white/10 transition-colors group"
+                aria-label="Kopieer antwoord"
+                title="Kopieer naar klembord"
+              >
+                <Copy className="w-3 h-3 text-white/60 group-hover:text-white/80" />
+              </button>
+            </div>
+          )}
+          
+          {isUser ? (
+            <div className="whitespace-pre-wrap leading-relaxed">
+              {message.content}
+            </div>
+          ) : (
+            <div 
+              className="prose prose-sm max-w-none text-ink" 
+              data-testid="nova-assistant"
+              dangerouslySetInnerHTML={{ __html: mdNova(message.content) }} 
+            />
+          )}
+          
+          {message.data && message.type === 'outfits' && (
+            <div className="mt-3 pt-3 border-t border-white/20">
+              <div className="text-xs text-white/80">
+                {message.data.items?.length || 0} outfit suggesties
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     );
-  }, [append, headers, initialContext, input, isLoading, messages, onEvent, start]);
-
-  const handleStop = useCallback(() => {
-    stop();
-    setStreaming("");
-  }, [stop]);
+  };
 
   return (
-    <section className={`ff-card card p-4 md:p-5 ${className || ""}`} aria-label="Nova chat">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3 border-b border-ui pb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full skeleton" aria-hidden="true" />
-          <div>
-            <h2 className="text-ink font-semibold leading-none">Nova</h2>
-            <p className="text-muted text-sm">Jouw AI-stylist — premium & to the point</p>
+    <div className="flex flex-col h-full">
+      {/* Enhanced Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center shadow-sm">
+            <Bot className="w-4 h-4 text-white" />
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {!isLoading ? (
-            <span className="badge badge-accent text-xs">Klaar</span>
-          ) : (
-            <span className="badge badge-accent text-xs">Bezig…</span>
-          )}
+          <div>
+            <h2 className="font-semibold text-ink">Nova AI</h2>
+            <div className="flex items-center space-x-2">
+              <span className="px-2 py-0.5 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+                Premium Stylist
+              </span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Online"></div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Messages */}
       <div
-        ref={listRef}
-        className="mt-4 max-h-[52vh] overflow-auto pr-1"
+        ref={messagesContainerRef}
+        className="relative flex-1 min-h-0 overflow-y-auto p-4 md:p-5 space-y-3 bg-white/70 text-ink"
+        role="log"
         aria-live="polite"
-        aria-busy={isLoading}
+        aria-relevant="additions text"
       >
-        <NovaMessageList messages={messages} streamingText={streaming} />
+        {messages.map(renderMessage)}
+        
+        {(showTypingDelay || isTyping) && <TypingSkeleton />}
+        
+        {isLoading && (
+          <div className="flex justify-start mb-4">
+            <div className="bg-[var(--ff-panel)] text-ink border border-gray-100 rounded-2xl px-4 py-3 flex items-center space-x-2 shadow-[0_4px_20px_rgba(13,27,42,0.06)]">
+              <Loader className="w-4 h-4 animate-spin text-[#89CFF0]" />
+              <span className="text-sm text-gray-600">Nova denkt na...</span>
+            </div>
+          </div>
+        )}
+        
+        {/* Outfit Cards */}
+        {cards && <OutfitCards data={cards} blur={userTier==='visitor'} onLockedClick={()=>setQuotaOpen(true)} />}
+        
+        {/* Outfit Explanations */}
+        {cards && cards.outfits.length > 0 && (
+          <div className="mt-4 space-y-3">
+            {cards.outfits.map((outfit, index) => (
+              <div key={outfit.id} className="bg-[#89CFF0]/10 rounded-2xl p-4 border border-[#89CFF0]/20">
+                <div className="flex items-center space-x-2 mb-2">
+                  <MessageCircle className="w-4 h-4 text-[#89CFF0]" />
+                  <span className="text-sm font-medium text-[#89CFF0]">
+                    Waarom outfit {index + 1} perfect bij je past:
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {generateNovaExplanation(
+                    {
+                      id: outfit.id,
+                      title: outfit.title,
+                      description: outfit.why || '',
+                      archetype: 'casual_chic', // Would be dynamic based on user profile
+                      occasion: outfit.occasion || 'Casual',
+                      products: outfit.items.map(item => ({
+                        id: `${outfit.id}-${item.role}`,
+                        name: item.name,
+                        type: item.role,
+                        category: item.role,
+                        brand: undefined,
+                        styleTags: [],
+                        imageUrl: undefined,
+                        price: undefined,
+                        affiliateUrl: undefined,
+                        season: ['spring', 'summer', 'autumn', 'winter']
+                      })),
+                      imageUrl: undefined,
+                      tags: [],
+                      matchPercentage: outfit.matchScore,
+                      explanation: ''
+                    },
+                    user ? {
+                      id: user.id,
+                      name: user.name,
+                      email: user.email,
+                      stylePreferences: {
+                        casual: 3,
+                        formal: 3,
+                        sporty: 3,
+                        vintage: 3,
+                        minimalist: 3
+                      }
+                    } : undefined
+                  )}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Error */}
-      {lastError && (
-        <div className="mt-3">
-          <div className="badge badge-danger text-sm">
-            Fout: <span className="ml-1">{lastError}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Composer */}
-      <form
-        className="mt-4 flex items-end gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void handleSend();
-        }}
-      >
-        <label className="w-full">
-          <span className="sr-only">Bericht aan Nova</span>
-          <textarea
+      {/* Input */}
+      <div className="p-4 border-t border-gray-100 bg-white/95 backdrop-blur-sm">
+        <form onSubmit={handleSubmit} className="flex space-x-2">
+          <input
+            ref={inputRef}
+            type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Stel je stijlvraag of laat Nova een outfit uitleggen…"
-            rows={2}
-            className="w-full resize-none rounded-xl border border-ui bg-surface p-3 text-ink focus:outline-none focus:ring-2 ring-brand ring-offset-2 ring-offset-surface"
+            placeholder="Vraag Nova om stijladvies..."
+            className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm
+                       text-ink placeholder-muted caret-ink outline-none
+                       focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/30 focus:shadow-[0_4px_20px_rgba(137,207,240,0.15)]"
           />
-        </label>
-
-        <div className="flex flex-col gap-2">
-          <button
-            type="submit"
-            className="btn btn-solid btn-md ff-focus"
-            disabled={isLoading || input.trim().length === 0}
-            aria-disabled={isLoading || input.trim().length === 0}
-            aria-label="Verstuur naar Nova"
-          >
-            Verstuur
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            onClick={handleStop}
-            disabled={!isLoading && !streaming}
-            aria-disabled={!isLoading && !streaming}
-            aria-label="Stop streaming"
-          >
-            Stop
-          </button>
-        </div>
-      </form>
-    </section>
+          
+          {isLoading ? (
+            <button
+              type="button"
+              onClick={handleAbort}
+              className="bg-red-500 hover:bg-red-600 text-white rounded-2xl px-4 py-2 transition-colors shadow-sm hover:shadow-md"
+              title="Stop Nova"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              aria-label="Verstuur bericht"
+              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] rounded-2xl px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md hover:scale-105"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          )}
+        </form>
+      </div>
+      
+      {/* Quota Modal */}
+      {quotaOpen && <QuotaModal tier={userTier} userId={user?.id} onClose={()=>setQuotaOpen(false)} />}
+    </div>
   );
 };
 

@@ -1,63 +1,29 @@
-/* src/styles/tokens.css */
-/* FitFi vNext — Light/Neutral Beige — CANONIEK */
+/* FitFi Design Tokens */
 :root {
-  /* Palet */
-  --color-bg: #F7F3EC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E2333;
-  --color-muted: #6B7280;
-
-  --color-primary: #9B8A7A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #857568;   /* hover */
-  --ff-color-primary-700: #6F6156;   /* active + CTA-bg (AA) */
-
-  --color-accent: #D8CABA;
-  --color-border: rgba(30, 35, 51, 0.08);
-
-  /* Status */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger:  #DC2626;
-
-  /* Overlays */
-  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
-  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
-
-  /* Radii */
+  /* Colors */
+  --color-midnight: #0D1B2A;
+  --color-white: #FFFFFF;
+  --color-accent: #89CFF0;
+  --color-surface: #F6F6F6;
+  
+  /* Typography */
+  --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
   --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
-
-  /* Shadows */
-  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
-  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
-
-  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
-  font-synthesis-weight: none;
+  --radius-full: 9999px;
 }
 
-/* Basiselementen */
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Cards */
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-}
-
-/* CTA – solid (AA) */
-.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
-.ff-cta:hover { background: var(--ff-color-primary-600); }
-
-/* Focus-ring tokenized */
-.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
-
-/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
+/* Hide legacy Nova dock if present */
+.nova-dock, .nova-chatbar, #nova-bottom-bar { display: none !important; }
+/* Niets toevoegen dat .fixed of hoge z-index elementen globaal verbergt */

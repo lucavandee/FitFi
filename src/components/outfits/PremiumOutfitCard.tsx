@@ -12,8 +12,6 @@ interface OutfitItem {
   image: string;
   category: string;
 }
-import { trackOutfitExplain } from '@/hooks/useABTesting';
-import { useEffect, useRef } from 'react';
 
 interface PremiumOutfitCardProps {
   outfit: {
@@ -34,31 +32,8 @@ export default function PremiumOutfitCard({
   onSave, 
   onShare 
 }: PremiumOutfitCardProps) {
-  const explainRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          trackOutfitExplain(outfit.id);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (explainRef.current) {
-      observer.observe(explainRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [outfit.id]);
-
   return (
-    <PremiumCard>
-    <div 
-      className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-      data-kind="outfit-card"
-    >
+    <PremiumCard hover className="group">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -156,12 +131,6 @@ export default function PremiumOutfitCard({
           </PremiumButton>
         </div>
       </div>
-      
-      <div className="explain">
-      <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-      </div>
-      </div>
-    </div>
     </PremiumCard>
   );
 }

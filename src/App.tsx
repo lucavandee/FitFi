@@ -16,10 +16,12 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
 import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
 
+// Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
 const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
 
+// Lazy load all pages with lazyAny for optimal code-splitting
 const HomePage = lazyAny(() => import('@/pages/HomePage'));
 const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
 const LoginPage = lazyAny(() => import('@/pages/LoginPage'));
@@ -61,14 +63,39 @@ const HealthCheckPage = lazyAny(() => import('@/pages/HealthCheckPage'));
 const BrandSafetyPage = lazyAny(() => import('@/pages/BrandSafetyPage'));
 const DisclosurePage = lazyAny(() => import('@/pages/DisclosurePage'));
 const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
+const CookiesPage = lazyAny(() => import('@/pages/CookiesPage'));
+const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
 
-const NOVA_ENABLED = true;
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-export default function App() {
+// Nova feature flag
+const NOVA_ENABLED = (import.meta.env.VITE_NOVA_ENABLED ?? 'true') !== 'false';
+// NotFound component
+const NotFound: React.FC = () => (
+  <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center">
+    <h1 className="text-2xl font-semibold">Pagina niet gevonden</h1>
+    <p className="mt-2 text-slate-600">
+      De pagina die je zoekt bestaat niet of is verplaatst.
+    </p>
+    <Link to="/" className="mt-4 underline">
+      ← Terug naar home
+    </Link>
+  </div>
+);
+
+const App: React.FC = () => {
   return (
-    <>
-      <div id="app-root" />
+    <CrashGate>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <UserProvider>
@@ -78,72 +105,136 @@ export default function App() {
                   <Router>
                     <NavigationServiceInitializer />
                     <ScrollToTop />
-                    <CrashGate>
-                      {/* Tokens-first app wrapper (geen gradients) */}
-                      <div className="min-h-screen bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
-                        <Navbar />
-                        <Suspense fallback={<div className="p-8">Loading…</div>}>
-                          <Routes>
-                            {/* Public */}
-                            <Route path="/" element={<LandingPage />} />
-                            <Route path="/home" element={<HomePage />} />
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/inloggen" element={<LoginPage />} />
-                            <Route path="/registreren" element={<RegisterPage />} />
-                            <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
-                            <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
-                            <Route path="/over-ons" element={<AboutPage />} />
-                            <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-                            <Route path="/prijzen" element={<PricingPage />} />
-                            <Route path="/blog" element={<BlogIndexPage />} />
-                            <Route path="/blog/:slug" element={<BlogDetailPage />} />
-                            <Route path="/contact" element={<ContactPage />} />
-                            <Route path="/veelgestelde-vragen" element={<FAQPage />} />
-                            <Route path="/juridisch" element={<LegalPage />} />
-                            <Route path="/ondersteuning" element={<SupportPage />} />
-                            <Route path="/help" element={<HelpCenterPage />} />
-                            <Route path="/feedback" element={<FeedbackPage />} />
-                            <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
-                            <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
-                            <Route path="/product/:id" element={<ProductPage />} />
-                            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                            <Route path="/veel-gestelde-vragen" element={<Navigate to="/veelgestelde-vragen" replace />} />
-                            {/* Protected */}
-                            <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
-                            <Route path="/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
-                            <Route path="/dynamic-onboarding" element={<ProtectedRoute><DynamicOnboardingPage /></ProtectedRoute>} />
-                            <Route path="/dynamic-results" element={<ProtectedRoute><DynamicResultsPage /></ProtectedRoute>} />
-                            <Route path="/enhanced-resultaten" element={<ProtectedRoute><EnhancedResultsPage /></ProtectedRoute>} />
-                            <Route path="/results" element={<EnhancedResultsPage />} />
-                            <Route path="/resultaten" element={<Navigate to="/results" replace />} />
-                            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-                            <Route path="/outfits" element={<ProtectedRoute><OutfitsPage /></ProtectedRoute>} />
-                            <Route path="/tribes" element={<ProtectedRoute><TribesPage /></ProtectedRoute>} />
-                            <Route path="/tribes/:id" element={<ProtectedRoute><TribeDetailPage /></ProtectedRoute>} />
-                            <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
-                            <Route path="/feed" element={<FeedPage />} />
-                            <Route path="/health" element={<HealthCheckPage />} />
-                            <Route path="/brand-safety" element={<BrandSafetyPage />} />
-                            <Route path="/disclosure" element={<DisclosurePage />} />
-                            <Route path="/privacy" element={<PrivacyPage />} />
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                          </Routes>
-                        </Suspense>
-
-                        {/* Nova AI */}
-                        {NOVA_ENABLED && (
-                          <>
-                            <Suspense fallback={null}><NovaLauncher /></Suspense>
-                            <Suspense fallback={null}><NovaBubble /></Suspense>
-                          </>
-                        )}
-
-                        {/* Banners/Portals */}
-                        <Suspense fallback={null}><CookieBanner /></Suspense>
-                        <NovaLoginPromptHost />
-                        <NovaChatMount />
-                      </div>
-                    </CrashGate>
+                    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 relative">
+                      <Navbar />
+                      <Suspense fallback={<div className="p-8">Loading…</div>}>
+                        <Routes>
+                        
+                          {/* Public Routes */}
+                          <Route path="/" element={<LandingPage />} />
+                          <Route path="/home" element={<HomePage />} />
+                          <Route path="/login" element={<LoginPage />} />
+                          <Route path="/inloggen" element={<LoginPage />} />
+                          <Route path="/registreren" element={<RegisterPage />} />
+                          <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
+                          <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
+                          <Route path="/over-ons" element={<AboutPage />} />
+                          <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                          <Route path="/prijzen"  element={<PricingPage />} />
+                          <Route path="/blog" element={<BlogIndexPage />} />
+                          <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                          <Route path="/contact" element={<ContactPage />} />
+                          <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+                          <Route path="/juridisch" element={<LegalPage />} />
+                          <Route path="/ondersteuning" element={<SupportPage />} />
+                          <Route path="/help" element={<HelpCenterPage />} />
+                          <Route path="/feedback" element={<FeedbackPage />} />
+                          <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
+                          <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
+                          <Route path="/product/:id" element={<ProductPage />} />
+                          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                          <Route path="/algemene-voorwaarden" element={<TermsPage />} />
+                          <Route path="/bedankt" element={<ThankYouPage />} />
+                          <Route path="/profile" element={<ProfilePage />} />
+                          
+                          {/* Legal & Compliance Routes */}
+                          <Route path="/brand-safety" element={<BrandSafetyPage />} />
+                          <Route path="/disclosure" element={<DisclosurePage />} />
+                          <Route path="/privacy" element={<PrivacyPage />} />
+                          <Route path="/cookies" element={<CookiesPage />} />
+                          <Route path="/terms" element={<TermsPage />} />
+                        
+                          {/* Public Routes */}
+                          <Route path="/feed" element={<FeedPage />} />
+                          <Route path="/shop" element={<ShopRedirect />} />
+                          
+                          {/* Protected Routes */}
+                          <Route path="/onboarding" element={
+                            <ProtectedRoute>
+                              <OnboardingPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/quiz" element={
+                            <ProtectedRoute>
+                              <QuizPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/dynamic-onboarding" element={
+                            <ProtectedRoute>
+                              <DynamicOnboardingPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/results" element={<EnhancedResultsPage />} />
+                          <Route path="/resultaten" element={<Navigate to="/results" replace />} />
+                          <Route path="/dynamic-results" element={
+                            <ProtectedRoute>
+                              <DynamicResultsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/enhanced-resultaten" element={
+                            <ProtectedRoute>
+                              <EnhancedResultsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/dashboard" element={
+                            <ProtectedRoute>
+                              <DashboardPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/outfits" element={
+                            <ProtectedRoute>
+                              <OutfitsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/gamification" element={
+                            <ProtectedRoute>
+                              <GamificationPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/analytics" element={
+                            <ProtectedRoute allowedRoles={['admin']} redirectTo="/login">
+                              <AnalyticsPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/tribes" element={
+                            <ProtectedRoute>
+                              <TribesPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/tribes/:slug" element={
+                            <ProtectedRoute>
+                              <TribeDetailPage />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/tribes/id/:tribeId" element={
+                            <ProtectedRoute>
+                              <TribeDetailPage />
+                            </ProtectedRoute>
+                          } />
+                          
+                          {/* Health Check Route */}
+                          <Route path="__health" element={<HealthCheckPage />} />
+                        
+                          {/* Fallback */}
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Suspense>
+                      
+                      {/* Nova AI Chat - Always mounted with fail-safe */}
+                      {NOVA_ENABLED && (
+                        <>
+                          <Suspense fallback={null}><NovaLauncher /></Suspense>
+                          <Suspense fallback={null}><NovaBubble /></Suspense>
+                        </>
+                      )}
+                      
+                      {/* Cookie Consent Banner */}
+                      <Suspense fallback={null}><CookieBanner /></Suspense>
+                      
+                      {/* Nova Login Prompt Host */}
+                      <NovaLoginPromptHost />
+                      <NovaChatMount />
+                    </div>
                   </Router>
                 </ErrorBoundary>
               </OnboardingProvider>
@@ -151,7 +242,8 @@ export default function App() {
           </UserProvider>
         </ThemeProvider>
       </QueryClientProvider>
-      <AppPortal />
-    </>
+    </CrashGate>
   );
 }
+
+export default App;
