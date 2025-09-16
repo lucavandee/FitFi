@@ -1,172 +1,131 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
-import SmartImage from '@/components/media/SmartImage';
+import React from "react";
+import { Sparkles, ArrowRight, Eye } from "lucide-react";
+import SwipeCarousel from "@/components/ui/SwipeCarousel";
+import { track } from "@/utils/analytics";
 
-interface PreviewItem {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  quote: string;
-}
+const PREVIEWS = [
+  { 
+    title: "Smart casual — Italiaans", 
+    why: "Warme taupe + clean lijnen = relaxed chic.",
+    category: "Casual",
+    season: "Herfst/Winter"
+  },
+  { 
+    title: "Diner — ton-sur-ton", 
+    why: "Ton-sur-ton verlengt je silhouet; merino oogt verfijnd.",
+    category: "Elegant", 
+    season: "Alle seizoenen"
+  },
+  { 
+    title: "Smart denim", 
+    why: "Indigo contrasteert subtiel; suède voegt luxe textuur toe.",
+    category: "Casual-chic",
+    season: "Lente/Zomer"
+  },
+  {
+    title: "Business casual",
+    why: "Gestructureerde blazer + zachte knit = professioneel maar toegankelijk.",
+    category: "Zakelijk",
+    season: "Alle seizoenen"
+  },
+  {
+    title: "Weekend comfort",
+    why: "Natuurlijke materialen + neutrale tinten = moeiteloos stijlvol.",
+    category: "Comfort",
+    season: "Alle seizoenen"
+  }
+];
 
-interface PreviewCarouselProps {
-  className?: string;
-}
-
-const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const previews: PreviewItem[] = [
-    {
-      id: 'personality',
-      title: "Persoonlijkheidsanalyse",
-      description: "Ontdek wat jouw stijlkeuzes vertellen over jouw karakter",
-      image: "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      quote: "Jouw voorkeur voor minimalisme toont leiderschapspotentieel."
-    },
-    {
-      id: 'insights',
-      title: "Kritische Stijl-insights",
-      description: "De top 3 verbeterpunten voor jouw stijl",
-      image: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      quote: "Draag vaker contrastkleuren om autoriteit uit te stralen."
-    },
-    {
-      id: 'recommendations',
-      title: "Nova's Aanbevelingen",
-      description: "Gepersonaliseerde outfit-tips en voorbeelden",
-      image: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      quote: "Deze combinatie versterkt jouw natuurlijke charisma."
-    },
-    {
-      id: 'wishlist',
-      title: "Persoonlijke Wishlist",
-      description: "Perfect passende producten geselecteerd door Nova",
-      image: "https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      quote: "Deze items passen perfect bij jouw levensstijl en doelen."
-    }
-  ];
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % previews.length);
+const PreviewCarousel: React.FC<{ className?: string }> = ({ className = "" }) => {
+  const handlePreviewClick = (preview: typeof PREVIEWS[0], index: number) => {
+    track('preview_card_click', {
+      preview_title: preview.title,
+      preview_category: preview.category,
+      preview_index: index,
+      section: 'landing_preview_carousel'
+    });
   };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + previews.length) % previews.length);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
+  const handleCTAClick = () => {
+    track('cta_click', {
+      cta_text: 'Start je stijlanalyse',
+      section: 'preview_carousel',
+      position: 'bottom'
+    });
   };
 
   return (
-    <section className={`section bg-[color:var(--color-bg)] ${className}`} aria-labelledby="preview-title">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 id="preview-heading" className="text-3xl md:text-4xl font-light text-gray-900 mb-6">
-            Visuele Preview van jouw AI Style Report
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Krijg een voorproefje van de diepgaande inzichten die Nova voor jou heeft
-          </p>
-        </div>
-        
-        <div className="relative max-w-4xl mx-auto">
-          {/* Main Carousel */}
-          <div className="relative overflow-hidden rounded-3xl bg-white shadow-xl">
-            <div 
-              className="flex transition-transform duration-500 ease-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {previews.map((preview) => (
-                <div key={preview.id} className="w-full flex-shrink-0">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                    {/* Image */}
-                    <div className="relative aspect-[4/5] lg:aspect-auto">
-                      <SmartImage
-                        src={preview.image}
-                        alt={`Preview van ${preview.title} sectie`}
-                        id={preview.id}
-                        kind="generic"
-                        aspect="4/5"
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent lg:hidden"></div>
+    <section className={`section bg-gradient-to-b from-[color:var(--color-bg)] to-[color:var(--color-surface)] ${className}`} aria-labelledby="preview-title">
+      <div className="container">
+        <header className="text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 chip mb-4">
+            <Eye className="w-4 h-4" />
+            <span>Voorproefje</span>
+          </div>
+          <h2 id="preview-title" className="hero__title">Zo zien jouw outfits eruit</h2>
+          <p className="lead mt-3">Elke look komt met een korte uitleg waarom het bij jou past.</p>
+        </header>
+
+        <div className="mt-8">
+          <SwipeCarousel ariaLabel="Outfit previews" className="pb-4">
+            {PREVIEWS.map((preview, index) => (
+              <article 
+                key={preview.title} 
+                className="subcard interactive-elevate cursor-pointer group"
+                onClick={() => handlePreviewClick(preview, index)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handlePreviewClick(preview, index);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Bekijk outfit: ${preview.title}`}
+              >
+                <div className="subcard__inner">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="inline-flex items-center gap-2 text-xs text-[color:var(--color-muted)]">
+                      <span className="chip text-xs py-1 px-2">{preview.category}</span>
+                      <span>•</span>
+                      <span>{preview.season}</span>
                     </div>
-                    
-                    {/* Content */}
-                    <div className="p-8 lg:p-12 flex flex-col justify-center">
-                      <div className="mb-6">
-                        <div className="inline-flex items-center space-x-2 text-sm text-[#bfae9f] font-medium mb-4">
-                          <Eye size={16} />
-                          <span>Preview</span>
-                        </div>
-                        
-                        <h3 className="text-2xl lg:text-3xl font-medium text-gray-900 mb-4">
-                          {preview.title}
-                        </h3>
-                        
-                        <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                          {preview.description}
-                        </p>
-                      </div>
-                      
-                      {/* Quote */}
-                      <div className="bg-[#bfae9f]/10 rounded-xl p-6 border-l-4 border-[#bfae9f]">
-                        <p className="text-lg italic text-gray-700 leading-relaxed">
-                          "{preview.quote}"
-                        </p>
-                        <div className="mt-3 text-sm text-[#bfae9f] font-medium">
-                          — Nova AI
-                        </div>
-                      </div>
-                    </div>
+                    <Sparkles className="w-4 h-4 text-[color:var(--color-primary)] opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200" />
+                  </div>
+                  
+                  <h3 className="subcard__title group-hover:text-[color:var(--color-primary)] transition-colors duration-200">
+                    {preview.title}
+                  </h3>
+                  
+                  <p className="subcard__kicker mt-2">
+                    <strong className="text-[color:var(--color-text)]">Waarom dit werkt:</strong> {preview.why}
+                  </p>
+                  
+                  <div className="mt-4 pt-3 border-t border-[color:var(--color-border)] flex items-center justify-between">
+                    <span className="text-xs text-[color:var(--color-muted)]">Klik voor meer details</span>
+                    <ArrowRight className="w-4 h-4 text-[color:var(--color-primary)] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Navigation */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
-            aria-label="Vorige preview"
-          >
-            <ChevronLeft size={20} className="text-gray-600" />
-          </button>
-          
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
-            aria-label="Volgende preview"
-          >
-            <ChevronRight size={20} className="text-gray-600" />
-          </button>
-          
-          {/* Dots */}
-          <div className="flex justify-center space-x-3 mt-8">
-            {previews.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-[#bfae9f]' : 'bg-gray-300'
-                }`}
-                aria-label={`Ga naar preview ${index + 1}`}
-              />
+              </article>
             ))}
-          </div>
+          </SwipeCarousel>
         </div>
-        
-        {/* Bottom Text */}
-        <div className="text-center mt-12">
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Dit is slechts een voorproefje. Jouw volledige AI Style Report bevat nog veel meer 
-            gepersonaliseerde inzichten en aanbevelingen.
-          </p>
+
+        {/* Bottom CTA */}
+        <div className="mt-8 text-center">
+          <div className="inline-flex flex-col items-center gap-4 p-6 rounded-2xl bg-gradient-to-br from-[color:var(--color-surface)] to-[color:var(--color-bg)] border border-[color:var(--color-border)]">
+            <p className="text-sm text-[color:var(--color-muted)] max-w-md">
+              Krijg jouw persoonlijke stijlanalyse met outfits die perfect bij je passen
+            </p>
+            <button 
+              onClick={handleCTAClick}
+              className="btn btn-primary btn-lg group"
+              aria-label="Start je persoonlijke stijlanalyse"
+            >
+              <span>Start je stijlanalyse</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
