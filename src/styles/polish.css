@@ -164,6 +164,15 @@ label:has(.input:focus), label:has(.textarea:focus), label:has(.select:focus){
 .sticky-cta__inner{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; max-width:80rem; margin-inline:auto; }
 .sticky-cta__text{ display:flex; flex-direction:column; font-size:.9rem; }
 
+/* ---------- Plan components ---------- */
+.plan{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft);
+  transition: box-shadow var(--motion-med) ease, transform var(--motion-fast) ease, border-color var(--motion-med) ease;
+}
+.plan--hi{ border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 50%); box-shadow: var(--shadow-medium); }
+.plan__inner{ padding:1.5rem; } @media (min-width:640px){ .plan__inner{ padding:2rem; } }
+.plan__title{ font-weight:800; font-size:1.25rem; }
+.plan__price{ font-weight:800; font-size:2.25rem; line-height:1; }
+
 /* ---------- Brand strip ---------- */
 .brandstrip{
   border-top:1px solid var(--color-border);

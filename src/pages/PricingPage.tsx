@@ -7,7 +7,7 @@ const Plan = ({
 }: {
   title: string; price: string; period: string; features: string[]; highlight?: boolean; badge?: string; cta: string;
 }) => (
-  <article className={`plan ${highlight ? "plan--hi" : ""}`} aria-labelledby={`${title}-title`}>
+  <article className={`plan ${highlight ? "plan--hi" : ""} interactive-elevate`} aria-labelledby={`${title}-title`}>
     <div className="plan__inner">
       <header className="flex items-start justify-between">
         <div>
@@ -80,5 +80,4 @@ const PricingPage: React.FC = () => {
     </main>
   );
 };
-
 export default PricingPage;
