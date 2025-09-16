@@ -1,37 +1,32 @@
-import React from 'react';
-import { track } from '@/utils/analytics';
+import React from "react";
 
 type Props = {
-  suggestions?: string[];
+  items: string[];
+  onPick?: (v: string) => void;
   className?: string;
-  autoSubmit?: boolean;
+  title?: string;
 };
 
-const DEFAULTS = [
-  'Maak een casual vrijdag-outfit voor mij',
-  'Welke sneakers passen bij donkere jeans?',
-  'Welke kleuren werken bij mijn huidtint?',
-  'Geef 3 outfits voor een bruiloft (smart casual)',
-  'Welke jas voor herfst 2025 met mijn stijlcode?',
-  'Maak 3 casual outfits voor vrijdagavond. Voeg JSON toe (cards).'
-];
-
-export default function SuggestionChips({ suggestions = DEFAULTS, className, autoSubmit = true }: Props) {
-  const send = (text: string) => {
-    window.dispatchEvent(new CustomEvent('nova:prefill', { detail: { prompt: text, submit: autoSubmit } }));
-    track?.('nova_suggestion_click', { prompt: text });
-  };
+const SuggestionChips: React.FC<Props> = ({ items, onPick, className, title = "Probeer ook:" }) => {
+  if (!items?.length) return null;
   return (
-    <div className={`flex flex-wrap gap-2 ${className ?? ''}`} aria-label="Voorbeelden">
-      {suggestions.map((s, i) => (
-        <button
-          key={i}
-          onClick={() => send(s)}
-          className="ff-chip hover:bg-white transition"
-        >
-          {s}
-        </button>
-      ))}
+    <div className={className}>
+      <p className="text-muted text-sm mb-2">{title}</p>
+      <div className="flex flex-wrap gap-2">
+        {items.map((v) => (
+          <button
+            key={v}
+            type="button"
+            className="nav-chip hover:cursor-pointer focus-ring"
+            onClick={() => onPick?.(v)}
+            aria-label={`Gebruik suggestie: ${v}`}
+          >
+            {v}
+          </button>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default SuggestionChips;

@@ -1,219 +1,195 @@
-import React, { Fragment, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Dialog, Transition } from '@headlessui/react';
-import { X, Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, LogIn, User } from 'lucide-react';
-import { NAV_ITEMS } from '../../constants/nav';
-import { useUser } from '../../context/UserContext';
+import React, { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { X, Home, User, BookOpen, Users, CreditCard, HelpCircle } from "lucide-react";
+import { w } from "@/utils/analytics";
+import { useUser } from "@/context/UserContext";
+import { w } from "@/utils/analytics";
 
 interface MobileNavDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
+const getNavIcon = (href: string) => {
+  if (href === "/" || href === "#home") return Home;
+  if (href === "/over-ons" || href === "/profiel") return User;
+  if (href === "/blog") return BookOpen;
+  if (href === "/tribes") return Users;
+  if (href === "/pricing") return CreditCard;
+  if (href === "/help") return HelpCircle;
+  return null;
+};
+
 const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
   const { user, logout } = useUser();
   const location = useLocation();
 
-  // Body scroll lock
+  // Track drawer open/close
+  useEffect(() => {
+    if (open) {
+      w('mobile_nav_opened', { 
+        page: location.pathname,
+        timestamp: Date.now()
+      });
+    }
+  }, [open, location.pathname]);
+
+  // Prevent body scroll when drawer is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
-      document.body.classList.add('mobile-menu-open');
-    } else {
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('mobile-menu-open');
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('mobile-menu-open');
-    };
   }, [open]);
 
-  // ESC key handler
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        onClose();
-      }
-    };
-
-    if (open) {
-      document.addEventListener('keydown', handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [open, onClose]);
-
-  const handleNavClick = (href: string) => {
-    // Close drawer - ScrollToTop component handles the scrolling
+  const handleNavClick = (href: string, label: string) => {
+    w('mobile_nav_click', {
+      nav_item: label,
+      href,
+      page: location.pathname,
+      timestamp: Date.now()
+    });
     onClose();
+  };
+
+  const handleAuthAction = (action: string) => {
+    w('mobile_nav_auth', {
+      action,
+      page: location.pathname,
+      timestamp: Date.now()
+    });
     
-    // Track analytics
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'mobile_nav_click', {
-        event_category: 'navigation',
-        event_label: href,
-        page_location: window.location.href
-      });
+    if (action === 'logout') {
+      logout();
     }
-  };
-
-  const handleLogout = async () => {
-    await logout();
     onClose();
   };
 
-  const isActiveLink = (href: string) => {
-    if (href === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.startsWith(href);
+  const handleClose = () => {
+    w('mobile_nav_closed', {
+      page: location.pathname,
+      timestamp: Date.now()
+    });
+    onClose();
   };
 
-  // Filter navigation items based on auth state
-  const getNavigationItems = () => {
-    if (user) {
-      return NAV_ITEMS.filter(item => item.href !== '/inloggen').concat([
-        { href: '/dashboard', label: 'Dashboard', icon: User }
-      ]);
-    } else {
-      return NAV_ITEMS.filter(item => !item.href.includes('/dashboard'));
-    }
-  };
+  const isActiveLink = (href: string) =>
+    location.pathname === href || (href !== "/" && location.pathname.startsWith(href));
 
-  const navigationItems = getNavigationItems();
+  if (!open) return null;
 
   return (
-    <Transition show={open} as={Fragment}>
-      <Dialog 
-        onClose={onClose} 
-        className="fixed inset-0 z-50 md:hidden"
-        aria-labelledby="mobile-menu-title"
-        aria-modal="true"
+    <>
+      {/* Animated scrim */}
+      <div 
+        className="mobile-drawer__scrim animate-fadeIn" 
+        onClick={handleClose} 
+        aria-hidden="true" 
+      />
+      
+      {/* Drawer */}
+      <aside 
+        className="mobile-drawer animate-slideInLeft" 
+        role="dialog" 
+        aria-modal="true" 
+        aria-label="Mobiel menu"
       >
-        {/* Backdrop */}
-        <Transition.Child
-          as={Fragment}
-          enter="transition-opacity duration-240 ease-out"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-240 ease-in"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div 
-            className="absolute inset-0 bg-navy/80 backdrop-blur-md" 
-            onClick={onClose}
-            aria-hidden="true"
-          />
-        </Transition.Child>
-
-        {/* Drawer Panel */}
-        <Transition.Child
-          as={Fragment}
-          enter="transition-transform duration-240 ease-out"
-          enterFrom="translate-x-full opacity-0"
-          enterTo="translate-x-0 opacity-100"
-          leave="transition-transform duration-240 ease-in"
-          leaveFrom="translate-x-0 opacity-100"
-          leaveTo="translate-x-full opacity-0"
-        >
-          <div className="fixed inset-y-0 right-0 z-50 w-[80vw] max-w-[320px] bg-white dark:bg-[#14172B] rounded-l-2xl shadow-menu flex flex-col animate-slide-in-right">
-            {/* Header */}
-            <header className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
-              <Dialog.Title 
-                id="mobile-menu-title"
-                className="text-xl font-bold text-brandPurple dark:text-white"
-              >
-                Menu
-              </Dialog.Title>
-              <button
-                onClick={onClose}
-                aria-label="Sluit menu"
-                className="w-8 h-8 flex items-center justify-center rounded-full text-brandPurple hover:bg-brandPurpleLight dark:text-white dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-offset-2"
-              >
-                <X size={20} />
-              </button>
-            </header>
-
-            {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto" role="navigation">
-              <ul className="py-2" role="list">
-                {navigationItems.map(({ href, label, icon: IconComponent }, index) => {
-                  const isActive = isActiveLink(href);
-                  
-                  return (
-                    <li 
-                      key={href} 
-                      className="group relative animate-fade-in"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                      {/* Active Route Indicator */}
-                      {isActive && (
-                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-brandPurple" />
-                      )}
-                      
-                      <Link
-                        to={href}
-                        onClick={() => handleNavClick(href)}
-                        className={`flex items-center gap-4 px-6 py-4 min-h-[44px] text-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brandPurple focus:ring-inset ${
-                          isActive 
-                            ? 'bg-brandPurpleLight dark:bg-white/5 text-brandPurple dark:text-white font-semibold' 
-                            : 'text-navy dark:text-white hover:bg-brandPurpleLight dark:hover:bg-white/5'
-                        }`}
-                        role="menuitem"
-                      >
-                        <IconComponent 
-                          className={`h-5 w-5 transition-all duration-200 group-hover:scale-105 ${
-                            isActive 
-                              ? 'text-brandPurple dark:text-white' 
-                              : 'text-brandPurple opacity-70 group-hover:opacity-100'
-                          }`} 
-                        />
-                        <span className="flex-1">{label}</span>
-                      </Link>
-                      
-                      {/* Divider */}
-                      {index < navigationItems.length - 1 && (
-                        <div className="border-b border-black/5 dark:border-white/10 mx-6" />
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-
-            {/* Auth Section */}
-            {user && (
-              <div className="px-6 pb-6 border-t border-black/5 dark:border-white/10">
-                <div className="pt-4">
-                  <div className="flex items-center space-x-3 mb-4 p-3 rounded-xl bg-brandPurpleLight dark:bg-white/5">
-                    <div className="w-10 h-10 rounded-full bg-brandPurple flex items-center justify-center">
-                      <span className="text-white font-medium text-sm">
-                        {user.name?.charAt(0).toUpperCase() || 'U'}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-navy dark:text-white">{user.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-3 min-h-[44px] text-left font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  >
-                    Uitloggen
-                  </button>
-                </div>
-              </div>
-            )}
+        {/* Header */}
+        <div className="mobile-drawer__head">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] rounded-full animate-pulse"></div>
+            <span className="font-semibold text-[color:var(--color-text)]">Menu</span>
           </div>
-        </Transition.Child>
-      </Dialog>
-    </Transition>
+          <button
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-border)] hover:bg-[color:var(--overlay-accent-08a)] transition-colors duration-200"
+            onClick={handleClose} 
+            aria-label="Sluit menu"
+          >
+            <X className="h-5 w-5 text-[color:var(--color-text)]" />
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto" aria-label="Mobiele navigatie">
+          <ul className="mobile-drawer__list">
+            {NAV_ITEMS.map((item) => {
+              const Icon = getNavIcon(item.href);
+              const isActive = isActiveLink(item.href);
+              
+              return (
+                <li key={item.href} className="mobile-drawer__item">
+                  {item.href.startsWith("#") ? (
+                    <a 
+                      href={item.href}
+                      onClick={() => handleNavClick(item.href, item.label)}
+                      className={`flex items-center gap-3 px-4 py-3 text-[color:var(--color-text)] hover:bg-[color:var(--overlay-accent-08a)] transition-all duration-200 ${
+                        isActive ? 'bg-[color:var(--overlay-primary-12a)] border-r-2 border-[color:var(--color-primary)]' : ''
+                      }`}
+                    >
+                      {Icon && <Icon className="h-5 w-5 text-[color:var(--color-muted)]" />}
+                      <span className={isActive ? 'font-medium text-[color:var(--color-primary)]' : ''}>{item.label}</span>
+                    </a>
+                  ) : (
+                    <Link 
+                      to={item.href}
+                      onClick={() => handleNavClick(item.href, item.label)}
+                      className={`flex items-center gap-3 px-4 py-3 text-[color:var(--color-text)] hover:bg-[color:var(--overlay-accent-08a)] transition-all duration-200 ${
+                        isActive ? 'bg-[color:var(--overlay-primary-12a)] border-r-2 border-[color:var(--color-primary)]' : ''
+                      }`}
+                    >
+                      {Icon && <Icon className="h-5 w-5 text-[color:var(--color-muted)]" />}
+                      <span className={isActive ? 'font-medium text-[color:var(--color-primary)]' : ''}>{item.label}</span>
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Auth Actions */}
+        <div className="p-4 border-t border-[color:var(--color-border)] bg-[color:var(--overlay-accent-08a)]">
+          {!user ? (
+            <>
+              <Link 
+                to="/inloggen" 
+                className="btn btn-ghost btn-full mb-3 hover:scale-105 transition-transform duration-200" 
+                onClick={() => handleAuthAction('login')}
+              >
+                <User className="h-4 w-4" />
+                Inloggen
+              </Link>
+              <Link 
+                to="/registreren" 
+                className="btn btn-primary btn-full hover:scale-105 transition-transform duration-200" 
+                onClick={() => handleAuthAction('register')}
+              >
+                Start gratis
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link 
+                to="/dashboard" 
+                className="btn btn-primary btn-full mb-3 hover:scale-105 transition-transform duration-200" 
+                onClick={() => handleAuthAction('dashboard')}
+              >
+                <User className="h-4 w-4" />
+                Dashboard
+              </Link>
+              <button 
+                className="btn btn-ghost btn-full hover:scale-105 transition-transform duration-200" 
+                onClick={() => handleAuthAction('logout')}
+              >
+                Uitloggen
+              </button>
+            </>
+          )}
+        </div>
+      </aside>
+    </>
   );
 };
 

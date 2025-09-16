@@ -3,44 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#A6886A" />
+    <meta name="color-scheme" content="light" />
     
-    <!-- SEO Meta -->
-    <meta name="description" content="AI-styling voor jouw perfecte outfit. Ontdek je stijl met persoonlijke aanbevelingen." />
-    <meta name="keywords" content="AI styling, outfit advies, persoonlijke stylist, mode AI" />
+    <!-- Primary Meta Tags -->
+    <title>FitFi — AI Styling die je écht begrijpt</title>
+    <meta name="title" content="FitFi — AI Styling die je écht begrijpt" />
+    <meta name="description" content="Ontdek outfits die perfect bij jouw silhouet, stijl en gelegenheid passen. AI-styling met heldere uitleg — start gratis in 2 minuten." />
+    <meta name="keywords" content="AI styling, persoonlijk stylist, outfit advies, kleding combineren, stijladvies, capsule wardrobe" />
     <meta name="author" content="FitFi" />
+    <meta name="robots" content="index, follow" />
     
-    <!-- Open Graph -->
-    <meta property="og:title" content="FitFi — AI Styling" />
-    <meta property="og:description" content="AI-styling voor jouw perfecte outfit. Ontdek je stijl met persoonlijke aanbevelingen." />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.fitfi.ai" />
+    <meta property="og:url" content="https://www.fitfi.ai/" />
+    <meta property="og:title" content="FitFi — AI Styling die je écht begrijpt" />
+    <meta property="og:description" content="Ontdek outfits die perfect bij jouw silhouet, stijl en gelegenheid passen. AI-styling met heldere uitleg — start gratis in 2 minuten." />
     <meta property="og:image" content="https://www.fitfi.ai/images/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="nl_NL" />
+    <meta property="og:site_name" content="FitFi" />
     
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="FitFi — AI Styling" />
-    <meta name="twitter:description" content="AI-styling voor jouw perfecte outfit. Ontdek je stijl met persoonlijke aanbevelingen." />
-    <meta name="twitter:image" content="https://www.fitfi.ai/images/og-image.jpg" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.fitfi.ai/" />
+    <meta property="twitter:title" content="FitFi — AI Styling die je écht begrijpt" />
+    <meta property="twitter:description" content="Ontdek outfits die perfect bij jouw silhouet, stijl en gelegenheid passen. AI-styling met heldere uitleg — start gratis in 2 minuten." />
+    <meta property="twitter:image" content="https://www.fitfi.ai/images/og-image.jpg" />
+    <meta property="twitter:creator" content="@fitfi_ai" />
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.fitfi.ai/" />
     
-    <!-- Manifest -->
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#9B8A7A" />
-    <meta name="msapplication-TileColor" content="#9B8A7A" />
-    
-    <!-- Preconnects for Performance -->
+    <!-- DNS Prefetch & Preconnects -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="//www.googletagmanager.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.fitfi.ai" />
     
-    <!-- Critical Font Loading - Montserrat (headings) + Lato (body) -->
+    <!-- Critical CSS Fonts (Montserrat + Lato) -->
     <link
       rel="preload"
       as="style"
@@ -54,51 +64,69 @@
       />
     </noscript>
     
-    <!-- Preload Critical CSS -->
-    <link rel="preload" href="/src/styles/tokens.css" as="style" />
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" crossorigin />
+    <link rel="preload" href="/images/nova.svg" as="image" />
     
     <!-- Security Headers -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.fitfi.ai" />
+    <!-- Performance Hints -->
+    <meta http-equiv="Accept-CH" content="DPR, Viewport-Width, Width" />
     
-    <title>FitFi — AI Styling voor jouw perfecte outfit</title>
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "FitFi",
+      "description": "AI-powered personal styling platform die outfits genereert op basis van jouw silhouet, stijl en gelegenheid",
+      "url": "https://www.fitfi.ai",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR",
+        "description": "Gratis stijltest en basis outfits"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "FitFi",
+        "url": "https://www.fitfi.ai"
+      },
+      "featureList": [
+        "AI-powered outfit recommendations",
+        "Personal style analysis",
+        "Silhouet-based styling",
+        "Seizoens-specifieke outfits",
+        "Shopping integration"
+      ]
+    }
+    </script>
   </head>
   <body class="font-body bg-[color:var(--color-bg)] text-[color:var(--color-text)] antialiased">
-    <!-- App Root -->
-    <div id="root" role="main"></div>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[color:var(--color-primary)] text-white px-4 py-2 rounded-md z-50">
+      Spring naar hoofdinhoud
+    </a>
     
-    <!-- App Portal for Modals/Overlays -->
-    <div id="app-portal"></div>
+    <!-- Root container -->
+    <div id="root"></div>
     
-    <!-- Loading Fallback -->
+    <!-- Main application script -->
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback for users with JavaScript disabled -->
     <noscript>
-      <div style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #F7F3EC;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        color: #1E2333;
-        text-align: center;
-        padding: 2rem;
-      ">
-        <div>
-          <h1 style="font-size: 1.5rem; margin-bottom: 1rem;">FitFi — AI Styling</h1>
-          <p>JavaScript is vereist voor de beste ervaring. Schakel JavaScript in om door te gaan.</p>
-        </div>
+      <div style="text-align: center; padding: 2rem; font-family: system-ui, sans-serif;">
+        <h1>FitFi — AI Styling</h1>
+        <p>Deze applicatie vereist JavaScript om te functioneren.</p>
+        <p>Schakel JavaScript in om FitFi te gebruiken.</p>
       </div>
     </noscript>
-    
-    <!-- Main App Script -->
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

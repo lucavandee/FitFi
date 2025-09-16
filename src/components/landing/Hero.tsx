@@ -1,148 +1,189 @@
-import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
-import track from '@/utils/telemetry';
-import Button from '../ui/Button';
-import SmartImage from '@/components/media/SmartImage';
-import HeroTitle from '../marketing/HeroTitle';
-import { useABTesting, trackHeroCTA } from '@/hooks/useABTesting';
+import React from "react";
+import { CheckCircle2, Sparkles, ArrowRight, Users, Star, TrendingUp } from "lucide-react";
+import Button from "@/components/ui/Button";
+import SmartImage from "@/components/media/SmartImage";
+import Seo from "@/components/Seo";
+import { w } from "@/utils/analytics";
+import { track } from "@/utils";
 
-interface HeroProps {
-  onCTAClick?: () => void;
-  className?: string;
-}
+const Hero: React.FC = () => {
+  const handleCTAClick = (action: string) => {
+    track('hero_cta_click', {
+      action,
+      section: 'hero',
+      timestamp: Date.now()
+    });
+  };
 
-const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
-  const { heroCTA } = useABTesting();
-  
-  const ctaText = heroCTA === 'ai-style-report' ? 'Ontvang je AI Style Report' : 'Ja, geef mij mijn gratis AI Style Report';
-  
-  const handleCTAClick = () => {
-    trackHeroCTA(heroCTA);
-    if (typeof track === 'function') track('cta_click', { loc: 'home_hero', cta: 'start_style_report' });
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'cta_click', { location: 'home_hero' });
-    }
-    
-    if (onCTAClick) {
-      onCTAClick();
-    } else {
-      // Default behavior: navigate to dynamic onboarding
-      window.location.href = '/dynamic-onboarding';
-    }
+  const handleFeatureClick = (feature: string) => {
+    track('hero_feature_click', {
+      feature,
+      section: 'hero',
+      timestamp: Date.now()
+    });
   };
 
   return (
-    <section className={`not-prose relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-white via-gray-50 to-purple-50 ${className}`} aria-labelledby="hero-heading">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
-          {/* Content */}
-          <div className="text-center lg:text-left">
-            <div className="mb-6">
-              <div className="inline-flex items-center space-x-2 bg-[#bfae9f]/10 text-[#bfae9f] px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Sparkles size={16} />
-                <span>Gratis AI Style Report</span>
-              </div>
-              
-              <div className="mb-6">
-                <HeroTitle
-                  lines={["Ontdek wat jouw stijl over je zegt"]}
-                  accents={{ 0: [{ word: 'stijl', className: 'text-gradient accent-bump sheen' }] }}
-                  className="text-ink"
-                  balance
-                />
-              </div>
-              
-              <p className="copy-muted text-lg md:text-xl mt-6 copy-narrow mb-8 leading-relaxed">
-                Krijg in 2 minuten een gepersonaliseerd AI-rapport dat laat zien hoe jouw kledingkeuzes je persoonlijkheid weerspiegelen — inclusief concrete outfits en shopbare aanbevelingen.
-              </p>
+    <>
+      <Seo
+        title="Ontdek jouw perfecte stijl met AI — FitFi"
+        description="Van korte test naar outfits met uitleg. Koel-taupe design, premium ervaring, privacy-first."
+        canonical="https://fitfi.ai/"
+      />
+      <section id="main" className="section relative overflow-hidden" aria-labelledby="hero-title">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--color-bg)] via-[color:var(--color-surface)] to-[color:var(--overlay-accent-08a)] opacity-60" />
+        
+        <div className="container relative z-10">
+          {/* Stats bar */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-8 text-sm text-[color:var(--color-muted)]">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-[color:var(--color-primary)]" />
+              <span>25.000+ gebruikers</span>
             </div>
-            
-            {/* Benefits */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-              {[
-                { icon: <CheckCircle size={16} />, text: '100% Gratis' },
-                { icon: <CheckCircle size={16} />, text: '2 Minuten' },
-                { icon: <CheckCircle size={16} />, text: 'Direct Resultaat' }
-              ].map((benefit, index) => (
-                <div key={index} className="flex items-center justify-center lg:justify-start space-x-2 text-gray-700">
-                  <div className="text-green-600">{benefit.icon}</div>
-                  <span className="text-sm font-medium">{benefit.text}</span>
-                </div>
-              ))}
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-[color:var(--color-primary)]" />
+              <span>4.8/5 sterren</span>
             </div>
-            
-            {/* CTA */}
-            <div className="space-y-4">
-              <Button
-                onClick={handleCTAClick}
-                data-ff-event="cta_click"
-                data-ff-loc="home_hero"
-                data-analytics="hero-cta"
-                variant="primary"
-                size="lg"
-                icon={<ArrowRight size={20} />}
-                iconPosition="right"
-                className="ff-cta cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-                aria-label="Start je gratis AI Style Report"
-              >
-                {ctaText}
-              </Button>
-              
-              <p className="text-sm text-gray-500">
-                Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten gegenereerd
-              </p>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[color:var(--color-primary)]" />
+              <span>95% tevreden</span>
             </div>
           </div>
-          
-          {/* Visual */}
-          <div className="relative flex justify-center lg:justify-end">
-            <div className="relative">
-              {/* Main Image in Glass Card */}
-              <div className="rounded-3xl shadow-[var(--ff-soft-shadow)] bg-white h-[500px] w-[350px] overflow-hidden">
-                <SmartImage
-                  src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&dpr=2"
-                  alt="Vrouw die haar perfecte stijl heeft ontdekt met FitFi"
-                  id="hero-main"
-                  kind="generic"
-                  width={350}
-                  height={500}
-                  sizes="(max-width: 768px) 280px, 350px"
-                  aspect="7/10"
-                  imgClassName="img-fit"
-                  priority
-                />
+
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 items-center">
+            {/* Copy */}
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              <div className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted)] mb-4 animate-fadeIn">
+                <div className="w-2 h-2 bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] rounded-full animate-pulse" />
+                <Sparkles className="w-4 h-4 text-[color:var(--color-primary)]" aria-hidden="true" />
+                <span className="font-medium">AI-Powered Styling</span>
               </div>
               
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4 animate-fade-in">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <CheckCircle size={16} className="text-green-600" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900 text-sm">95% Match</div>
-                    <div className="text-xs text-gray-600">Match</div>
-                  </div>
+              <h1 id="hero-title" className="hero__title animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+                Ontdek jouw{' '}
+                <span className="bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--ff-color-primary-600)] bg-clip-text text-transparent">
+                  perfecte stijl
+                </span>{' '}
+                met AI
+              </h1>
+              
+              <p className="lead mt-4 max-w-2xl animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+                Persoonlijk stijlrapport met outfits en korte uitleg waarom het werkt bij jouw silhouet, materialen en kleurtemperatuur.
+              </p>
+
+              <ul className="mt-6 flex flex-col gap-3 text-sm animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+                {[
+                  { text: "Gratis persoonlijkheidstest", feature: "personality_test" },
+                  { text: "AI-gepersonaliseerde outfits", feature: "ai_outfits" },
+                  { text: "Nederlandse merken", feature: "dutch_brands" }
+                ].map((item) => (
+                  <li 
+                    key={item.text} 
+                    className="inline-flex items-center gap-3 cursor-pointer hover:text-[color:var(--color-primary)] transition-colors duration-200"
+                    onClick={() => handleFeatureClick(item.feature)}
+                  >
+                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r from-[color:var(--color-success)] to-emerald-400 flex items-center justify-center">
+                      <CheckCircle2 className="h-3 w-3 text-white" />
+                    </div>
+                    <span className="font-medium">{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+                <Button 
+                  as={Link as any} 
+                  to="/registreren" 
+                  variant="primary" 
+                  size="lg" 
+                  className="group relative overflow-hidden"
+                  onClick={() => handleCTAClick('start_free')}
+                  aria-label="Start gratis AI Style Report"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Ja, geef mij mijn gratis AI Style Report
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ff-color-primary-600)] to-[color:var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </Button>
+                
+                <Button 
+                  as={Link as any} 
+                  to="/hoe-het-werkt" 
+                  variant="ghost" 
+                  size="lg"
+                  className="group"
+                  onClick={() => handleCTAClick('how_it_works')}
+                  aria-label="Hoe werkt het?"
+                >
+                  <span>Hoe werkt het?</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                </Button>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-[color:var(--color-muted)] animate-fadeIn" style={{ animationDelay: '0.5s' }}>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full" />
+                  <span>Geen creditcard vereist</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full" />
+                  <span>Privacy-first</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full" />
+                  <span>GDPR compliant</span>
                 </div>
               </div>
-              
-              <div className="absolute -bottom-4 -left-4 shadow-sm rounded-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4 animate-fade-in">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Sparkles size={16} className="text-purple-600" />
+            </div>
+
+            {/* Visual */}
+            <div className="lg:col-span-5 animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+              <div className="hero__card relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--overlay-primary-12a)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                <SmartImage
+                  src="/images/hero/nova-hero.jpg"
+                  alt="Nova AI — jouw stylist"
+                  loading="eager"
+                  decoding="async"
+                  className="block h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                
+                <div className="hero__card-footer relative z-10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-[color:var(--color-muted)]">Voorproefje van je rapport</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[color:var(--color-success)] rounded-full animate-pulse" />
+                      <span className="text-xs text-[color:var(--color-success)]">Live</span>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-gray-900 text-sm">Nova AI</div>
-                    <div className="text-xs text-gray-600">Jouw stylist</div>
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="chip bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] text-white">
+                      Taupe • Smart casual
+                    </span>
+                    <div className="flex -space-x-1">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="w-6 h-6 rounded-full bg-[color:var(--color-surface)] border-2 border-[color:var(--color-bg)] flex items-center justify-center">
+                          <Star className="w-3 h-3 text-[color:var(--color-primary)]" />
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                </div>
+
+                {/* Floating elements */}
+                <div className="absolute top-4 right-4 bg-[color:var(--color-surface)] rounded-full p-2 shadow-lg animate-bounce" style={{ animationDelay: '2s' }}>
+                  <Sparkles className="w-4 h-4 text-[color:var(--color-primary)]" />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

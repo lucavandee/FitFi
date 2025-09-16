@@ -1,142 +1,201 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User, LogOut } from "lucide-react";
-import { useUser } from "../../context/UserContext";
-import Button from "../ui/Button";
-import Logo from "../ui/Logo";
-import { NAV_ITEMS } from "../../constants/nav";
+import { useUser } from "@/context/UserContext";
+import Logo from "@/components/ui/Logo";
+import { NAV_ITEMS } from "@/constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
-import { scrollToHash } from "../../utils/scrollUtils";
+import { track } from "@/utils";
 
 const Navbar: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useUser();
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 4);
+    const onScroll = () => setScrolled(window.scrollY > 4);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    track('navbar:view', { path: location.pathname });
   }, [location.pathname]);
 
-  const isActiveLink = (href: string) => {
-    if (href === "/") return location.pathname === "/";
-    if (href.startsWith("#")) return false;
-    return location.pathname.startsWith(href);
+  const active = (href: string) =>
+    location.pathname === href || (href !== "/" && location.pathname.startsWith(href));
+
+  const handleNavClick = (href: string, label: string) => {
+    track('navbar:nav-click', { href, label });
   };
 
+  const handleCTAClick = (action: string) => {
+    track('navbar:cta-click', { action });
+  };
+
+  const handleMobileToggle = () => {
+    const newState = !open;
+    setOpen(newState);
+    track('navbar:mobile-toggle', { open: newState });
+  };
+
+  const handleUserMenuToggle = () => {
+    const newState = !userMenuOpen;
+    setUserMenuOpen(newState);
+    track('navbar:user-menu-toggle', { open: newState });
+  };
+
+  const handleLogout = () => {
+    track('navbar:logout');
+    logout();
+    setUserMenuOpen(false);
+  };
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (userMenuOpen && !target.closest('.user-menu-container')) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [userMenuOpen]);
+
   return (
-    <nav
-      data-fitfi="navbar"
-      role="navigation"
-      aria-label="Hoofdnavigatie"
-      className={`sticky top-0 z-40 bg-transparent backdrop-blur transition-all duration-300 ${
-        isScrolled ? "is-scrolled" : ""
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Left: Logo */}
-        <div className="flex items-center gap-3">
-          <Link to="/" aria-label="Home">
-            <Logo className="h-7 w-auto" />
-          </Link>
-        </div>
+    <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
+      {/* Skip link voor accessibility */}
+      <a href="#main" className="skip-link">Spring naar hoofdinhoud</a>
 
-        {/* Center: Desktop nav */}
-        <div className="hidden md:flex items-center gap-6">
-          {NAV_ITEMS.map((item) => {
-            const active = isActiveLink(item.href);
-            if (item.href.startsWith("#")) {
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToHash(item.href);
-                  }}
-                  className={`nav-link text-sm font-medium transition-colors ${
-                    active ? "is-active" : ""
-                  }`}
-                >
-                  {item.label}
-                </a>
-              );
-            }
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`nav-link text-sm font-medium transition-colors ${
-                  active ? "is-active" : ""
-                }`}
+      <div className="container nav-inner">
+        {/* Brand */}
+        <Link 
+          to="/" 
+          aria-label="FitFi Home" 
+          className="inline-flex items-center gap-2 brand-link"
+          onClick={() => handleNavClick('/', 'Home')}
+        >
+          <Logo className="h-6 w-auto logo-animate" />
+          <span className="font-bold text-lg gradient-text hidden sm:inline">FitFi</span>
+        </Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Hoofdnavigatie">
+          {NAV_ITEMS.map((n) =>
+            n.href.startsWith("#") ? (
+              <a 
+                key={n.href} 
+                href={n.href} 
+                className={`nav-link text-sm font-medium ${active(n.href) ? "is-active" : ""}`}
+                onClick={() => handleNavClick(n.href, n.label)}
               >
-                {item.label}
+                {n.label}
+              </a>
+            ) : (
+              <Link 
+                key={n.href} 
+                to={n.href} 
+                className={`nav-link text-sm font-medium ${active(n.href) ? "is-active" : ""}`}
+                onClick={() => handleNavClick(n.href, n.label)}
+              >
+                {n.label}
               </Link>
-            );
-          })}
-        </div>
+            )
+          )}
+        </nav>
 
-        {/* Right: Auth / CTA (desktop) */}
+        {/* CTA rechts */}
         <div className="hidden md:flex items-center gap-3">
-          {user ? (
+          {!user ? (
             <>
-              <Link
-                to="/dashboard"
-                className="text-sm opacity-90 hover:opacity-100 flex items-center gap-2"
-              >
-                <User className="w-4 h-4" aria-hidden="true" />
-                Dashboard
-              </Link>
-              <Button variant="ghost" onClick={logout} aria-label="Uitloggen">
-                <LogOut className="w-4 h-4" aria-hidden="true" />
-                Uitloggen
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="text-sm opacity-90 hover:opacity-100"
+              <Link 
+                to="/inloggen" 
+                className="nav-link text-sm font-medium"
+                onClick={() => handleCTAClick('login')}
               >
                 Inloggen
               </Link>
-              <Link to="/get-started" className="ff-cta px-4 py-2 text-sm">
-                Gratis starten
+              <Link 
+                to="/registreren" 
+                className="btn btn-primary btn-animate"
+                onClick={() => handleCTAClick('register')}
+              >
+                Start gratis
               </Link>
             </>
+          ) : (
+            <div className="user-menu-container relative">
+              <button
+                className="nav-link inline-flex items-center gap-2 text-sm font-medium"
+                onClick={handleUserMenuToggle}
+                aria-expanded={userMenuOpen}
+                aria-haspopup="true"
+                aria-label="Gebruikersmenu"
+              >
+                <User className="w-4 h-4" />
+                <span className="hidden lg:inline">{user.email?.split('@')[0] || 'Account'}</span>
+              </button>
+
+              {userMenuOpen && (
+                <div className="user-menu absolute right-0 top-full mt-2 w-48 bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-lg shadow-lg z-50 animate-fadeIn">
+                  <div className="p-2">
+                    <Link
+                      to="/dashboard"
+                      className="user-menu-item flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-[color:var(--overlay-accent-08a)] transition-colors"
+                      onClick={() => {
+                        handleCTAClick('dashboard');
+                        setUserMenuOpen(false);
+                      }}
+                    >
+                      <User className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                    <Link
+                      to="/profiel"
+                      className="user-menu-item flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-[color:var(--overlay-accent-08a)] transition-colors"
+                      onClick={() => {
+                        handleCTAClick('profile');
+                        setUserMenuOpen(false);
+                      }}
+                    >
+                      <User className="w-4 h-4" />
+                      Profiel
+                    </Link>
+                    <hr className="my-1 border-[color:var(--color-border)]" />
+                    <button
+                      className="user-menu-item flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-[color:var(--overlay-accent-08a)] transition-colors text-left"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Uitloggen
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Mobile: menu button */}
+        {/* Mobile toggle */}
         <button
-          type="button"
-          className="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-border transition-colors"
-          aria-label={isMobileMenuOpen ? "Sluit menu" : "Open menu"}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="mobile-menu"
-          onClick={() => setIsMobileMenuOpen((s) => !s)}
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-border)] mobile-menu-btn"
+          aria-label={open ? "Sluit menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={handleMobileToggle}
         >
-          {isMobileMenuOpen ? (
-            <X className="w-5 h-5" aria-hidden="true" />
-          ) : (
-            <Menu className="w-5 h-5" aria-hidden="true" />
-          )}
+          <div className="menu-icon-container">
+            {open ? <X className="h-5 w-5 animate-pulse" /> : <Menu className="h-5 w-5" />}
+          </div>
         </button>
       </div>
 
-      {/* Mobile Drawer */}
-      <MobileNavDrawer
-        open={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-      />
-    </nav>
+      <MobileNavDrawer open={open} onClose={() => setOpen(false)} />
+    </header>
   );
 };
 

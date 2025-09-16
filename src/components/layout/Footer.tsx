@@ -1,218 +1,123 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Instagram, Linkedin } from 'lucide-react';
-import Logo from '../ui/Logo';
-import CookieSettingsButton from '@/components/legal/CookieSettingsButton';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import Logo from "../ui/Logo";
+import Button from "../ui/Button";
+import { Instagram, Youtube, Twitter, Linkedin } from "lucide-react";
 
-interface FooterLink {
-  label: string;
-  href: string;
-  external?: boolean;
-}
-
-interface FooterSection {
-  title: string;
-  links: FooterLink[];
-}
+const siteNav = [
+  { href: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { href: "/prijzen", label: "Prijzen" },
+  { href: "/feed", label: "Feed" },
+  { href: "/blog", label: "Blog" },
+  { href: "/contact", label: "Contact" },
+  { href: "/veelgestelde-vragen", label: "FAQ" },
+];
 
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "FitFi",
+    url: "https://www.fitfi.ai/",
+    logo: "https://www.fitfi.ai/logo.png",
+    sameAs: [
+      "https://www.instagram.com/",
+      "https://www.youtube.com/",
+      "https://twitter.com/",
+      "https://www.linkedin.com/"
+    ]
+  };
 
-  const footerSections: FooterSection[] = [
-    {
-      title: 'Navigatie',
-      links: [
-        { label: 'Home', href: '/' },
-        { label: 'Waarom FitFi', href: '/over-ons' },
-        { label: 'Hoe het werkt', href: '/hoe-het-werkt' },
-        { label: 'Prijzen', href: '/prijzen' },
-        { label: 'Blog', href: '/blog' },
-        { label: 'Contact', href: '/contact' }
-      ]
-    },
-    {
-      title: 'Juridisch',
-      links: [
-        { label: 'Privacybeleid', href: '/privacy-policy' },
-        { label: 'Algemene voorwaarden', href: '/algemene-voorwaarden' },
-        { label: 'Cookiebeleid', href: '/cookies' },
-        { label: 'Veelgestelde vragen', href: '/veelgestelde-vragen' },
-        { label: 'Ondersteuning', href: '/ondersteuning' }
-      ]
-    },
-    {
-      title: 'Legal & Trust',
-      links: [
-        { label: 'Brand Safety & Editorial', href: '/brand-safety' },
-        { label: 'Affiliate Disclosure', href: '/disclosure' },
-        { label: 'Privacy Policy', href: '/privacy' },
-        { label: 'Cookie Policy', href: '/cookies' },
-        { label: 'Terms of Service', href: '/terms' }
-      ]
-    },
-    {
-      title: 'Account',
-      links: [
-        { label: 'Inloggen', href: '/inloggen' },
-        { label: 'Registreren', href: '/registreren' },
-        { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Profiel', href: '/profile' }
-      ]
-    }
-  ];
-
-  const socialLinks = [
-    { 
-      label: 'Instagram', 
-      href: 'https://www.instagram.com/xfitfi/', 
-      icon: <Instagram size={20} />,
-      external: true 
-    },
-    { 
-      label: 'LinkedIn', 
-      href: 'https://www.linkedin.com/company/fitfi-ai', 
-      icon: <Linkedin size={20} />,
-      external: true 
-    }
-  ];
+  const navJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    name: siteNav.map((i) => i.label),
+    url: siteNav.map((i) => `https://www.fitfi.ai${i.href}`)
+  };
 
   return (
-    <footer className="bg-[#0D1B2A] text-white" role="contentinfo">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Brand Section */}
-          <div>
-            <Logo className="h-8 w-auto mb-4" textColor="text-white" />
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              FitFi helpt je ontdekken wat jouw stijl over je zegt en hoe je dit kunt gebruiken 
-              om jouw doelen te bereiken.
+    <footer className="bg-[color:var(--color-bg)] border-t border-[color:var(--color-border)] mt-16" role="contentinfo">
+      {/* JSON-LD in head via Helmet */}
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(orgJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(navJsonLd)}</script>
+      </Helmet>
+
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div itemScope itemType="https://schema.org/Organization">
+            <Link to="/" className="inline-flex items-center" aria-label="FitFi home" itemProp="url">
+              <Logo className="h-7 w-auto" />
+            </Link>
+            <p className="text-[color:var(--color-muted)] mt-3 max-w-xs" itemProp="description">
+              Wij helpen je met stijl — met AI, uitleg en outfits die bij je silhouet passen.
             </p>
-            
-            {/* Contact Info */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-gray-300">
-                <Mail size={16} />
-                <a 
-                  href="mailto:info@fitfi.ai" 
-                  className="hover:text-[#89CFF0] transition-colors"
-                >
-                  info@fitfi.ai
-                </a>
-              </div>
-              <div className="flex items-center space-x-3 text-gray-300">
-                <Phone size={16} />
-                <a 
-                  href="tel:+31201234567" 
-                  className="hover:text-[#89CFF0] transition-colors"
-                >
-                  +31 6 203 709 68
-                </a>
-              </div>
-              <div className="flex items-start space-x-3 text-gray-300">
-                <MapPin size={16} className="mt-0.5 flex-shrink-0" />
-                <span>
-                  Marktstraat 15D<br />
-                  7551 DR Hengelo<br />
-                  Nederland
-                </span>
-              </div>
+            <meta itemProp="name" content="FitFi" />
+            <div className="mt-4 flex items-center gap-3" itemProp="sameAs">
+              <a href="https://www.instagram.com/" aria-label="Instagram" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="https://www.youtube.com/" aria-label="YouTube" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Youtube className="h-5 w-5" />
+              </a>
+              <a href="https://twitter.com/" aria-label="Twitter" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a href="https://www.linkedin.com/" aria-label="LinkedIn" className="text-[color:var(--color-muted)] hover:text-[color:var(--color-primary)]">
+                <Linkedin className="h-5 w-5" />
+              </a>
             </div>
           </div>
 
-          {/* Footer Sections */}
-          {footerSections.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-lg font-medium text-white mb-4">
-                {section.title}
-              </h3>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.href}>
-                    {link.external ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-300 hover:text-[#89CFF0] transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        to={link.href}
-                        className="text-gray-300 hover:text-[#89CFF0] transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              
-              {/* Cookie Settings Button for Legal & Trust section */}
-              {section.title === 'Legal & Trust' && (
-                <div className="mt-3">
-                  <CookieSettingsButton className="text-gray-300 hover:text-[#89CFF0] transition-colors underline" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Social Media & Bottom Section */}
-        <div className="pt-8 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            {/* Social Links */}
-            <div className="flex items-center space-x-6 mb-6 md:mb-0">
-              <span className="text-gray-300 text-sm font-medium">Volg ons:</span>
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-[#89CFF0] transition-colors"
-                  aria-label={`Volg ons op ${social.label}`}
-                >
-                  {social.icon}
-                </a>
+          {/* Snel naar (met microdata voor navigatie) */}
+          <nav aria-label="Footer navigatie" itemScope itemType="https://schema.org/SiteNavigationElement">
+            <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold" itemProp="name">Snel naar</h3>
+            <ul className="mt-3 space-y-2">
+              {siteNav.slice(0, 4).map((i) => (
+                <li key={i.href} itemProp="name">
+                  <Link to={i.href} className="text-[color:var(--color-text)] hover:underline" itemProp="url">
+                    {i.label}
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
+          </nav>
 
-            {/* Copyright */}
-            <div className="text-center md:text-right">
-              <p className="text-gray-300 text-sm">
-                © {currentYear} FitFi. Alle rechten voorbehouden.
-              </p>
-              <p className="text-gray-400 text-xs mt-1">
-                Powered by Nova AI • Jouw persoonlijke stijlassistent
-              </p>
+          {/* Juridisch */}
+          <div>
+            <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold">Juridisch</h3>
+            <ul className="mt-3 space-y-2">
+              <li><Link to="/privacy" className="text-[color:var(--color-text)] hover:underline">Privacy</Link></li>
+              <li><Link to="/cookies" className="text-[color:var(--color-text)] hover:underline">Cookies</Link></li>
+              <li><Link to="/voorwaarden" className="text-[color:var(--color-text)] hover:underline">Algemene voorwaarden</Link></li>
+              <li><Link to="/affiliate-disclosure" className="text-[color:var(--color-text)] hover:underline">Affiliate Disclosure</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="ff-heading text-[color:var(--color-text)] text-lg font-semibold">Contact</h3>
+            <ul className="mt-3 space-y-2">
+              <li><Link to="/contact" className="text-[color:var(--color-text)] hover:underline">Contactformulier</Link></li>
+              <li><a href="mailto:hi@fitfi.ai" className="text-[color:var(--color-text)] hover:underline">hi@fitfi.ai</a></li>
+            </ul>
+            <div className="mt-4">
+              <Button as={Link} to="/onboarding" variant="primary" size="md">
+                Start gratis
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Newsletter Signup */}
-        <div className="mt-8 pt-8 border-t border-gray-700">
-          <div className="max-w-md mx-auto text-center">
-            <h3 className="text-lg font-medium text-white mb-2">
-              Blijf op de hoogte
-            </h3>
-            <p className="text-gray-300 text-sm mb-4">
-              Ontvang de nieuwste styling tips en trends direct in je inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Je e-mailadres"
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
-                aria-label="E-mailadres voor nieuwsbrief"
-              />
-              <button className="px-6 py-2 bg-[#89CFF0] text-[#0D1B2A] rounded-lg font-medium hover:bg-[#89CFF0]/90 focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 focus:ring-offset-[#0D1B2A] transition-colors">
-                Aanmelden
-              </button>
-            </div>
-          </div>
+        <div className="mt-10 border-t border-[color:var(--color-border)] pt-6 text-sm text-[color:var(--color-muted)] flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} FitFi. Alle rechten voorbehouden.</p>
+          <p>
+            Transparantie: sommige links op deze site zijn <strong>affiliate links</strong>. Als je via deze links shopt, kan FitFi
+            een commissie ontvangen — zonder extra kosten voor jou. Meer info in onze{" "}
+            <Link to="/affiliate-disclosure" className="hover:underline">Affiliate Disclosure</Link>.
+          </p>
         </div>
       </div>
     </footer>
