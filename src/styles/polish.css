@@ -1,90 +1,185 @@
-/* src/styles/polish.css */
-/* UI-Polish: subtiele verbeteringen, ALLEEN tokens gebruiken (geen hex/rgb buiten tokens) */
+/* src/styles/polish.css
+   FitFi UI Polish — tokens-only
+   - Glass header + nav active chip
+   - Buttons, cards, chips, inputs
+   - Plan cards (pricing)
+   - Focus ring
+*/
 
-/* ====== App utilities (tokens) ====== */
-.bg-app { background-color: var(--color-bg); }
-.surface { background-color: var(--color-surface); }
-.text-ink { color: var(--color-text); }
-.text-muted { color: var(--color-muted); }
-.border-ui { border-color: var(--color-border); }
+/* ---------- Core ---------- */
+:root {
+  /* shadows via tokens */
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.06);
+  --shadow-ring: 0 0 0 3px rgba(166,136,106,0.24); /* warm primary alpha */
+}
 
-/* Ring utilities */
-.ring-brand { --tw-ring-color: var(--ff-color-primary-600); }
-.ring-offset-surface { --tw-ring-offset-color: var(--color-surface); }
+/* Global focus ring */
+:where(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: 12px;
+}
 
-/* Glas-header (conform polish-kaders) */
-.glass-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: saturate(180%) blur(12px);
-  background: color-mix(in oklab, var(--color-surface) 78%, transparent);
+/* ---------- Header (glass) ---------- */
+.header-glass {
+  backdrop-filter: saturate(180%) blur(10px);
+  background: color-mix(in oklab, var(--color-surface), transparent 6%);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 2px 12px rgba(30, 35, 51, 0.04);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
 
-/* Actieve nav-chip (accent tint) */
-.nav-chip {
-  background: color-mix(in oklab, var(--color-accent) 42%, #fff);
+/* Nav links */
+.nav-link {
   color: var(--color-text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+.nav-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.nav-link.is-active {
+  background: color-mix(in oklab, var(--color-accent), white 58%);
   border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  padding: .375rem .75rem;
-  font-weight: 600;
 }
 
-/* Linkstijl */
-a { color: var(--color-text); text-decoration: none; }
-a:hover { text-decoration: underline; text-underline-offset: 4px; }
-
-/* Buttons */
+/* ---------- Buttons ---------- */
 .btn {
-  --btn-bg: transparent;
-  --btn-fg: var(--color-text);
-  --btn-bd: var(--color-border);
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  border: 1px solid var(--btn-bd);
-  border-radius: var(--radius-lg);
+  --btn-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: .5rem;
+  border-radius: var(--btn-radius);
   padding: .75rem 1rem;
-  text-decoration: none;
-  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease, opacity .2s ease;
-  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
+  line-height: 1.1;
+  border: 1px solid transparent;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease;
   user-select: none;
+  cursor: pointer;
 }
-.btn-sm { height: 2.25rem; padding: .5rem .75rem; font-size: .875rem; }
-.btn-md { height: 2.5rem;  padding: .625rem 1rem; font-size: 1rem; }
-.btn-lg { height: 3rem;    padding: .75rem 1.25rem; font-size: 1.0625rem; }
+.btn:active { transform: translateY(1px); }
 
-.btn-primary { --btn-bg: var(--ff-color-primary-700); --btn-fg: #fff; --btn-bd: var(--ff-color-primary-700); }
-.btn-primary:hover { --btn-bg: var(--ff-color-primary-600); --btn-bd: var(--ff-color-primary-600); }
-
-.btn-ghost { --btn-bg: transparent; }
-.btn-ghost:hover { --btn-bd: var(--color-primary); }
-
-/* Cards & badges */
-.card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); }
-.badge { display: inline-flex; align-items: center; gap: .375rem; padding: .25rem .5rem; border-radius: 9999px; border: 1px solid var(--color-border); }
-.badge-accent { background: var(--overlay-accent-08a); }
-.badge-success { background: color-mix(in oklab, var(--color-success) 12%, #fff); }
-.badge-warn { background: color-mix(in oklab, var(--color-warning) 12%, #fff); }
-.badge-danger { background: color-mix(in oklab, var(--color-danger) 12%, #fff); }
-
-/* Hero card shell */
-.hero-card { border: 1px solid var(--color-border); border-radius: var(--radius-2xl); background: var(--color-surface); box-shadow: var(--shadow-soft); }
-
-/* Focus ring util */
-.focus-ring { outline: none !important; box-shadow: var(--shadow-ring); }
-
-/* Skeleton shimmer */
-.skeleton { position: relative; overflow: hidden; background: color-mix(in oklab, var(--color-text) 6%, var(--color-surface)); }
-.skeleton::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-text) 8%, var(--color-surface)), transparent);
-  animation: shine 1.2s infinite;
+.btn-primary {
+  background: var(--ff-color-primary-700);
+  color: #fff;
 }
-@keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.btn-primary:hover { background: var(--ff-color-primary-600); }
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+.btn-ghost:hover { border-color: var(--color-primary); }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+}
+.card-inner { padding: 1.25rem; }
+@media (min-width: 640px) { .card-inner { padding: 1.5rem; } }
+
+.subcard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+.subcard-inner { padding: 1rem; }
+.subcard-title {
+  font-weight: 700;
+}
+.subcard-text {
+  color: var(--color-muted);
+  margin-top: .25rem;
+}
+
+/* ---------- Chips / badges ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  height: 32px;
+  padding: 0 .75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-accent), white 70%);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: .875rem;
+  font-weight: 600;
+}
+.chip svg { width: 16px; height: 16px; }
+
+.chip-accent {
+  background: color-mix(in oklab, var(--color-accent), white 58%);
+}
+
+/* ---------- Typo helpers ---------- */
+.card-title {
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+.card-text {
+  color: var(--color-muted);
+  margin-top: .25rem;
+}
+
+.step-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-primary), white 78%);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-weight: 700;
+  margin-bottom: .75rem;
+}
+
+/* ---------- Inputs ---------- */
+.input {
+  width: 100%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: .625rem .75rem;
+}
+.range {
+  width: 100%;
+  accent-color: var(--ff-color-primary-700);
+}
+
+/* ---------- Pricing ---------- */
+.plan-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+.plan-card .plan-inner { padding: 1.25rem; }
+@media (min-width: 640px) { .plan-card .plan-inner { padding: 1.5rem; } }
+
+.plan-card--highlight {
+  outline: 2px solid color-mix(in oklab, var(--color-primary), white 30%);
+  outline-offset: 0;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.plan-title {
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+.plan-price {
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* ---------- Utility ---------- */
+.why {
+  margin-top: .5rem;
+  color: var(--color-text);
+}
