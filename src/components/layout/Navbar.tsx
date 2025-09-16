@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import Logo from "../ui/Logo";
 import { NAV_ITEMS } from "../../constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
-import { cn } from "../../utils/cn";
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,7 +13,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    const onScroll = () => setIsScrolled(window.scrollY > 4);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -35,12 +34,7 @@ const Navbar: React.FC = () => {
       data-fitfi="navbar"
       role="navigation"
       aria-label="Hoofdnavigatie"
-      className={cn(
-        "sticky top-0 z-40 transition-all duration-300",
-        isScrolled 
-          ? "navbar-glass border-b border-[color:var(--color-border)]" 
-          : "bg-transparent"
-      )}
+      className={`sticky top-0 z-40 transition-all ${isScrolled ? "glass-header" : "bg-transparent"}`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left: brand */}
@@ -57,20 +51,14 @@ const Navbar: React.FC = () => {
             if (item.href.startsWith("#")) {
               return (
                 <a key={item.href} href={item.href}
-                   className={cn(
-                     "nav-link text-sm font-medium transition-colors",
-                     active && "nav-link--active"
-                   )}>
+                   className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}>
                   {item.label}
                 </a>
               );
             }
             return (
               <Link key={item.href} to={item.href}
-                    className={cn(
-                      "nav-link text-sm font-medium transition-colors",
-                      active && "nav-link--active"
-                    )}>
+                    className={`nav-link text-sm font-medium transition-colors ${active ? "is-active" : ""}`}>
                 {item.label}
               </Link>
             );
@@ -80,8 +68,7 @@ const Navbar: React.FC = () => {
         {/* Right: Auth actions — exact één CTA */}
         <div className="auth-cta hidden items-center gap-3 md:flex">
           {!user && (
-            <Link to="/inloggen" className="btn btn-primary btn-md inline-flex items-center gap-2" aria-label="Inloggen" data-variant="primary">
-              <Sparkles className="w-4 h-4" />
+            <Link to="/inloggen" className="btn btn-primary btn-md" aria-label="Inloggen" data-variant="primary">
               Inloggen
             </Link>
           )}
