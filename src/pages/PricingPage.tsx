@@ -1,6 +1,7 @@
 // src/pages/PricingPage.tsx
 import React from "react";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, HelpCircle } from "lucide-react";
+import SwipeCarousel from "@/components/ui/SwipeCarousel";
 
 const Plan = ({
   title, price, period, features, highlight, badge, cta,
@@ -38,6 +39,13 @@ const Plan = ({
   </article>
 );
 
+const faqRail = [
+  { q: "Wat krijg ik gratis?", a: "Korte stijltest, basisprofiel en 3 outfit-richtingen." },
+  { q: "Wat zit er in Pro?", a: "Volledig stijlrapport (PDF), seizoensupdates en 10+ outfits met uitleg." },
+  { q: "Kan ik upgraden?", a: "Ja, je kunt altijd upgraden of pauzeren." },
+  { q: "B2B mogelijkheden?", a: "Integraties, UGC-outfitadvies en priority support." },
+];
+
 const PricingPage: React.FC = () => {
   return (
     <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
@@ -54,6 +62,7 @@ const PricingPage: React.FC = () => {
             <p className="lead mt-3">Kies wat past bij je doel: ontdekken, verdiepen of opschalen. Je kunt altijd upgraden.</p>
           </header>
 
+          {/* Plans */}
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             <Plan
               title="Starter" price="€0" period="eenmalig"
@@ -72,6 +81,24 @@ const PricingPage: React.FC = () => {
             />
           </div>
 
+          {/* Compact FAQ rail (swipe) */}
+          <section className="mt-12" aria-labelledby="pricing-faq-title">
+            <div className="flex items-center gap-2 mb-2">
+              <HelpCircle className="w-4 h-4 muted" aria-hidden="true" />
+              <h2 id="pricing-faq-title" className="card__title">Veelgestelde vragen</h2>
+            </div>
+            <SwipeCarousel ariaLabel="Prijzen FAQ carrousel">
+              {faqRail.map((f) => (
+                <article key={f.q} className="subcard">
+                  <div className="subcard__inner">
+                    <h3 className="subcard__title">{f.q}</h3>
+                    <p className="subcard__kicker">{f.a}</p>
+                  </div>
+                </article>
+              ))}
+            </SwipeCarousel>
+          </section>
+
           <p className="text-xs muted mt-6">
             Alle prijzen incl. btw. Affiliate/partnerlinks worden transparant vermeld zodra actief.
           </p>
@@ -80,4 +107,5 @@ const PricingPage: React.FC = () => {
     </main>
   );
 };
+
 export default PricingPage;
