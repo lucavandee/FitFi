@@ -44,7 +44,7 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
   ];
 
   return (
-    <section className={`py-20 bg-white ${className}`} aria-labelledby="ugc-heading">
+    <section className={`section bg-[color:var(--color-bg)] ${className}`} aria-labelledby="ugc-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 id="ugc-heading" className="text-3xl md:text-4xl font-light text-gray-900 mb-6">
@@ -142,3 +142,4 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
 };
 
 export default UGCGallery;
+            <div key={src} className="subcard interactive-elevate" style={{ overflow: 'hidden' }}>
