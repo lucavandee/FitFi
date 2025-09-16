@@ -170,6 +170,25 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
   min-width: 0;
 }
 
+.sticky-cta__text strong {
+  color: var(--color-text);
+}
+
+/* Step badges */
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
 /* ---------- Layout utilities ---------- */
 .w-full{ width:100%; }
 .mt-6{ margin-top:1.5rem; }
