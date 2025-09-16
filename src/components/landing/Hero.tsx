@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import SmartImage from "@/components/media/SmartImage";
 import Seo from "@/components/Seo";
 import { w } from "@/utils/analytics";
-import { track } from "@/utils/analytics";
+import { track } from "@/utils";
 
 const Hero: React.FC = () => {
   const handleCTAClick = (action: string) => {
