@@ -1,6 +1,8 @@
 /* @import ALTIJD eerst: */
 @import "@/components/nova/ChatTheme.css";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Lato:wght@300;400;500;600;700&display=swap');
 @import "./styles/tokens.css";
+@import "./styles/main.css";
 
 /* Tailwind layers */
 @import "./components/nova/ChatTheme.css";
@@ -10,11 +12,11 @@
 @tailwind utilities;
 
 /* Import FitFi Theme */
-@import './styles/fitfi-theme.css';
 @import './styles/animations.css';
+@import './styles/fitfi-theme.css';
 @import './styles/components/images.css';
-@import './styles/polish.css';
 @import './styles/components/pricing.css';
+@import './styles/utilities/typography.css';
 @import './styles/polish.css';
 
 /* Kill-switch legacy / third-party chat docks */
