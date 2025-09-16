@@ -54,7 +54,7 @@ const PricingPage: React.FC = () => {
         description="Gratis starten. Upgrade voor volledige rapporten, outfits en updates."
         canonical="https://www.fitfi.ai/prijzen"
       />
-      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+      <main>
         <section className="section" aria-labelledby="pricing-title">
           <div className="container">
             <header className="max-w-3xl">
