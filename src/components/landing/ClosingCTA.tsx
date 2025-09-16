@@ -117,3 +117,5 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
 };
 
 export default ClosingCTA;
+  )
+}
