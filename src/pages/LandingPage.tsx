@@ -7,12 +7,12 @@ import HowItWorksRail from "@/components/home/HowItWorksRail";
 
 const LandingPage: React.FC = () => {
   return (
-    <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+    <main>
       <Hero />
 
       {/* Brand strip */}
       <BrandStrip />
-
+      <section className="section bg-[color:var(--color-bg)]">
       {/* Proof strip */}
       <section className="section">
         <div className="container">
@@ -24,9 +24,9 @@ const LandingPage: React.FC = () => {
             ].map((m) => (
               <div key={m.l} className="card interactive-elevate">
                 <div className="card__inner">
-                  <div className="metric">
-                    <div className="metric__value">{m.v}</div>
-                    <div className="metric__label">{m.l}</div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-[color:var(--color-primary)]">{m.v}</div>
+                    <div className="text-sm muted mt-1">{m.l}</div>
                   </div>
                 </div>
               </div>
@@ -39,7 +39,7 @@ const LandingPage: React.FC = () => {
       <HowItWorksRail />
 
       {/* Waarom het werkt */}
-      <section className="section">
+      <section className="section bg-[color:var(--color-bg)]">
         <div className="container grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div className="card interactive-elevate">
             <div className="card__inner">
@@ -48,13 +48,13 @@ const LandingPage: React.FC = () => {
                 We combineren je silhouet, kleurtemperatuur en stijlvoorkeuren. Per outfit krijg je
                 1–2 zinnen uitleg — precies genoeg om zelfverzekerd te kiezen.
               </p>
-              <ul className="mt-4 space-y-2 text-sm">
+              <ul className="mt-4 space-y-2">
                 {[
                   "Silhouet-vriendelijke fits",
                   "Materialen die vallen zoals jij wilt",
                   "Kleuren die je huid laten spreken",
                 ].map((t) => (
-                  <li key={t} className="flex items-center gap-2">
+                  <li key={t} className="flex items-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-[color:var(--color-success)]" />
                     <span>{t}</span>
                   </li>
@@ -63,7 +63,7 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="subcard">
+          <div className="subcard interactive-elevate">
             <div className="subcard__inner">
               <h3 className="subcard__title">Seizoen-ready</h3>
               <p className="subcard__kicker">
