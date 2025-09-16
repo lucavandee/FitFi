@@ -1,124 +1,148 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
-import { useUser } from "../../context/UserContext";
-import Logo from "../ui/Logo";
-import { NAV_ITEMS } from "../../constants/nav";
+import { Menu, X } from "lucide-react";
+import { useUser } from "@/context/UserContext";
+import Logo from "@/components/ui/Logo";
+import { NAV_ITEMS } from "@/constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
-import { cn } from "../../utils/cn";
+import { track } from "@/utils/analytics";
 
 const Navbar: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const { user, logout } = useUser();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { user } = useUser();
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      setScrolled(isScrolled);
+    };
+    
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+  const isActive = (href: string) => {
+    if (href === "/" && location.pathname === "/") return true;
+    if (href !== "/" && location.pathname.startsWith(href)) return true;
+    return false;
+  };
 
-  const isActiveLink = (href: string) => {
-    if (href === "/") return location.pathname === "/";
-    if (href.startsWith("#")) return false;
-    return location.pathname.startsWith(href);
+  const handleCTAClick = () => {
+    track("nav:cta-click", {
+      cta_type: user ? "dashboard" : "register",
+      user_authenticated: !!user
+    });
+  };
+
+  const handleNavClick = (item: { href: string; label: string }) => {
+    track("nav:link-click", {
+      nav_item: item.label,
+      nav_href: item.href,
+      is_active: isActive(item.href)
+    });
+  };
+
+  const handleMobileToggle = () => {
+    const newOpen = !open;
+    setOpen(newOpen);
+    track("nav:mobile-toggle", {
+      action: newOpen ? "open" : "close"
+    });
   };
 
   return (
-    <nav
-      data-fitfi="navbar"
-      role="navigation"
-      aria-label="Hoofdnavigatie"
-      className={cn(
-        "sticky top-0 z-40 transition-all duration-300",
-        isScrolled 
-          ? "navbar-glass border-b border-[color:var(--color-border)]" 
-          : "bg-transparent"
-      )}
-    >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left: brand */}
-        <div className="flex items-center gap-3">
-          <Link to="/" aria-label="Ga naar home" className="inline-flex items-center">
-            <Logo className="h-6 w-auto" />
-          </Link>
-        </div>
+    <>
+      <nav 
+        className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} 
+        aria-label="Hoofdnavigatie"
+      >
+        <div className="container nav-inner">
+          {/* Left: Brand */}
+          <div className="flex items-center">
+            <Link 
+              to="/" 
+              aria-label="FitFi Home" 
+              className="inline-flex items-center transition-opacity duration-200 hover:opacity-80"
+              onClick={() => track("nav:logo-click")}
+            >
+              <Logo className="h-7 w-auto" />
+            </Link>
+          </div>
 
-        {/* Center: Desktop nav */}
-        <div className="hidden items-center gap-6 md:flex">
-          {NAV_ITEMS.map((item) => {
-            const active = isActiveLink(item.href);
-            if (item.href.startsWith("#")) {
-              return (
-                <a key={item.href} href={item.href}
-                   className={cn(
-                     "nav-link text-sm font-medium transition-colors",
-                     active && "nav-link--active"
-                   )}>
+          {/* Center: Desktop Navigation */}
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV_ITEMS.map((item) => {
+              const active = isActive(item.href);
+              
+              return item.href.startsWith("#") ? (
+                <a 
+                  key={item.href} 
+                  href={item.href}
+                  className={`nav-link ${active ? "is-active" : ""}`}
+                  onClick={() => handleNavClick(item)}
+                >
                   {item.label}
                 </a>
+              ) : (
+                <Link 
+                  key={item.href} 
+                  to={item.href}
+                  className={`nav-link ${active ? "is-active" : ""}`}
+                  onClick={() => handleNavClick(item)}
+                >
+                  {item.label}
+                </Link>
               );
-            }
-            return (
-              <Link key={item.href} to={item.href}
-                    className={cn(
-                      "nav-link text-sm font-medium transition-colors",
-                      active && "nav-link--active"
-                    )}>
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
+            })}
+          </div>
 
-        {/* Right: Auth actions — exact één CTA */}
-        <div className="auth-cta hidden items-center gap-3 md:flex">
-          {!user && (
-            <Link to="/inloggen" className="btn btn-primary btn-md inline-flex items-center gap-2" aria-label="Inloggen" data-variant="primary">
-              <Sparkles className="w-4 h-4" />
-              Inloggen
-            </Link>
-          )}
-          {user && (
-            <>
-              <Link to="/dashboard" className="btn btn-ghost btn-md" aria-label="Naar dashboard" data-variant="ghost">
+          {/* Right: CTA */}
+          <div className="hidden md:flex items-center">
+            {!user ? (
+              <Link 
+                to="/registreren" 
+                className="btn btn-primary"
+                onClick={handleCTAClick}
+              >
+                Start gratis
+              </Link>
+            ) : (
+              <Link 
+                to="/dashboard" 
+                className="btn btn-primary"
+                onClick={handleCTAClick}
+              >
                 Dashboard
               </Link>
-              <button
-                type="button"
-                onClick={logout}
-                className="btn btn-ghost btn-md"
-                aria-label="Uitloggen"
-                data-variant="ghost"
-              >
-                Uitloggen
-              </button>
-            </>
-          )}
+            )}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] transition-colors duration-200 hover:bg-[color:var(--color-accent)]"
+            aria-label={open ? "Sluit navigatie" : "Open navigatie"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={handleMobileToggle}
+          >
+            {open ? (
+              <X className="h-5 w-5 text-[color:var(--color-text)]" />
+            ) : (
+              <Menu className="h-5 w-5 text-[color:var(--color-text)]" />
+            )}
+          </button>
         </div>
+      </nav>
 
-        {/* Mobile: menu button */}
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-[var(--radius-lg)] border border-ui p-2 transition-colors md:hidden"
-          aria-label={isMobileMenuOpen ? "Sluit menu" : "Open menu"}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="mobile-menu"
-          onClick={() => setIsMobileMenuOpen((s) => !s)}
-        >
-          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer */}
-      <MobileNavDrawer open={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-    </nav>
+      {/* Mobile Navigation Drawer */}
+      <MobileNavDrawer 
+        open={open} 
+        onClose={() => setOpen(false)} 
+      />
+    </>
   );
 };
 
