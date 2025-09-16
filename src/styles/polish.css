@@ -33,47 +33,33 @@ section[aria-labelledby="hero-heading"], .ff-hero-card, [data-fitfi="hero-card"]
 position:relative; background: var(--color-surface);
 border:1px solid var(--color-border); border-radius: var(--radius-2xl);
 box-shadow: var(--shadow-soft);
-Pak alle CTA-varianten en forceer taupe door backgrounds te neutraliseren */
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary){
-  /* Zet tokens lokaal zodat parent-overschrijvingen niet lekken */
-  --ff-cta-bg: var(--ff-color-primary-600) !important;
-  --ff-cta-foreground: #fff !important;
-
-  /* 1) Eerst alle eerdere backgrounds neutraliseren */
-  background: none !important;
-
-  /* 2) Dan onze kleur op zowel shorthand als background-color */
-  background: var(--ff-cta-bg) !important;       /* wint van eerdere 'background' regels */
-  background-color: var(--ff-cta-bg) !important; /* extra safety */
-
-  color: var(--ff-cta-foreground) !important;
-  border: 1px solid transparent;
-  border-radius: var(--radius-lg);
-  opacity: 1 !important;
-  mix-blend-mode: normal !important;
-  display: inline-flex; align-items: center; gap: .5rem;
-  font-weight: 700; padding: .75rem 1rem;
-  text-decoration: none !important;
-  transition: transform .2s ease, background-color .2s ease, color .2s ease;
 }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary) * { color: inherit !important; }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary) svg{ color: currentColor; stroke: currentColor; fill: none; }
+section[aria-labelledby="hero-heading"]::before, .ff-hero-card::before{
+content:""; position:absolute; inset:0; pointer-events:none;
+background:
+radial-gradient(1200px 600px at 10% 12%, var(--overlay-primary-12a), transparent 60%),
+radial-gradient(900px 500px at 88% 85%, var(--overlay-accent-08a), transparent 60%);
+}
 
-/* Hover/active states */
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):hover{
-  transform: translateY(-1px) scale(1.01);
-  background: var(--ff-color-primary-700) !important;
-  background-color: var(--ff-color-primary-700) !important;
+/* ===== CTA — TAUPE (solid, altijd zichtbaar) ===== */
+.ff-cta, button, [role="button"]{
+transition: transform .2s ease, box-shadow .2s ease, filter .2s ease,
+background-color .2s ease, color .2s ease, border-color .2s ease;
 }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):active{
-  transform: translateY(0) scale(.995);
-  background: var(--ff-color-primary-700) !important;
-  background-color: var(--ff-color-primary-700) !important;
-  filter: brightness(.98);
+.ff-cta{
+background-color: var(--ff-cta-bg) !important; /* taupe-700 */
+color: var(--ff-cta-foreground) !important; /* wit */
+opacity: 1 !important; 
+mix-blend-mode: normal !important;
+border-radius: var(--radius-lg);
+display:inline-flex; align-items:center; gap:.5rem;
+font-weight: 700; padding-inline:1rem; padding-block:.75rem;
+text-decoration: none !important; 
+border: 1px solid transparent;
+box-shadow: 0 2px 8px rgba(122,97,74,.15);
 }
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary)[aria-disabled="true"],
-:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):disabled{
-  opacity:.6 !important; cursor:not-allowed; filter:grayscale(.05);
+.ff-cta *{ color: inherit !important; }
+.ff-cta svg{ color: currentColor; stroke: currentColor; fill: none; }
 .ff-cta:hover{ 
 transform: translateY(-1px) scale(1.01); 
 background-color: var(--ff-cta-bg-hover) !important;
