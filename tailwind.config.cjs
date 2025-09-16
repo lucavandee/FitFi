@@ -1,36 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
+  content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}'],
   safelist: [
-    "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
-    "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
-    "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2",
-    "flex","items-end","justify-end"
-  ],
-  safelist: [
-    "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
-    "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
-    "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2","flex","items-end","justify-end"
-  ],
-    "./index.html",
-    "./src/**/*.{ts,tsx,js,jsx}"
-  ],
-  safelist: [
-    // Launcher container + button
-    "fixed","right-6","pointer-events-none","rounded-full","h-14","w-14","p-0",
-    "shadow-lg","pointer-events-auto","z-[10000]","z-[2147483647]"
-  ],
-  safelist: [
-    "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
-    "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
-    "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2",
-    "flex","items-end","justify-end"
-  ],
-  safelist: [
-    "fixed","inset-0","right-6","rounded-xl","rounded-2xl","rounded-full",
-    "shadow-lg","border","text-sm","text-lg","max-w-md","overflow-hidden",
-    "z-[2147483647]","px-5","py-4","pb-3","pt-1","space-y-3","gap-2",
-    "flex","items-end","justify-end"
+    'fixed','inset-0','right-6','rounded-xl','rounded-2xl','rounded-full',
+    'shadow-lg','border','text-sm','text-lg','max-w-md','overflow-hidden',
+    'z-[2147483647]','px-5','py-4','pb-3','pt-1','space-y-3','gap-2','flex','items-end','justify-end'
   ],
   theme: {
     container: {
@@ -48,9 +22,8 @@ module.exports = {
         bg: "var(--ff-color-bg)",
         surface: "var(--ff-color-surface)",
         border: "var(--ff-color-border)",
-        muted: "var(--ff-color-muted)",
         text: "var(--ff-color-text)",
-        accent: "var(--ff-color-accent)",
+        muted: "var(--ff-color-muted)",
         success: "var(--ff-color-success)",
         warning: "var(--ff-color-warning)",
         danger: "var(--ff-color-danger)"

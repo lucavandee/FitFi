@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
           "logo": "https://fitfi.ai/logo.png"
         }}
       />
-    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
+    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center ff-hero-card">
       <div className="not-prose text-center max-w-2xl mx-auto p-8">
         <div className="w-20 h-20 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">
           <Sparkles className="w-10 h-10 text-white" />

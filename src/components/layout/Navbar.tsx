@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
             : ''
         }`}
         data-fitfi="navbar"
-        role="navigation"
+        className={`sticky top-0 z-40 bg-transparent transition-all duration-300 ${isScrolled ? 'is-scrolled' : ''}`}
         aria-label="Hoofdnavigatie"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
