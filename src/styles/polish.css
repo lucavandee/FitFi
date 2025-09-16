@@ -35,55 +35,44 @@ border:1px solid var(--color-border); border-radius: var(--radius-2xl);
 box-shadow: var(--shadow-soft);
 Pak alle CTA-varianten en forceer taupe door backgrounds te neutraliseren */
 :where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary){
-/* ===== CTA — TAUPE (final override, beats Tailwind utilities) ===== */
+  /* Zet tokens lokaal zodat parent-overschrijvingen niet lekken */
+  --ff-cta-bg: var(--ff-color-primary-600) !important;
+  --ff-cta-foreground: #fff !important;
 
-/* 1) Gebruik selectors met echte specificiteit (geen :where) */
-.ff-cta,
-[data-cta="primary"],
-.cta-primary,
-.btn-primary {
-  /* lokale token zodat parent-overschrijvingen niet lekken */
-  --ff-cta-bg: var(--ff-color-primary-600);
+  /* 1) Eerst alle eerdere backgrounds neutraliseren */
+  background: none !important;
 
-  /* 2) Schrijf zowel background als background-image zodat gradients/utilities verliezen */
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
+  /* 2) Dan onze kleur op zowel shorthand als background-color */
+  background: var(--ff-cta-bg) !important;       /* wint van eerdere 'background' regels */
+  background-color: var(--ff-cta-bg) !important; /* extra safety */
 
-  color: #FFFFFF !important;
-  border-color: transparent !important;
+  color: var(--ff-cta-foreground) !important;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
   opacity: 1 !important;
   mix-blend-mode: normal !important;
-
-  border-radius: var(--radius-lg);
   display: inline-flex; align-items: center; gap: .5rem;
   font-weight: 700; padding: .75rem 1rem;
   text-decoration: none !important;
   transition: transform .2s ease, background-color .2s ease, color .2s ease;
 }
+:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary) * { color: inherit !important; }
+:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary) svg{ color: currentColor; stroke: currentColor; fill: none; }
 
-.ff-cta:hover,
-[data-cta="primary"]:hover,
-.cta-primary:hover,
-.btn-primary:hover {
+/* Hover/active states */
+:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):hover{
+  transform: translateY(-1px) scale(1.01);
   background: var(--ff-color-primary-700) !important;
+  background-color: var(--ff-color-primary-700) !important;
 }
-.ff-cta:active,
-[data-cta="primary"]:active,
-.cta-primary:active,
-.btn-primary:active {
+:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):active{
+  transform: translateY(0) scale(.995);
   background: var(--ff-color-primary-700) !important;
+  background-color: var(--ff-color-primary-700) !important;
   filter: brightness(.98);
 }
-
-/* 3) Als er een utility .bg-white op de CTA staat, forceer onze kleur alsnog */
-.ff-cta.bg-white,
-[data-cta="primary"].bg-white,
-.cta-primary.bg-white,
-.btn-primary.bg-white {
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  color: #FFFFFF !important;
-}
+:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary)[aria-disabled="true"],
+:where(.ff-cta,[data-cta="primary"],.cta-primary,.btn,.btn-primary):disabled{
   opacity:.6 !important; cursor:not-allowed; filter:grayscale(.05);
 .ff-cta:hover{ 
 transform: translateY(-1px) scale(1.01); 
@@ -200,204 +189,3 @@ a:hover{ text-decoration: underline; }
 
 /* ===== RESPONSIVE ===== */
 @media (min-width: 768px){ .ff-sticky-cta{ display:none; } }
-
-/* ===== CTA — TAUPE (final, beats Tailwind .bg-white) ===== */
-
-/* specifieke targets; geen :where (heeft 0 specificiteit) */
-.ff-cta,
-.ff-cta.ff-cta,                    /* specificity bump (0,0,2) */
-[data-cta="primary"],
-.cta-primary,
-.btn-primary {
-  /* lokale token zodat parent-overschrijf niet lekt */
-  --ff-cta-bg: var(--ff-color-primary-600);
-
-  /* overschrijf zowel shorthand als color */
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  background-color: var(--ff-cta-bg) !important;
-
-  color: #fff !important;
-  border-color: transparent !important;
-  opacity: 1 !important;
-  mix-blend-mode: normal !important;
-
-  border-radius: var(--radius-lg);
-  display: inline-flex; align-items: center; gap: .5rem;
-  font-weight: 700; padding: .75rem 1rem;
-  text-decoration: none !important;
-  transition: transform .2s ease, background-color .2s ease, color .2s ease;
-}
-
-.ff-cta:hover,
-[data-cta="primary"]:hover,
-.cta-primary:hover,
-.btn-primary:hover {
-  background: var(--ff-color-primary-700) !important;
-}
-
-.ff-cta:active,
-[data-cta="primary"]:active,
-.cta-primary:active,
-.btn-primary:active {
-  background: var(--ff-color-primary-700) !important;
-  filter: brightness(.98);
-}
-
-/* Als er toch 'bg-white' op de CTA staat, forceer alsnog taupe */
-.ff-cta.bg-white,
-[data-cta="primary"].bg-white,
-.cta-primary.bg-white,
-.btn-primary.bg-white {
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  background-color: var(--ff-cta-bg) !important;
-  color: #fff !important;
-}
-
-/* ===== NAVBAR GLASS + ALIGN ===== */
-[data-fitfi="navbar"]{
-  position: sticky; top:0; z-index:40;
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  background-color: var(--glass-surface);
-  border-bottom: 1px solid var(--glass-border);
-}
-[data-fitfi="navbar"] .container, [data-fitfi="navbar"] .ff-container{
-  height: 64px; display:flex; align-items:center; justify-content:space-between; gap:1rem;
-}
-
-/* Nav chip (actieve link) */
-[data-fitfi="navbar"] .nav-link{
-  display:inline-flex; align-items:center; line-height:1;
-  padding:.5rem .625rem; border-radius:9999px; color:var(--color-text);
-  transition: background-color .2s ease, color .2s ease, opacity .2s ease;
-  opacity:.9;
-}
-[data-fitfi="navbar"] .nav-link:hover{ opacity:1; }
-[data-fitfi="navbar"] .nav-link.is-active{
-  background: color-mix(in srgb, var(--color-accent) 42%, #fff 58%);
-  box-shadow: inset 0 0 0 1px var(--color-border);
-  opacity:1;
-}
-
-/* Navbar CTA pill (taupe) */
-[data-fitfi="navbar"] .nav-cta,
-[data-fitfi="navbar"] [data-cta="primary"]{
-  --ff-cta-bg: var(--ff-color-primary-600, var(--color-primary));
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  color:#fff !important;
-  border:1px solid transparent !important;
-  padding:.6rem 1rem; border-radius:9999px; font-weight:700;
-  box-shadow:0 6px 18px rgba(0,0,0,.08);
-  transition: transform .15s ease, background-color .15s ease;
-}
-[data-fitfi="navbar"] .nav-cta:hover,
-[data-fitfi="navbar"] [data-cta="primary"]:hover{
-  background: var(--ff-color-primary-700, var(--color-primary)) !important;
-  transform: translateY(-1px);
-
-/* ===== CTA — TAUPE (wint van .bg-white & gradients) ===== */
-/* Gebruik echte specificiteit (geen :where) en kill shorthands/gradients. */
-.ff-cta,
-.ff-cta.ff-cta,                 /* specificity bump */
-[data-cta="primary"],
-.cta-primary,
-.btn-primary{
-  --ff-cta-bg: var(--ff-color-primary-600, var(--color-primary));
-  --ff-cta-bg-hover: var(--ff-color-primary-700, var(--color-primary));
-
-  background: var(--ff-cta-bg) !important;
-  background-color: var(--ff-cta-bg) !important;
-  background-image: none !important;
-
-  color:#fff !important; border-color:transparent !important;
-  opacity:1 !important; mix-blend-mode:normal !important;
-
-  display:inline-flex; align-items:center; gap:.5rem;
-  padding:.75rem 1rem; font-weight:700; border-radius: var(--radius-lg);
-  text-decoration:none !important;
-  transition: transform .2s ease, background-color .2s ease, color .2s ease;
-}
-.ff-cta:hover,
-[data-cta="primary"]:hover,
-.cta-primary:hover,
-.btn-primary:hover{ background:var(--ff-cta-bg-hover) !important; }
-
-/* Als er tóch een bg-utility op de CTA staat (zoals bg-white): alsnog forceren */
-.ff-cta[class*="bg-"],
-[data-cta="primary"][class*="bg-"],
-.cta-primary[class*="bg-"],
-.btn-primary[class*="bg-"]{
-  background:var(--ff-cta-bg) !important;
-  background-color:var(--ff-cta-bg) !important;
-  background-image:none !important;
-  color:#fff !important;
-}
-
-/* Zorg dat child tekst/icoontjes niet 'wegvallen' */
-.ff-cta *, [data-cta="primary"] *{ color:inherit !important; }
-/* ===== CTA — TAUPE, WINT VAN .bg-white ===== */
-.ff-cta,
-[data-cta="primary"],
-.cta-primary,
-.btn-primary {
-  /* lokale token, geen lekken van parents */
-  --ff-cta-bg: var(--ff-color-primary-600);
-
-  /* overschrijf alle eerdere backgrounds (ook shorthands/gradients) */
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  background-color: var(--ff-cta-bg) !important;
-
-  color: #FFFFFF !important;            /* zichtbare tekst */
-  border-color: transparent !important;
-  opacity: 1 !important;
-  mix-blend-mode: normal !important;
-
-  display: inline-flex; align-items: center; gap: .5rem;
-  padding: .75rem 1rem;
-  font-weight: 700;
-  border-radius: var(--radius-lg);
-  text-decoration: none !important;
-  transition: transform .2s ease, background-color .2s ease, color .2s ease;
-}
-/* Als er tóch bg-utilities op de CTA staan: forceer onze kleur alsnog */
-.ff-cta[class*="bg-"],
-[data-cta="primary"][class*="bg-"],
-.cta-primary[class*="bg-"],
-.btn-primary[class*="bg-"] {
-  background: var(--ff-cta-bg) !important;
-  background-image: none !important;
-  background-color: var(--ff-cta-bg) !important;
-  color: #FFFFFF !important;
-}
-.ff-cta:hover,
-[data-cta="primary"]:hover,
-.cta-primary:hover,
-.btn-primary:hover { background: var(--ff-color-primary-700) !important; }
-.ff-cta:active,
-[data-cta="primary"]:active,
-.cta-primary:active,
-.btn-primary:active { background: var(--ff-color-primary-700) !important; filter: brightness(.98); }
-
-/* ===== HEADER ALIGNMENT (vertical center, geen verschuiving) ===== */
-header[role="banner"], [data-fitfi="navbar"] {
-  position: sticky; top: 0; z-index: 40;
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  background-color: var(--glass-surface);
-  border-bottom: 1px solid var(--glass-border);
-}
-header[role="banner"] .container,
-[data-fitfi="navbar"] .container,
-header[role="banner"] .ff-container {
-  height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem;
-}
-header[role="banner"] nav a,
-[data-fitfi="navbar"] .nav-link {
-  display: inline-flex; align-items: center; line-height: 1;
-  padding: .5rem .625rem; border-radius: var(--radius-full);
-}
