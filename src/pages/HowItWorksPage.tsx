@@ -16,7 +16,7 @@ const HowItWorksPage: React.FC = () => {
         description="In 3 stappen naar je stijlrapport: test, AI-analyse en outfits met uitleg."
         canonical="https://www.fitfi.ai/hoe-het-werkt"
       />
-      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+      <main>
         <section className="section" aria-labelledby="howitworks-title">
           <div className="container max-w-5xl">
             <header className="max-w-3xl">

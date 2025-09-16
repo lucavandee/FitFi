@@ -67,7 +67,7 @@ const BlogIndexPage: React.FC = () => {
         description="Korte, toepasbare stukken over stijlpsychologie, capsules en AI-styling."
         canonical="https://www.fitfi.ai/blog"
       />
-      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+      <main>
         <section className="section">
           <div className="container">
             <header className="max-w-3xl">
