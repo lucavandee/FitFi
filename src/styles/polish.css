@@ -132,6 +132,14 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 .lead{ color: var(--color-muted); }
 .muted{ color: var(--color-muted); }
 .bordered{ border:1px solid var(--color-border); border-radius:14px; }
+
+/* ---------- Swipe carousel ---------- */
+.swipe{ display:flex; gap:1rem; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:.5rem; }
+.swipe::-webkit-scrollbar{ height:4px; }
+.swipe::-webkit-scrollbar-track{ background: var(--color-border); border-radius:2px; }
+.swipe::-webkit-scrollbar-thumb{ background: var(--color-muted); border-radius:2px; }
+.swipe::-webkit-scrollbar-thumb:hover{ background: var(--color-text); }
+.swipe__item{ flex:0 0 auto; scroll-snap-align:start; min-width:280px; }
 .why{ margin-top:.5rem; color: var(--color-text); }
 
 /* ---------- Layout utilities ---------- */
