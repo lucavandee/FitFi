@@ -1,6 +1,6 @@
 import React from "react";
 
-export type Outfit = {
+type Outfit = {
   id?: string | number;
   title?: string;
   imageUrl?: string;
@@ -10,65 +10,64 @@ export type Outfit = {
   matchPercentage?: number | null;
   href?: string;
   tags?: string[];
-  why?: string; // explainability: waarom dit past
 };
 
 type Props = {
   outfit: Outfit;
-  onSave?: (o: Outfit) => void;
-  onClick?: (o: Outfit) => void;
+  onSave?: (outfit: Outfit) => void;
+  onClick?: (outfit: Outfit) => void;
+  className?: string;
 };
 
-const fallbackImg = "/placeholder.png";
+const fallbackImg = "/images/outfits/fallback.jpg";
 
-const fmtPrice = (p: Props["outfit"]["price"], c?: string) => {
-  if (p == null || p === "") return "";
-  const n = typeof p === "string" ? Number(p) : p;
-  if (!Number.isFinite(n)) return String(p);
-  try {
-    return new Intl.NumberFormat("nl-NL", { style: "currency", currency: c || "EUR", maximumFractionDigits: 0 }).format(n as number);
-  } catch {
-    return `€${n}`;
-  }
+const formatPrice = (price?: string | number, currency: string = "€") => {
+  if (price === undefined || price === null || price === "") return "";
+  const num = typeof price === "string" ? Number(price) : price;
+  if (Number.isNaN(num)) return String(price);
+  return `${currency}${num.toFixed(2)}`.replace(".00", "");
 };
 
-const OutfitCard: React.FC<Props> = ({ outfit, onSave, onClick }) => {
+const OutfitCard: React.FC<Props> = ({ outfit, onSave, onClick, className = "" }) => {
   const {
     title = "Outfit",
     imageUrl,
     brand,
     price,
-    currency = "EUR",
+    currency = "€",
     matchPercentage,
-    href,
+    href = "#",
     tags = [],
-    why
   } = outfit || {};
 
-  const priceText = fmtPrice(price, currency);
+  const priceText = formatPrice(price, currency);
 
   return (
-    <article
-      className="card ff-card overflow-hidden focus:outline-none"
-      role="group"
-      aria-label={title}
-      onClick={() => onClick?.(outfit)}
-    >
-      {/* Image */}
+    <article className={`ff-card overflow-hidden ${className}`}>
+      {/* Visual */}
       <div className="relative">
-        <a href={href || "#"} aria-label={title} target={href ? "_blank" : undefined} rel={href ? "noopener noreferrer" : undefined}>
+        <a
+          href={href}
+          onClick={(e) => {
+            if (onClick) {
+              e.preventDefault();
+              onClick(outfit);
+            }
+          }}
+          aria-label={`Open ${title}`}
+        >
           <img
             src={imageUrl || fallbackImg}
             alt={title}
             loading="lazy"
             decoding="async"
-            className="block w-full aspect-[4/5] object-cover"
+            className="block w-full h-64 object-cover"
           />
         </a>
 
         {/* Match badge (veilig geconditioneerd) */}
         {typeof matchPercentage === "number" && !Number.isNaN(matchPercentage) && (
-          <span className="absolute left-3 top-3 badge badge-accent border-ui text-xs font-medium text-ink shadow-soft">
+          <span className="absolute left-3 top-3 surface border border-ui rounded-[var(--radius-lg)] px-2.5 py-1 text-xs font-medium text-ink shadow-soft">
             Match {Math.round(matchPercentage)}%
           </span>
         )}
@@ -84,38 +83,35 @@ const OutfitCard: React.FC<Props> = ({ outfit, onSave, onClick }) => {
             <p className="text-muted text-sm">{brand || "—"}</p>
           </div>
 
-          {/* Price (optioneel) */}
+        {/* Price (optioneel) */}
           {priceText && (
             <div className="text-ink font-semibold whitespace-nowrap">{priceText}</div>
           )}
         </div>
 
         {/* Tags */}
-        {tags?.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {tags.slice(0, 4).map((t) => (
-              <span key={t} className="badge text-xs badge-accent">{t}</span>
+        {tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {tags.slice(0, 6).map((t, i) => (
+              <span
+                key={`${t}-${i}`}
+                className="badge-accent inline-flex items-center rounded-full px-2 py-1 text-xs"
+              >
+                {t}
+              </span>
             ))}
           </div>
         )}
 
-        {/* Explainability – verplicht korte uitleg 1–2 zinnen */}
-        {why && (
-          <p className="mt-3 text-sm text-ink">
-            <strong>Waarom dit past:</strong> {why}
-          </p>
-        )}
-
         {/* Actions */}
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-3">
           <a
-            href={href || "#"}
-            target={href ? "_blank" : undefined}
-            rel={href ? "noopener noreferrer" : undefined}
-            className="btn btn-solid btn-md ff-focus"
-            aria-label="Bekijk & shop outfit"
+            href={href}
+            className="btn btn-primary btn-md"
+            data-variant="primary"
+            aria-label={`Bekijk ${title}`}
           >
-            Shop outfit
+            Bekijk
           </a>
           <button
             type="button"
