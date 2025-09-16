@@ -222,12 +222,11 @@ export default function OutfitCard({
     <div 
       className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
       data-kind="outfit-card"
-    >
       className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-[#89CFF0] focus-within:ring-offset-2"
       role="article"
       aria-labelledby={titleId}
       aria-describedby={descId}
-    >
+    {'>'}
       <div className="relative rounded-xl overflow-hidden mb-3">
         <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/5]">
           <SmartImage
@@ -458,6 +457,6 @@ export default function OutfitCard({
       <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
         <strong>Waarom dit werkt:</strong> de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
-    </article>
+    </div>
   );
 }
