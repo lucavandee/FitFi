@@ -18,10 +18,4 @@
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", ".netlify", "netlify"]
-    "noFallthroughCasesInSwitch": true,
-
-    /* Path mapping */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+}
