@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import { NovaChatProvider } from "@/components/nova/NovaChatProvider";
 import NovaChatMount from "@/components/nova/NovaChatMount";
+import "@/index.css";
 
 // CSS: eerst basis, DAN polish als allerlaatste (zorgt dat polish alles kan overrulen)
 import "./index.css";
