@@ -1,4 +1,4 @@
-import { Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, User } from 'lucide-react';
+import { Home, Info, HelpCircle, DollarSign, ShoppingBag, BookOpen, LogIn, User } from 'lucide-react';
 
 export interface NavLink {
   href: string;
@@ -6,11 +6,6 @@ export interface NavLink {
   icon: any;
 }
 
-/**
- * Let op:
- * - Géén "Inloggen" hier, zodat we geen dubbele login-link krijgen.
- * - Auth-CTA staat rechts in de Navbar en wordt daar conditioneel getoond.
- */
 export const NAV_ITEMS: NavLink[] = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/over-ons', label: 'Over ons', icon: Info },
@@ -19,5 +14,6 @@ export const NAV_ITEMS: NavLink[] = [
   { href: '/blog', label: 'Blog', icon: BookOpen },
   { href: '/contact', label: 'Contact', icon: User },
   { href: '/veelgestelde-vragen', label: 'FAQ', icon: HelpCircle },
-  { href: '/feed', label: 'Feed', icon: ShoppingBag }
+  { href: '/feed', label: 'Feed', icon: ShoppingBag },
+  { href: '/inloggen', label: 'Inloggen', icon: LogIn }
 ];
