@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { X, Home, User, BookOpen, Users, CreditCard, HelpCircle } from "lucide-react";
-import { w } from "@/utils/analytics";
+import { w as track } from "@/utils";
 import { useUser } from "@/context/UserContext";
 import { w } from "@/utils/analytics";
 
