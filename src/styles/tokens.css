@@ -7,9 +7,9 @@
   --color-text: #1E2333;
   --color-muted: #6B7280;
 
-  --color-primary: #A6886A;          /* brand taupe (semantisch, zelden direct gebruiken) */
-  --ff-color-primary-600: #8F7459;    /* hover */
-  --ff-color-primary-700: #7A614A;    /* active + CTA-bg (AA) */
+  --color-primary: #A6886A;          /* brand taupe (semantisch) */
+  --ff-color-primary-600: #8F7459;   /* hover */
+  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
 
   --color-accent: #D8CABA;
   --color-border: rgba(30, 35, 51, 0.08);
@@ -31,7 +31,7 @@
   --radius-2xl: 24px;
 }
 
-/* Baseline typografie + achtergrond */
+/* Baseline */
 html, body {
   background: var(--color-bg);
   color: var(--color-text);
@@ -39,20 +39,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+h1, h2, h3, h4, h5, h6, .ff-heading { font-family: Montserrat, ui-sans-serif, system-ui, sans-serif; }
 
-/* Headings → Montserrat via utility of globale scope */
-h1, h2, h3, h4, h5, h6, .ff-heading {
-  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
-}
-
-/* Linkstijl */
-a {
-  color: var(--color-text);
-  text-underline-offset: 4px;
-}
-a:hover {
-  text-decoration: underline;
-}
+a { color: var(--color-text); text-underline-offset: 4px; }
+a:hover { text-decoration: underline; }
 
 /* Cards */
 .ff-card {
@@ -63,21 +53,11 @@ a:hover {
 }
 
 /* CTA – solid (AA) */
-.ff-cta {
-  background: var(--ff-color-primary-700);
-  color: #fff;
-}
-.ff-cta:hover {
-  background: var(--ff-color-primary-600);
-}
+.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
+.ff-cta:hover { background: var(--ff-color-primary-600); }
 
 /* Focus-ring tokenized */
-.ff-focus {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
+.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
 
-/* ⚠️ Belangrijk: GEEN component- of app-logica (zoals display toggles) hier! */
-/* Verwijderd:
-   .nova-dock, .nova-chatbar, #nova-bottom-bar { display: none !important; }
-*/
+/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
+/* (Voorheen verborgen Nova-regels verwijderd) */
