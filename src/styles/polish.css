@@ -1,19 +1,14 @@
 /* src/styles/polish.css
-   FitFi — Premium Polish v6 (tokens-only)
-   - Glass header + nav active chip
-   - Buttons, cards, sections, chips, metrics
-   - Inputs + form states + :focus-within
-   - FAQ/details micro-motion
-   - Swipe carousel (no libs)
-   - Sticky mobile CTA
-   - Brand Strip (inline SVG "trusted by" badges)
+   FitFi — Premium Polish v7 (tokens-only)
+   - Alles uit v6 + form error states + alerts + disabled styles
+   - (Glass header, buttons, cards, chips, inputs, FAQ motion, swipe, sticky CTA, brand strip blijven gelijk)
 */
 
 /* ---------- Tokens helpers ---------- */
 :root{
   --shadow-soft: 0 12px 30px rgba(0,0,0,0.06);
   --shadow-medium: 0 16px 42px rgba(0,0,0,0.08);
-  --shadow-ring: 0 0 0 3px rgba(166,136,106,0.24); /* warm primary alpha */
+  --shadow-ring: 0 0 0 3px rgba(166,136,106,0.24);
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 18px;
@@ -55,6 +50,7 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
   user-select:none; cursor:pointer;
 }
 .btn:active{ transform: translateY(1px); }
+.btn[disabled]{ opacity:.5; cursor:not-allowed; }
 .btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
 .btn-primary:hover{ background: var(--ff-color-primary-600); box-shadow: 0 8px 18px rgba(0,0,0,0.06); }
 .btn-ghost{ background: transparent; border-color: var(--color-border); color: var(--color-text); }
@@ -95,26 +91,27 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 .metric__value{ font-weight:800; font-size:1.75rem; line-height:1; }
 .metric__label{ color: var(--color-muted); font-size:.875rem; }
 
-/* ---------- Step badges ---------- */
-.step-badge{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px;
-  border-radius:50%; background: var(--ff-color-primary-700); color:#fff; font-weight:800; font-size:.875rem; margin-bottom:.75rem;
-}
-
 /* ---------- Inputs ---------- */
 .input, .select, .textarea{
   width:100%; background: var(--color-surface); color: var(--color-text);
   border:1px solid var(--color-border); border-radius:12px; padding:.675rem .8rem;
-  transition: border-color var(--motion-med) ease, box-shadow var(--motion-med) ease;
+  transition: border-color var(--motion-med) ease, box-shadow var(--motion-med) ease, background var(--motion-med) ease;
 }
 .input:focus, .select:focus, .textarea:focus{
   border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 40%);
   box-shadow: var(--shadow-ring);
 }
-label:has(.input:focus), label:has(.textarea:focus), label:has(.select:focus){
-  text-shadow: 0 0 0 rgba(0,0,0,0.01);
+
+/* Error states */
+.input--error, .textarea--error{
+  border-color: var(--color-danger);
+  background: color-mix(in oklab, var(--color-danger), white 96%);
 }
-.textarea{ min-height:120px; resize:vertical; }
-.range{ width:100%; accent-color: var(--ff-color-primary-700); }
+.help-error{
+  color: var(--color-danger);
+  font-size: .875rem;
+  margin-top: .35rem;
+}
 
 /* ---------- FAQ / details ---------- */
 .faq details{ border:1px solid var(--color-border); border-radius:14px; background: var(--color-surface); box-shadow:var(--shadow-soft);
@@ -164,15 +161,6 @@ label:has(.input:focus), label:has(.textarea:focus), label:has(.select:focus){
 .sticky-cta__inner{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; max-width:80rem; margin-inline:auto; }
 .sticky-cta__text{ display:flex; flex-direction:column; font-size:.9rem; }
 
-/* ---------- Plan components ---------- */
-.plan{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft);
-  transition: box-shadow var(--motion-med) ease, transform var(--motion-fast) ease, border-color var(--motion-med) ease;
-}
-.plan--hi{ border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 50%); box-shadow: var(--shadow-medium); }
-.plan__inner{ padding:1.5rem; } @media (min-width:640px){ .plan__inner{ padding:2rem; } }
-.plan__title{ font-weight:800; font-size:1.25rem; }
-.plan__price{ font-weight:800; font-size:2.25rem; line-height:1; }
-
 /* ---------- Brand strip ---------- */
 .brandstrip{
   border-top:1px solid var(--color-border);
@@ -184,14 +172,22 @@ label:has(.input:focus), label:has(.textarea:focus), label:has(.select:focus){
   display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:.5rem 1rem;
 }
 @media (min-width:640px){ .brandstrip__inner{ grid-template-columns: repeat(5, minmax(0,1fr)); padding-inline:1.5rem; } }
-.brand-logo{
-  display:flex; align-items:center; gap:.5rem; opacity:.7; transition: opacity var(--motion-med) ease, transform var(--motion-fast) ease;
-}
+.brand-logo{ display:flex; align-items:center; gap:.5rem; opacity:.7; transition: opacity var(--motion-med) ease, transform var(--motion-fast) ease; }
 .brand-logo:hover{ opacity:1; transform: translateY(-1px); }
 .brand-logo__svg{ width: 22px; height: 22px; }
 .brand-logo__label{ font-weight:700; letter-spacing:.02em; font-size:.9rem; color: var(--color-text); }
 
-/* ---------- Utilities ---------- */
-.lead{ color: var(--color-muted); }
-.muted{ color: var(--color-muted); }
-.bordered{ border:1px solid var(--color-border); border-radius:14px; }
+/* ---------- Alerts ---------- */
+.alert{
+  display:flex; align-items:flex-start; gap:.75rem;
+  border:1px solid var(--color-border); border-radius: var(--radius-md);
+  padding:.75rem 1rem; background: color-mix(in oklab, var(--color-accent), white 70%);
+}
+.alert--success{
+  background: color-mix(in oklab, var(--color-success), white 92%);
+  border-color: color-mix(in oklab, var(--color-success), var(--color-border) 60%);
+}
+.alert--danger{
+  background: color-mix(in oklab, var(--color-danger), white 92%);
+  border-color: color-mix(in oklab, var(--color-danger), var(--color-border) 60%);
+}
