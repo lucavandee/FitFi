@@ -1,10 +1,13 @@
 /* src/styles/polish.css
-   FitFi — Premium Polish v4 (tokens-only)
+   FitFi — Premium Polish v5 (tokens-only)
    - Glass header + nav active chip
    - Buttons, cards, sections, chips, metrics
    - Inputs + form states
    - Details/FAQ + skeletons
-   - Subtle animations (no external libs)
+   - Swipe carousel (no libs)
+   - Sticky mobile CTA
+   - Step badges for onboarding
+   - Plan components for pricing
 */
 
 /* ---------- Tokens helpers ---------- */
@@ -62,18 +65,17 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 .card__inner{ padding:1.25rem; } @media (min-width:640px){ .card__inner{ padding:1.5rem; } }
 .card__title{ font-weight:800; font-size:1.125rem; }
 .card__text{ color: var(--color-muted); margin-top:.25rem; }
-.subcard{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:14px; }
+.subcard{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:14px; overflow: hidden; }
 .subcard__inner{ padding:1rem; }
 .subcard__title{ font-weight:700; }
-.subcard__kicker{ color: var(--color-muted); font-size:.875rem; margin-top:.25rem; }
+.subcard__kicker{ color: var(--color-muted); font-size:.9rem; margin-top:.15rem; }
 
-/* Legacy card classes for backward compatibility */
-.card-inner{ padding:1.25rem; } @media (min-width:640px){ .card-inner{ padding:1.5rem; } }
-.card-title{ font-weight:800; font-size:1.125rem; }
-.card-text{ color: var(--color-muted); margin-top:.25rem; }
-.subcard-inner{ padding:1rem; }
-.subcard-title{ font-weight:700; }
-.subcard-text{ color: var(--color-muted); font-size:.875rem; margin-top:.25rem; }
+/* ---------- Plans (pricing) ---------- */
+.plan{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); position: relative; }
+.plan--hi{ border-color: var(--color-primary); box-shadow: var(--shadow-medium); }
+.plan__inner{ padding:1.5rem; } @media (min-width:640px){ .plan__inner{ padding:2rem; } }
+.plan__title{ font-weight:800; font-size:1.25rem; }
+.plan__price{ font-weight:800; font-size:2rem; line-height:1; }
 
 /* ---------- Chips / badges / metrics ---------- */
 .chip{ display:inline-flex; align-items:center; gap:.4rem; height:32px; padding:0 .75rem;
@@ -81,16 +83,13 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
   color: var(--color-text); font-size:.875rem; font-weight:600;
 }
 .chip svg{ width:16px; height:16px; }
-.chip--accent, .chip-accent{ background: color-mix(in oklab, var(--color-accent), white 58%); }
+.chip--accent{ background: color-mix(in oklab, var(--color-accent), white 58%); }
+.step-badge{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px;
+  border-radius:50%; background: var(--ff-color-primary-700); color:#fff; font-weight:800; font-size:.875rem; margin-bottom:.75rem;
+}
 .metric{ display:flex; align-items:baseline; gap:.5rem; }
 .metric__value{ font-weight:800; font-size:1.75rem; line-height:1; }
 .metric__label{ color: var(--color-muted); font-size:.875rem; }
-
-/* Step badges */
-.step-badge{ display:inline-grid; place-items:center; width:36px; height:36px; border-radius:999px;
-  background: color-mix(in oklab, var(--color-primary), white 78%); border:1px solid var(--color-border);
-  color: var(--color-text); font-weight:700; margin-bottom:.75rem;
-}
 
 /* ---------- Inputs ---------- */
 .input, .select, .textarea{
@@ -107,14 +106,6 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 .faq summary::-webkit-details-marker{ display:none; }
 .faq__content{ padding:0 1.25rem 1rem 1.25rem; color: var(--color-muted); }
 
-/* ---------- Pricing ---------- */
-.plan, .plan-card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:18px; box-shadow:var(--shadow-soft); }
-.plan--hi, .plan-card--highlight{ outline: 2px solid color-mix(in oklab, var(--color-primary), white 30%); box-shadow:0 12px 30px rgba(0,0,0,0.08); }
-.plan__inner, .plan-inner{ padding:1.25rem; } @media (min-width:640px){ .plan__inner, .plan-inner{ padding:1.5rem; } }
-.plan__title, .plan-title{ font-weight:800; font-size:1.125rem; }
-.plan__price, .plan-price{ font-weight:800; font-size:2rem; line-height:1; }
-.plan__badge{ composes: chip; }
-
 /* ---------- Hero ---------- */
 .hero__eyebrow{ display:inline-flex; align-items:center; gap:.5rem; color: var(--color-muted); font-size:.95rem; margin-bottom:.5rem; }
 .hero__title{ font-family: var(--font-heading, inherit); font-weight:800; letter-spacing:-0.02em; line-height:1.1; }
@@ -128,73 +119,35 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 .skel::after{ content:""; position:absolute; inset:0; transform:translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); animation: skel 1.35s infinite; }
 @keyframes skel{ 100%{ transform:translateX(100%); } }
 
+/* ---------- Swipe carousel ---------- */
+.swipe{
+  display:grid; grid-auto-flow:column; grid-auto-columns: 82%;
+  gap: 1rem; overflow-x:auto; padding-bottom:.5rem;
+  scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+}
+@media (min-width:640px){ .swipe{ grid-auto-columns: 48%; } }
+@media (min-width:1024px){ .swipe{ grid-auto-columns: 38%; } }
+.swipe:focus-visible{ box-shadow: var(--shadow-ring); border-radius: 14px; }
+.swipe__item{ scroll-snap-align:start; }
+
+/* Custom scrollbar for swipe */
+.swipe::-webkit-scrollbar{ height: 6px; }
+.swipe::-webkit-scrollbar-track{ background: color-mix(in oklab, var(--color-border), transparent 50%); border-radius: 3px; }
+.swipe::-webkit-scrollbar-thumb{ background: var(--color-primary); border-radius: 3px; }
+.swipe::-webkit-scrollbar-thumb:hover{ background: var(--ff-color-primary-600); }
+
+/* ---------- Sticky mobile CTA ---------- */
+.sticky-cta{
+  position: fixed; left:0; right:0; bottom:0; z-index:40;
+  background: color-mix(in oklab, var(--color-surface), transparent 0%);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.06);
+  padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom));
+}
+.sticky-cta__inner{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; max-width:80rem; margin-inline:auto; }
+.sticky-cta__text{ display:flex; flex-direction:column; font-size:.9rem; }
+
 /* ---------- Utilities ---------- */
 .lead{ color: var(--color-muted); }
 .muted{ color: var(--color-muted); }
 .bordered{ border:1px solid var(--color-border); border-radius:14px; }
-
-/* ---------- Swipe carousel ---------- */
-.swipe{ display:flex; gap:1rem; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:.5rem; }
-.swipe::-webkit-scrollbar{ height:4px; }
-.swipe::-webkit-scrollbar-track{ background: var(--color-border); border-radius:2px; }
-.swipe::-webkit-scrollbar-thumb{ background: var(--color-muted); border-radius:2px; }
-.swipe::-webkit-scrollbar-thumb:hover{ background: var(--color-text); }
-.swipe__item{ flex:0 0 auto; scroll-snap-align:start; min-width:280px; }
-.why{ margin-top:.5rem; color: var(--color-text); }
-
-/* Sticky CTA */
-.sticky-cta {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: 1rem;
-  z-index: 50;
-}
-
-.sticky-cta__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  max-width: 100%;
-}
-
-.sticky-cta__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.sticky-cta__text strong {
-  color: var(--color-text);
-}
-
-/* Step badges */
-.step-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  background: var(--color-primary);
-  color: #fff;
-  border-radius: 50%;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-}
-
-/* ---------- Layout utilities ---------- */
-.w-full{ width:100%; }
-.mt-6{ margin-top:1.5rem; }
-.space-y-2 > * + *{ margin-top:.5rem; }
-.space-y-3 > * + *{ margin-top:.75rem; }
-.flex{ display:flex; }
-.items-center{ align-items:center; }
-.gap-2{ gap:.5rem; }
-.gap-3{ gap:.75rem; }
