@@ -1,126 +1,100 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import Seo from '@/components/Seo';
-import Button from '../components/ui/Button';
-import HeroTitle from '@/components/marketing/HeroTitle';
-import Chip from '@/components/ui/Chip';
-import { useUser } from '../context/UserContext';
-import { trackStickyCTA } from '@/hooks/useABTesting';
+import Button from '@/components/ui/Button';
+import { useUser } from '@/context/UserContext';
+import SmartImage from '@/components/media/SmartImage';
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
 
-  const handleStartQuiz = () => {
-    // Track quiz start from home hero
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'quiz_start', { 
-        location: 'home_hero',
-        event_category: 'conversion',
-        event_label: 'home_cta_click'
-      });
-    }
-  };
-
   return (
     <>
-      <Seo 
+      <Seo
         title="FitFi - AI Styling voor jouw perfecte outfit"
-        description="Ontdek jouw unieke stijl met AI-powered outfit aanbevelingen. Persoonlijke styling advies op basis van jouw voorkeuren en lichaamsbouw."
-        canonical="https://fitfi.app/home"
-        keywords="AI personal stylist, outfit aanbevelingen, stijl quiz, fashion advies, Nederlandse mode platform"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "FitFi",
-          "url": "https://fitfi.ai",
-          "logo": "https://fitfi.ai/logo.png"
-        }}
+        description="Ontdek jouw unieke stijl met AI. Persoonlijke outfits met uitleg en shopbare suggesties — in 2 minuten."
+        canonical="https://fitfi.ai/"
+        keywords="AI personal stylist, outfit aanbevelingen, stijl quiz, fashion advies"
       />
-    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center ff-hero-card">
-      <div className="not-prose text-center max-w-2xl mx-auto p-8">
-        <div className="w-20 h-20 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">
-          <Sparkles className="w-10 h-10 text-white" />
-        </div>
-        
-        <div className="mb-6">
-          <HeroTitle
-            lines={[
-              'Ontdek wat',
-              'jouw stijl',
-              'over je zegt',
-            ]}
-            accents={{
-              1: [
-                { word: 'jouw', className: 'text-gradient-soft', onlyFirst: true },
-                { word: 'stijl', className: 'text-gradient accent-bump sheen', onlyFirst: true },
-              ],
-            }}
-            className="mb-6"
-            balance
-          />
-        </div>
-        
-        <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
-          Krijg in 2 minuten een gepersonaliseerd AI-rapport dat onthult hoe jouw kledingkeuzes 
-          jouw persoonlijkheid weerspiegelen en hoe je dit kunt gebruiken om jouw doelen te bereiken.
-        </p>
-        
-        {/* Trust Indicators */}
-        <div className="flex flex-wrap justify-center gap-3 mt-4 mb-8">
-          <Chip>100% Gratis</Chip>
-          <Chip>2 Minuten</Chip>
-          <Chip>Direct Resultaat</Chip>
-        </div>
-        
-        <div className="space-y-4">
-          {user ? (
-            <>
-              <Button 
-                as={Link}
-                to="/dashboard" 
-                variant="primary"
-                size="lg"
-                icon={<ArrowRight size={20} />}
-                iconPosition="right"
-                data-ff-event="cta_click"
-                data-ff-loc="home_hero"
-              >
-                Ga naar Dashboard
-              </Button>
-              <p className="copy-muted text-lg md:text-xl mt-4 max-w-2xl mx-auto mb-8 leading-relaxed copy-narrow">
-                Welkom terug, {user.name}!
+
+      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+        <section className="section">
+          <div className="container grid grid-cols-1 gap-10 lg:grid-cols-12">
+            {/* Copy */}
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              <div className="mb-6">
+                <span className="chip chip--accent">
+                  ✨ Gratis AI Style Report
+                </span>
+              </div>
+
+              <h1 className="hero__title">
+                Ontdek wat<br />jouw stijl<br />over je zegt
+              </h1>
+
+              <p className="lead mt-4 max-w-2xl">
+                Krijg in 2&nbsp;minuten een gepersonaliseerd AI-rapport met outfits en shopbare aanbevelingen.
               </p>
-            </>
-          ) : (
-            <>
-              <Button 
-                as={Link}
-                to="/registreren" 
-                onClick={handleStartQuiz}
-                variant="primary"
-                size="lg"
-                icon={<ArrowRight size={20} />}
-                iconPosition="right"
-                className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
-                data-ff-event="cta_click"
-                data-ff-loc="home_hero"
-              >
-                Start nu gratis
-              </Button>
-              <p className="text-sm text-gray-500 mt-4">
-                Geen creditcard vereist • Privacy gegarandeerd • 10.000+ rapporten gegenereerd
+
+              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+                <li className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[color:var(--color-success)]" />
+                  100% Gratis
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[color:var(--color-success)]" />
+                  2 Minuten
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[color:var(--color-success)]" />
+                  Direct resultaat
+                </li>
+              </ul>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                {!user ? (
+                  <>
+                    <Button as={Link as any} to="/registreren" variant="primary" size="lg" aria-label="Start gratis">
+                      Ja, geef mij mijn gratis AI Style Report
+                    </Button>
+                    <Button as={Link as any} to="/hoe-het-werkt" variant="ghost" size="lg" aria-label="Lees hoe het werkt">
+                      Hoe het werkt
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button as={Link as any} to="/dashboard" variant="primary" size="lg" aria-label="Naar je dashboard">
+                      Ga naar je dashboard
+                    </Button>
+                    <Button as={Link as any} to="/feed" variant="ghost" size="lg" aria-label="Bekijk je feed">
+                      Bekijk de feed
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              <p className="mt-5 text-sm muted">
+                Geen creditcard vereist · Privacy gegarandeerd · 10.000+ rapporten gegenereerd
               </p>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-    
-    {/* Sticky Mobile CTA */}
-    <div className="ff-sticky-cta md:hidden">
-      <a href="/get-started" className="ff-cta" data-analytics="sticky-cta" onClick={trackStickyCTA}>Start gratis</a>
-    </div>
+            </div>
+
+            {/* Visual */}
+            <div className="lg:col-span-5">
+              <div className="card card--elevated overflow-hidden">
+                <SmartImage
+                  src="/images/hero/nova-hero.jpg"
+                  alt="Nova AI — jouw stylist"
+                  loading="eager"
+                  decoding="async"
+                  className="block h-full w-full object-cover"
+                />
+              </div>
+              <div className="h-2" />
+            </div>
+          </div>
+        </section>
+      </main>
     </>
   );
 };
