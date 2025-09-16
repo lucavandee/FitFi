@@ -79,11 +79,12 @@ const Hero: React.FC<HeroProps> = ({ onCTAClick, className = '' }) => {
                 data-ff-event="cta_click"
                 data-ff-loc="home_hero"
                 data-analytics="hero-cta"
+                data-cta="primary"
                 variant="primary"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 iconPosition="right"
-                className="ff-cta cta-btn px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                className="ff-cta px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                 aria-label="Start je gratis AI Style Report"
               >
                 {ctaText}
