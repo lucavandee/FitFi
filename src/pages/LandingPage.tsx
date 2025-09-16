@@ -57,7 +57,7 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[color:var(--color-bg)]">
+    <div className="min-h-screen bg-white">
       <Seo
         title="AI Style Report — Ontdek wat jouw stijl over je zegt"
         description="Krijg je gratis AI Style Report in 2 minuten. Zie wat jouw kledingkeuzes over je zeggen en ontvang direct passende outfits."

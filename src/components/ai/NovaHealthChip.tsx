@@ -1,34 +1,30 @@
-// src/components/ai/NovaHealthChip.tsx
-import React from "react";
+import React from 'react';
 
-type Status = "ok" | "warn" | "error";
-type Props = { status: Status; label?: string; className?: string };
+export default function NovaHealthChip({
+  status, model, ttfbMs, traceId,
+}: {
+  status: 'idle'|'connecting'|'streaming'|'done'|'error';
+  model?: string; ttfbMs?: number; traceId?: string;
+}) {
+  const color = status === 'error' ? 'bg-red-500'
+              : status === 'done' ? 'bg-emerald-500'
+              : status === 'streaming' ? 'bg-sky-500'
+              : status === 'connecting' ? 'bg-amber-500'
+              : 'bg-gray-400';
+  const label = status === 'error' ? 'Error'
+              : status === 'done' ? 'Connected'
+              : status === 'streaming' ? 'Streaming'
+              : status === 'connecting' ? 'Connecting'
+              : 'Idle';
+  const tid = traceId ? `${traceId.slice(0,6)}…` : '';
 
-const mapBadge = (status: Status) => {
-  switch (status) {
-    case "ok":
-      return "badge badge-success";
-    case "warn":
-      return "badge badge-warn";
-    case "error":
-    default:
-      return "badge badge-danger";
-  }
-};
-
-const mapText = (status: Status, label?: string) => {
-  if (label) return label;
-  if (status === "ok") return "Online";
-  if (status === "warn") return "Vertraagd";
-  return "Storing";
-};
-
-const NovaHealthChip: React.FC<Props> = ({ status, label, className }) => {
   return (
-    <span className={`${mapBadge(status)} text-xs ${className || ""}`} role="status" aria-live="polite">
-      {mapText(status, label)}
-    </span>
+    <div className="flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs text-ink bg-white/70">
+      <span className={`inline-block h-2 w-2 rounded-full ${color}`} />
+      <span className="font-medium">{label}</span>
+      {model && <span className="text-gray-500">• {model}</span>}
+      {typeof ttfbMs === 'number' && <span className="text-gray-500">• {ttfbMs}ms</span>}
+      {tid && <span className="text-gray-400">• {tid}</span>}
+    </div>
   );
-};
-
-export default NovaHealthChip;
+}
