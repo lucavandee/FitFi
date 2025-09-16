@@ -8,8 +8,16 @@ import MobileNavDrawer from "./MobileNavDrawer";
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user } = useUser();
   const location = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -26,8 +34,11 @@ const Navbar: React.FC = () => {
         {/* Center: Desktop nav */}
         <div className="hidden items-center gap-6 md:flex">
           {NAV_ITEMS.map((item) => (
-            item.external ? (
-              <a key={item.href} href={item.href} className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}>{item.label}</a>
+            item.href.startsWith("#") ? (
+              <a key={item.href} href={item.href}
+                 className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}>
+                {item.label}
+              </a>
             ) : (
               <Link key={item.href} to={item.href}
                     className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}>
@@ -48,7 +59,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)]"
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-border)]"
           aria-label="Open navigatie"
           aria-expanded={open}
           aria-controls="mobile-menu"
