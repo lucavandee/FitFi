@@ -1,17 +1,29 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+// /src/main.tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+// Geen BrowserRouter hier (App bevat al een Router)
+import { HelmetProvider } from "react-helmet-async";
 
-// Bootstrap guards en analytics
-import './bootstrap/guards'
-import { initAnalytics } from './utils/analytics'
+import App from "./App";
+import { NovaChatProvider } from "@/components/nova/NovaChatProvider";
+import NovaChatMount from "@/components/nova/NovaChatMount";
+import "@/index.css";
 
-// Initialize analytics
-initAnalytics()
+// CSS: eerst basis, DAN polish als allerlaatste (zorgt dat polish alles kan overrulen)
+import "./index.css";
+import "./styles/polish.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Boot Nova eenmaal (dubbele import verwijderd)
+import "./components/nova/boot.tsx";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+    <HelmetProvider>
+      <NovaChatProvider>
+        <App />
+        {/* Floating FAB + overlay panel (rechtsonder) */}
+        <NovaChatMount />
+      </NovaChatProvider>
+    </HelmetProvider>
+  </React.StrictMode>
+);
