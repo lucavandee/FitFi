@@ -33,7 +33,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
   ];
 
   return (
-    <section className={`py-16 bg-[color:var(--color-bg)] ${className}`} aria-labelledby="social-proof-heading">
+    <section className={`py-16 bg-white ${className}`} aria-labelledby="social-proof-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 id="social-proof-heading" className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
@@ -56,7 +56,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
                 </div>
               </div>
               
-              <blockquote className="card__text">
+              <blockquote className="text-lg text-gray-700 leading-relaxed mb-6 italic">
                 "{testimonial.quote}"
               </blockquote>
               
@@ -67,7 +67,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
                   className="w-12 h-12 rounded-full object-cover shadow-sm mr-4"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">— {testimonial.author}</div>
+                  <div className="font-medium text-gray-900">{testimonial.author}</div>
                   <div className="text-sm text-gray-500">Geverifieerde gebruiker</div>
                 </div>
               </div>

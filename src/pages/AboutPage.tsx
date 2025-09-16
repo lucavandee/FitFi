@@ -19,7 +19,7 @@ const AboutPage: React.FC = () => {
         description="Wij combineren AI en stijlkennis voor persoonlijk, onafhankelijk stylingadvies. Premium ervaring, privacy-first."
         canonical="https://www.fitfi.ai/over-ons"
       />
-      <main>
+      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
         {/* Hero */}
         <section className="section">
           <div className="container grid gap-10 lg:grid-cols-12">
