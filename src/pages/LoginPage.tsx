@@ -152,8 +152,10 @@ const LoginPage: React.FC = () => {
                   role="alert"
                   aria-live="assertive"
                 >
-                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                  <p className="text-red-700 text-sm">{errors.general}</p>
+                <div className="bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-lg p-3 flex items-start gap-2">
+                  <AlertCircle className="text-[color:var(--color-danger)] flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-[color:var(--color-text)] text-sm">{errors.general}</p>
+                </div>
                 </div>
               )}
 
@@ -162,9 +164,10 @@ const LoginPage: React.FC = () => {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   E-mailadres
                 </label>
+                <label htmlFor="email" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">E-mailadres</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <Mail className="h-5 w-5 text-[color:var(--color-muted)]" />
                   </div>
                   <input
                     id="email"
@@ -174,12 +177,13 @@ const LoginPage: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-3 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.email ? 'border-red-300' : 'border-gray-300'
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg bg-[color:var(--color-surface)] text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)]
+                                focus-visible:ring-2 ring-[color:var(--color-primary)] ring-offset-2 ring-offset-[color:var(--color-surface)] transition-colors
+                                ${errors.email ? 'border-[color:var(--color-danger)]' : 'border-[color:var(--color-border)]'}`}
                     placeholder="je@email.com"
                   />
                 </div>
+                {errors.email && <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">{errors.email}</p>}
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600" role="alert">
                     {errors.email}
@@ -192,9 +196,10 @@ const LoginPage: React.FC = () => {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Wachtwoord
                 </label>
+                <label htmlFor="password" className="block text-sm font-medium text-[color:var(--color-text)] mb-2">Wachtwoord</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <Lock className="h-5 w-5 text-[color:var(--color-muted)]" />
                   </div>
                   <input
                     id="password"
@@ -204,9 +209,9 @@ const LoginPage: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-10 py-3 border rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#bfae9f] focus:border-[#bfae9f] transition-colors ${
-                      errors.password ? 'border-red-300' : 'border-gray-300'
-                    }`}
+                    className={`block w-full pl-10 pr-10 py-3 border rounded-lg bg-[color:var(--color-surface)] text-[color:var(--color-text)] placeholder:text-[color:var(--color-muted)]
+                                focus-visible:ring-2 ring-[color:var(--color-primary)] ring-offset-2 ring-offset-[color:var(--color-surface)] transition-colors
+                                ${errors.password ? 'border-[color:var(--color-danger)]' : 'border-[color:var(--color-border)]'}`}
                     placeholder="Je wachtwoord"
                   />
                   <button
@@ -215,6 +220,7 @@ const LoginPage: React.FC = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Verberg wachtwoord" : "Toon wachtwoord"}
                   >
+                    {showPassword ? <EyeOff className="h-5 w-5 text-[color:var(--color-muted)]" /> : <Eye className="h-5 w-5 text-[color:var(--color-muted)]" />}
                     {showPassword ? (
                       <EyeOff className="h-5 w-5 text-gray-400" />
                     ) : (
@@ -222,6 +228,7 @@ const LoginPage: React.FC = () => {
                     )}
                   </button>
                 </div>
+                {errors.password && <p className="mt-1 text-sm text-[color:var(--color-danger)]" role="alert">{errors.password}</p>}
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600" role="alert">
                     {errors.password}
@@ -253,7 +260,7 @@ const LoginPage: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Inloggen...
+                <Link to="/wachtwoord-vergeten" className="text-sm text-[color:var(--color-text)] hover:underline">Wachtwoord vergeten?</Link>
                   </div>
                 ) : (
                   'Inloggen'
