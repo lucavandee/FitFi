@@ -1,39 +1,10 @@
-/* @import ALTIJD eerst: */
-@import "@/components/nova/ChatTheme.css";
+/* src/index.css */
+
+/* 0) @import moet boven alle andere regels staan (Vite) */
 @import "./styles/tokens.css";
+@import "./styles/polish.css";
 
-/* Tailwind layers */
-@import "./components/nova/ChatTheme.css";
-
+/* 1) Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import FitFi Theme */
-@import './styles/fitfi-theme.css';
-@import './styles/animations.css';
-@import './styles/components/images.css';
-@import './styles/polish.css';
-@import './styles/components/pricing.css';
-@import './styles/polish.css';
-
-/* Kill-switch legacy / third-party chat docks */
-:root {
-  color-scheme: light dark;
-}
-
-/* (optioneel) centrering safeguards – behoudt je premium grid */
-.container,
-.page-wrap,
-.main-wrap {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 80rem; /* ~1280px (max-w-7xl) */
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-/* Zorg dat body nooit horizontaal scrollt door FAB/rail */
-html, body {
-  overflow-x: hidden;
-}
