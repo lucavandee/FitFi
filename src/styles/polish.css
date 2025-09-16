@@ -1,165 +1,113 @@
-/* src/styles/polish.css */
-/* UI-Polish: subtiele verbeteringen, ALLEEN tokens gebruiken (geen hex/rgb buiten tokens) */
+/* src/styles/polish.css — Premium Polish v8 (tokens-only) */
+/* Glas-header, nav chips, cards, CTA's, inputs, FAQ, swipe, metrics */
 
-/* ====== App utilities (tokens) ====== */
-.bg-app { background-color: var(--color-bg); }
-.surface { background-color: var(--color-surface); }
-.text-ink { color: var(--color-text); }
-.text-muted { color: var(--color-muted); }
-.border-ui { border-color: var(--color-border); }
+:root{
+  --shadow-soft: 0 12px 30px rgba(0,0,0,0.06);
+  --shadow-medium: 0 16px 42px rgba(0,0,0,0.08);
+  --shadow-ring: 0 0 0 3px rgba(166,136,106,0.24);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 1.5rem;
+  --motion-fast: 160ms;
+  --motion-med: 260ms;
+}
 
-/* Ring utilities */
-.ring-brand { --tw-ring-color: var(--ff-color-primary-600); }
-.ring-offset-surface { --tw-ring-offset-color: var(--color-surface); }
+/* Layout helpers */
+.section{ padding-block: clamp(2.5rem, 6vw, 4.5rem); }
+.container{ width: 100%; max-width: 1120px; margin-inline:auto; padding-inline:1rem; }
+@media (min-width:640px){ .container{ padding-inline:1.5rem; } }
+@media (min-width:1024px){ .container{ padding-inline:2rem; } }
 
-/* Glas-header (conform polish-kaders) */
-.glass-header {
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
-  backdrop-filter: saturate(180%) blur(12px);
-  background-color: color-mix(in srgb, var(--color-surface) 86%, var(--overlay-primary-12a) 14%);
+/* Typography scale */
+.hero__title{
+  font-family: theme(fontFamily.heading);
+  font-weight: 700;
+  line-height:1.04;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.01em;
+}
+.lead{ font-size: clamp(1.05rem, 2.2vw, 1.25rem); color: var(--color-text); opacity:.92; }
+.muted{ color: var(--color-muted); }
+
+/* Navbar (één header, glas) */
+.navbar{
+  position: sticky; top:0; z-index:50;
+  backdrop-filter: blur(10px);
+  background: color-mix(in oklab, var(--overlay-primary-12a), var(--color-surface) 86%);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-soft);
 }
+.nav-inner{ display:flex; align-items:center; justify-content:space-between; height: 72px; }
+.nav-link{ color: var(--color-text); padding:.5rem .85rem; border-radius:999px; text-decoration:none; }
+.nav-link:hover{ text-decoration: underline; text-underline-offset:4px; }
+.nav-link.is-active{ background: color-mix(in oklab, var(--color-accent), white 58%); border:1px solid var(--color-border); }
 
-/* Hero-card shell */
-.hero-shell {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-soft);
+/* Buttons */
+.btn{
+  --btn-r:14px;
+  display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+  border-radius:var(--btn-r); padding:.85rem 1rem; font-weight:700; line-height:1.1;
+  border:1px solid transparent; transition: transform .05s ease, background-color var(--motion-med) ease, box-shadow var(--motion-med) ease, border-color var(--motion-med) ease, color var(--motion-med) ease;
+  user-select:none; cursor:pointer;
 }
+.btn:active{ transform: translateY(1px); }
+.btn[disabled]{ opacity:.5; cursor:not-allowed; }
+.btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
+.btn-primary:hover{ background: var(--ff-color-primary-600); box-shadow: 0 8px 18px rgba(0,0,0,0.06); }
+.btn-ghost{ background: transparent; border-color: var(--color-border); color: var(--color-text); }
+.btn-ghost:hover{ border-color: var(--color-primary); }
+.btn-lg{ padding:1rem 1.25rem; border-radius:16px; }
+.btn-full{ width:100%; }
 
-/* Badges/metrics (lichte tints) */
-.badge-accent { background-color: color-mix(in srgb, var(--color-surface) 88%, var(--color-accent) 12%); color: var(--color-text); }
-.badge-success { background-color: color-mix(in srgb, var(--color-surface) 90%, var(--color-success) 10%); color: var(--color-text); }
-.badge-warn    { background-color: color-mix(in srgb, var(--color-surface) 90%, var(--color-warning) 10%); color: var(--color-text); }
-.badge-danger  { background-color: color-mix(in srgb, var(--color-surface) 90%, var(--color-danger) 10%); color: var(--color-text); }
+/* Cards / Subcards */
+.card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); }
+.card__inner{ padding: clamp(1rem, 2.2vw, 1.25rem); }
+.card__title{ font-family: theme(fontFamily.heading); font-weight:600; font-size: clamp(1.15rem,2.4vw,1.35rem); }
+.card__text{ margin-top:.25rem; color: var(--color-text); opacity:.92; }
 
-/* Links: hover-underline met offset */
-a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.subcard{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); }
+.subcard__inner{ padding: clamp(.9rem,2.2vw,1.15rem); }
+.subcard__title{ font-weight:600; }
+.subcard__kicker{ color: var(--color-muted); margin-top:.25rem; font-size:.95rem; }
 
-/* Focus-ring consistent (fallback voor non-TW context) */
-.ff-focus-visible:focus-visible {
-  outline: 0;
-  box-shadow: var(--shadow-ring);
+/* Chips / metrics */
+.chip{
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.35rem .7rem; border-radius:999px;
+  background: color-mix(in oklab, var(--color-accent), white 58%);
+  color: var(--color-text); border:1px solid var(--color-border); font-size:.85rem;
 }
+.metric{ display:flex; flex-direction:column; gap:.25rem; }
+.metric__value{ font-family: theme(fontFamily.heading); font-size: clamp(1.6rem, 4.5vw, 2rem); font-weight:700; }
+.metric__label{ color: var(--color-muted); }
 
-/* Neutraliseer legacy gradients snel waar nodig */
-.bg-neutral-app {
-  background: var(--color-bg) !important;
-  background-image: none !important;
-}
+/* Interactive */
+.interactive-elevate{ transition: transform var(--motion-fast) ease, box-shadow var(--motion-med) ease; }
+.interactive-elevate:hover{ transform: translateY(-2px); box-shadow: var(--shadow-medium); }
 
-/* =========================================================
-   CANONIEKE CTA-BUTTONS (dekking voor alle varianten/legacy)
-   - Werkt voor: <Button/>, .btn, .button, [data-variant], .primary-cta
-   - Altijd AA-contrast, tokens-only
-   ========================================================= */
+/* Inputs */
+.input{ display:flex; flex-direction:column; gap:.4rem; }
+.input__label{ font-weight:600; }
+.input__field{
+  border:1px solid var(--color-border); border-radius:var(--radius-md);
+  padding:.75rem .85rem; background: var(--color-surface); color: var(--color-text);
+}
+.input__error{ display:flex; align-items:center; gap:.4rem; color: var(--color-danger); margin-top:.3rem; font-size:.9rem; }
 
-/* Basis */
-.btn, .button, button,
-a.btn, a.button, [role="button"] {
-  font-weight: 600;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-  padding: .75rem 1rem;
-  text-decoration: none;
-  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease, opacity .2s ease;
-  -webkit-font-smoothing: antialiased;
-  user-select: none;
-}
+/* Brand strip */
+.brandstrip{ border-block:1px solid var(--color-border); background: var(--color-surface); }
+.brandstrip__inner{ display:flex; gap:1.25rem; overflow:auto; padding: .85rem 1rem; }
 
-/* Maten */
-.btn-sm { height: 2.25rem; padding: .5rem .75rem; font-size: .875rem; }
-.btn-md { height: 2.5rem;  padding: .625rem 1rem; font-size: 1rem; }
-.btn-lg { height: 3rem;    padding: 0 1.25rem;   font-size: 1.125rem; }
+/* Hero card shell */
+.hero__card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-xl); overflow:hidden; box-shadow:var(--shadow-soft); }
+.hero__card-footer{ display:flex; align-items:center; justify-content:space-between; padding:.9rem 1rem; border-top:1px solid var(--color-border); }
 
-/* Primaire CTA (solid) — altijd leesbare tekst */
-.primary-cta,
-[data-variant="primary"],
-.btn-primary {
-  background: var(--ff-color-primary-700);
-  color: var(--color-surface);
-  border-color: transparent;
-}
-.primary-cta:hover,
-[data-variant="primary"]:hover,
-.btn-primary:hover {
-  background: var(--ff-color-primary-600);
-}
+/* FAQ */
+.faq__item{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); }
+.faq__btn{ width:100%; text-align:left; padding: .9rem 1rem; display:flex; align-items:center; justify-content:space-between; }
+.faq__panel{ padding: 0 1rem 1rem; }
 
-/* Secundair (ghost) */
-.ghost-cta,
-[data-variant="ghost"],
-.btn-ghost {
-  background: transparent;
-  color: var(--color-text);
-  border-color: var(--color-border);
-}
-.ghost-cta:hover,
-[data-variant="ghost"]:hover,
-.btn-ghost:hover {
-  border-color: var(--color-primary);
-}
-
-/* Status */
-.btn-success { background: var(--color-success); color: var(--color-surface); border-color: transparent; }
-.btn-success:hover { opacity: .92; }
-.btn-danger { background: var(--color-danger); color: var(--color-surface); border-color: transparent; }
-.btn-danger:hover { opacity: .92; }
-
-/* Focus (tokens) */
-.btn:focus-visible,
-.button:focus-visible,
-button:focus-visible,
-a.btn:focus-visible,
-[role="button"]:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-/* Disabled → nog steeds goed leesbaar (maar duidelijk gedeactiveerd) */
-:root { --btn-disabled-opacity: 0.72; }
-.btn:disabled,
-.button:disabled,
-button:disabled,
-a.btn[aria-disabled="true"],
-[role="button"][aria-disabled="true"] {
-  opacity: var(--btn-disabled-opacity);
-  cursor: not-allowed;
-  filter: none;
-  color: var(--color-surface); /* blijft leesbaar op primary bg */
-}
-
-/* ==============================================
-   NAV: actieve link als chip (accent-tint)
-   ============================================== */
-.nav-link {
-  color: var(--color-text);
-  text-decoration: none;
-  padding: .375rem .75rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-}
-.nav-link.is-active {
-  background-color: color-mix(in srgb, var(--color-surface) 58%, var(--color-accent) 42%);
-  border-color: var(--color-border);
-}
-
-/* Zorg dat auth-CTA rechts nooit "ghost" wordt door overerving */
-[data-fitfi="navbar"] .auth-cta .btn,
-[data-fitfi="navbar"] .auth-cta button,
-[data-fitfi="navbar"] .auth-cta .primary-cta {
-  background: var(--ff-color-primary-700);
-  color: var(--color-surface);
-  border-color: transparent;
-}
-[data-fitfi="navbar"] .auth-cta .btn:hover,
-[data-fitfi="navbar"] .auth-cta button:hover,
-[data-fitfi="navbar"] .auth-cta .primary-cta:hover {
-  background: var(--ff-color-primary-600);
-}
+/* Utility */
+.link{ color: var(--color-text); text-underline-offset:4px; }
+.link:hover{ text-decoration:underline; }
