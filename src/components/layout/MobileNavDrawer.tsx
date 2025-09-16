@@ -1,192 +1,96 @@
-import { w as track } from "@/utils";
-import { useUser } from "@/context/UserContext";
-import { w } from "@/utils/analytics";
-import { w as track } from "@/utils/analytics";
-interface MobileNavDrawerProps {
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { X } from "lucide-react";
+import { useUser } from "../../context/UserContext";
+import { NAV_ITEMS } from "../../constants/nav";
+
+type Props = {
   open: boolean;
   onClose: () => void;
-}
-
-const getNavIcon = (href: string) => {
-  if (href === "/" || href === "#home") return Home;
-  if (href === "/over-ons" || href === "/profiel") return User;
-  if (href === "/blog") return BookOpen;
-  if (href === "/tribes") return Users;
-  if (href === "/pricing") return CreditCard;
-  if (href === "/help") return HelpCircle;
-  return null;
 };
 
-const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ open, onClose }) => {
+const MobileNavDrawer: React.FC<Props> = ({ open, onClose }) => {
   const { user, logout } = useUser();
   const location = useLocation();
 
-  // Track drawer open/close
-  useEffect(() => {
-    if (open) {
-      w('mobile_nav_opened', { 
-        page: location.pathname,
-        timestamp: Date.now()
-      });
-    }
-  }, [open, location.pathname]);
-
-  // Prevent body scroll when drawer is open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }
-  }, [open]);
-
-  const handleNavClick = (href: string, label: string) => {
-    w('mobile_nav_click', {
-      nav_item: label,
-      href,
-      page: location.pathname,
-      timestamp: Date.now()
-    });
-    onClose();
-  };
-
-  const handleAuthAction = (action: string) => {
-    w('mobile_nav_auth', {
-      action,
-      page: location.pathname,
-      timestamp: Date.now()
-    });
-    
-    if (action === 'logout') {
-      logout();
-    }
-    onClose();
-  };
-
-  const handleClose = () => {
-    w('mobile_nav_closed', {
-      page: location.pathname,
-      timestamp: Date.now()
-    });
-    onClose();
-  };
-
-  const isActiveLink = (href: string) =>
-    location.pathname === href || (href !== "/" && location.pathname.startsWith(href));
-
-  if (!open) return null;
+  React.useEffect(() => {
+    onClose(); // sluit bij route-change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   return (
-    <>
-      {/* Animated scrim */}
-      <div 
-        className="mobile-drawer__scrim animate-fadeIn" 
-        onClick={handleClose} 
-        aria-hidden="true" 
+    <div
+      id="mobile-menu"
+      aria-hidden={!open}
+      className={`md:hidden fixed inset-0 z-50 transition ${open ? "pointer-events-auto" : "pointer-events-none"}`}
+    >
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 bg-black/30 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+        onClick={onClose}
+        aria-hidden="true"
       />
-      
-      {/* Drawer */}
-      <aside 
-        className="mobile-drawer animate-slideInLeft" 
-        role="dialog" 
-        aria-modal="true" 
-        aria-label="Mobiel menu"
+
+      {/* Panel */}
+      <aside
+        className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-app border-l border-ui shadow-soft transition-transform
+        ${open ? "translate-x-0" : "translate-x-full"}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobiele navigatie"
       >
-        {/* Header */}
-        <div className="mobile-drawer__head">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-gradient-to-r from-[color:var(--color-primary)] to-[color:var(--color-accent)] rounded-full animate-pulse"></div>
-            <span className="font-semibold text-[color:var(--color-text)]">Menu</span>
-          </div>
+        <div className="flex items-center justify-between p-4">
+          <span className="text-ink font-semibold">Menu</span>
           <button
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-border)] hover:bg-[color:var(--overlay-accent-08a)] transition-colors duration-200"
-            onClick={handleClose} 
+            type="button"
+            onClick={onClose}
             aria-label="Sluit menu"
+            className="btn btn-ghost btn-sm"
+            data-variant="ghost"
           >
-            <X className="h-5 w-5 text-[color:var(--color-text)]" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto" aria-label="Mobiele navigatie">
-          <ul className="mobile-drawer__list">
-            {NAV_ITEMS.map((item) => {
-              const Icon = getNavIcon(item.href);
-              const isActive = isActiveLink(item.href);
-              
-              return (
-                <li key={item.href} className="mobile-drawer__item">
-                  {item.href.startsWith("#") ? (
-                    <a 
-                      href={item.href}
-                      onClick={() => handleNavClick(item.href, item.label)}
-                      className={`flex items-center gap-3 px-4 py-3 text-[color:var(--color-text)] hover:bg-[color:var(--overlay-accent-08a)] transition-all duration-200 ${
-                        isActive ? 'bg-[color:var(--overlay-primary-12a)] border-r-2 border-[color:var(--color-primary)]' : ''
-                      }`}
-                    >
-                      {Icon && <Icon className="h-5 w-5 text-[color:var(--color-muted)]" />}
-                      <span className={isActive ? 'font-medium text-[color:var(--color-primary)]' : ''}>{item.label}</span>
-                    </a>
-                  ) : (
-                    <Link 
-                      to={item.href}
-                      onClick={() => handleNavClick(item.href, item.label)}
-                      className={`flex items-center gap-3 px-4 py-3 text-[color:var(--color-text)] hover:bg-[color:var(--overlay-accent-08a)] transition-all duration-200 ${
-                        isActive ? 'bg-[color:var(--overlay-primary-12a)] border-r-2 border-[color:var(--color-primary)]' : ''
-                      }`}
-                    >
-                      {Icon && <Icon className="h-5 w-5 text-[color:var(--color-muted)]" />}
-                      <span className={isActive ? 'font-medium text-[color:var(--color-primary)]' : ''}>{item.label}</span>
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
+        <nav className="px-4 pb-4">
+          <ul className="flex flex-col gap-1">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href}>
+                <Link
+                  to={item.href}
+                  className="nav-link block w-full px-3 py-2"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
 
-        {/* Auth Actions */}
-        <div className="p-4 border-t border-[color:var(--color-border)] bg-[color:var(--overlay-accent-08a)]">
+        <div className="mt-auto p-4 border-t border-ui">
           {!user ? (
-            <>
-              <Link 
-                to="/inloggen" 
-                className="btn btn-ghost btn-full mb-3 hover:scale-105 transition-transform duration-200" 
-                onClick={() => handleAuthAction('login')}
-              >
-                <User className="h-4 w-4" />
-                Inloggen
-              </Link>
-              <Link 
-                to="/registreren" 
-                className="btn btn-primary btn-full hover:scale-105 transition-transform duration-200" 
-                onClick={() => handleAuthAction('register')}
-              >
-                Start gratis
-              </Link>
-            </>
+            <Link to="/inloggen" className="btn btn-primary btn-lg w-full" data-variant="primary" aria-label="Inloggen">
+              Inloggen
+            </Link>
           ) : (
-            <>
-              <Link 
-                to="/dashboard" 
-                className="btn btn-primary btn-full mb-3 hover:scale-105 transition-transform duration-200" 
-                onClick={() => handleAuthAction('dashboard')}
-              >
-                <User className="h-4 w-4" />
+            <div className="flex gap-2">
+              <Link to="/dashboard" className="btn btn-ghost btn-lg flex-1" data-variant="ghost" aria-label="Dashboard">
                 Dashboard
               </Link>
-              <button 
-                className="btn btn-ghost btn-full hover:scale-105 transition-transform duration-200" 
-                onClick={() => handleAuthAction('logout')}
+              <button
+                type="button"
+                onClick={logout}
+                className="btn btn-ghost btn-lg flex-1"
+                data-variant="ghost"
+                aria-label="Uitloggen"
               >
                 Uitloggen
               </button>
-            </>
+            </div>
           )}
         </div>
       </aside>
-    </>
+    </div>
   );
 };
 
