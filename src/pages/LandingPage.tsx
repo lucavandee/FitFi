@@ -1,184 +1,76 @@
-import React, { Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { track } from '@/utils/analytics';
-import Seo from '@/components/Seo';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import AffiliateDisclosureNote from '@/components/legal/AffiliateDisclosureNote';
-
-// Import components directly (not lazy loaded for better LCP)
-import Hero from '../components/landing/Hero';
-import SocialProof from '../components/landing/SocialProof';
-import HowItWorks from '../components/landing/HowItWorks';
-import Features from '../components/landing/Features';
-import Footer from '../components/layout/Footer';
-
-// Lazy load heavy components with better error handling
-const PreviewCarousel = React.lazy(() => 
-  import('../components/landing/PreviewCarousel').catch(err => {
-    console.error('Failed to load PreviewCarousel:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Preview tijdelijk niet beschikbaar</div> };
-  })
-);
-
-const FoundersBlock = React.lazy(() => 
-  import('../components/founders/FoundersBlock').catch(err => {
-    console.error('Failed to load FoundersBlock:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Founders Club tijdelijk niet beschikbaar</div> };
-  })
-);
-
-const UGCGallery = React.lazy(() => 
-  import('../components/landing/UGCGallery').catch(err => {
-    console.error('Failed to load UGCGallery:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">Gebruikersverhalen tijdelijk niet beschikbaar</div> };
-  })
-);
-
-const ClosingCTA = React.lazy(() => 
-  import('../components/landing/ClosingCTA').catch(err => {
-    console.error('Failed to load ClosingCTA:', err);
-    return { default: () => <div className="py-8 text-center text-gray-500">CTA tijdelijk niet beschikbaar</div> };
-  })
-);
+// src/pages/LandingPage.tsx
+import React from "react";
+import Hero from "@/components/landing/Hero";
+import { CheckCircle } from "lucide-react";
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleCTAClick = () => {
-    track('quiz_start_intent', { loc: 'closing_cta' });
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'begin_checkout', { event_label: 'ai_style_report_landing', value: 1 });
-    }
-    
-    // Track conversion intent
-    // Navigate to onboarding
-    navigate('/onboarding');
-  };
-
   return (
-    <div className="min-h-screen bg-[color:var(--color-bg)]">
-      <Seo
-        title="AI Style Report — Ontdek wat jouw stijl over je zegt"
-        description="Krijg je gratis AI Style Report in 2 minuten. Zie wat jouw kledingkeuzes over je zeggen en ontvang direct passende outfits."
-        jsonLd={[
-          {
-            "@context":"https://schema.org",
-            "@type":"Organization",
-            "name":"FitFi",
-            "url":"https://www.fitfi.ai",
-            "logo":"https://www.fitfi.ai/logo.png"
-          },
-          {
-            "@context":"https://schema.org",
-            "@type":"WebSite",
-            "name":"FitFi",
-            "url":"https://www.fitfi.ai",
-            "potentialAction": {
-              "@type":"SearchAction",
-              "target":"https://www.fitfi.ai/?q={search_term_string}",
-              "query-input":"required name=search_term_string"
-            }
-          }
-        ]}
-      />
+    <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+      <Hero />
 
-      {/* Hero Section - Critical above-the-fold content */}
-      <section className="section bg-white">
+      {/* Proof strip */}
+      <section className="section">
         <div className="container">
-          <ErrorBoundary>
-            <Hero onCTAClick={handleCTAClick} />
-          </ErrorBoundary>
-          <AffiliateDisclosureNote />
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              { v: "97%", l: "tevredenheid na eerste outfits" },
+              { v: "2 min", l: "van test naar stijlprofiel" },
+              { v: "10+", l: "outfits met uitleg in Pro" },
+            ].map((m) => (
+              <div key={m.l} className="card">
+                <div className="card__inner">
+                  <div className="metric">
+                    <div className="metric__value">{m.v}</div>
+                    <div className="metric__label">{m.l}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Social Proof - Important for conversion */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <SocialProof />
-          </div>
-        </section>
-      </ErrorBoundary>
-
-      {/* How It Works - Core value proposition */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <HowItWorks />
-          </div>
-        </section>
-      </ErrorBoundary>
-
-      {/* Features - Product details */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <Features />
-          </div>
-        </section>
-      </ErrorBoundary>
-
-      {/* Preview Carousel - Lazy loaded for performance */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <Suspense fallback={<LoadingFallback message="Preview laden..." />}>
-              <PreviewCarousel />
-            </Suspense>
-          </div>
-        </section>
-      </ErrorBoundary>
-
-      {/* Founders Club - Lazy loaded (breder + gecentreerd) */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container max-w-5xl mx-auto">
-            <div className="mx-auto text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-semibold text-ink">Founders Club</h2>
-              <p className="text-gray-600 mt-2">Verdien perks met referrals — stijl, status en early access.</p>
-            </div>
-            <div className="max-w-3xl mx-auto">
-              <Suspense fallback={<LoadingFallback message="Founders Club laden..." />}>
-                <FoundersBlock />
-              </Suspense>
+      {/* Waarom het werkt */}
+      <section className="section">
+        <div className="container grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+          <div className="card">
+            <div className="card__inner">
+              <h2 className="card__title">Waarom dit werkt</h2>
+              <p className="card__text">
+                We combineren jouw silhouet, kleurtemperatuur en stijlvoorkeuren. Per outfit krijg je
+                1–2 zinnen uitleg — precies genoeg om zelfverzekerd te kiezen.
+              </p>
+              <ul className="mt-4 space-y-2 text-sm">
+                {[
+                  "Silhouet-vriendelijke fits",
+                  "Materialen die vallen zoals jij wilt",
+                  "Kleuren die je huid laten spreken",
+                ].map((t) => (
+                  <li key={t} className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[color:var(--color-success)]" />
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-        </section>
-      </ErrorBoundary>
 
-      {/* UGC Gallery - Lazy loaded */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <Suspense fallback={<LoadingFallback message="Gebruikersverhalen laden..." />}>
-              <UGCGallery />
-            </Suspense>
+          <div className="subcard">
+            <div className="subcard__inner">
+              <h3 className="subcard__title">Seizoen-ready</h3>
+              <p className="subcard__kicker">
+                Outfits variëren automatisch per seizoen en gelegenheid.
+              </p>
+              <div className="mt-4 grid sm:grid-cols-2 gap-3">
+                {["Werk", "Weekend", "Diner", "Reizen"].map((c) => (
+                  <span key={c} className="chip">{c}</span>
+                ))}
+              </div>
+            </div>
           </div>
-        </section>
-      </ErrorBoundary>
-
-      {/* Closing CTA - Lazy loaded */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <Suspense fallback={<LoadingFallback message="Laatste sectie laden..." />}>
-              <ClosingCTA onCTAClick={handleCTAClick} />
-            </Suspense>
-          </div>
-        </section>
-      </ErrorBoundary>
-
-      {/* Footer */}
-      <ErrorBoundary>
-        <section className="section bg-white">
-          <div className="container">
-            <Footer />
-          </div>
-        </section>
-      </ErrorBoundary>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 };
 
