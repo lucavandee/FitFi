@@ -1,140 +1,155 @@
-import React from 'react';
-import { Heart, MessageCircle } from 'lucide-react';
-import SmartImage from '@/components/media/SmartImage';
+import React from "react";
+import { Heart, Eye, MessageCircle, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import SmartImage from "@/components/media/SmartImage";
+import { track } from "@/utils/analytics";
 
-interface UGCItem {
-  id: string;
-  image: string;
-  caption: string;
-  author: string;
-  likes: number;
-  comments: number;
-}
+const GALLERY_ITEMS = [
+  { 
+    src: "/images/ugc/1.jpg", 
+    title: "Casual chic", 
+    description: "Beige trench + witte sneakers = tijdloos en comfortabel",
+    likes: 24,
+    views: 156,
+    comments: 8,
+    category: "casual"
+  },
+  { 
+    src: "/images/ugc/2.jpg", 
+    title: "Business casual", 
+    description: "Navy blazer + beige chino = professioneel maar toegankelijk",
+    likes: 31,
+    views: 203,
+    comments: 12,
+    category: "business"
+  },
+  { 
+    src: "/images/ugc/3.jpg", 
+    title: "Weekend look", 
+    description: "Denim jacket + witte tee = relaxed maar verzorgd",
+    likes: 18,
+    views: 142,
+    comments: 5,
+    category: "weekend"
+  },
+  { 
+    src: "/images/ugc/4.jpg", 
+    title: "Date night", 
+    description: "Zwarte blouse + tailored broek = elegant en zelfverzekerd",
+    likes: 42,
+    views: 287,
+    comments: 15,
+    category: "evening"
+  },
+];
 
-interface UGCGalleryProps {
-  className?: string;
-}
+const UGCGallery: React.FC<{ className?: string }> = ({ className = "" }) => {
+  const handleImageClick = (item: typeof GALLERY_ITEMS[0], index: number) => {
+    track('ugc_gallery_click', {
+      image_index: index,
+      category: item.category,
+      title: item.title,
+      likes: item.likes,
+      views: item.views
+    });
+  };
 
-const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
-  const ugcItems: UGCItem[] = [
-    {
-      id: 'yasmin',
-      image: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      caption: "Sinds het rapport begrijp ik hoe ik zakelijker overkom. Topadvies!",
-      author: "Yasmin",
-      likes: 127,
-      comments: 23
-    },
-    {
-      id: 'mike',
-      image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      caption: "Nova's aanbevelingen hebben mijn dating game compleet veranderd 🔥",
-      author: "Mike",
-      likes: 89,
-      comments: 15
-    },
-    {
-      id: 'lisa',
-      image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      caption: "Eindelijk weet ik waarom ik me zo goed voel in bepaalde outfits!",
-      author: "Lisa",
-      likes: 156,
-      comments: 31
-    }
-  ];
+  const handleCTAClick = () => {
+    track('ugc_gallery_cta_click', {
+      section: 'community_looks',
+      cta_text: 'Ontdek je eigen stijl'
+    });
+  };
 
   return (
-    <section className={`py-20 bg-white ${className}`} aria-labelledby="ugc-heading">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 id="ugc-heading" className="text-3xl md:text-4xl font-light text-gray-900 mb-6">
-            Echte verhalen van onze community
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ontdek hoe anderen hun AI Style Report hebben gebruikt om hun stijl en zelfvertrouwen te transformeren
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {ugcItems.map((item) => (
-            <div 
-              key={item.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all hover:transform hover:scale-105 group"
+    <section 
+      className={`section bg-gradient-to-b from-[color:var(--color-bg)] to-[color:var(--color-surface)] ${className}`} 
+      aria-labelledby="ugc-title"
+    >
+      <div className="container">
+        <header className="text-center max-w-3xl mx-auto">
+          <h2 id="ugc-title" className="hero__title">Community looks</h2>
+          <p className="lead mt-3">Outfits geïnspireerd door jouw profiel — met korte uitleg per look.</p>
+        </header>
+
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {GALLERY_ITEMS.map((item, index) => (
+            <article 
+              key={item.src} 
+              className="card interactive-elevate overflow-hidden cursor-pointer group"
+              onClick={() => handleImageClick(item, index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleImageClick(item, index);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Bekijk ${item.title} outfit`}
             >
-              {/* Image */}
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <SmartImage
-                  src={item.image}
-                  alt={`${item.author}'s stijltransformatie`}
-                  id={item.id}
-                  kind="avatar"
-                  aspect="4/5"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              <div className="relative overflow-hidden">
+                <SmartImage 
+                  src={item.src} 
+                  alt={`${item.title} outfit - ${item.description}`}
+                  className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105" 
                 />
                 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="absolute bottom-4 left-4 right-4">
+                {/* Overlay with stats */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-3 left-3 right-3">
                     <div className="flex items-center justify-between text-white text-sm">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          <Heart size={16} />
-                          <span>{item.likes}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <MessageCircle size={16} />
-                          <span>{item.comments}</span>
-                        </div>
-                      </div>
-                      <div className="text-xs bg-white/20 backdrop-blur-sm rounded-full px-2 py-1">
-                        #NovaKnows
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                          <Heart className="w-4 h-4" />
+                          {item.likes}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          {item.views}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MessageCircle className="w-4 h-4" />
+                          {item.comments}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Content */}
-              <div className="p-6">
-                <blockquote className="text-gray-700 leading-relaxed mb-4 italic">
-                  "{item.caption}"
-                </blockquote>
-                
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-gray-900">
-                    — {item.author}
-                  </div>
-                  
-                  <div className="flex items-center space-x-3 text-sm text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <Heart size={14} />
-                      <span>{item.likes}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <MessageCircle size={14} />
-                      <span>{item.comments}</span>
-                    </div>
-                  </div>
+
+                {/* Category chip */}
+                <div className="absolute top-3 left-3">
+                  <span className="chip text-xs bg-white/90 text-gray-800 backdrop-blur-sm">
+                    {item.category}
+                  </span>
                 </div>
               </div>
-            </div>
+
+              <div className="card__inner">
+                <h3 className="subcard__title group-hover:text-[color:var(--color-primary)] transition-colors duration-200">
+                  {item.title}
+                </h3>
+                <p className="subcard__kicker mt-2">
+                  <strong>Waarom dit werkt:</strong> {item.description}
+                </p>
+              </div>
+            </article>
           ))}
         </div>
-        
+
         {/* Bottom CTA */}
-        <div className="text-center mt-12">
-          <div className="bg-gradient-to-r from-[#bfae9f]/10 to-purple-50 rounded-2xl p-8 max-w-2xl mx-auto">
-            <h3 className="text-xl font-medium text-gray-900 mb-3">
-              Deel jouw verhaal
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Laat zien hoe Nova jouw stijl heeft getransformeerd en inspireer anderen
-            </p>
-            <div className="text-sm text-gray-500">
-              Gebruik <span className="font-medium text-[#bfae9f]">#NovaKnows</span> en tag <span className="font-medium">@fitfi</span>
-            </div>
-          </div>
+        <div className="mt-10 text-center">
+          <Link 
+            to="/quiz" 
+            className="btn btn-primary btn-lg group"
+            onClick={handleCTAClick}
+          >
+            Ontdek je eigen stijl
+            <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+          <p className="mt-3 text-sm muted">
+            Start de quiz en krijg outfits met persoonlijke uitleg
+          </p>
         </div>
       </div>
     </section>

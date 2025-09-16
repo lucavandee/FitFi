@@ -1,96 +1,158 @@
-import React from 'react';
-import { Quote, Star } from 'lucide-react';
-import SmartImage from '@/components/media/SmartImage';
+import React from "react";
+import { Quote, Star, Users } from "lucide-react";
+import SmartImage from "@/components/media/SmartImage";
+import { track } from "@/utils/analytics";
 
-interface Testimonial {
-  id: string;
-  quote: string;
-  author: string;
-  avatar: string;
-  rating: number;
-}
+const TESTIMONIALS = [
+  { 
+    quote: "Ik snap nu waarom bepaalde fits mij wel en niet staan. De uitleg per outfit is zo helder!", 
+    author: "Sanne, 29", 
+    avatar: "/images/avatars/a1.jpg", 
+    rating: 5,
+    location: "Amsterdam"
+  },
+  { 
+    quote: "De uitleg per outfit geeft direct vertrouwen bij het shoppen. Geen twijfel meer!", 
+    author: "Jeroen, 34", 
+    avatar: "/images/avatars/a2.jpg", 
+    rating: 5,
+    location: "Rotterdam"
+  },
+  { 
+    quote: "Eindelijk een AI die begrijpt wat bij mijn lichaam past. Game changer!", 
+    author: "Lisa, 27", 
+    avatar: "/images/avatars/a3.jpg", 
+    rating: 5,
+    location: "Utrecht"
+  },
+];
 
-interface SocialProofProps {
-  className?: string;
-}
+const STATS = [
+  { value: "10.000+", label: "Tevreden gebruikers" },
+  { value: "4.8/5", label: "Gemiddelde beoordeling" },
+  { value: "95%", label: "Zou FitFi aanbevelen" },
+];
 
-const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
-  const testimonials: Testimonial[] = [
-    {
-      id: 'emma',
-      quote: "Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter.",
-      author: "Emma",
-      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
-      rating: 5
-    },
-    {
-      id: 'jordi',
-      quote: "Alsof deze AI recht door mij heen keek, superwaardevol!",
-      author: "Jordi",
-      avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
-      rating: 5
-    }
-  ];
+const SocialProof: React.FC<{ className?: string }> = ({ className = "" }) => {
+  const handleTestimonialClick = (author: string, index: number) => {
+    track('social_proof_testimonial_click', {
+      author,
+      position: index + 1,
+      section: 'landing_social_proof'
+    });
+  };
+
+  const handleStatsClick = (stat: string, value: string) => {
+    track('social_proof_stat_click', {
+      stat,
+      value,
+      section: 'landing_social_proof'
+    });
+  };
 
   return (
-    <section className={`py-16 bg-white ${className}`} aria-labelledby="social-proof-heading">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 id="social-proof-heading" className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
-            Wat anderen zeggen over hun AI Style Report
+    <section className={`section bg-gradient-to-b from-[color:var(--color-bg)] to-[color:var(--color-surface)] ${className}`} aria-labelledby="sp-title">
+      <div className="container">
+        {/* Header */}
+        <header className="max-w-3xl text-center mx-auto">
+          <div className="inline-flex items-center gap-2 chip mb-4">
+            <Users className="w-4 h-4" />
+            <span>Wat anderen zeggen</span>
+          </div>
+          <h2 id="sp-title" className="hero__title">
+            Duizenden mensen vonden hun perfecte stijl
           </h2>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {testimonials.map((testimonial) => (
-            <div 
-              key={testimonial.id}
-              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          <p className="lead mt-4">
+            Ontdek waarom FitFi de #1 AI styling assistent is in Nederland
+          </p>
+        </header>
+
+        {/* Stats */}
+        <div className="mt-8 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+          {STATS.map((stat, i) => (
+            <button
+              key={i}
+              onClick={() => handleStatsClick(stat.label, stat.value)}
+              className="metric text-center p-4 rounded-xl bg-[color:var(--color-surface)] border border-[color:var(--color-border)] hover:border-[color:var(--color-primary)] transition-all duration-300 hover:scale-105"
+              aria-label={`${stat.value} ${stat.label}`}
             >
-              <div className="flex items-center mb-6">
-                <Quote className="text-[#bfae9f] mr-3" size={24} />
-                <div className="flex">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-current" size={16} />
-                  ))}
-                </div>
-              </div>
-              
-              <blockquote className="text-lg text-gray-700 leading-relaxed mb-6 italic">
-                "{testimonial.quote}"
-              </blockquote>
-              
-              <div className="flex items-center">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.author}
-                  className="w-12 h-12 rounded-full object-cover shadow-sm mr-4"
-                />
-                <div>
-                  <div className="font-medium text-gray-900">{testimonial.author}</div>
-                  <div className="text-sm text-gray-500">Geverifieerde gebruiker</div>
-                </div>
-              </div>
-            </div>
+              <div className="metric__value text-[color:var(--color-primary)]">{stat.value}</div>
+              <div className="metric__label text-xs">{stat.label}</div>
+            </button>
           ))}
         </div>
-        
-        {/* Trust Indicators */}
+
+        {/* Testimonials */}
+        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+          {TESTIMONIALS.map((testimonial, i) => (
+            <article 
+              key={i} 
+              className="card interactive-elevate cursor-pointer group"
+              onClick={() => handleTestimonialClick(testimonial.author, i)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleTestimonialClick(testimonial.author, i);
+                }
+              }}
+              aria-label={`Testimonial van ${testimonial.author}`}
+            >
+              <div className="card__inner">
+                {/* Quote Icon */}
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-[color:var(--color-primary)] to-[color:var(--color-accent)] mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Quote className="w-4 h-4 text-white" />
+                </div>
+
+                {/* Quote */}
+                <blockquote className="text-[color:var(--color-text)] leading-relaxed mb-4 group-hover:text-[color:var(--color-primary)] transition-colors duration-300">
+                  "{testimonial.quote}"
+                </blockquote>
+
+                {/* Author Info */}
+                <div className="flex items-center gap-3">
+                  <SmartImage 
+                    src={testimonial.avatar} 
+                    alt={`Profielfoto van ${testimonial.author}`}
+                    className="h-10 w-10 rounded-full object-cover border-2 border-[color:var(--color-border)] group-hover:border-[color:var(--color-primary)] transition-colors duration-300" 
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium text-[color:var(--color-text)] text-sm">
+                      {testimonial.author}
+                    </div>
+                    <div className="text-xs text-[color:var(--color-muted)]">
+                      {testimonial.location}
+                    </div>
+                  </div>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center gap-1" aria-label={`${testimonial.rating} van 5 sterren`}>
+                    {Array.from({ length: testimonial.rating }).map((_, k) => (
+                      <Star 
+                        key={k} 
+                        className="w-4 h-4 fill-[color:var(--color-success)] text-[color:var(--color-success)] group-hover:scale-110 transition-transform duration-300" 
+                        style={{ transitionDelay: `${k * 50}ms` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
         <div className="mt-12 text-center">
-          <div className="flex flex-wrap justify-center items-center space-x-8 text-sm text-gray-500">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>10.000+ rapporten gegenereerd</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>4.8/5 gemiddelde beoordeling</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span>95% nauwkeurigheid</span>
-            </div>
-          </div>
+          <p className="text-[color:var(--color-muted)] mb-4">
+            Klaar om jouw perfecte stijl te ontdekken?
+          </p>
+          <button
+            onClick={() => track('social_proof_cta_click', { section: 'landing_social_proof' })}
+            className="btn btn-primary btn-lg"
+          >
+            Start je gratis style report
+          </button>
         </div>
       </div>
     </section>
