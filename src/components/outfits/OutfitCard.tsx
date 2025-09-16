@@ -226,7 +226,7 @@ export default function OutfitCard({
       role="article"
       aria-labelledby={titleId}
       aria-describedby={descId}
-    {'>'}
+      >
       <div className="relative rounded-xl overflow-hidden mb-3">
         <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/5]">
           <SmartImage
