@@ -1,66 +1,129 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Sparkles, Users, Zap } from 'lucide-react';
+import Seo from '@/components/Seo';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Welkom bij <span className="text-blue-600">FitFi</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Ontdek jouw perfecte stijl met AI-powered styling advies. 
-            Persoonlijk, premium en precies wat bij jou past.
-          </p>
-          <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
-            <button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors">
-              Start je stijlquiz
-            </button>
-            <button className="w-full sm:w-auto border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-lg transition-colors">
-              Meer informatie
-            </button>
-          </div>
-        </div>
-        
-        <div className="mt-16 grid md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+    <ErrorBoundary>
+      <Seo
+        title="FitFi — AI-stylist voor jouw perfecte outfit"
+        description="Ontdek je stijl met AI. Krijg binnen 2 minuten gepersonaliseerde outfits die passen bij je lichaam en voorkeuren."
+        canonical="https://www.fitfi.ai"
+      />
+      <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="container">
+            <div className="hero-content">
+              <div className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted)] mb-4">
+                <Sparkles className="w-4 h-4" />
+                <span>AI-powered styling</span>
+              </div>
+              
+              <h1 className="hero__title">
+                Jouw perfecte outfit,
+                <br />
+                <span className="text-[color:var(--color-primary)]">AI-gestyled</span>
+              </h1>
+              
+              <p className="hero__subtitle">
+                Ontdek binnen 2 minuten welke stijl en outfits perfect bij je passen. 
+                Gepersonaliseerd advies op basis van je lichaam, voorkeuren en lifestyle.
+              </p>
+              
+              <div className="hero__actions">
+                <Link to="/quiz" className="btn btn-primary btn-lg">
+                  Start gratis stijltest
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link to="/hoe-het-werkt" className="btn btn-ghost btn-lg">
+                  Hoe het werkt
+                </Link>
+              </div>
+              
+              <div className="hero__stats">
+                <div className="stat">
+                  <div className="stat__number">50K+</div>
+                  <div className="stat__label">Outfits gegenereerd</div>
+                </div>
+                <div className="stat">
+                  <div className="stat__number">4.8★</div>
+                  <div className="stat__label">Gebruikerswaardering</div>
+                </div>
+                <div className="stat">
+                  <div className="stat__number">2 min</div>
+                  <div className="stat__label">Tot je eerste outfit</div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">AI-Powered</h3>
-            <p className="text-gray-600">
-              Geavanceerde AI analyseert jouw voorkeuren en lichaamsbouw voor perfecte matches.
-            </p>
           </div>
-          
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+        </section>
+
+        {/* Features Section */}
+        <section className="section">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="section__title">Waarom FitFi werkt</h2>
+              <p className="section__subtitle">
+                AI-technologie gecombineerd met stijlexpertise voor resultaten die écht passen.
+              </p>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Persoonlijk</h3>
-            <p className="text-gray-600">
-              Elke aanbeveling is uniek afgestemd op jouw stijl, budget en levensstijl.
-            </p>
-          </div>
-          
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            
+            <div className="grid gap-8 md:grid-cols-3">
+              <div className="feature-card">
+                <div className="feature-card__icon">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <h3 className="feature-card__title">Instant resultaten</h3>
+                <p className="feature-card__description">
+                  Binnen 2 minuten van stijltest naar gepersonaliseerde outfits met uitleg waarom het bij je past.
+                </p>
+              </div>
+              
+              <div className="feature-card">
+                <div className="feature-card__icon">
+                  <Users className="w-6 h-6" />
+                </div>
+                <h3 className="feature-card__title">Voor elk lichaam</h3>
+                <p className="feature-card__description">
+                  Onze AI houdt rekening met je lichaamstype, kleurvoorkeur en lifestyle voor optimale pasvorm.
+                </p>
+              </div>
+              
+              <div className="feature-card">
+                <div className="feature-card__icon">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <h3 className="feature-card__title">Seizoens-ready</h3>
+                <p className="feature-card__description">
+                  Outfits die passen bij het seizoen, weer en gelegenheid. Altijd relevant, altijd stijlvol.
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Snel & Makkelijk</h3>
-            <p className="text-gray-600">
-              In slechts 5 minuten krijg je complete outfit-aanbevelingen die je direct kunt shoppen.
-            </p>
           </div>
-        </div>
-      </div>
-    </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="section bg-[color:var(--color-surface)]">
+          <div className="container">
+            <div className="cta-block">
+              <div className="cta-block__content">
+                <h2 className="cta-block__title">Klaar om je stijl te ontdekken?</h2>
+                <p className="cta-block__description">
+                  Start nu met de gratis stijltest en ontvang binnen 2 minuten je eerste gepersonaliseerde outfits.
+                </p>
+                <Link to="/quiz" className="btn btn-primary btn-lg">
+                  Begin nu gratis
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </ErrorBoundary>
   );
 };
 

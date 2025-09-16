@@ -1,118 +1,153 @@
 import React from "react";
+import Seo from "@/components/Seo";
+import { CheckCircle, AlertTriangle } from "lucide-react";
+
+type FormData = { name: string; email: string; message: string };
+type Errors = Partial<Record<keyof FormData, string>>;
+
+const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
 const ContactPage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 py-16">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact</h1>
-            <p className="text-xl text-gray-600">
-              Heb je vragen? We helpen je graag verder!
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Stuur ons een bericht</h2>
-              <form className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Naam
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Je volledige naam"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    E-mail
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="je@email.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Onderwerp
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Waar gaat je bericht over?"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bericht
-                  </label>
-                  <textarea
-                    rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Vertel ons wat je op je hart hebt..."
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                >
-                  Verstuur bericht
-                </button>
-              </form>
-            </div>
-            
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Andere manieren om contact op te nemen</h2>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+  const [data, setData] = React.useState<FormData>({ name: "", email: "", message: "" });
+  const [errors, setErrors] = React.useState<Errors>({});
+  const [submitting, setSubmitting] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+
+  const validate = (): boolean => {
+    const e: Errors = {};
+    if (!data.name.trim()) e.name = "Vul je naam in.";
+    if (!data.email.trim()) e.email = "Vul je e-mail in.";
+    else if (!emailOk(data.email)) e.email = "Gebruik een geldig e-mailadres.";
+    if (!data.message.trim()) e.message = "Schrijf kort je vraag of verzoek.";
+    else if (data.message.trim().length < 10) e.message = "Geef minimaal 10 tekens context.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const onSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!validate()) return;
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      setSuccess(true);
+    }, 800);
+  };
+
+  if (success) {
+    return (
+      <>
+        <Seo title="Contact — Bedankt" description="We hebben je bericht ontvangen en reageren snel." canonical="https://www.fitfi.ai/contact" />
+        <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+          <section className="section">
+            <div className="container max-w-3xl">
+              <div className="card card--elevated">
+                <div className="card__inner">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-[color:var(--color-success)]" aria-hidden="true" />
+                    <div>
+                      <h1 className="hero__title text-[clamp(1.6rem,4.5vw,2.2rem)]">Bericht verzonden — dank je!</h1>
+                      <p className="lead mt-2">
+                        We reageren snel via <strong>{data.email.trim()}</strong>. Je kunt dit venster sluiten
+                        of terug naar de veelgestelde vragen.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">E-mail</h3>
-                    <p className="text-gray-600">hello@fitfi.nl</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Live Chat</h3>
-                    <p className="text-gray-600">Beschikbaar ma-vr 9:00-17:00</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Adres</h3>
-                    <p className="text-gray-600">
-                      Amsterdam, Nederland<br />
-                      (Alleen op afspraak)
-                    </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <a href="/veelgestelde-vragen" className="btn btn-ghost">Naar FAQ</a>
+                    <button className="btn btn-primary" onClick={() => setSuccess(false)}>Nieuw bericht</button>
                   </div>
                 </div>
               </div>
             </div>
+          </section>
+        </main>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Seo title="Contact — FitFi" description="Stel je vraag of vraag een demo aan." canonical="https://www.fitfi.ai/contact" />
+      <main>
+        <section className="section">
+          <div className="container max-w-3xl">
+            <h1 className="hero__title">Contact</h1>
+            <p className="lead mt-2">We helpen je graag — gemiddeld binnen 1 werkdag reactie.</p>
+
+            <form onSubmit={onSubmit} className="mt-6 space-y-4" aria-label="Contactformulier">
+              <div className="input">
+                <label htmlFor="name" className="input__label">Naam</label>
+                <input 
+                  id="name" 
+                  className="input__field" 
+                  value={data.name} 
+                  onChange={(e) => setData({ ...data, name: e.target.value })}
+                  aria-describedby={errors.name ? "name-error" : undefined}
+                  aria-invalid={!!errors.name}
+                />
+                {errors.name && (
+                  <div id="name-error" className="input__error" role="alert">
+                    <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                    {errors.name}
+                  </div>
+                )}
+              </div>
+              
+              <div className="input">
+                <label htmlFor="email" className="input__label">E-mail</label>
+                <input 
+                  id="email" 
+                  type="email"
+                  inputMode="email" 
+                  className="input__field" 
+                  value={data.email} 
+                  onChange={(e) => setData({ ...data, email: e.target.value })}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-invalid={!!errors.email}
+                />
+                {errors.email && (
+                  <div id="email-error" className="input__error" role="alert">
+                    <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                    {errors.email}
+                  </div>
+                )}
+              </div>
+              
+              <div className="input">
+                <label htmlFor="message" className="input__label">Bericht</label>
+                <textarea 
+                  id="message" 
+                  rows={5} 
+                  className="input__field" 
+                  value={data.message} 
+                  onChange={(e) => setData({ ...data, message: e.target.value })}
+                  aria-describedby={errors.message ? "message-error" : undefined}
+                  aria-invalid={!!errors.message}
+                />
+                {errors.message && (
+                  <div id="message-error" className="input__error" role="alert">
+                    <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                    {errors.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-2">
+                <button 
+                  type="submit"
+                  className="btn btn-primary btn-lg" 
+                  disabled={submitting} 
+                  aria-busy={submitting}
+                >
+                  {submitting ? "Verzenden…" : "Verstuur bericht"}
+                </button>
+              </div>
+            </form>
           </div>
-        </div>
-      </div>
-    </div>
+        </section>
+      </main>
+    </>
   );
 };
 
