@@ -2,95 +2,103 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <!-- ✅ Performance optimizations -->
-    <link rel="preconnect" href="https://images.pexels.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    
-    <!-- ✅ Critical fonts preload -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"></noscript>
-    
-    <!-- ✅ Fallback fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- ✅ Favicon and meta -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/tw.css">
-    <meta name="theme-color" content="#89CFF0" />
-    <meta name="color-scheme" content="light" />
     
-    <!-- ✅ SEO defaults -->
-    <link rel="canonical" href="https://fitfi.app/" />
-    <meta property="og:site_name" content="FitFi" />
+    <!-- SEO Meta -->
+    <meta name="description" content="AI-styling voor jouw perfecte outfit. Ontdek je stijl met persoonlijke aanbevelingen." />
+    <meta name="keywords" content="AI styling, outfit advies, persoonlijke stylist, mode AI" />
+    <meta name="author" content="FitFi" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="FitFi — AI Styling" />
+    <meta property="og:description" content="AI-styling voor jouw perfecte outfit. Ontdek je stijl met persoonlijke aanbevelingen." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.fitfi.ai" />
+    <meta property="og:image" content="https://www.fitfi.ai/images/og-image.jpg" />
     <meta property="og:locale" content="nl_NL" />
     
-    <title>FitFi - Jouw Persoonlijke Stylist</title>
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FitFi — AI Styling" />
+    <meta name="twitter:description" content="AI-styling voor jouw perfecte outfit. Ontdek je stijl met persoonlijke aanbevelingen." />
+    <meta name="twitter:image" content="https://www.fitfi.ai/images/og-image.jpg" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#9B8A7A" />
+    <meta name="msapplication-TileColor" content="#9B8A7A" />
+    
+    <!-- Preconnects for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.fitfi.ai" />
+    
+    <!-- Critical Font Loading - Montserrat (headings) + Lato (body) -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Lato:wght@300;400;500;600&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link 
+        rel="stylesheet" 
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Lato:wght@300;400;500;600&display=swap"
+      />
+    </noscript>
+    
+    <!-- Preload Critical CSS -->
+    <link rel="preload" href="/src/styles/tokens.css" as="style" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.fitfi.ai" />
+    
+    <title>FitFi — AI Styling voor jouw perfecte outfit</title>
   </head>
-  <body>
-    <div id="root"></div>
-    <script>
-    (function () {
-      // Zet alleen aan in productie/host (laat in dev ook aan – schaadt niets)
-      window.addEventListener('error', function(e){
-        try {
-          if (document.getElementById('ff-crash')) return;
-          var msg = (e.error && e.error.message) || e.message || 'Unknown error';
-          var stack = (e.error && e.error.stack) || '';
-          var safe = function (s){return String(s).replace(/[<>&]/g, c=>({'<':'<','>':'>','&':'&'}[c]));};
-          var el = document.createElement('div');
-          el.id='ff-crash';
-          el.style='position:fixed;inset:0;z-index:999999;background:#0D1B2A;color:#fff;padding:24px;overflow:auto;font-family:ui-sans-serif,system-ui';
-          el.innerHTML='<div style="max-width:820px;margin:0 auto">'
-            +'<div style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(137,207,240,.15);color:#89CFF0">Nova • Crash Report</div>'
-            +'<h1 style="margin:12px 0 8px;font-size:24px">Er ging iets mis</h1>'
-            +'<pre style="white-space:pre-wrap;background:rgba(0,0,0,.25);padding:12px;border-radius:16px">'+safe(msg+'\n\n'+stack)+'</pre>'
-            +'</div>';
-          document.body.appendChild(el);
-        } catch(_) {}
-      }, { once:true });
-
-      window.addEventListener('unhandledrejection', function(e){
-        try {
-          var reason = (e && e.reason) || 'Unhandled rejection';
-          throw (reason instanceof Error ? reason : new Error(String(reason)));
-        } catch(_) {}
-      });
-    })();
-    </script>
-    <script>
-    (function () {
-      // Zet alleen aan in productie/host (laat in dev ook aan – schaadt niets)
-      window.addEventListener('error', function(e){
-        try {
-          if (document.getElementById('ff-crash')) return;
-          var msg = (e.error && e.error.message) || e.message || 'Unknown error';
-          var stack = (e.error && e.error.stack) || '';
-          var safe = function (s){return String(s).replace(/[<>&]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));};
-          var el = document.createElement('div');
-          el.id='ff-crash';
-          el.style='position:fixed;inset:0;z-index:999999;background:#0D1B2A;color:#fff;padding:24px;overflow:auto;font-family:ui-sans-serif,system-ui';
-          el.innerHTML='<div style="max-width:820px;margin:0 auto">'
-            +'<div style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(137,207,240,.15);color:#89CFF0">Nova • Crash Report</div>'
-            +'<h1 style="margin:12px 0 8px;font-size:24px">Er ging iets mis</h1>'
-            +'<pre style="white-space:pre-wrap;background:rgba(0,0,0,.25);padding:12px;border-radius:16px">'+safe(msg+'\n\n'+stack)+'</pre>'
-            +'</div>';
-          document.body.appendChild(el);
-        } catch(_) {}
-      }, { once:true });
-
-      window.addEventListener('unhandledrejection', function(e){
-        try {
-          var reason = (e && e.reason) || 'Unhandled rejection';
-          throw (reason instanceof Error ? reason : new Error(String(reason)));
-        } catch(_) {}
-      });
-    })();
-    </script>
+  <body class="font-body bg-[color:var(--color-bg)] text-[color:var(--color-text)] antialiased">
+    <!-- App Root -->
+    <div id="root" role="main"></div>
+    
+    <!-- App Portal for Modals/Overlays -->
+    <div id="app-portal"></div>
+    
+    <!-- Loading Fallback -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #F7F3EC;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        color: #1E2333;
+        text-align: center;
+        padding: 2rem;
+      ">
+        <div>
+          <h1 style="font-size: 1.5rem; margin-bottom: 1rem;">FitFi — AI Styling</h1>
+          <p>JavaScript is vereist voor de beste ervaring. Schakel JavaScript in om door te gaan.</p>
+        </div>
+      </div>
+    </noscript>
+    
+    <!-- Main App Script -->
     <script type="module" src="/src/main.tsx"></script>
-    <script type="module" src="/src/components/nova/boot.tsx"></script>
   </body>
 </html>
