@@ -1,13 +1,12 @@
 /* src/styles/polish.css
-   FitFi — Premium Polish v5 (tokens-only)
+   FitFi — Premium Polish v6 (tokens-only)
    - Glass header + nav active chip
    - Buttons, cards, sections, chips, metrics
-   - Inputs + form states
-   - Details/FAQ + skeletons
+   - Inputs + form states + :focus-within
+   - FAQ/details micro-motion
    - Swipe carousel (no libs)
    - Sticky mobile CTA
-   - Step badges for onboarding
-   - Plan components for pricing
+   - Brand Strip (inline SVG "trusted by" badges)
 */
 
 /* ---------- Tokens helpers ---------- */
@@ -19,6 +18,10 @@
   --radius-md: 14px;
   --radius-lg: 18px;
   --radius-xl: 24px;
+
+  --motion-fast: 120ms;
+  --motion-med: 200ms;
+  --motion-slow: 360ms;
 }
 
 /* ---------- Global ---------- */
@@ -48,70 +51,90 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 /* ---------- Buttons ---------- */
 .btn{ --btn-r:14px; display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
   border-radius:var(--btn-r); padding:.85rem 1rem; font-weight:700; line-height:1.1;
-  border:1px solid transparent; transition:transform .05s ease, background .2s ease, border-color .2s ease;
+  border:1px solid transparent; transition:transform .05s ease, background var(--motion-med) ease, border-color var(--motion-med) ease, box-shadow var(--motion-med) ease;
   user-select:none; cursor:pointer;
 }
 .btn:active{ transform: translateY(1px); }
 .btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
-.btn-primary:hover{ background: var(--ff-color-primary-600); }
+.btn-primary:hover{ background: var(--ff-color-primary-600); box-shadow: 0 8px 18px rgba(0,0,0,0.06); }
 .btn-ghost{ background: transparent; border-color: var(--color-border); color: var(--color-text); }
 .btn-ghost:hover{ border-color: var(--color-primary); }
 .btn-lg{ padding:1rem 1.25rem; border-radius:16px; }
 .btn-full{ width:100%; }
 
 /* ---------- Cards ---------- */
-.card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); }
+.card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft);
+  transition: box-shadow var(--motion-med) ease, transform var(--motion-fast) ease, border-color var(--motion-med) ease;
+}
 .card--elevated{ box-shadow:var(--shadow-medium); }
 .card__inner{ padding:1.25rem; } @media (min-width:640px){ .card__inner{ padding:1.5rem; } }
 .card__title{ font-weight:800; font-size:1.125rem; }
 .card__text{ color: var(--color-muted); margin-top:.25rem; }
-.subcard{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:14px; overflow: hidden; }
+
+.subcard{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:14px; overflow: hidden;
+  transition: box-shadow var(--motion-med) ease, transform var(--motion-fast) ease, border-color var(--motion-med) ease;
+}
+.subcard:hover{ box-shadow: var(--shadow-medium); transform: translateY(-2px); border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 70%); }
 .subcard__inner{ padding:1rem; }
 .subcard__title{ font-weight:700; }
 .subcard__kicker{ color: var(--color-muted); font-size:.9rem; margin-top:.15rem; }
 
-/* ---------- Plans (pricing) ---------- */
-.plan{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); position: relative; }
-.plan--hi{ border-color: var(--color-primary); box-shadow: var(--shadow-medium); }
-.plan__inner{ padding:1.5rem; } @media (min-width:640px){ .plan__inner{ padding:2rem; } }
-.plan__title{ font-weight:800; font-size:1.25rem; }
-.plan__price{ font-weight:800; font-size:2rem; line-height:1; }
+/* ---------- Interactive elevation utility ---------- */
+.interactive-elevate:hover{ box-shadow: var(--shadow-medium); transform: translateY(-2px); border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 70%); }
 
 /* ---------- Chips / badges / metrics ---------- */
 .chip{ display:inline-flex; align-items:center; gap:.4rem; height:32px; padding:0 .75rem;
   border-radius:999px; background: color-mix(in oklab, var(--color-accent), white 70%); border:1px solid var(--color-border);
-  color: var(--color-text); font-size:.875rem; font-weight:600;
+  color: var(--color-text); font-size:.875rem; font-weight:600; transition: box-shadow var(--motion-med) ease, transform var(--motion-fast) ease;
 }
 .chip svg{ width:16px; height:16px; }
 .chip--accent{ background: color-mix(in oklab, var(--color-accent), white 58%); }
-.step-badge{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px;
-  border-radius:50%; background: var(--ff-color-primary-700); color:#fff; font-weight:800; font-size:.875rem; margin-bottom:.75rem;
-}
+.chip:hover{ box-shadow: var(--shadow-soft); transform: translateY(-1px); }
+
 .metric{ display:flex; align-items:baseline; gap:.5rem; }
 .metric__value{ font-weight:800; font-size:1.75rem; line-height:1; }
 .metric__label{ color: var(--color-muted); font-size:.875rem; }
+
+/* ---------- Step badges ---------- */
+.step-badge{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px;
+  border-radius:50%; background: var(--ff-color-primary-700); color:#fff; font-weight:800; font-size:.875rem; margin-bottom:.75rem;
+}
 
 /* ---------- Inputs ---------- */
 .input, .select, .textarea{
   width:100%; background: var(--color-surface); color: var(--color-text);
   border:1px solid var(--color-border); border-radius:12px; padding:.675rem .8rem;
+  transition: border-color var(--motion-med) ease, box-shadow var(--motion-med) ease;
+}
+.input:focus, .select:focus, .textarea:focus{
+  border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 40%);
+  box-shadow: var(--shadow-ring);
+}
+label:has(.input:focus), label:has(.textarea:focus), label:has(.select:focus){
+  text-shadow: 0 0 0 rgba(0,0,0,0.01);
 }
 .textarea{ min-height:120px; resize:vertical; }
 .range{ width:100%; accent-color: var(--ff-color-primary-700); }
 
 /* ---------- FAQ / details ---------- */
-.faq details{ border:1px solid var(--color-border); border-radius:14px; background: var(--color-surface); box-shadow:var(--shadow-soft); }
+.faq details{ border:1px solid var(--color-border); border-radius:14px; background: var(--color-surface); box-shadow:var(--shadow-soft);
+  transition: border-color var(--motion-med) ease, box-shadow var(--motion-med) ease;
+}
 .faq details + details{ margin-top:.75rem; }
-.faq summary{ cursor:pointer; list-style:none; padding:1rem 1.25rem; font-weight:700; }
+.faq summary{ cursor:pointer; list-style:none; padding:1rem 1.25rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
 .faq summary::-webkit-details-marker{ display:none; }
-.faq__content{ padding:0 1.25rem 1rem 1.25rem; color: var(--color-muted); }
+.faq summary .chev{ transition: transform var(--motion-med) ease; }
+.faq details[open] summary .chev{ transform: rotate(180deg); }
+.faq__content{ padding:0 1.25rem 1rem 1.25rem; color: var(--color-muted); animation: faqIn var(--motion-slow) ease both; }
+@keyframes faqIn{ from{ opacity:0; transform: translateY(-4px); } to{ opacity:1; transform: translateY(0); } }
 
 /* ---------- Hero ---------- */
 .hero__eyebrow{ display:inline-flex; align-items:center; gap:.5rem; color: var(--color-muted); font-size:.95rem; margin-bottom:.5rem; }
 .hero__title{ font-family: var(--font-heading, inherit); font-weight:800; letter-spacing:-0.02em; line-height:1.1; }
 .hero__lead{ color: var(--color-muted); max-width:36rem; }
 .hero__benefits{ margin-top:1rem; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem 1rem; max-width:42rem; }
-.hero__card{ border:1px solid var(--color-border); background: color-mix(in oklab, var(--color-surface), var(--overlay-accent-08a) 0%); border-radius:20px; box-shadow:var(--shadow-soft); overflow:hidden; }
+.hero__card{ border:1px solid var(--color-border); background: color-mix(in oklab, var(--color-surface), var(--overlay-accent-08a) 0%); border-radius:20px; box-shadow:var(--shadow-soft); overflow:hidden; transition: box-shadow var(--motion-med) ease; }
+.hero__card:hover{ box-shadow: var(--shadow-medium); }
 .hero__card-footer{ border-top:1px solid var(--color-border); padding: .9rem 1.25rem; }
 
 /* ---------- Skeletons ---------- */
@@ -130,12 +153,6 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 .swipe:focus-visible{ box-shadow: var(--shadow-ring); border-radius: 14px; }
 .swipe__item{ scroll-snap-align:start; }
 
-/* Custom scrollbar for swipe */
-.swipe::-webkit-scrollbar{ height: 6px; }
-.swipe::-webkit-scrollbar-track{ background: color-mix(in oklab, var(--color-border), transparent 50%); border-radius: 3px; }
-.swipe::-webkit-scrollbar-thumb{ background: var(--color-primary); border-radius: 3px; }
-.swipe::-webkit-scrollbar-thumb:hover{ background: var(--ff-color-primary-600); }
-
 /* ---------- Sticky mobile CTA ---------- */
 .sticky-cta{
   position: fixed; left:0; right:0; bottom:0; z-index:40;
@@ -146,6 +163,24 @@ html,body{ background: var(--color-bg); color: var(--color-text); }
 }
 .sticky-cta__inner{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; max-width:80rem; margin-inline:auto; }
 .sticky-cta__text{ display:flex; flex-direction:column; font-size:.9rem; }
+
+/* ---------- Brand strip ---------- */
+.brandstrip{
+  border-top:1px solid var(--color-border);
+  border-bottom:1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface), white 6%);
+}
+.brandstrip__inner{
+  max-width:80rem; margin-inline:auto; padding:.9rem 1rem;
+  display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:.5rem 1rem;
+}
+@media (min-width:640px){ .brandstrip__inner{ grid-template-columns: repeat(5, minmax(0,1fr)); padding-inline:1.5rem; } }
+.brand-logo{
+  display:flex; align-items:center; gap:.5rem; opacity:.7; transition: opacity var(--motion-med) ease, transform var(--motion-fast) ease;
+}
+.brand-logo:hover{ opacity:1; transform: translateY(-1px); }
+.brand-logo__svg{ width: 22px; height: 22px; }
+.brand-logo__label{ font-weight:700; letter-spacing:.02em; font-size:.9rem; color: var(--color-text); }
 
 /* ---------- Utilities ---------- */
 .lead{ color: var(--color-muted); }
