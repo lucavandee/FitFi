@@ -200,3 +200,57 @@ a:hover{ text-decoration: underline; }
 
 /* ===== RESPONSIVE ===== */
 @media (min-width: 768px){ .ff-sticky-cta{ display:none; } }
+
+/* ===== CTA — TAUPE (final, beats Tailwind .bg-white) ===== */
+
+/* specifieke targets; geen :where (heeft 0 specificiteit) */
+.ff-cta,
+.ff-cta.ff-cta,                    /* specificity bump (0,0,2) */
+[data-cta="primary"],
+.cta-primary,
+.btn-primary {
+  /* lokale token zodat parent-overschrijf niet lekt */
+  --ff-cta-bg: var(--ff-color-primary-600);
+
+  /* overschrijf zowel shorthand als color */
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
+  background-color: var(--ff-cta-bg) !important;
+
+  color: #fff !important;
+  border-color: transparent !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+
+  border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-weight: 700; padding: .75rem 1rem;
+  text-decoration: none !important;
+  transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+
+.ff-cta:hover,
+[data-cta="primary"]:hover,
+.cta-primary:hover,
+.btn-primary:hover {
+  background: var(--ff-color-primary-700) !important;
+}
+
+.ff-cta:active,
+[data-cta="primary"]:active,
+.cta-primary:active,
+.btn-primary:active {
+  background: var(--ff-color-primary-700) !important;
+  filter: brightness(.98);
+}
+
+/* Als er toch 'bg-white' op de CTA staat, forceer alsnog taupe */
+.ff-cta.bg-white,
+[data-cta="primary"].bg-white,
+.cta-primary.bg-white,
+.btn-primary.bg-white {
+  background: var(--ff-cta-bg) !important;
+  background-image: none !important;
+  background-color: var(--ff-cta-bg) !important;
+  color: #fff !important;
+}
