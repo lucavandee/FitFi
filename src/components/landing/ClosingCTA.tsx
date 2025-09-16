@@ -27,7 +27,7 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
   };
 
   return (
-    <section className={`section bg-[color:var(--color-bg)] ${className}`} aria-labelledby="closing-title">
+    <section className={`py-20 bg-gradient-to-br from-[#bfae9f] to-purple-600 ${className}`} aria-labelledby="closing-cta-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center text-white">
           <div className="max-w-4xl mx-auto">
@@ -98,9 +98,9 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
                   <span>10.000+ rapporten gegenereerd</span>
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <span className="chip"><Clock className="w-4 h-4" /> Supersnel</span>
-                  <span className="chip"><Shield className="w-4 h-4" /> Privacy-first</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
                   <span>4.8/5 ⭐ beoordeling</span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -117,5 +117,3 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
 };
 
 export default ClosingCTA;
-  )
-}
