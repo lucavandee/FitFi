@@ -1,185 +1,145 @@
 /* src/styles/polish.css
-   FitFi UI Polish — tokens-only
+   FitFi — Premium Polish v4 (tokens-only)
    - Glass header + nav active chip
-   - Buttons, cards, chips, inputs
-   - Plan cards (pricing)
-   - Focus ring
+   - Buttons, cards, sections, chips, metrics
+   - Inputs + form states
+   - Details/FAQ + skeletons
+   - Subtle animations (no external libs)
 */
 
-/* ---------- Core ---------- */
-:root {
-  /* shadows via tokens */
-  --shadow-soft: 0 10px 30px rgba(0,0,0,0.06);
+/* ---------- Tokens helpers ---------- */
+:root{
+  --shadow-soft: 0 12px 30px rgba(0,0,0,0.06);
+  --shadow-medium: 0 16px 42px rgba(0,0,0,0.08);
   --shadow-ring: 0 0 0 3px rgba(166,136,106,0.24); /* warm primary alpha */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
 }
 
-/* Global focus ring */
-:where(a, button, [role="button"], input, select, textarea):focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-  border-radius: 12px;
+/* ---------- Global ---------- */
+html,body{ background: var(--color-bg); color: var(--color-text); }
+:where(a,button,[role="button"],input,select,textarea,summary):focus-visible{
+  outline: none; box-shadow: var(--shadow-ring); border-radius: var(--radius-md);
 }
+::selection{ background: color-mix(in oklab, var(--color-primary), white 70%); color: var(--color-text); }
 
-/* ---------- Header (glass) ---------- */
-.header-glass {
-  backdrop-filter: saturate(180%) blur(10px);
+/* Section rhythm */
+.section{ padding: 4rem 0; } @media (min-width:768px){ .section{ padding: 6rem 0; } }
+.container{ max-width: 80rem; margin-inline:auto; padding-inline:1rem; }
+@media (min-width:640px){ .container{ padding-inline:1.5rem; } }
+@media (min-width:1024px){ .container{ padding-inline:2rem; } }
+
+/* ---------- Glass header ---------- */
+.header-glass{ position: sticky; top:0; z-index:50;
+  backdrop-filter: saturate(160%) blur(10px);
   background: color-mix(in oklab, var(--color-surface), transparent 6%);
   border-bottom: 1px solid var(--color-border);
   box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
-
-/* Nav links */
-.nav-link {
-  color: var(--color-text);
-  padding: 8px 12px;
-  border-radius: 999px;
-  text-decoration: none;
-}
-.nav-link:hover { text-decoration: underline; text-underline-offset: 4px; }
-.nav-link.is-active {
-  background: color-mix(in oklab, var(--color-accent), white 58%);
-  border: 1px solid var(--color-border);
-}
+.nav-link{ color: var(--color-text); padding:.5rem .85rem; border-radius:999px; text-decoration:none; }
+.nav-link:hover{ text-decoration: underline; text-underline-offset:4px; }
+.nav-link.is-active{ background: color-mix(in oklab, var(--color-accent), white 58%); border:1px solid var(--color-border); }
 
 /* ---------- Buttons ---------- */
-.btn {
-  --btn-radius: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-  border-radius: var(--btn-radius);
-  padding: .75rem 1rem;
-  font-weight: 600;
-  line-height: 1.1;
-  border: 1px solid transparent;
-  transition: transform .05s ease, background .2s ease, border-color .2s ease;
-  user-select: none;
-  cursor: pointer;
+.btn{ --btn-r:14px; display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+  border-radius:var(--btn-r); padding:.85rem 1rem; font-weight:700; line-height:1.1;
+  border:1px solid transparent; transition:transform .05s ease, background .2s ease, border-color .2s ease;
+  user-select:none; cursor:pointer;
 }
-.btn:active { transform: translateY(1px); }
-
-.btn-primary {
-  background: var(--ff-color-primary-700);
-  color: #fff;
-}
-.btn-primary:hover { background: var(--ff-color-primary-600); }
-
-.btn-ghost {
-  background: transparent;
-  border-color: var(--color-border);
-  color: var(--color-text);
-}
-.btn-ghost:hover { border-color: var(--color-primary); }
+.btn:active{ transform: translateY(1px); }
+.btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
+.btn-primary:hover{ background: var(--ff-color-primary-600); }
+.btn-ghost{ background: transparent; border-color: var(--color-border); color: var(--color-text); }
+.btn-ghost:hover{ border-color: var(--color-primary); }
+.btn-lg{ padding:1rem 1.25rem; border-radius:16px; }
+.btn-full{ width:100%; }
 
 /* ---------- Cards ---------- */
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  box-shadow: var(--shadow-soft);
-}
-.card-inner { padding: 1.25rem; }
-@media (min-width: 640px) { .card-inner { padding: 1.5rem; } }
+.card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); }
+.card--elevated{ box-shadow:var(--shadow-medium); }
+.card__inner{ padding:1.25rem; } @media (min-width:640px){ .card__inner{ padding:1.5rem; } }
+.card__title{ font-weight:800; font-size:1.125rem; }
+.card__text{ color: var(--color-muted); margin-top:.25rem; }
+.subcard{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:14px; }
+.subcard__inner{ padding:1rem; }
+.subcard__title{ font-weight:700; }
+.subcard__kicker{ color: var(--color-muted); font-size:.875rem; margin-top:.25rem; }
 
-.subcard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-}
-.subcard-inner { padding: 1rem; }
-.subcard-title {
-  font-weight: 700;
-}
-.subcard-text {
-  color: var(--color-muted);
-  margin-top: .25rem;
-}
+/* Legacy card classes for backward compatibility */
+.card-inner{ padding:1.25rem; } @media (min-width:640px){ .card-inner{ padding:1.5rem; } }
+.card-title{ font-weight:800; font-size:1.125rem; }
+.card-text{ color: var(--color-muted); margin-top:.25rem; }
+.subcard-inner{ padding:1rem; }
+.subcard-title{ font-weight:700; }
+.subcard-text{ color: var(--color-muted); font-size:.875rem; margin-top:.25rem; }
 
-/* ---------- Chips / badges ---------- */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  height: 32px;
-  padding: 0 .75rem;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--color-accent), white 70%);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-size: .875rem;
-  font-weight: 600;
+/* ---------- Chips / badges / metrics ---------- */
+.chip{ display:inline-flex; align-items:center; gap:.4rem; height:32px; padding:0 .75rem;
+  border-radius:999px; background: color-mix(in oklab, var(--color-accent), white 70%); border:1px solid var(--color-border);
+  color: var(--color-text); font-size:.875rem; font-weight:600;
 }
-.chip svg { width: 16px; height: 16px; }
+.chip svg{ width:16px; height:16px; }
+.chip--accent, .chip-accent{ background: color-mix(in oklab, var(--color-accent), white 58%); }
+.metric{ display:flex; align-items:baseline; gap:.5rem; }
+.metric__value{ font-weight:800; font-size:1.75rem; line-height:1; }
+.metric__label{ color: var(--color-muted); font-size:.875rem; }
 
-.chip-accent {
-  background: color-mix(in oklab, var(--color-accent), white 58%);
-}
-
-/* ---------- Typo helpers ---------- */
-.card-title {
-  font-weight: 800;
-  font-size: 1.125rem;
-}
-.card-text {
-  color: var(--color-muted);
-  margin-top: .25rem;
-}
-
-.step-badge {
-  display: inline-grid;
-  place-items: center;
-  width: 36px; height: 36px;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--color-primary), white 78%);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-weight: 700;
-  margin-bottom: .75rem;
+/* Step badges */
+.step-badge{ display:inline-grid; place-items:center; width:36px; height:36px; border-radius:999px;
+  background: color-mix(in oklab, var(--color-primary), white 78%); border:1px solid var(--color-border);
+  color: var(--color-text); font-weight:700; margin-bottom:.75rem;
 }
 
 /* ---------- Inputs ---------- */
-.input {
-  width: 100%;
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: .625rem .75rem;
+.input, .select, .textarea{
+  width:100%; background: var(--color-surface); color: var(--color-text);
+  border:1px solid var(--color-border); border-radius:12px; padding:.675rem .8rem;
 }
-.range {
-  width: 100%;
-  accent-color: var(--ff-color-primary-700);
-}
+.textarea{ min-height:120px; resize:vertical; }
+.range{ width:100%; accent-color: var(--ff-color-primary-700); }
+
+/* ---------- FAQ / details ---------- */
+.faq details{ border:1px solid var(--color-border); border-radius:14px; background: var(--color-surface); box-shadow:var(--shadow-soft); }
+.faq details + details{ margin-top:.75rem; }
+.faq summary{ cursor:pointer; list-style:none; padding:1rem 1.25rem; font-weight:700; }
+.faq summary::-webkit-details-marker{ display:none; }
+.faq__content{ padding:0 1.25rem 1rem 1.25rem; color: var(--color-muted); }
 
 /* ---------- Pricing ---------- */
-.plan-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 18px;
-  box-shadow: var(--shadow-soft);
-}
-.plan-card .plan-inner { padding: 1.25rem; }
-@media (min-width: 640px) { .plan-card .plan-inner { padding: 1.5rem; } }
+.plan, .plan-card{ background: var(--color-surface); border:1px solid var(--color-border); border-radius:18px; box-shadow:var(--shadow-soft); }
+.plan--hi, .plan-card--highlight{ outline: 2px solid color-mix(in oklab, var(--color-primary), white 30%); box-shadow:0 12px 30px rgba(0,0,0,0.08); }
+.plan__inner, .plan-inner{ padding:1.25rem; } @media (min-width:640px){ .plan__inner, .plan-inner{ padding:1.5rem; } }
+.plan__title, .plan-title{ font-weight:800; font-size:1.125rem; }
+.plan__price, .plan-price{ font-weight:800; font-size:2rem; line-height:1; }
+.plan__badge{ composes: chip; }
 
-.plan-card--highlight {
-  outline: 2px solid color-mix(in oklab, var(--color-primary), white 30%);
-  outline-offset: 0;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-}
+/* ---------- Hero ---------- */
+.hero__eyebrow{ display:inline-flex; align-items:center; gap:.5rem; color: var(--color-muted); font-size:.95rem; margin-bottom:.5rem; }
+.hero__title{ font-family: var(--font-heading, inherit); font-weight:800; letter-spacing:-0.02em; line-height:1.1; }
+.hero__lead{ color: var(--color-muted); max-width:36rem; }
+.hero__benefits{ margin-top:1rem; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem 1rem; max-width:42rem; }
+.hero__card{ border:1px solid var(--color-border); background: color-mix(in oklab, var(--color-surface), var(--overlay-accent-08a) 0%); border-radius:20px; box-shadow:var(--shadow-soft); overflow:hidden; }
+.hero__card-footer{ border-top:1px solid var(--color-border); padding: .9rem 1.25rem; }
 
-.plan-title {
-  font-weight: 800;
-  font-size: 1.125rem;
-}
-.plan-price {
-  font-weight: 800;
-  font-size: 2rem;
-  line-height: 1;
-}
+/* ---------- Skeletons ---------- */
+.skel{ position:relative; overflow:hidden; background: color-mix(in oklab, var(--color-surface), var(--overlay-primary-12a) 0%); border-radius:12px; }
+.skel::after{ content:""; position:absolute; inset:0; transform:translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); animation: skel 1.35s infinite; }
+@keyframes skel{ 100%{ transform:translateX(100%); } }
 
-/* ---------- Utility ---------- */
-.why {
-  margin-top: .5rem;
-  color: var(--color-text);
-}
+/* ---------- Utilities ---------- */
+.lead{ color: var(--color-muted); }
+.muted{ color: var(--color-muted); }
+.bordered{ border:1px solid var(--color-border); border-radius:14px; }
+.why{ margin-top:.5rem; color: var(--color-text); }
+
+/* ---------- Layout utilities ---------- */
+.w-full{ width:100%; }
+.mt-6{ margin-top:1.5rem; }
+.space-y-2 > * + *{ margin-top:.5rem; }
+.space-y-3 > * + *{ margin-top:.75rem; }
+.flex{ display:flex; }
+.items-center{ align-items:center; }
+.gap-2{ gap:.5rem; }
+.gap-3{ gap:.75rem; }
