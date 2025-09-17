@@ -1,325 +1,179 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Star, TrendingUp, Heart, Share2 } from 'lucide-react';
-import Button from '../components/ui/Button';
-import { useUser } from '../context/UserContext';
-import { useQuizAnswers } from '../hooks/useQuizAnswers';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import toast from 'react-hot-toast';
+import React from "react";
+import Seo from "@/components/Seo";
+import OutfitCard from "@/components/results/OutfitCard";
+import Button from "@/components/ui/Button";
 
-const ResultsPage: React.FC = () => {
-  const { user, isLoading: userLoading } = useUser();
-  const { quizData, isLoading: quizLoading, isQuizCompleted, resetQuiz, isResetting } = useQuizAnswers();
-  const navigate = useNavigate();
-  const [analysisComplete, setAnalysisComplete] = useState(false);
+/**
+ * ResultsPage (premium, editorial)
+ * - Toont header met samenvatting van het stijlprofiel
+ * - Grid met outfit-cards
+ * - Explainability per outfit (1–2 zinnen)
+ * - Werkt met echte resultaten als die bestaan; anders een dev-friendly mock
+ * - Tokens-first; geen hex in componenten
+ */
 
-  // Redirect to quiz if not completed
-  useEffect(() => {
-    if (!quizLoading && !userLoading && !isQuizCompleted()) {
-      navigate('/quiz', { replace: true });
-    }
-  }, [quizLoading, userLoading, isQuizCompleted, navigate]);
-
-  useEffect(() => {
-    // Simulate AI analysis completion
-    const timer = setTimeout(() => {
-      setAnalysisComplete(true);
-    }, 2000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleQuizRestart = async () => {
-    try {
-      const success = await resetQuiz();
-      
-      if (success) {
-        // Set flag to prevent redirect back to results
-        sessionStorage.setItem('quiz-restarted', 'true');
-        toast.success('Quiz opnieuw gestart!');
-        navigate('/quiz', { replace: true });
-      }
-    } catch (error) {
-      console.error('Quiz restart error:', error);
-      toast.error('Kan quiz niet resetten. Probeer opnieuw.');
-    }
-  };
-
-  if (userLoading || quizLoading) {
-    return <LoadingFallback fullScreen message="Resultaten laden..." />;
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Inloggen vereist</h2>
-          <p className="text-gray-600 mb-6">Je moet ingelogd zijn om je resultaten te bekijken.</p>
-          <Button as={Link} to="/inloggen" variant="primary" fullWidth>
-            Inloggen
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't show results if quiz not completed (will redirect)
-  if (!isQuizCompleted()) {
-    return <LoadingFallback fullScreen message="Quiz controleren..." />;
-  }
-
-  if (!analysisComplete) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="w-20 h-20 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Sparkles className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="text-2xl font-light text-gray-900 mb-4">
-            AI analyseert jouw stijl...
-          </h2>
-          <p className="text-gray-600 mb-6">
-            We creëren jouw persoonlijke stijlprofiel op basis van je antwoorden.
-          </p>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-[#bfae9f] h-2 rounded-full animate-pulse" style={{ width: '75%' }}></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0]">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link 
-            to="/dashboard"
-            className="inline-flex items-center text-[#bfae9f] hover:text-[#a89a8c] transition-colors mb-6"
-          >
-            <ArrowLeft size={20} className="mr-2" />
-            Terug naar dashboard
-          </Link>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 bg-[#bfae9f] rounded-full flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4" id="results-heading">
-              Jouw AI-Stijlanalyse
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Gebaseerd op jouw antwoorden hebben we een uniek stijlprofiel voor je samengesteld
-            </p>
-          </div>
-        </div>
-
-        {/* Results Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* Main Analysis Card */}
-          <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm p-8">
-            <div className="flex items-center justify-between mb-6" role="region" aria-labelledby="style-profile-heading">
-              <h2 className="text-2xl font-medium text-gray-900">Jouw Stijlprofiel</h2>
-              <div className="flex items-center space-x-2">
-                <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                <span className="text-lg font-medium text-gray-900">87% Match</span>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-[#bfae9f]/10 to-purple-50 rounded-2xl p-6 mb-6">
-              <h3 className="text-xl font-medium text-gray-900 mb-3">
-                {getStyleProfileTitle(quizData)}
-              </h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                {getStyleDescription(quizData)}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {getStyleTags(quizData).map((tag) => (
-                  <span key={tag} className="px-3 py-1 bg-white rounded-full text-sm font-medium text-gray-700">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-medium text-gray-900">Jouw voorkeuren:</h4>
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Minimalistisch</span>
-                    <span>75%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-[#bfae9f] h-2 rounded-full" style={{ width: '75%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Casual Chic</span>
-                    <span>20%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: '20%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Klassiek</span>
-                    <span>5%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-purple-400 h-2 rounded-full" style={{ width: '5%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-              <h3 className="font-medium text-gray-900 mb-4">Jouw Statistieken</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Stijlmatch</span>
-                  <span className="font-medium text-[#bfae9f]">87%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Uniekheid</span>
-                  <span className="font-medium text-blue-600">92%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Veelzijdigheid</span>
-                  <span className="font-medium text-green-600">85%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-              <h3 className="font-medium text-gray-900 mb-4">Acties</h3>
-              <div className="space-y-3">
-                <Button
-                  variant="primary"
-                  fullWidth
-                  icon={<Heart size={16} />}
-                  iconPosition="left"
-                  className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
-                >
-                  Bewaar Profiel
-                </Button>
-                <Button
-                  variant="outline"
-                  fullWidth
-                  icon={<Share2 size={16} />}
-                  iconPosition="left"
-                  className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
-                >
-                  Deel Resultaat
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Next Steps */}
-        <div className="bg-white rounded-3xl shadow-sm p-8 text-center">
-          <h2 className="text-2xl font-medium text-gray-900 mb-4">
-            Wat nu?
-          </h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Nu je jouw stijlprofiel kent, kunnen we gepersonaliseerde outfit aanbevelingen voor je maken.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button 
-              as={Link}
-              to="/outfits" 
-              variant="primary"
-              size="lg"
-              icon={<TrendingUp size={20} />}
-              iconPosition="left"
-              className="bg-[#bfae9f] hover:bg-[#a89a8c] text-white"
-            >
-              Bekijk Outfits
-            </Button>
-            <Button 
-              onClick={handleQuizRestart}
-              variant="outline"
-              size="lg"
-              className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
-              disabled={isResetting}
-              aria-busy={isResetting}
-            >
-              {isResetting ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-[#bfae9f] border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Quiz resetten...
-                </div>
-              ) : (
-                'Quiz Opnieuw Doen'
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+type Outfit = {
+  id: string;
+  title: string;
+  imageSrc?: string;
+  season?: string;
+  colorTemp?: string;
+  archetype?: string;
+  why: string;
 };
 
-// Helper functions to generate content based on quiz answers
-function getStyleProfileTitle(answers: any): string {
-  if (!answers?.stylePreferences) return 'Jouw Unieke Stijl';
-  
-  const preferences = answers.stylePreferences;
-  if (preferences.includes('minimalist')) return 'Modern Minimalist';
-  if (preferences.includes('classic')) return 'Tijdloos Elegant';
-  if (preferences.includes('bohemian')) return 'Bohemian Spirit';
-  if (preferences.includes('streetwear')) return 'Urban Trendsetter';
-  if (preferences.includes('romantic')) return 'Romantisch Chic';
-  if (preferences.includes('edgy')) return 'Edgy & Bold';
-  
-  return 'Eclectische Stijl';
+type ResultsModel = {
+  persona: string;              // bijv. "Modern Minimal"
+  palette: string;              // bijv. "Koel neutraal"
+  body: string;                 // bijv. "Rechthoek"
+  outfits: Outfit[];
+};
+
+// === MOCK FALLBACK ===
+// Gebruik alleen als er geen echte resultaten (SSE/state) beschikbaar zijn.
+const USE_MOCK = import.meta.env.VITE_DEV_MOCK_NOVA !== "0";
+
+const mockResults: ResultsModel = {
+  persona: "Modern Minimal",
+  palette: "Koel neutraal",
+  body: "Rechthoek",
+  outfits: [
+    {
+      id: "o1",
+      title: "Monochrome city casual",
+      imageSrc: "/images/results/o1.jpg", // als dit niet bestaat: toont gewoon een rustige bg
+      season: "Herfst/Winter",
+      colorTemp: "Koel",
+      archetype: "Minimal",
+      why:
+        "De rechte lijnen en langere laagjes verlengen het silhouet. De koele, gedempte tinten sluiten aan bij je kleurtemperatuur en houden de look coherent.",
+    },
+    {
+      id: "o2",
+      title: "Soft tailoring",
+      imageSrc: "/images/results/o2.jpg",
+      season: "Lente/Herfst",
+      colorTemp: "Koel-neutraal",
+      archetype: "Modern",
+      why:
+        "Lichte structuur in de blazer creëert vorm zonder te verzwaren. Neutrale basis maakt combineren simpel en tijdloos.",
+    },
+    {
+      id: "o3",
+      title: "Weekend clean",
+      imageSrc: "/images/results/o3.jpg",
+      season: "Hele jaar",
+      colorTemp: "Koel",
+      archetype: "Casual-clean",
+      why:
+        "Minimal layers met subtiel contrast; materialen met zachte handfeel versterken het cleane karakter en passen bij je stijlprofiel.",
+    },
+  ],
+};
+
+// TODO: vervang dit door jullie echte selector/sse-state zodra aanwezig.
+function useResultsData(): ResultsModel | null {
+  // Voor nu: geen globale store? Val terug op mock indien toegestaan.
+  return USE_MOCK ? mockResults : null;
 }
 
-function getStyleDescription(answers: any): string {
-  if (!answers) return 'Jouw unieke stijl combineert verschillende elementen die perfect bij jouw persoonlijkheid passen.';
-  
-  const baseColors = answers.baseColors;
-  const occasions = answers.occasions || [];
-  
-  let description = 'Jouw stijl ';
-  
-  if (baseColors === 'neutral') {
-    description += 'straalt rust en verfijning uit met neutrale tinten die tijdloos en veelzijdig zijn. ';
-  } else if (baseColors === 'bold') {
-    description += 'is gedurfd en expressief met felle kleuren die je persoonlijkheid laten zien. ';
-  }
-  
-  if (occasions.includes('work')) {
-    description += 'Je waardeert professionaliteit en wilt er altijd verzorgd uitzien. ';
-  }
-  
-  return description + 'Deze combinatie toont dat je bewuste keuzes maakt die bij jouw lifestyle passen.';
-}
+const chip =
+  "inline-flex items-center rounded-full px-2.5 py-1 text-xs border border-[var(--color-border)] " +
+  "bg-[var(--color-surface)] text-[var(--color-text)]";
 
-function getStyleTags(answers: any): string[] {
-  if (!answers?.stylePreferences) return ['Uniek', 'Persoonlijk', 'Stijlvol'];
-  
-  const tagMap: Record<string, string> = {
-    minimalist: 'Minimalistisch',
-    classic: 'Tijdloos',
-    bohemian: 'Vrij',
-    streetwear: 'Urban',
-    romantic: 'Romantisch',
-    edgy: 'Gedurfd'
-  };
+const ResultsPage: React.FC = () => {
+  const data = useResultsData();
 
-  const tags = answers.stylePreferences.map((pref: string) => tagMap[pref] || pref);
-  return [...tags, 'Veelzijdig', 'Authentiek'].slice(0, 4);
-}
+  return (
+    <main className="bg-[var(--color-bg)] min-h-screen">
+      <Seo
+        title="Jouw AI Style Report — Resultaten | FitFi"
+        description="Bekijk je gepersonaliseerde outfits en lees in 1–2 zinnen per look waarom dit past bij jouw silhouet, materialen en kleurtemperatuur."
+        canonical="https://www.fitfi.ai/results"
+      />
+
+      {/* Header */}
+      <section aria-labelledby="report-heading" className="pt-14 md:pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <header>
+            <h1
+              id="report-heading"
+              className="font-semibold tracking-tight text-[var(--color-text)]"
+              style={{ fontSize: "clamp(2rem, 2.3vw + 1rem, 3rem)", lineHeight: 1.08 }}
+            >
+              Jouw AI Style Report
+            </h1>
+
+            {data ? (
+              <>
+                <p className="mt-4 text-[var(--color-muted)]">
+                  Samenvatting op basis van je antwoorden — klaar om te shoppen of te verfijnen.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <span className={chip}>Persona: {data.persona}</span>
+                  <span className={chip}>Palette: {data.palette}</span>
+                  <span className={chip}>Silhouet: {data.body}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-4 text-[var(--color-muted)]">
+                  We genereren je resultaten… Als dit te lang duurt, bekijk dan een voorbeeldrapport.
+                </p>
+                <div className="mt-5">
+                  <Button
+                    variant="ghost"
+                    onClick={() => (window.location.href = "/results")}
+                    aria-label="Bekijk voorbeeldrapport"
+                  >
+                    Bekijk voorbeeld
+                  </Button>
+                </div>
+              </>
+            )}
+          </header>
+        </div>
+      </section>
+
+      {/* Grid */}
+      <section className="py-12 md:py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {data ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.outfits.map((o) => (
+                <OutfitCard
+                  key={o.id}
+                  title={o.title}
+                  imageSrc={o.imageSrc}
+                  season={o.season}
+                  colorTemp={o.colorTemp}
+                  archetype={o.archetype}
+                  why={o.why}
+                  onShop={() => {
+                    // Hier kan jullie bestaande analytics/affiliate redirect in
+                    // Bijvoorbeeld: navigate('/shop-redirect?...')
+                  }}
+                  onSave={() => {
+                    // Bewaar in favorieten / profiel (later)
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            // Lightweight skeleton — geen extra libs nodig
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] h-[420px]"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+};
 
 export default ResultsPage;
