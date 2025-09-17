@@ -1,51 +1,63 @@
-import React from "react";
+import React, { forwardRef } from "react";
+import type { ButtonHTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
 
-type Variant = "primary" | "ghost" | "danger" | "success";
-type Size = "sm" | "md" | "lg";
+/**
+ * Tokens-first Button
+ * - Primary (solid): bg var(--ff-color-primary-700), hover var(--ff-color-primary-600), text white
+ * - Ghost (secondary): transparent bg, border var(--color-border), text var(--color-text), hover border var(--color-primary)
+ * - Outline: border + subtle hover on surface
+ * - Focus ring via tokens
+ * - Sizes: sm, md, lg
+ */
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: Variant;
-  size?: Size;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+type ButtonVariant = "primary" | "ghost" | "outline";
+type ButtonSize = "sm" | "md" | "lg";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+}
+
+const base =
+  "inline-flex items-center justify-center rounded-2xl font-medium transition-all " +
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
+  "focus-visible:ring-[color:var(--shadow-ring)] disabled:opacity-50 disabled:cursor-not-allowed";
+
+const variants: Record<ButtonVariant, string> = {
+  primary:
+    "bg-[color:var(--ff-color-primary-700)] text-white " +
+    "hover:bg-[color:var(--ff-color-primary-600)]",
+  ghost:
+    "bg-transparent border border-[color:var(--color-border)] " +
+    "text-[color:var(--color-text)] hover:border-[color:var(--color-primary)]",
+  outline:
+    "border border-[color:var(--color-border)] text-[color:var(--color-text)] " +
+    "hover:bg-[color:var(--color-surface)]",
 };
 
-function classes(variant: Variant, size: Size, disabled?: boolean) {
-  const base = "inline-flex items-center justify-center rounded-xl border transition-all focus-visible:outline-none";
-  const sizes: Record<Size, string> = {
-    sm: "h-9 px-3 text-sm",
-    md: "h-11 px-4 text-[15px]",
-    lg: "h-12 px-5 text-base",
-  };
-  const v: Record<Variant, string> = {
-    primary:
-      "bg-[var(--fitfi-primary)] border-white/10 text-white hover:translate-y-[-1px] hover:shadow-xl hover:shadow-[rgba(43,106,243,.35)] active:translate-y-0",
-    ghost:
-      "bg-transparent border-white/15 text-white hover:bg-white/10",
-    danger:
-      "bg-[var(--fitfi-danger)] border-white/10 text-white hover:brightness-110",
-    success:
-      "bg-[var(--fitfi-success)] border-white/10 text-white hover:brightness-110",
-  };
-  const state = disabled ? "opacity-60 cursor-not-allowed" : "";
-  return `${base} ${sizes[size]} ${v[variant]} ${state}`;
-    primary: 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] shadow-sm',
-    secondary: 'bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] hover:bg-[var(--ff-color-neutral-200)]',
-    ghost: 'text-[var(--color-text)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-neutral-50)] border border-transparent hover:border-[var(--color-primary)]',
-    outline: 'border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface)]'
-  size = "md",
-  leftIcon,
-  rightIcon,
-  disabled,
-  className = "",
-  children,
-  ...rest
-}: Props) {
-  return (
-    <button className={`${classes(variant, size, disabled)} ${className}`} disabled={disabled} {...rest}>
-      {leftIcon && <span className="mr-2">{leftIcon}</span>}
-      <span>{children}</span>
-      {rightIcon && <span className="ml-2">{rightIcon}</span>}
-    </button>
-  );
+const sizes: Record<ButtonSize, string> = {
+  sm: "h-9 px-3 text-sm",
+  md: "h-11 px-4 text-base",
+  lg: "h-12 px-6 text-base",
+};
+
+function cn(...cls: Array<string | false | null | undefined>) {
+  return twMerge(cls.filter(Boolean).join(" "));
 }
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { className, variant = "primary", size = "md", type = "button", ...props },
+  ref
+) {
+  return (
+    <button
+      ref={ref}
+      type={type}
+      className={cn(base, variants[variant], sizes[size], className)}
+      {...props}
+    />
+  );
+});
+
+export default Button;

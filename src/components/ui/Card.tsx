@@ -1,29 +1,29 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
-type Props = {
-  className?: string;
-  children: React.ReactNode;
+/**
+ * Tokens-first Card
+ * - Cards: bg --color-surface, border --color-border, shadow --shadow-soft, radius --radius-lg
+ * - A11y: semantic <article> by default, overridable via as="div" | "section"
+ */
+
+type AsElement = "article" | "section" | "div";
+
+export interface CardProps extends React.HTMLAttributes<HTMLElement> {
+  as?: AsElement;
+}
+
+function cn(...cls: Array<string | false | null | undefined>) {
+  return twMerge(cls.filter(Boolean).join(" "));
+}
+
+const base =
+  "bg-[color:var(--color-surface)] border border-[color:var(--color-border)] " +
+  "rounded-[var(--radius-lg)] shadow-[var(--shadow-soft)]";
+
+const Card: React.FC<CardProps> = ({ as = "article", className, ...props }) => {
+  const Comp = as as unknown as React.ElementType;
+  return <Comp className={cn(base, className)} {...props} />;
 };
 
-function Root({ className = "", children }: Props) {
-  return <div className={`ff-card ${className}`}>{children}</div>;
-        'bg-[var(--color-surface)] rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]',
-
-function Header({ className = "", children }: Props) {
-  return (
-    <div className={`px-5 py-4 flex items-center justify-between border-b border-white/10 ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-function Body({ className = "", children }: Props) {
-  return <div className={`px-5 py-4 ${className}`}>{children}</div>;
-}
-
-function Footer({ className = "", children }: Props) {
-  return <div className={`px-5 py-4 border-t border-white/10 ${className}`}>{children}</div>;
-}
-
-const Card = Object.assign(Root, { Header, Body, Footer });
 export default Card;
