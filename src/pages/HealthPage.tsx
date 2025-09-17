@@ -30,7 +30,7 @@ export default function HealthPage() {
   }, []);
 
   return (
-    <main className="px-6 py-8">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <h1 className="text-2xl font-semibold mb-4">FitFi • Health</h1>
       <div className="max-w-xl divide-y divide-gray-800 border border-gray-800 rounded-lg">
         {rows.map((r) => (

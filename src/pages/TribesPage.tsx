@@ -43,7 +43,7 @@ export default function TribesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F6F6F6]">
+    <main id="main" className="min-h-screen bg-[#F6F6F6]">
       <Helmet>
         <title>Style Tribes | FitFi</title>
         <meta name="description" content="Word lid van Style Tribes en deel je look met gelijkgestemden." />
@@ -70,6 +70,6 @@ export default function TribesPage() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }
