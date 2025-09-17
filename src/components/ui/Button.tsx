@@ -4,9 +4,9 @@ import { twMerge } from "tailwind-merge";
 
 /**
  * Tokens-first Button
- * - Primary (solid): bg var(--ff-color-primary-700), hover var(--ff-color-primary-600), text white
- * - Ghost (secondary): transparent bg, border var(--color-border), text var(--color-text), hover border var(--color-primary)
- * - Outline: border + subtle hover on surface
+ * - Primary: bg var(--ff-color-primary-700), hover var(--ff-color-primary-600), text #fff
+ * - Ghost: transparent bg, border var(--color-border), text var(--color-text); hover border var(--color-primary)
+ * - Outline: border var(--color-border), hover bg var(--color-surface)
  * - Focus ring via tokens
  * - Sizes: sm, md, lg
  */
