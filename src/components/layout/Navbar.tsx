@@ -19,6 +19,14 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 nav-glass">
+      {/* Skip to content */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded px-3 py-1 text-sm shadow-[var(--shadow-soft)]"
+      >
+        Naar hoofdinhoud
+      </a>
+
       <nav
         aria-label="Hoofdnavigatie"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
@@ -27,11 +35,10 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--shadow-ring)]"
+            className="inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shadow-ring)]"
             aria-label="Ga naar home"
           >
-            {/* Simpele tekstlogo; vervang door SmartImage als je een beeldmerk hebt */}
-            <span className="text-lg font-semibold text-[color:var(--color-text)]">FitFi</span>
+            <span className="text-lg font-semibold text-[var(--color-text)]">FitFi</span>
           </button>
         </div>
 
@@ -45,8 +52,8 @@ const Navbar: React.FC = () => {
                   cx(
                     "px-3 py-2 text-sm",
                     isActive
-                      ? "accent-chip" // chip-stijl volgens polish.css
-                      : "text-[color:var(--color-text)] hover:underline underline-offset-4"
+                      ? "accent-chip"
+                      : "text-[var(--color-text)] hover:underline underline-offset-4"
                   )
                 }
               >
