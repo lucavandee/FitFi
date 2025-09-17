@@ -1,14 +1,9 @@
-# Canonicals (NL als waarheid)
-# Privacy
-/privacy-policy     /privacy                      301
-# FAQ
-/faq                /veelgestelde-vragen         301
-# Auth
-/login              /inloggen                    301
-# Terms (eng → nl)
-/terms-of-service   /algemene-voorwaarden        301
-# Disclaimer (als eng pad ooit bestond)
-/disclaimer         /disclosure                  301
+# Canonicals — NL is de waarheid
+/faq                 /veelgestelde-vragen      301
+/privacy-policy      /privacy                  301
+/login               /inloggen                 301
+/terms-of-service    /algemene-voorwaarden     301
+/disclaimer          /disclosure               301
 
 # SPA fallback (laatste regel!)
-/*                  /index.html                  200
+/*                   /index.html               200
