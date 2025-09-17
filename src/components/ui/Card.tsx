@@ -3,8 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 /**
  * Tokens-first Card
- * - Cards: bg --color-surface, border --color-border, shadow --shadow-soft, radius --radius-lg
- * - A11y: semantic <article> by default, overridable via as="div" | "section"
+ * - bg --color-surface, border --color-border, shadow --shadow-soft, radius --radius-lg
  */
 
 type AsElement = "article" | "section" | "div";
