@@ -44,7 +44,7 @@ const FeedPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F6F6]">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Helmet>
         <title>Style Feed - Ontdek Nieuwe Outfits | FitFi</title>
         <meta name="description" content="Ontdek nieuwe outfit inspiratie in je persoonlijke style feed. Swipe, save en shop je favoriete looks." />
@@ -170,7 +170,7 @@ const FeedPage: React.FC = () => {
           </ErrorBoundary>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

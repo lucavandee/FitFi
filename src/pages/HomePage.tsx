@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <>
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Helmet>
         <title>FitFi - AI Style Report voor jouw perfecte look</title>
         <meta name="description" content="Ontdek jouw perfecte stijl met onze AI-gedreven style reports. Persoonlijke outfit aanbevelingen op basis van jouw unieke profiel." />
@@ -281,7 +281,7 @@ const HomePage: React.FC = () => {
     <div className="ff-sticky-cta md:hidden">
       <a href="/get-started" className="ff-cta" data-analytics="sticky-cta" onClick={trackStickyCTA}>Start gratis</a>
     </div>
-    </>
+    </main>
   );
 };
 

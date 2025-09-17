@@ -120,7 +120,7 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <div className="max-w-md w-full space-y-8">
         <div>
           {/* Header */}
@@ -286,7 +286,7 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

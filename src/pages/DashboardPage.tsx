@@ -95,7 +95,7 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 pb-20 md:pb-8">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo 
         title="Dashboard - FitFi"
         description="Jouw persoonlijke stijldashboard met outfit geschiedenis, aanbevelingen en styling insights."
@@ -242,7 +242,7 @@ const DashboardPage: React.FC = () => {
         onClaimDaily={handleClaimDaily}
         userId={user.id}
       />
-    </div>
+    </main>
   );
 };
 

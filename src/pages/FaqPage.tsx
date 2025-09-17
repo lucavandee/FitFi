@@ -14,7 +14,7 @@ const QA = ({ q, a }: { q: string; a: string }) => (
 
 const FaqPage: React.FC = () => {
   return (
-    <main className="bg-[color:var(--color-bg)] text-[color:var(--color-text)]">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <section className="section" aria-labelledby="faq-title">
         <div className="container">
           <h1 id="faq-title" className="hero__title text-[clamp(2rem,5vw,2.6rem)]">Veelgestelde vragen</h1>

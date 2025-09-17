@@ -462,7 +462,7 @@ const QuizPage: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF8F6] via-white to-[#F5F3F0] py-8">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -628,7 +628,7 @@ const QuizPage: React.FC = () => {
           />
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

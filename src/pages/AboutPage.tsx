@@ -41,7 +41,7 @@ const AboutPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F6F6F6]">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="Over ons — Waarom kiezen mensen voor FitFi?"
         description="Wij combineren AI en stijlkennis voor persoonlijk, onafhankelijk stylingadvies met focus op kwaliteit en duurzaamheid."
@@ -224,7 +224,7 @@ const AboutPage: React.FC = () => {
           </section>
         </ErrorBoundary>
       </div>
-    </div>
+    </main>
   );
 };
 
