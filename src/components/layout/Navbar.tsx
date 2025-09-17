@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
                   cx(
                     "px-3 py-2 text-sm",
                     isActive
-                      ? "accent-chip"
+                      ? "accent-chip"  // chip-stijl via polish.css
                       : "text-[var(--color-text)] hover:underline underline-offset-4"
                   )
                 }
