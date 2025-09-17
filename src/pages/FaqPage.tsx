@@ -1,5 +1,6 @@
 // src/pages/FaqPage.tsx
 import React from "react";
+import Seo from "@/components/Seo";
 import { ChevronDown } from "lucide-react";
 
 const QA = ({ q, a }: { q: string; a: string }) => (
@@ -14,7 +15,13 @@ const QA = ({ q, a }: { q: string; a: string }) => (
 
 const FaqPage: React.FC = () => {
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <Seo 
+        title="Veelgestelde vragen - FitFi"
+        description="Vind antwoorden op de meest gestelde vragen over FitFi's AI style quiz en gepersonaliseerde outfit aanbevelingen."
+        canonical="https://fitfi.ai/veelgestelde-vragen"
+      />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <section className="section" aria-labelledby="faq-title">
         <div className="container">
           <h1 id="faq-title" className="hero__title text-[clamp(2rem,5vw,2.6rem)]">Veelgestelde vragen</h1>
@@ -32,7 +39,8 @@ const FaqPage: React.FC = () => {
           </div>
         </div>
       </section>
-    </main>
+      </main>
+    </>
   );
 };
 export default FaqPage;

@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
 import HeroTitle from '@/components/marketing/HeroTitle';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import Seo from "@/components/Seo";
 
 const AboutPage: React.FC = () => {
   const uspCards = [
@@ -41,7 +42,13 @@ const AboutPage: React.FC = () => {
   ];
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <Seo 
+        title="Over ons - FitFi"
+        description="Leer meer over FitFi's missie om iedereen te helpen hun perfecte stijl te vinden met behulp van AI-technologie."
+        canonical="https://fitfi.ai/over-ons"
+      />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="Over ons — Waarom kiezen mensen voor FitFi?"
         description="Wij combineren AI en stijlkennis voor persoonlijk, onafhankelijk stylingadvies met focus op kwaliteit en duurzaamheid."
@@ -224,7 +231,8 @@ const AboutPage: React.FC = () => {
           </section>
         </ErrorBoundary>
       </div>
-    </main>
+      </main>
+    </>
   );
 };
 

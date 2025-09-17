@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext';
 import { supabase } from '../lib/supabaseClient';
 
 // Get singleton client
+import Seo from "@/components/Seo";
 const sb = supabase();
 
 const LoginPage: React.FC = () => {
@@ -120,7 +121,13 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <Seo 
+        title="Inloggen - FitFi"
+        description="Log in op je FitFi account om toegang te krijgen tot je gepersonaliseerde style dashboard en outfit aanbevelingen."
+        canonical="https://fitfi.ai/inloggen"
+      />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <div className="max-w-md w-full space-y-8">
         <div>
           {/* Header */}
@@ -286,7 +293,8 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </>
   );
 };
 
