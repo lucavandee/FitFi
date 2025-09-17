@@ -29,10 +29,10 @@ function classes(variant: Variant, size: Size, disabled?: boolean) {
   };
   const state = disabled ? "opacity-60 cursor-not-allowed" : "";
   return `${base} ${sizes[size]} ${v[variant]} ${state}`;
-}
-
-export default function Button({
-  variant = "primary",
+    primary: 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] shadow-sm',
+    secondary: 'bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] hover:bg-[var(--ff-color-neutral-200)]',
+    ghost: 'text-[var(--color-text)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-neutral-50)] border border-transparent hover:border-[var(--color-primary)]',
+    outline: 'border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface)]'
   size = "md",
   leftIcon,
   rightIcon,

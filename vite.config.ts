@@ -30,14 +30,13 @@ export default defineConfig(({ command }) => {
               console.warn(`   Hex colors: ${hexMatches.join(", ")}`);
               console.warn(`   → Gebruik CSS custom properties: var(--color-*) in tokens.css`);
             }
-            if (grayMatches) {
               console.warn(`   Gray classes: ${grayMatches.join(", ")}`);
               console.warn(`   → Gebruik: text-muted, text, bg-surface, border-ui`);
             }
             if (redMatches) {
               console.warn(`   Red classes: ${redMatches.join(", ")}`);
               console.warn(`   → Gebruik: [color:var(--color-danger)] utilities`);
-            }
+      '@': '/src'
             if (blueMatches) {
               console.warn(`   Blue classes: ${blueMatches.join(", ")}`);
               console.warn(`   → Gebruik: [color:var(--color-primary)] utilities`);

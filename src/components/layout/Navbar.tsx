@@ -7,6 +7,7 @@ import Logo from "../ui/Logo";
 import { NAV_ITEMS } from "../../constants/nav";
 import MobileNavDrawer from "./MobileNavDrawer";
 import { scrollToHash } from "../../utils/scrollUtils";
+import { cn } from '@/utils/cn';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,12 +32,20 @@ const Navbar: React.FC = () => {
     return location.pathname.startsWith(href);
   };
 
+  const navLinkClass = (path: string) => cn(
+    'px-3 py-2 rounded-full text-sm font-medium transition-all duration-200',
+    'focus-ring',
+    isActiveLink(path) 
+      ? 'bg-[var(--ff-color-primary-50)] text-[var(--color-text)] border border-[var(--ff-color-primary-200)]'
+      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:border-[var(--color-primary)]'
+  );
+
   return (
     <nav
       data-fitfi="navbar"
       role="navigation"
       aria-label="Hoofdnavigatie"
-      className={`sticky top-0 z-40 bg-transparent backdrop-blur transition-all duration-300 ${
+      className={`sticky top-0 z-40 bg-[var(--color-surface)] backdrop-blur transition-all duration-300 ${
         isScrolled ? "is-scrolled" : ""
       }`}
     >
@@ -61,9 +70,7 @@ const Navbar: React.FC = () => {
                     e.preventDefault();
                     scrollToHash(item.href);
                   }}
-                  className={`nav-link text-sm font-medium transition-colors ${
-                    active ? "is-active" : ""
-                  }`}
+                  className={navLinkClass(item.href)}
                 >
                   {item.label}
                 </a>
@@ -73,9 +80,7 @@ const Navbar: React.FC = () => {
               <Link
                 key={item.href}
                 to={item.href}
-                className={`nav-link text-sm font-medium transition-colors ${
-                  active ? "is-active" : ""
-                }`}
+                className={navLinkClass(item.href)}
               >
                 {item.label}
               </Link>
@@ -103,11 +108,11 @@ const Navbar: React.FC = () => {
             <>
               <Link
                 to="/login"
-                className="text-sm opacity-90 hover:opacity-100"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] text-sm font-medium focus-ring rounded-md px-2 py-1"
               >
                 Inloggen
               </Link>
-              <Link to="/get-started" className="ff-cta px-4 py-2 text-sm">
+              <Link to="/get-started" className="bg-[var(--ff-color-primary-700)] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--ff-color-primary-600)] transition-colors focus-ring">
                 Gratis starten
               </Link>
             </>

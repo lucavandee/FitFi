@@ -7,7 +7,7 @@ type Props = {
 
 function Root({ className = "", children }: Props) {
   return <div className={`ff-card ${className}`}>{children}</div>;
-}
+        'bg-[var(--color-surface)] rounded-[var(--radius-lg)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]',
 
 function Header({ className = "", children }: Props) {
   return (
