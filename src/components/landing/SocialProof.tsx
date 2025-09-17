@@ -1,6 +1,6 @@
-import React from 'react';
-import { Quote, Star } from 'lucide-react';
-import SmartImage from '@/components/media/SmartImage';
+import React from "react";
+import { Quote, Star } from "lucide-react";
+import SmartImage from "@/components/media/SmartImage";
 
 interface Testimonial {
   id: string;
@@ -14,81 +14,85 @@ interface SocialProofProps {
   className?: string;
 }
 
-const SocialProof: React.FC<SocialProofProps> = ({ className = '' }) => {
-  const testimonials: Testimonial[] = [
-    {
-      id: 'emma',
-      quote: "Verbazingwekkend nauwkeurig! Ik begrijp mezelf ineens veel beter.",
-      author: "Emma",
-      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
-      rating: 5
-    },
-    {
-      id: 'jordi',
-      quote: "Alsof deze AI recht door mij heen keek, superwaardevol!",
-      author: "Jordi",
-      avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2",
-      rating: 5
-    }
-  ];
+const testimonials: Testimonial[] = [
+  {
+    id: "t1",
+    quote:
+      "Verbazingwekkend hoe accuraat het rapport mijn stijl en persoonlijkheid samenvat. De outfits kloppen echt.",
+    author: "Sanne, Amsterdam",
+    avatar: "/images/avatars/sanne.jpg",
+    rating: 5,
+  },
+  {
+    id: "t2",
+    quote:
+      "Binnen twee minuten had ik een plan én items die ik direct kon shoppen. Scheelt tijd en miskopen.",
+    author: "Milan, Utrecht",
+    avatar: "/images/avatars/milan.jpg",
+    rating: 5,
+  },
+];
 
+const SocialProof: React.FC<SocialProofProps> = ({ className = "" }) => {
   return (
     <section className={`py-16 bg-white ${className}`} aria-labelledby="social-proof-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 id="social-proof-heading" className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
+          <h2 id="social-proof-heading" className="text-2xl md:text-3xl font-semibold text-[color:var(--color-text)]">
             Wat anderen zeggen over hun AI Style Report
           </h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {testimonials.map((testimonial) => (
-            <div 
-              key={testimonial.id}
-              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          {testimonials.map((t) => (
+            <article
+              key={t.id}
+              className="bg-[color:var(--color-surface)] rounded-2xl p-8 premium-shadow border border-[color:var(--color-border)]"
             >
               <div className="flex items-center mb-6">
-                <Quote className="text-[#bfae9f] mr-3" size={24} />
-                <div className="flex">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-current" size={16} />
+                <Quote className="text-[color:var(--ff-color-primary-600)] mr-3" size={24} aria-hidden="true" />
+                <div className="flex" aria-label={`${t.rating} van 5 sterren`}>
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} className="text-[color:var(--ff-color-primary-600)]" size={16} aria-hidden="true" />
                   ))}
                 </div>
               </div>
-              
-              <blockquote className="text-lg text-gray-700 leading-relaxed mb-6 italic">
-                "{testimonial.quote}"
+
+              <blockquote className="text-lg text-[color:var(--color-text)] leading-relaxed mb-6 italic">
+                "{t.quote}"
               </blockquote>
-              
-              <div className="flex items-center">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.author}
-                  className="w-12 h-12 rounded-full object-cover shadow-sm mr-4"
+
+              <div className="flex items-center gap-3">
+                <SmartImage
+                  id={`avatar-${t.id}`}
+                  kind="avatar"
+                  src={t.avatar}
+                  alt={`Avatar van ${t.author}`}
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">{testimonial.author}</div>
-                  <div className="text-sm text-gray-500">Geverifieerde gebruiker</div>
+                  <div className="text-sm font-medium text-[color:var(--color-text)]">{t.author}</div>
+                  <div className="text-xs text-[color:var(--color-muted)]">Geverifieerde gebruiker</div>
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
-        
-        {/* Trust Indicators */}
+
+        {/* Trust indicators */}
         <div className="mt-12 text-center">
-          <div className="flex flex-wrap justify-center items-center space-x-8 text-sm text-gray-500">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-sm text-[color:var(--color-muted)]">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[color:var(--color-success)]" />
               <span>10.000+ rapporten gegenereerd</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[color:var(--ff-color-primary-600)]" />
               <span>4.8/5 gemiddelde beoordeling</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span>95% nauwkeurigheid</span>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[color:var(--color-accent)]" />
+              <span>95% nauwkeurigheid (interne survey)</span>
             </div>
           </div>
         </div>
