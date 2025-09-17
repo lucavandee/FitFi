@@ -2,47 +2,34 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import Hero from "@/components/landing/Hero";
-import HowItWorks from "@/components/landing/HowItWorks";
-import Features from "@/components/landing/Features";
 import SocialProof from "@/components/landing/SocialProof";
-import Footer from "@/components/layout/Footer";
+
+// NB: We houden het licht: HowItWorks/Features kunnen apart opgepoetst worden.
+// Deze pagina focust op LCP/CTR (hero + trust) en blijft tokens-first.
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCTAClick = () => {
-    // Conversie-eventen kunnen via utils/analytics, maar we houden het hier lightweight
     navigate("/onboarding");
   };
 
   return (
     <div className="min-h-screen bg-[color:var(--color-bg)]">
       <Seo
-        title="AI Style Report — Ontdek wat jouw stijl over je zegt"
-        description="Krijg je gratis AI Style Report in 2 minuten: zie wat je kledingkeuzes over je zeggen en ontvang direct passende outfits."
+        title="AI Style Report — Ontdek wat jouw stijl over je zegt | FitFi"
+        description="Krijg je gratis AI Style Report in 2 minuten: ontdek wat je kledingkeuzes zeggen over je persoonlijkheid en ontvang passende outfits met shoplinks."
+        preloadImages={["/images/hero/main.jpg"]}
+        canonical="https://fitfi.ai/"
       />
 
+      {/* Hero met sterke trust direct naast CTA (uit Hero-component) */}
       <Hero onCTAClick={handleCTAClick} />
 
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <HowItWorks />
-        </div>
-      </section>
-
-      <section className="py-16 bg-[color:var(--color-bg)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Features />
-        </div>
-      </section>
-
+      {/* Social proof dicht op de hero voor hogere CTR en vertrouwen */}
       <SocialProof />
 
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Footer />
-        </div>
-      </section>
+      {/* Footer wordt elders gerenderd via layout, of voeg hier een sectie toe indien nodig */}
     </div>
   );
 };
