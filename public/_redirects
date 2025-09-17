@@ -1,11 +1,14 @@
-# Prevent serving HTML for JS/CSS assets
-/assets/*  /assets/:splat  200
-/*.js      /:splat.js      200
-/*.css     /:splat.css     200
-/*.map     /:splat.map     200
+# Canonicals (NL als waarheid)
+# Privacy
+/privacy-policy     /privacy                      301
+# FAQ
+/faq                /veelgestelde-vragen         301
+# Auth
+/login              /inloggen                    301
+# Terms (eng → nl)
+/terms-of-service   /algemene-voorwaarden        301
+# Disclaimer (als eng pad ooit bestond)
+/disclaimer         /disclosure                  301
 
-# API routes to Netlify functions
-/api/*    /.netlify/functions/:splat  200
-
-# SPA fallback for client-side routing
-/*    /index.html   200
+# SPA fallback (laatste regel!)
+/*                  /index.html                  200
