@@ -12,33 +12,35 @@ type Props = {
 };
 
 const OutfitCard: React.FC<Props> = ({ outfit, onShop, onViewItems }) => {
+  const { title, season, colorTemp, archetype, explanation, items, imageId, priceHint } = outfit;
+
   return (
-    <article className="outfit-card">
+    <article className="outfit-card" role="listitem">
       {/* Visual */}
       <div className="outfit-media">
         <SmartImage
-          id={outfit.imageId ?? "outfit-generic"}
+          id={imageId ?? "outfit-generic"}
           kind="generic"
-          alt={`Outfit ${outfit.title}`}
+          alt={`Outfit: ${title}`}
           className="h-full w-full object-cover"
         />
       </div>
 
       {/* Body */}
       <div className="outfit-body flow">
-        <h3 className="outfit-title">{outfit.title}</h3>
+        <h3 className="outfit-title">{title}</h3>
 
         <div className="cluster gap-2">
-          <Badge tone="season">{outfit.season}</Badge>
-          <Badge tone="temp">{outfit.colorTemp}</Badge>
-          <Badge tone="arch">{outfit.archetype}</Badge>
-          {outfit.priceHint ? <Badge tone="neutral">{outfit.priceHint}</Badge> : null}
+          <Badge tone="season">{season}</Badge>
+          <Badge tone="temp">{colorTemp}</Badge>
+          <Badge tone="arch">{archetype}</Badge>
+          {priceHint ? <Badge tone="neutral">{priceHint}</Badge> : null}
         </div>
 
-        <p className="outfit-expl">{outfit.explanation}</p>
+        <p className="outfit-expl">{explanation}</p>
 
-        <ul className="outfit-items">
-          {outfit.items.map((it) => (
+        <ul className="outfit-items" aria-label="Items in deze outfit">
+          {items.map((it) => (
             <li key={it}>{it}</li>
           ))}
         </ul>
@@ -50,7 +52,7 @@ const OutfitCard: React.FC<Props> = ({ outfit, onShop, onViewItems }) => {
           <Button variant="ghost" size="md" onClick={onViewItems} aria-label="Bekijk items van deze outfit">
             Bekijk items <List size={18} className="ml-2" aria-hidden />
           </Button>
-          <a href="#" className="text-[var(--color-text)] inline-flex items-center text-sm hover:underline">
+          <a href="#" className="share-link" aria-label="Deel deze outfit">
             Delen <ExternalLink size={16} className="ml-1" aria-hidden />
           </a>
         </div>
