@@ -76,6 +76,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
 });
 
 // Nova feature flag
@@ -215,6 +216,8 @@ const App: React.FC = () => {
                           
                           {/* Health Check Route */}
                           <Route path="__health" element={<HealthCheckPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/prijzen" element={<PricingPage />} />
                         
                           {/* Fallback */}
                           <Route path="*" element={<NotFound />} />
