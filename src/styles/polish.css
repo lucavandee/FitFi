@@ -797,6 +797,155 @@
 .ff-section .section-title + .text-\[var\(--color-muted\)\]{
   margin-top: .25rem;
 }
+
+/* ===== About Page Components (premium editorial) ===== */
+
+/* About Hero */
+.about-hero{
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 2rem);
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 980px){
+  .about-hero{ grid-template-columns: 1.1fr .9fr; }
+}
+
+.about-hero-copy .kicker{
+  color: var(--color-muted);
+  letter-spacing: .04em;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: .825rem;
+}
+
+.about-hero-visual{
+  aspect-ratio: 4/5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Values Trio */
+.values-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(.75rem, 2.2vw, 1rem);
+  list-style: none;
+  padding: 0;
+}
+@media (min-width: 980px){
+  .values-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+.value-card{ min-height: 180px; }
+
+/* Team Grid */
+.team-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2.4vw, 1.25rem);
+}
+@media (min-width: 768px){
+  .team-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px){
+  .team-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+.team-card{
+  text-align: center;
+  min-height: 280px;
+}
+
+.team-avatar{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem;
+  background: color-mix(in oklab, var(--color-accent) 12%, var(--color-surface));
+  border: 1px solid var(--color-border);
+}
+
+.team-name{
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: .25rem;
+}
+
+.team-role{
+  color: var(--color-muted);
+  font-size: .9rem;
+  margin-bottom: .75rem;
+}
+
+.team-bio{
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: .95rem;
+}
+
+/* Timeline Mini */
+.timeline-list{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  list-style: none;
+  padding: 0;
+}
+@media (min-width: 768px){
+  .timeline-list{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px){
+  .timeline-list{ grid-template-columns: repeat(4, 1fr); }
+}
+
+.timeline-item{
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+}
+
+.timeline-marker{
+  flex-shrink: 0;
+  margin-top: .125rem;
+}
+
+.timeline-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--color-accent) 20%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.timeline-period{
+  display: block;
+  color: var(--color-muted);
+  font-size: .85rem;
+  font-weight: 600;
+  margin-bottom: .25rem;
+}
+
+.timeline-title{
+  color: var(--color-text);
+  font-weight: 600;
+  margin-bottom: .5rem;
+  font-size: 1rem;
+}
+
+.timeline-text{
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: .9rem;
+}
+
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
 .badge-arch  { background: color-mix(in oklab, var(--color-accent) 22%, white); }
 
