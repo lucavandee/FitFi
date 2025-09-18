@@ -27,7 +27,11 @@ const BlogCard: React.FC<Props> = ({ post }) => {
 
       <header className="blog-head flow-xs">
         <time className="blog-date" dateTime={post.date}>{pretty}</time>
-        <h3 id={`post-${post.id}`} className="card-title">{post.title}</h3>
+        <h3 id={`post-${post.id}`} className="card-title">
+          <Link className="underlined" to={`/blog/${post.id}`} aria-label={`Lees artikel: ${post.title}`}>
+            {post.title}
+          </Link>
+        </h3>
         <ul className="blog-tags" aria-label="Tags">
           {post.tags.map((t) => (
             <li key={t} className="tag-chip">{t}</li>
@@ -53,8 +57,8 @@ const BlogCard: React.FC<Props> = ({ post }) => {
         >
           {open ? "Minder lezen" : "Lees meer"}
         </button>
-        <Link className="share-link" to="/onboarding" aria-label="Probeer FitFi">
-          Probeer FitFi
+        <Link className="share-link" to={`/blog/${post.id}`} aria-label={`Lees artikel: ${post.title}`}>
+          Lees artikel
         </Link>
       </div>
     </article>
