@@ -13,7 +13,8 @@ const Hero: React.FC<Props> = ({ onCTAClick, className = "" }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 items-center gap-y-10 gap-x-16">
         {/* Copy */}
         <div className="max-w-2xl flow-xl">
-          <span className="accent-chip inline-flex">
+          {/* extra spacing via .hero-chip */}
+          <span className="accent-chip hero-chip inline-flex">
             <Sparkles size={16} aria-hidden />
             <span>Gratis AI Style Report</span>
           </span>
@@ -39,12 +40,12 @@ const Hero: React.FC<Props> = ({ onCTAClick, className = "" }) => {
             ))}
           </ul>
 
-          {/* CTA rail */}
+          {/* CTA rail — hero CTA in dezelfde tint als de chip */}
           <div className="cluster gap-3">
             <Button
               variant="primary"
               size="lg"
-              className="px-7 py-4 text-base md:text-lg cta-raise rounded-full"
+              className="btn-chip-cta px-7 py-4 text-base md:text-lg cta-raise rounded-full"
               onClick={onCTAClick}
               aria-label="Start je gratis AI Style Report"
             >

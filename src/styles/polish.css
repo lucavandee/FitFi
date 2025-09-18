@@ -95,6 +95,22 @@
   display: inline-flex; align-items: center; gap: .5rem;
 }
 
+/* Hero chip met extra spacing naar H1 */
+.hero-chip{
+  margin-bottom: 2rem;
+}
+
+/* Hero CTA in dezelfde tint als accent-chip */
+.btn-chip-cta{
+  background: color-mix(in oklab, var(--color-accent) 42%, white) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.btn-chip-cta:hover{
+  background: color-mix(in oklab, var(--color-accent) 52%, white) !important;
+  border-color: color-mix(in oklab, var(--color-accent) 60%, var(--color-border)) !important;
+}
+
 /* Hero wrapper with radial bg + subtle grid */
 .hero-wrap{
   padding-top: 5rem; 
