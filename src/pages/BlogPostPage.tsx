@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import SmartImage from "@/components/media/SmartImage";
 import posts from "@/data/blogPosts";
+import RichProse, { toRichBlocks, Block } from "@/components/blog/RichProse";
 
 const canonicalBase = "https://fitfi.ai";
 
@@ -22,22 +23,15 @@ const BlogPostPage: React.FC = () => {
   const prev = index >= 0 && index < all.length - 1 ? all[index + 1] : null;
   const next = index > 0 ? all[index - 1] : null;
 
-  React.useEffect(() => {
-    if (!post) {
-      // Geen artikel → terug naar blog
-      navigate("/blog", { replace: true });
-    }
-  }, [post, navigate]);
-
+  React.useEffect(() => { if (!post) navigate("/blog", { replace: true }); }, [post, navigate]);
   if (!post) return null;
 
-  const prettyDate = new Date(post.date).toLocaleDateString("nl-NL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const prettyDate = new Date(post.date).toLocaleDateString("nl-NL", { year: "numeric", month: "long", day: "numeric" });
   const read = readingTime(`${post.title} ${post.excerpt} ${post.content}`);
   const canonical = `${canonicalBase}/blog/${post.id}`;
+
+  const blocks: Block[] = React.useMemo(() => toRichBlocks(post.content), [post.content]);
+  const headings = blocks.filter(b => b.type === "h2" || b.type === "h3") as Array<Block & { id: string; text: string }>;
 
   const jsonLdArticle = {
     "@context": "https://schema.org",
@@ -46,11 +40,7 @@ const BlogPostPage: React.FC = () => {
     datePublished: post.date,
     image: post.imageId ? [`${canonicalBase}/images/${post.imageId}.jpg`] : undefined,
     author: { "@type": "Organization", name: "FitFi" },
-    publisher: {
-      "@type": "Organization",
-      name: "FitFi",
-      logo: { "@type": "ImageObject", url: `${canonicalBase}/images/social/logo-512.png` },
-    },
+    publisher: { "@type": "Organization", name: "FitFi", logo: { "@type": "ImageObject", url: `${canonicalBase}/images/social/logo-512.png` } },
     mainEntityOfPage: canonical,
   };
 
@@ -73,11 +63,9 @@ const BlogPostPage: React.FC = () => {
         ogImage={post.imageId ? `/images/${post.imageId}.jpg` : "/images/social/blog-og.jpg"}
       />
 
-      {/* SEO JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }} />
 
-      {/* Header / breadcrumbs */}
       <section className="ff-section ff-container">
         <nav aria-label="Breadcrumbs" className="post-breadcrumbs">
           <ol>
@@ -87,11 +75,9 @@ const BlogPostPage: React.FC = () => {
           </ol>
         </nav>
 
-        {/* Hero */}
         <article className="post-wrap" itemScope itemType="https://schema.org/BlogPosting">
           <header className="flow-sm">
             <h1 className="section-title" itemProp="headline">{post.title}</h1>
-
             <div className="post-meta">
               <time className="post-date" dateTime={post.date} itemProp="datePublished">{prettyDate}</time>
               <span className="post-dot" aria-hidden>•</span>
@@ -109,25 +95,30 @@ const BlogPostPage: React.FC = () => {
 
           <figure className="post-hero">
             {post.imageId ? (
-              <SmartImage
-                id={post.imageId}
-                kind="generic"
-                alt=""
-                className="w-full h-full object-cover"
-              />
+              <SmartImage id={post.imageId} kind="generic" alt="" className="w-full h-full object-cover" />
             ) : <div className="post-hero-fallback" aria-hidden />}
             <figcaption className="sr-only">{post.title}</figcaption>
           </figure>
 
-          {/* Body */}
+          {/* Inhoudsopgave (als er koppen zijn) */}
+          {headings.length > 0 && (
+            <nav className="post-toc" aria-label="Inhoudsopgave">
+              <strong className="toc-title">In dit artikel</strong>
+              <ul className="toc-list">
+                {headings.map(h => (
+                  <li key={h.id} className={h.type === "h3" ? "toc-item sub" : "toc-item"}>
+                    <a href={`#${h.id}`} className="underlined">{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
           <section className="post-body" itemProp="articleBody">
-            {post.content.split(/\n{2,}/).map((para, i) => (
-              <p key={i} className="post-p">{para}</p>
-            ))}
+            <RichProse blocks={blocks} />
           </section>
         </article>
 
-        {/* Prev / Next */}
         <nav className="post-nav cluster" aria-label="Navigatie tussen artikelen">
           {prev ? (
             <Link className="btn ghost" to={`/blog/${prev.id}`} aria-label={`Vorig artikel: ${prev.title}`}>

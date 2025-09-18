@@ -617,6 +617,57 @@
   .post-hero{ aspect-ratio: 4/3; }
 }
 
+/* ===== Rich prose (blog) ===== */
+.prose{ display: grid; gap: .9rem; max-width: 80ch; color: var(--color-text); }
+.prose-p{ line-height: 1.8; letter-spacing: -.003em; }
+
+.prose-h2, .prose-h3{
+  position: relative;
+  scroll-margin-top: 6rem;
+  letter-spacing: -.006em;
+}
+.prose-h2{ font-size: clamp(1.25rem, 1.2vw + 1rem, 1.6rem); line-height: 1.25; margin-top: 1rem; }
+.prose-h3{ font-size: clamp(1.05rem, .8vw + .9rem, 1.25rem); line-height: 1.3; margin-top: .5rem; }
+
+.heading-anchor{
+  position: absolute; left: -1.2em;
+  opacity: 0; text-decoration: none;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+.prose-h2:hover .heading-anchor,
+.prose-h3:hover .heading-anchor{ opacity: 1; }
+
+.prose-ul, .prose-ol{ display: grid; gap: .35rem; padding-left: 1.2rem; }
+.prose-ol{ list-style: decimal; }
+.prose-ul{ list-style: disc; }
+
+.prose-quote{
+  margin: .25rem 0;
+  padding: .6rem .8rem;
+  border-left: 3px solid var(--color-primary);
+  background: color-mix(in oklab, var(--color-surface) 96%, white);
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+/* Inhoudsopgave */
+.post-toc{
+  margin: .5rem 0 0 0;
+  padding: .75rem .9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--color-surface) 96%, white);
+}
+.toc-title{ color: var(--color-muted); display: block; margin-bottom: .25rem; }
+.toc-list{ display: grid; gap: .25rem; list-style: none; padding: 0; margin: 0; }
+.toc-item.sub{ padding-left: .75rem; }
+
+/* Mobile comfort */
+@media (max-width: 480px){
+  .heading-anchor{ display: none; } /* rustiger op klein scherm */
+}
+
 /* ===== Pers & media ===== */
 .press-hero{
   display: grid;
