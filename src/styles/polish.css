@@ -668,6 +668,65 @@
   .heading-anchor{ display: none; } /* rustiger op klein scherm */
 }
 
+/* === Premium fold · micro-polish === */
+
+/* 1) Hero copy · typografie & ritme */
+.hero-wrap .kicker{
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+.hero-wrap .section-title{
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  margin-top: .25rem;
+}
+.hero-wrap .lead{
+  margin-top: .5rem;
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+/* 2) CTA-cluster · minder lucht, betere alignment, mobiel 100% breed */
+.hero-wrap .cluster{ margin-top: .7rem; gap: .6rem; }
+.hero-wrap .cta-raise{ box-shadow: var(--shadow-soft); }
+@media (max-width: 520px){
+  .hero-wrap .cluster .btn{ width: 100%; }
+}
+
+/* 3) Hero media · art-direction (samen met .hero-img regel uit eerdere patch) */
+.hero-media{
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  aspect-ratio: 4/5;
+}
+@media (min-width: 900px){  .hero-media{ aspect-ratio: 5/4; } }
+@media (min-width: 1440px){ .hero-media{ aspect-ratio: 16/10; } }
+.hero-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-object-position, 50% 35%);
+}
+
+/* 4) Sectie-overgang hero → volgende sectie (verwijder de zichtbare haarlijn) */
+.hero-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.hero-wrap + .ff-section{ border-top: 0 !important; box-shadow: none !important; }
+.hero-wrap + section{ border-top: 0 !important; box-shadow: none !important; }
+
+/* 5) How-it-Works · microtypografie & adem */
+.hiw-grid{ gap: clamp(.75rem, 2.2vw, 1rem); }
+.hiw-grid .card-title{ letter-spacing: -0.006em; line-height: 1.25; }
+.hiw-grid .card-text{ line-height: 1.68; }
+
+/* 6) Social Proof · meer lucht tussen quotes en persbelt */
+.sp-grid{ gap: clamp(1rem, 2.2vw, 1.25rem); }
+.pressbelt{ margin-top: clamp(.85rem, 2vw, 1.3rem); }
+
 /* ===== Hero art-direction (focuspunt + ratio) ===== */
 .hero-grid{
   display: grid;
