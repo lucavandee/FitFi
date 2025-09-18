@@ -14,6 +14,7 @@ const PlanToggle: React.FC<{
         aria-selected={value === "monthly"}
         className={`plan-toggle-btn ${value === "monthly" ? "is-active" : ""}`}
         onClick={() => onChange("monthly")}
+        aria-controls="pricing-grid"
       >
         Maandelijks
       </button>
@@ -22,6 +23,7 @@ const PlanToggle: React.FC<{
         aria-selected={value === "yearly"}
         className={`plan-toggle-btn ${value === "yearly" ? "is-active" : ""}`}
         onClick={() => onChange("yearly")}
+        aria-controls="pricing-grid"
       >
         Jaarlijks
       </button>
