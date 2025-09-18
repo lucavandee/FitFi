@@ -2,8 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import Hero from "@/components/landing/Hero";
-import HowItWorksSnippet from "@/components/landing/HowItWorksSnippet";
-import FeaturesTrio from "@/components/landing/FeaturesTrio";
+import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
 
 const LandingPage: React.FC = () => {
@@ -16,17 +15,26 @@ const LandingPage: React.FC = () => {
         description="Krijg je gratis AI Style Report in 2 minuten: ontdek wat je kledingkeuzes zeggen over je persoonlijkheid en ontvang passende outfits met shoplinks."
         canonical="https://fitfi.ai/"
         preloadImages={["/images/hero/main.jpg"]}
-        ogImage="/images/social/home-og.jpg"
       />
-      <Hero onCTAClick={() => navigate("/onboarding")} />
 
-      <section className="ff-section ff-container">
-        <HowItWorksSnippet />
-      </section>
-      <SocialProofEditorial />
+      {/* Hero met art-directed focal point (pas aan naargelang je beeld) */}
+      <Hero
+        focal="50% 35%"
+        onCTAClick={() => navigate("/onboarding")}
+        onSecondaryClick={() => navigate("/results")}
+      />
 
-      <section className="ff-section ff-container">
-        <SocialProofEditorial />
+      {/* How it works */}
+      <HowItWorksEditorial
+        onStart={() => navigate("/onboarding")}
+        onExample={() => navigate("/results")}
+      />
+
+      {/* Social proof */}
+      <section className="py-16 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SocialProofEditorial />
+        </div>
       </section>
     </main>
   );
