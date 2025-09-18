@@ -1,41 +1,74 @@
 import React from "react";
-import { Quote } from "lucide-react";
+import { QuoteIcon } from "lucide-react";
 
-const quotes = [
+type Quote = {
+  text: string;
+  name: string;
+  meta: string; // stad/beroep e.d.
+};
+
+const QUOTES: Quote[] = [
   {
-    q: "Het rapport vatte mijn stijl perfect samen. De outfits klopten echt en schelen miskopen.",
-    a: "Sanne — Amsterdam",
+    text:
+      "Het rapport vatte mijn stijl perfect samen. De outfits klopten echt en schelen miskopen.",
+    name: "Sanne",
+    meta: "Amsterdam",
   },
   {
-    q: "In twee minuten had ik een plan én items die ik direct kon shoppen. Precies de juiste balans.",
-    a: "Milan — Utrecht",
+    text:
+      "In twee minuten had ik een plan én items die ik direct kon shoppen. Precies de juiste balans.",
+    name: "Milan",
+    meta: "Utrecht",
   },
   {
-    q: "Rustige, moderne outfits die aansluiten op mijn silhouet en kleuren. Eindelijk richting.",
-    a: "Lara — Rotterdam",
+    text:
+      "Rustige, moderne outfits die aansluiten op mijn silhouet en kleuren. Eindelijk richting.",
+    name: "Lara",
+    meta: "Rotterdam",
   },
 ];
 
+const LOGOS = ["AD", "LINDA.", "RTL", "Sprout", "Bright"];
+
 const SocialProofEditorial: React.FC = () => {
   return (
-    <section aria-labelledby="social-proof-editorial">
-      <h2 id="social-proof-editorial" className="text-2xl md:text-3xl font-semibold text-[var(--color-text)] mb-8">
-        Wat gebruikers zeggen
-      </h2>
+    <section aria-labelledby="social-proof-title" className="ff-section">
+      <div className="ff-container flow-lg">
+        <header className="flow-sm">
+          <h2 id="social-proof-title" className="section-title">
+            Wat gebruikers zeggen
+          </h2>
+          <p className="text-[var(--color-muted)] max-w-prose">
+            Echte ervaringen — kort en helder. Geen ruis, wel resultaat.
+          </p>
+        </header>
 
-      <div className="space-y-6">
-        {quotes.map((t, i) => (
-          <blockquote
-            key={i}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-soft)] hover-lift"
-          >
-            <div className="flex items-start gap-3">
-              <Quote className="text-[var(--ff-color-primary-600)] shrink-0 mt-1" size={20} aria-hidden />
-              <p className="text-lg text-[var(--color-text)] leading-relaxed">"{t.q}"</p>
-            </div>
-            <footer className="mt-3 text-sm text-[var(--color-muted)]">{t.a}</footer>
-          </blockquote>
-        ))}
+        {/* Quotes */}
+        <div className="sp-grid">
+          {QUOTES.map((q) => (
+            <figure key={q.name} className="sp-quote card card-hover">
+              <QuoteIcon size={18} aria-hidden className="sp-quote-mark" />
+              <blockquote className="sp-quote-text">"{q.text}"</blockquote>
+              <figcaption className="sp-quote-meta">
+                <span className="sp-quote-name">{q.name}</span>
+                <span className="sp-quote-dot" aria-hidden>•</span>
+                <span className="sp-quote-city">{q.meta}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+
+        {/* Logo belt */}
+        <div className="sp-press">
+          <span className="text-[var(--color-muted)]">Gezien in</span>
+          <ul className="sp-press-list" aria-label="Media">
+            {LOGOS.map((l) => (
+              <li key={l} className="press-chip" aria-label={l}>
+                {l}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
