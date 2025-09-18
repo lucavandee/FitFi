@@ -304,6 +304,12 @@
   background: color-mix(in oklab, var(--color-accent) 52%, white);
 }
 
+/* About page team cards */
+.team-card{
+  max-width: 280px;
+  margin-inline: auto;
+}
+
 /* Results page styling */
 .results-grid{
   display: grid;
