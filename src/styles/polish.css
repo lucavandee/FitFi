@@ -304,6 +304,93 @@
   background: color-mix(in oklab, var(--color-accent) 52%, white);
 }
 
+/* Premium hero styling */
+.hero-wrap {
+  padding: clamp(3rem, 8vw, 6rem) 0;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--ff-color-primary-600), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-lead {
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--color-muted);
+  max-width: 42ch;
+}
+
+.perk-list {
+  gap: 1rem;
+}
+
+.perk-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--color-accent) 20%, white);
+  color: var(--ff-color-primary-600);
+  flex-shrink: 0;
+}
+
+.trust-belt {
+  margin-top: 1.5rem;
+}
+
+.hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 4/5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  background: var(--color-surface);
+}
+
+.hero-glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.hero-base {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 20px;
+  background: color-mix(in oklab, var(--color-shadow) 20%, transparent);
+  border-radius: 50%;
+  filter: blur(8px);
+}
+
 /* About page team cards */
 .team-card{
   max-width: 280px;
