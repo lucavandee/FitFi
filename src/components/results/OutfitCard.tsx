@@ -1,7 +1,8 @@
 import React from "react";
-import { ShoppingBag, Eye } from "lucide-react";
+import { ExternalLink, ShoppingBag, List } from "lucide-react";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
+import Badge from "@/components/results/Badge";
 import type { Outfit } from "@/pages/ResultsPage";
 
 type Props = {
@@ -14,65 +15,45 @@ const OutfitCard: React.FC<Props> = ({ outfit, onShop, onViewItems }) => {
   return (
     <article className="outfit-card">
       {/* Visual */}
-      <div className="outfit-visual">
+      <div className="outfit-media">
         <SmartImage
-          id={outfit.imageId || "generic"}
+          id={outfit.imageId ?? "outfit-generic"}
           kind="generic"
-          alt={`Outfit: ${outfit.title}`}
+          alt={`Outfit ${outfit.title}`}
           className="h-full w-full object-cover"
         />
-        <div className="outfit-overlay">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="outfit-preview-btn"
-            onClick={onViewItems}
-            aria-label={`Bekijk items van ${outfit.title}`}
-          >
-            <Eye size={16} />
-          </Button>
-        </div>
       </div>
 
-      {/* Content */}
-      <div className="outfit-content flow-sm">
-        {/* Header */}
-        <div className="flow-xs">
-          <h3 className="outfit-title">{outfit.title}</h3>
-          <div className="outfit-badges cluster gap-1">
-            <span className="badge badge-season">{outfit.season}</span>
-            <span className="badge badge-temp">{outfit.colorTemp}</span>
-            <span className="badge badge-arch">{outfit.archetype}</span>
-            {outfit.priceHint && <span className="badge badge-price">{outfit.priceHint}</span>}
-          </div>
+      {/* Body */}
+      <div className="outfit-body flow">
+        <h3 className="outfit-title">{outfit.title}</h3>
+
+        <div className="cluster gap-2">
+          <Badge tone="season">{outfit.season}</Badge>
+          <Badge tone="temp">{outfit.colorTemp}</Badge>
+          <Badge tone="arch">{outfit.archetype}</Badge>
+          {outfit.priceHint ? <Badge tone="neutral">{outfit.priceHint}</Badge> : null}
         </div>
 
-        {/* Explanation */}
-        <p className="outfit-explanation">{outfit.explanation}</p>
+        <p className="outfit-expl">{outfit.explanation}</p>
 
-        {/* Items */}
-        <div className="outfit-items">
-          <h4 className="outfit-items-title">Items:</h4>
-          <ul className="outfit-items-list">
-            {outfit.items.map((item, i) => (
-              <li key={i} className="outfit-item">
-                {item}
-              </li>
-            ))}
-          </ul>
+        <ul className="outfit-items">
+          {outfit.items.map((it) => (
+            <li key={it}>{it}</li>
+          ))}
+        </ul>
+
+        <div className="outfit-cta cluster">
+          <Button variant="primary" size="md" className="cta-raise" onClick={onShop} aria-label="Shop deze outfit">
+            Shop outfit <ShoppingBag size={18} className="ml-2" aria-hidden />
+          </Button>
+          <Button variant="ghost" size="md" onClick={onViewItems} aria-label="Bekijk items van deze outfit">
+            Bekijk items <List size={18} className="ml-2" aria-hidden />
+          </Button>
+          <a href="#" className="text-[var(--color-text)] inline-flex items-center text-sm hover:underline">
+            Delen <ExternalLink size={16} className="ml-1" aria-hidden />
+          </a>
         </div>
-
-        {/* CTA */}
-        <Button
-          variant="primary"
-          size="sm"
-          className="outfit-shop-btn"
-          onClick={onShop}
-          aria-label={`Shop items voor ${outfit.title}`}
-        >
-          <ShoppingBag size={16} className="mr-2" />
-          Shop dit look
-        </Button>
       </div>
     </article>
   );

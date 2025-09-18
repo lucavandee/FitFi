@@ -304,6 +304,131 @@
   background: color-mix(in oklab, var(--color-accent) 52%, white);
 }
 
+/* Results page styling */
+.results-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Outfit cards */
+.outfit-card{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: transform .18s ease-out, box-shadow .18s ease-out;
+}
+@media (prefers-reduced-motion: no-preference){
+  .outfit-card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05);
+  }
+}
+
+.outfit-media{
+  aspect-ratio: 4/5;
+  position: relative;
+  overflow: hidden;
+}
+
+.outfit-body{
+  padding: 1.5rem;
+}
+
+.outfit-title{
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 0;
+}
+
+.outfit-expl{
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-top: 0;
+}
+
+.outfit-items{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.outfit-items li{
+  background: color-mix(in oklab, var(--color-surface) 85%, var(--color-text) 15%);
+  color: var(--color-text);
+  padding: .25rem .75rem;
+  border-radius: 9999px;
+  font-size: .875rem;
+}
+
+.outfit-cta{
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Badge system */
+.badge{
+  display: inline-flex;
+  align-items: center;
+  padding: .25rem .75rem;
+  border-radius: 9999px;
+  font-size: .75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.badge-season{
+  background: color-mix(in oklab, var(--color-accent) 15%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid color-mix(in oklab, var(--color-accent) 25%, var(--color-border));
+}
+
+.badge-temp{
+  background: color-mix(in oklab, var(--color-primary, var(--color-accent)) 15%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid color-mix(in oklab, var(--color-primary, var(--color-accent)) 25%, var(--color-border));
+}
+
+.badge-arch{
+  background: color-mix(in oklab, var(--color-text) 8%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.badge-neutral{
+  background: var(--color-surface);
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* Skeleton system */
+.skeleton{
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-surface) 85%, var(--color-text) 15%) 25%,
+    color-mix(in oklab, var(--color-surface) 90%, var(--color-text) 10%) 50%,
+    color-mix(in oklab, var(--color-surface) 85%, var(--color-text) 15%) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-md);
+}
+
+@media (prefers-reduced-motion: no-preference){
+  .skeleton{
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer{
+  0%{ background-position: -200% 0; }
+  100%{ background-position: 200% 0; }
+}
 /* ======== Results Grid & Outfit Cards ======== */
 .results-grid{
   display: grid;
