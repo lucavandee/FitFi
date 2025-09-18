@@ -703,6 +703,56 @@
   .anim-fade-up, .stagger-3 > * { animation: none !important; }
 }
 
+/* ===== Home – ULTRA SHORT POLISH (hero + social proof) ===== */
+
+/* Hero: strakkere titel/lead en ritme */
+.hero-wrap .section-title{
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+}
+.hero-wrap .kicker{
+  color: var(--color-muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: .825rem;
+}
+.hero-wrap .lead{
+  font-size: clamp(1rem, 0.5vw + 1rem, 1.15rem);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  max-width: 62ch;
+}
+@media (min-width: 1400px){
+  .hero-wrap .max-w-7xl{ max-width: 76rem; } /* balans op ultrawide */
+}
+
+/* CTA-cluster: rust op mobiel, geen jumps */
+@media (max-width: 480px){
+  .hero-wrap .cluster{ gap: .5rem; }
+  .hero-wrap .cluster .btn{ width: 100%; }
+}
+
+/* Social Proof: editorial rust (cards & belt) */
+.sp-grid{ gap: clamp(1rem, 2.4vw, 1.25rem); }
+.sp-quote.card{ padding: clamp(.875rem, .6vw + .65rem, 1.1rem); }
+.sp-quote-text{
+  line-height: 1.7;
+  letter-spacing: -.003em;
+}
+.sp-quote-meta{ font-size: .9rem; }
+.sp-press{ margin-top: clamp(.75rem, 1.8vw, 1.25rem); }
+.sp-press-list{ gap: .45rem .65rem; }
+.press-chip{
+  padding: .28rem .55rem;
+  letter-spacing: .01em;
+}
+
+/* Kleine uniformiteit tussen sectie-titel en introtekst overal */
+.ff-section .section-title + .text-\[var\(--color-muted\)\]{
+  margin-top: .25rem;
+}
+
 /* ===== Ultra-short polish: HIW hero & trio (premium rhythm) ===== */
 
 /* 1) Hero-kop en lead: compacter, maar rustig */
