@@ -298,6 +298,111 @@
   to   { background-position: -200% 0; }
 }
 
+/* ======== Pricing components ======== */
+.pricing-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 768px){
+  .pricing-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Plan toggle */
+.plan-toggle{
+  display: inline-flex; align-items: center; gap: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: .25rem;
+}
+.plan-toggle-btn{
+  padding: .5rem 1rem; border-radius: 9999px;
+  background: transparent; border: none;
+  color: var(--color-text); font-size: .875rem;
+  cursor: pointer; transition: all .18s ease-out;
+}
+.plan-toggle-btn.is-active{
+  background: var(--color-primary, var(--color-accent));
+  color: var(--color-on-primary, white);
+  box-shadow: var(--shadow-soft);
+}
+.plan-toggle-note{
+  margin-left: .75rem; font-size: .8125rem;
+  color: var(--color-muted);
+}
+
+/* Pricing cards */
+.pricing-card{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-soft);
+}
+.pricing-card.is-featured{
+  border-color: var(--color-primary, var(--color-accent));
+  box-shadow: 0 10px 25px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.05);
+  transform: scale(1.02);
+}
+
+.pricing-head{ margin-bottom: 1.5rem; }
+.pricing-title-row{
+  display: flex; align-items: center; gap: .5rem;
+  margin: .75rem 0;
+}
+.pricing-title{
+  font-size: 1.25rem; font-weight: 600;
+  color: var(--color-text);
+}
+.pricing-price{
+  display: flex; align-items: baseline; gap: .25rem;
+}
+.price-free{
+  font-size: 2rem; font-weight: 700;
+  color: var(--color-text);
+}
+.price-currency{
+  font-size: 1.125rem; font-weight: 600;
+  color: var(--color-text);
+}
+.price-amount{
+  font-size: 2.5rem; font-weight: 700;
+  color: var(--color-text);
+}
+.price-period{
+  font-size: .875rem; color: var(--color-muted);
+}
+
+.pricing-benefits{
+  list-style: none; padding: 0;
+  flex: 1; margin-bottom: 1.5rem;
+}
+.benefit-row{
+  display: flex; align-items: flex-start; gap: .75rem;
+  padding: .5rem 0;
+}
+.benefit-row.dim{
+  opacity: .6;
+}
+.benefit-icon{
+  margin-top: .125rem; flex-shrink: 0;
+}
+.benefit-icon.ok{
+  color: var(--color-success, var(--color-accent));
+}
+
+/* Badge variants voor pricing */
+.badge-pro{
+  background: color-mix(in oklab, var(--color-primary) 18%, white);
+  color: var(--color-text);
+}
+.badge-premium{
+  background: color-mix(in oklab, var(--color-accent) 22%, white);
+  color: var(--color-text);
+}
+
 /* ======== Pricing components (premium editorial) ======== */
 .pricing-grid{
   display: grid;

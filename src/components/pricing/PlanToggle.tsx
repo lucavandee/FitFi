@@ -1,39 +1,31 @@
 import React from "react";
 
-type Props = {
-  value: "monthly" | "yearly";
-  onChange: (value: "monthly" | "yearly") => void;
-  note?: string;
-};
+type Billing = "monthly" | "yearly";
 
-const PlanToggle: React.FC<Props> = ({ value, onChange, note }) => {
+const PlanToggle: React.FC<{
+  value: Billing;
+  onChange: (v: Billing) => void;
+  note?: string;
+}> = ({ value, onChange, note }) => {
   return (
-    <div className="plan-toggle-wrap">
-      <div className="plan-toggle" role="radiogroup" aria-label="Factureringsperiode">
-        <button
-          type="button"
-          role="radio"
-          aria-checked={value === "monthly"}
-          className={`toggle-option ${value === "monthly" ? "active" : ""}`}
-          onClick={() => onChange("monthly")}
-        >
-          Maandelijks
-        </button>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={value === "yearly"}
-          className={`toggle-option ${value === "yearly" ? "active" : ""}`}
-          onClick={() => onChange("yearly")}
-        >
-          Jaarlijks
-        </button>
-      </div>
-      {note && (
-        <p className="toggle-note">
-          {note}
-        </p>
-      )}
+    <div className="plan-toggle" role="tablist" aria-label="Facturering">
+      <button
+        role="tab"
+        aria-selected={value === "monthly"}
+        className={`plan-toggle-btn ${value === "monthly" ? "is-active" : ""}`}
+        onClick={() => onChange("monthly")}
+      >
+        Maandelijks
+      </button>
+      <button
+        role="tab"
+        aria-selected={value === "yearly"}
+        className={`plan-toggle-btn ${value === "yearly" ? "is-active" : ""}`}
+        onClick={() => onChange("yearly")}
+      >
+        Jaarlijks
+      </button>
+      {note ? <span className="plan-toggle-note">{note}</span> : null}
     </div>
   );
 };
