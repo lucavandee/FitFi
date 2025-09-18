@@ -702,6 +702,51 @@
 @media (prefers-reduced-motion: reduce){
   .anim-fade-up, .stagger-3 > * { animation: none !important; }
 }
+
+/* ===== Ultra-short polish: HIW hero & trio (premium rhythm) ===== */
+
+/* 1) Hero-kop en lead: compacter, maar rustig */
+.hiw-hero-copy .section-title{
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.hiw-hero-copy .lead{
+  font-size: clamp(1rem, 0.45vw + 1rem, 1.125rem);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  max-width: 62ch; /* net iets luchtiger dan 60ch */
+}
+
+/* 2) Grid-spacing: meer balans tussen copy en visual op wide */
+@media (min-width: 980px){
+  .hiw-hero{ column-gap: clamp(1.5rem, 3.2vw, 3rem); }
+}
+
+/* 3) Meta-chips: optische rust (kleinere padding, strakkere interpunctie) */
+.meta-chips .chip{
+  padding: .3rem .55rem;
+  letter-spacing: .01em;
+}
+
+/* 4) Trio-kaarten: titel/tekst microtypografie */
+.hiw-grid .card-title{
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+}
+.hiw-grid .card-text{
+  line-height: 1.65;
+}
+
+/* 5) CTA-rail: iets meer adem op small screens, zonder layout jump */
+@media (max-width: 480px){
+  .hiw-cta-rail{ gap: .5rem; }
+  .hiw-cta-rail .btn{ width: 100%; }
+}
+
+/* 6) Sectieritme: titel → intro altijd een klein beetje dichter bij elkaar */
+.ff-section .section-title + .text-\[var\(--color-muted\)\]{
+  margin-top: .25rem;
+}
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
 .badge-arch  { background: color-mix(in oklab, var(--color-accent) 22%, white); }
 
