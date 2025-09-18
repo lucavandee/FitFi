@@ -668,6 +668,32 @@
   .heading-anchor{ display: none; } /* rustiger op klein scherm */
 }
 
+/* ===== Homepage premium rhythm (micro-polish) ===== */
+
+/* 1) Hero: ritme tussen kicker → titel → lead → CTA */
+.hero-wrap .section-title{ letter-spacing: -0.012em; line-height: 1.12; margin-top: .15rem; }
+.hero-wrap .lead{ margin-top: .45rem; line-height: 1.7; max-width: 62ch; }
+.hero-wrap .cluster{ margin-top: .65rem; }
+
+/* 2) Hero → volgende sectie: net wat meer adem zonder globale paddings te wijzigen */
+.hero-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.hero-wrap + .ff-section,
+.hero-wrap + section{ margin-top: clamp(.25rem, 2vw, .75rem); }
+
+/* 3) CTA-cluster: mobiel eerder naar 100% breed en iets minder gap */
+@media (max-width: 520px){
+  .hero-wrap .cluster{ gap: .5rem; }
+  .hero-wrap .cluster .btn{ width: 100%; }
+}
+
+/* 4) How-it-Works: microtypografie voor premium rust */
+.hiw-grid .card-title{ letter-spacing: -0.006em; line-height: 1.25; }
+.hiw-grid .card-text{ line-height: 1.68; }
+
+/* 5) Social Proof: net iets meer lucht tussen quotes en perslint */
+.sp-grid{ gap: clamp(1rem, 2.2vw, 1.25rem); }
+.pressbelt{ margin-top: clamp(.85rem, 2vw, 1.3rem); }
+
 /* ===== Pers & media ===== */
 .press-hero{
   display: grid;
