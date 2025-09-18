@@ -298,6 +298,100 @@
   to   { background-position: -200% 0; }
 }
 
+/* ======== Pricing grid & cards ======== */
+.pricing-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+@media (min-width: 900px){
+  .pricing-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+.pricing-card{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  display: flex; flex-direction: column;
+  padding: clamp(1rem, 1.2vw + .75rem, 1.5rem);
+}
+.pricing-card.is-featured{
+  border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.08),
+    0 2px 6px rgba(0,0,0,.05);
+}
+
+.pricing-head{ display: grid; gap: .75rem; }
+.pricing-title-row{ display: inline-flex; align-items: center; gap: .5rem; }
+.pricing-title{ font-weight: 600; color: var(--color-text); }
+
+.pricing-price{
+  display: flex; align-items: baseline; gap: .25rem;
+  color: var(--color-text);
+}
+.price-free{ font-weight: 700; font-size: 1.625rem; }
+.price-currency{ font-weight: 600; }
+.price-amount{ font-weight: 700; font-size: 2rem; letter-spacing: -0.01em; }
+.price-period{ color: var(--color-muted); font-size: .95rem; }
+
+/* Benefits list */
+.pricing-benefits{ list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: .5rem; }
+.benefit-row{ display: grid; grid-template-columns: 20px 1fr; align-items: start; gap: .5rem; color: var(--color-text); }
+.benefit-row.dim{ color: var(--color-muted); }
+.benefit-icon{ color: var(--color-text); }
+.benefit-icon.ok{ color: var(--ff-color-primary-600, var(--color-primary, var(--color-accent))); }
+
+/* CTA area */
+.pricing-cta{ margin-top: 1rem; }
+
+/* Badges for plan accents */
+.badge-pro{
+  background: color-mix(in oklab, var(--color-primary) 18%, white);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.badge-premium{
+  background: color-mix(in oklab, var(--color-accent) 24%, white);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* ======== Plan toggle ======== */
+.plan-toggle{
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: color-mix(in oklab, var(--color-surface) 92%, white);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: .25rem;
+}
+.plan-toggle-btn{
+  appearance: none; border: 0; background: transparent; color: var(--color-text);
+  padding: .4rem .8rem; border-radius: 9999px; cursor: pointer;
+}
+.plan-toggle-btn.is-active{
+  background: color-mix(in oklab, var(--color-accent) 42%, white);
+  border: 1px solid var(--color-border);
+}
+.plan-toggle-note{
+  margin-left: .5rem; color: var(--color-muted); font-size: .875rem;
+}
+
+/* ======== FAQ teaser ======== */
+.faq-teaser{ display: grid; gap: 1rem; }
+.faq-list{ display: grid; gap: .5rem; margin-top: .25rem; }
+.faq-item{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: .875rem 1rem;
+}
+.faq-item[open] .faq-q{ color: var(--color-text); }
+.faq-q{ cursor: pointer; color: var(--color-text); font-weight: 600; }
+.faq-a{ color: var(--color-muted); margin-top: .5rem; }
+.underlined{ text-decoration: underline; text-underline-offset: 4px; }
+
 /* ======== Pricing components ======== */
 .pricing-grid{
   display: grid;
