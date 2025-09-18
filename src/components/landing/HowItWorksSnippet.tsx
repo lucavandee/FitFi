@@ -11,9 +11,9 @@ const HowItWorksSnippet: React.FC = () => {
   return (
     <section aria-labelledby="hiw">
       <h2 id="hiw" className="section-title">Hoe het werkt</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-comfy">
         {steps.map((s) => (
-          <article key={s.title} className="card card-hover">
+          <article key={s.title} className="card card-hover flow-sm">
             <div className="icon-chip" aria-hidden>
               <s.icon size={18} />
             </div>
