@@ -1,55 +1,35 @@
 import React from "react";
-import { ArrowRight, HelpCircle } from "lucide-react";
-import Button from "@/components/ui/Button";
 
-const quickFaqs = [
+const items = [
   {
-    q: "Kan ik altijd opzeggen?",
-    a: "Ja, je kunt elk moment opzeggen. Geen verborgen kosten of lange contracten.",
+    q: "Kan ik eerst gratis proberen?",
+    a: "Ja. Start met het gratis AI Style Report. Upgrade pas als je meer wilt: wekelijkse updates en extra tools.",
   },
   {
-    q: "Hoe werkt de gratis versie?",
-    a: "Je krijgt een volledig AI Style Report met 3 outfits. Geen creditcard nodig.",
+    q: "Kan ik op elk moment opzeggen?",
+    a: "Ja. Je abonnement stopt aan het einde van je periode. Jaarlijks levert 20% voordeel op.",
   },
   {
-    q: "Wat gebeurt er met mijn data?",
-    a: "We bewaren alleen wat nodig is voor je rapport. Privacy-first, GDPR-compliant.",
+    q: "Wat doen jullie met mijn data?",
+    a: "We hanteren een privacy-first aanpak. Zo weinig mogelijk data, transparant verwerkt. Jij houdt regie.",
   },
 ];
 
 const FaqTeaser: React.FC = () => {
   return (
     <div className="faq-teaser">
-      <header className="faq-header">
-        <div className="faq-icon">
-          <HelpCircle size={24} aria-hidden />
-        </div>
-        <h2 className="faq-title">Veelgestelde vragen</h2>
-        <p className="faq-subtitle">
-          Snel antwoord op de belangrijkste vragen over plannen en privacy.
-        </p>
-      </header>
-
-      <div className="faq-grid">
-        {quickFaqs.map((faq, i) => (
-          <article key={i} className="faq-item">
-            <h3 className="faq-question">{faq.q}</h3>
-            <p className="faq-answer">{faq.a}</p>
-          </article>
+      <h2 className="section-title">Veelgestelde vragen</h2>
+      <div className="faq-list">
+        {items.map((x) => (
+          <details key={x.q} className="faq-item">
+            <summary className="faq-q">{x.q}</summary>
+            <p className="faq-a">{x.a}</p>
+          </details>
         ))}
       </div>
-
-      <div className="faq-cta">
-        <Button
-          variant="ghost"
-          size="lg"
-          onClick={() => (window.location.href = "/faq")}
-          aria-label="Bekijk alle veelgestelde vragen"
-        >
-          Alle FAQ's bekijken
-          <ArrowRight size={18} className="ml-2" aria-hidden />
-        </Button>
-      </div>
+      <p className="faq-foot text-[var(--color-muted)]">
+        Meer vragen? <a className="underlined" href="/contact">Neem contact op</a>.
+      </p>
     </div>
   );
 };
