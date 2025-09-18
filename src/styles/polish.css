@@ -61,6 +61,28 @@
 @media (prefers-reduced-motion: no-preference) {
   .hover-lift { transition: transform .18s ease-out, box-shadow .18s ease-out; }
   .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05); }
+  .cta-raise { transition: transform .15s ease-out, box-shadow .15s ease-out; }
+  .cta-raise:hover { transform: translateY(-1px); }
+  .cta-raise:active { transform: translateY(0); }
+}
+
+/* ======== Premium text gradients ======== */
+.text-gradient-primary {
+  background: linear-gradient(135deg,
+    var(--ff-color-primary-600, var(--color-primary, var(--color-accent))) 0%,
+    color-mix(in oklab, var(--ff-color-primary-600, var(--color-primary, var(--color-accent))) 80%, var(--color-accent)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ======== Premium shadows ======== */
+.premium-shadow-lg {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px color-mix(in oklab, var(--color-border) 50%, transparent);
 }
 
 /* ======== Glass navbar (premium backdrop blur) ======== */

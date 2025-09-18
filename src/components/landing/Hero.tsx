@@ -18,9 +18,9 @@ const Hero: React.FC<Props> = ({ onCTAClick, className = "" }) => {
 
           <h1
             className="font-semibold tracking-tight text-[var(--color-text)]"
-            style={{ fontSize: "clamp(2.125rem, 2.6vw + 1rem, 3.5rem)", lineHeight: 1.06 }}
+            style={{ fontSize: "clamp(2.25rem, 2.6vw + 1rem, 3.6rem)", lineHeight: 1.06 }}
           >
-            AI Style Report — ontdek wat jouw stijl over je zegt
+            <span className="text-gradient-primary">AI Style Report</span> — ontdek wat jouw stijl over je zegt
           </h1>
 
           <p
@@ -74,20 +74,14 @@ const Hero: React.FC<Props> = ({ onCTAClick, className = "" }) => {
           </div>
         </div>
 
-        {/* Visual — compacter en luxe frame zodat "Generic" fallback niet domineert */}
+        {/* Visual — compacter en luxe frame zodat "Generic" niet domineert */}
         <div className="relative flex justify-center lg:justify-end pb-8 md:pb-14">
           <div
             className="hero-art rounded-[var(--radius-lg)] premium-shadow-lg overflow-hidden"
             style={{ width: 360, height: 500 }}
             aria-hidden="true"
           >
-            <SmartImage
-              id="nova-hero"
-              kind="generic"
-              alt=""
-              className="h-full w-full object-cover"
-              priority
-            />
+            <SmartImage id="nova-hero" kind="generic" alt="" className="h-full w-full object-cover" priority />
           </div>
         </div>
       </div>
