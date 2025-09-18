@@ -8,6 +8,7 @@ function cx(...cls: Array<string | false | null | undefined>) {
 
 const links = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/pricing", label: "Prijzen" },
   { to: "/over-ons", label: "Over ons" },
   { to: "/veelgestelde-vragen", label: "FAQ" },
   { to: "/blog", label: "Blog" },
