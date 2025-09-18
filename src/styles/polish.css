@@ -1,5 +1,30 @@
 /* FitFi Polish - Visual enhancements using tokens */
 
+/* =============================
+   Token fallbacks & helpers
+   ============================= */
+:root{
+  /* Zorg dat primary CTA altijd een geldige kleur heeft,
+     óók als --ff-color-primary-* (nog) niet in tokens.css staat */
+  --ff-color-primary-700: var(--color-primary-700, var(--color-primary, var(--color-accent)));
+  --ff-color-primary-600: var(--color-primary-600, var(--color-primary, var(--color-accent)));
+  --ff-color-neutral-100: var(--color-surface);
+  --ff-color-neutral-200: color-mix(in oklab, var(--color-surface) 85%, var(--color-text) 15%);
+  --ff-color-neutral-50:  color-mix(in oklab, var(--color-surface) 95%, var(--color-text) 5%);
+}
+
+/* Accent chip spacing fix */
+.accent-chip {
+  background: color-mix(in oklab, var(--color-accent) 42%, white);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: .375rem .75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
 /* Micro-animations (accessibility-friendly) */
 @media (prefers-reduced-motion: no-preference) {
   .hover-lift {
