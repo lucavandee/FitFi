@@ -19,7 +19,6 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 nav-glass">
-      {/* Skip to content */}
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded px-3 py-1 text-sm shadow-[var(--shadow-soft)]"
@@ -31,7 +30,6 @@ const Navbar: React.FC = () => {
         aria-label="Hoofdnavigatie"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
       >
-        {/* Brand */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/")}
@@ -42,7 +40,6 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Links */}
         <ul className="hidden md:flex items-center gap-2">
           {links.map((l) => (
             <li key={l.to}>
@@ -50,10 +47,10 @@ const Navbar: React.FC = () => {
                 to={l.to}
                 className={({ isActive }) =>
                   cx(
-                    "px-3 py-2 text-sm",
-                    isActive
-                      ? "accent-chip"  // chip-stijl via polish.css
-                      : "text-[var(--color-text)] hover:underline underline-offset-4"
+                    "px-3 py-2 text-sm rounded-md transition-colors duration-200",
+                    isActive 
+                      ? "accent-chip" 
+                      : "text-[var(--color-text)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface)]"
                   )
                 }
               >
@@ -63,7 +60,6 @@ const Navbar: React.FC = () => {
           ))}
         </ul>
 
-        {/* CTA */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -77,7 +73,7 @@ const Navbar: React.FC = () => {
           <Button
             variant="primary"
             size="sm"
-            className="cta-raise"
+            className="nav-cta btn-primary"
             onClick={onStart}
             aria-label="Start je gratis AI Style Report"
           >

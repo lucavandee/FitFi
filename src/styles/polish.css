@@ -63,6 +63,27 @@
   .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05); }
 }
 
+/* ======== Glass navbar (premium backdrop blur) ======== */
+.nav-glass {
+  background: color-mix(in oklab, var(--color-surface) 85%, transparent);
+  backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-border) 40%, transparent);
+}
+
+/* ======== Accent chip (active nav state) ======== */
+.accent-chip {
+  background: color-mix(in oklab, var(--color-accent) 15%, var(--color-surface));
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+}
+
+/* ======== Nav CTA (compact primary button) ======== */
+.nav-cta {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
 /* Hover lift micro-interaction voor cards */
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
