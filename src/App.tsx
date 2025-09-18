@@ -34,6 +34,7 @@ const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
 const PricingPage = lazyAny(() => import('@/pages/PricingPage'));
 const ContactPage = lazyAny(() => import('@/pages/ContactPage'));
 const FAQPage = lazyAny(() => import('@/pages/FAQPage'));
+const FaqPage = lazyAny(() => import('@/pages/FaqPage'));
 const LegalPage = lazyAny(() => import('@/pages/LegalPage'));
 const SupportPage = lazyAny(() => import('@/pages/SupportPage'));
 const TermsPage = lazyAny(() => import('@/pages/TermsPage'));
@@ -127,7 +128,8 @@ const App: React.FC = () => {
                           <Route path="/pricing" element={<PricingPage />} />
                           <Route path="/prijzen" element={<PricingPage />} />
                           <Route path="/contact" element={<ContactPage />} />
-                          <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+                          <Route path="/veelgestelde-vragen" element={<FaqPage />} />
+                          <Route path="/faq" element={<FaqPage />} />
                           <Route path="/juridisch" element={<LegalPage />} />
                           <Route path="/ondersteuning" element={<SupportPage />} />
                           <Route path="/help" element={<HelpCenterPage />} />
