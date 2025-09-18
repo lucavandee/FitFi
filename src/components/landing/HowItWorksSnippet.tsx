@@ -9,20 +9,16 @@ const steps = [
 
 const HowItWorksSnippet: React.FC = () => {
   return (
-    <section aria-labelledby="hiw-snippet">
-      <h2 id="hiw-snippet" className="text-2xl md:text-3xl font-semibold text-[var(--color-text)] mb-8">
-        Hoe het werkt
-      </h2>
-
+    <section aria-labelledby="hiw">
+      <h2 id="hiw" className="section-title">Hoe het werkt</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {steps.map((s) => (
-          <article
-            key={s.title}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-soft)] hover-lift"
-          >
-            <s.icon className="text-[var(--ff-color-primary-600)]" size={24} aria-hidden />
-            <h3 className="mt-3 text-lg font-medium text-[var(--color-text)]">{s.title}</h3>
-            <p className="mt-2 text-[var(--color-muted)]">{s.text}</p>
+          <article key={s.title} className="card card-hover">
+            <div className="icon-chip" aria-hidden>
+              <s.icon size={18} />
+            </div>
+            <h3 className="card-title">{s.title}</h3>
+            <p className="card-text">{s.text}</p>
           </article>
         ))}
       </div>

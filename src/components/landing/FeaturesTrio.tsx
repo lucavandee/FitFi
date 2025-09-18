@@ -10,19 +10,15 @@ const items = [
 const FeaturesTrio: React.FC = () => {
   return (
     <section aria-labelledby="features-trio">
-      <h2 id="features-trio" className="text-2xl md:text-3xl font-semibold text-[var(--color-text)] mb-8">
-        Waarom FitFi
-      </h2>
-
+      <h2 id="features-trio" className="section-title">Waarom FitFi</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {items.map((f) => (
-          <article
-            key={f.title}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-soft)] hover-lift"
-          >
-            <f.icon className="text-[var(--ff-color-primary-600)]" size={24} aria-hidden />
-            <h3 className="mt-3 text-lg font-medium text-[var(--color-text)]">{f.title}</h3>
-            <p className="mt-2 text-[var(--color-muted)]">{f.text}</p>
+          <article key={f.title} className="card card-hover">
+            <div className="icon-chip" aria-hidden>
+              <f.icon size={18} />
+            </div>
+            <h3 className="card-title">{f.title}</h3>
+            <p className="card-text">{f.text}</p>
           </article>
         ))}
       </div>
