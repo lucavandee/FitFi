@@ -61,10 +61,50 @@
 @media (prefers-reduced-motion: no-preference) {
   .hover-lift { transition: transform .18s ease-out, box-shadow .18s ease-out; }
   .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05); }
+
   .cta-raise { transition: transform .15s ease-out, box-shadow .15s ease-out; }
-  .cta-raise:hover { transform: translateY(-1px); }
-  .cta-raise:active { transform: translateY(0); }
+  .cta-raise:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.12), 0 3px 6px rgba(0,0,0,.08); }
 }
+
+/* ======== Nav CTA compact & consistent ======== */
+.nav-cta {
+  padding-inline: .875rem;
+  height: 2.25rem; /* ~h-9 look, maar met btn-primary styling */
+  line-height: 1;
+}
+
+/* ======== Tekst-gradient voor H1, tokens-safe ======== */
+.text-gradient-primary{
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-accent) 42%, var(--color-text)) 0%,
+    color-mix(in oklab, var(--color-primary, var(--color-accent)) 65%, var(--color-text)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ======== Hero art: zachte grad + luxe frame ======== */
+.hero-art{
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-accent) 10%, var(--color-surface)) 0%,
+    color-mix(in oklab, var(--color-accent) 28%, var(--color-surface)) 100%
+  );
+  border: 1px solid var(--color-border);
+}
+
+/* ======== Premium shadows voor hero art ======== */
+.premium-shadow-lg {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px color-mix(in oklab, var(--color-accent) 20%, transparent);
+}
+
+/* ======== Glass navbar (al aanwezig), accent-chip spacing blijft ======== */
+/* (laat je bestaande .nav-glass en .accent-chip staan) */
 
 /* ======== Premium text gradients ======== */
 .text-gradient-primary {
