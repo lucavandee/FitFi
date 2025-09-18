@@ -124,6 +124,8 @@ const App: React.FC = () => {
                           <Route path="/prijzen"  element={<PricingPage />} />
                           <Route path="/blog" element={<BlogIndexPage />} />
                           <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                          <Route path="/pricing" element={<PricingPage />} />
+                          <Route path="/prijzen" element={<PricingPage />} />
                           <Route path="/contact" element={<ContactPage />} />
                           <Route path="/veelgestelde-vragen" element={<FAQPage />} />
                           <Route path="/juridisch" element={<LegalPage />} />
@@ -215,7 +217,6 @@ const App: React.FC = () => {
                           
                           {/* Health Check Route */}
                           <Route path="__health" element={<HealthCheckPage />} />
-                          <Route path="/pricing" element={<PricingPage />} />
                         
                           {/* Fallback */}
                           <Route path="*" element={<NotFound />} />
