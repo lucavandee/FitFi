@@ -401,6 +401,29 @@
 }
 .plan-toggle-note{ white-space: nowrap; }
 
+/* ===== Pricing polish: korting, 'was'-prijs, badges, footnote ===== */
+.price-was{
+  text-decoration: line-through;
+  color: color-mix(in oklab, var(--color-muted) 88%, var(--color-text) 12%);
+  margin-right: .25rem;
+}
+.save-badge{
+  background: color-mix(in oklab, var(--color-primary) 24%, white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+.price-footnote{
+  font-size: .875rem;
+}
+
+/* Featured subtle lift (al aanwezig, iets verfijnd) */
+.pricing-card.is-featured{
+  border-color: color-mix(in oklab, var(--color-primary) 46%, var(--color-border));
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.10),
+    0 3px 8px rgba(0,0,0,.06);
+}
+
 /* Results badges: +tint voor scanbaarheid */
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
