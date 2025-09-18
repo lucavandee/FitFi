@@ -61,8 +61,7 @@ const ResultsPage: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // Simuleer korte laadfase voor skeletons; in prod komt dit uit fetch/react-query.
-    const t = setTimeout(() => setLoading(false), 450);
+    const t = setTimeout(() => setLoading(false), 450); // gesimuleerd; in prod via fetch/react-query
     return () => clearTimeout(t);
   }, []);
 
@@ -92,7 +91,7 @@ const ResultsPage: React.FC = () => {
         </header>
 
         {/* Grid */}
-        <div className="results-grid mt-8">
+        <div className="results-grid mt-8" role="list">
           {loading
             ? Array.from({ length: 3 }).map((_, i) => <OutfitSkeleton key={i} />)
             : sampleOutfits.map((o) => (
