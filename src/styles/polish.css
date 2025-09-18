@@ -37,6 +37,32 @@
     0 4px 8px rgba(0,0,0,.05);
 }
 
+/* ======== Hero art (decoratief frame + zachte grad) ======== */
+.hero-art{
+  background:
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--color-accent) 12%, var(--color-surface)) 0%,
+      color-mix(in oklab, var(--color-accent) 32%, var(--color-surface)) 100%);
+}
+
+/* ======== CTA: solid + fallback-keten blijft actief ======== */
+.btn-primary{
+  background: var(--ff-color-primary-700, var(--color-primary, var(--color-accent)));
+  color: var(--color-on-primary, white);
+  border: 1px solid transparent;
+}
+.btn-primary:hover{
+  background: var(--ff-color-primary-600,
+               var(--ff-color-primary-700,
+               var(--color-primary, var(--color-accent))));
+}
+
+/* ======== Hover & micro-animaties (motion-safe) ======== */
+@media (prefers-reduced-motion: no-preference) {
+  .hover-lift { transition: transform .18s ease-out, box-shadow .18s ease-out; }
+  .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05); }
+}
+
 /* Hover lift micro-interaction voor cards */
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
