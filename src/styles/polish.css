@@ -1,6 +1,43 @@
 /* FitFi Polish - Visual enhancements using tokens */
 
 /* =============================
+   CTA token fallbacks (solid)
+   ============================= */
+:root{
+  /* Multi-fallback: ff-token -> color-primary -> accent */
+  --ff-color-primary-700: var(--ff-color-primary-700, initial); /* laat bestaan indien gedefinieerd */
+  --ff-color-primary-600: var(--ff-color-primary-600, initial);
+}
+
+/* Robuuste primaire knop: gebruikt fallback-keten zodat de CTA nooit "transparant" wordt */
+.btn-primary{
+  /* achtergrond: ff700 -> primary -> accent */
+  background: var(--ff-color-primary-700, var(--color-primary, var(--color-accent)));
+  /* tekstkleur: tokens-first met veilige fallback naar white */
+  color: var(--color-on-primary, white);
+  border: 1px solid transparent;
+}
+.btn-primary:hover{
+  /* hover: ff600 -> ff700 -> primary -> accent */
+  background: var(--ff-color-primary-600,
+               var(--ff-color-primary-700,
+               var(--color-primary, var(--color-accent))));
+}
+/* Disabled state blijft vanuit Button-base: opacity-50 + cursor-not-allowed */
+
+/* (optioneel, subtiele elevatie consistent met jullie stijl) */
+.btn-primary.cta-raise{
+  box-shadow:
+    0 6px 14px rgba(0,0,0,.06),
+    0 2px 4px rgba(0,0,0,.04);
+}
+.btn-primary.cta-raise:hover{
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.08),
+    0 4px 8px rgba(0,0,0,.05);
+}
+
+/* =============================
    Token fallbacks & helpers
    ============================= */
 :root{
