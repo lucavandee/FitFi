@@ -4,37 +4,45 @@ import Button from "@/components/ui/Button";
 
 export type PlanId = "free" | "pro" | "premium";
 
-const iconFor = (id: PlanId) =>
-  id === "premium" ? Crown : id === "pro" ? Sparkles : Check;
-
-const accentTone = (id: PlanId) =>
-  id === "premium" ? "badge-premium" : id === "pro" ? "badge-pro" : "badge-neutral";
+const iconFor = (id: PlanId) => (id === "premium" ? Crown : id === "pro" ? Sparkles : Check);
+const accentTone = (id: PlanId) => (id === "premium" ? "badge-premium" : id === "pro" ? "badge-pro" : "badge-neutral");
 
 const PricingCard: React.FC<{
   id: PlanId;
   title: string;
-  price: number;
+  price: number;                    // actuele prijs obv billing
+  baseMonthly: number;              // basisprijs per maand (voor 'was'-prijs)
   billing: "monthly" | "yearly";
   bullets: string[];
   ctaLabel: string;
   featured?: boolean;
   subtext?: string;
-}> = ({ id, title, price, billing, bullets, ctaLabel, featured = false, subtext }) => {
+  saveBadge?: string;               // bij yearly: "Bespaar 20%"
+}> = ({ id, title, price, baseMonthly, billing, bullets, ctaLabel, featured = false, subtext, saveBadge }) => {
   const Icon = iconFor(id);
+  const isFree = price === 0;
+
+  const showWas = billing === "yearly" && baseMonthly > 0;
 
   return (
     <article className={`pricing-card ${featured ? "is-featured" : ""}`}>
       <header className="pricing-head">
-        <span className={`badge ${accentTone(id)}`}>{subtext ?? " "}</span>
+        <div className="pricing-badges cluster">
+          {subtext ? <span className={`badge ${accentTone(id)}`}>{subtext}</span> : null}
+          {saveBadge ? <span className="badge save-badge">{saveBadge}</span> : null}
+        </div>
+
         <div className="pricing-title-row">
           <Icon size={18} className="text-[var(--color-text)]" aria-hidden />
           <h3 className="pricing-title">{title}</h3>
         </div>
+
         <div className="pricing-price">
-          {price === 0 ? (
+          {isFree ? (
             <span className="price-free">€0</span>
           ) : (
             <>
+              {showWas ? <span className="price-was">€{baseMonthly}</span> : null}
               <span className="price-currency">€</span>
               <span className="price-amount">{price}</span>
               <span className="price-period">/{billing === "monthly" ? "mnd" : "jr"}</span>
@@ -50,7 +58,6 @@ const PricingCard: React.FC<{
             <span>{b}</span>
           </li>
         ))}
-        {/* Kleine "–" rij als visuele spacer/indicatie dat dit geen eindeloze lijst is */}
         <li className="benefit-row dim">
           <Minus size={16} className="benefit-icon" aria-hidden />
           <span>Rustige, maandelijkse upgrades</span>
