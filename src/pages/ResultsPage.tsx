@@ -1,175 +1,117 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import OutfitCard from "@/components/results/OutfitCard";
+import OutfitSkeleton from "@/components/results/OutfitSkeleton";
 import Button from "@/components/ui/Button";
 
-/**
- * ResultsPage (premium, editorial)
- * - Toont header met samenvatting van het stijlprofiel
- * - Grid met outfit-cards
- * - Explainability per outfit (1–2 zinnen)
- * - Werkt met echte resultaten als die bestaan; anders een dev-friendly mock
- * - Tokens-first; geen hex in componenten
- */
-
-type Outfit = {
+export type Outfit = {
   id: string;
   title: string;
-  imageSrc?: string;
-  season?: string;
-  colorTemp?: string;
-  archetype?: string;
-  why: string;
+  season: "lente" | "zomer" | "herfst" | "winter";
+  colorTemp: "koel" | "neutraal" | "warm";
+  archetype: "minimal" | "sportief" | "klassiek" | "creatief";
+  explanation: string;      // 1–2 zinnen waarom dit past
+  items: string[];          // high-level items in de outfit
+  imageId?: string;         // SmartImage id (optioneel; valt terug op Generic)
+  priceHint?: string;       // optioneel
 };
 
-type ResultsModel = {
-  persona: string;              // bijv. "Modern Minimal"
-  palette: string;              // bijv. "Koel neutraal"
-  body: string;                 // bijv. "Rechthoek"
-  outfits: Outfit[];
-};
-
-// === MOCK FALLBACK ===
-// Gebruik alleen als er geen echte resultaten (SSE/state) beschikbaar zijn.
-const USE_MOCK = import.meta.env.VITE_DEV_MOCK_NOVA !== "0";
-
-const mockResults: ResultsModel = {
-  persona: "Modern Minimal",
-  palette: "Koel neutraal",
-  body: "Rechthoek",
-  outfits: [
-    {
-      id: "o1",
-      title: "Monochrome city casual",
-      imageSrc: "/images/results/o1.jpg", // als dit niet bestaat: toont gewoon een rustige bg
-      season: "Herfst/Winter",
-      colorTemp: "Koel",
-      archetype: "Minimal",
-      why:
-        "De rechte lijnen en langere laagjes verlengen het silhouet. De koele, gedempte tinten sluiten aan bij je kleurtemperatuur en houden de look coherent.",
-    },
-    {
-      id: "o2",
-      title: "Soft tailoring",
-      imageSrc: "/images/results/o2.jpg",
-      season: "Lente/Herfst",
-      colorTemp: "Koel-neutraal",
-      archetype: "Modern",
-      why:
-        "Lichte structuur in de blazer creëert vorm zonder te verzwaren. Neutrale basis maakt combineren simpel en tijdloos.",
-    },
-    {
-      id: "o3",
-      title: "Weekend clean",
-      imageSrc: "/images/results/o3.jpg",
-      season: "Hele jaar",
-      colorTemp: "Koel",
-      archetype: "Casual-clean",
-      why:
-        "Minimal layers met subtiel contrast; materialen met zachte handfeel versterken het cleane karakter en passen bij je stijlprofiel.",
-    },
-  ],
-};
-
-// TODO: vervang dit door jullie echte selector/sse-state zodra aanwezig.
-function useResultsData(): ResultsModel | null {
-  // Voor nu: geen globale store? Val terug op mock indien toegestaan.
-  return USE_MOCK ? mockResults : null;
-}
-
-const chip =
-  "inline-flex items-center rounded-full px-2.5 py-1 text-xs border border-[var(--color-border)] " +
-  "bg-[var(--color-surface)] text-[var(--color-text)]";
+const sampleOutfits: Outfit[] = [
+  {
+    id: "look-01",
+    title: "Clean minimal — smart casual",
+    season: "lente",
+    colorTemp: "neutraal",
+    archetype: "minimal",
+    explanation:
+      "Strakke lijnen en mattere stoffen benadrukken je rechte schouders. Neutrale tinten houden het geheel rustig én veelzijdig.",
+    items: ["Wollen overshirt", "Merino crewneck", "Slim chino", "Minimal sneaker"],
+    imageId: "outfit-minimal-1",
+    priceHint: "€€",
+  },
+  {
+    id: "look-02",
+    title: "Sportief modern — laagjes",
+    season: "herfst",
+    colorTemp: "koel",
+    archetype: "sportief",
+    explanation:
+      "Technische laagjes leggen de nadruk op een V-silhouet zonder bulk. Koele blauwtinten matchen je kleurtemperatuur.",
+    items: ["Softshell jas", "Dryknit hoodie", "Tapered jogger", "Retro runner"],
+    imageId: "outfit-sport-1",
+    priceHint: "€–€€",
+  },
+  {
+    id: "look-03",
+    title: "Klassiek met structuur",
+    season: "winter",
+    colorTemp: "warm",
+    archetype: "klassiek",
+    explanation:
+      "Warme camel-tinten en textuur (flanel, suède) voegen diepte toe en flatteren je huidtint — formeel én comfortabel.",
+    items: ["Flanellen blazer", "Oxford shirt", "Wollen pantalon", "Suède loafer"],
+    imageId: "outfit-classic-1",
+    priceHint: "€€€",
+  },
+];
 
 const ResultsPage: React.FC = () => {
-  const data = useResultsData();
+  const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simuleer korte laadfase voor skeletons; in prod komt dit uit fetch/react-query.
+    const t = setTimeout(() => setLoading(false), 450);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
-    <main className="bg-[var(--color-bg)] min-h-screen">
+    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
-        title="Jouw AI Style Report — Resultaten | FitFi"
-        description="Bekijk je gepersonaliseerde outfits en lees in 1–2 zinnen per look waarom dit past bij jouw silhouet, materialen en kleurtemperatuur."
-        canonical="https://www.fitfi.ai/results"
+        title="Jouw AI Style Report — outfits die werken | FitFi"
+        description="Bekijk je gepersonaliseerde outfits met uitleg waarom ze werken voor je silhouet en kleurtemperatuur. Shop slimmer met FitFi."
+        canonical="https://fitfi.ai/results"
+        preloadImages={[]}
+        ogImage="/images/social/results-og.jpg"
       />
 
-      {/* Header */}
-      <section aria-labelledby="report-heading" className="pt-14 md:pt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <header>
-            <h1
-              id="report-heading"
-              className="font-semibold tracking-tight text-[var(--color-text)]"
-              style={{ fontSize: "clamp(2rem, 2.3vw + 1rem, 3rem)", lineHeight: 1.08 }}
-            >
-              Jouw AI Style Report
-            </h1>
+      <section className="ff-section ff-container">
+        <header className="flow-lg">
+          <h1 className="section-title">Jouw outfits</h1>
+          <p className="text-[var(--color-muted)] max-w-prose">
+            Dit is een voorbeeldrapport. Elk look-advies bevat 1–2 zinnen waarom het past bij je silhouet, materialen
+            en kleurtemperatuur — helder, zonder ruis.
+          </p>
 
-            {data ? (
-              <>
-                <p className="mt-4 text-[var(--color-muted)]">
-                  Samenvatting op basis van je antwoorden — klaar om te shoppen of te verfijnen.
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  <span className={chip}>Persona: {data.persona}</span>
-                  <span className={chip}>Palette: {data.palette}</span>
-                  <span className={chip}>Silhouet: {data.body}</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <p className="mt-4 text-[var(--color-muted)]">
-                  We genereren je resultaten… Als dit te lang duurt, bekijk dan een voorbeeldrapport.
-                </p>
-                <div className="mt-5">
-                  <Button
-                    variant="ghost"
-                    onClick={() => (window.location.href = "/results")}
-                    aria-label="Bekijk voorbeeldrapport"
-                  >
-                    Bekijk voorbeeld
-                  </Button>
-                </div>
-              </>
-            )}
-          </header>
-        </div>
-      </section>
+          <div className="cluster gap-2">
+            <span className="badge badge-soft">Seizoen: all-year</span>
+            <span className="badge badge-soft">Kleurtemperatuur: neutraal</span>
+            <span className="badge badge-soft">Archetype: modern minimal</span>
+          </div>
+        </header>
 
-      {/* Grid */}
-      <section className="py-12 md:py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {data ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.outfits.map((o) => (
+        {/* Grid */}
+        <div className="results-grid mt-8">
+          {loading
+            ? Array.from({ length: 3 }).map((_, i) => <OutfitSkeleton key={i} />)
+            : sampleOutfits.map((o) => (
                 <OutfitCard
                   key={o.id}
-                  title={o.title}
-                  imageSrc={o.imageSrc}
-                  season={o.season}
-                  colorTemp={o.colorTemp}
-                  archetype={o.archetype}
-                  why={o.why}
-                  onShop={() => {
-                    // Hier kan jullie bestaande analytics/affiliate redirect in
-                    // Bijvoorbeeld: navigate('/shop-redirect?...')
-                  }}
-                  onSave={() => {
-                    // Bewaar in favorieten / profiel (later)
-                  }}
+                  outfit={o}
+                  onShop={() => navigate("/onboarding")}
+                  onViewItems={() => navigate("/onboarding")}
                 />
               ))}
-            </div>
-          ) : (
-            // Lightweight skeleton — geen extra libs nodig
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="animate-pulse bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] h-[420px]"
-                />
-              ))}
-            </div>
-          )}
+        </div>
+
+        <div className="mt-10 cluster">
+          <Button variant="primary" size="lg" onClick={() => navigate("/onboarding")}>
+            Start gratis — maak mijn echte rapport
+          </Button>
+          <Button variant="ghost" size="lg" onClick={() => navigate("/hoe-het-werkt")}>
+            Hoe het werkt
+          </Button>
         </div>
       </section>
     </main>
