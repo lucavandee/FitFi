@@ -470,6 +470,30 @@
   font-weight: 600;
   letter-spacing: .02em;
 }
+
+/* ===== Home & editorial micro-polish ===== */
+
+/* 1) Social Proof: iets meer sectie-adem en compacter perslint */
+#social-proof-title { scroll-margin-top: 80px; } /* fijner anker-gedrag */
+.sp-grid { gap: clamp(0.9rem, 2.2vw, 1.15rem); }
+.sp-press { gap: .5rem 1rem; }
+.press-chip { letter-spacing: .01em; padding: .3rem .6rem; }
+
+/* 2) Results: onderstreping iets rustiger */
+.share-link:hover { text-underline-offset: 4px; }
+
+/* 3) Pricing: subtiele lucht tussen prijs en benefits */
+.pricing-price { margin-bottom: .25rem; }
+
+/* 4) Hero fine-tune op ultra-wide: begrens content-breedte voor balans */
+@media (min-width: 1400px){
+  .hero-wrap .max-w-7xl { max-width: 76rem; }
+}
+
+/* 5) Kleine mobiel-nudge: spreid CTA's netter onder 360px */
+@media (max-width: 360px){
+  .cluster > .btn, .cluster > a.share-link { width: 100%; }
+}
 /* Results badges: +tint voor scanbaarheid */
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
