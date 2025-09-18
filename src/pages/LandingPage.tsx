@@ -18,18 +18,12 @@ const LandingPage: React.FC = () => {
         preloadImages={["/images/hero/main.jpg"]}
         ogImage="/images/social/home-og.jpg"
       />
-
       <Hero onCTAClick={() => navigate("/onboarding")} />
 
       <section className="ff-section ff-container">
         <HowItWorksSnippet />
       </section>
-
-      <section className="ff-section alt-bg">
-        <div className="ff-container">
-          <FeaturesTrio />
-        </div>
-      </section>
+      <SocialProofEditorial />
 
       <section className="ff-section ff-container">
         <SocialProofEditorial />
