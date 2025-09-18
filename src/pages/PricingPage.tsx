@@ -9,21 +9,24 @@ type Billing = "monthly" | "yearly";
 const PricingPage: React.FC = () => {
   const [billing, setBilling] = React.useState<Billing>("monthly");
 
-  // Prijzen (voorbeeld). Yearly krijgt -20%.
+  // Basistarieven (maandelijks) — voorbeeldprijzen.
+  const baseMonthly = (plan: PlanId) =>
+    plan === "free" ? 0 : plan === "pro" ? 14 : 29;
+
+  // Afgeleide prijs op basis van billing.
   const price = (plan: PlanId) => {
-    const base =
-      plan === "free" ? 0 :
-      plan === "pro" ? 14 :
-      29; // premium
-    if (plan === "free") return 0;
+    const base = baseMonthly(plan);
+    if (base === 0) return 0;
     return billing === "monthly" ? base : Math.round(base * 0.8);
   };
+
+  const yearlySave = billing === "yearly";
 
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="Prijzen — kies je FitFi plan | FitFi"
-        description="Kies het plan dat bij je past: gratis AI Style Report, Pro met wekelijkse updates of Premium met extra functies. Altijd tokens-first, privacy-first."
+        description="Start gratis met je AI Style Report. Upgrade naar Pro of Premium voor wekelijkse updates, capsules en shoplinks. Jaarlijks = 20% korting."
         canonical="https://fitfi.ai/pricing"
         ogImage="/images/social/pricing-og.jpg"
       />
@@ -51,6 +54,7 @@ const PricingPage: React.FC = () => {
             id="free"
             title="Gratis"
             price={price("free")}
+            baseMonthly={baseMonthly("free")}
             billing={billing}
             ctaLabel="Start gratis"
             bullets={[
@@ -65,7 +69,9 @@ const PricingPage: React.FC = () => {
             id="pro"
             title="Pro"
             featured
+            saveBadge={yearlySave ? "Bespaar 20%" : undefined}
             price={price("pro")}
+            baseMonthly={baseMonthly("pro")}
             billing={billing}
             ctaLabel="Kies Pro"
             bullets={[
@@ -79,7 +85,9 @@ const PricingPage: React.FC = () => {
           <PricingCard
             id="premium"
             title="Premium"
+            saveBadge={yearlySave ? "Bespaar 20%" : undefined}
             price={price("premium")}
+            baseMonthly={baseMonthly("premium")}
             billing={billing}
             ctaLabel="Ga Premium"
             bullets={[
@@ -90,6 +98,17 @@ const PricingPage: React.FC = () => {
             subtext="Voor power users"
           />
         </div>
+
+        {/* Reassurance rail */}
+        <div className="cluster mt-6">
+          <span className="badge badge-neutral">Geen verborgen kosten</span>
+          <span className="badge badge-neutral">Opzeggen wanneer je wilt</span>
+          <span className="badge badge-neutral">Privacy-first</span>
+        </div>
+
+        <p className="price-footnote text-[var(--color-muted)] mt-3">
+          Prijzen zijn indicatief en inclusief btw. Kortingen worden verrekend bij jaarlijkse betaling.
+        </p>
       </section>
 
       {/* FAQ teaser */}
