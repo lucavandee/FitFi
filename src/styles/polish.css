@@ -25,6 +25,22 @@
   gap: .5rem;
 }
 
+/* Primary button with robust fallback chain */
+.btn-primary {
+  background: var(--ff-color-primary-700);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--ff-color-primary-600);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 /* Micro-animations (accessibility-friendly) */
 @media (prefers-reduced-motion: no-preference) {
   .hover-lift {

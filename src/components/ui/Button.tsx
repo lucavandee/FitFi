@@ -16,8 +16,8 @@ const base =
   "focus-visible:ring-[var(--shadow-ring)] disabled:opacity-50 disabled:cursor-not-allowed";
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]",
-  ghost:
+  // Gebruik een robuuste CSS-class die via polish.css een fallback-keten opzet.
+  primary: "btn-primary",
     "bg-transparent border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]",
   outline:
     "border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface)]",
