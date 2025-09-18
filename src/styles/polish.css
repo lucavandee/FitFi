@@ -491,7 +491,27 @@
 .sp-grid{ gap: clamp(1rem, 2.4vw, 1.25rem); }
 .sp-quote.card{ padding: clamp(.875rem, .6vw + .65rem, 1.1rem); }
 .sp-quote-text{ line-height: 1.7; letter-spacing: -.003em; }
-.sp-press{ display:none; } /* oude chip-belt onzichtbaar houden als aanwezig */
+
+/* --- Safety net voor persbelt --- */
+/* Chips zijn default; echte logo's alleen met useLogos=true */
+.pressbelt{ display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1rem; margin-top: clamp(.75rem,2vw,1.25rem); }
+.pressbelt-list{ display:inline-flex; flex-wrap:wrap; gap:.5rem .75rem; list-style:none; padding:0; margin:0; }
+.presslogo-wrap{ display:inline-flex; align-items:center; justify-content:center; height:28px; }
+@media (max-width:480px){ .presslogo-wrap{ height:24px; } }
+
+.presslogo-chip{
+  display:inline-flex; align-items:center; padding:.28rem .55rem; border-radius:9999px;
+  border:1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface) 94%, white);
+  color: var(--color-text); font-weight:600; letter-spacing:.01em;
+}
+
+/* Wanneer we later useLogos=true doen: zorg dat mogelijke SmartImage wrappers geen layout opblazen */
+.presslogo-img{ max-height:100%; max-width:140px; width:auto; object-fit:contain; filter: grayscale(100%) contrast(1) opacity(.85); transition: filter .2s ease, transform .2s ease; }
+.presslogo-wrap:hover .presslogo-img{ filter: grayscale(0) opacity(1); transform: translateY(-1px); }
+
+/* Oudere variant onzichtbaar houden indien nog aanwezig */
+.sp-press{ display:none; }
 .sp-quote-meta{
   display: inline-flex; align-items: center; gap: .375rem;
   color: var(--color-muted);
