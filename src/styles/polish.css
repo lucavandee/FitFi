@@ -424,6 +424,52 @@
     0 3px 8px rgba(0,0,0,.06);
 }
 
+/* ======== Social Proof (editorial) ======== */
+.sp-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(0.75rem, 2vw, 1rem);
+}
+@media (min-width: 900px){
+  .sp-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+.sp-quote{
+  display: grid; gap: .75rem;
+}
+.sp-quote-mark{
+  color: color-mix(in oklab, var(--color-accent) 40%, var(--color-text));
+}
+.sp-quote-text{
+  color: var(--color-text);
+  font-size: clamp(1rem, .6vw + .85rem, 1.1rem);
+  line-height: 1.6;
+}
+.sp-quote-meta{
+  display: inline-flex; align-items: center; gap: .375rem;
+  color: var(--color-muted);
+  font-size: .925rem;
+}
+.sp-quote-name{ color: var(--color-text); font-weight: 600; }
+.sp-quote-dot{ opacity: .6; }
+
+/* Press/logo belt als editorial chips (tokens-only) */
+.sp-press{
+  margin-top: clamp(1rem, 2.2vw, 1.5rem);
+  display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem;
+}
+.sp-press-list{
+  display: inline-flex; flex-wrap: wrap; gap: .5rem .75rem;
+  list-style: none; padding: 0; margin: 0;
+}
+.press-chip{
+  padding: .35rem .65rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface) 94%, white);
+  color: var(--color-text);
+  font-weight: 600;
+  letter-spacing: .02em;
+}
 /* Results badges: +tint voor scanbaarheid */
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
