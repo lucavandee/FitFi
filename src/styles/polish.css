@@ -554,6 +554,47 @@
 
 /* Links */
 .underlined{ text-decoration: underline; text-underline-offset: 4px; }
+
+/* ===== FAQ: zoekveld ===== */
+.faq-search{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .5rem;
+}
+.input{
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text);
+  padding: .65rem .9rem;
+}
+.input-lg{ padding: .8rem 1rem; }
+.input:focus-visible{
+  outline: none;
+  box-shadow: var(--shadow-ring);
+}
+.input-clear{
+  position: absolute; right: .75rem; top: 50%; transform: translateY(-50%);
+  background: transparent; border: 0; cursor: pointer;
+  color: var(--color-text);
+  font-size: 1.1rem; line-height: 1;
+}
+.search-hint{ grid-column: 1 / -1; color: var(--color-muted); font-size: .875rem; }
+
+/* ===== How it works (editorial trio) ===== */
+.hiw-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(.75rem, 2vw, 1rem);
+}
+@media (min-width: 900px){
+  .hiw-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+.hiw-card{ min-height: 180px; }
+.hiw-cta-rail .btn{ border-radius: 9999px; }
 /* Results badges: +tint voor scanbaarheid */
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
