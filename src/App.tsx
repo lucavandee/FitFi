@@ -52,6 +52,7 @@ const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
 const BlogIndexPage = lazyAny(() => import('@/pages/BlogIndexPage'));
 const BlogPage = lazyAny(() => import('@/pages/BlogPage'));
 const BlogPostPage = lazyAny(() => import('@/pages/BlogPostPage'));
+const PressPage = lazyAny(() => import('@/pages/PressPage'));
 const BlogDetailPage = lazyAny(() => import('@/pages/BlogDetailPage'));
 const TribesPage = lazyAny(() => import('@/pages/TribesPage'));
 const TribeDetailPage = lazyAny(() => import('@/pages/TribeDetailPage'));
@@ -127,6 +128,7 @@ const App: React.FC = () => {
                           <Route path="/prijzen"  element={<PricingPage />} />
                           <Route path="/blog" element={<BlogPage />} />
                           <Route path="/blog/:id" element={<BlogPostPage />} />
+                          <Route path="/pers" element={<PressPage />} />
                           <Route path="/blog/:slug" element={<BlogDetailPage />} />
                           <Route path="/pricing" element={<PricingPage />} />
                           <Route path="/prijzen" element={<PricingPage />} />
