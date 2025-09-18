@@ -1,5 +1,6 @@
 import React from "react";
 import { QuoteIcon } from "lucide-react";
+import PressLogoBelt from "@/components/landing/PressLogoBelt";
 
 type Quote = {
   text: string;
@@ -28,16 +29,12 @@ const QUOTES: Quote[] = [
   },
 ];
 
-const LOGOS = ["AD", "LINDA.", "RTL", "Sprout", "Bright"];
-
 const SocialProofEditorial: React.FC = () => {
   return (
     <section aria-labelledby="social-proof-title" className="ff-section">
       <div className="ff-container flow-lg">
         <header className="flow-sm">
-          <h2 id="social-proof-title" className="section-title">
-            Wat gebruikers zeggen
-          </h2>
+          <h2 id="social-proof-title" className="section-title">Wat gebruikers zeggen</h2>
           <p className="text-[var(--color-muted)] max-w-prose">
             Echte ervaringen — kort en helder. Geen ruis, wel resultaat.
           </p>
@@ -58,17 +55,8 @@ const SocialProofEditorial: React.FC = () => {
           ))}
         </div>
 
-        {/* Logo belt */}
-        <div className="sp-press">
-          <span className="text-[var(--color-muted)]">Gezien in</span>
-          <ul className="sp-press-list" aria-label="Media">
-            {LOGOS.map((l) => (
-              <li key={l} className="press-chip" aria-label={l}>
-                {l}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Press/logo belt met echte assets (graceful fallback) */}
+        <PressLogoBelt />
       </div>
     </section>
   );
