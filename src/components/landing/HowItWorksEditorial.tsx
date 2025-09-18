@@ -26,14 +26,15 @@ const HowItWorksEditorial: React.FC<Props> = ({ onStart, onExample }) => {
   return (
     <section className="ff-section alt-bg" aria-labelledby="hiw-title">
       <div className="ff-container">
-        <header className="flow-sm max-w-3xl">
+        <header className="flow-sm max-w-3xl anim-fade-up">
           <h2 id="hiw-title" className="section-title">Hoe het werkt</h2>
           <p className="text-[var(--color-muted)]">
             Rustig, stap-voor-stap — zonder ruis.
           </p>
         </header>
 
-        <ol className="hiw-grid mt-6">
+        {/* Staggered cards */}
+        <ol className="hiw-grid stagger-3 mt-6">
           {steps.map((s, i) => (
             <li key={s.title} className="hiw-card card card-hover flow-sm" aria-label={`Stap ${i + 1}`}>
               <span className="icon-chip" aria-hidden>
@@ -45,7 +46,8 @@ const HowItWorksEditorial: React.FC<Props> = ({ onStart, onExample }) => {
           ))}
         </ol>
 
-        <div className="hiw-cta-rail cluster mt-6">
+        {/* CTA rail met subtiele fade-up */}
+        <div className="hiw-cta-rail cluster mt-6 anim-fade-up">
           <Button variant="primary" size="lg" className="cta-raise" onClick={onStart}>
             Start gratis
           </Button>
