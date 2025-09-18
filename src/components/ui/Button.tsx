@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import type { ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 type ButtonVariant = "primary" | "ghost" | "outline";
@@ -8,6 +8,7 @@ type ButtonSize = "sm" | "md" | "lg";
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  children?: ReactNode;
 }
 
 const base =
@@ -16,8 +17,9 @@ const base =
   "focus-visible:ring-[var(--shadow-ring)] disabled:opacity-50 disabled:cursor-not-allowed";
 
 const variants: Record<ButtonVariant, string> = {
-  // Gebruik een robuuste CSS-class die via polish.css een fallback-keten opzet.
+  // Solid CTA via polish.css (fallback-keten naar primary/accent)
   primary: "btn-primary",
+  ghost:
     "bg-transparent border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]",
   outline:
     "border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface)]",
@@ -34,7 +36,7 @@ function cn(...cls: Array<string | false | null | undefined>) {
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className, variant = "primary", size = "md", type = "button", ...props },
+  { className, variant = "primary", size = "md", type = "button", children, ...props },
   ref
 ) {
   return (
@@ -43,7 +45,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       type={type}
       className={cn(base, variants[variant], sizes[size], className)}
       {...props}
-    />
+    >
+      {children}
+    </button>
   );
 });
 
