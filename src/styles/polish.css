@@ -624,6 +624,84 @@
 }
 /* Results badges: +tint voor scanbaarheid */
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
+
+/* ===== How-it-Works PAGE (editorial, premium) ===== */
+
+/* Hero layout: copy + visual */
+.hiw-hero{
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 2rem);
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 980px){
+  .hiw-hero{ grid-template-columns: 1.1fr .9fr; }
+}
+
+.hiw-hero-copy .kicker{
+  color: var(--color-muted);
+  letter-spacing: .04em;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: .825rem;
+}
+
+.lead{
+  color: var(--color-text);
+  max-width: 60ch;
+}
+
+/* Chips onder de lead */
+.meta-chips{
+  display: flex; flex-wrap: wrap; gap: .5rem .6rem;
+  margin-top: .5rem;
+  list-style: none; padding: 0;
+}
+.chip{
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .35rem .6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface) 94%, white);
+  color: var(--color-text);
+  font-size: .9rem;
+}
+
+/* Visual placeholder (SmartImage) */
+.hiw-hero-visual{
+  aspect-ratio: 4/5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Trio grid */
+.hiw-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(.75rem, 2.2vw, 1rem);
+}
+@media (min-width: 980px){
+  .hiw-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+.hiw-card{ min-height: 180px; }
+
+/* Explanatory note en CTA-rail */
+.hiw-note{ max-width: 70ch; }
+.hiw-cta-rail .btn{ border-radius: 9999px; }
+
+/* Micro-animaties (re-use uit eerdere stap) */
+@keyframes ff-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.anim-fade-up { animation: ff-fade-up .48s ease-out both; }
+.stagger-3 > * { animation: ff-fade-up .52s ease-out both; }
+.stagger-3 > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-3 > *:nth-child(2) { animation-delay: 0.14s; }
+.stagger-3 > *:nth-child(3) { animation-delay: 0.23s; }
+@media (prefers-reduced-motion: reduce){
+  .anim-fade-up, .stagger-3 > * { animation: none !important; }
+}
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
 .badge-arch  { background: color-mix(in oklab, var(--color-accent) 22%, white); }
 
