@@ -494,6 +494,66 @@
 @media (max-width: 360px){
   .cluster > .btn, .cluster > a.share-link { width: 100%; }
 }
+
+/* ======== FAQ page ======== */
+.faq-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2.4vw, 1.5rem);
+}
+@media (min-width: 980px){
+  .faq-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+.faq-section{ display: grid; gap: .75rem; }
+.faq-heading{
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 1.05rem;
+}
+
+.faq-accordion{ display: grid; gap: .5rem; }
+.faq-item.card{
+  padding: .5rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+.faq-qbtn{
+  appearance: none; width: 100%;
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .75rem;
+  padding: .75rem .75rem;
+  background: transparent; border: 0; cursor: pointer;
+  color: var(--color-text); font-weight: 600; text-align: left;
+  border-radius: calc(var(--radius-lg) - 4px);
+}
+.faq-qbtn:is(:focus-visible, :hover){
+  outline: none;
+  box-shadow: var(--shadow-ring);
+}
+.faq-icon{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.5rem; height: 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface) 92%, white);
+  color: var(--color-text);
+  font-weight: 700;
+}
+.faq-panel{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .24s ease;
+  will-change: max-height;
+}
+.faq-panel.is-open{ max-height: 300px; } /* genoeg voor 2–4 korte regels */
+.faq-answer{
+  color: var(--color-muted);
+  padding: 0 .75rem .75rem .75rem;
+}
+
+/* Links */
+.underlined{ text-decoration: underline; text-underline-offset: 4px; }
 /* Results badges: +tint voor scanbaarheid */
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
 .badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
