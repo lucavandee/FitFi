@@ -1886,3 +1886,98 @@
   background: color-mix(in oklab, var(--color-accent) 18%, white);
   color: var(--color-text);
 }
+
+/* === Premium hero dominance & chip-kicker ================================= */
+
+/* 0) Basis: section-title/lead ritme (consistent met eerdere polish) */
+.hero-wrap .section-title{
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  /* Groter dan elders op de site: hero moet dominant zijn */
+  font-size: clamp(2rem, 2.6vw + 1rem, 3rem);
+  margin-top: .25rem;
+}
+.hero-wrap .lead{
+  margin-top: .55rem;
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+/* 1) Kicker als premium chip in primaire tint (zelfde gevoelskleur als Start gratis) */
+.hero-wrap .kicker{
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .35rem .6rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+
+  /* tokens-first: zachte tint van primary + subtiele border */
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, white);
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 24%, var(--color-border));
+  color: color-mix(in oklab, var(--ff-color-primary-700), black 10%);
+  box-shadow: var(--shadow-soft);
+}
+
+/* 2) Grid: copy-kolom > media — hero voelt substantieel */
+.hero-grid{
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 2rem);
+  grid-template-columns: 1fr;       /* mobiel */
+  align-items: center;
+}
+@media (min-width: 980px){
+  /* copy  ~60–65%, media ~35–40%  */
+  .hero-grid{ grid-template-columns: 1.35fr .65fr; }
+}
+@media (min-width: 1440px){
+  /* op ultrawide mag copy nog iets dominanter */
+  .hero-grid{ grid-template-columns: 1.45fr .55fr; }
+}
+
+/* 3) CTA-cluster: compacter en mobiel 100% breed */
+.hero-wrap .cluster{ margin-top: .75rem; gap: .6rem; }
+.hero-wrap .cta-raise{ box-shadow: var(--shadow-soft); }
+@media (max-width: 520px){
+  .hero-wrap .cluster .btn{ width: 100%; }
+}
+
+/* 4) Hero-media: editorial aspect-ratio + minder visueel gewicht dan copy */
+.hero-media{
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  aspect-ratio: 4/5; /* mobiel: iets verticaler */
+}
+@media (min-width: 900px){  .hero-media{ aspect-ratio: 5/4; } }
+@media (min-width: 1440px){ .hero-media{ aspect-ratio: 16/10; } }
+
+.hero-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  /* focal uit Hero-prop; standaard iets hoger zodat gezichten niet afsnijden */
+  object-position: var(--hero-object-position, 50% 35%);
+  filter: saturate(.95) contrast(.98); /* subtiel: beeld iets rustiger dan copy */
+}
+
+/* 5) Overgang hero → volgende sectie: geen haarlijn of harde scheiding */
+.hero-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.hero-wrap + .ff-section,
+.hero-wrap + section{
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 6) How-it-Works: microtypografie & adem – premium rust */
+.hiw-grid{ gap: clamp(.8rem, 2.2vw, 1.1rem); }
+.hiw-grid .card-title{ letter-spacing: -0.006em; line-height: 1.25; }
+.hiw-grid .card-text{ line-height: 1.68; }
+
+/* 7) Social Proof: iets meer lucht tov persbelt */
+.sp-grid{ gap: clamp(1rem, 2.2vw, 1.25rem); }
+.pressbelt{ margin-top: clamp(.9rem, 2vw, 1.3rem); }
