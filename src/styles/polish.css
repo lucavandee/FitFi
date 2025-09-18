@@ -1,300 +1,35 @@
-/* FitFi Polish - Visual enhancements using tokens */
+/* =========================================================
+   FitFi Polish — premium editorial (tokens-first, no hex)
+   ========================================================= */
 
-/* =============================
-   CTA token fallbacks (solid)
-   ============================= */
-:root{
-  /* Multi-fallback: ff-token -> color-primary -> accent */
-  --ff-color-primary-700: var(--ff-color-primary-700, initial); /* laat bestaan indien gedefinieerd */
-  --ff-color-primary-600: var(--ff-color-primary-600, initial);
-}
+/* Containers & sections */
+.ff-container { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; }
+.ff-section   { padding-block: 4rem; }
+@media (min-width: 768px){ .ff-section{ padding-block: 5rem; } }
+.alt-bg { background: color-mix(in oklab, var(--color-surface) 88%, white); }
 
-/* Robuuste primaire knop: gebruikt fallback-keten zodat de CTA nooit "transparant" wordt */
-.btn-primary{
-  /* achtergrond: ff700 -> primary -> accent */
-  background: var(--ff-color-primary-700, var(--color-primary, var(--color-accent)));
-  /* tekstkleur: tokens-first met veilige fallback naar white */
-  color: var(--color-on-primary, white);
-  border: 1px solid transparent;
-}
-.btn-primary:hover{
-  /* hover: ff600 -> ff700 -> primary -> accent */
-  background: var(--ff-color-primary-600,
-               var(--ff-color-primary-700,
-               var(--color-primary, var(--color-accent))));
-}
-/* Disabled state blijft vanuit Button-base: opacity-50 + cursor-not-allowed */
-
-/* (optioneel, subtiele elevatie consistent met jullie stijl) */
-.btn-primary.cta-raise{
-  box-shadow:
-    0 6px 14px rgba(0,0,0,.06),
-    0 2px 4px rgba(0,0,0,.04);
-}
-.btn-primary.cta-raise:hover{
-  box-shadow:
-    0 10px 22px rgba(0,0,0,.08),
-    0 4px 8px rgba(0,0,0,.05);
-}
-
-/* ======== Hero art (decoratief frame + zachte grad) ======== */
-.hero-art{
-  background:
-    linear-gradient(180deg,
-      color-mix(in oklab, var(--color-accent) 12%, var(--color-surface)) 0%,
-      color-mix(in oklab, var(--color-accent) 32%, var(--color-surface)) 100%);
-}
-
-/* ======== CTA: solid + fallback-keten blijft actief ======== */
-.btn-primary{
-  background: var(--ff-color-primary-700, var(--color-primary, var(--color-accent)));
-  color: var(--color-on-primary, white);
-  border: 1px solid transparent;
-}
-.btn-primary:hover{
-  background: var(--ff-color-primary-600,
-               var(--ff-color-primary-700,
-               var(--color-primary, var(--color-accent))));
-}
-
-/* ======== Hover & micro-animaties (motion-safe) ======== */
-@media (prefers-reduced-motion: no-preference) {
-  .hover-lift { transition: transform .18s ease-out, box-shadow .18s ease-out; }
-  .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05); }
-
-  .cta-raise { transition: transform .15s ease-out, box-shadow .15s ease-out; }
-  .cta-raise:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.12), 0 3px 6px rgba(0,0,0,.08); }
-}
-
-/* ======== Landing page layout & sections ======== */
-.ff-section {
-  padding-block: 4rem;
-}
-
-.ff-container {
-  max-width: 80rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
-}
-
-@media (min-width: 640px) {
-  .ff-container {
-    padding-inline: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .ff-container {
-    padding-inline: 2rem;
-  }
-}
-
-.alt-bg {
-  background: color-mix(in oklab, var(--color-accent) 4%, var(--color-bg));
-}
-
-/* ======== Hero styling ======== */
-.hero-wrap {
-  padding-top: 3.5rem;
-  padding-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .hero-wrap {
-    padding-top: 5rem;
-    padding-bottom: 3rem;
-  }
-}
-
-.hero-title {
+/* Typography scale (tokens-friendly) */
+.hero-title{
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
   font-size: clamp(2.25rem, 2.6vw + 1rem, 3.6rem);
   line-height: 1.06;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  color: var(--color-text);
-  margin-bottom: 1.5rem;
 }
-
-.hero-lead {
-  font-size: clamp(1rem, 0.6vw + 0.8rem, 1.2rem);
+.hero-lead{
+  margin-top: 1.25rem;
+  color: var(--color-muted);
+  font-size: clamp(1rem, .6vw + .8rem, 1.2rem);
   line-height: 1.65;
-  color: var(--color-muted);
   max-width: 52ch;
-  margin-top: 1.5rem;
 }
-
-.perk-dot {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  background: var(--ff-color-primary-600, var(--color-primary));
-  color: white;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.trust-belt {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0;
-  font-size: 0.875rem;
-  color: var(--color-muted);
-}
-
-.trust-belt .sep {
-  margin-inline: 0.75rem;
-  color: var(--color-border);
-}
-
-/* ======== Hero visual ======== */
-.hero-visual {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .hero-visual {
-    justify-content: end;
-    padding-bottom: 3.5rem;
-  }
-}
-
-.hero-card {
-  position: relative;
-  width: 22.5rem;
-  height: 31.25rem;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--color-accent) 10%, var(--color-surface)) 0%,
-    color-mix(in oklab, var(--color-accent) 28%, var(--color-surface)) 100%
-  );
-  border: 1px solid var(--color-border);
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px color-mix(in oklab, var(--color-accent) 20%, transparent);
-}
-
-.hero-glare {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, white 8%, transparent) 0%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-.hero-base {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--color-accent);
-  opacity: 0.3;
-}
-
-/* ======== Section & card styling ======== */
-.section-title {
-  font-size: clamp(1.875rem, 1.5vw + 1rem, 2.25rem);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  color: var(--color-text);
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-soft);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .card-hover {
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-  }
-  
-  .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-}
-
-.icon-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  background: color-mix(in oklab, var(--color-accent) 15%, var(--color-surface));
-  color: var(--ff-color-primary-600, var(--color-primary));
-  border-radius: var(--radius-lg);
-  margin-bottom: 1rem;
-}
-
-.card-title {
-  font-size: 1.25rem;
+.section-title{
+  font-size: clamp(1.5rem, .9vw + 1rem, 2rem);
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 0.75rem;
 }
 
-.card-text {
-  color: var(--color-muted);
-  line-height: 1.6;
-}
-
-/* ======== Quote styling ======== */
-.quote {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-soft);
-  position: relative;
-}
-
-.quote-mark {
-  color: var(--ff-color-primary-600, var(--color-primary));
-  margin-bottom: 1rem;
-}
-
-.quote-text {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  color: var(--color-text);
-  margin-bottom: 1rem;
-}
-
-.quote-author {
-  font-size: 0.875rem;
-  color: var(--color-muted);
-  font-style: normal;
-}
-
-/* ======== Nav CTA compact & consistent ======== */
-.nav-cta {
-  padding-inline: .875rem;
-  height: 2.25rem; /* ~h-9 look, maar met btn-primary styling */
-  line-height: 1;
-}
-
-/* ======== Tekst-gradient voor H1, tokens-safe ======== */
+/* Text gradient (tokens-safe) */
 .text-gradient-primary{
   background: linear-gradient(
     90deg,
@@ -306,205 +41,140 @@
   color: transparent;
 }
 
-/* ======== Hero art: zachte grad + luxe frame ======== */
-.hero-art{
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--color-accent) 10%, var(--color-surface)) 0%,
-    color-mix(in oklab, var(--color-accent) 28%, var(--color-surface)) 100%
-  );
-  border: 1px solid var(--color-border);
-}
-
-/* ======== Premium shadows voor hero art ======== */
-.premium-shadow-lg {
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px color-mix(in oklab, var(--color-accent) 20%, transparent);
-}
-
-/* ======== Glass navbar (al aanwezig), accent-chip spacing blijft ======== */
-/* (laat je bestaande .nav-glass en .accent-chip staan) */
-
-/* ======== Premium text gradients ======== */
-.text-gradient-primary {
-  background: linear-gradient(135deg,
-    var(--ff-color-primary-600, var(--color-primary, var(--color-accent))) 0%,
-    color-mix(in oklab, var(--ff-color-primary-600, var(--color-primary, var(--color-accent))) 80%, var(--color-accent)) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* ======== Premium shadows ======== */
-.premium-shadow-lg {
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px color-mix(in oklab, var(--color-border) 50%, transparent);
-}
-
-/* ======== Glass navbar (premium backdrop blur) ======== */
+/* Navbar glass & CTA */
 .nav-glass {
-  background: color-mix(in oklab, var(--color-surface) 85%, transparent);
-  backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 1px solid color-mix(in oklab, var(--color-border) 40%, transparent);
+  backdrop-filter: saturate(180%) blur(8px);
+  background: color-mix(in oklab, var(--color-surface) 88%, transparent);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
 }
+.nav-cta { padding-inline: .875rem; height: 2.25rem; line-height: 1; border-radius: 9999px; }
 
-/* ======== Accent chip (active nav state) ======== */
-.accent-chip {
-  background: color-mix(in oklab, var(--color-accent) 15%, var(--color-surface));
-  color: var(--color-text);
-  border-radius: var(--radius-md);
-  font-weight: 500;
-}
-
-/* ======== Nav CTA (compact primary button) ======== */
-.nav-cta {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* Hover lift micro-interaction voor cards */
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 20px rgba(0,0,0,.08),
-    0 3px 6px rgba(0,0,0,.04);
-}
-/* =============================
-   Token fallbacks & helpers
-   ============================= */
-:root{
-  /* Zorg dat primary CTA altijd een geldige kleur heeft,
-     óók als --ff-color-primary-* (nog) niet in tokens.css staat */
-  --ff-color-primary-700: var(--color-primary-700, var(--color-primary, var(--color-accent)));
-  --ff-color-primary-600: var(--color-primary-600, var(--color-primary, var(--color-accent)));
-  --ff-color-neutral-100: var(--color-surface);
-  --ff-color-neutral-200: color-mix(in oklab, var(--color-surface) 85%, var(--color-text) 15%);
-  --ff-color-neutral-50:  color-mix(in oklab, var(--color-surface) 95%, var(--color-text) 5%);
-}
-
-/* Accent chip spacing fix */
-.accent-chip {
+/* Accent chip */
+.accent-chip{
   background: color-mix(in oklab, var(--color-accent) 42%, white);
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: 9999px;
   padding: .375rem .75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
+  display: inline-flex; align-items: center; gap: .5rem;
 }
 
-/* Primary button with robust fallback chain */
-.btn-primary {
-  background: var(--ff-color-primary-700);
-  color: white;
-  transition: all 0.2s ease;
+/* Hero wrapper with radial bg + subtle grid */
+.hero-wrap{
+  padding-top: 4.5rem; padding-bottom: 3rem;
+  background:
+    radial-gradient(1200px 600px at 20% -10%,
+      color-mix(in oklab, var(--color-accent) 10%, var(--color-surface)) 0%,
+      transparent 60%),
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--color-surface) 96%, white) 0%,
+      color-mix(in oklab, var(--color-surface) 100%, white) 100%);
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: var(--ff-color-primary-600);
-  transform: translateY(-1px);
+/* Hero perks */
+.perk-dot{
+  width: 1.5rem; height: 1.5rem; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ff-color-neutral-50, color-mix(in oklab, var(--color-surface) 95%, var(--color-text) 5%));
+  border: 1px solid var(--color-border); border-radius: 9999px;
 }
 
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
+/* Hero visual (card frame + glare + base) */
+.hero-visual { display: flex; justify-content: center; }
+.hero-card{
+  position: relative; width: 360px; height: 500px;
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--color-accent) 12%, var(--color-surface)) 0%,
+    color-mix(in oklab, var(--color-accent) 32%, var(--color-surface)) 100%);
+  box-shadow:
+    0 10px 15px -3px rgba(0,0,0,.10),
+    0 4px 6px -2px rgba(0,0,0,.06),
+    0 0 0 1px var(--color-border);
 }
-
-/* Micro-animations (accessibility-friendly) */
-@media (prefers-reduced-motion: no-preference) {
-  .hover-lift {
-    transition: transform 0.2s ease-out;
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-2px);
-  }
-  
-  .fade-in {
-    animation: fadeIn 0.3s ease-out;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .scale-in {
-    animation: scaleIn 0.2s ease-out;
-  }
-  
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
+.hero-glare{
+  position: absolute; inset: 0;
+  background: radial-gradient(500px 300px at 20% 0%, rgba(255,255,255,.28), transparent 60%);
+  pointer-events: none;
 }
-
-/* Glass effects using tokens */
-.glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
+.hero-base{
+  position: absolute; left: 8%; right: 8%; bottom: -12px; height: 18px;
+  background: color-mix(in oklab, var(--color-surface) 90%, white);
   border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.10),
+    0 2px 6px rgba(0,0,0,.06);
 }
 
-/* Gradient overlays using token colors */
-.hero-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--ff-color-primary-50) 0%,
-    var(--ff-color-primary-100) 100%
-  );
+/* Cards (HIW/Features) */
+.card{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+.card-hover{
+  transition: transform .18s ease-out, box-shadow .18s ease-out;
+}
+@media (prefers-reduced-motion: no-preference){
+  .card-hover:hover{ transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05); }
+}
+.icon-chip{
+  width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ff-color-neutral-50, color-mix(in oklab, var(--color-surface) 95%, var(--color-text) 5%));
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+}
+.card-title{ margin-top: .5rem; font-weight: 600; color: var(--color-text); }
+.card-text { margin-top: .25rem; color: var(--color-muted); }
+
+/* Editorial quotes */
+.quote{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.25rem 1rem;
+  box-shadow: var(--shadow-soft);
+}
+.quote-mark{ color: var(--ff-color-primary-600, var(--color-primary, var(--color-accent))); margin-right: .5rem; }
+.quote-text{ color: var(--color-text); font-size: 1.125rem; line-height: 1.65; }
+.quote-author{ margin-top: .4rem; color: var(--color-muted); font-size: .925rem; }
+
+/* CTA: token fallbacks (solid) */
+.btn-primary{
+  background: var(--ff-color-primary-700, var(--color-primary, var(--color-accent)));
+  color: var(--color-on-primary, white);
+  border: 1px solid transparent;
+}
+.btn-primary:hover{
+  background: var(--ff-color-primary-600,
+               var(--ff-color-primary-700,
+               var(--color-primary, var(--color-accent))));
+}
+/* Ghost blijft via utilities; cta elevatie */
+.cta-raise{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
+}
+.cta-raise:hover{
+  box-shadow: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05);
 }
 
-.cta-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--ff-color-primary-700) 0%,
-    var(--ff-color-primary-600) 100%
-  );
+/* Accessibility helpers */
+.skip-link{ position: absolute; left: -9999px; }
+.skip-link:focus{ left: 1rem; top: .5rem; }
+
+/* Neutral helpers used in perks */
+:root{
+  --ff-color-neutral-50:  color-mix(in oklab, var(--color-surface) 95%, var(--color-text) 5%);
+  --ff-color-neutral-100: var(--color-surface);
+  --ff-color-neutral-200: color-mix(in oklab, var(--color-surface) 85%, var(--color-text) 15%);
 }
 
-/* Focus enhancements */
-.focus-ring:focus-visible {
-  outline: 2px solid var(--ff-color-primary-500);
-  outline-offset: 2px;
+/* Trust belt styling */
+.trust-belt{
+  display: flex; flex-wrap: wrap; align-items: center; gap-y: .5rem;
+  font-size: .875rem; color: var(--color-muted);
 }
-
-/* Loading states */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-surface) 25%,
-    var(--ff-color-neutral-100) 50%,
-    var(--color-surface) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* Premium touches */
-.premium-shadow {
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    0 0 0 1px var(--color-border);
-}
-
-.premium-shadow-lg {
-  box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05),
-    0 0 0 1px var(--color-border);
-}
+.trust-belt .sep{ margin-inline: .75rem; }
