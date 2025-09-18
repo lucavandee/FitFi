@@ -392,6 +392,28 @@
 .faq-a{ color: var(--color-muted); margin-top: .5rem; }
 .underlined{ text-decoration: underline; text-underline-offset: 4px; }
 
+/* === B4 Pricing micro-polish === */
+.pricing-card.is-featured{
+  border-color: color-mix(in oklab, var(--color-primary) 46%, var(--color-border));
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.10),
+    0 3px 8px rgba(0,0,0,.06);
+}
+.plan-toggle-note{ white-space: nowrap; }
+
+/* Results badges: +tint voor scanbaarheid */
+.badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
+.badge-temp  { background: color-mix(in oklab, var(--color-primary) 22%, white); }
+.badge-arch  { background: color-mix(in oklab, var(--color-accent) 22%, white); }
+
+/* Share link iets rustiger onder hover */
+.share-link:hover{ text-underline-offset: 4px; }
+
+/* Safety: sm-breakpoint CTA's op Results mogen breken maar niet springen */
+@media (max-width: 360px){
+  .outfit-cta > *{ width: 100%; }
+}
+
 /* ======== Pricing components ======== */
 .pricing-grid{
   display: grid;
