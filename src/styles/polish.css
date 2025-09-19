@@ -2269,3 +2269,54 @@
 /* Veiligheid: geen "haar" tussen hero en volgende sectie */
 .hero-wrap + .ff-section,
 .hero-wrap + section{ border-top: 0 !important; box-shadow: none !important; }
+
+/* ===== HomeFold · editorial opbouw zoals /hoe-het-werkt, maar hero-variant === */
+
+.homefold-wrap{
+  position: relative;
+  isolation: isolate;
+}
+
+/* Zachte premium background-glow – stil, tokens-first */
+.homefold-wrap::before{
+  content:"";
+  position:absolute;
+  inset: 0 -5vw -10% -5vw;
+  background:
+    radial-gradient(120% 100% at 15% 8%,
+      color-mix(in oklab, var(--ff-color-primary-700) 10%, transparent) 0%,
+      transparent 60%)
+    ,
+    radial-gradient(100% 100% at 92% 20%,
+      color-mix(in oklab, var(--color-accent) 12%, transparent) 0%,
+      transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Grid layout – gelijk aan /hoe-het-werkt header (copy dominant) */
+.homefold-grid{
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 2rem);
+  grid-template-columns: 1fr;        /* mobiel */
+  align-items: center;
+  overflow: visible;
+}
+@media (min-width: 980px){
+  .homefold-grid{ grid-template-columns: 1.55fr .45fr; }
+}
+@media (min-width: 1440px){
+  .homefold-grid{ grid-template-columns: 1.65fr .35fr; }
+}
+
+/* Editorial header typografie (gedeelde sectie-stijl) */
+.section-header .kicker{
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .35rem .6rem; border-radius: 9999px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, white);
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 24%, var(--color-border));
+  color: color-mix(in oklab, var(--ff-color-primary-700), black 10%);
+  box-shadow: var(--shadow-soft);
+}
