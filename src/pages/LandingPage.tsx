@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
-import Hero from "@/components/landing/Hero";
+import HeroStacked from "@/components/landing/HeroStacked";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
 
@@ -17,18 +17,22 @@ const LandingPage: React.FC = () => {
         preloadImages={["/images/hero/main.jpg"]}
       />
 
-      {/* Hero met art-directed focal point (pas aan naargelang je beeld) */}
-      <Hero
-        focal="50% 35%"
-        onCTAClick={() => navigate("/onboarding")}
-        onSecondaryClick={() => navigate("/results")}
-      />
-
-      {/* How it works */}
-      <HowItWorksEditorial
+      {/* HERO — stacked: copy/CTA's/chips, daaronder groot beeld */}
+      <HeroStacked
+        focal="50% 38%"
         onStart={() => navigate("/onboarding")}
         onExample={() => navigate("/results")}
       />
+
+      {/* How it works */}
+      <section className="py-16 bg-[var(--color-bg)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <HowItWorksEditorial
+            onStart={() => navigate("/onboarding")}
+            onExample={() => navigate("/results")}
+          />
+        </div>
+      </section>
 
       {/* Social proof */}
       <section className="py-16 bg-white">

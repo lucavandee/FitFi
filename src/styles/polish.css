@@ -2270,6 +2270,115 @@
 .hero-wrap + .ff-section,
 .hero-wrap + section{ border-top: 0 !important; box-shadow: none !important; }
 
+/* === HERO · STACKED (copy + chips, beeld eronder — premium editorial) ====== */
+
+.hero-stack-wrap{ position: relative; isolation: isolate; }
+.hero-stack-wrap::before{
+  content:"";
+  position:absolute;
+  inset: 0 -5vw -8% -5vw;
+  background:
+    radial-gradient(120% 100% at 14% 12%,
+      color-mix(in oklab, var(--ff-color-primary-700) 10%, transparent) 0%,
+      transparent 60%)
+    ,
+    radial-gradient(100% 100% at 88% 22%,
+      color-mix(in oklab, var(--color-accent) 12%, transparent) 0%,
+      transparent 70%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Layout: één kolom; royale witte ruimte */
+.hero-stack{
+  display: grid;
+  gap: clamp(1rem, 2.8vw, 2rem);
+}
+
+/* Typografie — dominant maar rustig */
+.stack-kicker{
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .35rem .6rem; border-radius: 9999px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, white);
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 24%, var(--color-border));
+  color: color-mix(in oklab, var(--ff-color-primary-700), black 10%);
+  box-shadow: var(--shadow-soft);
+}
+.stack-title{
+  margin-top: .25rem;
+  font-size: clamp(2.2rem, 3.2vw + 1rem, 3.8rem);
+  line-height: 1.12;
+  letter-spacing: -0.012em;
+}
+.stack-title::after{
+  content:"";
+  display:block;
+  width:min(140px, 24%);
+  height:2px;
+  margin-top:.65rem;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 60%, var(--color-accent));
+  border-radius: 1px;
+}
+.stack-lead{
+  margin-top:.6rem;
+  line-height:1.7;
+  max-width: 62ch;
+}
+
+/* CTA's + usp-rail */
+.stack-head .cluster{ margin-top:.85rem; gap:.6rem; }
+.stack-head .cta-raise{ box-shadow: var(--shadow-soft); }
+@media (max-width: 520px){ .stack-head .cluster .btn{ width:100%; } }
+
+.usp-rail{
+  display:flex; flex-wrap:wrap; gap:.5rem .6rem;
+  margin-top:.8rem; padding:0; list-style:none;
+}
+.usp-chip{
+  padding:.35rem .6rem; border-radius:9999px;
+  background: color-mix(in oklab, var(--color-accent) 10%, var(--color-surface));
+  border:1px solid var(--color-border);
+  color:var(--color-text); font-weight:600; letter-spacing:.01em; font-size:.9rem;
+}
+
+/* Groot beeld ONDER de chips — nette panel look + royale spacing */
+.stack-media{
+  margin-top: clamp(1.2rem, 3.2vw, 2.2rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+
+  /* maatvoering: groot maar gecontroleerd */
+  width: 100%;
+  max-width: min(1120px, 100%);
+  /* aspect: rustig op mobiel (verticaler), breder op desktop */
+  aspect-ratio: 4 / 5;
+}
+@media (min-width: 900px){ .stack-media{ aspect-ratio: 16 / 9; } }
+@media (min-width: 1440px){
+  .stack-media{
+    aspect-ratio: 16 / 9;
+    /* subtiele overscan binnen de container voor premium presence */
+    transform: scale(1.06);
+    transform-origin: center;
+  }
+}
+
+.stack-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-object-position, 50% 38%);
+  filter: saturate(.96) contrast(.98);
+}
+
+/* Overgang naar volgende sectie clean (geen haarlijn) */
+.hero-stack-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.hero-stack-wrap + .ff-section,
+.hero-stack-wrap + section{ border-top:0 !important; box-shadow:none !important; }
 /* ===== HomeFold · editorial opbouw zoals /hoe-het-werkt, maar hero-variant === */
 
 .homefold-wrap{
