@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
-import Hero from "@/components/landing/Hero";
+import HomeFold from "@/components/landing/HomeFold";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
 
@@ -17,21 +17,25 @@ const LandingPage: React.FC = () => {
         preloadImages={["/images/hero/main.jpg"]}
       />
 
-      {/* Hero met art-directed focal point (pas aan naargelang je beeld) */}
-      <Hero
+      {/* Fold opgebouwd als editorial header + media (consistent met /hoe-het-werkt, maar hero-variant) */}
+      <HomeFold
         focal="50% 35%"
-        onCTAClick={() => navigate("/onboarding")}
-        onSecondaryClick={() => navigate("/results")}
-      />
-
-      {/* How it works */}
-      <HowItWorksEditorial
         onStart={() => navigate("/onboarding")}
         onExample={() => navigate("/results")}
       />
 
-      {/* Social proof */}
+      {/* How-it-Works (identiek ritme aan de pagina, zodat de overgang naadloos voelt) */}
       <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <HowItWorksEditorial
+            onStart={() => navigate("/onboarding")}
+            onExample={() => navigate("/results")}
+          />
+        </div>
+      </section>
+
+      {/* Social proof (rustig, editorial quotes) */}
+      <section className="py-16 bg-[var(--color-bg)]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <SocialProofEditorial />
         </div>

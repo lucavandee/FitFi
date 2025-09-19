@@ -2269,3 +2269,155 @@
 /* Veiligheid: geen "haar" tussen hero en volgende sectie */
 .hero-wrap + .ff-section,
 .hero-wrap + section{ border-top: 0 !important; box-shadow: none !important; }
+
+/* ===== HomeFold · editorial opbouw zoals /hoe-het-werkt, maar hero-variant === */
+
+.homefold-wrap{
+  position: relative;
+  isolation: isolate;
+}
+
+/* Zachte premium background-glow – stil, tokens-first */
+.homefold-wrap::before{
+  content:"";
+  position:absolute;
+  inset: 0 -5vw -10% -5vw;
+  background:
+    radial-gradient(120% 100% at 15% 8%,
+      color-mix(in oklab, var(--ff-color-primary-700) 10%, transparent) 0%,
+      transparent 60%)
+    ,
+    radial-gradient(100% 100% at 92% 20%,
+      color-mix(in oklab, var(--color-accent) 12%, transparent) 0%,
+      transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Grid layout – gelijk aan /hoe-het-werkt header (copy dominant) */
+.homefold-grid{
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 2rem);
+  grid-template-columns: 1fr;        /* mobiel */
+  align-items: center;
+  overflow: visible;
+}
+@media (min-width: 980px){
+  .homefold-grid{ grid-template-columns: 1.55fr .45fr; }
+}
+@media (min-width: 1440px){
+  .homefold-grid{ grid-template-columns: 1.65fr .35fr; }
+}
+
+/* Editorial header typografie (gedeelde sectie-stijl) */
+.section-header .kicker{
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .35rem .6rem; border-radius: 9999px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, white);
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 24%, var(--color-border));
+  color: color-mix(in oklab, var(--ff-color-primary-700), black 10%);
+  box-shadow: var(--shadow-soft);
+}
+.section-header .section-title{
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  font-size: clamp(2.4rem, 3.1vw + 1rem, 3.6rem);
+  margin-top: .25rem;
+}
+.section-header .section-title::after{
+  content:"";
+  display:block;
+  width:min(140px, 24%);
+  height:2px;
+  margin-top:.65rem;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 60%, var(--color-accent));
+  border-radius: 1px;
+}
+.section-header .section-intro{
+  margin-top: .55rem;
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+/* CTA-cluster + USP-rail (zelfde feel als op HW-pagina) */
+.section-header .cluster{ margin-top: .75rem; gap: .6rem; }
+.section-header .cta-raise{ box-shadow: var(--shadow-soft); transform: translateZ(0); }
+.section-header .cta-raise:hover{ transform: translateY(-1px); }
+@media (max-width: 520px){ .section-header .cluster .btn{ width: 100%; } }
+
+.usp-rail{
+  display: flex; flex-wrap: wrap; gap: .5rem .5rem;
+  margin-top: .75rem; padding: 0; list-style: none;
+}
+.usp-chip{
+  padding: .35rem .55rem; border-radius: 9999px;
+  font-weight: 600; letter-spacing: .01em; font-size: .875rem;
+  background: color-mix(in oklab, var(--color-accent) 10%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* Media: XL overscan (editorial, wow) */
+.homefold-media{
+  position: relative; border-radius: var(--radius-lg);
+  overflow: hidden; background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border); box-shadow: var(--shadow-soft);
+  aspect-ratio: 4 / 5; /* mobiel */
+}
+.homefold-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-object-position, 50% 35%);
+  filter: saturate(.95) contrast(.98);
+}
+
+/* Desktop/ultrawide – groter dan container (overscan) */
+:root{
+  --hf-scale-desktop: 1.55;
+  --hf-shift-desktop: 10%;
+  --hf-scale-ultra:   1.80;
+  --hf-shift-ultra:   14%;
+}
+@media (min-width: 1100px){
+  .homefold-media{
+    aspect-ratio: 3 / 2;
+    transform-origin: center right;
+    transform: scale(var(--hf-scale-desktop)) translateX(var(--hf-shift-desktop));
+    will-change: transform;
+  }
+}
+@media (min-width: 1440px){
+  .homefold-media{
+    aspect-ratio: 16 / 10;
+    transform: scale(var(--hf-scale-ultra)) translateX(var(--hf-shift-ultra));
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width:1100px){
+  .homefold-media{ animation: hfFloat 14s ease-in-out infinite alternate; }
+  @keyframes hfFloat{
+    from{ transform: scale(calc(var(--hf-scale-desktop) * 0.98))
+                  translateX(calc(var(--hf-shift-desktop) - 2%)); }
+    to  { transform: scale(calc(var(--hf-scale-desktop) * 1.02))
+                  translateX(calc(var(--hf-shift-desktop) + 1%))
+                  translateY(-0.5%); }
+  }
+}
+
+/* Overgang naar volgende sectie: clean (geen haarlijn) */
+.homefold-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.homefold-wrap + .ff-section,
+.homefold-wrap + section{
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* How-it-Works micro-polish (zelfde feel als /hoe-het-werkt) */
+.hiw-grid{ gap: clamp(.9rem, 2.2vw, 1.15rem); }
+.hiw-grid .card-title{ letter-spacing: -0.006em; line-height: 1.25; }
+.hiw-grid .card-text{ line-height: 1.68; }
+
+/* Kaarten zachte hover (premium micro-interactie) */
+.card.card-hover{ transition: transform .18s ease, box-shadow .18s ease; }
+.card.card-hover:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft); }
