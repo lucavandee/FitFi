@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
-import HomeFold from "@/components/landing/HomeFold";
+import HeroSplit from "@/components/landing/HeroSplit";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
 
@@ -17,15 +17,15 @@ const LandingPage: React.FC = () => {
         preloadImages={["/images/hero/main.jpg"]}
       />
 
-      {/* Fold opgebouwd als editorial header + media (consistent met /hoe-het-werkt, maar hero-variant) */}
-      <HomeFold
-        focal="50% 35%"
+      {/* Hero: split layout zoals /hoe-het-werkt, maar hero-variant */}
+      <HeroSplit
+        focal="50% 38%"
         onStart={() => navigate("/onboarding")}
         onExample={() => navigate("/results")}
       />
 
-      {/* How-it-Works (identiek ritme aan de pagina, zodat de overgang naadloos voelt) */}
-      <section className="py-16 bg-white">
+      {/* How it works */}
+      <section className="py-16 bg-[var(--color-bg)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HowItWorksEditorial
             onStart={() => navigate("/onboarding")}
@@ -34,8 +34,8 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Social proof (rustig, editorial quotes) */}
-      <section className="py-16 bg-[var(--color-bg)]">
+      {/* Social proof */}
+      <section className="py-16 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <SocialProofEditorial />
         </div>
