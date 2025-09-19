@@ -1983,6 +1983,119 @@
 .pressbelt{ margin-top: clamp(.9rem, 2vw, 1.3rem); }
 /* === Premium Hero (dominantie, chip, USP-rail, glow) ====================== */
 
+/* === HOMEPAGE WOW — XL hero, editorial glow & dominance =================== */
+/* 0) Hero basis: we isoleren de sectie en geven een zachte premium achtergrond */
+.hero-wrap{
+  position: relative;
+  isolation: isolate; /* glow blijft binnen de sectie */
+}
+.hero-wrap::before{
+  content:"";
+  position:absolute;
+  inset: 0 -5vw -10% -5vw; /* klein overscan voor mooie randen */
+  background:
+    radial-gradient(120% 100% at 15% 10%,
+      color-mix(in oklab, var(--ff-color-primary-700) 10%, transparent) 0%,
+      transparent 60%)
+    ,
+    radial-gradient(100% 100% at 90% 20%,
+      color-mix(in oklab, var(--color-accent) 12%, transparent) 0%,
+      transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 1) Hero type: kop moet winnen van alles eronder */
+.hero-wrap .section-title{
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  font-size: clamp(2.4rem, 3.1vw + 1rem, 3.6rem);
+  margin-top: .25rem;
+}
+/* editorial accent-underline onder de kop (heel subtiel) */
+.hero-copy .section-title::after{
+  content:"";
+  display:block;
+  width:min(120px, 22%);
+  height:2px;
+  margin-top:.65rem;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 60%, var(--color-accent));
+  border-radius: 1px;
+}
+.hero-wrap .lead{
+  margin-top: .55rem;
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+/* 2) Kicker-chip (al aanwezig) blijft premium en stil — geen wijzig nodig */
+/* 3) Grid: copykolom > mediakolom (hiërarchie) */
+.hero-grid{
+  display:grid;
+  gap: clamp(1rem, 2.6vw, 2rem);
+  grid-template-columns: 1fr;
+  align-items: center;
+  overflow: visible; /* maakt overscan zichtbaar */
+}
+@media (min-width: 980px){
+  .hero-grid{ grid-template-columns: 1.55fr .45fr; }
+}
+@media (min-width: 1440px){
+  .hero-grid{ grid-template-columns: 1.65fr .35fr; }
+}
+
+/* 4) XL hero-beeld met overscan (niet-layout: transform) */
+.hero-media{
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  aspect-ratio: 4 / 5; /* mobiel rustig */
+}
+.hero-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-object-position, 50% 35%);
+  filter: saturate(.95) contrast(.98); /* beeld iets stiller dan copy */
+}
+
+@media (min-width: 1100px){
+  .hero-media{ aspect-ratio: 4 / 3; transform: scale(1.25) translateX(8%); transform-origin: center right; will-change: transform; }
+}
+@media (min-width: 1440px){
+  .hero-media{ aspect-ratio: 16 / 10; transform: scale(1.35) translateX(12%); }
+}
+/* kleine, rustige parallax/float voor luxe (respecteert RDM) */
+@media (prefers-reduced-motion: no-preference) and (min-width:1100px){
+  .hero-media{ animation: heroFloat 12s ease-in-out infinite alternate; }
+  @keyframes heroFloat{
+    from{ transform: scale(1.23) translateX(7%); }
+    to  { transform: scale(1.30) translateX(9%) translateY(-0.6%); }
+  }
+}
+
+/* 5) CTA's + USP-rail (al aanwezig) blijven compact; nothing to change here */
+
+/* 6) Overgang naar volgende sectie blijft clean (geen zichtbare haarlijn) */
+.hero-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.hero-wrap + .ff-section,
+.hero-wrap + section{
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 7) How-it-Works micro-polish (rustig, editorial) */
+.hiw-grid{ gap: clamp(.9rem, 2.2vw, 1.15rem); }
+.hiw-grid .card-title{ letter-spacing: -0.006em; line-height: 1.25; }
+.hiw-grid .card-text{ line-height: 1.68; }
+
+/* 8) Kaarten mogen zacht liften bij hover (premium micro-interactie) */
+.card.card-hover{ transition: transform .18s ease, box-shadow .18s ease; }
+.card.card-hover:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+
 /* 1) Dominante titel (hero moet winnen van alle andere koppen) */
 .hero-wrap .section-title{
   letter-spacing: -0.012em;
