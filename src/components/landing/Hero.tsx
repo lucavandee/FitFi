@@ -3,25 +3,20 @@ import Button from "@/components/ui/Button";
 import SmartImage from "@/components/media/SmartImage";
 
 type Props = {
-  /** Primary CTA */
   onCTAClick?: () => void;
-  /** Secondary CTA (optioneel) */
   onSecondaryClick?: () => void;
-  /** Object-position (bv. "50% 35%") om de visuele focus te sturen */
+  /** CSS object-position, bv. "50% 35%" om het focuspunt van de afbeelding te sturen */
   focal?: string;
-  /** Optioneel: SmartImage id van het hero-beeld (we gebruiken de bestaande asset-lijn) */
   imageId?: string;
-  /** Optioneel: alternatieve alt-tekst voor het hero-beeld */
   imageAlt?: string;
-  /** Toon of verberg de secundaire CTA */
   showSecondary?: boolean;
 };
 
 const Hero: React.FC<Props> = ({
   onCTAClick,
   onSecondaryClick,
-  focal = "50% 40%",
-  imageId = "hero-main", // gebruik jullie bestaande SmartImage/asset id
+  focal = "50% 35%",
+  imageId = "hero-main",
   imageAlt = "Voorbeeld van het AI Style Report in een rustige interface",
   showSecondary = true,
 }) => {
@@ -35,9 +30,10 @@ const Hero: React.FC<Props> = ({
             Ontdek wat jouw stijl over je zegt
           </h1>
           <p className="lead">
-            Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks —
-            privacy-first, zonder ruis.
+            Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en
+            shoplinks — privacy-first, zonder ruis.
           </p>
+
           <div className="cluster mt-3">
             <Button variant="primary" size="lg" className="cta-raise" onClick={onCTAClick}>
               Start gratis
@@ -48,6 +44,14 @@ const Hero: React.FC<Props> = ({
               </Button>
             )}
           </div>
+
+          {/* USP-rail (compacte chips onder de CTA's) */}
+          <ul className="usp-rail" aria-label="Belangrijkste voordelen">
+            <li className="usp-chip">100% gratis</li>
+            <li className="usp-chip">Klaar in 2 min</li>
+            <li className="usp-chip">Outfits + shoplinks</li>
+            <li className="usp-chip">Privacy-first</li>
+          </ul>
         </div>
 
         {/* MEDIA */}
@@ -55,21 +59,13 @@ const Hero: React.FC<Props> = ({
           className="hero-media"
           style={
             {
-              // CSS var voor object-position (kan door polish.css worden opgepakt)
               // @ts-expect-error CSS custom property
               "--hero-object-position": focal,
             } as React.CSSProperties
           }
         >
-          <SmartImage
-            id={imageId}
-            kind="generic"
-            alt={imageAlt}
-            className="hero-img"
-          />
-          <figcaption className="sr-only">
-            {imageAlt}
-          </figcaption>
+          <SmartImage id={imageId} kind="generic" alt={imageAlt} className="hero-img" />
+          <figcaption className="sr-only">{imageAlt}</figcaption>
         </figure>
       </div>
     </section>

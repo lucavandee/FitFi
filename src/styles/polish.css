@@ -1981,3 +1981,100 @@
 /* 7) Social Proof: iets meer lucht tov persbelt */
 .sp-grid{ gap: clamp(1rem, 2.2vw, 1.25rem); }
 .pressbelt{ margin-top: clamp(.9rem, 2vw, 1.3rem); }
+/* === Premium Hero (dominantie, chip, USP-rail, glow) ====================== */
+
+/* 1) Dominante titel (hero moet winnen van alle andere koppen) */
+.hero-wrap .section-title{
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  font-size: clamp(2.2rem, 2.8vw + 1rem, 3.25rem);
+  margin-top: .25rem;
+}
+.hero-wrap .lead{
+  margin-top: .55rem;
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+/* 2) Kicker als premium chip (kleurfamilie = Start-cta) */
+.hero-wrap .kicker{
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .35rem .6rem; border-radius: 9999px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, white);
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 24%, var(--color-border));
+  color: color-mix(in oklab, var(--ff-color-primary-700), black 10%);
+  box-shadow: var(--shadow-soft);
+}
+
+/* 3) Grid: copy > media (heldere hiërarchie) */
+.hero-grid{
+  display: grid; gap: clamp(1rem, 2.6vw, 2rem);
+  grid-template-columns: 1fr; align-items: center;
+}
+@media (min-width: 980px){  .hero-grid{ grid-template-columns: 1.45fr .55fr; } }
+@media (min-width: 1440px){ .hero-grid{ grid-template-columns: 1.55fr .45fr; } }
+
+/* 4) CTA-cluster */
+.hero-wrap .cluster{ margin-top: .75rem; gap: .6rem; }
+.hero-wrap .cta-raise{ box-shadow: var(--shadow-soft); transform: translateZ(0); }
+.hero-wrap .cta-raise:hover{ transform: translateY(-1px); }
+@media (max-width: 520px){ .hero-wrap .cluster .btn{ width: 100%; } }
+
+/* 5) USP-rail (lichte, stille chips) */
+.usp-rail{
+  display: flex; flex-wrap: wrap; gap: .5rem .5rem;
+  margin-top: .75rem; padding: 0; list-style: none;
+}
+.usp-chip{
+  padding: .35rem .55rem; border-radius: 9999px;
+  font-weight: 600; letter-spacing: .01em; font-size: .875rem;
+  background: color-mix(in oklab, var(--color-accent) 10%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* 6) Media met zachte glow (premium, zonder te schreeuwen) */
+.hero-media{
+  position: relative; overflow: hidden; border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid var(--color-border); box-shadow: var(--shadow-soft);
+  aspect-ratio: 4/5;
+}
+@media (min-width: 900px){  .hero-media{ aspect-ratio: 5/4; } }
+@media (min-width: 1440px){ .hero-media{ aspect-ratio: 16/10; } }
+
+.hero-media::after{
+  content: "";
+  position: absolute; inset: -20% -20% -30% -20%;
+  background:
+    radial-gradient(60% 60% at 70% 20%,
+      color-mix(in oklab, var(--ff-color-primary-700) 14%, transparent) 0%,
+      transparent 60%)
+    ,
+    radial-gradient(50% 50% at 20% 80%,
+      color-mix(in oklab, var(--color-accent) 18%, transparent) 0%,
+      transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+.hero-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-object-position, 50% 35%);
+  filter: saturate(.95) contrast(.98);
+}
+
+/* 7) Hero → volgende sectie: geen haarlijn; overgang clean */
+.hero-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
+.hero-wrap + .ff-section, .hero-wrap + section{ border-top: 0 !important; box-shadow: none !important; }
+
+/* 8) Kaarten (globale micro-interactie: subtiele lift) */
+.card.card-hover{ transition: transform .18s ease, box-shadow .18s ease; }
+.card.card-hover:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+
+/* 9) How-it-Works: rustige microtypografie */
+.hiw-grid{ gap: clamp(.8rem, 2.2vw, 1.1rem); }
+.hiw-grid .card-title{ letter-spacing: -0.006em; line-height: 1.25; }
+.hiw-grid .card-text{ line-height: 1.68; }
