@@ -13,9 +13,7 @@ const Hero: React.FC<Props> = ({ onCTAClick, onExampleClick }) => {
         <div className="lg:col-span-7">
           <p className="kicker">Gratis AI Style Report</p>
 
-          <h1 className="section-title">
-            Ontdek wat jouw stijl over je zegt
-          </h1>
+          <h1 className="section-title">Ontdek wat jouw stijl over je zegt</h1>
 
           <p className="section-intro">
             Beantwoord 6 korte vragen en ontvang direct een persoonlijk
@@ -50,21 +48,13 @@ const Hero: React.FC<Props> = ({ onCTAClick, onExampleClick }) => {
           </div>
         </div>
 
-        {/* Visual (zoals live: groot, rechts, met "plinth") */}
+        {/* Visual — tokens-first gradient card + plinth (zoals live) */}
         <div className="lg:col-span-5">
           <div className="relative w-full ml-auto max-w-[680px]">
-            <img
-              src="/images/hero/main.jpg"
-              alt="Voorbeeld van AI-stijlrapport met outfits in FitFi"
-              width={960}
-              height={720}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              sizes="(min-width:1280px) 640px, (min-width:1024px) 560px, 90vw"
-              className="block w-full h-auto aspect-[4/3] rounded-[var(--radius-2xl)] shadow-[var(--shadow-soft)] object-cover"
+            <div
+              aria-hidden="true"
+              className="hero-gradient block w-full h-auto aspect-[4/3] rounded-[var(--radius-2xl)] shadow-[var(--shadow-soft)]"
             />
-            {/* zachte "plinth" onder het beeld, gelijk aan live uitstraling */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -bottom-3 left-1/2 h-3 w-[82%] -translate-x-1/2 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
