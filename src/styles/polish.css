@@ -2893,6 +2893,14 @@
 @media (min-width: 1024px){
   .hero-media-wrapper{ margin-inline-end: 0; }
 }
+
+/* === Hero gradient card (tokens-first, geen hex) ========================= */
+.hero-gradient{
+  background-image:
+    radial-gradient(120% 120% at 20% 20%, color-mix(in oklab, var(--ff-color-primary-600) 88%, transparent) 0%, transparent 60%),
+    linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-900));
+  background-blend-mode: screen, normal;
+}
 /* === Chips (FAQ filters) ================================================== */
 .chip{
   display:inline-flex; align-items:center; gap:.4rem;
