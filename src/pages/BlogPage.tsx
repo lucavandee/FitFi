@@ -2,6 +2,7 @@ import React from "react";
 import Seo from "@/components/Seo";
 import BlogHeader from "@/components/blog/BlogHeader";
 import Footer from "@/components/layout/Footer";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const posts = [
   { title: "Wat je silhouet écht zegt over je outfitkeuzes", excerpt: "De 4 meest voorkomende silhouetten en hoe stof & snit het verschil maken.", href: "/blog/silhouet-outfits" },
@@ -11,7 +12,9 @@ const posts = [
 
 const BlogPage: React.FC = () => {
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="Blog — Styling zonder ruis | FitFi"
         description="Korte, heldere stukken over silhouet, materiaal en kleurtemperatuur. Rustig en direct toepasbaar."
@@ -42,7 +45,8 @@ const BlogPage: React.FC = () => {
       </section>
 
       <Footer />
-    </main>
+      </main>
+    </>
   );
 };
 

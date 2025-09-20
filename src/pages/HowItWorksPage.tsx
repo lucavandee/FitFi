@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import Footer from "@/components/layout/Footer";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const HowItWorksPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="Hoe het werkt — In 3 rustige stappen | FitFi"
         description="Beantwoord 6 korte vragen en ontvang direct je AI Style Report met outfits en shoplinks — privacy-first, zonder ruis."
@@ -34,7 +37,8 @@ const HowItWorksPage: React.FC = () => {
       </section>
 
       <Footer />
-    </main>
+      </main>
+    </>
   );
 };
 

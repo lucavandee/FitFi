@@ -5,12 +5,15 @@ import HeroStacked from "@/components/landing/HeroStacked";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
 import Footer from "@/components/layout/Footer";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="AI Style Report — Ontdek wat jouw stijl over je zegt | FitFi"
         description="Krijg je gratis AI Style Report in 2 minuten: ontdek wat je kledingkeuzes zeggen over je persoonlijkheid en ontvang passende outfits met shoplinks."
@@ -40,7 +43,8 @@ const LandingPage: React.FC = () => {
       </section>
 
       <Footer />
-    </main>
+      </main>
+    </>
   );
 };
 

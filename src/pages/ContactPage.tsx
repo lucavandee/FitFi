@@ -1,10 +1,13 @@
 import React from "react";
 import Seo from "@/components/Seo";
 import Footer from "@/components/layout/Footer";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const ContactPage: React.FC = () => {
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
         title="Contact — We helpen je graag | FitFi"
         description="Vragen over het AI Style Report, privacy of samenwerkingen? Stuur ons een bericht — we reageren snel en helder."
@@ -114,7 +117,8 @@ const ContactPage: React.FC = () => {
       </section>
 
       <Footer />
-    </main>
+      </main>
+    </>
   );
 };
 

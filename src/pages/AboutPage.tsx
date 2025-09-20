@@ -5,28 +5,33 @@ import AboutHero from "@/components/about/AboutHero";
 import TeamSection from "@/components/about/TeamSection";
 import Timeline from "@/components/about/Timeline";
 import Footer from "@/components/layout/Footer";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const AboutPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-      <Seo
-        title="Over FitFi — AI-gestuurde styling zonder ruis"
-        description="Wij combineren computer vision met een menselijk oog voor stijl. Privacy-first advies dat werkt voor silhouet, materialen en kleurtinten."
-        canonical="https://fitfi.ai/over-ons"
-      />
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+        <Seo
+          title="Over FitFi — AI-gestuurde styling zonder ruis"
+          description="Wij combineren computer vision met een menselijk oog voor stijl. Privacy-first advies dat werkt voor silhouet, materialen en kleurtinten."
+          canonical="https://fitfi.ai/over-ons"
+          preloadImages={["/images/hero/main.jpg"]}
+        />
 
-      <AboutHero
-        onStart={() => navigate("/onboarding")}
-        onExample={() => navigate("/results")}
-      />
+        <AboutHero
+          onStart={() => navigate("/onboarding")}
+          onExample={() => navigate("/results")}
+        />
 
-      <TeamSection />
-      <Timeline />
+        <TeamSection />
+        <Timeline />
 
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </>
   );
 };
 
