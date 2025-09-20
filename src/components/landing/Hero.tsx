@@ -8,7 +8,7 @@ type Props = {
 const Hero: React.FC<Props> = ({ onCTAClick, onExampleClick }) => {
   return (
     <section className="ff-section bg-[var(--color-bg)]">
-      <div className="ff-container grid items-center gap-8 lg:grid-cols-12">
+      <div className="ff-container grid items-center gap-10 lg:grid-cols-12">
         {/* Copy */}
         <div className="lg:col-span-7">
           <p className="kicker">Gratis AI Style Report</p>
@@ -50,10 +50,9 @@ const Hero: React.FC<Props> = ({ onCTAClick, onExampleClick }) => {
           </div>
         </div>
 
-        {/* Visual */}
+        {/* Visual (zoals live: groot, rechts, met "plinth") */}
         <div className="lg:col-span-5">
-          <div className="hero-media-wrapper">
-            {/* Decoratief, maar informatief genoeg voor screenreaders */}
+          <div className="relative w-full ml-auto max-w-[680px]">
             <img
               src="/images/hero/main.jpg"
               alt="Voorbeeld van AI-stijlrapport met outfits in FitFi"
@@ -62,8 +61,13 @@ const Hero: React.FC<Props> = ({ onCTAClick, onExampleClick }) => {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              sizes="(min-width:1280px) 600px, (min-width:1024px) 520px, 90vw"
-              className="w-full h-auto aspect-[4/3] rounded-[var(--radius-2xl)] shadow-[var(--shadow-soft)] object-cover"
+              sizes="(min-width:1280px) 640px, (min-width:1024px) 560px, 90vw"
+              className="block w-full h-auto aspect-[4/3] rounded-[var(--radius-2xl)] shadow-[var(--shadow-soft)] object-cover"
+            />
+            {/* zachte "plinth" onder het beeld, gelijk aan live uitstraling */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-3 left-1/2 h-3 w-[82%] -translate-x-1/2 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
             />
           </div>
         </div>
