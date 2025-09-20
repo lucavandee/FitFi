@@ -12,7 +12,7 @@ const members: Member[] = [
     name: "Lara",
     role: "UX & Brand",
     location: "Rotterdam",
-    bio: "Verantwoordelijk voor het rustige, premium design-systeem en de editorial flows.",
+    bio: "Ontwerpt het rustige, premium design-systeem en de editorial flows.",
   },
   {
     name: "Milan",
@@ -40,30 +40,29 @@ const TeamSection: React.FC = () => {
   return (
     <section className="ff-section" aria-labelledby="team-title">
       <div className="ff-container">
-        <header className="section-header mb-4">
+        <header className="section-header">
           <p className="kicker">Team</p>
           <h2 id="team-title" className="section-title">Mensen achter FitFi</h2>
           <p className="section-intro">
-            Een klein team met een gezamenlijk kompas: duidelijke stijl zonder ruis — met respect voor privacy.
+            Klein team, groot kompas: duidelijke stijl zonder ruis — met respect voor privacy.
           </p>
         </header>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="team-grid">
           {members.map((m) => (
-            <article
-              key={m.name}
-              className="card card-hover p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
-            >
-              <div className="flex items-center gap-4">
-                <div className="avatar-chip" aria-hidden>
+            <article key={m.name} className="team-card" aria-label={`${m.name}, ${m.role}`}>
+              <div className="team-meta">
+                <div className="avatar-ring" aria-hidden>
                   <span className="avatar-initials">{initials(m.name)}</span>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold leading-tight">{m.name}</h3>
-                  <p className="opacity-80">{m.role}{m.location ? ` — ${m.location}` : ""}</p>
+                  <h3 className="team-name">{m.name}</h3>
+                  <p className="team-role">
+                    {m.role}{m.location ? ` — ${m.location}` : ""}
+                  </p>
                 </div>
               </div>
-              <p className="leading-7 mt-4">{m.bio}</p>
+              <p className="team-bio">{m.bio}</p>
             </article>
           ))}
         </div>
