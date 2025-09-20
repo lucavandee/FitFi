@@ -2829,6 +2829,34 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+
+/* === Footer · focus & interactie ========================================= */
+.site-footer a:focus-visible{
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: .4rem;
+}
+
+/* Zorg dat de overgang naar de footer altijd lucht heeft (ook als de sectie
+   erboven weinig padding heeft). Dit stapelt netjes met bestaande margin-top. */
+.ff-section + .site-footer{
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+/* Subtielere hover in de footer, consistent met linkstijl site-breed */
+.footer-list a,
+.footer-legal-links a{
+  text-underline-offset: 4px;
+}
+.footer-list a:hover,
+.footer-legal-links a:hover{
+  text-decoration: underline;
+}
+
+/* Laatste sectie in een pagina: iets meer bodemruimte voor adem */
+.ff-section:last-of-type{
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
 /* === Chips (FAQ filters) ================================================== */
 .chip{
   display:inline-flex; align-items:center; gap:.4rem;
