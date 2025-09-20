@@ -2884,6 +2884,15 @@
 @media (min-width: 1024px){
   .hero-media-wrapper{ margin-inline-end: 0; }
 }
+
+/* === Hero media fix: groot, rustig, CLS-vrij ============================= */
+.hero-media-wrapper{
+  max-width: clamp(420px, 36vw, 680px);
+  margin-inline: auto;
+}
+@media (min-width: 1024px){
+  .hero-media-wrapper{ margin-inline-end: 0; }
+}
 /* === Chips (FAQ filters) ================================================== */
 .chip{
   display:inline-flex; align-items:center; gap:.4rem;
