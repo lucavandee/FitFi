@@ -1,60 +1,82 @@
 import React from "react";
-import { ExternalLink, ShoppingBag, List } from "lucide-react";
-import SmartImage from "@/components/media/SmartImage";
-import Button from "@/components/ui/Button";
-import Badge from "@/components/results/Badge";
-import type { Outfit } from "@/pages/ResultsPage";
+
+export type ShopLink = {
+  label: string;
+  href: string;
+};
+
+export type Outfit = {
+  id: string;
+  title: string;
+  imageUrl?: string;
+  items?: { name: string; note?: string }[];
+  shop?: ShopLink;
+};
 
 type Props = {
   outfit: Outfit;
-  onShop: () => void;
-  onViewItems: () => void;
 };
 
-const OutfitCard: React.FC<Props> = ({ outfit, onShop, onViewItems }) => {
-  const { title, season, colorTemp, archetype, explanation, items, imageId, priceHint } = outfit;
+const OutfitCard: React.FC<Props> = ({ outfit }) => {
+  const { title, imageUrl, items = [], shop } = outfit;
 
   return (
-    <article className="outfit-card" role="listitem">
+    <article className="card overflow-hidden h-full flex flex-col">
       {/* Visual */}
-      <div className="outfit-media">
-        <SmartImage
-          id={imageId ?? "outfit-generic"}
-          kind="generic"
-          alt={`Outfit: ${title}`}
-          className="h-full w-full object-cover"
-        />
+      <div className="relative">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={title}
+            width={960}
+            height={960}
+            decoding="async"
+            loading="lazy"
+            className="block w-full h-auto aspect-square object-cover"
+          />
+        ) : (
+          <div
+            aria-hidden
+            className="w-full aspect-square"
+            style={{
+              borderRadius: "calc(var(--radius-lg))",
+              background:
+                "linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-900))",
+              boxShadow: "var(--shadow-soft)",
+            }}
+          />
+        )}
       </div>
 
       {/* Body */}
-      <div className="outfit-body flow">
-        <h3 className="outfit-title">{title}</h3>
+      <div className="p-5 flex-1 flex flex-col">
+        <h3 className="text-base font-semibold mb-2">{title}</h3>
 
-        <div className="cluster gap-2">
-          <Badge tone="season">{season}</Badge>
-          <Badge tone="temp">{colorTemp}</Badge>
-          <Badge tone="arch">{archetype}</Badge>
-          {priceHint ? <Badge tone="neutral">{priceHint}</Badge> : null}
-        </div>
+        {items.length > 0 && (
+          <ul className="text-sm text-[var(--color-text-subtle)] space-y-1 mb-4">
+            {items.map((it, i) => (
+              <li key={`${it.name}-${i}`}>
+                <span className="font-medium text-[var(--color-text)]">{it.name}</span>
+                {it.note ? <span> — {it.note}</span> : null}
+              </li>
+            ))}
+          </ul>
+        )}
 
-        <p className="outfit-expl">{explanation}</p>
-
-        <ul className="outfit-items" aria-label="Items in deze outfit">
-          {items.map((it) => (
-            <li key={it}>{it}</li>
-          ))}
-        </ul>
-
-        <div className="outfit-cta cluster">
-          <Button variant="primary" size="md" className="cta-raise" onClick={onShop} aria-label="Shop deze outfit">
-            Shop outfit <ShoppingBag size={18} className="ml-2" aria-hidden />
-          </Button>
-          <Button variant="ghost" size="md" onClick={onViewItems} aria-label="Bekijk items van deze outfit">
-            Bekijk items <List size={18} className="ml-2" aria-hidden />
-          </Button>
-          <a href="#" className="share-link" aria-label="Deel deze outfit">
-            Delen <ExternalLink size={16} className="ml-1" aria-hidden />
-          </a>
+        <div className="mt-auto">
+          {shop ? (
+            <a
+              href={shop.href}
+              target="_blank"
+              rel="noopener noreferrer nofollow sponsored"
+              className="btn btn-ghost"
+              aria-label={`Shop: ${shop.label}`}
+            >
+              {shop.label}
+            </a>
+          ) : (
+            <div className="chip">Shoplink volgt</div>
+          )}
         </div>
       </div>
     </article>

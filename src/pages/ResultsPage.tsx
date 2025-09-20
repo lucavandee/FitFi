@@ -1,118 +1,130 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
-import OutfitCard from "@/components/results/OutfitCard";
-import OutfitSkeleton from "@/components/results/OutfitSkeleton";
-import Button from "@/components/ui/Button";
+import ResultsHeader from "@/components/results/ResultsHeader";
+import WhyItFits from "@/components/results/WhyItFits";
+import OutfitGrid from "@/components/results/OutfitGrid";
+import ResultsSkeleton from "@/components/results/ResultsSkeleton";
 
-export type Outfit = {
-  id: string;
-  title: string;
-  season: "lente" | "zomer" | "herfst" | "winter";
-  colorTemp: "koel" | "neutraal" | "warm";
-  archetype: "minimal" | "sportief" | "klassiek" | "creatief";
-  explanation: string;      // 1–2 zinnen waarom dit past
-  items: string[];          // high-level items in de outfit
-  imageId?: string;         // SmartImage id (optioneel; valt terug op Generic)
-  priceHint?: string;       // optioneel
-};
+type Outfit = React.ComponentProps<typeof OutfitGrid>["outfits"][number];
 
-const sampleOutfits: Outfit[] = [
+const mockOutfits: Outfit[] = [
   {
-    id: "look-01",
-    title: "Clean minimal — smart casual",
-    season: "lente",
-    colorTemp: "neutraal",
-    archetype: "minimal",
-    explanation:
-      "Strakke lijnen en mattere stoffen benadrukken je rechte schouders. Neutrale tinten houden het geheel rustig én veelzijdig.",
-    items: ["Wollen overshirt", "Merino crewneck", "Slim chino", "Minimal sneaker"],
-    imageId: "outfit-minimal-1",
-    priceHint: "€€",
+    id: "o1",
+    title: "Minimal modern (casual smart)",
+    items: [
+      { name: "Gebreide polo", note: "lichtgewicht, zacht" },
+      { name: "Tapered chino", note: "enkelvrij, clean" },
+      { name: "Suède sneaker", note: "warm grijs" },
+    ],
+    shop: { label: "Shop vergelijkbare items", href: "/#" },
   },
   {
-    id: "look-02",
-    title: "Sportief modern — laagjes",
-    season: "herfst",
-    colorTemp: "koel",
-    archetype: "sportief",
-    explanation:
-      "Technische laagjes leggen de nadruk op een V-silhouet zonder bulk. Koele blauwtinten matchen je kleurtemperatuur.",
-    items: ["Softshell jas", "Dryknit hoodie", "Tapered jogger", "Retro runner"],
-    imageId: "outfit-sport-1",
-    priceHint: "€–€€",
+    id: "o2",
+    title: "Soft monochrome (workday)",
+    items: [
+      { name: "Fijngebreide crew", note: "koel off-white" },
+      { name: "Wolmix pantalon", note: "rechte pijp" },
+      { name: "Leren loafer", note: "minimal buckle" },
+    ],
+    shop: { label: "Shop vergelijkbare items", href: "/#" },
   },
   {
-    id: "look-03",
-    title: "Klassiek met structuur",
-    season: "winter",
-    colorTemp: "warm",
-    archetype: "klassiek",
-    explanation:
-      "Warme camel-tinten en textuur (flanel, suède) voegen diepte toe en flatteren je huidtint — formeel én comfortabel.",
-    items: ["Flanellen blazer", "Oxford shirt", "Wollen pantalon", "Suède loafer"],
-    imageId: "outfit-classic-1",
-    priceHint: "€€€",
+    id: "o3",
+    title: "Athflow weekend",
+    items: [
+      { name: "Merino zip hoodie" },
+      { name: "Tech jogger", note: "mat, geen glans" },
+      { name: "Retro runner" },
+    ],
+    shop: { label: "Shop vergelijkbare items", href: "/#" },
   },
 ];
 
 const ResultsPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = React.useState(true);
+  // TODO: vervang later door echte data/loader
+  const isLoading = false;
 
-  React.useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 450); // gesimuleerd; in prod via fetch/react-query
-    return () => clearTimeout(t);
-  }, []);
+  const whyBullets = [
+    "Silhouet: je staat beter met een iets taps toelopende lijn i.p.v. skinny.",
+    "Materiaal: matte breisels en suède verzachten — glans vermijden.",
+    "Kleur: koele neutrale basis (off-white, grijsblauw, antraciet) werkt het best.",
+    "Archetype: modern-rustig; vermijd grote logo's en drukke contrasten.",
+  ];
 
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
       <Seo
-        title="Jouw AI Style Report — outfits die werken | FitFi"
-        description="Bekijk je gepersonaliseerde outfits met uitleg waarom ze werken voor je silhouet en kleurtemperatuur. Shop slimmer met FitFi."
+        title="Jouw AI Style Report | FitFi"
+        description="Je persoonlijke stijlprofiel met outfits en shoplinks — inclusief heldere uitleg waarom het past."
         canonical="https://fitfi.ai/results"
-        preloadImages={[]}
-        ogImage="/images/social/results-og.jpg"
       />
 
-      <section className="ff-section ff-container">
-        <header className="flow-lg">
-          <h1 className="section-title">Jouw outfits</h1>
-          <p className="text-[var(--color-muted)] max-w-prose">
-            Dit is een voorbeeldrapport. Elk look-advies bevat 1–2 zinnen waarom het past bij je silhouet, materialen
-            en kleurtemperatuur — helder, zonder ruis.
-          </p>
-
-          <div className="cluster gap-2">
-            <span className="badge badge-soft">Seizoen: all-year</span>
-            <span className="badge badge-soft">Kleurtemperatuur: neutraal</span>
-            <span className="badge badge-soft">Archetype: modern minimal</span>
-          </div>
-        </header>
-
-        {/* Grid */}
-        <div className="results-grid mt-8" role="list">
-          {loading
-            ? Array.from({ length: 3 }).map((_, i) => <OutfitSkeleton key={i} />)
-            : sampleOutfits.map((o) => (
-                <OutfitCard
-                  key={o.id}
-                  outfit={o}
-                  onShop={() => navigate("/onboarding")}
-                  onViewItems={() => navigate("/onboarding")}
+      {isLoading ? (
+        <ResultsSkeleton />
+      ) : (
+        <>
+          {/* Hero-achtige header + korte context */}
+          <section className="ff-section bg-[var(--color-bg)]">
+            <div className="ff-container grid items-start gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                <ResultsHeader
+                  title="Jouw stijlprofiel is klaar"
+                  subtitle="Rustig, modern en tijdloos — met aandacht voor silhouet, materiaal en kleurtemperatuur."
+                  badges={["Koel neutraal", "Modern-rustig", "Smart casual"]}
                 />
-              ))}
-        </div>
 
-        <div className="mt-10 cluster">
-          <Button variant="primary" size="lg" onClick={() => navigate("/onboarding")}>
-            Start gratis — maak mijn echte rapport
-          </Button>
-          <Button variant="ghost" size="lg" onClick={() => navigate("/hoe-het-werkt")}>
-            Hoe het werkt
-          </Button>
-        </div>
-      </section>
+                {/* CTA rail */}
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <a href="/onboarding" className="btn btn-primary">
+                    Volgende outfit
+                  </a>
+                  <a href="/pricing" className="btn btn-ghost">
+                    Meer outfits met Pro
+                  </a>
+                </div>
+
+                {/* Uitleg */}
+                <div className="mt-6 max-w-2xl">
+                  <WhyItFits bullets={whyBullets} />
+                </div>
+              </div>
+
+              {/* Visual kaart naast header */}
+              <div className="lg:col-span-5">
+                <div className="relative w-full ml-auto max-w-[680px]">
+                  <div
+                    aria-hidden="true"
+                    className="block w-full h-auto aspect-[4/3] rounded-[var(--radius-2xl)] shadow-[var(--shadow-soft)]"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-900))",
+                    }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -bottom-3 left-1/2 h-3 w-[82%] -translate-x-1/2 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Outfits */}
+          <OutfitGrid outfits={mockOutfits} />
+
+          {/* Footer-CTA */}
+          <section className="ff-section bg-[var(--color-bg)]">
+            <div className="ff-container flex flex-wrap items-center justify-between gap-4">
+              <p className="section-intro m-0">
+                Wil je meer varianten per silhouet en seizoen?
+              </p>
+              <a href="/pricing" className="btn btn-primary">
+                Ontgrendel premium outfits
+              </a>
+            </div>
+          </section>
+        </>
+      )}
     </main>
   );
 };
