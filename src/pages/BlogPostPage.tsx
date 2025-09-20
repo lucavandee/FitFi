@@ -2,12 +2,39 @@ import React from "react";
 import Seo from "@/components/Seo";
 import PostHeader from "@/components/blog/PostHeader";
 
+type RelatedPost = { title: string; excerpt: string; href: string };
+
 const BlogPostPage: React.FC = () => {
   const title = "Kleurtemperatuur: warm, koel of neutraal?";
   const excerpt =
     "Een korte gids om je kleurtemperatuur te herkennen — en outfits te kiezen die je huid laten stralen.";
   const date = "16 sep 2025";
   const readingTime = "4 min";
+
+  // Stap 1 — topic labels (chips)
+  const tags = ["Kleur", "Gids", "Basics"];
+
+  // Stap 2 — 'Verder lezen' rail (3 kaarten)
+  const related: RelatedPost[] = [
+    {
+      title: "Wat je silhouet écht zegt over je outfitkeuzes",
+      excerpt:
+        "De 4 meest voorkomende silhouetten en hoe stof & snit het verschil maken.",
+      href: "/blog/silhouet-outfits",
+    },
+    {
+      title: "Rust in je garderobe: 5 micro-beslissingen",
+      excerpt:
+        "Kleine keuzes met groot effect: consistentie in stof, tint en fit.",
+      href: "/blog/rust-in-garderobe",
+    },
+    {
+      title: "Materiaal-gids: mat versus glans",
+      excerpt:
+        "Wanneer kies je voor textuur en wanneer laat je glans het werk doen?",
+      href: "/blog/materiaal-gids",
+    },
+  ];
 
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
@@ -21,7 +48,16 @@ const BlogPostPage: React.FC = () => {
         <div className="ff-container">
           <PostHeader title={title} excerpt={excerpt} date={date} readingTime={readingTime} />
 
-          {/* Strakkere editorial typografie */}
+          {/* Topic labels onder de kop */}
+          <div className="post-meta-chips" aria-label="Onderwerpen">
+            {tags.map((t) => (
+              <span key={t} className="chip" role="listitem" aria-label={`Tag: ${t}`}>
+                {t}
+              </span>
+            ))}
+          </div>
+
+          {/* Editorial artikel */}
           <article className="article" aria-labelledby="post-body">
             <p id="post-body">
               Kleurtemperatuur gaat niet over "mooie" of "foute" kleuren — het gaat over harmonie
@@ -87,6 +123,31 @@ const BlogPostPage: React.FC = () => {
               jouw silhouet en kleurtemperatuur — privacy-first, zonder account.
             </p>
           </article>
+
+          {/* Verder lezen — editorial rail */}
+          <div className="mt-12">
+            <header className="section-header">
+              <p className="kicker">Verder lezen</p>
+              <h2 className="section-title">Meer rustige, praktische stukken</h2>
+              <p className="section-intro">
+                Korte artikelen die direct toepasbaar zijn — zonder ruis.
+              </p>
+            </header>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              {related.map((p) => (
+                <a
+                  key={p.href}
+                  href={p.href}
+                  className="card card-hover block rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)] p-6 focus:outline-none focus-visible:ring-2"
+                  aria-label={p.title}
+                >
+                  <h3 className="text-lg font-semibold mb-1">{p.title}</h3>
+                  <p className="opacity-80 leading-7">{p.excerpt}</p>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </main>

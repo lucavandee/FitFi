@@ -2702,6 +2702,13 @@
   border-radius: .35rem;
   padding: .05rem .3rem;
 }
+
+/* Blogpost meta chips onder de header */
+.post-meta-chips{
+  display:flex; flex-wrap:wrap; gap:.5rem;
+  margin-top: .35rem;
+  margin-bottom: .75rem;
+}
 /* === Chips (FAQ filters) ================================================== */
 .chip{
   display:inline-flex; align-items:center; gap:.4rem;
