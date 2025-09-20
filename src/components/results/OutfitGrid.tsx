@@ -1,9 +1,7 @@
 import React from "react";
 import OutfitCard, { Outfit } from "./OutfitCard";
 
-type Props = { outfits: Outfit[] };
-
-const OutfitGrid: React.FC<Props> = ({ outfits }) => {
+const OutfitGrid: React.FC<{ outfits: Outfit[] }> = ({ outfits }) => {
   if (!outfits?.length) return null;
   return (
     <section aria-labelledby="outfits-title" className="ff-section bg-white">
@@ -12,9 +10,7 @@ const OutfitGrid: React.FC<Props> = ({ outfits }) => {
           Outfits die nu werken voor jou
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {outfits.map((o) => (
-            <OutfitCard key={o.id} outfit={o} />
-          ))}
+          {outfits.map((o) => <OutfitCard key={o.id} outfit={o} />)}
         </div>
       </div>
     </section>
