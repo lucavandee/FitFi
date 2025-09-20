@@ -3027,3 +3027,6 @@
   .timeline-axis{ display:none; }
   .timeline-card--ghost{ display:none; }
 }
+
+/* Results – kleine prose-tweak voor strakkere leeslijn */
+.prose-results p{ margin-block: .6rem; }
