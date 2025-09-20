@@ -1,9 +1,7 @@
 import React from "react";
 import OutfitCard, { Outfit } from "./OutfitCard";
 
-type Props = {
-  outfits: Outfit[];
-};
+type Props = { outfits: Outfit[] };
 
 const OutfitGrid: React.FC<Props> = ({ outfits }) => {
   if (!outfits?.length) return null;

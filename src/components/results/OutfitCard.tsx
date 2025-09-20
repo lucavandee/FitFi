@@ -1,9 +1,6 @@
 import React from "react";
 
-export type ShopLink = {
-  label: string;
-  href: string;
-};
+export type ShopLink = { label: string; href: string; };
 
 export type Outfit = {
   id: string;
@@ -13,16 +10,13 @@ export type Outfit = {
   shop?: ShopLink;
 };
 
-type Props = {
-  outfit: Outfit;
-};
+type Props = { outfit: Outfit };
 
 const OutfitCard: React.FC<Props> = ({ outfit }) => {
   const { title, imageUrl, items = [], shop } = outfit;
 
   return (
     <article className="card overflow-hidden h-full flex flex-col">
-      {/* Visual */}
       <div className="relative">
         {imageUrl ? (
           <img
@@ -37,18 +31,15 @@ const OutfitCard: React.FC<Props> = ({ outfit }) => {
         ) : (
           <div
             aria-hidden
-            className="w-full aspect-square"
+            className="w-full aspect-square rounded-[var(--radius-lg)] shadow-[var(--shadow-soft)]"
             style={{
-              borderRadius: "calc(var(--radius-lg))",
               background:
                 "linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-900))",
-              boxShadow: "var(--shadow-soft)",
             }}
           />
         )}
       </div>
 
-      {/* Body */}
       <div className="p-5 flex-1 flex flex-col">
         <h3 className="text-base font-semibold mb-2">{title}</h3>
 

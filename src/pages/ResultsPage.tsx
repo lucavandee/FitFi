@@ -5,51 +5,60 @@ import WhyItFits from "@/components/results/WhyItFits";
 import OutfitGrid from "@/components/results/OutfitGrid";
 import ResultsSkeleton from "@/components/results/ResultsSkeleton";
 
-type Outfit = React.ComponentProps<typeof OutfitGrid>["outfits"][number];
+// ———————————————————————————————————————————————————————————————
+// Let op: we tonen ALTIJD iets.
+// Als er (nog) geen data is, laten we editorial defaults zien i.p.v. een lege kaart.
+// ———————————————————————————————————————————————————————————————
 
-const mockOutfits: Outfit[] = [
-  {
-    id: "o1",
-    title: "Minimal modern (casual smart)",
-    items: [
-      { name: "Gebreide polo", note: "lichtgewicht, zacht" },
-      { name: "Tapered chino", note: "enkelvrij, clean" },
-      { name: "Suède sneaker", note: "warm grijs" },
-    ],
-    shop: { label: "Shop vergelijkbare items", href: "/#" },
-  },
-  {
-    id: "o2",
-    title: "Soft monochrome (workday)",
-    items: [
-      { name: "Fijngebreide crew", note: "koel off-white" },
-      { name: "Wolmix pantalon", note: "rechte pijp" },
-      { name: "Leren loafer", note: "minimal buckle" },
-    ],
-    shop: { label: "Shop vergelijkbare items", href: "/#" },
-  },
-  {
-    id: "o3",
-    title: "Athflow weekend",
-    items: [
-      { name: "Merino zip hoodie" },
-      { name: "Tech jogger", note: "mat, geen glans" },
-      { name: "Retro runner" },
-    ],
-    shop: { label: "Shop vergelijkbare items", href: "/#" },
-  },
-];
-
-const ResultsPage: React.FC = () => {
-  // TODO: vervang later door echte data/loader
-  const isLoading = false;
-
-  const whyBullets = [
-    "Silhouet: je staat beter met een iets taps toelopende lijn i.p.v. skinny.",
+const defaults = {
+  headerTitle: "Jouw stijlprofiel is klaar",
+  headerSub:
+    "Rustig, modern en tijdloos — met aandacht voor silhouet, materiaal en kleurtemperatuur.",
+  badges: ["Koel neutraal", "Modern-rustig", "Smart casual"],
+  why: [
+    "Silhouet: taps toelopend i.p.v. skinny oogt evenwichtiger.",
     "Materiaal: matte breisels en suède verzachten — glans vermijden.",
     "Kleur: koele neutrale basis (off-white, grijsblauw, antraciet) werkt het best.",
-    "Archetype: modern-rustig; vermijd grote logo's en drukke contrasten.",
-  ];
+    "Archetype: modern-rustig; vermijd grote logo's en harde contrasten.",
+  ],
+  outfits: [
+    {
+      id: "o1",
+      title: "Minimal modern (casual smart)",
+      items: [
+        { name: "Gebreide polo", note: "lichtgewicht, zacht" },
+        { name: "Tapered chino", note: "enkelvrij, clean" },
+        { name: "Suède sneaker", note: "warm grijs" },
+      ],
+      shop: { label: "Shop vergelijkbare items", href: "/#" },
+    },
+    {
+      id: "o2",
+      title: "Soft monochrome (workday)",
+      items: [
+        { name: "Fijngebreide crew", note: "koel off-white" },
+        { name: "Wolmix pantalon", note: "rechte pijp" },
+        { name: "Leren loafer", note: "minimal buckle" },
+      ],
+      shop: { label: "Shop vergelijkbare items", href: "/#" },
+    },
+    {
+      id: "o3",
+      title: "Athflow weekend",
+      items: [
+        { name: "Merino zip hoodie" },
+        { name: "Tech jogger", note: "mat, geen glans" },
+        { name: "Retro runner" },
+      ],
+      shop: { label: "Shop vergelijkbare items", href: "/#" },
+    },
+  ],
+};
+
+const ResultsPage: React.FC = () => {
+  // In de echte app zou je hier context / query-data lezen.
+  // Voor nu forceren we 'loaded' zodat er nooit een lege pagina is.
+  const isLoading = false;
 
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
@@ -63,17 +72,17 @@ const ResultsPage: React.FC = () => {
         <ResultsSkeleton />
       ) : (
         <>
-          {/* Hero-achtige header + korte context */}
+          {/* Editorial header + visual (rechts) */}
           <section className="ff-section bg-[var(--color-bg)]">
             <div className="ff-container grid items-start gap-10 lg:grid-cols-12">
               <div className="lg:col-span-7">
                 <ResultsHeader
-                  title="Jouw stijlprofiel is klaar"
-                  subtitle="Rustig, modern en tijdloos — met aandacht voor silhouet, materiaal en kleurtemperatuur."
-                  badges={["Koel neutraal", "Modern-rustig", "Smart casual"]}
+                  title={defaults.headerTitle}
+                  subtitle={defaults.headerSub}
+                  badges={defaults.badges}
                 />
 
-                {/* CTA rail */}
+                {/* CTA-rail */}
                 <div className="mt-5 flex flex-wrap gap-3">
                   <a href="/onboarding" className="btn btn-primary">
                     Volgende outfit
@@ -83,13 +92,13 @@ const ResultsPage: React.FC = () => {
                   </a>
                 </div>
 
-                {/* Uitleg */}
+                {/* Waarom-uitleg (verplicht) */}
                 <div className="mt-6 max-w-2xl">
-                  <WhyItFits bullets={whyBullets} />
+                  <WhyItFits bullets={defaults.why} />
                 </div>
               </div>
 
-              {/* Visual kaart naast header */}
+              {/* Visual kaart naast header — gradient + plinth (zero payload) */}
               <div className="lg:col-span-5">
                 <div className="relative w-full ml-auto max-w-[680px]">
                   <div
@@ -109,8 +118,8 @@ const ResultsPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Outfits */}
-          <OutfitGrid outfits={mockOutfits} />
+          {/* Outfits-grid */}
+          <OutfitGrid outfits={defaults.outfits as any} />
 
           {/* Footer-CTA */}
           <section className="ff-section bg-[var(--color-bg)]">
