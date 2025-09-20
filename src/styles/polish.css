@@ -3030,3 +3030,6 @@
 
 /* Results – kleine prose-tweak voor strakkere leeslijn */
 .prose-results p{ margin-block: .6rem; }
+
+/* Results – strakkere tekstafstand in het rapport */
+.prose-results p{ margin-block: .6rem; }
