@@ -3,38 +3,15 @@ import Seo from "@/components/Seo";
 import FaqSearch from "@/components/faq/FaqSearch";
 import FaqAccordion, { FaqItem } from "@/components/faq/FaqAccordion";
 import FaqFilters from "@/components/faq/FaqFilters";
+import Footer from "@/components/layout/Footer";
 
 const FAQ_ITEMS: FaqItem[] = [
-  {
-    q: "Is het echt gratis?",
-    a: "Ja. Je start met een gratis AI Style Report. Upgraden kan later — volledig optioneel.",
-    tags: ["Algemeen", "Prijs"],
-  },
-  {
-    q: "Heb ik een account of creditcard nodig?",
-    a: "Nee. Je kunt zonder account en zonder creditcard starten en je rapport bekijken.",
-    tags: ["Algemeen", "Account"],
-  },
-  {
-    q: "Werkt het ook zonder foto?",
-    a: "Ja. Een foto is optioneel. Je krijgt nog steeds een stijlprofiel met outfits en shoplinks.",
-    tags: ["Rapport", "Privacy"],
-  },
-  {
-    q: "Wat gebeurt er met mijn data?",
-    a: "We verzamelen alleen wat nodig is voor jouw advies en we delen geen persoonsgegevens met derden.",
-    tags: ["Privacy"],
-  },
-  {
-    q: "Hoe snel krijg ik mijn rapport?",
-    a: "Binnen 1–2 minuten. We houden de flow kort, helder en zonder ruis.",
-    tags: ["Rapport", "Snelheid"],
-  },
-  {
-    q: "Kan ik outfits direct shoppen?",
-    a: "Ja. We tonen outfits met slimme shoplinks, afgestemd op jouw silhouet en kleurtemperatuur.",
-    tags: ["Outfits", "Shoplinks"],
-  },
+  { q: "Is het echt gratis?", a: "Ja. Je start met een gratis AI Style Report. Upgraden kan later — volledig optioneel.", tags: ["Algemeen","Prijs"] },
+  { q: "Heb ik een account of creditcard nodig?", a: "Nee. Je kunt zonder account en zonder creditcard starten en je rapport bekijken.", tags: ["Algemeen","Account"] },
+  { q: "Werkt het ook zonder foto?", a: "Ja. Een foto is optioneel. Je krijgt nog steeds een stijlprofiel met outfits en shoplinks.", tags: ["Rapport","Privacy"] },
+  { q: "Wat gebeurt er met mijn data?", a: "We verzamelen alleen wat nodig is voor jouw advies en we delen geen persoonsgegevens met derden.", tags: ["Privacy"] },
+  { q: "Hoe snel krijg ik mijn rapport?", a: "Binnen 1–2 minuten. We houden de flow kort, helder en zonder ruis.", tags: ["Rapport","Snelheid"] },
+  { q: "Kan ik outfits direct shoppen?", a: "Ja. We tonen outfits met slimme shoplinks, afgestemd op jouw silhouet en kleurtemperatuur.", tags: ["Outfits","Shoplinks"] },
 ];
 
 const FaqPage: React.FC = () => {
@@ -47,8 +24,7 @@ const FaqPage: React.FC = () => {
     return Array.from(set).sort((a, b) => a.localeCompare(b, "nl"));
   }, []);
 
-  const toggle = (t: string) =>
-    setSelected((cur) => (cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t]));
+  const toggle = (t: string) => setSelected((cur) => (cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t]));
   const clear = () => setSelected([]);
 
   return (
@@ -59,30 +35,27 @@ const FaqPage: React.FC = () => {
         canonical="https://fitfi.ai/faq"
       />
 
-      <section className="ff-section" aria-labelledby="faq-title">
+      <section className="ff-section">
         <div className="ff-container">
           <header className="section-header">
             <p className="kicker">FAQ</p>
-            <h1 id="faq-title" className="section-title">Veelgestelde vragen</h1>
-            <p className="section-intro">
-              Filter op onderwerp of gebruik het zoekveld om direct het juiste antwoord te vinden.
-            </p>
+            <h1 className="section-title">Veelgestelde vragen</h1>
+            <p className="section-intro">Filter op onderwerp of gebruik het zoekveld om direct het juiste antwoord te vinden.</p>
           </header>
 
-          {/* Chips-filter */}
           <div className="mb-4">
             <FaqFilters tags={tags} selected={selected} onToggle={toggle} onClear={clear} />
           </div>
 
-          {/* Zoekveld */}
           <div className="mb-6">
             <FaqSearch query={query} onChange={setQuery} />
           </div>
 
-          {/* Accordion (filter + search) */}
           <FaqAccordion items={FAQ_ITEMS} query={query} selectedTags={selected} />
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 };

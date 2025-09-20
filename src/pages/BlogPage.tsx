@@ -1,26 +1,12 @@
 import React from "react";
 import Seo from "@/components/Seo";
 import BlogHeader from "@/components/blog/BlogHeader";
+import Footer from "@/components/layout/Footer";
 
 const posts = [
-  {
-    title: "Wat je silhouet écht zegt over je outfitkeuzes",
-    excerpt:
-      "We ontleden de 4 meest voorkomende silhouetten en laten zien hoe materiaal en snit het verschil maken.",
-    href: "/blog/silhouet-outfits",
-  },
-  {
-    title: "Kleurtemperatuur: warm, koel of neutraal?",
-    excerpt:
-      "Een korte gids om je kleurtemperatuur te herkennen — en outfits te kiezen die je huid laten stralen.",
-    href: "/blog/kleurtemperatuur-gids",
-  },
-  {
-    title: "Rust in je garderobe: 5 micro-beslissingen",
-    excerpt:
-      "Kleine keuzes met groot effect: zo breng je consistentie in stof, tint en fit.",
-    href: "/blog/rust-in-garderobe",
-  },
+  { title: "Wat je silhouet écht zegt over je outfitkeuzes", excerpt: "De 4 meest voorkomende silhouetten en hoe stof & snit het verschil maken.", href: "/blog/silhouet-outfits" },
+  { title: "Kleurtemperatuur: warm, koel of neutraal?", excerpt: "Een korte gids om je kleurtemperatuur te herkennen — en outfits te kiezen die je huid laten stralen.", href: "/blog/kleurtemperatuur-gids" },
+  { title: "Rust in je garderobe: 5 micro-beslissingen", excerpt: "Kleine keuzes met groot effect: consistentie in stof, tint en fit.", href: "/blog/rust-in-garderobe" },
 ];
 
 const BlogPage: React.FC = () => {
@@ -44,7 +30,7 @@ const BlogPage: React.FC = () => {
               <a
                 key={p.href}
                 href={p.href}
-                className="card card-hover block rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)] p-6 focus:outline-none focus-visible:ring-2"
+                className="card card-hover block rounded-[var(--radius-lg)] p-6 focus:outline-none focus-visible:ring-2"
                 aria-label={p.title}
               >
                 <h2 className="text-lg font-semibold mb-1">{p.title}</h2>
@@ -54,6 +40,8 @@ const BlogPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 };

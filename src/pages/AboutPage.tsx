@@ -4,6 +4,7 @@ import Seo from "@/components/Seo";
 import AboutHero from "@/components/about/AboutHero";
 import TeamSection from "@/components/about/TeamSection";
 import Timeline from "@/components/about/Timeline";
+import Footer from "@/components/layout/Footer";
 
 const AboutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,9 +22,10 @@ const AboutPage: React.FC = () => {
         onExample={() => navigate("/results")}
       />
 
-      {/* Editorial body: Team + Timeline */}
       <TeamSection />
       <Timeline />
+
+      <Footer />
     </main>
   );
 };

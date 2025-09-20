@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import PricingHero from "@/components/pricing/PricingHero";
 import PricingFaqTeaser from "@/components/pricing/PricingFaqTeaser";
+import Footer from "@/components/layout/Footer";
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,10 +21,9 @@ const PricingPage: React.FC = () => {
         onExample={() => navigate("/results")}
       />
 
-      {/* Prijs-kaarten */}
       <section className="ff-section bg-white">
         <div className="ff-container grid gap-6 md:grid-cols-3">
-          <div className="card card-hover pricing-card p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+          <div className="card p-6">
             <h2 className="text-xl font-semibold mb-1">Gratis</h2>
             <p className="text-sm mb-4 opacity-80">AI Style Report • outfits + shoplinks</p>
             <p className="text-3xl font-semibold mb-4">€0</p>
@@ -32,16 +32,12 @@ const PricingPage: React.FC = () => {
               <li>✔ 3 outfits met shoplinks</li>
               <li>✔ Privacy-first</li>
             </ul>
-            <button
-              className="btn btn-primary mt-6"
-              onClick={() => navigate("/onboarding")}
-              aria-label="Start gratis plan"
-            >
+            <button className="btn btn-primary mt-6" onClick={() => navigate("/onboarding")} aria-label="Start gratis plan">
               Start gratis
             </button>
           </div>
 
-          <div className="card card-hover pricing-card p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+          <div className="card p-6">
             <h2 className="text-xl font-semibold mb-1">Pro</h2>
             <p className="text-sm mb-4 opacity-80">Meer outfits, kleurenadvies &amp; garderobetips</p>
             <p className="text-3xl font-semibold mb-4">€—</p>
@@ -50,16 +46,12 @@ const PricingPage: React.FC = () => {
               <li>✔ Seizoen- &amp; materiaaladvies</li>
               <li>✔ Prioriteit updates</li>
             </ul>
-            <button
-              className="btn btn-ghost mt-6"
-              onClick={() => navigate("/onboarding")}
-              aria-label="Pro proberen"
-            >
+            <button className="btn btn-ghost mt-6" onClick={() => navigate("/onboarding")} aria-label="Pro proberen">
               Proberen
             </button>
           </div>
 
-          <div className="card card-hover pricing-card p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+          <div className="card p-6">
             <h2 className="text-xl font-semibold mb-1">Team</h2>
             <p className="text-sm mb-4 opacity-80">Voor brands &amp; stylists</p>
             <p className="text-3xl font-semibold mb-4">Op aanvraag</p>
@@ -68,19 +60,16 @@ const PricingPage: React.FC = () => {
               <li>✔ API-toegang (op termijn)</li>
               <li>✔ Dedicated support</li>
             </ul>
-            <button
-              className="btn btn-ghost mt-6"
-              onClick={() => navigate("/contact")}
-              aria-label="Contact team"
-            >
+            <button className="btn btn-ghost mt-6" onClick={() => navigate("/contact")} aria-label="Contact team">
               Contact
             </button>
           </div>
         </div>
       </section>
 
-      {/* FAQ-teaser */}
       <PricingFaqTeaser />
+
+      <Footer />
     </main>
   );
 };

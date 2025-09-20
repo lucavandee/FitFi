@@ -4,6 +4,7 @@ import Seo from "@/components/Seo";
 import HeroStacked from "@/components/landing/HeroStacked";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
+import Footer from "@/components/layout/Footer";
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,16 +18,14 @@ const LandingPage: React.FC = () => {
         preloadImages={["/images/hero/main.jpg"]}
       />
 
-      {/* HERO — stacked: copy/CTA's/chips, daaronder groot beeld */}
       <HeroStacked
         focal="50% 38%"
         onStart={() => navigate("/onboarding")}
         onExample={() => navigate("/results")}
       />
 
-      {/* How it works */}
-      <section className="py-16 bg-[var(--color-bg)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="ff-section bg-[var(--color-bg)]">
+        <div className="ff-container">
           <HowItWorksEditorial
             onStart={() => navigate("/onboarding")}
             onExample={() => navigate("/results")}
@@ -34,12 +33,13 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Social proof */}
-      <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="ff-section bg-white">
+        <div className="ff-container">
           <SocialProofEditorial />
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 };
