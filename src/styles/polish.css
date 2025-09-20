@@ -2596,6 +2596,17 @@
 }
 .link:hover{ color: color-mix(in oklab, var(--ff-color-primary-700), var(--color-text)); }
 
+/* === FAQ search micro-polish ============================================= */
+#faq-search {
+  /* zachte focusring in onze warme primaire tint */
+  box-shadow: var(--shadow-soft);
+}
+#faq-search:focus {
+  outline: none;
+}
+
+/* details/summary styling kwam eerder mee met .faq-item/.faq-summary/.faq-answer */
+
 /* ===== Section header (herbruikbaar) ===================================== */
 .section-header{ margin-bottom: clamp(1rem, 2.6vw, 1.5rem); }
 .kicker{
