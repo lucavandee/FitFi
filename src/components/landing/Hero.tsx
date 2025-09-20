@@ -1,66 +1,72 @@
 import React from "react";
+import Button from "@/components/ui/Button";
+import SmartImage from "@/components/media/SmartImage";
 
 type Props = {
   onCTAClick?: () => void;
-  onExampleClick?: () => void;
+  onSecondaryClick?: () => void;
+  /** CSS object-position, bv. "50% 35%" om het focuspunt van de afbeelding te sturen */
+  focal?: string;
+  imageId?: string;
+  imageAlt?: string;
+  showSecondary?: boolean;
 };
 
-const Hero: React.FC<Props> = ({ onCTAClick, onExampleClick }) => {
+const Hero: React.FC<Props> = ({
+  onCTAClick,
+  onSecondaryClick,
+  focal = "50% 35%",
+  imageId = "hero-main",
+  imageAlt = "Voorbeeld van het AI Style Report in een rustige interface",
+  showSecondary = true,
+}) => {
   return (
-    <section className="ff-section bg-[var(--color-bg)]">
-      <div className="ff-container grid items-center gap-10 lg:grid-cols-12">
-        {/* Copy */}
-        <div className="lg:col-span-7">
+    <section className="ff-section hero-wrap alt-bg" aria-labelledby="hero-title">
+      <div className="ff-container hero-grid">
+        {/* COPY */}
+        <div className="hero-copy">
           <p className="kicker">Gratis AI Style Report</p>
-
-          <h1 className="section-title">Ontdek wat jouw stijl over je zegt</h1>
-
-          <p className="section-intro">
-            Beantwoord 6 korte vragen en ontvang direct een persoonlijk
-            stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.
+          <h1 id="hero-title" className="section-title">
+            Ontdek wat jouw stijl over je zegt
+          </h1>
+          <p className="lead">
+            Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en
+            shoplinks — privacy-first, zonder ruis.
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onCTAClick}
-              aria-label="Start gratis"
-            >
+          <div className="cluster mt-3">
+            <Button variant="primary" size="lg" className="cta-raise" onClick={onCTAClick}>
               Start gratis
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={onExampleClick}
-              aria-label="Bekijk voorbeeld"
-            >
-              Bekijk voorbeeld
-            </button>
+            </Button>
+            {showSecondary && (
+              <Button variant="ghost" size="lg" onClick={onSecondaryClick}>
+                Bekijk voorbeeld
+              </Button>
+            )}
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="chip">100% gratis</span>
-            <span className="chip">Klaar in 2 min</span>
-            <span className="chip">Outfits + shoplinks</span>
-            <span className="chip">Privacy-first</span>
-          </div>
+          {/* USP-rail (compacte chips onder de CTA's) */}
+          <ul className="usp-rail" aria-label="Belangrijkste voordelen">
+            <li className="usp-chip">100% gratis</li>
+            <li className="usp-chip">Klaar in 2 min</li>
+            <li className="usp-chip">Outfits + shoplinks</li>
+            <li className="usp-chip">Privacy-first</li>
+          </ul>
         </div>
 
-        {/* Visual — tokens-first gradient card + plinth (zoals live) */}
-        <div className="lg:col-span-5">
-          <div className="relative w-full ml-auto max-w-[680px]">
-            <div
-              aria-hidden="true"
-              className="hero-gradient block w-full h-auto aspect-[4/3] rounded-[var(--radius-2xl)] shadow-[var(--shadow-soft)]"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-3 left-1/2 h-3 w-[82%] -translate-x-1/2 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
-            />
-          </div>
-        </div>
+        {/* MEDIA */}
+        <figure
+          className="hero-media"
+          style={
+            {
+              // @ts-expect-error CSS custom property
+              "--hero-object-position": focal,
+            } as React.CSSProperties
+          }
+        >
+          <SmartImage id={imageId} kind="generic" alt={imageAlt} className="hero-img" />
+          <figcaption className="sr-only">{imageAlt}</figcaption>
+        </figure>
       </div>
     </section>
   );
