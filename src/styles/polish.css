@@ -2521,3 +2521,77 @@
 .pagehero-wrap{ padding-bottom: clamp(1rem, 3vw, 2rem); }
 .pagehero-wrap + .ff-section,
 .pagehero-wrap + section{ border-top:0 !important; box-shadow:none !important; }
+/* === Team cards =========================================================== */
+.avatar-chip{
+  width: 3rem; height: 3rem;
+  display:grid; place-items:center;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 24%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+.avatar-initials{ font-weight: 700; }
+
+/* === Timeline (vertical, rustig) ========================================= */
+.timeline{
+  position: relative;
+  margin-left: .25rem;
+  padding-left: 1.25rem;
+}
+.timeline::before{
+  content:"";
+  position:absolute; left:.5rem; top:.25rem; bottom:.25rem;
+  width:2px; background: var(--color-border);
+  border-radius: 2px;
+}
+.timeline-item{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .25rem;
+  padding: .6rem 0 .9rem 0;
+}
+.timeline-dot{
+  position:absolute; left:.17rem; top:.7rem;
+  width:.8rem; height:.8rem; border-radius:9999px;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 50%, var(--color-accent));
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+.timeline-content{ padding-left: .6rem; }
+
+/* === Pricing: micro-polish =============================================== */
+.pricing-card{ transition: transform .18s ease, box-shadow .18s ease; }
+.pricing-card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+
+/* === FAQ teaser (details/summary) ======================================== */
+.faq-item{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: .25rem .75rem;
+  box-shadow: var(--shadow-soft);
+}
+.faq-summary{
+  cursor: pointer;
+  list-style: none;
+  padding: .75rem .25rem;
+  font-weight: 600;
+}
+.faq-summary::-webkit-details-marker{ display:none; }
+.faq-item[open] .faq-summary{ color: var(--ff-color-primary-700); }
+.faq-answer{
+  padding: 0 0 .9rem 0;
+  margin: 0 .25rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+/* Link utility (tokens-first) */
+.link{
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.link:hover{ color: color-mix(in oklab, var(--ff-color-primary-700), var(--color-text)); }

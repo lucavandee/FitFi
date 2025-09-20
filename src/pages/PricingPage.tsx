@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import PricingHero from "@/components/pricing/PricingHero";
+import PricingFaqTeaser from "@/components/pricing/PricingFaqTeaser";
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,16 +15,15 @@ const PricingPage: React.FC = () => {
         canonical="https://fitfi.ai/prijzen"
       />
 
-      {/* Premium stacked hero */}
       <PricingHero
         onStart={() => navigate("/onboarding")}
         onExample={() => navigate("/results")}
       />
 
-      {/* Pricing-kerngrid (compact; hero blijft de ster) */}
+      {/* Prijs-kaarten */}
       <section className="ff-section bg-white">
         <div className="ff-container grid gap-6 md:grid-cols-3">
-          <div className="card card-hover p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+          <div className="card card-hover pricing-card p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
             <h2 className="text-xl font-semibold mb-1">Gratis</h2>
             <p className="text-sm mb-4 opacity-80">AI Style Report • outfits + shoplinks</p>
             <p className="text-3xl font-semibold mb-4">€0</p>
@@ -41,7 +41,7 @@ const PricingPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="card card-hover p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+          <div className="card card-hover pricing-card p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
             <h2 className="text-xl font-semibold mb-1">Pro</h2>
             <p className="text-sm mb-4 opacity-80">Meer outfits, kleurenadvies &amp; garderobetips</p>
             <p className="text-3xl font-semibold mb-4">€—</p>
@@ -59,7 +59,7 @@ const PricingPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="card card-hover p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+          <div className="card card-hover pricing-card p-6 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
             <h2 className="text-xl font-semibold mb-1">Team</h2>
             <p className="text-sm mb-4 opacity-80">Voor brands &amp; stylists</p>
             <p className="text-3xl font-semibold mb-4">Op aanvraag</p>
@@ -78,6 +78,9 @@ const PricingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* FAQ-teaser */}
+      <PricingFaqTeaser />
     </main>
   );
 };
