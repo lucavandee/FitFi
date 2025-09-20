@@ -4,6 +4,7 @@ import FaqSearch from "@/components/faq/FaqSearch";
 import FaqAccordion, { FaqItem } from "@/components/faq/FaqAccordion";
 import FaqFilters from "@/components/faq/FaqFilters";
 import Footer from "@/components/layout/Footer";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const FAQ_ITEMS: FaqItem[] = [
   { q: "Is het echt gratis?", a: "Ja. Je start met een gratis AI Style Report. Upgraden kan later — volledig optioneel.", tags: ["Algemeen","Prijs"] },
@@ -13,6 +14,16 @@ const FAQ_ITEMS: FaqItem[] = [
   { q: "Hoe snel krijg ik mijn rapport?", a: "Binnen 1–2 minuten. We houden de flow kort, helder en zonder ruis.", tags: ["Rapport","Snelheid"] },
   { q: "Kan ik outfits direct shoppen?", a: "Ja. We tonen outfits met slimme shoplinks, afgestemd op jouw silhouet en kleurtemperatuur.", tags: ["Outfits","Shoplinks"] },
 ];
+
+const jsonLdFaq = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": FAQ_ITEMS.map(it => ({
+    "@type": "Question",
+    "name": it.q,
+    "acceptedAnswer": { "@type": "Answer", "text": it.a }
+  }))
+};
 
 const FaqPage: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -28,35 +39,41 @@ const FaqPage: React.FC = () => {
   const clear = () => setSelected([]);
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-      <Seo
-        title="FAQ — Antwoorden zonder ruis | FitFi"
-        description="Korte, heldere antwoorden over het AI Style Report, privacy en werken zonder foto. Vind snel wat je zoekt."
-        canonical="https://fitfi.ai/faq"
-      />
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+        <Seo
+          title="FAQ — Antwoorden zonder ruis | FitFi"
+          description="Korte, heldere antwoorden over het AI Style Report, privacy en werken zonder foto. Vind snel wat je zoekt."
+          canonical="https://fitfi.ai/faq"
+        />
 
-      <section className="ff-section">
-        <div className="ff-container">
-          <header className="section-header">
-            <p className="kicker">FAQ</p>
-            <h1 className="section-title">Veelgestelde vragen</h1>
-            <p className="section-intro">Filter op onderwerp of gebruik het zoekveld om direct het juiste antwoord te vinden.</p>
-          </header>
+        {/* JSON-LD voor rich results */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }} />
 
-          <div className="mb-4">
-            <FaqFilters tags={tags} selected={selected} onToggle={toggle} onClear={clear} />
+        <section className="ff-section">
+          <div className="ff-container">
+            <header className="section-header">
+              <p className="kicker">FAQ</p>
+              <h1 className="section-title">Veelgestelde vragen</h1>
+              <p className="section-intro">Filter op onderwerp of gebruik het zoekveld om direct het juiste antwoord te vinden.</p>
+            </header>
+
+            <div className="mb-4">
+              <FaqFilters tags={tags} selected={selected} onToggle={toggle} onClear={clear} />
+            </div>
+
+            <div className="mb-6">
+              <FaqSearch query={query} onChange={setQuery} />
+            </div>
+
+            <FaqAccordion items={FAQ_ITEMS} query={query} selectedTags={selected} />
           </div>
+        </section>
 
-          <div className="mb-6">
-            <FaqSearch query={query} onChange={setQuery} />
-          </div>
-
-          <FaqAccordion items={FAQ_ITEMS} query={query} selectedTags={selected} />
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </>
   );
 };
 
