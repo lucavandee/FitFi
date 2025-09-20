@@ -2709,6 +2709,126 @@
   margin-top: .35rem;
   margin-bottom: .75rem;
 }
+
+/* === Global Rhythm & Spacing ============================================== */
+/* Doel: rustiger verticaal ritme, consistente section-paddings en header-marges.
+   Tokens-first, geen layout-breuken. */
+
+.ff-section{
+  padding-block: clamp(2rem, 5vw, 4.5rem);
+}
+
+.section-header{
+  margin-bottom: clamp(1rem, 2.6vw, 1.6rem);
+}
+.section-header .section-title{
+  margin-top: .25rem;
+}
+.section-header .section-intro{
+  margin-top: .5rem;
+  line-height: 1.7;
+  max-width: 70ch;
+}
+
+/* Cards en grids: rustige gaps */
+.grid, .grid > * { /* non-destructive; respecteert bestaande Tailwind grid classes */
+  /* geen harde wijzigingen, enkel default ritme wanneer geen Tailwind gap is gezet */
+}
+.card{
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* === Premium Footer ======================================================= */
+.site-footer{
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Bovenste blok */
+.footer-grid{
+  display: grid;
+  gap: clamp(1rem, 2.4vw, 2rem);
+  grid-template-columns: 1fr;
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+}
+@media (min-width: 960px){
+  .footer-grid{
+    grid-template-columns: 1.4fr .8fr .8fr .8fr;
+  }
+}
+
+.footer-brand{ max-width: 52ch; }
+.footer-logo{
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-size: 1.15rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.footer-mission{
+  margin-top: .5rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.footer-col{}
+.footer-heading{
+  font-weight: 700;
+  font-size: .95rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: .6rem;
+}
+.footer-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: .4rem;
+}
+.footer-list a{
+  color: var(--color-text);
+  text-decoration: none;
+}
+.footer-list a:hover{
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Onderste juridische balk */
+.footer-legal{
+  border-top: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-accent) 8%, var(--color-surface));
+}
+.footer-legal-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding-block: .9rem;
+  flex-wrap: wrap;
+}
+.footer-copy{ opacity: .8; }
+.footer-legal-links{
+  display: inline-flex;
+  gap: .9rem;
+  list-style: none;
+  padding: 0; margin: 0;
+}
+.footer-legal-links a{
+  color: var(--color-text);
+  text-decoration: none;
+}
+.footer-legal-links a:hover{
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 /* === Chips (FAQ filters) ================================================== */
 .chip{
   display:inline-flex; align-items:center; gap:.4rem;
