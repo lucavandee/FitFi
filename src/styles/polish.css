@@ -2596,6 +2596,112 @@
 }
 .link:hover{ color: color-mix(in oklab, var(--ff-color-primary-700), var(--color-text)); }
 
+/* ===== Editorial Article (blogpost) ====================================== */
+.article{
+  /* breedte en ritme */
+  max-width: 70ch;
+  margin-inline: auto;
+  color: var(--color-text);
+  line-height: 1.75;
+  font-size: clamp(1rem, .22vw + .98rem, 1.0625rem);
+}
+.article > * { margin-block: clamp(.65rem, .9vw, 1rem); }
+
+/* Koppen: strakker en hiërarchisch */
+.article h2{
+  font-size: clamp(1.35rem, .9vw + 1.1rem, 1.75rem);
+  line-height: 1.2;
+  margin-top: clamp(1rem, 2vw, 1.6rem);
+}
+.article h3{
+  font-size: clamp(1.1rem, .6vw + 1rem, 1.25rem);
+  line-height: 1.25;
+  margin-top: clamp(.8rem, 1.4vw, 1.2rem);
+}
+
+/* Lists: rustige markers en binnenlijn */
+.article ul, .article ol{ padding-left: 1.15rem; }
+.article ul { list-style: disc; }
+.article ol { list-style: decimal; }
+.article li + li { margin-top: .4rem; }
+
+/* Inline fix-label */
+.article .fix{
+  font-weight: 600;
+  padding: .05rem .35rem;
+  border-radius: .35rem;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 12%, var(--color-surface));
+  border: 1px solid var(--color-border);
+}
+
+/* Blockquote / Pullquote */
+.article blockquote{
+  margin: 0;
+  font-size: clamp(1.1rem, .6vw + 1rem, 1.25rem);
+  line-height: 1.4;
+}
+.pullquote{
+  margin-inline: auto;
+  text-align: center;
+}
+.pullquote blockquote{
+  display: inline-block;
+  padding: .6rem .9rem;
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--color-accent) 10%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+.pullquote figcaption{
+  margin-top: .35rem;
+  font-size: .9rem;
+  opacity: .75;
+}
+
+/* Callout (tip/note) */
+.callout{
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--ff-color-primary-700) 8%, var(--color-surface));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: .8rem .9rem;
+}
+
+/* HR: zachte divider */
+.article hr{
+  border: 0;
+  height: 1px;
+  background: var(--color-border);
+  margin-block: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Afbeeldingen/figures (indien gebruikt) */
+.article img, .article figure{
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  width: 100%;
+  height: auto;
+}
+
+/* Links in artikel */
+.article a{
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.article a:hover{
+  color: color-mix(in oklab, var(--ff-color-primary-700), var(--color-text));
+}
+
+/* Code/inline pre (optioneel gebruikt) */
+.article code{
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .95em;
+  background: color-mix(in oklab, var(--color-accent) 8%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  border-radius: .35rem;
+  padding: .05rem .3rem;
+}
 /* === Chips (FAQ filters) ================================================== */
 .chip{
   display:inline-flex; align-items:center; gap:.4rem;

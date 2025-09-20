@@ -3,9 +3,9 @@ import Seo from "@/components/Seo";
 import PostHeader from "@/components/blog/PostHeader";
 
 const BlogPostPage: React.FC = () => {
-  // In een echte setup haal je de postdata uit params/loader. Voor nu statisch, editorial en rustig.
   const title = "Kleurtemperatuur: warm, koel of neutraal?";
-  const excerpt = "Een korte gids om je kleurtemperatuur te herkennen — en outfits te kiezen die je huid laten stralen.";
+  const excerpt =
+    "Een korte gids om je kleurtemperatuur te herkennen — en outfits te kiezen die je huid laten stralen.";
   const date = "16 sep 2025";
   const readingTime = "4 min";
 
@@ -21,19 +21,70 @@ const BlogPostPage: React.FC = () => {
         <div className="ff-container">
           <PostHeader title={title} excerpt={excerpt} date={date} readingTime={readingTime} />
 
-          <article className="prose max-w-none leading-7">
-            <p>
-              Kleurtemperatuur gaat niet over "mooie" of "foute" kleuren — het gaat over
-              harmonie met je ondertoon. We onderscheiden grofweg warm, koel en neutraal.
+          {/* Strakkere editorial typografie */}
+          <article className="article" aria-labelledby="post-body">
+            <p id="post-body">
+              Kleurtemperatuur gaat niet over "mooie" of "foute" kleuren — het gaat over harmonie
+              met je ondertoon. We onderscheiden grofweg warm, koel en neutraal. Deze gids helpt
+              je in <em>2–3 minuten</em> de juiste richting te kiezen.
             </p>
+
+            <aside className="callout" role="note" aria-label="Tip">
+              <strong>Snelle tip:</strong> twijfel je? Leg een wit T-shirt naast een crèmekleurig
+              T-shirt onder daglicht. Welke doet je huid rustiger ogen — helder wit (koel) of crème
+              (warm)?
+            </aside>
+
+            <h2>Zo herken je je kleurtemperatuur</h2>
+            <ul>
+              <li>
+                <strong>Warm</strong> — goud in sieraden staat je vaak beter dan zilver; aders ogen
+                eerder groen; natuurlijke match met crèmes, camel, olijf, terracotta.
+              </li>
+              <li>
+                <strong>Koel</strong> — zilver werkt vaak beter; aders ogen eerder blauw; matcht
+                met ijsblauw, houtskool, navy, framboos.
+              </li>
+              <li>
+                <strong>Neutraal</strong> — mix van beide signalen; gedempte tinten en midden-waarden
+                werken het best.
+              </li>
+            </ul>
+
+            <figure className="pullquote">
+              <blockquote>
+                "Kleur werkt wanneer stof, tint en <em>ondertoon</em> hetzelfde verhaal vertellen."
+              </blockquote>
+              <figcaption>— FitFi Styling</figcaption>
+            </figure>
+
+            <h3>Outfits kiezen zonder ruis</h3>
             <p>
-              <strong>Warm</strong> voelt beter bij crèmes, camel, olijf, terracotta.
-              <strong> Koel</strong> matcht met ijsblauw, houtskool, navy, framboos.
-              <strong> Neutraal</strong> kan beide kanten op — met gedempte tinten.
+              Begin met één basis (bijv. navy of camel), herhaal die in schoenen/riem en houd
+              materialen consistent (mat vs. glans). Zo krijgt je look rust zonder saai te worden.
             </p>
+
+            <h3>Veelgemaakte missers (en snelle fixes)</h3>
+            <ol>
+              <li>
+                Te veel contrasterende tinten combineren. <span className="fix">Fix:</span> beperk
+                tot 2 kleurfamilies + 1 accent.
+              </li>
+              <li>
+                Glanzend materiaal bij een warme, matte garderobe. <span className="fix">Fix:</span>{" "}
+                kies suède/gebreid i.p.v. lakleer/satijn.
+              </li>
+              <li>
+                Verkeerde white-balance bij online shoppen. <span className="fix">Fix:</span>{" "}
+                check productfoto's op verschillende achtergronden.
+              </li>
+            </ol>
+
+            <hr />
+
             <p>
-              Twijfel je? Kies één basis (bijv. navy of camel), herhaal die in schoenen/riem,
-              en laat het materiaal (mat vs. glans) het werk doen. Rust, zonder ruis.
+              Klaar om het te testen? Start je gratis AI Style Report en zie outfits die passen bij
+              jouw silhouet en kleurtemperatuur — privacy-first, zonder account.
             </p>
           </article>
         </div>
