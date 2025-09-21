@@ -9,7 +9,7 @@ import { NovaChatProvider } from "@/components/nova/NovaChatProvider";
 import NovaChatMount from "@/components/nova/NovaChatMount";
 
 // CSS: eerst basis, DAN polish als allerlaatste (zorgt dat polish alles kan overrulen)
-import "./index.css";
+import "./styles/index.css";
 import "./styles/polish.css";
 
 // Boot Nova eenmaal (dubbele import verwijderd)

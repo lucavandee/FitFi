@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (CSS variabelen) – moet vóór polish zodat polish de vars kan gebruiken */
+@import "./tokens.css";
+
+/* Kleine, optionele presentational tweaks */
+@import "./polish.css";
