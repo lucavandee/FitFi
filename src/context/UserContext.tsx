@@ -1,127 +1,175 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
-/** User data structure */
-export type User = {
+// Get singleton client
+const sb = supabase();
+
+export interface FitFiUser {
   id: string;
+  name: string;
   email: string;
-  name?: string;
-  tier: "visitor" | "member" | "plus" | "founder";
-  createdAt?: string;
-};
-
-/** Publieke API van de context */
-export type UserState = {
-  /** Huidige gebruiker (null = niet ingelogd) */
-  user: User | null;
-  /** Loading state voor auth checks */
-  loading: boolean;
-  /** Zet gebruiker (login) */
-  setUser: (user: User | null) => void;
-  /** Logout helper */
-  logout: () => void;
-  /** Check of gebruiker is ingelogd */
-  isAuthenticated: boolean;
-  /** Check of gebruiker premium tier heeft */
-  isPremium: boolean;
-};
-
-const UserCtx = createContext<UserState | null>(null);
-
-const STORAGE_KEY = "ff_user_v1";
-
-type ProviderProps = { children: ReactNode };
-
-/**
- * UserProvider
- * - Bewaart user state in localStorage
- * - Fail-safe patterns voor robuuste auth
- */
-const UserProvider: React.FC<ProviderProps> = ({ children }) => {
-  const [user, setUserState] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Hydrate uit localStorage
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as User;
-        if (parsed && typeof parsed === "object" && parsed.id) {
-          setUserState(parsed);
-        }
-      }
-    } catch {
-      /* ignore corrupt storage */
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Persist naar localStorage
-  useEffect(() => {
-    try {
-      if (user) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    } catch {
-      /* ignore quota */
-    }
-  }, [user]);
-
-  const setUser = (newUser: User | null) => setUserState(newUser);
-
-  const logout = () => {
-    setUserState(null);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
-  };
-
-  const isAuthenticated = user !== null;
-  const isPremium = user?.tier === "plus" || user?.tier === "founder";
-
-  const value = useMemo<UserState>(
-    () => ({
-      user,
-      loading,
-      setUser,
-      logout,
-      isAuthenticated,
-      isPremium,
-    }),
-    [user, loading, isAuthenticated, isPremium]
-  );
-
-  return <UserCtx.Provider value={value}>{children}</UserCtx.Provider>;
-};
-
-/**
- * Fail-safe hook: crasht niet als de Provider ontbreekt.
- */
-export function useUser(): UserState {
-  const ctx = useContext(UserCtx);
-  if (ctx) return ctx;
-
-  // No-op fallback
-  return {
-    user: null,
-    loading: false,
-    setUser: () => {},
-    logout: () => {},
-    isAuthenticated: false,
-    isPremium: false,
+  gender?: 'male' | 'female';
+  role?: string;
+  isPremium?: boolean;
+  stylePreferences?: {
+    casual: number;
+    formal: number;
+    sporty: number;
+    vintage: number;
+    minimalist: number;
   };
 }
 
-export default UserProvider;
+export interface UserProfile extends FitFiUser {
+  stylePreferences: {
+    casual: number;
+    formal: number;
+    sporty: number;
+    vintage: number;
+    minimalist: number;
+  };
+}
+
+interface UserCtx {
+  user: FitFiUser | null;
+  status: 'loading' | 'authenticated' | 'unauthenticated';
+  isLoading: boolean;
+  isMember: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string, name: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  updateProfile: (updates: Partial<FitFiUser>) => Promise<void>;
+}
+
+const UserContext = createContext<UserCtx | undefined>(undefined);
+
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<FitFiUser | null>(null);
+  const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
+  
+  // Determine if user is a member (has account = member for now)
+  const isMember = status === 'authenticated' && !!user?.id;
+
+  useEffect(() => {
+    if (!sb) {
+      setStatus('unauthenticated');
+      return;
+    }
+
+    // Get initial session
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          gender: session.user.user_metadata?.gender,
+          role: session.user.user_metadata?.role || 'user'
+        });
+        setStatus('authenticated');
+      } else {
+        setStatus('unauthenticated');
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          gender: session.user.user_metadata?.gender,
+          role: session.user.user_metadata?.role || 'user'
+        });
+        setStatus('authenticated');
+      } else {
+        setUser(null);
+        setStatus('unauthenticated');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    if (!sb) return false;
+    
+    try {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      return !error;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
+  };
+
+  const register = async (email: string, password: string, name: string): Promise<boolean> => {
+    if (!sb) return false;
+    
+    try {
+      const { error } = await sb.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }
+        }
+      });
+      return !error;
+    } catch (error) {
+      console.error('Register error:', error);
+      return false;
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    if (!sb) return;
+    
+    try {
+      await sb.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const updateProfile = async (updates: Partial<FitFiUser>): Promise<void> => {
+    if (!sb || !user) return;
+    
+    try {
+      const { error } = await sb.auth.updateUser({
+        data: updates
+      });
+      
+      if (!error) {
+        setUser(prev => prev ? { ...prev, ...updates } : null);
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+    }
+  };
+
+  const value: UserCtx = {
+    user,
+    status,
+    isLoading: status === 'loading',
+    isMember,
+    login,
+    register,
+    logout,
+    updateProfile
+  };
+
+  return (
+    <UserContext.Provider value={value}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+export const useUser = (): UserCtx => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};

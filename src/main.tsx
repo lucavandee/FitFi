@@ -1,23 +1,28 @@
+// /src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+// Geen BrowserRouter hier (App bevat al een Router)
 import { HelmetProvider } from "react-helmet-async";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import ThemeProvider from "@/context/ThemeContext";
-import UserProvider from "@/context/UserContext";
-import GamificationProvider from "@/context/GamificationContext";
-import OnboardingProvider from "@/context/OnboardingContext";
-import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import App from "./App";
+import { NovaChatProvider } from "@/components/nova/NovaChatProvider";
+import NovaChatMount from "@/components/nova/NovaChatMount";
+
+// CSS: eerst basis, DAN polish als allerlaatste (zorgt dat polish alles kan overrulen)
 import "./index.css";
+import "./styles/polish.css";
+
+// Boot Nova eenmaal (dubbele import verwijderd)
+import "./components/nova/boot.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <BrowserRouter>
+      <NovaChatProvider>
         <App />
-      </BrowserRouter>
+        {/* Floating FAB + overlay panel (rechtsonder) */}
+        <NovaChatMount />
+      </NovaChatProvider>
     </HelmetProvider>
   </React.StrictMode>
 );

@@ -1,30 +1,16 @@
 import React from "react";
+import Card from "@/components/ui/Card";
 
-/** Premium skeleton: luchtig en tokens-first */
 function ResultSkeleton() {
   return (
-    <div className="w-full">
-      <div className="rounded-2xl bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-6 md:p-8">
-        <div className="h-4 w-28 rounded-md bg-[var(--overlay-accent-08a)] animate-pulse" />
-        <div className="mt-4 h-6 w-2/3 rounded-md bg-[var(--overlay-accent-08a)] animate-pulse" />
-        <div className="mt-2 h-4 w-3/4 rounded-md bg-[var(--overlay-accent-08a)] animate-pulse" />
-        <div className="mt-6 h-8 w-40 rounded-md bg-[var(--overlay-accent-08a)] animate-pulse" />
-      </div>
-
-      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div
-            key={i}
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] overflow-hidden"
-          >
-            <div className="h-60 w-full bg-[var(--overlay-accent-08a)] animate-pulse" />
-            <div className="p-5">
-              <div className="h-4 w-1/2 bg-[var(--overlay-accent-08a)] rounded-md animate-pulse" />
-              <div className="mt-2 h-4 w-2/3 bg-[var(--overlay-accent-08a)] rounded-md animate-pulse" />
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Card key={i} className="p-4">
+          <div className="h-44 w-full rounded-md bg-[#1b2138] animate-pulse mb-4" />
+          <div className="h-4 w-2/3 rounded-md bg-[#1b2138] animate-pulse mb-2" />
+          <div className="h-4 w-1/2 rounded-md bg-[#1b2138] animate-pulse" />
+        </Card>
+      ))}
     </div>
   );
 }
