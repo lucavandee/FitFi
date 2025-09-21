@@ -1,91 +1,122 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+
+/** Publieke API van de context */
+export type OnboardingAnswers = Record<
+  string,
+  string | number | boolean | string[] | number[] | null
+>;
+
+export type OnboardingState = {
+  /** Huidige stap in de onboarding-flow (1-based of route-gebaseerd) */
+  step: number;
+  /** Alle gegeven antwoorden (keyed per vraag/veldnaam) */
+  answers: OnboardingAnswers;
+  /** Zet expliciet de stap (begrenst op min 1) */
+  setStep: (n: number) => void;
+  /** Merge een subset van antwoorden (immutabel) */
+  setAnswers: (patch: Partial<OnboardingAnswers>) => void;
+  /** Volgende stap helper */
+  next: () => void;
+  /** Vorige stap helper */
+  prev: () => void;
+  /** Reset alle state naar begin */
+  reset: () => void;
+};
+
+const OnboardingCtx = createContext<OnboardingState | null>(null);
+
+const STORAGE_KEY = "ff_onboarding_v1";
+
+type ProviderProps = { children: ReactNode };
 
 /**
- * Clean OnboardingContext for route-driven flow
- * No auto-populate, no navigation logic, just data management
+ * OnboardingProvider
+ * - Bewaart voortgang in localStorage (client-only, PII-vrij als je key's slim kiest)
+ * - Veilige defaults zodat UI nooit crasht
  */
-interface OnboardingData {
-  gender?: 'man' | 'vrouw';
-  name?: string;
-  archetypes?: string[];
-  season?: 'lente' | 'zomer' | 'herfst' | 'winter';
-  occasions?: string[];
-  preferences?: {
-    tops?: boolean;
-    bottoms?: boolean;
-    outerwear?: boolean;
-    shoes?: boolean;
-    accessories?: boolean;
-  };
-  // Metadata
-  startTime?: number;
-}
+const OnboardingProvider: React.FC<ProviderProps> = ({ children }) => {
+  const [step, setStepState] = useState<number>(1);
+  const [answers, setAnswersState] = useState<OnboardingAnswers>({});
 
-interface OnboardingContextType {
-  data: OnboardingData;
-  updateAnswers: (newData: Partial<OnboardingData>) => void;
-  resetData: () => void;
-  isComplete: boolean;
-}
+  // Hydrate
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Partial<OnboardingState>;
+      if (parsed && typeof parsed === "object") {
+        if (typeof parsed.step === "number") setStepState(Math.max(1, parsed.step));
+        if (parsed.answers && typeof parsed.answers === "object") {
+          setAnswersState(parsed.answers as OnboardingAnswers);
+        }
+      }
+    } catch {
+      /* ignore corrupt storage */
+    }
+  }, []);
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+  // Persist
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ step, answers })
+      );
+    } catch {
+      /* ignore quota */
+    }
+  }, [step, answers]);
 
-export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Clean initial state - no auto-population
-  const initialState: OnboardingData = {
-    gender: undefined,
-    name: '',
-    archetypes: [],
-    season: undefined,
-    occasions: [],
-    preferences: {
-      tops: true,
-      bottoms: true,
-      outerwear: true,
-      shoes: true,
-      accessories: true
-    },
-    startTime: Date.now()
-  };
+  const setStep = (n: number) => setStepState(Math.max(1, n));
 
-  const [data, setData] = useState<OnboardingData>(initialState);
+  const setAnswers = (patch: Partial<OnboardingAnswers>) =>
+    setAnswersState((prev) => ({ ...prev, ...patch }));
 
-  // Simple update function
-  const updateAnswers = (newData: Partial<OnboardingData>) => {
-    setData(prev => ({ ...prev, ...newData }));
-  };
-
-  // Reset function
-  const resetData = () => {
-    setData(initialState);
+  const next = () => setStepState((s) => s + 1);
+  const prev = () => setStepState((s) => Math.max(1, s - 1));
+  const reset = () => {
+    setStepState(1);
+    setAnswersState({});
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
   };
 
-  // Check if onboarding is complete
-  const isComplete = !!(
-    data.gender &&
-    data.archetypes && data.archetypes.length > 0 &&
-    data.season &&
-    data.occasions && data.occasions.length > 0
+  const value = useMemo<OnboardingState>(
+    () => ({ step, answers, setStep, setAnswers, next, prev, reset }),
+    [step, answers]
   );
 
-  const value: OnboardingContextType = {
-    data,
-    updateAnswers,
-    resetData,
-    isComplete
+  return <OnboardingCtx.Provider value={value}>{children}</OnboardingCtx.Provider>;
+};
+
+/**
+ * Fail-safe hook: crasht niet als de Provider (tijdelijk) ontbreekt.
+ * Geeft een no-op implementatie terug zodat UI functioneel blijft in dev.
+ */
+export function useOnboarding(): OnboardingState {
+  const ctx = useContext(OnboardingCtx);
+  if (ctx) return ctx;
+
+  // No-op fallback (dev-vriendelijk; voorkomt runtime crashes)
+  return {
+    step: 1,
+    answers: {},
+    setStep: () => {},
+    setAnswers: () => {},
+    next: () => {},
+    prev: () => {},
+    reset: () => {},
   };
+}
 
-  return (
-    <OnboardingContext.Provider value={value}>
-      {children}
-    </OnboardingContext.Provider>
-  );
-};
-
-export const useOnboarding = (): OnboardingContextType => {
-  const context = useContext(OnboardingContext);
-  if (context === undefined) {
-    throw new Error('useOnboarding must be used within an OnboardingProvider');
-  }
-  return context;
-};
+export default OnboardingProvider;
