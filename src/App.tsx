@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CrashGate from '@/components/system/CrashGate';
 import { lazyAny } from '@/utils/lazyPage';
@@ -107,7 +107,7 @@ const App: React.FC = () => {
             <GamificationProvider>
               <OnboardingProvider>
                 <ErrorBoundary>
-                  <BrowserRouter>
+                  <Router>
                     <NavigationServiceInitializer />
                     <ScrollToTop />
                     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 relative">
@@ -245,7 +245,7 @@ const App: React.FC = () => {
                       <NovaLoginPromptHost />
                       <NovaChatMount />
                     </div>
-                  </BrowserRouter>
+                  </Router>
                 </ErrorBoundary>
               </OnboardingProvider>
             </GamificationProvider>

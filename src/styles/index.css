@@ -1,9 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Tokens eerst (variabelen) en daarna polish (micro-animaties, chips, btn-helpers) */
-@import "./tokens.css";
-@import "./polish.css";
-
-/* Eventuele globale resets of util-overrides mogen hierna komen */
