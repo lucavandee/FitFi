@@ -3552,7 +3552,8 @@
   .res-card, .btn { transition: none; }
   .skel::after { animation: none; }
   .img-fade { transition: none; }
-  .res-card { opacity: 1; transform: none; }
+  .res-card { opacity: 1; transform: none; 
+}
 
 
 /* =======================
