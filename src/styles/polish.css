@@ -3914,3 +3914,24 @@ a:focus-visible {
   background: color-mix(in oklab, var(--ff-cta-500) 15%, #fff);
   border-color: var(--ff-cta-400);
   color: var(--
+
+:target {
+  scroll-margin-top: 72px; /* match je navbar hoogte */
+}
+
+/* Consistent link and focus styling */
+a {
+  color: var(--ff-link);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+a:hover {
+  color: var(--ff-link-hover);
+  text-decoration-color: var(--ff-link-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--ff-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
