@@ -1,5 +1,6 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
+import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 
 const EnhancedResultsPage: React.FC = () => {
   // Mock data voor outfit kaarten
@@ -85,6 +86,14 @@ const EnhancedResultsPage: React.FC = () => {
         <div className="preview-tile" />
       </div>
 
+
+    {/* Premium Upsell */}
+    <PremiumUpsellStrip 
+      onCta={() => {
+        // Analytics tracking voor upgrade CTA
+        console.log('Premium upsell clicked');
+      }}
+    />
       {/* 2) Grid met kaarten */}
       <section aria-labelledby="outfits-heading">
         <h2 id="outfits-heading" className="sr-only">Outfits</h2>

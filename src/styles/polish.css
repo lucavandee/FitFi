@@ -3320,7 +3320,144 @@
   background: linear-gradient(145deg, #89cff0, #2a6b8a);
 }
 [data-style="weekend-casual"] .res-card__tile:nth-child(4) {
-  background: linear-gradient(145deg, #0e2746, #89cff0);
+  background: linear-gradient(145deg, #89cff0, #1a4f6b);
+}
+
+/* =======================
+   PREMIUM UPSELL STRIP
+   ======================= */
+
+.res-upsell {
+  max-width: 1120px;
+  margin: clamp(32px, 5vw, 48px) auto;
+  padding: clamp(20px, 3vw, 32px);
+  background: linear-gradient(135deg, 
+    color-mix(in oklab, var(--ff-color-primary-700) 8%, #fff),
+    color-mix(in oklab, var(--ff-color-primary-700) 12%, #fff)
+  );
+  border-radius: 20px;
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 15%, transparent);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: clamp(24px, 4vw, 40px);
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .res-upsell {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+.res-upsell__copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.2vw, 12px);
+}
+
+.res-upsell__title {
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ff-color-text);
+  margin: 0;
+}
+
+.res-upsell__title span {
+  color: var(--ff-color-primary-700);
+  font-weight: 700;
+}
+
+.res-upsell__sub {
+  font-size: clamp(14px, 1.4vw, 16px);
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--ff-color-text) 80%, transparent);
+  margin: 0;
+}
+
+.res-upsell__benefits {
+  list-style: none;
+  padding: 0;
+  margin: clamp(12px, 1.8vw, 16px) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.res-upsell__benefits li {
+  font-size: clamp(13px, 1.3vw, 15px);
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--ff-color-text) 75%, transparent);
+  position: relative;
+  padding-left: 16px;
+}
+
+.res-upsell__benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--ff-color-primary-700);
+  font-weight: 600;
+}
+
+.res-upsell__ctas {
+  display: flex;
+  gap: 12px;
+  margin-top: clamp(16px, 2.4vw, 20px);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .res-upsell__ctas {
+    justify-content: center;
+  }
+}
+
+/* Teasers (locked outfits) */
+.res-upsell__teasers {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .res-upsell__teasers {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.teaser {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  filter: blur(1px) brightness(0.7);
+}
+
+.teaser__tile {
+  border-radius: 6px;
+}
+
+/* Archetype-specific teaser colors */
+.teaser__tile[data-arch="smart"] { background: linear-gradient(145deg, #0e2746, #1a4470); }
+.teaser__tile[data-arch="mono"] { background: linear-gradient(145deg, #0f2138, #1f4267); }
+.teaser__tile[data-arch="ath"] { background: linear-gradient(145deg, #1a4f6b, #89cff0); }
+
+.teaser__lock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  filter: none;
 }
 
 /* Results hero section */
