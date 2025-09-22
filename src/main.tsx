@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 // Geen BrowserRouter hier (App bevat al een Router)
 import { HelmetProvider } from "react-helmet-async";
+import "@/styles/polish.css";
 
 import App from "./App";
 import { NovaChatProvider } from "@/components/nova/NovaChatProvider";
