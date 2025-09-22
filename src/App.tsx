@@ -1,260 +1,168 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import CrashGate from '@/components/system/CrashGate';
+import { Routes, Route } from 'react-router-dom';
 import { lazyAny } from '@/utils/lazyPage';
-import { UserProvider } from '@/context/UserContext';
-import { ThemeProvider } from '@/context/ThemeContext';
-import { GamificationProvider } from '@/context/GamificationContext';
-import { OnboardingProvider } from '@/context/OnboardingContext';
-import { NavigationServiceInitializer } from '@/components/NavigationServiceInitializer';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import NovaChatMount from '@/components/nova/NovaChatMount';
-import { ScrollToTop } from '@/components/ScrollToTop';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/layout/Navbar';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import AppPortal from '@/components/layout/AppPortal';
-import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
-import EnhancedResultsPage from '@/pages/EnhancedResultsPage';
+import Footer from '@/components/layout/Footer';
+import ScrollToTop from '@/components/ScrollToTop';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
 
-// Lazy load components with lazyAny for better error handling
-const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
-const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
+// Lazy loaded components - ONE declaration each
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
-
-// Lazy load all pages with lazyAny for optimal code-splitting
-const HomePage = lazyAny(() => import('@/pages/HomePage'));
-const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
-const LoginPage = lazyAny(() => import('@/pages/LoginPage'));
-const RegisterPage = lazyAny(() => import('@/pages/RegisterPage'));
-const ForgotPasswordPage = lazyAny(() => import('@/pages/ForgotPasswordPage'));
-const ResetPasswordPage = lazyAny(() => import('@/pages/ResetPasswordPage'));
-const ProfilePage = lazyAny(() => import('@/pages/ProfilePage'));
 const AboutPage = lazyAny(() => import('@/pages/AboutPage'));
-const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
-const PricingPage = lazyAny(() => import('@/pages/PricingPage'));
-const ContactPage = lazyAny(() => import('@/pages/ContactPage'));
-const FAQPage = lazyAny(() => import('@/pages/FAQPage'));
-const FaqPage = lazyAny(() => import('@/pages/FaqPage'));
-const LegalPage = lazyAny(() => import('@/pages/LegalPage'));
-const SupportPage = lazyAny(() => import('@/pages/SupportPage'));
-const TermsPage = lazyAny(() => import('@/pages/TermsPage'));
-const GenderSelectPage = lazyAny(() => import('@/pages/GenderSelectPage'));
-const ProductPage = lazyAny(() => import('@/pages/ProductPage'));
-const PrivacyPolicyPage = lazyAny(() => import('@/pages/PrivacyPolicyPage'));
-const ThankYouPage = lazyAny(() => import('@/pages/ThankYouPage'));
-const OnboardingPage = lazyAny(() => import('@/pages/OnboardingPage'));
-const QuizPage = lazyAny(() => import('@/pages/QuizPage'));
-const DynamicOnboardingPage = lazyAny(() => import('@/pages/DynamicOnboardingPage'));
-const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
-const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
+const AnalyticsPage = lazyAny(() => import('@/pages/AnalyticsPage'));
+const BlogDetailPage = lazyAny(() => import('@/pages/BlogDetailPage'));
 const BlogIndexPage = lazyAny(() => import('@/pages/BlogIndexPage'));
 const BlogPage = lazyAny(() => import('@/pages/BlogPage'));
 const BlogPostPage = lazyAny(() => import('@/pages/BlogPostPage'));
-const PressPage = lazyAny(() => import('@/pages/PressPage'));
-const BlogDetailPage = lazyAny(() => import('@/pages/BlogDetailPage'));
-const TribesPage = lazyAny(() => import('@/pages/TribesPage'));
-const TribeDetailPage = lazyAny(() => import('@/pages/TribeDetailPage'));
-const HelpCenterPage = lazyAny(() => import('@/pages/HelpCenterPage'));
-const FeedbackPage = lazyAny(() => import('@/pages/FeedbackPage'));
-const SuccessStoriesPage = lazyAny(() => import('@/pages/SuccessStoriesPage'));
-const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
-const GamificationPage = lazyAny(() => import('@/pages/GamificationPage'));
-const AnalyticsPage = lazyAny(() => import('@/pages/AnalyticsPage'));
-const FeedPage = lazyAny(() => import('@/pages/FeedPage'));
-const HealthCheckPage = lazyAny(() => import('@/pages/HealthCheckPage'));
 const BrandSafetyPage = lazyAny(() => import('@/pages/BrandSafetyPage'));
-const DisclosurePage = lazyAny(() => import('@/pages/DisclosurePage'));
-const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
+const ContactPage = lazyAny(() => import('@/pages/ContactPage'));
 const CookiesPage = lazyAny(() => import('@/pages/CookiesPage'));
-const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
+const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
+const DisclosurePage = lazyAny(() => import('@/pages/DisclosurePage'));
+const DynamicOnboardingPage = lazyAny(() => import('@/pages/DynamicOnboardingPage'));
+const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
 const EnhancedResultsPage = lazyAny(() => import('@/pages/EnhancedResultsPage'));
+const FaqPage = lazyAny(() => import('@/pages/FaqPage'));
+const FeedPage = lazyAny(() => import('@/pages/FeedPage'));
+const FeedbackPage = lazyAny(() => import('@/pages/FeedbackPage'));
+const ForgotPasswordPage = lazyAny(() => import('@/pages/ForgotPasswordPage'));
+const GamificationPage = lazyAny(() => import('@/pages/GamificationPage'));
+const GenderSelectPage = lazyAny(() => import('@/pages/GenderSelectPage'));
+const HealthCheckPage = lazyAny(() => import('@/pages/HealthCheckPage'));
+const HealthPage = lazyAny(() => import('@/pages/HealthPage'));
+const HelpCenterPage = lazyAny(() => import('@/pages/HelpCenterPage'));
+const HomePage = lazyAny(() => import('@/pages/HomePage'));
+const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
+const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
+const LegalPage = lazyAny(() => import('@/pages/LegalPage'));
+const LoginPage = lazyAny(() => import('@/pages/LoginPage'));
+const OnboardingPage = lazyAny(() => import('@/pages/OnboardingPage'));
+const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
+const PressPage = lazyAny(() => import('@/pages/PressPage'));
+const PricingPage = lazyAny(() => import('@/pages/PricingPage'));
+const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
+const PrivacyPolicyPage = lazyAny(() => import('@/pages/PrivacyPolicyPage'));
+const ProductPage = lazyAny(() => import('@/pages/ProductPage'));
+const ProfilePage = lazyAny(() => import('@/pages/ProfilePage'));
+const QuizPage = lazyAny(() => import('@/pages/QuizPage'));
+const RegisterPage = lazyAny(() => import('@/pages/RegisterPage'));
+const ResetPasswordPage = lazyAny(() => import('@/pages/ResetPasswordPage'));
+const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
+const SuccessStoriesPage = lazyAny(() => import('@/pages/SuccessStoriesPage'));
+const SupportPage = lazyAny(() => import('@/pages/SupportPage'));
+const TermsPage = lazyAny(() => import('@/pages/TermsPage'));
+const ThankYouPage = lazyAny(() => import('@/pages/ThankYouPage'));
+const TribeDetailPage = lazyAny(() => import('@/pages/TribeDetailPage'));
+const TribesPage = lazyAny(() => import('@/pages/TribesPage'));
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
-// Nova feature flag
-const NOVA_ENABLED = (import.meta.env.VITE_NOVA_ENABLED ?? 'true') !== 'false';
-// NotFound component
-const NotFound: React.FC = () => (
-  <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center">
-    <h1 className="text-2xl font-semibold">Pagina niet gevonden</h1>
-    <p className="mt-2 text-slate-600">
-      De pagina die je zoekt bestaat niet of is verplaatst.
-    </p>
-    <Link to="/" className="mt-4 underline">
-      ← Terug naar home
-    </Link>
+// 404 fallback
+const NotFoundPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-4xl font-bold mb-4">404</h1>
+      <p className="text-gray-600 mb-4">Pagina niet gevonden</p>
+      <a href="/" className="btn btn--primary">Terug naar home</a>
+    </div>
   </div>
 );
 
-const App: React.FC = () => {
+export default function App() {
   return (
-    <>
-    <div className="min-h-screen bg-[color:var(--color-bg)]">
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <UserProvider>
-            <GamificationProvider>
-              <OnboardingProvider>
-                <ErrorBoundary>
-                  <Router>
-                    <NavigationServiceInitializer />
-                    <ScrollToTop />
-                    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 relative">
-                      <Navbar />
-                      <Suspense fallback={<div className="p-8">Loading…</div>}>
-                        <Routes>
-                        
-                          {/* Public Routes */}
-                          <Route path="/" element={<LandingPage />} />
-                          <Route path="/home" element={<HomePage />} />
-                          <Route path="/login" element={<LoginPage />} />
-                          <Route path="/inloggen" element={<LoginPage />} />
-                          <Route path="/registreren" element={<RegisterPage />} />
-                          <Route path="/wachtwoord-vergeten" element={<ForgotPasswordPage />} />
-                          <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
-                          <Route path="/over-ons" element={<AboutPage />} />
-                          <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-                          <Route path="/prijzen"  element={<PricingPage />} />
-                          <Route path="/blog" element={<BlogPage />} />
-                          <Route path="/blog/:id" element={<BlogPostPage />} />
-                          <Route path="/pers" element={<PressPage />} />
-                          <Route path="/blog/:slug" element={<BlogDetailPage />} />
-                          <Route path="/pricing" element={<PricingPage />} />
-                          <Route path="/prijzen" element={<PricingPage />} />
-                          <Route path="/contact" element={<ContactPage />} />
-                          <Route path="/veelgestelde-vragen" element={<FaqPage />} />
-                          <Route path="/faq" element={<FaqPage />} />
-                          <Route path="/juridisch" element={<LegalPage />} />
-                          <Route path="/ondersteuning" element={<SupportPage />} />
-                          <Route path="/help" element={<HelpCenterPage />} />
-                          <Route path="/feedback" element={<FeedbackPage />} />
-                          <Route path="/succesverhalen" element={<SuccessStoriesPage />} />
-                          <Route path="/geslacht-selecteren" element={<GenderSelectPage />} />
-                          <Route path="/product/:id" element={<ProductPage />} />
-                          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                          <Route path="/algemene-voorwaarden" element={<TermsPage />} />
-                          <Route path="/bedankt" element={<ThankYouPage />} />
-                          <Route path="/profile" element={<ProfilePage />} />
-                          
-                          {/* Legal & Compliance Routes */}
-                          <Route path="/brand-safety" element={<BrandSafetyPage />} />
-                          <Route path="/disclosure" element={<DisclosurePage />} />
-                          <Route path="/privacy" element={<PrivacyPage />} />
-                          <Route path="/cookies" element={<CookiesPage />} />
-                          <Route path="/terms" element={<TermsPage />} />
-                        
-                          {/* Public Routes */}
-                          <Route path="/feed" element={<FeedPage />} />
-                          <Route path="/shop" element={<ShopRedirect />} />
-                          
-                          {/* Protected Routes */}
-                          <Route path="/onboarding" element={
-                            <ProtectedRoute>
-                              <OnboardingPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/quiz" element={
-                            <ProtectedRoute>
-                              <QuizPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/dynamic-onboarding" element={
-                            <ProtectedRoute>
-                              <DynamicOnboardingPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/results" element={<EnhancedResultsPage />} />
-                          <Route path="/resultaten" element={<Navigate to="/results" replace />} />
-                          <Route path="/dynamic-results" element={
-                            <ProtectedRoute>
-                              <DynamicResultsPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/enhanced-resultaten" element={
-                            <ProtectedRoute>
-                              <EnhancedResultsPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/dashboard" element={
-                            <ProtectedRoute>
-                              <DashboardPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/outfits" element={
-                            <ProtectedRoute>
-                              <OutfitsPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/gamification" element={
-                            <ProtectedRoute>
-                              <GamificationPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/analytics" element={
-                            <ProtectedRoute allowedRoles={['admin']} redirectTo="/login">
-                              <AnalyticsPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/tribes" element={
-                            <ProtectedRoute>
-                              <TribesPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/tribes/:slug" element={
-                            <ProtectedRoute>
-                              <TribeDetailPage />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/tribes/id/:tribeId" element={
-                            <ProtectedRoute>
-                              <TribeDetailPage />
-                            </ProtectedRoute>
-                          } />
-                          
-                          {/* Health Check Route */}
-                          <Route path="__health" element={<HealthCheckPage />} />
-                        
-                          {/* Fallback */}
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
-                      
-                      {/* Nova AI Chat - Always mounted with fail-safe */}
-                      {NOVA_ENABLED && (
-                        <>
-                          <Suspense fallback={null}><NovaLauncher /></Suspense>
-                          <Suspense fallback={null}><NovaBubble /></Suspense>
-                        </>
-                      )}
-                      
-                      {/* Cookie Consent Banner */}
-                      <Suspense fallback={null}><CookieBanner /></Suspense>
-                      
-                      {/* Nova Login Prompt Host */}
-                      <NovaLoginPromptHost />
-                      <NovaChatMount />
-                    </div>
-                  </Router>
-                </ErrorBoundary>
-              </OnboardingProvider>
-            </GamificationProvider>
-          </UserProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </div>
-    </>
-  );
-};
+    <ErrorBoundary>
+      <NavigationServiceInitializer />
+      <ScrollToTop />
+      
+      <Helmet>
+        <title>FitFi - AI Styling Platform</title>
+        <meta name="description" content="Premium AI styling platform voor Nederland en Europa" />
+      </Helmet>
 
-export default App;
+      <div className="app-layout">
+        <Navbar />
+        
+        <main className="main-content">
+          <Suspense fallback={<div className="loading-fallback">Loading...</div>}>
+            <Routes>
+              {/* Landing & Home */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<HomePage />} />
+              
+              {/* Onboarding & Quiz */}
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/dynamic-onboarding" element={<DynamicOnboardingPage />} />
+              <Route path="/quiz" element={<QuizPage />} />
+              <Route path="/gender-select" element={<GenderSelectPage />} />
+              
+              {/* Results - NEW ENHANCED PAGE */}
+              <Route path="/results" element={<EnhancedResultsPage />} />
+              <Route path="/dynamic-results" element={<DynamicResultsPage />} />
+              <Route path="/outfits" element={<OutfitsPage />} />
+              
+              {/* User & Auth */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              
+              {/* Content */}
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog-index" element={<BlogIndexPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/blog-detail/:id" element={<BlogDetailPage />} />
+              
+              {/* Community */}
+              <Route path="/tribes" element={<TribesPage />} />
+              <Route path="/tribes/:id" element={<TribeDetailPage />} />
+              <Route path="/feed" element={<FeedPage />} />
+              <Route path="/gamification" element={<GamificationPage />} />
+              
+              {/* Info Pages */}
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/how-it-works" element={<HowItWorksPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/success-stories" element={<SuccessStoriesPage />} />
+              <Route path="/press" element={<PressPage />} />
+              
+              {/* Support */}
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/support" element={<SupportPage />} />
+              <Route path="/help" element={<HelpCenterPage />} />
+              <Route path="/faq" element={<FaqPage />} />
+              <Route path="/feedback" element={<FeedbackPage />} />
+              
+              {/* Legal */}
+              <Route path="/legal" element={<LegalPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/cookies" element={<CookiesPage />} />
+              <Route path="/disclosure" element={<DisclosurePage />} />
+              <Route path="/brand-safety" element={<BrandSafetyPage />} />
+              
+              {/* Utility */}
+              <Route path="/thank-you" element={<ThankYouPage />} />
+              <Route path="/shop-redirect" element={<ShopRedirect />} />
+              <Route path="/product/:id" element={<ProductPage />} />
+              
+              {/* Health & Analytics */}
+              <Route path="/__health" element={<HealthPage />} />
+              <Route path="/health-check" element={<HealthCheckPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              
+              {/* 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </main>
+        
+        <Footer />
+      </div>
+      
+      <CookieBanner />
+    </ErrorBoundary>
+  );
+}
