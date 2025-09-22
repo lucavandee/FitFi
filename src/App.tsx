@@ -22,6 +22,7 @@ const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
 const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
 
+const EnhancedResultsPage = lazy(() => import('@/pages/EnhancedResultsPage'));
 // Lazy load all pages with lazyAny for optimal code-splitting
 const HomePage = lazyAny(() => import('@/pages/HomePage'));
 const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
@@ -124,6 +125,7 @@ const App: React.FC = () => {
                           <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
                           <Route path="/over-ons" element={<AboutPage />} />
                           <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                          <Route path="/enhanced-results" element={<EnhancedResultsPage />} />
                           <Route path="/prijzen"  element={<PricingPage />} />
                           <Route path="/blog" element={<BlogPage />} />
                           <Route path="/blog/:id" element={<BlogPostPage />} />
