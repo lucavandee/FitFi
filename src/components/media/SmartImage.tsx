@@ -53,9 +53,7 @@ export default function SmartImage({
   const handleLoad = () => { setLoaded(true); onLoad?.(); };
 
   const imgEl = (
-  fetchPriority = 'auto',
-  sizes = '(max-width: 768px) 92vw, 360px',
-  srcSet
+    <img
       src={cdnPrimary ?? current}
       srcSet={srcSet}
       sizes={sizes}
@@ -82,27 +80,13 @@ export default function SmartImage({
   const style = aspect ? (typeof aspect === 'number'
     ? { aspectRatio: String(aspect) }
     : { aspectRatio: aspect }) : undefined;
-      {/* Skeleton background */}
-      <div className={cn(
-        'smart-image__skeleton',
-        isLoaded && 'smart-image__skeleton--loaded'
-      )} />
-      
 
   return (
     <div
-        srcSet={srcSet}
-        sizes={sizes}
       className={['relative overflow-hidden img-skeleton', containerClassName ?? ''].join(' ')}
       style={style}
     >
       {imgEl}
-        className={cn(
-          'smart-image__img',
-          isLoaded && 'smart-image__img--loaded',
-          hasError && 'smart-image__img--error'
-        )}
+    </div>
   );
-  sizes?: string;
-  srcSet?: string;
 }
