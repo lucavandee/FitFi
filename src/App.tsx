@@ -159,11 +159,10 @@ export default function App() {
       </Suspense>
         
       </div>
-      
-      <Footer />
       <CookieBanner />
     </ErrorBoundary>
   );
+        <NavigationServiceInitializer />
 }
   )
 }
