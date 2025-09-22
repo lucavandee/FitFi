@@ -4,10 +4,8 @@ import { lazyAny } from '@/utils/lazyPage';
 import { Helmet } from 'react-helmet-async';
 import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
 import Navbar from '@/components/layout/Navbar';
-import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
 
 // Lazy loaded components - ONE declaration each
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
@@ -38,6 +36,7 @@ const HomePage = lazyAny(() => import('@/pages/HomePage'));
 const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
 const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
 const LegalPage = lazyAny(() => import('@/pages/LegalPage'));
+const LoginPage = lazyAny(() => import('@/pages/LoginPage'));
 const OnboardingPage = lazyAny(() => import('@/pages/OnboardingPage'));
 const OutfitsPage = lazyAny(() => import('@/pages/OutfitsPage'));
 const PressPage = lazyAny(() => import('@/pages/PressPage'));
@@ -80,7 +79,6 @@ export default function App() {
       </Helmet>
 
       <div className="app-layout">
-        <NavigationServiceInitializer />
         <Navbar />
         
         <main className="main-content">
