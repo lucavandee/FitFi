@@ -3554,6 +3554,47 @@
   .img-fade { transition: none; }
   .res-card { opacity: 1; transform: none; }
 
+/* ============ TYPOGRAPHY & SPACING (micro-fixes) ============ */
+/* Headline breedte */
+.results-hero h1 { 
+  max-width: 28ch; 
+}
+
+/* Chips-stack spacing */
+.results-hero .chip-row { 
+  margin-top: 12px; 
+  gap: 8px; 
+}
+
+section.results { 
+  scroll-margin-top: 84px; 
+}
+
+/* ============ PREMIUM UPSELL (strakker blok) ============ */
+.premium-cta {
+  margin: 32px auto 0; 
+  padding: 16px 18px;
+  display: flex; 
+  gap: 12px; 
+  align-items: center; 
+  justify-content: center;
+  border: 1px dashed var(--ff-cta-300); 
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--ff-cta-50) 60%, #fff);
+  text-align: center;
+}
+
+.premium-cta h3 {
+  margin: 0 0 8px;
+  color: var(--ff-cta-700);
+  font-size: 1.1rem;
+}
+
+.premium-cta p {
+  margin: 0 0 12px;
+  color: var(--ff-ink-600);
+}
+
 /* ============ RESULTS: PREMIUM CARD STYLING ============ */
 /* Results: kaart */
 .res-card {
