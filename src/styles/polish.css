@@ -2885,9 +2885,29 @@
   font-weight:600; font-size:.9rem;
   cursor: pointer;
   transition: all .15s ease;
+/* Chip variants (stable, closed braces) */
+.ff-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text);
+  background: #f5f6f8; /* fallback */
+  border: 1px solid var(--color-border, #e7e7ea);
 }
-.chip:hover{
-  background: color-mix(in oklab, var(--ff-color-primary-700) 8%, var(--color-surface));
-}
-.chip--active{
+
+.ff-chip--active {
+  /* fallback first */
+  background: #eef2ff;
+  /* progressive enhancement */
   background: color-mix(in oklab, var(--ff-color-primary-700) 15%, var(--color-surface));
+  border-color: color-mix(in oklab, var(--ff-color-primary-700) 40%, var(--color-border, #e7e7ea));
+  box-shadow: 0 4px 12px rgba(36, 73, 216, 0.18);
+}
+
+.ff-chip--active:hover {
+  background: color-mix(in oklab, var(--ff-color-primary-700) 22%, var(--color-surface));
+}
