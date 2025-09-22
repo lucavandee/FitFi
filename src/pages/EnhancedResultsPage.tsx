@@ -163,6 +163,9 @@ const EnhancedResultsPage: React.FC = () => {
                     sizes="(max-width: 768px) 45vw, 180px"
                     srcSet={`${img}?w=360 360w, ${img}?w=720 720w`}
                   />
+            )
+            )
+            }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {mockOutfits.map((outfit, index) => (
             <OutfitCard
@@ -175,6 +178,9 @@ const EnhancedResultsPage: React.FC = () => {
           ))}
         </div>
       </section>
+    )
+    )
+    }
     </main>
   );
 };
