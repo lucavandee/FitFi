@@ -3239,6 +3239,90 @@
 .chip { border-radius: 9999px; padding: .35rem .7rem; background: color-mix(in oklab, var(--ff-color-primary-700) 10%, #fff); }
 .chip--active { background: color-mix(in oklab, var(--ff-color-primary-700) 16%, #fff); }
 
+/* =======================
+   SMART IMAGE & FALLBACKS
+   ======================= */
+
+.smart-image {
+  position: relative;
+  overflow: hidden;
+  background: var(--ff-elevation-900, #0f2138);
+}
+
+.smart-image__skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #0e2746, #0b1b30);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.smart-image__skeleton--loaded {
+  opacity: 0;
+}
+
+.smart-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.smart-image__img--loaded {
+  opacity: 1;
+}
+
+.smart-image__img--error {
+  display: none;
+}
+
+/* =======================
+   ARCHETYPE GRADIENTS
+   ======================= */
+
+/* Smart Casual */
+[data-style="smart-casual"] .res-card__tile:nth-child(1) {
+  background: linear-gradient(145deg, #0e2746, #0b1b30);
+}
+[data-style="smart-casual"] .res-card__tile:nth-child(2) {
+  background: linear-gradient(145deg, #163a63, #0e2746);
+}
+[data-style="smart-casual"] .res-card__tile:nth-child(3) {
+  background: linear-gradient(145deg, #1a4470, #163a63);
+}
+[data-style="smart-casual"] .res-card__tile:nth-child(4) {
+  background: linear-gradient(145deg, #0b1b30, #1a4470);
+}
+
+/* Business Casual */
+[data-style="business-casual"] .res-card__tile:nth-child(1) {
+  background: linear-gradient(145deg, #0f2138, #0d1b2a);
+}
+[data-style="business-casual"] .res-card__tile:nth-child(2) {
+  background: linear-gradient(145deg, #1b3a5c, #0f2138);
+}
+[data-style="business-casual"] .res-card__tile:nth-child(3) {
+  background: linear-gradient(145deg, #1f4267, #1b3a5c);
+}
+[data-style="business-casual"] .res-card__tile:nth-child(4) {
+  background: linear-gradient(145deg, #0d1b2a, #1f4267);
+}
+
+/* Weekend Casual */
+[data-style="weekend-casual"] .res-card__tile:nth-child(1) {
+  background: linear-gradient(145deg, #1a4f6b, #0e2746);
+}
+[data-style="weekend-casual"] .res-card__tile:nth-child(2) {
+  background: linear-gradient(145deg, #2a6b8a, #1a4f6b);
+}
+[data-style="weekend-casual"] .res-card__tile:nth-child(3) {
+  background: linear-gradient(145deg, #89cff0, #2a6b8a);
+}
+[data-style="weekend-casual"] .res-card__tile:nth-child(4) {
+  background: linear-gradient(145deg, #0e2746, #89cff0);
+}
+
 /* Results hero section */
 .res-hero {
   max-width: 80ch;
