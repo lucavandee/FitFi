@@ -55,6 +55,8 @@ const FALLBACK: { title: string; sub: string; outfits: Outfit[] } = {
     {
       id: "o3",
       title: "Athflow weekend",
+    }
+  ]
   return <ResultsPremium />;
 }
 
