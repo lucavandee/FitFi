@@ -3554,6 +3554,67 @@
   .img-fade { transition: none; }
   .res-card { opacity: 1; transform: none; }
 
+/* ============ RESULTS: PREMIUM CARD STYLING ============ */
+/* Results: kaart */
+.res-card {
+  border: 1px solid var(--ff-border-soft);
+  border-radius: 16px;
+  background: #fff;
+  transition: box-shadow .18s ease, transform .18s ease, border-color .18s;
+  will-change: transform;
+}
+.res-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 14px rgba(17, 24, 39, .08),
+    0 1px 0 rgba(17,24,39,.04) inset;
+  border-color: color-mix(in oklab, var(--ff-ink-500) 18%, #fff);
+}
+
+/* Collage: 2x2 met zachte gap en vaste verhouding */
+.res-img-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 14px 0 14px;
+}
+.res-img {
+  aspect-ratio: 4/5;          /* mode magazine */
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  background: linear-gradient(180deg, #0E2337 0%, #0C1A2A 100%);
+}
+
+/* Footer van kaart */
+.res-card-footer {
+  padding: 16px 18px 18px;
+}
+.res-card h3 {
+  font-size: 1rem;
+  line-height: 1.35;
+  margin: 0 0 6px;
+  color: var(--ff-ink-600);
+}
+
+/* Subtle link */
+.res-shoplink {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-weight: 600;
+  color: var(--ff-ink-600);
+  text-underline-offset: .12em;
+}
+.res-shoplink:hover { color: var(--ff-cta-600); text-decoration: underline; }
+
+/* Mini hover-overlay voor collage (optioneel) */
+.res-img-grid .res-overlay {
+  position: absolute; inset: 0;
+  border-radius: 12px;
+  background: linear-gradient( to top, rgba(0,0,0,.28), rgba(0,0,0,0) 55% );
+  opacity: 0; transition: opacity .2s ease;
+}
+.res-card:hover .res-overlay { opacity: 1; }
+
 /* ============ BUTTONS (consistent met Start gratis) ============ */
 .btn--primary {
   background: var(--ff-cta-500);
@@ -3686,6 +3747,7 @@ a:focus-visible {
 /* Motion respect */
 @media (prefers-reduced-motion: reduce){
   .res-card, .btn { transition: none; }
+  .res-overlay { transition: none; }
 }
 
 /* =======================

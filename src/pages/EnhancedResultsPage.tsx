@@ -1,10 +1,57 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
+import OutfitCard from "@/components/results/OutfitCard";
 import { useInView } from "@/hooks/useInView";
 
 const EnhancedResultsPage: React.FC = () => {
   const { ref: gridRef, inView: gridInView } = useInView<HTMLElement>();
+
+  // Mock outfit data for demonstration
+  const mockOutfits = [
+    {
+      title: "Smart casual (dagelijks)",
+      description: [
+        "Netter denim — rechte pijp",
+        "Witte sneaker — minimal", 
+        "Licht overshirt — koele tint"
+      ],
+      images: [
+        "/images/fallbacks/top.jpg",
+        "/images/fallbacks/bottom.jpg", 
+        "/images/fallbacks/footwear.jpg",
+        "/images/fallbacks/accessory.jpg"
+      ]
+    },
+    {
+      title: "Weekend casual",
+      description: [
+        "Comfortabele chino — relaxed fit",
+        "Canvas sneakers — vintage look",
+        "Gebreide trui — zachte textuur"
+      ],
+      images: [
+        "/images/fallbacks/top.jpg",
+        "/images/fallbacks/bottom.jpg",
+        "/images/fallbacks/footwear.jpg", 
+        "/images/fallbacks/accessory.jpg"
+      ]
+    },
+    {
+      title: "Business casual",
+      description: [
+        "Donkere chino — tailored fit",
+        "Leren loafers — klassiek",
+        "Button-down shirt — crisp wit"
+      ],
+      images: [
+        "/images/fallbacks/top.jpg",
+        "/images/fallbacks/bottom.jpg",
+        "/images/fallbacks/footwear.jpg",
+        "/images/fallbacks/accessory.jpg"
+      ]
+    }
+  ];
   
   // Mock data voor outfit kaarten
   const outfits = [
@@ -116,19 +163,15 @@ const EnhancedResultsPage: React.FC = () => {
                     sizes="(max-width: 768px) 45vw, 180px"
                     srcSet={`${img}?w=360 360w, ${img}?w=720 720w`}
                   />
-                ))}
-              </div>
-
-              <div className="res-card__body">
-                <h3 className="res-card__title">{outfit.title}</h3>
-                <ul className="res-card__bullets">
-                  {outfit.bullets.map((bullet, i) => (
-                    <li key={i}>{bullet}</li>
-                  ))}
-                </ul>
-                <a href="#" className="link-cta">Shop vergelijkbare items</a>
-              </div>
-            </article>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {mockOutfits.map((outfit, index) => (
+            <OutfitCard
+              key={index}
+              title={outfit.title}
+              description={outfit.description}
+              images={outfit.images}
+              shopLink="#shop"
+            />
           ))}
         </div>
       </section>

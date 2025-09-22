@@ -1,49 +1,79 @@
 import React from "react";
+import SmartImage from "@/components/media/SmartImage";
+import { useInView } from "@/hooks/useInView";
 
-export type ShopLink = { label: string; href: string; };
-export type Outfit = {
-  id: string;
+interface OutfitCardProps {
   title: string;
-  imageUrl?: string;
-  items?: { name: string; note?: string }[];
-  shop?: ShopLink;
-};
+  description: string[];
+  images: string[];
+  shopLink?: string;
+  className?: string;
+}
 
-const OutfitCard: React.FC<{ outfit: Outfit }> = ({ outfit }) => {
-  const { title, imageUrl, items = [], shop } = outfit;
+const OutfitCard: React.FC<OutfitCardProps> = ({
+  title,
+  description,
+  images,
+  shopLink = "#shop",
+  className = ""
+}) => {
+  const { ref, inView } = useInView<HTMLDivElement>();
+
+  // Ensure we have 4 images for the 2x2 grid
+  const gridImages = [...images];
+  while (gridImages.length < 4) {
+    gridImages.push("/images/outfit-fallback.jpg");
+  }
+
   return (
-    <article className="card overflow-hidden h-full flex flex-col">
-      <div className="relative">
-        {imageUrl ? (
-          <img src={imageUrl} alt={title} width={960} height={960}
-               decoding="async" loading="lazy"
-               className="block w-full h-auto aspect-square object-cover" />
-        ) : (
-          <div aria-hidden className="w-full aspect-square rounded-[var(--radius-lg)] shadow-[var(--shadow-soft)]"
-               style={{ background: "linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-900))" }} />
-        )}
+    <article 
+      ref={ref} 
+      className={`res-card ${inView ? 'in' : ''} ${className}`}
+    >
+      <div className="res-img-grid">
+        <div style={{ position: 'relative' }}>
+          <SmartImage 
+            className="res-img" 
+            src={gridImages[0]} 
+            alt="" 
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="res-overlay" aria-hidden="true"></span>
+        </div>
+        <SmartImage 
+          className="res-img" 
+          src={gridImages[1]} 
+          alt="" 
+          loading="lazy"
+          decoding="async"
+        />
+        <SmartImage 
+          className="res-img" 
+          src={gridImages[2]} 
+          alt="" 
+          loading="lazy"
+          decoding="async"
+        />
+        <SmartImage 
+          className="res-img" 
+          src={gridImages[3]} 
+          alt="" 
+          loading="lazy"
+          decoding="async"
+        />
       </div>
 
-      <div className="p-5 flex-1 flex flex-col">
-        <h3 className="text-base font-semibold mb-2">{title}</h3>
-        {items.length > 0 && (
-          <ul className="text-sm text-[var(--color-text-subtle)] space-y-1 mb-4">
-            {items.map((it, i) => (
-              <li key={`${it.name}-${i}`}>
-                <span className="font-medium text-[var(--color-text)]">{it.name}</span>
-                {it.note ? <span> — {it.note}</span> : null}
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="mt-auto">
-          {shop ? (
-            <a href={shop.href} target="_blank" rel="noopener noreferrer nofollow sponsored"
-               className="btn btn-ghost" aria-label={`Shop: ${shop.label}`}>
-              {shop.label}
-            </a>
-          ) : <div className="chip">Shoplink volgt</div>}
-        </div>
+      <div className="res-card-footer">
+        <h3>{title}</h3>
+        <ul className="res-bullets">
+          {description.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+        <a className="res-shoplink" href={shopLink}>
+          Shop vergelijkbare items
+        </a>
       </div>
     </article>
   );
