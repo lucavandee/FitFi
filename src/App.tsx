@@ -15,6 +15,7 @@ import Navbar from '@/components/layout/Navbar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppPortal from '@/components/layout/AppPortal';
 import NovaLoginPromptHost from '@/components/auth/NovaLoginPromptHost';
+import EnhancedResultsPage from '@/pages/EnhancedResultsPage';
 
 // Lazy load components with lazyAny for better error handling
 const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
@@ -44,8 +45,6 @@ const PrivacyPolicyPage = lazyAny(() => import('@/pages/PrivacyPolicyPage'));
 const ThankYouPage = lazyAny(() => import('@/pages/ThankYouPage'));
 const OnboardingPage = lazyAny(() => import('@/pages/OnboardingPage'));
 const QuizPage = lazyAny(() => import('@/pages/QuizPage'));
-const ResultsPage = lazyAny(() => import('@/pages/ResultsPage'));
-const EnhancedResultsPage = lazyAny(() => import('@/pages/EnhancedResultsPage'));
 const DynamicOnboardingPage = lazyAny(() => import('@/pages/DynamicOnboardingPage'));
 const DynamicResultsPage = lazyAny(() => import('@/pages/DynamicResultsPage'));
 const DashboardPage = lazyAny(() => import('@/pages/DashboardPage'));
