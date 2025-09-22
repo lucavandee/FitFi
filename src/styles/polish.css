@@ -2911,6 +2911,187 @@
 
 /* === einde chips ========================================================== */
 
+/* === Results (premium polish) — tokens-first, scoped ======================= */
+/* Scope alles onder .ff-results om regressies te voorkomen. */
+.ff-results {
+  --brand: var(--color-primary);                  /* hoofdmerk */
+  --brand-600: var(--color-primary-600, var(--color-primary));
+  --brand-700: var(--color-primary-700, var(--color-primary));
+  --brand-800: var(--color-primary-800, var(--color-primary));
+  --on-brand: var(--color-on-primary, #fff);
+
+  --surface: var(--color-surface, #fff);
+  --bg: var(--color-bg, #fafaf9);
+  --text: var(--color-text, #111);
+  --muted: var(--color-muted, #667085);
+  --border: var(--color-border, #e7e7ea);
+
+  /* schaduw & radius consistent */
+  --radius-lg: 16px;
+  --shadow-sm: 0 6px 18px rgba(16, 24, 40, .06);
+  --shadow-lg: 0 14px 40px rgba(16, 24, 40, .10);
+}
+
+/* Header / hero van results */
+.ff-results .results__header {
+  max-width: 80ch;
+  margin-inline: auto;
+  margin-bottom: 2.2rem;
+}
+
+.ff-results .eyebrow {
+  color: color-mix(in oklab, var(--brand-700) 28%, var(--muted));
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.ff-results .results__title {
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--text);
+  margin: .15rem 0 .6rem;
+}
+
+.ff-results .results__intro {
+  color: var(--muted);
+}
+
+/* Actieknoppen: alleen tokens, geen hex */
+.ff-results .btn {
+  border-radius: calc(var(--radius-lg) - 4px);
+  padding: .7rem 1rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: transform .1s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.ff-results .btn--primary {
+  color: var(--on-brand);
+  background:
+    linear-gradient(135deg,
+      color-mix(in oklab, var(--brand-700) 92%, white) 0%,
+      color-mix(in oklab, var(--brand-800) 92%, black) 100%);
+  box-shadow: 0 10px 28px color-mix(in oklab, var(--brand-700) 22%, transparent);
+}
+.ff-results .btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px color-mix(in oklab, var(--brand-700) 28%, transparent);
+}
+
+.ff-results .btn--ghost {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+.ff-results .btn--ghost:hover {
+  background: color-mix(in oklab, var(--surface) 92%, var(--brand-700) 8%);
+  border-color: color-mix(in oklab, var(--border) 60%, var(--brand-700) 40%);
+}
+
+/* Chips (gebruikt jullie bestaande chip-structuur, maar netjes met tokens) */
+.ff-results .results__chips { gap: .55rem; }
+.ff-results .chip {
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: color-mix(in oklab, var(--surface) 92%, var(--brand-700) 8%);
+  padding: .38rem .65rem;
+  border-radius: 9999px;
+  font-size: .86rem;
+  font-weight: 600;
+}
+
+/* Grid & cards */
+.ff-results .results__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.6rem;
+}
+@media (min-width: 900px) {
+  .ff-results .results__grid { gap: 1.6rem; }
+}
+
+.ff-results .result-card {
+  grid-column: span 12;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: clip;
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+@media (min-width: 900px) {
+  .ff-results .result-card { grid-column: span 4; }
+}
+.ff-results .result-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in oklab, var(--border) 55%, var(--brand-700) 45%);
+}
+
+/* Media-aspect strak en voorspelbaar, geen instortende afbeeldingen */
+.ff-results .result-card__media {
+  aspect-ratio: 4 / 3;
+  background: color-mix(in oklab, var(--surface) 85%, var(--brand-700) 15%);
+}
+.ff-results .result-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.02);
+}
+
+.ff-results .result-card__body { padding: 1rem 1rem 1.1rem; }
+.ff-results .result-card__title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 .5rem;
+}
+.ff-results .result-card__list {
+  color: var(--muted);
+  margin: 0 0 .9rem 0;
+  padding-left: 1.1rem;
+}
+.ff-results .result-card__cta {
+  position: relative;
+  font-weight: 700;
+  text-decoration: none;
+  color: color-mix(in oklab, var(--brand-700) 92%, black);
+}
+.ff-results .result-card__cta::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  opacity: .35;
+  transition: opacity .2s ease;
+}
+.ff-results .result-card__cta:hover::after { opacity: .7; }
+
+/* Footer callout */
+.ff-results .results__footer {
+  display: flex;
+  gap: .8rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.2rem;
+}
+.ff-results .btn--pill {
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: .55rem .9rem;
+  font-weight: 700;
+}
+.ff-results .btn--pill:hover {
+  border-color: color-mix(in oklab, var(--border) 60%, var(--brand-700) 40%);
+  background: color-mix(in oklab, var(--surface) 95%, var(--brand-700) 5%);
+}
+
 /* === Results / Report ===================================================== */
 
 .results {
