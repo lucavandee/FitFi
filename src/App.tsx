@@ -156,7 +156,6 @@ export default function App() {
           <Route path="/feed" element={<FeedPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </Suspense>
       </div>
       <CookieBanner />
     </ErrorBoundary>
