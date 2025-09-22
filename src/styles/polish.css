@@ -3463,6 +3463,32 @@
   .btn{ transition: none; }
 }
 
+/* ==== Card micro-interacties (safe) ==== */
+.res-card {
+  will-change: transform, box-shadow;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.res-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(15, 33, 56, .10);
+}
+.res-card:focus-within {
+  outline: 2px solid color-mix(in oklab, var(--ff-color-primary-700) 50%, #fff);
+  outline-offset: 2px;
+}
+
+/* ==== CTA micro-interacties ==== */
+.btn {
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+}
+.btn--primary:hover { transform: translateY(-1px); }
+.btn--primary:active { transform: translateY(0); }
+
+/* Motion respect */
+@media (prefers-reduced-motion: reduce){
+  .res-card, .btn { transition: none; }
+}
+
 /* =======================
    PREMIUM UPSELL STRIP
    ======================= */
