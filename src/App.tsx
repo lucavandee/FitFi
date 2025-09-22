@@ -69,6 +69,7 @@ const DisclosurePage = lazyAny(() => import('@/pages/DisclosurePage'));
 const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
 const CookiesPage = lazyAny(() => import('@/pages/CookiesPage'));
 const ShopRedirect = lazyAny(() => import('@/pages/ShopRedirect'));
+const EnhancedResultsPage = lazyAny(() => import('@/pages/EnhancedResultsPage'));
 
 // Create a client
 const queryClient = new QueryClient({
@@ -125,7 +126,6 @@ const App: React.FC = () => {
                           <Route path="/wachtwoord-reset" element={<ResetPasswordPage />} />
                           <Route path="/over-ons" element={<AboutPage />} />
                           <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-                          <Route path="/enhanced-results" element={<EnhancedResultsPage />} />
                           <Route path="/prijzen"  element={<PricingPage />} />
                           <Route path="/blog" element={<BlogPage />} />
                           <Route path="/blog/:id" element={<BlogPostPage />} />
