@@ -3553,6 +3553,113 @@
   .skel::after { animation: none; }
   .img-fade { transition: none; }
   .res-card { opacity: 1; transform: none; }
+
+/* ============ BUTTONS (consistent met Start gratis) ============ */
+.btn--primary {
+  background: var(--ff-cta-500);
+  color: var(--ff-cta-contrast);
+  border: 1px solid color-mix(in oklab, var(--ff-cta-700) 22%, var(--ff-cta-500));
+  box-shadow: 0 1px 0 rgba(0,0,0,.05) inset;
+}
+.btn--primary:hover {
+  background: var(--ff-cta-600);
+  border-color: color-mix(in oklab, var(--ff-cta-700) 34%, var(--ff-cta-600));
+}
+.btn--primary:active {
+  background: var(--ff-cta-700);
+  border-color: var(--ff-cta-700);
+  transform: translateY(0); /* uit de micro-lift terug */
+}
+.btn--primary:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--ff-cta-700) 60%, #FFFFFF);
+  outline-offset: 2px;
+}
+.btn--primary[disabled],
+.btn--primary[aria-disabled="true"] {
+  opacity: .6; cursor: not-allowed;
+}
+
+.btn--soft {
+  background: var(--ff-cta-50);
+  color: var(--ff-cta-700);
+  border: 1px solid var(--ff-cta-200);
+}
+.btn--soft:hover { background: var(--ff-cta-100); }
+.btn--soft:active { background: var(--ff-cta-200); }
+
+/* ============ LINKS: subtiele premium hover ============ */
+a,
+.link {
+  color: var(--ff-ink-600);
+  text-decoration: none;
+  transition: color .15s ease, text-underline-offset .15s ease;
+}
+a:hover,
+.link:hover {
+  color: var(--ff-cta-600);
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+a:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--ff-cta-700) 65%, #fff);
+  outline-offset: 2px;
+}
+
+/* Context: 'tekst-link op donkere CTA' */
+.link--invert { color: var(--ff-cta-contrast); }
+.link--invert:hover { color: #fff; text-decoration: underline; }
+
+/* ============ CHIPS/FILTERS in CTA-stijl ============ */
+.chip {
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.35rem .7rem; border-radius: 9999px;
+  border:1px solid var(--ff-cta-200);
+  background: #fff;
+  color: var(--ff-ink-600);
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chip:hover {
+  border-color: var(--ff-cta-300);
+  background: var(--ff-cta-50);
+}
+.chip--active {
+  background: color-mix(in oklab, var(--ff-cta-500) 15%, #fff);
+  border-color: var(--ff-cta-400);
+  color: var(--ff-cta-700);
+}
+.chip:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--ff-cta-700) 55%, #fff);
+  outline-offset: 2px;
+}
+
+/* ============ BADGE/PILL styling ============ */
+.pill {
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.35rem .6rem; border-radius: 9999px;
+  font-weight: 600; letter-spacing:.02em;
+  background: var(--ff-cta-50);
+  color: var(--ff-cta-700);
+  border:1px solid var(--ff-cta-200);
+}
+.pill--ghost {
+  background: transparent;
+  color: var(--ff-cta-600);
+  border:1px solid var(--ff-cta-300);
+}
+
+/* ============ FOCUS SYSTEM (uniform CTA-accent) ============ */
+:where(button, [role="button"], a, input, select, textarea, .chip, .res-card, .pill):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--ff-cta-700) 60%, #fff);
+  outline-offset: 2px;
+}
+
+/* Hero-pills met CTA-tint */
+.hero-pill {
+  background: var(--ff-cta-50);
+  border: 1px solid var(--ff-cta-200);
+  color: var(--ff-cta-700);
+}
+.hero-pill svg { color: var(--ff-cta-600); }
 }
 
 /* ==== Card micro-interacties (safe) ==== */

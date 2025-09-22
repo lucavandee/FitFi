@@ -23,6 +23,27 @@
   --overlay-primary-12a: rgba(166, 136, 106, 0.12);
   --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
 
+  /* ============ TOKENS: CTA (Start gratis) ============ */
+  /* Basis warm bruin; tint/tonen voor states & surfaces */
+  --ff-cta-50:  #F6EFE9;
+  --ff-cta-100: #EEE2D7;
+  --ff-cta-200: #E2D0BF;
+  --ff-cta-300: #CEB39A;
+  --ff-cta-400: #B98F71;
+  --ff-cta-500: #9D6E52;   /* ≈ huidige Start gratis */
+  --ff-cta-600: #8A6048;   /* hover */
+  --ff-cta-700: #724E3B;   /* active/focus ring donker */
+  --ff-cta-800: #5C3E2E;
+  --ff-cta-900: #493123;
+
+  /* Tekst op CTA-vlakken */
+  --ff-cta-contrast: #FFFFFF;
+
+  /* Neutrale inkt & border die mooi samengaan met CTA */
+  --ff-ink-600: #1D2430;
+  --ff-ink-500: #2B3342;
+  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
+
   /* Radii */
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
