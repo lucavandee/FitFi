@@ -4,9 +4,10 @@ import { lazyAny } from '@/utils/lazyPage';
 import { Helmet } from 'react-helmet-async';
 import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
 import Navbar from '@/components/layout/Navbar';
-import ScrollToTop from '@/components/ScrollToTop';
-import ErrorBoundary from '@/components/ErrorBoundary';
 import Footer from '@/components/layout/Footer';
+
+// Lazy loaded pages
+import { lazy } from 'react';
 
 // Lazy loaded components - ONE declaration each
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
@@ -158,15 +159,8 @@ export default function App() {
   );
         <NavigationServiceInitializer />
 }
-  )
 }
+import Footer from '@/components/layout/Footer';
   )
-}
-  )
-}
-  )
-}
-  )
-}
-  )
+import ErrorBoundary from '@/components/ErrorBoundary';
 }
