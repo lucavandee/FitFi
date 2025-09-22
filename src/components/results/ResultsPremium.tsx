@@ -46,7 +46,7 @@ const outfits: Outfit[] = [
 
 const ResultsPremium: React.FC = () => {
   return (
-    <main id="main" className="bg-[var(--color-bg)]">
+    <section className="ff-results results ff-container">
       <section className="results ff-container">
         <header className="results__header">
           <p className="eyebrow">Onze aanbeveling</p>
