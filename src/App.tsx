@@ -157,7 +157,6 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-        
       </div>
       <CookieBanner />
     </ErrorBoundary>
