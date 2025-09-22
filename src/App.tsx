@@ -12,7 +12,8 @@ const LandingPage        = lazy(() => import("@/pages/LandingPage"));
 const HowItWorksPage     = lazy(() => import("@/pages/HowItWorksPage"));
 const PricingPage        = lazy(() => import("@/pages/PricingPage"));
 const AboutPage          = lazy(() => import("@/pages/AboutPage"));
-const BlogPage           = lazy(() => import("@/pages/BlogPage"));
+// TEMP: niet-lazy import voor diagnose
+import BlogPage from "@/pages/BlogPage";
 const FAQPage            = lazy(() => import("@/pages/FAQPage")); // intern component
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
