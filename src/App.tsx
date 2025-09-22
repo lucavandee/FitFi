@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { lazyAny } from '@/utils/lazyPage';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
+import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import NavigationServiceInitializer from '@/components/NavigationServiceInitializer';
