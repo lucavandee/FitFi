@@ -49,7 +49,7 @@ const fallbackCardItems: CardItem[] = [
 
 const EnhancedResultsPage: React.FC = () => {
   const cards = fallbackCardItems;
-
+    <>
   return (
     <>
       <Helmet>
@@ -118,7 +118,7 @@ const EnhancedResultsPage: React.FC = () => {
 
       {/* 3) (optioneel) Premium strip kan hieronder; laat ik nu weg om import-conflicten te voorkomen */}
       {/* <PremiumUpsellStrip /> */}
-    </main>
+    </>
       </div>
     </>
   );

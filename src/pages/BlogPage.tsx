@@ -43,7 +43,7 @@ const BlogPage: React.FC = () => {
           </div>
         </div>
       </section>
-
+    </>
       <Footer />
       </main>
     </>
