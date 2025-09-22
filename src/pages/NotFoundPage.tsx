@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+const NotFoundPage = () => {
+  return (
     <section className="ff-section bg-white">
       <div className="ff-container">
         <h1 className="ff-h1">Pagina niet gevonden</h1>
