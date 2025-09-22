@@ -13,6 +13,7 @@ import NovaChatMount from "@/components/nova/NovaChatMount";
 import "./index.css";
 import "./styles/polish.css";
 
+import { BrowserRouter } from 'react-router-dom';
 // Boot Nova eenmaal (dubbele import verwijderd)
 import "./components/nova/boot.tsx";
 
@@ -24,6 +25,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         {/* Floating FAB + overlay panel (rechtsonder) */}
         <NovaChatMount />
       </NovaChatProvider>
-    </HelmetProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );

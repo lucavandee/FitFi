@@ -73,14 +73,13 @@ export default function App() {
     <ErrorBoundary>
       <NavigationServiceInitializer />
       <ScrollToTop />
-      
-      <Helmet>
-        <title>FitFi - AI Styling Platform</title>
-        <meta name="description" content="Premium AI styling platform voor Nederland en Europa" />
-      </Helmet>
+    <Helmet>
+      <title>FitFi - AI Styling Platform</title>
+      <meta name="description" content="Premium AI styling voor Nederland en Europa" />
+    </Helmet>
 
-      <div className="app-layout">
-        <Navbar />
+    <NavigationServiceInitializer />
+    <Navbar />
         
         <main className="main-content">
           <Suspense fallback={<div className="loading-fallback">Loading...</div>}>
@@ -137,29 +136,28 @@ export default function App() {
               {/* Legal */}
               <Route path="/legal" element={<LegalPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              <Route path="/terms" element={<TermsPage />} />
+    <ErrorBoundary>
+      <ScrollToTop />
               <Route path="/cookies" element={<CookiesPage />} />
-              <Route path="/disclosure" element={<DisclosurePage />} />
-              <Route path="/brand-safety" element={<BrandSafetyPage />} />
-              
-              {/* Utility */}
-              <Route path="/thank-you" element={<ThankYouPage />} />
-              <Route path="/shop-redirect" element={<ShopRedirect />} />
-              <Route path="/product/:id" element={<ProductPage />} />
-              
-              {/* Health & Analytics */}
-              <Route path="/__health" element={<HealthPage />} />
-              <Route path="/health-check" element={<HealthCheckPage />} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              
-              {/* 404 */}
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-        </main>
+      <Suspense fallback={<div />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/results" element={<EnhancedResultsPage />} />
+          <Route path="/nova" element={<NovaPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/tribes" element={<TribesPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/cookies" element={<CookiesPage />} />
+          <Route path="/__health" element={<HealthPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
         
-        <Footer />
       </div>
       
       <Footer />
