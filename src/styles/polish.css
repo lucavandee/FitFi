@@ -3172,6 +3172,19 @@
   border-color: color-mix(in oklab, var(--ff-color-primary-700) 25%, #fff);
 }
 
+/* Composed Look - Premium placeholders */
+.composed-look {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .5rem;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.composed-look__tile {
+  border-radius: .75rem;
+}
+
 /* === Results / Report ===================================================== */
 
 .results {
