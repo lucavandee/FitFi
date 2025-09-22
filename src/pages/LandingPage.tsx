@@ -4,7 +4,6 @@ import Seo from "@/components/Seo";
 import HeroStacked from "@/components/landing/HeroStacked";
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
 import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
-import Footer from "@/components/layout/Footer";
 import SkipLink from "@/components/a11y/SkipLink";
 
 const LandingPage: React.FC = () => {
@@ -42,7 +41,6 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <Footer />
       </main>
     </>
   );

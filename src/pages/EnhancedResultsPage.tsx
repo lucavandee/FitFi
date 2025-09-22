@@ -1,4 +1,6 @@
 import React from "react";
+import { Helmet } from 'react-helmet-async';
+import ResultsHeader from '@/components/results/ResultsHeader';
 
 /**
  * EnhancedResultsPage
@@ -49,6 +51,12 @@ const EnhancedResultsPage: React.FC = () => {
   const cards = fallbackCardItems;
 
   return (
+    <>
+      <Helmet>
+        <title>Jouw Stijlanalyse Resultaten - FashionFinder</title>
+        <meta name="description" content="Ontdek jouw persoonlijke stijl en shop de perfecte outfits die bij je passen." />
+      </Helmet>
+      <div className="min-h-screen bg-gray-50">
     <main className="ff-results">
       {/* 1) Hero / intro */}
       <section className="res-hero">
@@ -111,6 +119,8 @@ const EnhancedResultsPage: React.FC = () => {
       {/* 3) (optioneel) Premium strip kan hieronder; laat ik nu weg om import-conflicten te voorkomen */}
       {/* <PremiumUpsellStrip /> */}
     </main>
+      </div>
+    </>
   );
 };
 
