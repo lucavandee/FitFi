@@ -1,5 +1,6 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
+import SmartImage from "@/components/ui/SmartImage";
 import ComposedLook from "./ComposedLook";
 
 type Outfit = {
@@ -58,9 +59,25 @@ const ResultsPremium: React.FC = () => {
   return (
     <main className="ff-results ff-container">
       {/* 1) Header / intro */}
-      <section className="results__header">
+      <section className="res-hero">
         <p className="eyebrow">Onze aanbeveling</p>
-        <h1 className="results__title">
+        <h1 className="res-hero__title">Dit past bij jouw stijl — <span>clean, smart-casual</span></h1>
+        <p className="res-hero__sub">
+          We kozen voor een cleane, smart-casual look: netter denim, witte sneaker en licht overshirt —
+          minimalistisch en comfortabel.
+        </p>
+
+        <div className="res-hero__cta">
+          <button className="btn btn-primary">Shop deze look</button>
+          <button className="btn btn-ghost">Nieuwe analyse</button>
+        </div>
+
+        <ul className="chips" aria-label="USP's">
+          <li className="chip chip--active">100% gratis</li>
+          <li className="chip">Klaar in 2 min</li>
+          <li className="chip">Outfits + shoplinks</li>
+          <li className="chip">Privacy-first</li>
+        </ul>
           Dit past bij jouw stijl — clean, smart-casual
         </h1>
         <p className="results__intro">
@@ -84,8 +101,123 @@ const ResultsPremium: React.FC = () => {
       <section aria-labelledby="outfits-heading">
         <h2 id="outfits-heading" className="sr-only">Outfits</h2>
         <div className="results__grid">
-          {/* Card 1 */}
-          <article className="result-card">
+          <article className="res-card">
+            <div className="res-card__mosaic">
+              <SmartImage 
+                src="/images/fallbacks/top.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile"
+                fetchPriority="high"
+              />
+              <SmartImage 
+                src="/images/fallbacks/bottom.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/footwear.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/accessory.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+            </div>
+
+            <div className="res-card__body">
+              <h3 className="res-card__title">Smart casual (dagelijks)</h3>
+              <ul className="res-card__bullets">
+                <li>Netter denim — rechte pijp</li>
+                <li>Witte sneaker — minimal</li>
+                <li>Licht overshirt — koele tint</li>
+              </ul>
+              <a href="#" className="link-cta">Shop vergelijkbare items</a>
+            </div>
+          </article>
+
+          <article className="res-card">
+            <div className="res-card__mosaic">
+              <SmartImage 
+                src="/images/fallbacks/top.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/bottom.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/footwear.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/accessory.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+            </div>
+
+            <div className="res-card__body">
+              <h3 className="res-card__title">Business casual (werk)</h3>
+              <ul className="res-card__bullets">
+                <li>Chino — tailored fit</li>
+                <li>Oxford shirt — wit/lichtblauw</li>
+                <li>Loafers — leer, donkerbruin</li>
+              </ul>
+              <a href="#" className="link-cta">Shop vergelijkbare items</a>
+            </div>
+          </article>
+
+          <article className="res-card">
+            <div className="res-card__mosaic">
+              <SmartImage 
+                src="/images/fallbacks/top.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/bottom.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/footwear.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+              <SmartImage 
+                src="/images/fallbacks/accessory.jpg" 
+                alt="" 
+                aspectRatio={1} 
+                className="res-card__tile" 
+              />
+            </div>
+
+            <div className="res-card__body">
+              <h3 className="res-card__title">Weekend casual (vrije tijd)</h3>
+              <ul className="res-card__bullets">
+                <li>Jogger — comfortabel, tapered</li>
+                <li>Hoodie — oversized, neutrale kleur</li>
+                <li>Chunky sneaker — wit/grijs</li>
+              </ul>
+              <a href="#" className="link-cta">Shop vergelijkbare items</a>
+            </div>
+          </article>
             <div className="result-card__media">
               <ComposedLook items={composedLookItems} />
             </div>
@@ -136,8 +268,11 @@ const ResultsPremium: React.FC = () => {
 
       {/* 3) Footer callout */}
       <footer className="results__footer">
-        <p>Meer varianten per silhouet en seizoen?</p>
-        <a className="btn btn--pill" href="#">
+        <div className="results__footer-content">
+          <h2>Meer stijladvies nodig?</h2>
+          <p>Ontdek onze AI-stylist Nova voor persoonlijke styling tips en outfit inspiratie.</p>
+          <button className="btn btn-primary">Probeer Nova gratis</button>
+        </div>
           Ontgrendel premium outfits
         </a>
       </footer>
