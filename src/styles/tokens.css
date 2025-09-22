@@ -44,6 +44,23 @@
   --ff-ink-500: #2B3342;
   --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
 
+  /* Accent color - matches "Start gratis" button */
+  --ff-color-accent: #9C745E;
+  --ff-color-accent-contrast: #fff;
+
+  /* Links consistent with accent */
+  --ff-link: var(--ff-color-accent);
+  --ff-link-hover: color-mix(
+    in oklab,
+    var(--ff-color-accent) 84%,
+    black 16%
+  );
+  --ff-focus: color-mix(
+    in oklab,
+    var(--ff-color-accent) 20%,
+    white 80%
+  );
+
   /* Radii */
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
