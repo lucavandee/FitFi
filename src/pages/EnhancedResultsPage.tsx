@@ -52,7 +52,7 @@ const EnhancedResultsPage: React.FC = () => {
   ];
 
   return (
-    <main>
+    <main className="res-container">
       {/* 1) Hero */}
       <section className="res-hero">
         <p className="eyebrow">Onze aanbeveling</p>
@@ -75,6 +75,12 @@ const EnhancedResultsPage: React.FC = () => {
           <li className="chip">Privacy-first</li>
         </ul>
       </section>
+
+      {/* Hero Preview Tiles */}
+      <div className="res-hero-preview">
+        <div className="preview-tile" />
+        <div className="preview-tile" />
+      </div>
 
       {/* 2) Grid met kaarten */}
       <section aria-labelledby="outfits-heading">

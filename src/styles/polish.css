@@ -3172,6 +3172,73 @@
   border-color: color-mix(in oklab, var(--ff-color-primary-700) 25%, #fff);
 }
 
+/* =======================
+   RESULTS — LAYOUT TUNING
+   ======================= */
+
+/* Container */
+.res-container {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 28px);
+}
+
+/* 1) Hero boven de kaarten (die twee grote tegels) — kleiner maken */
+.res-hero-preview {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(12px, 2vw, 20px);
+  max-width: 1120px;
+  margin: clamp(8px, 1.2vw, 14px) auto clamp(18px, 3vw, 28px);
+  padding-inline: clamp(16px, 4vw, 28px);
+}
+.res-hero-preview .preview-tile {
+  /* hielden het scherm 'te lang vast'; nu slanker */
+  aspect-ratio: 16 / 10;
+  border-radius: 18px;
+  background: var(--ff-card-deep, #0b223a);
+}
+@media (min-width: 1280px) {
+  .res-hero-preview .preview-tile { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 900px) {
+  .res-hero-preview { grid-template-columns: 1fr; }
+}
+
+/* 2) Kaarten-grid */
+.res-grid {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 28px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(16px, 2.4vw, 28px);
+}
+
+/* 3) Mozaïek boven op elke kaart – minder hoog, rustiger */
+.res-card__mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(8px, 1.2vw, 12px);
+  padding: clamp(10px, 1.5vw, 14px);
+  aspect-ratio: 3 / 2; /* i.p.v. "te lang" blok */
+  border-radius: 16px;
+}
+.res-card__tile {
+  border-radius: 12px;
+  background: var(--ff-elevation-900, #0f2138);
+}
+
+/* 4) Copy/CTA op de kaart – iets compacter en premium spacing */
+.res-card__body { padding: clamp(14px, 2vw, 18px) clamp(14px, 2vw, 18px) 18px; }
+.res-card__title { font-size: clamp(16px, 1.6vw, 18px); letter-spacing: -.01em; }
+.res-card__bullets { margin: 10px 0 14px; line-height: 1.45; }
+
+/* 5) USP chips onder de hero */
+.chips { display:flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.chip { border-radius: 9999px; padding: .35rem .7rem; background: color-mix(in oklab, var(--ff-color-primary-700) 10%, #fff); }
+.chip--active { background: color-mix(in oklab, var(--ff-color-primary-700) 16%, #fff); }
+
 /* Results hero section */
 .res-hero {
   max-width: 80ch;
