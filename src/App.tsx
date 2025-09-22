@@ -164,3 +164,5 @@ import Footer from '@/components/layout/Footer';
   )
 import ErrorBoundary from '@/components/ErrorBoundary';
 }
+  )
+}
