@@ -46,30 +46,33 @@ const outfits: Outfit[] = [
 
 const ResultsPremium: React.FC = () => {
   return (
-    <section className="ff-results results ff-container">
-      <section className="results ff-container">
-        <header className="results__header">
-          <p className="eyebrow">Onze aanbeveling</p>
-          <h1 className="results__title">
-            Dit past bij jouw stijl — clean, smart-casual
-          </h1>
-          <p className="results__intro">
-            We kozen voor een cleane, smart-casual look: netter denim, witte sneaker
-            en licht overshirt — minimalistisch en comfortabel.
-          </p>
-          <div className="results__actions">
-            <button className="btn btn--primary">Shop deze look</button>
-            <button className="btn btn--ghost">Nieuwe analyse</button>
-          </div>
+    <main className="ff-results ff-container">
+      {/* 1) Header / intro */}
+      <section className="results__header">
+        <p className="eyebrow">Onze aanbeveling</p>
+        <h1 className="results__title">
+          Dit past bij jouw stijl — clean, smart-casual
+        </h1>
+        <p className="results__intro">
+          We kozen voor een cleane, smart-casual look: netter denim, witte sneaker
+          en licht overshirt — minimalistisch en comfortabel.
+        </p>
+        <div className="results__actions">
+          <button className="btn btn--primary">Shop deze look</button>
+          <button className="btn btn--ghost">Nieuwe analyse</button>
+        </div>
 
-          <ul className="results__chips">
-            <li className="chip">100% gratis</li>
-            <li className="chip">Klaar in 2 min</li>
-            <li className="chip">Outfits + shoplinks</li>
-            <li className="chip">Privacy-first</li>
-          </ul>
-        </header>
+        <ul className="results__chips">
+          <li className="chip">100% gratis</li>
+          <li className="chip">Klaar in 2 min</li>
+          <li className="chip">Outfits + shoplinks</li>
+          <li className="chip">Privacy-first</li>
+        </ul>
+      </section>
 
+      {/* 2) Grid met kaarten (géén nested sections openen binnen een andere section) */}
+      <section aria-labelledby="outfits-heading">
+        <h2 id="outfits-heading" className="sr-only">Outfits</h2>
         <div className="results__grid">
           {/* Card 1 */}
           <article className="result-card">
@@ -134,14 +137,15 @@ const ResultsPremium: React.FC = () => {
             </div>
           </article>
         </div>
-
-        <footer className="results__footer">
-          <p>Meer varianten per silhouet en seizoen?</p>
-          <a className="btn btn--pill" href="#">
-            Ontgrendel premium outfits
-          </a>
-        </footer>
       </section>
+
+      {/* 3) Footer callout */}
+      <footer className="results__footer">
+        <p>Meer varianten per silhouet en seizoen?</p>
+        <a className="btn btn--pill" href="#">
+          Ontgrendel premium outfits
+        </a>
+      </footer>
     </main>
   );
 };
