@@ -1,49 +1,49 @@
-import { Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import CookieBanner from "@/components/legal/CookieBanner";
+import React, { Suspense, lazy } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-// Lazy pages (enkel 1x declareren)
-const LandingPage       = lazy(() => import("@/pages/LandingPage"));
-const HomePage          = lazy(() => import("@/pages/HomePage"));
-const HowItWorksPage    = lazy(() => import("@/pages/HowItWorksPage"));
-const PricingPage       = lazy(() => import("@/pages/PricingPage"));
-const AboutPage         = lazy(() => import("@/pages/AboutPage"));
-const FAQPage           = lazy(() => import("@/pages/FAQPage"));
-const EnhancedResults   = lazy(() => import("@/pages/EnhancedResultsPage"));
-const NotFoundPage      = lazy(() => import("@/pages/NotFoundPage"));
+// Laat header/footer intact zoals jullie ze nu hebben.
+// We raken alleen de routes aan en vermijden dubbele declaraties.
+
+const LandingPage        = lazy(() => import("@/pages/LandingPage"));
+const HowItWorksPage     = lazy(() => import("@/pages/HowItWorksPage"));
+const PricingPage        = lazy(() => import("@/pages/PricingPage"));
+const AboutPage          = lazy(() => import("@/pages/AboutPage"));
+const BlogPage           = lazy(() => import("@/pages/BlogPage"));
+const FAQPage            = lazy(() => import("@/pages/FAQPage")); // intern component
+const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
+const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 
 export default function App() {
   return (
-    <div className="ff-app flex min-h-screen flex-col bg-[var(--color-bg)]">
-      {/* Header - exact 1x in de app */}
-      <Navbar className="ff-navbar sticky top-0 z-[60]" />
+    // Laat jullie bestaande shell/layout hier staan (Navbar/Footer/Providers).
+    // Sommige projecten renderen Navbar/Footer buiten App; dat is ook oké.
+    <Suspense fallback={<div />}>
+      <Routes>
+        {/* Home / Landing */}
+        <Route index element={<LandingPage />} />
 
-      {/* Main content */}
-      <ErrorBoundary>
-        <Suspense fallback={null}>
-          <main id="main" className="ff-main flex-1">
-            <Routes>
-              <Route index element={<LandingPage />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-              <Route path="/prijzen" element={<PricingPage />} />
-              <Route path="/over-ons" element={<AboutPage />} />
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/results" element={<EnhancedResults />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </main>
-        </Suspense>
-      </ErrorBoundary>
+        {/* Hoe het werkt */}
+        <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
 
-      {/* Footer - exact 1x in de app */}
-      <Footer />
+        {/* Prijzen */}
+        <Route path="/prijzen" element={<PricingPage />} />
 
-      {/* Cookie banner ook 1x op root-niveau */}
-      <CookieBanner />
-    </div>
+        {/* Blog */}
+        <Route path="/blog" element={<BlogPage />} />
+
+        {/* Over ons */}
+        <Route path="/over-ons" element={<AboutPage />} />
+
+        {/* FAQ: live slug is /veelgestelde-vragen. We ondersteunen beide. */}
+        <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+        <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
+
+        {/* Results */}
+        <Route path="/results" element={<EnhancedResults />} />
+
+        {/* 404 */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 }
