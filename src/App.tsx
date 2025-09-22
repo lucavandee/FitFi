@@ -22,7 +22,6 @@ const NovaBubble = lazyAny(() => import('@/components/ai/NovaBubble'));
 const NovaLauncher = lazyAny(() => import('@/components/ai/NovaLauncher'));
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
 
-const EnhancedResultsPage = lazy(() => import('@/pages/EnhancedResultsPage'));
 // Lazy load all pages with lazyAny for optimal code-splitting
 const HomePage = lazyAny(() => import('@/pages/HomePage'));
 const LandingPage = lazyAny(() => import('@/pages/LandingPage'));
