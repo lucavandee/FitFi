@@ -136,22 +136,6 @@ const EnhancedResultsPage: React.FC = () => {
         <div className="preview-tile" />
       </div>
 
-      {/* PREMIUM UPSELL (compact) */}
-      <div className="premium-cta">
-        <div>
-          <h3>Ontgrendel premium outfits</h3>
-          <p>Krijg 9+ extra outfits per silhouet & seizoen, materiaal-uitleg en shop-filters.</p>
-          <button 
-            className="btn btn--primary"
-            onClick={() => {
-              console.log('Premium CTA clicked');
-              // analytics.track('premium_cta_clicked', { location: 'results_compact' });
-            }}
-          >
-            Upgrade naar Premium
-          </button>
-        </div>
-      </div>
 
     {/* Premium Upsell */}
     <PremiumUpsellStrip 
@@ -179,9 +163,11 @@ const EnhancedResultsPage: React.FC = () => {
                     sizes="(max-width: 768px) 45vw, 180px"
                     srcSet={`${img}?w=360 360w, ${img}?w=720 720w`}
                   />
-            )
-            )
-            }
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {mockOutfits.map((outfit, index) => (
             <OutfitCard
@@ -194,9 +180,6 @@ const EnhancedResultsPage: React.FC = () => {
           ))}
         </div>
       </section>
-    )
-    )
-    }
     </main>
   );
 };
@@ -206,3 +189,4 @@ const OutfitCard: React.FC<{ outfit: any; inView: boolean }> = ({ outfit, inView
   const { ref, inView: cardInView } = useInView<HTMLElement>();
   
 };
+  
