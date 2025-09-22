@@ -1,8 +1,11 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
+import { useInView } from "@/hooks/useInView";
 
 const EnhancedResultsPage: React.FC = () => {
+  const { ref: gridRef, inView: gridInView } = useInView<HTMLElement>();
+  
   // Mock data voor outfit kaarten
   const outfits = [
     {
@@ -56,7 +59,7 @@ const EnhancedResultsPage: React.FC = () => {
   ];
 
   return (
-    <main className="res-container">
+    <article ref={ref} className={`res-card ${cardInView ? 'in' : ''}`} data-style={outfit.style}>
       {/* 1) Hero */}
       <section className="res-hero">
         <p className="eyebrow">Onze aanbeveling</p>
@@ -95,10 +98,10 @@ const EnhancedResultsPage: React.FC = () => {
       }}
     />
       {/* 2) Grid met kaarten */}
-      <section aria-labelledby="outfits-heading">
+      <section ref={gridRef} className="res-grid-section" aria-labelledby="outfits-heading" data-cv="auto">
         <h2 id="outfits-heading" className="sr-only">Outfits</h2>
 
-        <div className="res-grid">
+        <div className={`res-grid ${gridInView ? 'in' : ''}`}>
           {outfits.map((outfit, index) => (
             <article key={index} className="res-card" data-style={outfit.style}>
               <div className="res-card__mosaic">
@@ -125,7 +128,7 @@ const EnhancedResultsPage: React.FC = () => {
                 </ul>
                 <a href="#" className="link-cta">Shop vergelijkbare items</a>
               </div>
-            </article>
+            <OutfitCard key={index} outfit={outfit} inView={gridInView} />
           ))}
         </div>
       </section>
@@ -134,3 +137,6 @@ const EnhancedResultsPage: React.FC = () => {
 };
 
 export default EnhancedResultsPage;
+const OutfitCard: React.FC<{ outfit: any; inView: boolean }> = ({ outfit, inView }) => {
+  const { ref, inView: cardInView } = useInView<HTMLElement>();
+  

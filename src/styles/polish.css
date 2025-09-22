@@ -3484,6 +3484,98 @@
 .btn--primary:hover { transform: translateY(-1px); }
 .btn--primary:active { transform: translateY(0); }
 
+/* =======================
+   PERFORMANCE & SKELETONS
+   ======================= */
+
+/* Zware secties pas renderen als ze in beeld komen */
+[data-cv="auto"] { content-visibility: auto; contain-intrinsic-size: 800px; }
+
+/* Skeleton basis */
+.skel {
+  position: relative;
+  background: color-mix(in oklab, #0f2138 90%, #fff);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.skel::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,.06) 45%,
+    rgba(255,255,255,.10) 50%,
+    rgba(255,255,255,.06) 55%,
+    transparent 100%);
+  transform: translateX(-100%);
+  animation: skel 1.2s infinite linear;
+}
+@keyframes skel { to { transform: translateX(100%); } }
+
+/* Fade-in voor echte afbeeldingen */
+.img-fade { opacity: 0; transition: opacity .25s ease; }
+.img-fade.is-loaded { opacity: 1; }
+
+/* IntersectionObserver enter animations */
+.res-card { opacity: 0; transform: translateY(6px); }
+.res-card.in { opacity: 1; transform: translateY(0); }
+
+/* =======================
+   POLISH DETAILS
+   ======================= */
+
+/* Chips "actief" */
+.chip {
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.35rem .7rem; border-radius: 9999px;
+  border:1px solid color-mix(in oklab, #0f2138 16%, #d6dbe3);
+  background:#fff; color:#0f2138;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chip--active{
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, #fff);
+  border-color: color-mix(in oklab, var(--ff-color-primary-700) 40%, #d6dbe3);
+  color: color-mix(in oklab, #fff 96%, var(--ff-color-primary-700));
+}
+
+/* Cards: uniforme aspect ratio voor je "look grid" */
+.res-look-quad {
+  display:grid; grid-template-columns: repeat(2,1fr); gap: 8px;
+}
+.res-look-quad > * {
+  border-radius: 12px; aspect-ratio: 1 / 1; overflow: hidden;
+  background: #0f2138;
+}
+
+/* Motion respect */
+@media (prefers-reduced-motion: reduce){
+  .res-card, .btn { transition: none; }
+  .skel::after { animation: none; }
+  .img-fade { transition: none; }
+  .res-card { opacity: 1; transform: none; }
+}
+
+/* ==== Card micro-interacties (safe) ==== */
+.res-card {
+  will-change: transform, box-shadow;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.res-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(15, 33, 56, .10);
+}
+.res-card:focus-within {
+  outline: 2px solid color-mix(in oklab, var(--ff-color-primary-700) 50%, #fff);
+  outline-offset: 2px;
+}
+
+/* ==== CTA micro-interacties ==== */
+.btn {
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+}
+.btn--primary:hover { transform: translateY(-1px); }
+.btn--primary:active { transform: translateY(0); }
+
 /* Motion respect */
 @media (prefers-reduced-motion: reduce){
   .res-card, .btn { transition: none; }

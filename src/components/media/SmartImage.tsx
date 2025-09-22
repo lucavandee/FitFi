@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useInView } from '@/hooks/useInView';
 import { fallbackDataUrl, normalizeUrl, toCdn, buildSrcSet, ImageKind } from '@/utils/image';
 
 type SmartImageProps = {
@@ -39,6 +40,7 @@ export default function SmartImage({
   const [current, setCurrent] = useState<string>(initial);
   const [loaded, setLoaded] = useState(false);
   const errorCount = useRef(0);
+  const { ref, inView } = useInView<HTMLDivElement>();
 
   useEffect(() => { setCurrent(initial); setLoaded(false); }, [initial]);
 
@@ -83,7 +85,8 @@ export default function SmartImage({
 
   return (
     <div
-      className={['relative overflow-hidden img-skeleton', containerClassName ?? ''].join(' ')}
+      ref={ref}
+      className={['relative overflow-hidden img-skeleton', containerClassName ?? '', inView ? 'in' : ''].join(' ')}
       style={style}
     >
       {imgEl}
