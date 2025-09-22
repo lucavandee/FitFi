@@ -2,28 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 
-type Outfit = {
+type OutfitCard = {
   id: string;
   title: string;
   bullets: string[];
-  image?: string;
-  shopUrl?: string;
+  /** optioneel; als je nog geen foto's hebt, laat je deze leeg  */
+  img?: string;
+  alt?: string;
+  link: string;
 };
 
-type ResultsData = {
-  summary?: string;
-  outfits?: Outfit[];
-};
-
-function loadResults(): ResultsData | null {
-  try {
-    const raw = localStorage.getItem("fitfi.results");
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return null;
-}
-
-const FALLBACK_OUTFITS: Outfit[] = [
+const OUTFITS: OutfitCard[] = [
   {
     id: "smart-casual",
     title: "Smart casual (dagelijks)",
@@ -32,126 +21,143 @@ const FALLBACK_OUTFITS: Outfit[] = [
       "Witte sneaker — minimal",
       "Licht overshirt — koele tint",
     ],
-    image: "/images/results/smart-casual.jpg",
-    shopUrl: "/shop/smart-casual",
+    // img: "/images/outfits/smart-casual.jpg",
+    alt: "Smart casual look",
+    link: "#smart-casual",
   },
   {
-    id: "mono-work",
+    id: "mono-workday",
     title: "Monochrome workday",
     bullets: [
       "Fijngebreide crew — off-white",
       "Wolmix pantalon — rechte pijp",
       "Leren loafer — clean buckle",
     ],
-    image: "/images/results/mono-work.jpg",
-    shopUrl: "/shop/monochrome",
+    // img: "/images/outfits/monochrome-workday.jpg",
+    alt: "Monochrome workday",
+    link: "#mono-workday",
   },
   {
     id: "athflow-weekend",
     title: "Athflow weekend",
-    bullets: ["Merino zip hoodie", "Tech jogger", "Minimal runner"],
-    image: "/images/results/athflow-weekend.jpg",
-    shopUrl: "/shop/athflow",
+    bullets: [
+      "Merino zip hoodie",
+      "Tech jogger",
+      "Minimal runner",
+    ],
+    // img: "/images/outfits/athflow-weekend.jpg",
+    alt: "Athflow weekend",
+    link: "#athflow-weekend",
   },
 ];
 
 const ResultsPage: React.FC = () => {
-  const data = loadResults();
-  const outfits = (data?.outfits?.length ? data.outfits : FALLBACK_OUTFITS).slice(0, 3);
-
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <main id="main" className="min-h-screen bg-[var(--color-bg)]">
       <Seo
-        title="Jouw stijlresultaten — FitFi"
-        description="Persoonlijk advies met 3 concrete outfits — inclusief vergelijkbare items en shoplinks."
+        title="Jouw AI Style Resultaten | FitFi"
+        description="Op maat gemaakte outfits die passen bij jouw silhouet en smaak — met slimme shoplinks. Privacy-first, klaar in 2 minuten."
         canonical="https://fitfi.ai/results"
       />
 
-      {/* Hero/editorial header */}
-      <section className="ff-section">
-        <div className="ff-container">
-          <div className="ff-results-hero">
-            <div className="ff-hero-copy">
-              <p className="ff-eyebrow">Onze aanbeveling</p>
-              <h1 className="ff-hero-title">
-                {data?.summary
-                  ? data.summary
-                  : "We kozen voor een cleane, smart-casual richting: netter denim, witte sneaker en licht overshirt — minimalistisch en comfortabel."}
-              </h1>
+      {/* Header / editorial intro */}
+      <section className="py-10 sm:py-14 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-xs font-semibold tracking-widest text-[var(--color-muted)] uppercase">
+            Onze aanbeveling
+          </p>
 
-              <div className="ff-cta-row">
-                <Link to={outfits[0]?.shopUrl || "#"} className="btn btn-primary">
-                  Shop deze look
-                </Link>
-                <Link to="/onboarding" className="btn btn-secondary">
-                  Nieuwe analyse
-                </Link>
-              </div>
+          <h1 className="mt-2 text-[clamp(1.75rem,3.2vw,2.5rem)] font-semibold leading-tight text-[var(--color-text)]">
+            Dit past bij jouw stijl — clean, smart-casual
+          </h1>
 
-              <ul className="ff-meta-chips">
-                <li className="ff-chip">100% gratis</li>
-                <li className="ff-chip">Klaar in 2 min</li>
-                <li className="ff-chip">Outfits + shoplinks</li>
-                <li className="ff-chip">Privacy-first</li>
-              </ul>
-            </div>
+          <p className="mt-3 max-w-2xl text-[var(--color-muted)]">
+            We kozen voor een cleane, smart-casual look: netter denim, witte sneaker
+            en licht overshirt — minimalistisch en comfortabel.
+          </p>
+
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Link
+              to="/onboarding"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 font-semibold text-white bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] shadow-sm"
+            >
+              Shop deze look
+            </Link>
+            <Link
+              to="/quiz"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 font-semibold border border-[var(--color-border)] bg-[var(--ff-color-neutral-50)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)]"
+            >
+              Nieuwe analyse
+            </Link>
           </div>
-        </div>
-      </section>
 
-      {/* 3 outfit cards */}
-      <section className="ff-section">
-        <div className="ff-container">
-          <div className="ff-grid-3">
-            {outfits.map((o) => (
-              <article key={o.id} className="ff-card">
-                <div className="ff-img-frame">
-                  {o.image ? (
-                    <img
-                      src={o.image}
-                      alt={o.title}
-                      className="ff-img"
-                      onError={(e) => {
-                        // toon gradient fallback als image ontbreekt
-                        (e.currentTarget as HTMLImageElement).style.display = "none";
-                        e.currentTarget.parentElement?.classList.add("ff-img-fallback");
-                      }}
-                    />
-                  ) : (
-                    <div className="ff-img-fallback" aria-hidden />
-                  )}
-                </div>
-
-                <div className="ff-card-body">
-                  <h3 className="ff-card-title">{o.title}</h3>
-                  <ul className="ff-bullets">
-                    {o.bullets.map((b, i) => (
-                      <li key={i}>{b}</li>
-                    ))}
-                  </ul>
-
-                  <div className="ff-card-actions">
-                    <Link to={o.shopUrl || "#"} className="btn btn-ghost">
-                      Shop vergelijkbare items
-                    </Link>
-                  </div>
-                </div>
-              </article>
+          {/* Chips */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {["100% gratis", "Klaar in 2 min", "Outfits + shoplinks", "Privacy-first"].map((c) => (
+              <span
+                key={c}
+                className="rounded-full border border-[var(--color-border)] bg-[var(--ff-color-neutral-50)] text-[var(--color-muted)] px-2.5 py-1 text-sm"
+              >
+                {c}
+              </span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Premium rail */}
-      <section className="ff-section pb-24">
-        <div className="ff-container">
-          <div className="ff-premium-rail">
-            <div>
-              <p className="ff-eyebrow mb-1">Meer varianten per silhouet en seizoen?</p>
-              <h2 className="ff-rail-title">Ontgrendel premium outfits</h2>
-            </div>
-            <Link to="/prijzen" className="btn btn-primary">
-              Bekijk pakketten
+      {/* Cards */}
+      <section className="py-10 sm:py-14 bg-[var(--color-bg)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {OUTFITS.map((o) => (
+              <article
+                key={o.id}
+                className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white shadow-[0_1px_0_rgba(15,23,42,.02)] hover:shadow-[0_10px_30px_rgba(2,8,23,.08)] transition"
+              >
+                <div className="relative aspect-[4/3] bg-gradient-to-br from-[#1e40af] to-[#0b1025]">
+                  {o.img && (
+                    <img
+                      src={o.img}
+                      alt={o.alt || ""}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        // Fallback: verberg kapotte afbeelding; gradient blijft staan
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  )}
+                </div>
+
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-lg font-semibold text-[var(--color-text)]">{o.title}</h3>
+                  <ul className="mt-2 space-y-1 text-[var(--color-muted)]">
+                    {o.bullets.map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    to={o.link}
+                    className="mt-3 inline-flex text-[var(--color-primary)] hover:underline"
+                  >
+                    Shop vergelijkbare items
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {/* Premium rail */}
+          <div className="mt-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl bg-white border border-[var(--color-border)] p-4 sm:p-5">
+            <p className="text-[var(--color-muted)]">
+              Meer varianten per silhouet en seizoen? Ontgrendel premium outfits.
+            </p>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 font-semibold text-white bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] shadow-sm"
+            >
+              Ontgrendel premium
             </Link>
           </div>
         </div>
