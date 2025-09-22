@@ -6,6 +6,7 @@ const EnhancedResultsPage: React.FC = () => {
   const outfits = [
     {
       id: 1,
+      style: 'smart-casual',
       title: "Smart casual (dagelijks)",
       bullets: [
         "Netter denim — rechte pijp",
@@ -21,6 +22,7 @@ const EnhancedResultsPage: React.FC = () => {
     },
     {
       id: 2,
+      style: 'business-casual',
       title: "Business casual (werk)",
       bullets: [
         "Donkere chino — tailored fit",
@@ -36,6 +38,7 @@ const EnhancedResultsPage: React.FC = () => {
     },
     {
       id: 3,
+      style: 'weekend-casual',
       title: "Weekend casual (vrij)",
       bullets: [
         "Relaxed jeans — vintage wash",
@@ -88,7 +91,7 @@ const EnhancedResultsPage: React.FC = () => {
 
         <div className="res-grid">
           {outfits.map((outfit, index) => (
-            <article key={outfit.id} className="res-card">
+            <article key={index} className="res-card" data-style={outfit.style}>
               <div className="res-card__mosaic">
                 {outfit.images.map((img, i) => (
                   <SmartImage
@@ -98,6 +101,8 @@ const EnhancedResultsPage: React.FC = () => {
                     aspectRatio={1}
                     className="res-card__tile"
                     fetchPriority={index === 0 && i === 0 ? "high" : "auto"}
+                    sizes="(max-width: 768px) 45vw, 180px"
+                    srcSet={`${img}?w=360 360w, ${img}?w=720 720w`}
                   />
                 ))}
               </div>
