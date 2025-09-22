@@ -6,6 +6,7 @@ import NavigationServiceInitializer from '@/components/NavigationServiceInitiali
 import Navbar from '@/components/layout/Navbar';
 import ScrollToTop from '@/components/ScrollToTop';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import Footer from '@/components/layout/Footer';
 
 // Lazy loaded components - ONE declaration each
 const CookieBanner = lazyAny(() => import('@/components/legal/CookieBanner'));
@@ -162,5 +163,6 @@ export default function App() {
       </div>
       <CookieBanner />
     </ErrorBoundary>
+    <Footer />
   );
 }
