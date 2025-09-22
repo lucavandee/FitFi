@@ -3172,6 +3172,117 @@
   border-color: color-mix(in oklab, var(--ff-color-primary-700) 25%, #fff);
 }
 
+/* Results hero section */
+.res-hero {
+  max-width: 80ch;
+  margin-inline: auto;
+  margin-bottom: 2.2rem;
+  text-align: center;
+}
+
+.res-hero .eyebrow {
+  color: color-mix(in oklab, var(--ff-color-primary-700) 28%, var(--color-muted));
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: .875rem;
+  margin-bottom: .5rem;
+}
+
+.res-hero__title {
+  font-weight: 800;
+  font-size: 2.25rem;
+  letter-spacing: -.01em;
+  color: var(--color-text);
+  margin: .15rem 0 .6rem;
+  line-height: 1.2;
+}
+
+.res-hero__title span {
+  color: var(--ff-color-primary-700);
+}
+
+.res-hero__sub {
+  color: var(--color-muted);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  max-width: 60ch;
+  margin-inline: auto;
+}
+
+.res-hero__cta {
+  display: flex;
+  gap: .8rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Premium mosaic cards */
+.res-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  box-shadow: var(--ff-card-shadow);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  overflow: hidden;
+}
+
+.res-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ff-card-shadow-strong);
+  border-color: color-mix(in oklab, var(--color-border) 55%, var(--ff-color-primary-700) 45%);
+}
+
+.res-card__mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .5rem;
+  padding: 1rem 1rem 0;
+}
+
+.res-card__tile {
+  border-radius: .75rem;
+  overflow: hidden;
+}
+
+.res-card__body {
+  padding: 0 1rem 1.1rem;
+}
+
+.res-card__title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: .5rem;
+  color: var(--color-text);
+}
+
+.res-card__bullets {
+  margin: .25rem 0 .75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.res-card__bullets li {
+  margin: .25rem 0;
+  color: var(--color-muted);
+  position: relative;
+  padding-left: 1rem;
+}
+
+.res-card__bullets li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--ff-color-primary-700);
+  font-weight: 600;
+}
+
 /* Composed Look - Premium placeholders */
 .composed-look {
   display: grid;
