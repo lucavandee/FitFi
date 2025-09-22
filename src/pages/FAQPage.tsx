@@ -31,7 +31,6 @@ const ITEMS: Item[] = [
 
 const FAQPage: React.FC = () => {
   const [open, setOpen] = React.useState<number | null>(0);
-    <>
   return (
     <>
       <Helmet>
