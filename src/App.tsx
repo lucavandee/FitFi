@@ -161,8 +161,9 @@ export default function App() {
         
         <Footer />
       </div>
+      
+      <Footer />
       <CookieBanner />
     </ErrorBoundary>
-    <Footer />
   );
 }
