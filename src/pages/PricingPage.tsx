@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
 import PricingHero from "@/components/pricing/PricingHero";
 import PricingFaqTeaser from "@/components/pricing/PricingFaqTeaser";
-import Footer from "@/components/layout/Footer";
 import SkipLink from "@/components/a11y/SkipLink";
 
 const PricingPage: React.FC = () => {
@@ -72,7 +71,6 @@ const PricingPage: React.FC = () => {
         </section>
 
         <PricingFaqTeaser />
-        <Footer />
       </main>
     </>
   );

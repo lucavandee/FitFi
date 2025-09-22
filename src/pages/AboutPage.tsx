@@ -4,7 +4,6 @@ import Seo from "@/components/Seo";
 import AboutHero from "@/components/about/AboutHero";
 import TeamSection from "@/components/about/TeamSection";
 import Timeline from "@/components/about/Timeline";
-import Footer from "@/components/layout/Footer";
 import SkipLink from "@/components/a11y/SkipLink";
 
 const AboutPage: React.FC = () => {
@@ -28,8 +27,6 @@ const AboutPage: React.FC = () => {
 
         <TeamSection />
         <Timeline />
-
-        <Footer />
       </main>
     </>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, Users, TrendingUp } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import Hero from '@/components/landing/Hero';
 import SmartImage from '@/components/media/SmartImage';
 import Seo from '@/components/Seo';
 import Button from '@/components/ui/Button';
@@ -51,6 +52,8 @@ const HomePage: React.FC = () => {
             "logo": "https://fitfi.ai/logo.png"
           }}
         />
+      <Hero />
+      
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center ff-hero-card">
         {/* Hero Section */}
         <section className="hero-gradient py-20">

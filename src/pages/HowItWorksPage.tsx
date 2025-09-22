@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Seo from "@/components/Seo";
+import { Helmet } from 'react-helmet-async';
 import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
-import Footer from "@/components/layout/Footer";
+import HowItWorks from '@/components/landing/HowItWorks';
 import SkipLink from "@/components/a11y/SkipLink";
 
 const HowItWorksPage: React.FC = () => {
@@ -12,13 +12,13 @@ const HowItWorksPage: React.FC = () => {
     <>
       <SkipLink />
       <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-      <Seo
-        title="Hoe het werkt — In 3 rustige stappen | FitFi"
-        description="Beantwoord 6 korte vragen en ontvang direct je AI Style Report met outfits en shoplinks — privacy-first, zonder ruis."
-        canonical="https://fitfi.ai/hoe-het-werkt"
-      />
+      <Helmet>
+        <title>Hoe het werkt — In 3 rustige stappen | FitFi</title>
+        <meta name="description" content="Beantwoord 6 korte vragen en ontvang direct je AI Style Report met outfits en shoplinks — privacy-first, zonder ruis." />
+        <link rel="canonical" href="https://fitfi.ai/hoe-het-werkt" />
+      </Helmet>
 
-      <section className="ff-section">
+      <div className="min-h-screen bg-white">
         <div className="ff-container">
           <header className="section-header">
             <p className="kicker">Hoe het werkt</p>
@@ -34,9 +34,7 @@ const HowItWorksPage: React.FC = () => {
             onExample={() => navigate("/results")}
           />
         </div>
-      </section>
-
-      <Footer />
+      </div>
       </main>
     </>
   );

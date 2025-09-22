@@ -1,6 +1,8 @@
 import React from "react";
 import Seo from "@/components/Seo";
 import Button from "@/components/ui/Button";
+import { Helmet } from 'react-helmet-async';
+import FaqSearch from '@/components/faq/FaqSearch';
 
 type Item = { q: string; a: string };
 
@@ -32,45 +34,50 @@ const FAQPage: React.FC = () => {
 
   return (
     <>
-      <Seo title="Veelgestelde vragen — FitFi" description="Antwoorden op de meest gestelde vragen over FitFi en je AI-stijlrapport." />
-      <section className="bg-[color:var(--color-bg)]">
-        <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-          <h1 className="ff-heading text-[color:var(--color-text)] text-3xl sm:text-4xl font-extrabold text-center">Veelgestelde vragen</h1>
-          <p className="text-[color:var(--color-muted)] text-center mt-3">
-            Staat je vraag er niet bij? Neem gerust contact op via het formulier.
-          </p>
+      <Helmet>
+        <title>Veelgestelde vragen — FitFi</title>
+        <meta name="description" content="Antwoorden op de meest gestelde vragen over FitFi en je AI-stijlrapport." />
+      </Helmet>
+      <div className="min-h-screen bg-gray-50">
+        <section className="bg-[color:var(--color-bg)]">
+          <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+            <h1 className="ff-heading text-[color:var(--color-text)] text-3xl sm:text-4xl font-extrabold text-center">Veelgestelde vragen</h1>
+            <p className="text-[color:var(--color-muted)] text-center mt-3">
+              Staat je vraag er niet bij? Neem gerust contact op via het formulier.
+            </p>
 
-          <div className="mt-8 space-y-3">
-            {ITEMS.map((item, idx) => {
-              const isOpen = open === idx;
-              return (
-                <div key={idx} className="bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-[var(--radius-lg)]">
-                  <button
-                    type="button"
-                    className="w-full text-left px-4 py-3 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] rounded-[var(--radius-lg)]"
-                    aria-expanded={isOpen}
-                    onClick={() => setOpen(isOpen ? null : idx)}
-                  >
-                    <span className="text-[color:var(--color-text)] font-medium">{item.q}</span>
-                    <span className="text-[color:var(--color-muted)]" aria-hidden="true">{isOpen ? "–" : "+"}</span>
-                  </button>
-                  {isOpen && (
-                    <div className="px-4 pb-4">
-                      <p className="text-[color:var(--color-text)]">{item.a}</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+            <div className="mt-8 space-y-3">
+              {ITEMS.map((item, idx) => {
+                const isOpen = open === idx;
+                return (
+                  <div key={idx} className="bg-[color:var(--color-surface)] border border-[color:var(--color-border)] rounded-[var(--radius-lg)]">
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-3 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface)] rounded-[var(--radius-lg)]"
+                      aria-expanded={isOpen}
+                      onClick={() => setOpen(isOpen ? null : idx)}
+                    >
+                      <span className="text-[color:var(--color-text)] font-medium">{item.q}</span>
+                      <span className="text-[color:var(--color-muted)]" aria-hidden="true">{isOpen ? "–" : "+"}</span>
+                    </button>
+                    {isOpen && (
+                      <div className="px-4 pb-4">
+                        <p className="text-[color:var(--color-text)]">{item.a}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
 
-          <div className="mt-10 text-center">
-            <Button as="a" href="/contact" variant="primary" size="lg">
-              Stel je vraag
-            </Button>
+            <div className="mt-10 text-center">
+              <Button as="a" href="/contact" variant="primary" size="lg">
+                Stel je vraag
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </>
   );
 };
