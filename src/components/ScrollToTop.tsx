@@ -1,23 +1,32 @@
-import { useLayoutEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 /**
- * ScrollToTop component that automatically scrolls to the top of the page
- * whenever the route changes. Uses useLayoutEffect for immediate scroll
- * before the browser paints the new content.
+ * ScrollToTop
+ * - Scrollt naar top bij routewijziging (pathname of hash).
+ * - Respecteert hash anchors: als er een hash is, laat native browser-scroll het afhandelen.
  */
-export const ScrollToTop = () => {
-  const { pathname } = useLocation();
+const ScrollToTop: React.FC = () => {
+  const { pathname, hash } = useLocation();
 
-  useLayoutEffect(() => {
-    // Scroll to top smoothly on route change
-    window.scrollTo({ 
-      top: 0, 
-      behavior: 'smooth' 
+  useEffect(() => {
+    // Als er een hash is, laat de browser naar het element scrollen.
+    if (hash) return;
+
+    // Smooth maar toegankelijk; reduce-motion users krijgen instant.
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: prefersReduced ? "auto" : "smooth",
     });
-  }, [pathname]);
+  }, [pathname, hash]);
 
-  // This component doesn't render anything
   return null;
 };
 
+export default ScrollToTop;
