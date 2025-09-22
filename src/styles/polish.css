@@ -3323,6 +3323,146 @@
   background: linear-gradient(145deg, #89cff0, #1a4f6b);
 }
 
+/* Archetype-specifieke styling */
+[data-style="smart-casual"] .res-card__tile:nth-child(1) { background: linear-gradient(145deg, #0e2746, #0b1b30); }
+[data-style="smart-casual"] .res-card__tile:nth-child(2) { background: linear-gradient(145deg, #163a63, #0e2746); }
+[data-style="smart-casual"] .res-card__tile:nth-child(3) { background: linear-gradient(145deg, #1a4470, #163a63); }
+[data-style="smart-casual"] .res-card__tile:nth-child(4) { background: linear-gradient(145deg, #0e2746, #1a4470); }
+
+[data-style="business-casual"] .res-card__tile:nth-child(1) { background: linear-gradient(145deg, #0f2138, #0b1b30); }
+[data-style="business-casual"] .res-card__tile:nth-child(2) { background: linear-gradient(145deg, #1f4267, #0f2138); }
+[data-style="business-casual"] .res-card__tile:nth-child(3) { background: linear-gradient(145deg, #2a5a8a, #1f4267); }
+[data-style="business-casual"] .res-card__tile:nth-child(4) { background: linear-gradient(145deg, #0f2138, #2a5a8a); }
+
+[data-style="weekend-casual"] .res-card__tile:nth-child(1) { background: linear-gradient(145deg, #1a4f6b, #0f2138); }
+[data-style="weekend-casual"] .res-card__tile:nth-child(2) { background: linear-gradient(145deg, #89cff0, #1a4f6b); }
+[data-style="weekend-casual"] .res-card__tile:nth-child(3) { background: linear-gradient(145deg, #5ba8c7, #89cff0); }
+[data-style="weekend-casual"] .res-card__tile:nth-child(4) { background: linear-gradient(145deg, #1a4f6b, #5ba8c7); }
+
+/* =======================
+   PREMIUM UPSELL STRIP
+   ======================= */
+
+.res-upsell{
+  --up-bg: color-mix(in oklab, var(--ff-color-primary-700) 6%, #fff);
+  --card: #fff;
+  --text: var(--ff-text-strong, #0c1526);
+
+  display:grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(18px, 3vw, 36px);
+  align-items:center;
+
+  margin: clamp(28px, 4.5vw, 48px) auto;
+  padding: clamp(18px, 3vw, 32px);
+  border-radius: 20px;
+  background: var(--up-bg);
+  max-width: 1120px;
+}
+
+@media (max-width: 900px){
+  .res-upsell{ grid-template-columns: 1fr; }
+}
+
+.res-upsell__copy .eyebrow{
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ff-color-primary-700) 40%, #333);
+  margin: 0 0 .25rem;
+}
+
+.res-upsell__title{
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.15;
+  color: var(--text);
+  margin: 0 0 .4rem;
+}
+.res-upsell__title span{
+  color: var(--ff-color-primary-700);
+}
+
+.res-upsell__sub{
+  margin: 0 0 .8rem;
+  color: color-mix(in oklab, var(--text) 78%, #000);
+}
+
+.res-upsell__benefits{
+  margin: 0 0 1rem;
+  padding-left: 1.1rem;
+  color: color-mix(in oklab, var(--text) 80%, #000);
+}
+.res-upsell__benefits li{ margin: .25rem 0; }
+
+.res-upsell__ctas{
+  display:flex; gap: .6rem; flex-wrap: wrap;
+}
+
+/* Buttons – gebruikt jullie tokens, maar met voorspelbare fallbacks */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  height: 42px; padding: 0 18px; border-radius: 9999px;
+  font-weight: 600; text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+}
+.btn--primary{
+  color:#fff;
+  background: var(--ff-color-cta, var(--ff-color-primary-700));
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--ff-color-primary-700) 24%, transparent);
+}
+.btn--primary:hover{ transform: translateY(-1px); }
+.btn--ghost{
+  background: transparent;
+  color: var(--ff-color-primary-700);
+  border-color: color-mix(in oklab, var(--ff-color-primary-700) 45%, #ccc);
+}
+
+/* Teasers */
+.res-upsell__teasers{
+  display:grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 1.8vw, 16px);
+}
+@media (max-width: 600px){
+  .res-upsell__teasers{ grid-template-columns: 1fr 1fr; }
+}
+
+.teaser{
+  position: relative; isolation:isolate;
+  background: var(--card);
+  border-radius: 16px;
+  padding: clamp(10px, 1.6vw, 14px);
+  box-shadow: 0 8px 24px rgba(15, 33, 56, .06);
+}
+.teaser__tile{
+  border-radius: 12px;
+  aspect-ratio: 1 / 1;
+  filter: blur(3px) saturate(.9) opacity(.9);
+  background: #0f2138;
+}
+
+/* Archetype accenten (discreet) */
+.teaser__tile[data-arch="smart"]{ background: linear-gradient(155deg,#0e2746,#0b1b30); }
+.teaser__tile[data-arch="mono"]{ background: linear-gradient(155deg,#142d4e,#0e223d); }
+.teaser__tile[data-arch="ath"]{  background: linear-gradient(155deg,#0c2f3a,#0a2230); }
+
+/* Grid van 2×2 in de teaser */
+.teaser{
+  display:grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.2vw, 12px);
+}
+.teaser__lock{
+  position:absolute; inset:auto auto 8px 10px;
+  z-index: 2;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+  font-weight: 700; font-size: 18px; line-height: 1;
+  color: color-mix(in oklab, #fff 88%, var(--ff-color-primary-700));
+  text-shadow: 0 2px 10px rgba(0,0,0,.25);
+}
+
+/* Motion-respect */
+@media (prefers-reduced-motion: reduce){
+  .btn{ transition: none; }
+}
+
 /* =======================
    PREMIUM UPSELL STRIP
    ======================= */
