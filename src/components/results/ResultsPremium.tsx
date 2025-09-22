@@ -1,5 +1,6 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
+import ComposedLook from "./ComposedLook";
 
 type Outfit = {
   slug: string;
@@ -46,6 +47,14 @@ const outfits: Outfit[] = [
 ];
 
 const ResultsPremium: React.FC = () => {
+  // Mock data voor composed looks wanneer outfit images ontbreken
+  const composedLookItems = [
+    { img: "/images/fallbacks/top.jpg", alt: "Premium shirt" },
+    { img: "/images/fallbacks/bottom.jpg", alt: "Tailored broek" },
+    { img: "/images/fallbacks/footwear.jpg", alt: "Designer sneakers" },
+    { img: "/images/fallbacks/accessory.jpg", alt: "Statement accessoire" }
+  ];
+
   return (
     <main className="ff-results ff-container">
       {/* 1) Header / intro */}
@@ -77,16 +86,9 @@ const ResultsPremium: React.FC = () => {
         <div className="results__grid">
           {/* Card 1 */}
           <article className="result-card">
-            <SmartImage
-              src="/images/results/smart-casual.jpg"
-              alt="Smart casual outfit met nette denim, witte sneaker en licht overshirt"
-              aspectRatio={4 / 3}
-              fetchPriority="high"
-              sources={[
-                { type: "image/avif", srcSet: "/images/results/smart-casual.jpg?fm=avif&w=480 480w, /images/results/smart-casual.jpg?fm=avif&w=960 960w" },
-                { type: "image/webp", srcSet: "/images/results/smart-casual.jpg?fm=webp&w=480 480w, /images/results/smart-casual.jpg?fm=webp&w=960 960w" },
-              ]}
-            />
+            <div className="result-card__media">
+              <ComposedLook items={composedLookItems} />
+            </div>
             <div className="result-card__body">
               <h2 className="result-card__title">Smart casual (dagelijks)</h2>
               <ul className="result-card__list">
@@ -100,15 +102,9 @@ const ResultsPremium: React.FC = () => {
 
           {/* Card 2 */}
           <article className="result-card">
-            <SmartImage
-              src="/images/results/monochrome.jpg"
-              alt="Monochrome workday outfit in neutrale tinten"
-              aspectRatio={4 / 3}
-              sources={[
-                { type: "image/avif", srcSet: "/images/results/monochrome.jpg?fm=avif&w=480 480w, /images/results/monochrome.jpg?fm=avif&w=960 960w" },
-                { type: "image/webp", srcSet: "/images/results/monochrome.jpg?fm=webp&w=480 480w, /images/results/monochrome.jpg?fm=webp&w=960 960w" },
-              ]}
-            />
+            <div className="result-card__media">
+              <ComposedLook items={composedLookItems} />
+            </div>
             <div className="result-card__body">
               <h2 className="result-card__title">Monochrome workday</h2>
               <ul className="result-card__list">
@@ -122,15 +118,9 @@ const ResultsPremium: React.FC = () => {
 
           {/* Card 3 */}
           <article className="result-card">
-            <SmartImage
-              src="/images/results/athflow.jpg"
-              alt="Comfortabele weekendlook met hoodie en jogger"
-              aspectRatio={4 / 3}
-              sources={[
-                { type: "image/avif", srcSet: "/images/results/athflow.jpg?fm=avif&w=480 480w, /images/results/athflow.jpg?fm=avif&w=960 960w" },
-                { type: "image/webp", srcSet: "/images/results/athflow.jpg?fm=webp&w=480 480w, /images/results/athflow.jpg?fm=webp&w=960 960w" },
-              ]}
-            />
+            <div className="result-card__media">
+              <ComposedLook items={composedLookItems} />
+            </div>
             <div className="result-card__body">
               <h2 className="result-card__title">Athflow weekend</h2>
               <ul className="result-card__list">
