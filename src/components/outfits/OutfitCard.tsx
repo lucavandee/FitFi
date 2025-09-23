@@ -220,9 +220,8 @@ export default function OutfitCard({
 
   return (
     <div 
-      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-      data-kind="outfit-card"
       className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-[#89CFF0] focus-within:ring-offset-2"
+      data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
       aria-describedby={descId}
