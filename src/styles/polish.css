@@ -3835,4 +3835,88 @@
 .res-hero__title span {
   color: var(--ff-cta-600);
 }
-  
+
+/* === Pricing — clean tiers, premium polish ================================ */
+.hero-wrap {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.pricing-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.pricing-card--popular {
+  border-color: var(--ff-color-primary-700);
+  box-shadow: 0 8px 32px rgba(166,136,106,0.12);
+}
+
+.pricing-card--popular::before {
+  content: "Populair";
+  position: absolute;
+  top: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ff-color-primary-700);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-lg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pricing-price {
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: 0.25rem;
+}
+
+.pricing-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.pricing-card li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-card li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--ff-color-primary-700);
+  font-weight: 600;
+}
+
+.pricing-card .btn {
+  margin-top: auto;
+}
+
+/* Hover effects */
+.pricing-card.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(30,35,51,0.12);
+}
+
+.pricing-card--popular.card-hover:hover {
+  box-shadow: 0 16px 48px rgba(166,136,106,0.18);
+}
+
+/* Focus states */
+.pricing-card:focus-within {
+  outline: none;
+  box-shadow: var(--shadow-ring, 0 0 0 3px rgba(166,136,106,.24));
+}
