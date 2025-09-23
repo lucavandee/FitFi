@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Helmet } from 'react-helmet-async';
 import ResultsHeader from '@/components/results/ResultsHeader';
 
@@ -57,70 +58,79 @@ const EnhancedResultsPage: React.FC = () => {
       </Helmet>
       <div className="min-h-screen bg-gray-50">
         <main className="ff-results">
-          {/* 1) Hero / intro */}
-          <section className="res-hero">
-            <p className="eyebrow">Onze aanbeveling</p>
-            <h1 className="res-hero__title">
-              Dit past bij jouw stijl — <span>clean, smart-casual</span>
-            </h1>
-            <p className="res-hero__sub">
-              We kozen voor een cleane, smart-casual look: netter denim, witte
-              sneaker en licht overshirt — minimalistisch en comfortabel.
-            </p>
-
-            <div className="res-hero__cta">
-              <a className="btn btn--primary" href="#shop">
-                Shop deze look
-              </a>
-              <a className="btn btn--ghost" href="/onboarding">
-                Nieuwe analyse
-              </a>
-            </div>
-
+    <>
+      <Helmet>
+        <title>Jouw Styling Resultaten - FitFi</title>
+        <meta name="description" content="Ontdek je gepersonaliseerde outfit-aanbevelingen, perfect afgestemd op jouw stijl en voorkeuren." />
+      </Helmet>
+      
+          <div className="res-grid">
+            <article className="res-card card">
+              <div className="res-card__tiles">
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+          </div>
+              <div className="res-card__body">
+                <h3 className="res-card__title">Casual Weekend Look</h3>
+                <p className="text-muted">
+                  Perfect voor ontspannen weekenden. De zachte kleuren en comfortabele pasvorm 
+                  passen bij je voorkeur voor casual elegantie.
+                </p>
+                <div className="d-flex">
+                  <button className="btn btn--primary">Shop look</button>
+                  <button className="btn btn--ghost">Bekijk details</button>
+                </div>
+              </div>
+            </article>
             <ul className="chips" aria-label="USP's">
-              <li className="chip chip--active">100% gratis</li>
-              <li className="chip">Klaar in 2 min</li>
-              <li className="chip">Outfits + shoplinks</li>
-              <li className="chip">Privacy-first</li>
-            </ul>
-          </section>
-
-          {/* 2) Grid met kaarten */}
-          <section className="res-grid" aria-labelledby="outfits-heading" data-cv="auto">
-            <h2 id="outfits-heading" className="sr-only">
-              Aanbevolen outfits
-            </h2>
-
-            {cards.map((card) => (
-              <article key={card.id} className="res-card" data-style={card.id}>
-                {/* Mozaïek: 2×2 tegels. Als je echte images hebt, vervang <div className="res-img" /> door jouw <img />/SmartImage. */}
+            <article className="res-card card">
+              <div className="res-card__tiles">
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
                 <div className="res-card__mosaic">
-                  {card.tiles.map((_, idx) => (
-                    <div key={idx} className="res-card__tile" />
+              <div className="res-card__body">
+                <h3 className="res-card__title">Business Professional</h3>
+                <p className="text-muted">
+                  Strak en professioneel voor belangrijke meetings. De donkere tinten 
+                  en getailleerde snit geven je de zelfverzekerde uitstraling die je zoekt.
+                </p>
+                <div className="d-flex">
+                  <button className="btn btn--primary">Shop look</button>
+                  <button className="btn btn--ghost">Bekijk details</button>
+                </div>
+              </div>
+            </article>
                   ))}
-                </div>
+            <article className="res-card card">
+              <div className="res-card__tiles">
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
 
-                <div className="res-card__body">
-                  <h3 className="res-card__title">{card.title}</h3>
-                  <ul className="res-card__bullets">
-                    {card.bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                  <a className="link-cta" href="#shop">
-                    Shop vergelijkbare items
-                  </a>
+              <div className="res-card__body">
+                <h3 className="res-card__title">Evening Chic</h3>
+                <p className="text-muted">
+                  Elegant en verfijnd voor speciale gelegenheden. De luxe materialen 
+                  en subtiele details maken deze look perfect voor avonduitjes.
+                </p>
+                <div className="d-flex">
+                  <button className="btn btn--primary">Shop look</button>
+                  <button className="btn btn--ghost">Bekijk details</button>
                 </div>
-              </article>
-            ))}
-          </section>
-
-          {/* 3) (optioneel) Premium strip kan hieronder; laat ik nu weg om import-conflicten te voorkomen */}
-          {/* <PremiumUpsellStrip /> */}
+              </div>
+            </article>
+          </div>
         </main>
-      </div>
+      </section>
     </>
   );
 };
 
 export default EnhancedResultsPage;
+  )
+}
