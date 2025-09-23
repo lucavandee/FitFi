@@ -73,10 +73,13 @@ export default function App() {
         <CookieBanner />
       </div>
     </ErrorBoundary>
+
+            <Routes>
               <Route path="/blog" element={<BlogPage />} />
 
               {/* Over ons */}
               <Route path="/over-ons" element={<AboutPage />} />
+            </Routes>
 
               {/* FAQ: live slug is /veelgestelde-vragen. We ondersteunen beide. */}
               <Route path="/veelgestelde-vragen" element={<FAQPage />} />
