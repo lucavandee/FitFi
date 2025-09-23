@@ -29,8 +29,11 @@ import '@/styles/polish/80-faq.css';
 import '@/styles/polish/90-blog.css';
 
 // Header/Footer polish & overrides
+import { BrowserRouter } from "react-router-dom";
 import '@/styles/polish/95-header-footer.css';
-import '@/styles/polish/99-overrides.css';
+
+// LAAD ALLES VIA DIT ÉNE BESTAND
+import "@/styles/index.css";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -38,6 +41,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </HelmetProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );

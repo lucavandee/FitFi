@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CookieBanner from "@/components/legal/CookieBanner";
@@ -53,25 +53,23 @@ const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
-      {/* HEADER — één keer, bovenaan */}
-      <Navbar />
-
-      {/* MAIN CONTENT */}
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
         <Suspense fallback={<div />}>
-          <main id="main" className="flex-1">
-            <Routes>
-              {/* Home / Landing */}
-              <Route index element={<LandingPage />} />
-
-              {/* Hoe het werkt */}
-              <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-
-              {/* Prijzen */}
-              <Route path="/prijzen" element={<PricingPage />} />
-
-              {/* Blog */}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/prijzen" element={<PricingPage />} />
+            <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+            <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
+        <Footer />
+        <CookieBanner />
+      </div>
+    </ErrorBoundary>
               <Route path="/blog" element={<BlogPage />} />
 
               {/* Over ons */}
