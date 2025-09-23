@@ -1,11 +1,9 @@
-// src/pages/FAQPage.tsx
 import React from "react";
 
 /**
  * FAQPage — tokens-first + ff-utilities
- * - Compact, snel scanbaar, AA-contrast.
- * - <details>/<summary> voor toegankelijke accordeons.
- * - Geen externe imports, default export.
+ * - Micro-interactie: draaiende chevron via group-open, subtiele ff-fade-in op content.
+ * - <details>/<summary> blijven toegankelijk; geen externe deps.
  */
 
 type QA = { q: string; a: React.ReactNode };
@@ -15,8 +13,8 @@ const QAS: QA[] = [
     q: "Is FitFi echt gratis te proberen?",
     a: (
       <>
-        Ja. Met <strong>Starter</strong> begin je direct gratis. Wil je meer outfits en functies,
-        kies dan voor Pro of Elite — je kunt op elk moment downgraden of annuleren.
+        Ja. Met <strong>Starter</strong> begin je direct gratis. Voor meer outfits en functies kies je Pro of Elite —
+        je kunt op elk moment downgraden of annuleren.
       </>
     ),
   },
@@ -24,8 +22,8 @@ const QAS: QA[] = [
     q: "Wat houdt het AI Style Report in?",
     a: (
       <>
-        Je ontvangt een persoonlijk stijlprofiel met 3–10 outfitvoorstellen (per plan),
-        inclusief uitleg <em>waarom</em> het werkt (silhouet, kleur, materiaal) en shoplinks.
+        Je ontvangt een persoonlijk stijlprofiel met outfitvoorstellen (per plan), inclusief uitleg <em>waarom</em> het
+        werkt (silhouet, kleur, materiaal) en shoplinks.
       </>
     ),
   },
@@ -33,8 +31,8 @@ const QAS: QA[] = [
     q: "Wat doen jullie met mijn gegevens?",
     a: (
       <>
-        We zijn <strong>privacy-first</strong>. Je antwoorden worden uitsluitend gebruikt om jouw
-        stijl te personaliseren. Geen doorverkoop. Meer in onze privacyverklaring.
+        We zijn <strong>privacy-first</strong>. Je antwoorden gebruiken we alleen om jouw stijl te personaliseren. Geen
+        doorverkoop. Zie ook onze privacyverklaring.
       </>
     ),
   },
@@ -42,8 +40,8 @@ const QAS: QA[] = [
     q: "Kan ik op elk moment opzeggen?",
     a: (
       <>
-        Ja. Maandabonnementen zijn maandelijks opzegbaar. Jaarabonnementen lopen tot het einde van
-        de periode; we verlengen niet zonder bevestiging.
+        Ja. Maandabonnementen kun je maandelijks opzeggen. Jaarabonnementen lopen tot het einde van de periode en
+        verlengen niet zonder jouw bevestiging.
       </>
     ),
   },
@@ -51,8 +49,7 @@ const QAS: QA[] = [
     q: "Werken jullie met affiliate links?",
     a: (
       <>
-        Ja, soms. We linken alleen naar betrouwbare shops. Dit beïnvloedt onze aanbevelingen niet:
-        stijl & pasvorm gaan altijd voor.
+        Soms. We linken alleen naar betrouwbare shops. Aanbevelingen blijven altijd stijl- en pasvorm-gedreven.
       </>
     ),
   },
@@ -74,9 +71,20 @@ export default function FAQPage() {
 
         <div className="space-y-3 sm:space-y-4">
           {QAS.map(({ q, a }) => (
-            <details key={q} className="ff-card p-4">
-              <summary className="cursor-pointer font-medium select-none">{q}</summary>
-              <div className="mt-2 text-sm text-text/80">{a}</div>
+            <details key={q} className="group ff-card p-4">
+              <summary className="cursor-pointer font-medium select-none flex items-center justify-between">
+                <span>{q}</span>
+                {/* Chevron (draait bij open) */}
+                <svg
+                  className="size-4 shrink-0 transition-transform duration-200 group-open:rotate-180"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.06l3.71-2.83a.75.75 0 0 1 .92 1.18l-4.2 3.2a.75.75 0 0 1-.92 0l-4.2-3.2a.75.75 0 0 1-.02-1.06z" />
+                </svg>
+              </summary>
+              <div className="mt-2 text-sm text-text/80 ff-fade-in">{a}</div>
             </details>
           ))}
         </div>
@@ -87,8 +95,12 @@ export default function FAQPage() {
             Bekijk ook onze uitlegpagina of neem contact met ons op — we helpen je graag verder.
           </p>
           <div className="mt-3 flex gap-2">
-            <a href="/how-it-works" className="ff-btn ff-btn-secondary h-10">Hoe het werkt</a>
-            <a href="/contact" className="ff-btn ff-btn-primary h-10">Contact</a>
+            <a href="/how-it-works" className="ff-btn ff-btn-secondary h-10">
+              Hoe het werkt
+            </a>
+            <a href="/contact" className="ff-btn ff-btn-primary h-10">
+              Contact
+            </a>
           </div>
         </aside>
       </section>
