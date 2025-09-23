@@ -132,13 +132,13 @@ function PlanCard({
       <div className="p-5 sm:p-6 pt-0">
         <div className="flex flex-col sm:flex-row gap-2">
           <NavLink
-            to="/start"
+            to="/hoe-het-werkt"
             className="ff-btn ff-btn-primary h-10"
             aria-label={`${plan.ctaLabel} – ${plan.title}`}
           >
             {plan.ctaLabel}
           </NavLink>
-          <NavLink to="/how-it-works" className="ff-btn ff-btn-secondary h-10">
+          <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary h-10">
             Bekijk features
           </NavLink>
         </div>
@@ -271,8 +271,8 @@ export default function PricingPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <NavLink to="/start" className="ff-btn ff-btn-primary h-10">Start gratis</NavLink>
-              <NavLink to="/how-it-works" className="ff-btn ff-btn-secondary h-10">Hoe het werkt</NavLink>
+              <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-primary h-10">Start gratis</NavLink>
+              <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary h-10">FAQ</NavLink>
             </div>
           </div>
         </section>
