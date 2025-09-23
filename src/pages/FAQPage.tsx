@@ -1,3 +1,4 @@
+// src/pages/FAQPage.tsx
 import React from "react";
 
 /**

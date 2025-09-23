@@ -11,10 +11,10 @@ import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
  * - Mobile: <MobileNavDrawer /> gemount in md:hidden.
  */
 const links = [
-  { to: "/how-it-works", label: "Hoe het werkt" },
-  { to: "/pricing", label: "Prijzen" },
-  { to: "/about", label: "Over ons" },
-  { to: "/faq", label: "FAQ" },
+  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/prijzen", label: "Prijzen" },
+  { to: "/over-ons", label: "Over ons" },
+  { to: "/veelgestelde-vragen", label: "FAQ" },
   { to: "/blog", label: "Blog" },
 ];
 
@@ -58,10 +58,10 @@ export default function Navbar() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-2">
-            <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
+            <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary h-9">
               Inloggen
             </NavLink>
-            <NavLink to="/start" className="ff-btn ff-btn-primary h-9">
+            <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">
               Start gratis
             </NavLink>
           </div>

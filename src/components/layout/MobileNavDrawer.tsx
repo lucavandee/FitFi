@@ -9,10 +9,10 @@ import { NavLink } from "react-router-dom";
  * - Opt-in polish via ff-utilities (glass, btn, nav-active).
  */
 const links = [
-  { to: "/how-it-works", label: "Hoe het werkt" },
-  { to: "/pricing", label: "Prijzen" },
-  { to: "/about", label: "Over ons" },
-  { to: "/faq", label: "FAQ" },
+  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/prijzen", label: "Prijzen" },
+  { to: "/over-ons", label: "Over ons" },
+  { to: "/veelgestelde-vragen", label: "FAQ" },
   { to: "/blog", label: "Blog" },
 ];
 
@@ -30,7 +30,7 @@ export default function MobileNavDrawer() {
 
   React.useEffect(() => {
     if (open) panelRef.current?.focus();
-  }, [open]);
+  }, []);
 
   return (
     <>
@@ -103,10 +103,10 @@ export default function MobileNavDrawer() {
           </ul>
 
           <div className="mt-3 px-2 flex gap-2">
-            <NavLink to="/login" onClick={() => setOpen(false)} className="ff-btn ff-btn-secondary h-10 grow">
+            <NavLink to="/hoe-het-werkt" onClick={() => setOpen(false)} className="ff-btn ff-btn-secondary h-10 grow">
               Inloggen
             </NavLink>
-            <NavLink to="/start" onClick={() => setOpen(false)} className="ff-btn ff-btn-primary h-10 grow">
+            <NavLink to="/prijzen" onClick={() => setOpen(false)} className="ff-btn ff-btn-primary h-10 grow">
               Start gratis
             </NavLink>
           </div>
