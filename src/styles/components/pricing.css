@@ -1,14 +1,14 @@
-@layer components {
-  /* Pricing Component Styles */
-  
-@media (max-width: 639px) {
-  .pricing-scroll {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-  }
-  .pricing-scroll > * {
-    min-width: 88%;
-    scroll-snap-align: center;
-  }
+.pr-grid { display:grid; gap: var(--sp-4); grid-template-columns: repeat(3, minmax(0,1fr)); }
+@media (max-width: 992px){ .pr-grid{ grid-template-columns: 1fr; } }
+
+.pr-card { composes: card; padding: var(--sp-4); position:relative; }
+.pr-card__price { font-size: var(--fs-36); font-weight: 800; }
+.pr-card__badge {
+  position:absolute; top: .9rem; right: .9rem;
+  background: color-mix(in oklab, var(--ff-primary-100) 55%, #fff);
+  color: var(--ff-primary-700); padding:.3rem .6rem; border-radius:999px; font-size: var(--fs-12); font-weight:700;
 }
+.pr-card--best {
+  border: 1px solid color-mix(in oklab, var(--ff-primary-600) 35%, transparent);
+  box-shadow: 0 6px 22px rgba(40, 72, 220, .12);
 }
