@@ -1,3 +1,13 @@
+import React, { Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import CookieBanner from "@/components/CookieBanner";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import LandingPage from "@/pages/LandingPage";
+import { Navigate } from "react-router-dom";
+import { lazy } from "react";
+
 // Robuuste lazy helper (géén duplicaten elders in het bestand!)
 function lazyAny<T extends { default: React.ComponentType<any> }>(
   factory: () => Promise<T>
