@@ -1,20 +1,44 @@
-import React, { Suspense, lazy } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import CookieBanner from "@/components/legal/CookieBanner";
+// Robuuste lazy helper (géén duplicaten elders in het bestand!)
+function lazyAny<T extends { default: React.ComponentType<any> }>(
+  factory: () => Promise<T>
+) {
+  return React.lazy(async () => {
+    try {
+      return await factory();
+    } catch (err) {
+      console.error("Lazy import failed:", err);
+      // Simpele fallback-component ipv witte pagina:
+      return {
+        default: () => (
+          <main className="ff-section">
+            <div className="ff-container">
+              <h1>Kon pagina niet laden</h1>
+              <p className="muted">Probeer te verversen of kom later terug.</p>
+            </div>
+          </main>
+        ),
+      } as unknown as T;
+    }
+  });
+}
 
-// Laat header/footer intact zoals jullie ze nu hebben.
-// We raken alleen de routes aan en vermijden dubbele declaraties.
-
-const LandingPage        = lazy(() => import("@/pages/LandingPage"));
-const HowItWorksPage     = lazy(() => import("@/pages/HowItWorksPage"));
-const PricingPage        = lazy(() => import("@/pages/PricingPage"));
-const AboutPage          = lazy(() => import("@/pages/AboutPage"));
-const BlogPage           = lazy(() => import("@/pages/BlogPage"));
-const FAQPage            = lazy(() => import("@/pages/FAQPage")); // intern component
-const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
+// ÉÉN declaratie per page (en niet nog eens verderop):
+const HomePage = lazyAny(() => import('@/pages/HomePage'));
+const QuizPage = lazyAny(() => import('@/pages/QuizPage'));
+const ResultsPage = lazyAny(() => import('@/pages/ResultsPage'));
+const EnhancedResultsPage = lazyAny(() => import('@/pages/EnhancedResultsPage'));
+const BlogPage = lazyAny(() => import('@/pages/BlogPage'));
+const PricingPage = lazyAny(() => import('@/pages/PricingPage'));
+const HowItWorksPage = lazyAny(() => import('@/pages/HowItWorksPage'));
+const FAQPage = lazyAny(() => import('@/pages/FAQPage'));
+const AboutPage = lazyAny(() => import('@/pages/AboutPage'));
+const ContactPage = lazyAny(() => import('@/pages/ContactPage'));
+const LegalPage = lazyAny(() => import('@/pages/LegalPage'));
+const PrivacyPage = lazyAny(() => import('@/pages/PrivacyPage'));
+const TermsPage = lazyAny(() => import('@/pages/TermsPage'));
+const CookiesPage = lazyAny(() => import('@/pages/CookiesPage'));
+const NotFoundPage = lazyAny(() => import('@/pages/NotFoundPage'));
+const HealthPage = lazyAny(() => import('@/pages/HealthPage'));
 const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 
 export default function App() {
@@ -64,4 +88,3 @@ export default function App() {
       <CookieBanner />
     </div>
   );
-}
