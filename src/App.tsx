@@ -1,58 +1,63 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import React, { Suspense, lazy } from "react";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import CookieBanner from "@/components/legal/CookieBanner";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import NavigationServiceInitializer from "@/components/NavigationServiceInitializer";
 
-// Components
-import Navbar from '@/components/layout/Navbar';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import { Routes, Route } from "react-router-dom";
 
-// Pages - lazy loaded
-import HomePage from '@/pages/HomePage';
-import BlogPage from '@/pages/BlogPage';
-import AboutPage from '@/pages/AboutPage';
-import QuizPage from '@/pages/QuizPage';
-import ResultsPage from '@/pages/ResultsPage';
-import EnhancedResultsPage from '@/pages/EnhancedResultsPage';
-import OnboardingPage from '@/pages/OnboardingPage';
-import PricingPage from '@/pages/PricingPage';
-import PrivacyPage from '@/pages/PrivacyPage';
-import TermsPage from '@/pages/TermsPage';
-import CookiesPage from '@/pages/CookiesPage';
-import HealthPage from '@/pages/HealthPage';
-import NotFoundPage from '@/pages/NotFoundPage';
+/** Context providers */
+import { ThemeProvider } from "@/context/ThemeContext";
+import { UserProvider } from "@/context/UserContext";
+import { OnboardingProvider } from "@/context/OnboardingContext";
+import { GamificationProvider } from "@/context/GamificationContext";
 
-function App() {
+/** Pages (lazy) */
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const HowItWorksPage = lazy(() => import("@/pages/HowItWorksPage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const FAQPage = lazy(() => import("@/pages/FAQPage"));
+const BlogPage = lazy(() => import("@/pages/BlogPage"));
+const ResultsPage = lazy(() => import("@/pages/ResultsPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+
+export default function App() {
   return (
-    <>
-      <a href="#main-content" className="skip-link">
-        Naar hoofdinhoud
-      </a>
-      <Helmet>
-        <title>FitFi - AI Styling Platform</title>
-        <meta name="description" content="Premium AI styling platform voor Nederland en EU" />
-      </Helmet>
-      <Navbar />
-      <ErrorBoundary>
-        <main id="main-content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/over-ons" element={<AboutPage />} />
-            <Route path="/quiz" element={<QuizPage />} />
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/enhanced-results" element={<EnhancedResultsPage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/cookies" element={<CookiesPage />} />
-            <Route path="/__health" element={<HealthPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </main>
-      </ErrorBoundary>
-    </>
+    <ErrorBoundary>
+      {/* ALLE app-state providers moeten HIER staan,
+          zodat elke pagina (HomePage, etc.) de contexten ziet. */}
+      <ThemeProvider>
+        <UserProvider>
+          <OnboardingProvider>
+            <GamificationProvider>
+              {/* NavigationServiceInitializer gebruikt useLocation() -> MOET binnen Router (main.tsx) staan */}
+              <NavigationServiceInitializer />
+
+              <div className="app-shell">
+                <Navbar />
+                <main id="main" role="main">
+                  <Suspense fallback={<div className="ff-loading">Laden…</div>}>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+                      <Route path="/prijzen" element={<PricingPage />} />
+                      <Route path="/over-ons" element={<AboutPage />} />
+                      <Route path="/faq" element={<FAQPage />} />
+                      <Route path="/blog" element={<BlogPage />} />
+                      <Route path="/results" element={<ResultsPage />} />
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                  </Suspense>
+                </main>
+                <Footer />
+                <CookieBanner />
+              </div>
+            </GamificationProvider>
+          </OnboardingProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
-
-export default App;
