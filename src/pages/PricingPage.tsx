@@ -1,119 +1,77 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
-
-const tiers = [
-  {
-    id: "free",
-    name: "Gratis",
-    price: "€0",
-    period: "",
-    cta: { href: "/onboarding", label: "Start gratis" },
-    features: [
-      "AI Style Report (basis)",
-      "3 outfits met shoplinks",
-      "Opslaan & delen",
-    ],
-    accent: false,
-  },
-  {
-    id: "plus",
-    name: "Plus",
-    price: "€9",
-    period: "per maand",
-    cta: { href: "/onboarding", label: "Probeer Plus" },
-    features: [
-      "Volledig AI Style Report",
-      "9 outfits + alternatieven",
-      "Kleur- & silhouetadvies",
-      "Voorstel per gelegenheid",
-    ],
-    accent: true,
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "€19",
-    period: "per maand",
-    cta: { href: "/onboarding", label: "Kies Pro" },
-    features: [
-      "Alles van Plus",
-      "Seizoenscapsules & combinaties",
-      "Persoonlijke voorkeuren (fine-tune)",
-      "Early access nieuwe features",
-    ],
-    accent: false,
-  },
-];
+import PricingHero from "@/components/pricing/PricingHero";
+import PricingFaqTeaser from "@/components/pricing/PricingFaqTeaser";
+import SkipLink from "@/components/a11y/SkipLink";
 
 const PricingPage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <>
-      <Seo
-        title="Prijzen — Kies je plan | FitFi"
-        description="Kies het FitFi-plan dat past bij jouw stijl: Gratis, Plus of Pro. Upgrade wanneer je wilt."
-        canonical="https://fitfi.ai/prijzen"
-      />
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+        <Seo
+          title="Prijzen — Start gratis, upgrade wanneer jij wil | FitFi"
+          description="Begin met een gratis AI Style Report. Breid desgewenst uit met premium functies. Geen creditcard nodig."
+          canonical="https://fitfi.ai/prijzen"
+          preloadImages={["/images/hero/main.jpg"]}
+        />
 
-      <section className="ff-section bg-white">
-        <div className="ff-container">
-          <header className="max-w-3xl">
-            <h1 className="ff-h1">Prijzen</h1>
-            <p className="ff-lead text-[var(--color-muted)]">
-              Begin gratis. Upgrade wanneer jij meer detail of outfits wilt.
-            </p>
-          </header>
+        <PricingHero
+          onStart={() => navigate("/onboarding")}
+          onExample={() => navigate("/results")}
+        />
 
-          <div
-            className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3"
-            role="list"
-            aria-label="Abonnementen"
-          >
-            {tiers.map((t) => (
-              <article
-                key={t.id}
-                className={`ff-card ${t.accent ? "ff-card--accent" : ""}`}
-                aria-label={`Plan ${t.name}`}
-              >
-                <div className="ff-card__inner">
-                  <h2 className="ff-h3">{t.name}</h2>
-                  <p className="mt-2 ff-price">
-                    <span className="ff-price__value">{t.price}</span>{" "}
-                    <span className="ff-price__period">{t.period}</span>
-                  </p>
-                  <ul className="ff-list mt-4">
-                    {t.features.map((f) => (
-                      <li key={f} className="ff-list__item">
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    className={`btn ${t.accent ? "btn-cta" : "btn-ghost"} mt-6`}
-                    href={t.cta.href}
-                    aria-label={t.cta.label}
-                  >
-                    {t.cta.label}
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* FAQ-teaser */}
-          <div className="ff-rail mt-12">
-            <div className="ff-rail__left">
-              <p className="ff-body text-[var(--color-muted)]">
-                Vragen over betalingen, upgrades of opzeggen?
-              </p>
+        <section className="ff-section bg-white">
+          <div className="ff-container grid gap-6 md:grid-cols-3">
+            <div className="card p-6">
+              <h2 className="text-xl font-semibold mb-1">Gratis</h2>
+              <p className="text-sm mb-4 opacity-80">AI Style Report • outfits + shoplinks</p>
+              <p className="text-3xl font-semibold mb-4">€0</p>
+              <ul className="space-y-2 text-sm">
+                <li>✔ Stijlprofiel &amp; uitleg</li>
+                <li>✔ 3 outfits met shoplinks</li>
+                <li>✔ Privacy-first</li>
+              </ul>
+              <button className="btn btn-primary mt-6" onClick={() => navigate("/onboarding")} aria-label="Start gratis plan">
+                Start gratis
+              </button>
             </div>
-            <div className="ff-rail__right">
-              <a href="/faq" className="ff-link">
-                Bekijk de veelgestelde vragen
-              </a>
+
+            <div className="card p-6">
+              <h2 className="text-xl font-semibold mb-1">Pro</h2>
+              <p className="text-sm mb-4 opacity-80">Meer outfits, kleurenadvies &amp; garderobetips</p>
+              <p className="text-3xl font-semibold mb-4">€—</p>
+              <ul className="space-y-2 text-sm">
+                <li>✔ Extra outfits &amp; varianten</li>
+                <li>✔ Seizoen- &amp; materiaaladvies</li>
+                <li>✔ Prioriteit updates</li>
+              </ul>
+              <button className="btn btn-ghost mt-6" onClick={() => navigate("/onboarding")} aria-label="Pro proberen">
+                Proberen
+              </button>
+            </div>
+
+            <div className="card p-6">
+              <h2 className="text-xl font-semibold mb-1">Team</h2>
+              <p className="text-sm mb-4 opacity-80">Voor brands &amp; stylists</p>
+              <p className="text-3xl font-semibold mb-4">Op aanvraag</p>
+              <ul className="space-y-2 text-sm">
+                <li>✔ Co-branding &amp; integraties</li>
+                <li>✔ API-toegang (op termijn)</li>
+                <li>✔ Dedicated support</li>
+              </ul>
+              <button className="btn btn-ghost mt-6" onClick={() => navigate("/contact")} aria-label="Contact team">
+                Contact
+              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <PricingFaqTeaser />
+      </main>
     </>
   );
 };
