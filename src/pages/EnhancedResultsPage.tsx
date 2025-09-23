@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Helmet } from 'react-helmet-async';
 import ResultsHeader from '@/components/results/ResultsHeader';
 
@@ -60,22 +61,77 @@ const EnhancedResultsPage: React.FC = () => {
           {/* 1) Hero / intro */}
           <section className="res-hero">
             <p className="eyebrow">Onze aanbeveling</p>
+    <>
+      <Helmet>
+        <title>Jouw Outfits - FitFi</title>
+        <meta name="description" content="Ontdek jouw perfecte outfits, gebaseerd op jouw stijl en voorkeuren." />
+      </Helmet>
+      
+      <section className="ff-section">
+        <div className="ff-container">
+          <div className="res-hero">
             <h1 className="res-hero__title">
-              Dit past bij jouw stijl — <span>clean, smart-casual</span>
+              Jouw perfecte <span>outfits</span>
             </h1>
-            <p className="res-hero__sub">
-              We kozen voor een cleane, smart-casual look: netter denim, witte
-              sneaker en licht overshirt — minimalistisch en comfortabel.
-            </p>
+            <p>Gebaseerd op jouw stijl, lichaamsbouw en voorkeuren.</p>
+          </div>
+          
+          <div className="res-grid">
+            {/* Outfit 1 - Casual Chic */}
+            <article className="res-card card">
+              <div className="res-card__tiles">
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+              </div>
+              <div className="res-card__body">
+                <h3 className="res-card__title">Casual Chic</h3>
+                <p className="text-muted">Perfect voor een relaxte dag met vrienden. De zachte kleuren en comfortabele stoffen passen bij jouw natuurlijke uitstraling.</p>
+                <div className="d-flex">
+                  <button className="btn btn--ghost">Bekijk details</button>
+                  <button className="btn">Shop look</button>
+                </div>
+              </div>
+            </article>
 
+            {/* Outfit 2 - Business Elegant */}
+            <article className="res-card card">
+              <div className="res-card__tiles">
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+              </div>
+              <div className="res-card__body">
+                <h3 className="res-card__title">Business Elegant</h3>
+                <p className="text-muted">Professioneel en stijlvol voor belangrijke meetings. De getailleerde snit accentueert jouw silhouet op een subtiele manier.</p>
+                <div className="d-flex">
+                  <button className="btn btn--ghost">Bekijk details</button>
+                  <button className="btn">Shop look</button>
+                </div>
+              </div>
+            </article>
+
+            {/* Outfit 3 - Weekend Vibes */}
+            <article className="res-card card">
+              <div className="res-card__tiles">
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+                <div className="skel round" style={{aspectRatio:'1/1'}} />
+              </div>
+              <div className="res-card__body">
+                <h3 className="res-card__title">Weekend Vibes</h3>
+                <p className="text-muted">Ontspannen en trendy voor je vrije tijd. De losse pasvorm en speelse details reflecteren jouw persoonlijkheid.</p>
+                <div className="d-flex">
+                  <button className="btn btn--ghost">Bekijk details</button>
+                  <button className="btn">Shop look</button>
+                </div>
+              </div>
+            </article>
+          </div>
             <div className="res-hero__cta">
-              <a className="btn btn--primary" href="#shop">
-                Shop deze look
-              </a>
-              <a className="btn btn--ghost" href="/onboarding">
-                Nieuwe analyse
-              </a>
-            </div>
 
             <ul className="chips" aria-label="USP's">
               <li className="chip chip--active">100% gratis</li>
@@ -104,21 +160,7 @@ const EnhancedResultsPage: React.FC = () => {
                   <h3 className="res-card__title">{card.title}</h3>
                   <ul className="res-card__bullets">
                     {card.bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                  <a className="link-cta" href="#shop">
-                    Shop vergelijkbare items
-                  </a>
-                </div>
-              </article>
-            ))}
-          </section>
-
-          {/* 3) (optioneel) Premium strip kan hieronder; laat ik nu weg om import-conflicten te voorkomen */}
-          {/* <PremiumUpsellStrip /> */}
-        </main>
-      </div>
+      </section>
     </>
   );
 };
