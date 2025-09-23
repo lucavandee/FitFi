@@ -139,6 +139,7 @@ const EnhancedResultsPage: React.FC = () => {
               <li className="chip">Outfits + shoplinks</li>
               <li className="chip">Privacy-first</li>
             </ul>
+            </div>
           </section>
 
           {/* 2) Grid met kaarten */}
@@ -160,7 +161,18 @@ const EnhancedResultsPage: React.FC = () => {
                   <h3 className="res-card__title">{card.title}</h3>
                   <ul className="res-card__bullets">
                     {card.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </section>
+        </div>
       </section>
+    </>
+        </main>
+      </div>
     </>
   );
 };
