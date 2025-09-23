@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import CookieBanner from "@/components/CookieBanner";
+import CookieBanner from "@/components/legal/CookieBanner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import LandingPage from "@/pages/LandingPage";
 import { Navigate } from "react-router-dom";
