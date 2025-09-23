@@ -1090,6 +1090,80 @@
   .stagger-3 > * { animation: none !important; }
 }
 /* Results badges: +tint voor scanbaarheid */
+
+/* === How-it-works — premium editorial pass ================================== */
+.section-header { max-width: 56rem; margin-inline: auto; text-align: left; }
+.kicker { letter-spacing:.04em; text-transform:uppercase; font-weight:600; color:var(--color-muted); margin-bottom:.5rem; }
+.section-title { font-family: var(--ff-heading, Montserrat, ui-sans-serif); font-size:clamp(1.75rem, 2.2vw, 2.5rem); line-height:1.2; color:var(--color-text); }
+.section-intro { margin-top:.75rem; color:var(--color-muted); font-size:clamp(1rem, 1.2vw, 1.125rem); }
+
+/* ritme */
+.ff-section.alt-bg { background: var(--color-bg); }
+.ff-section + .ff-section { margin-top: 0; }
+.ff-section .ff-container { padding-top: clamp(2.5rem, 4vw, 4rem); padding-bottom: clamp(2.5rem, 4vw, 4rem); }
+
+/* grid van 3 stappen met counters */
+.hiw-grid {
+  --gap: clamp(1rem, 2vw, 1.5rem);
+  display: grid; gap: var(--gap);
+  grid-template-columns: 1fr; counter-reset: hiwstep;
+  margin-top: clamp(1.25rem, 2vw, 1.75rem);
+}
+@media (min-width: 768px) {
+  .hiw-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+/* kaart */
+.hiw-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1rem, 2vw, 1.25rem);
+}
+.hiw-card__header { display:flex; align-items:center; gap:.6rem; margin-bottom:.25rem; }
+.hiw-counter::before {
+  counter-increment: hiwstep;
+  content: counter(hiwstep);
+  display:inline-flex; align-items:center; justify-content:center;
+  inline-size: 1.75rem; block-size: 1.75rem; border-radius: 9999px;
+  background: color-mix(in oklab, var(--ff-color-primary-700) 14%, var(--color-surface));
+  color: var(--color-text); font-weight:600; font-size:.9rem;
+}
+.icon-chip {
+  display:inline-flex; align-items:center; justify-content:center;
+  inline-size: 1.75rem; block-size: 1.75rem; border-radius: 9999px;
+  background: var(--overlay-primary-12a);
+  color: var(--color-text);
+}
+.card-title { font-weight:600; color:var(--color-text); margin-top:.25rem; }
+.card-text { color: var(--color-muted); }
+
+/* hover micro-elevatie */
+.card-hover { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,35,51,0.08); border-color: color-mix(in oklab, var(--ff-color-primary-700) 16%, var(--color-border)); }
+
+/* CTA-rail */
+.hiw-cta-rail { display:flex; gap:.75rem; margin-top: clamp(1.25rem, 2vw, 1.75rem); }
+@media (max-width: 480px) {
+  .hiw-cta-rail { flex-direction: column; align-items: stretch; }
+}
+
+/* CTA-lift (consistent met tokens) */
+.cta-raise { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transition: transform .18s ease, box-shadow .18s ease; }
+.cta-raise:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0,0,0,0.10); }
+
+/* focus ring warm primary */
+:where(.hiw-card, .btn, .icon-chip, .hiw-counter) :focus-visible,
+:where(.hiw-card, .btn, .icon-chip, .hiw-counter).focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring, 0 0 0 3px rgba(166,136,106,.24));
+}
+
+/* motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .card-hover, .cta-raise { transition: none; }
+}
 .badge-season{ background: color-mix(in oklab, var(--color-success) 18%, white); }
 
 /* ===== How-it-Works PAGE (editorial, premium) ===== */
