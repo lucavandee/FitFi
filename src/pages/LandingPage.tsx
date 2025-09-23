@@ -1,22 +1,49 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import Seo from "@/components/Seo";
+import HeroStacked from "@/components/landing/HeroStacked";
+import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
+import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
+import SkipLink from "@/components/a11y/SkipLink";
 
-export default function LandingPage() {
+const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
-    <section className="ff-section ff-hero">
-      <div className="ff-container">
-        <div className="ff-hero__eyebrow">Welkom bij FitFi</div>
-        <h1 className="ff-hero__title">
-          Ontdek jouw perfecte stijl met <span style={{color: 'var(--ff-primary-600)'}}>AI</span>
-        </h1>
-        <p className="ff-hero__lead">
-          FitFi helpt je de kleding te vinden die perfect bij jou past. 
-          Geen giswerk meer, alleen outfits die je zelfvertrouwen boosten.
-        </p>
-        <div className="d-flex" style={{gap: 'var(--sp-4)', marginTop: 'var(--sp-6)'}}>
-          <button className="btn btn--primary">Start gratis</button>
-          <button className="btn btn--ghost">Hoe het werkt</button>
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+      <Seo
+        title="AI Style Report — Ontdek wat jouw stijl over je zegt | FitFi"
+        description="Krijg je gratis AI Style Report in 2 minuten: ontdek wat je kledingkeuzes zeggen over je persoonlijkheid en ontvang passende outfits met shoplinks."
+        canonical="https://fitfi.ai/"
+        preloadImages={["/images/hero/main.jpg"]}
+      />
+
+      <HeroStacked
+        focal="50% 38%"
+        onStart={() => navigate("/onboarding")}
+        onExample={() => navigate("/results")}
+      />
+
+      <section className="ff-section bg-[var(--color-bg)]">
+        <div className="ff-container">
+          <HowItWorksEditorial
+            onStart={() => navigate("/onboarding")}
+            onExample={() => navigate("/results")}
+          />
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="ff-section bg-white">
+        <div className="ff-container">
+          <SocialProofEditorial />
+        </div>
+      </section>
+
+      </main>
+    </>
   );
-}
+};
+
+export default LandingPage;

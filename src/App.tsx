@@ -1,80 +1,67 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
-
+import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { UserProvider } from "@/context/UserContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { OnboardingProvider } from "@/context/OnboardingContext";
-import { GamificationProvider } from "@/context/GamificationContext";
-import "@/styles/polish.css";
+import CookieBanner from "@/components/legal/CookieBanner";
 
-/* Pages – voorkom dubbele declaraties, gebruik steeds één lazy per page */
-const HomePage        = lazy(() => import("@/pages/HomePage"));
-const LandingPage     = lazy(() => import("@/pages/LandingPage"));
-const HowItWorksPage  = lazy(() => import("@/pages/HowItWorksPage"));
-const PricingPage     = lazy(() => import("@/pages/PricingPage"));
-const FAQPage         = lazy(() => import("@/pages/FAQPage"));
-const BlogPage        = lazy(() => import("@/pages/BlogPage"));
-const BlogArticlePage = lazy(() => import("@/pages/BlogDetailPage"));
-const AboutPage       = lazy(() => import("@/pages/AboutPage"));
-const ResultsPage     = lazy(() => import("@/pages/EnhancedResultsPage"));
-const NotFoundPage    = lazy(() => import("@/pages/NotFoundPage"));
+// Laat header/footer intact zoals jullie ze nu hebben.
+// We raken alleen de routes aan en vermijden dubbele declaraties.
 
-function AppShell() {
-  return (
-    <>
-      <header className="ff-header">
-        <div className="ff-container ff-header__in">
-          <Navbar />
-        </div>
-      </header>
-
-      <main>
-        <Suspense fallback={<div className="ff-container ff-section">Laden…</div>}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
-            <Route path="/prijzen" element={<PricingPage />} />
-            <Route path="/veelgestelde-vragen" element={<FAQPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:slug" element={<BlogArticlePage />} />
-            <Route path="/over-ons" element={<AboutPage />} />
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/404" element={<NotFoundPage />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
-          </Routes>
-        </Suspense>
-      </main>
-
-      <footer className="ff-footer">
-        <div className="ff-container">
-          <Footer />
-        </div>
-      </footer>
-    </>
-  );
-}
+const LandingPage        = lazy(() => import("@/pages/LandingPage"));
+const HowItWorksPage     = lazy(() => import("@/pages/HowItWorksPage"));
+const PricingPage        = lazy(() => import("@/pages/PricingPage"));
+const AboutPage          = lazy(() => import("@/pages/AboutPage"));
+const BlogPage           = lazy(() => import("@/pages/BlogPage"));
+const FAQPage            = lazy(() => import("@/pages/FAQPage")); // intern component
+const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
+const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 
 export default function App() {
   return (
-    <HelmetProvider>
-      <ThemeProvider>
-        <UserProvider>
-          <OnboardingProvider>
-            <GamificationProvider>
-              <ErrorBoundary>
-                <BrowserRouter>
-                  <AppShell />
-                </BrowserRouter>
-              </ErrorBoundary>
-            </GamificationProvider>
-          </OnboardingProvider>
-        </UserProvider>
-      </ThemeProvider>
-    </HelmetProvider>
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
+      {/* HEADER — één keer, bovenaan */}
+      <Navbar />
+
+      {/* MAIN CONTENT */}
+      <ErrorBoundary>
+        <Suspense fallback={<div />}>
+          <main id="main" className="flex-1">
+            <Routes>
+              {/* Home / Landing */}
+              <Route index element={<LandingPage />} />
+
+              {/* Hoe het werkt */}
+              <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
+
+              {/* Prijzen */}
+              <Route path="/prijzen" element={<PricingPage />} />
+
+              {/* Blog */}
+              <Route path="/blog" element={<BlogPage />} />
+
+              {/* Over ons */}
+              <Route path="/over-ons" element={<AboutPage />} />
+
+              {/* FAQ: live slug is /veelgestelde-vragen. We ondersteunen beide. */}
+              <Route path="/veelgestelde-vragen" element={<FAQPage />} />
+              <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
+
+              {/* Results */}
+              <Route path="/results" element={<EnhancedResults />} />
+
+              {/* 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </main>
+        </Suspense>
+      </ErrorBoundary>
+
+      {/* FOOTER — één keer, onderaan */}
+      <Footer />
+
+      {/* Globale modals/banners die overal mogen verschijnen */}
+      <CookieBanner />
+    </div>
   );
 }

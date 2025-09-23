@@ -5,20 +5,5 @@
 /terms-of-service    /algemene-voorwaarden     301
 /disclaimer          /disclosure               301
 
-# Prijzen
-/pricing           /prijzen          301!
-
-# FAQ
-/faq               /veelgestelde-vragen   301!
-
-# How it works (EN → NL)
-/how-it-works      /hoe-het-werkt     301!
-
-# Over Ons (alias)
-/about             /over-ons          301!
-
-# Blog details (fallback naar lijst)
-#/blog/*           /blog              302
-
 # SPA fallback (laatste regel!)
 /*                   /index.html               200

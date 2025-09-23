@@ -1,5 +1,4 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 
@@ -158,59 +157,11 @@ const ResultsPage: React.FC = () => {
               to="/pricing"
               className="inline-flex items-center gap-2 rounded-xl px-4 py-2 font-semibold text-white bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] shadow-sm"
             >
-              Upgrade naar Premium
+              Ontgrendel premium
             </Link>
           </div>
         </div>
       </section>
-
-      <>
-        <Helmet>
-          <title>Jouw Resultaten - FitFi</title>
-          <meta name="description" content="Jouw gepersonaliseerde outfit aanbevelingen op basis van de quiz." />
-        </Helmet>
-        
-        <section className="ff-section">
-          <div className="ff-container">
-            <div className="res-hero">
-              <h1 className="res-hero__title">Jouw Resultaten</h1>
-              <p>Hier zijn jouw gepersonaliseerde outfit aanbevelingen.</p>
-            </div>
-            
-            <div className="res-grid">
-              {/* Result 1 */}
-              <article className="res-card card">
-                <div className="res-card__tiles">
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                </div>
-                <div className="res-card__body">
-                  <h3 className="res-card__title">Jouw Stijl Match</h3>
-                  <p className="text-muted">Deze combinatie past perfect bij jouw antwoorden en persoonlijke voorkeuren.</p>
-                  <button className="btn">Bekijk outfit</button>
-                </div>
-              </article>
-
-              {/* Result 2 */}
-              <article className="res-card card">
-                <div className="res-card__tiles">
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                  <div className="skel round" style={{aspectRatio:'1/1'}} />
-                </div>
-                <div className="res-card__body">
-                  <h3 className="res-card__title">Alternatieve Look</h3>
-                  <p className="text-muted">Een andere interpretatie van jouw stijl voor verschillende gelegenheden.</p>
-                  <button className="btn btn--ghost">Ontdek meer</button>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-      </>
     </main>
   );
 };
