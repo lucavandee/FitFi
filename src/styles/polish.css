@@ -3626,6 +3626,69 @@
   .res-card, .btn { transition: none; }
   .skel::after { animation: none; }
 }
+/* === Over-ons — premium editorial polish =================================== */
+.about-hero .section-title { font-size: clamp(2rem, 3.2vw, 3rem); }
+.about-accent { color: var(--ff-color-primary-700); }
+.about-cta { display:flex; gap:.75rem; flex-wrap:wrap; }
+
+.about-figure { position: relative; }
+.about-image {
+  display:block; width:100%; height: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  object-fit: cover; object-position: 50% 40%;
+}
+
+/* Stat cards onder de hero-copy */
+.about-stats {
+  display:flex; gap:.75rem; flex-wrap:wrap;
+  align-items:stretch; padding:0; list-style:none;
+}
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: .75rem .9rem;
+  display:flex; align-items: baseline; gap:.5rem;
+}
+.stat-kpi { font-weight:700; font-size:1.125rem; color: var(--color-text); }
+.stat-label { color: var(--color-muted); font-size:.95rem; }
+
+/* Nova quote */
+.about-nova-note {
+  background: color-mix(in oklab, var(--ff-color-primary-700) 10%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* Principles cards */
+.principle-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1rem, 2vw, 1.25rem);
+}
+
+/* Micro-hover elevatie (card-hover) */
+.card-hover { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(30,35,51,0.08);
+  border-color: color-mix(in oklab, var(--ff-color-primary-700) 16%, var(--color-border));
+}
+
+/* Focus-ring warm primary (a11y) */
+:where(.btn, .principle-card, .stat-card, .about-image):focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring, 0 0 0 3px rgba(166,136,106,.24));
+}
+
+/* Motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .card-hover { transition: none; }
+}
   .img-fade { transition: none; }
   .res-card { opacity: 1; transform: none; 
 }
