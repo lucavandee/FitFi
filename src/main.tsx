@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import './index.css';
+import '@/styles/polish.addon.css'; // ← ✅ additieve, tokens-first polish (veilig, geen overrides)
 
 // Providers
 import { UserProvider } from '@/context/UserContext';
