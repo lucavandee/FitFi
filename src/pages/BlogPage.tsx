@@ -1,23 +1,22 @@
 import React from "react";
 import Seo from "@/components/Seo";
-import BlogHeader from "@/components/blog/BlogHeader";
 import SkipLink from "@/components/a11y/SkipLink";
 
 const posts = [
   {
-    title: "Wat je silhouet écht zegt over je outfitkeuzes",
-    excerpt: "Zo laat je proportie, lengte en snit voor je werken—met rust in je keuzes.",
-    href: "/blog/silhouet-outfits",
+    title: "De kracht van kleur in je garderobe",
+    excerpt: "Hoe kleurtemperatuur je uitstraling beïnvloedt, en hoe Nova dit vertaalt naar outfits.",
+    href: "/blog/kleur-garderobe",
   },
   {
-    title: "Kleurtemperatuur: warm, koel of neutraal?",
-    excerpt: "Herken je kleurfamilie en combineer zonder twijfelen. Zo laat je je huid stralen.",
-    href: "/blog/kleurtemperatuur-gids",
+    title: "Minimalistische essentials",
+    excerpt: "Waarom minder meer kan zijn — en hoe je outfits samenstelt die altijd werken.",
+    href: "/blog/minimalistische-essentials",
   },
   {
-    title: "Rust in je garderobe: 5 micro-beslissingen",
-    excerpt: "Kleine keuzes met groot effect: intentie in stof, tint en fit.",
-    href: "/blog/rust-in-garderobe",
+    title: "AI in mode",
+    excerpt: "Geen hype maar praktijk: hoe FitFi AI inzet voor transparantie en eenvoud.",
+    href: "/blog/ai-in-mode",
   },
 ];
 
@@ -25,31 +24,36 @@ const BlogPage: React.FC = () => {
   return (
     <>
       <SkipLink />
-      <main id="main" className="bg-[var(--color-bg)]">
+      <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen">
         <Seo
-          title="Blog — Tips & gidsen | FitFi"
-          description="Lees tips over silhouet, kleur en outfits. Slim combineren zonder twijfelen."
+          title="Blog — Inzichten & inspiratie | FitFi"
+          description="Lees over kleur, silhouet, AI en minimalistische stijl. Inzichten die je garderobe slimmer maken."
           canonical="https://fitfi.ai/blog"
         />
 
-        <section className="ff-section bg-white">
-          <div className="ff-container">
-            <BlogHeader
-              title="Blog"
-              intro="Korte, praktische gidsen — direct toepasbaar in je kast."
-              kicker="Insights"
-            />
+        {/* HERO */}
+        <section className="hero-wrap">
+          <div className="ff-container text-center flow-sm">
+            <p className="kicker">Blog</p>
+            <h1 className="display-title">Inzichten & inspiratie</h1>
+            <p className="lead">Rustige artikelen, geen modehype.</p>
+          </div>
+        </section>
 
-            <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-              {posts.map((p) => (
-                <article key={p.href} className="ff-card">
-                  <a href={p.href} className="block ff-card__inner" aria-label={`Lees: ${p.title}`}>
-                    <h2 className="ff-h3">{p.title}</h2>
-                    <p className="ff-body text-[var(--color-muted)] mt-2">{p.excerpt}</p>
-                  </a>
-                </article>
-              ))}
-            </div>
+        {/* GRID */}
+        <section className="ff-section">
+          <div className="ff-container grid gap-8 md:grid-cols-3">
+            {posts.map((post) => (
+              <article key={post.title} className="blog-card card-hover flow-sm">
+                <h2 className="ff-h4">
+                  <a href={post.href} className="blog-card__link">{post.title}</a>
+                </h2>
+                <p className="ff-body text-[var(--color-muted)]">{post.excerpt}</p>
+                <a href={post.href} className="btn btn-ghost mt-auto">
+                  Lees meer
+                </a>
+              </article>
+            ))}
           </div>
         </section>
       </main>
