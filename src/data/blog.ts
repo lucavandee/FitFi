@@ -29,7 +29,7 @@ export const BLOG_POSTS: BlogPost[] = [
       { type: "p", content: "Nova leest je context en matcht kleurtemperatuur met silhouet en texturen." },
       { type: "h2", content: "Warm vs. koel — wat past bij jou?" },
       { type: "p", content: "Let op huidondertoon en contrast: zacht neutraal werkt vaak het hele jaar." },
-      { type: "quote", content: ""Een rustige basiskleur + 1 accent is vaak genoeg."" },
+      { type: "quote", content: "\"Een rustige basiskleur + 1 accent is vaak genoeg."" },
       { type: "p", content: "Begin met één accentkleur in accessoires of bovenstukken." }
     ],
   },
