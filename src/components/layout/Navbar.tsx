@@ -1,12 +1,14 @@
 // src/components/layout/Navbar.tsx
 import React from "react";
 import { NavLink } from "react-router-dom";
+import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
 
 /**
  * Eén enkele, semantische Navbar.
  * - Tokens-first (geen hex).
  * - Actieve link gebruikt `.ff-nav-active`.
  * - CTA's: .ff-btn-primary (solid), .ff-btn-secondary (ghost).
+ * - Mobile: <MobileNavDrawer /> gemount in md:hidden.
  */
 const links = [
   { to: "/how-it-works", label: "Hoe het werkt" },
@@ -54,7 +56,7 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Actions */}
+          {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-2">
             <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
               Inloggen
@@ -64,9 +66,9 @@ export default function Navbar() {
             </NavLink>
           </div>
 
-          {/* Mobile placeholder (bestaand drawer-component kan hier worden gemount) */}
+          {/* Mobile menu trigger/drawer */}
           <div className="md:hidden">
-            {/* Laat bestaande MobileNavDrawer staan indien aanwezig */}
+            <MobileNavDrawer />
           </div>
         </div>
       </nav>
