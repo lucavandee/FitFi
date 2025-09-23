@@ -1,0 +1,51 @@
+/* === FitFi POLISH • 50-results.css ===================================== */
+
+.res-hero {
+  text-align: center;
+  padding: clamp(2rem, 1.6rem + 2vw, 4rem) 0 1rem;
+}
+.res-hero__eyebrow { color: var(--ff-muted); font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.res-hero__title { margin:.45rem 0 .8rem; }
+.res-hero__title span { color: var(--ff-cta-600); font-style: italic; }
+.res-hero .chips { justify-content:center; margin-top: .8rem; }
+
+.res-grid {
+  display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--ff-space-9);
+}
+@media (max-width: 1080px){ .res-grid { grid-template-columns: 1fr; } }
+
+.res-card { border-radius: 18px; border:1px solid var(--ff-border); background:#fff; box-shadow: var(--ff-shadow-sm); overflow: clip; }
+.res-card__tiles {
+  display:grid; grid-template-columns: repeat(2, 1fr);
+  gap: 10px; padding: 12px; background: var(--ff-brand-50);
+}
+.res-card__tile {
+  aspect-ratio: 1/1; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  background: color-mix(in oklab, var(--ff-primary-900) 8%, #0d1e33);
+  position: relative; overflow: hidden;
+}
+.res-card__tile.skel::after { animation-duration: 1.7s; }
+
+.res-card__body { padding: 1rem 1.2rem 1.2rem; }
+.res-card__title { font-weight: 800; color: var(--ff-ink); margin-bottom: .35rem; }
+.res-card__list { margin: .35rem 0 .75rem; color: var(--ff-ink-2); }
+.res-card__list li { margin: .2rem 0; }
+
+.res-card .link {
+  color: var(--ff-primary-700); font-weight: 700; text-underline-offset: 3px;
+}
+.res-card .link:hover { text-decoration: underline; }
+
+/* Style-specific color hints (safe placeholders) */
+[data-style="smart-casual"]      .res-card__tile { background: linear-gradient(145deg, #102a44, #0a1e33); }
+[data-style="monochrome-work"]   .res-card__tile { background: linear-gradient(145deg, #0c1f34, #16243a); }
+[data-style="weekend-casual"]    .res-card__tile { background: linear-gradient(145deg, #1a4f6b, #0f2138); }
+
+/* CTA band below grid */
+.res-upgrade {
+  display:flex; justify-content:center; align-items:center; gap: 1rem;
+  margin-top: var(--ff-space-10);
+}
+.res-upgrade .btn--ghost { border-color: var(--ff-cta-200); }
+
+/* === EOF (50-results.css) ============================================== */

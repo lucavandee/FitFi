@@ -1,0 +1,32 @@
+/* === FitFi POLISH • 30-buttons.css ===================================== */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  height: 44px; padding: 0 1.1rem;
+  border-radius: var(--ff-radius-lg);
+  border: 1px solid color-mix(in oklab, var(--ff-cta-600) 20%, white);
+  box-shadow: var(--ff-shadow-sm);
+  transition: all var(--ff-speed-2) var(--ff-ease);
+  font-weight: 600; letter-spacing: .01em;
+  background: var(--ff-cta-500); color: white;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ff-shadow-md);
+  background: var(--ff-cta-600);
+}
+.btn:active { transform: translateY(0); }
+
+.btn--ghost {
+  background: white; color: var(--ff-ink);
+  border-color: var(--ff-border);
+}
+.btn--ghost:hover {
+  background: color-mix(in oklab, var(--ff-primary-500) 4%, white);
+  border-color: color-mix(in oklab, var(--ff-primary-500) 14%, var(--ff-border));
+}
+
+/* Pill */
+.btn--pill { height: 38px; padding: 0 .9rem; border-radius: 9999px; }
+
+/* === EOF (30-buttons.css) =============================================== */

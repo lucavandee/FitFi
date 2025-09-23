@@ -1,0 +1,16 @@
+/* === FitFi POLISH • 32-cards.css ======================================= */
+
+.card {
+  background:#fff; border:1px solid var(--ff-border);
+  border-radius: var(--ff-radius-xl);
+  box-shadow: var(--ff-shadow-sm);
+  overflow: clip;
+  transition: transform var(--ff-speed-3) var(--ff-ease), box-shadow var(--ff-speed-3) var(--ff-ease);
+}
+.card:hover { transform: translateY(-3px); box-shadow: var(--ff-shadow-lg); }
+
+.card__body { padding: 1.2rem 1.2rem 1.25rem; }
+.card__title { font-weight: 700; color: var(--ff-ink); margin-bottom: .35rem; }
+.card__meta { font-size: .9rem; color: var(--ff-muted); }
+
+/* === EOF (32-cards.css) ================================================ */
