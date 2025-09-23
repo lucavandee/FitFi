@@ -9,7 +9,7 @@ import { Routes, Route } from "react-router-dom";
 
 /** Context providers */
 import { ThemeProvider } from "@/context/ThemeContext";
-import { UserProvider } from "@/context/UserContext";
+import { UserProvider, useUser } from "@/context/UserContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import { GamificationProvider } from "@/context/GamificationContext";
 
