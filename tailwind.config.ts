@@ -1,7 +1,7 @@
-// tailwind.config.ts
+// /tailwind.config.ts
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+export default {
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
@@ -23,18 +23,16 @@ const config: Config = {
         heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
         body: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"],
       },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        ring: "var(--shadow-ring)",
+      },
       borderRadius: {
         lg: "var(--radius-lg)",
         xl: "var(--radius-xl)",
         "2xl": "var(--radius-2xl)",
       },
-      boxShadow: {
-        soft: "var(--shadow-soft)",
-        ring: "var(--shadow-ring)",
-      },
     },
   },
   plugins: [],
-};
-
-export default config;
+} satisfies Config;

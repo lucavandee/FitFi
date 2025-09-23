@@ -1,10 +1,31 @@
-/* src/index.css */
-
-/* 0) @import moet boven alle andere regels staan (Vite) */
+/* /src/index.css */
+/* Volgorde is belangrijk: eerst tokens/polish, dan Tailwind layers */
 @import "./styles/tokens.css";
 @import "./styles/polish.css";
 
-/* 1) Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Baseline: systeemkleurenschema + body-font volgens tokens */
+:root { color-scheme: light; }
+
+html {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+body {
+  font-family: theme("fontFamily.body");
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* A11Y: nette focus-ring via token */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+}
+
+/* Optioneel: visuele polish zonder hex-kleuren */
+/* Buttons houden hun tokens-styling vanuit component-classes */

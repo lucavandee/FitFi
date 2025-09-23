@@ -1,28 +1,16 @@
-// src/main.tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
-import App from './App';
-import './index.css';
-import '@/styles/polish.addon.css'; // ← ✅ additieve, tokens-first polish (veilig, geen overrides)
+// /src/main.tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import App from "./App";
+import "./index.css"; // ← Zorgt dat Tailwind + tokens geladen worden
 
-// Providers
-import { UserProvider } from '@/context/UserContext';
-import { GamificationProvider } from '@/context/GamificationContext';
-import NovaChatProvider from '@/components/nova/NovaChatProvider';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
       <BrowserRouter>
-        <UserProvider>
-          <GamificationProvider>
-            <NovaChatProvider>
-              <App />
-            </NovaChatProvider>
-          </GamificationProvider>
-        </UserProvider>
+        <App />
       </BrowserRouter>
     </HelmetProvider>
   </React.StrictMode>
