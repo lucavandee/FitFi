@@ -29,7 +29,6 @@ type Filter = typeof FILTERS[number];
 export default function OutfitsPage() {
   const [filter, setFilter] = React.useState<Filter>("Alle");
 
-  // In een echte app filter je hier je outfits uit state/query.
   const outfits = React.useMemo(() => {
     if (filter === "Alle") return DEMO_OUTFITS;
     return DEMO_OUTFITS.filter((o) => o.title.toLowerCase().includes(filter.toLowerCase()));
@@ -48,63 +47,40 @@ export default function OutfitsPage() {
           </p>
         </header>
 
-        {/* Filters */}
         <div aria-label="Filters" className="mb-5 flex flex-wrap gap-2">
           {FILTERS.map((f) => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => setFilter(f)}
-              className="focus:outline-none"
-              aria-pressed={filter === f}
-            >
+            <button key={f} type="button" onClick={() => setFilter(f)} className="focus:outline-none" aria-pressed={filter === f}>
               <PremiumChip active={filter === f}>{f}</PremiumChip>
             </button>
           ))}
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {outfits.map((item) => (
             <article key={item.id} className="ff-card ff-hover-lift overflow-hidden">
-              {/* Image placeholder / skeleton — vervang door echte afbeelding indien beschikbaar */}
               <div className="aspect-[4/5] ff-skeleton" aria-hidden="true" />
-
               <div className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-heading text-lg leading-tight">{item.title}</h2>
-                  <span
-                    className="ff-chip text-xs"
-                    aria-label={`Match ${item.match} procent`}
-                    title={`${item.match}% match`}
-                  >
+                  <span className="ff-chip text-xs" aria-label={`Match ${item.match} procent`} title={`${item.match}% match`}>
                     {item.match}% match
                   </span>
                 </div>
-
                 <p className="mt-2 text-sm text-text/80">{item.note}</p>
-
                 <div className="mt-4 flex items-center gap-2">
-                  <NavLink to="/start" className="ff-btn ff-btn-primary h-9">
-                    Bekijk details
-                  </NavLink>
-                  <NavLink to="/preview" className="ff-btn ff-btn-secondary h-9">
-                    Shop links
-                  </NavLink>
+                  <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-primary h-9">Bekijk details</NavLink>
+                  <NavLink to="/prijzen" className="ff-btn ff-btn-secondary h-9">Shop links</NavLink>
                 </div>
               </div>
             </article>
           ))}
 
-          {/* Lege staat */}
           {outfits.length === 0 && (
             <div className="col-span-full">
               <div className="ff-card p-6 text-center">
                 <p className="text-text/80">Geen outfits gevonden voor deze filter.</p>
                 <div className="mt-3">
-                  <button onClick={() => setFilter("Alle")} className="ff-btn ff-btn-secondary h-9">
-                    Reset filters
-                  </button>
+                  <button onClick={() => setFilter("Alle")} className="ff-btn ff-btn-secondary h-9">Reset filters</button>
                 </div>
               </div>
             </div>

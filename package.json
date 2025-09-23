@@ -16,7 +16,6 @@
     "typecheck": "tsc --noEmit --pretty",
     "build:strict": "npm run typecheck && vite build",
     "test": "vitest",
-    "test:routes": "node scripts/test-routes.js",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:smoke": "playwright test tests/visual/nova-sse-health.spec.ts --headed",
@@ -27,29 +26,6 @@
     "predev": "npm run doctor",
     "prebuild": "npm run doctor",
     "start": "vite"
-  },
-  "dependencies": {
-    "@headlessui/react": "^2.1.2",
-    "@supabase/supabase-js": "^2.39.3",
-    "@tanstack/react-query": "^5.28.4",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.263.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-helmet-async": "^2.0.5",
-    "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^6.30.1",
-    "tailwind-merge": "^3.3.1"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.css": [
-      "stylelint --fix",
-      "git add"
-    ]
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",

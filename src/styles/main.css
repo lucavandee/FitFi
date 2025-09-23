@@ -1,76 +1,14 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lato:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 @import './tokens.css';
 @import './animations.css';
-@import './utilities/typography.css';
+@import './utilities/accessibility.css';
 @import './components/images.css';
 @import './components/pricing.css';
 
 /* CSS Variables for consistent header height */
 :root {
   --header-height: 4.5rem;
-}
-
-/* Scroll margin for sections to account for sticky header */
-section[id],
-div[id] {
-  scroll-margin-top: var(--header-height);
-}
-
-/* CTA Button Global Styling */
-.cta-btn {
-  @apply inline-flex items-center justify-center px-6 py-4 font-semibold
-         rounded-2xl border-2 border-brandPurple
-         bg-white text-brandPurple hover:bg-purple-50
-         focus:outline-none focus:ring-2 focus:ring-brandPurple/40;
-}
-
-/* Mobile menu focus trap */
-.mobile-menu-open {
-  overflow: hidden;
-}
-
-/* Nova Chat Styling */
-.nova-bubble {
-  max-width: 360px;
-  width: min(92vw, 360px);
-}
-
-/* Portal pointer events fix */
-#nova-root {
-  pointer-events: none;
-}
-
-#nova-root > * {
-  pointer-events: auto;
-}
-
-/* Horizontal scrolling for suggestion chips */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Line clamp utilities */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Quiz animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
 }
