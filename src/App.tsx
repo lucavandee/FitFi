@@ -54,6 +54,9 @@ const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 export default function App() {
   return (
     <ErrorBoundary>
+      <a href="#main-content" className="skip-link">
+        Naar hoofdinhoud
+      </a>
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <Suspense fallback={<div />}>
