@@ -132,3 +132,5 @@ const EnhancedResultsPage: React.FC = () => {
 };
 
 export default EnhancedResultsPage;
+  )
+}
