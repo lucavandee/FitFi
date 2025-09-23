@@ -1,0 +1,150 @@
+/* src/styles/polish.addon.css
+   Additieve premium polish — tokens-first, géén hex, nul globale overrides.
+   Prefix: .ff-  → voorkomt conflicten met bestaande 3000+ regels in polish.css.
+   Bronvariabelen: src/styles/tokens.css
+*/
+
+/* ---------- Helpers & focus ---------- */
+
+.ff-text-balance { text-wrap: balance; }
+.ff-text-pretty  { text-wrap: pretty; }
+.ff-antialiased  { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+.ff-focus-ring { outline: none; box-shadow: var(--shadow-ring); }
+.ff-focus-ring:focus-visible { outline: none; box-shadow: var(--shadow-ring); }
+
+/* ---------- Cards & chips ---------- */
+
+.ff-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.ff-chip {
+  --_chip-bg: color-mix(in oklab, var(--color-surface) 92%, var(--color-text));
+  background: var(--_chip-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: calc(var(--radius-lg) / 1.5);
+  padding: 0.25rem 0.625rem;
+  line-height: 1.15;
+}
+.ff-chip--active {
+  background: color-mix(in oklab, var(--ff-color-primary-700) 12%, var(--color-surface));
+  border-color: color-mix(in oklab, var(--ff-color-primary-700) 35%, var(--color-border));
+}
+
+/* ---------- Buttons (conform CTA-regels) ---------- */
+
+.ff-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .5rem; height: 2.5rem; padding-inline: .875rem;
+  border-radius: calc(var(--radius-lg) - 2px);
+  border: 1px solid transparent; font-weight: 600; line-height: 1;
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
+}
+.ff-btn:focus-visible { box-shadow: var(--shadow-ring); }
+
+.ff-btn-primary {
+  background: var(--ff-color-primary-700);
+  color: #fff; /* toegestaan: CTA-tekst wit volgens CTA-regels */
+  border-color: color-mix(in oklab, var(--ff-color-primary-700) 50%, var(--color-border));
+}
+.ff-btn-primary:hover { background: var(--ff-color-primary-600); }
+.ff-btn-primary:active { transform: translateY(1px); }
+
+.ff-btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.ff-btn-secondary:hover { border-color: var(--ff-color-primary-700); }
+
+/* ---------- Glass & scrims (zonder globale bg) ---------- */
+
+.ff-glass {
+  backdrop-filter: saturate(160%) blur(10px);
+  background: color-mix(in oklab, var(--color-surface) 80%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.ff-glass-strong {
+  backdrop-filter: saturate(180%) blur(16px);
+  background: color-mix(in oklab, var(--color-surface) 68%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, var(--color-text));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.ff-scrim-top {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--color-surface) 85%, transparent) 0%,
+    transparent 60%
+  );
+}
+.ff-scrim-bottom {
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--color-surface) 85%, transparent) 0%,
+    transparent 60%
+  );
+}
+
+/* ---------- Micro-animaties ---------- */
+
+.ff-hover-lift { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.ff-hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+.ff-pressable:active { transform: translateY(1px); }
+
+.ff-fade-in {
+  opacity: 0; transform: translateY(4px);
+  animation: ffFadeInUp .32s ease forwards;
+}
+@keyframes ffFadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+/* ---------- Skeletons ---------- */
+
+.ff-skeleton {
+  position: relative; overflow: hidden;
+  background: color-mix(in oklab, var(--color-surface) 95%, var(--color-text));
+  border-radius: calc(var(--radius-lg) - 2px);
+}
+.ff-skeleton::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--color-text) 4%, var(--color-surface)) 40%,
+    color-mix(in oklab, var(--color-text) 12%, var(--color-surface)) 50%,
+    color-mix(in oklab, var(--color-text) 4%, var(--color-surface)) 60%,
+    transparent 100%
+  );
+  animation: ffShimmer 1.35s ease-in-out infinite;
+}
+@keyframes ffShimmer { 100% { transform: translateX(100%); } }
+
+/* ---------- Nav active chip ---------- */
+
+.ff-nav-active {
+  background: color-mix(in oklab, var(--ff-color-primary-700) 12%, var(--color-surface));
+  color: var(--color-text);
+  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 30%, var(--color-border));
+  border-radius: calc(var(--radius-lg) / 1.5);
+}
+
+/* ---------- Hero CTA layout ---------- */
+
+.ff-hero-cta-row { display: flex; flex-wrap: wrap; gap: .625rem; }
+.ff-hero-cta-row .ff-btn { min-width: 9.5rem; }
+
+/* ---------- Reduce motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-hover-lift, .ff-pressable, .ff-fade-in, .ff-skeleton::after {
+    transform: none !important; animation: none !important; transition: none !important;
+  }
+}
