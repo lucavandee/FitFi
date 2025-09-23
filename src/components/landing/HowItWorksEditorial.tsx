@@ -14,36 +14,42 @@ const HowItWorksEditorial: React.FC<Props> = ({ onStart, onExample }) => {
     {
       icon: Sparkles,
       title: "Ontvang je AI Style Report",
-      text: "Modellen vertalen je antwoorden (en optioneel je foto) naar een persoonlijk profiel.",
+      text: "Wij vertalen je antwoorden (en optioneel je foto) naar een persoonlijk profiel.",
     },
     {
       icon: ShoppingBag,
       title: "Krijg outfits & shoplinks",
-      text: "Zie concrete outfits die werken voor silhouet en kleurtemperatuur — en shop gericht.",
+      text: "Concrete outfits die werken voor silhouet en kleurtemperatuur — en shop gericht.",
     },
   ];
 
   return (
-    <section className="ff-section alt-bg" aria-labelledby="hiw-title">
+    <section className="ff-section alt-bg" aria-labelledby="hiw-title" aria-describedby="hiw-intro">
       <div className="ff-container">
-        <header className="flow-sm max-w-3xl anim-fade-up">
-          <h2 id="hiw-title" className="section-title">Hoe het werkt</h2>
-          <p className="text-[var(--color-muted)]">Rustig, stap-voor-stap — zonder ruis.</p>
+        <header className="section-header anim-fade-up">
+          <p className="kicker">Hoe het werkt</p>
+          <h2 id="hiw-title" className="section-title">Rustig, helder en direct toepasbaar</h2>
+          <p id="hiw-intro" className="section-intro">
+            In enkele minuten heb je een stijlprofiel, outfits en shoplinks — zonder ruis.
+          </p>
         </header>
 
-        <ol className="hiw-grid stagger-3 mt-6">
-          {steps.map((s, i) => (
-            <li key={s.title} className="hiw-card card card-hover flow-sm" aria-label={`Stap ${i + 1}`}>
-              <span className="icon-chip" aria-hidden>
-                <s.icon size={16} />
-              </span>
+        <ol className="hiw-grid stagger-3" role="list">
+          {steps.map((s) => (
+            <li key={s.title} className="hiw-card card card-hover flow-sm" aria-label={s.title}>
+              <div className="hiw-card__header">
+                <span className="hiw-counter" aria-hidden="true" />
+                <span className="icon-chip" aria-hidden>
+                  <s.icon size={16} />
+                </span>
+              </div>
               <h3 className="card-title">{s.title}</h3>
               <p className="card-text">{s.text}</p>
             </li>
           ))}
         </ol>
 
-        <div className="hiw-cta-rail cluster mt-6 anim-fade-up">
+        <div className="hiw-cta-rail cluster anim-fade-up" role="group" aria-label="Acties">
           <Button variant="primary" size="lg" className="cta-raise" onClick={onStart}>
             Start gratis
           </Button>
