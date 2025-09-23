@@ -1,136 +1,112 @@
+// src/pages/EnhancedResultsPage.tsx
 import React from "react";
-import { Helmet } from "react-helmet-async";
-import { Helmet } from 'react-helmet-async';
-import ResultsHeader from '@/components/results/ResultsHeader';
+import { NavLink } from "react-router-dom";
+import ExplainBadge from "@/components/outfits/ExplainBadge";
+import StickyCTA from "@/components/outfits/StickyCTA";
 
 /**
- * EnhancedResultsPage
- * - Syntactisch sluitende JSX (geen zwerftags of dubbele haakjes)
- * - Geen extra imports nodig (dus geen kans op import-resolutie errors)
- * - Classes afgestemd op de eerder aangeleverde polish (.res-hero, .chips, .res-grid, .res-card, etc.)
- * - Vult de grid met drie voorbeeldkaarten als er (nog) geen data is
+ * EnhancedResultsPage — premium UI zonder data-architectuur te wijzigen.
+ * - Als er geen externe data/hook aanwezig is, tonen we een lichte DEMO (UI-only).
+ * - Tokens-first, geen hex. Skeletons voor afbeeldingen. Explainability-badges.
+ * - Mobiele sticky CTA om door te klikken (shop of bewaar).
  */
 
-type CardItem = {
+// Type kan aansluiten op jullie bestaande shape; hier simpel gehouden.
+type Outfit = {
   id: string;
   title: string;
-  bullets: string[];
-  // voor nu placeholder tiles; vervang door echte urls wanneer beschikbaar
-  tiles: string[];
+  match: number;   // 0..100
+  why: string;     // korte uitleg
+  tags: string[];  // explainability labels
 };
 
-const fallbackCardItems: CardItem[] = [
+const DEMO: Outfit[] = [
   {
-    id: "smart-casual",
-    title: "Smart casual (dagelijks)",
-    bullets: [
-      "Netter denim — rechte pijp",
-      "Witte sneaker — minimal",
-      "Licht overshirt — koele tint",
-    ],
-    tiles: ["", "", "", ""],
+    id: "r1",
+    title: "Smart Casual — Italiaans",
+    match: 93,
+    why: "Zachte taupe top met rechte pantalon verlengt je silhouet; wit sneakerdetail houdt het minimal-chic.",
+    tags: ["Kleurharmonie", "Silhouet", "Materiaal"],
   },
   {
-    id: "mono-workday",
-    title: "Monochrome workday",
-    bullets: [
-      "Fijngebreide crew — off-white",
-      "Wolmix pantalon — rechte pijp",
-      "Leren loafer — clean buckle",
-    ],
-    tiles: ["", "", "", ""],
+    id: "r2",
+    title: "Street Minimal — Monochrome",
+    match: 89,
+    why: "Monochrome laagjes in matten stoffen geven rust en diepte zonder drukke prints.",
+    tags: ["Monochroom", "Textuur", "Balans"],
   },
   {
-    id: "athflow-weekend",
-    title: "Athflow weekend",
-    bullets: ["Merino zip hoodie", "Tech jogger", "Minimal runner"],
-    tiles: ["", "", "", ""],
+    id: "r3",
+    title: "Business Relaxed — Soft Neutrals",
+    match: 86,
+    why: "Wolblend blazer verzacht schouders; rechte broeklijn en subtiele sneakers houden het modern.",
+    tags: ["Silhouet", "Materiaal", "Contrast"],
   },
 ];
 
-const EnhancedResultsPage: React.FC = () => {
-  const cards = fallbackCardItems;
+export default function EnhancedResultsPage() {
+  // TODO data-hook integratie blijft ongemoeid; val desnoods terug op DEMO
+  const outfits = DEMO;
+
   return (
-    <>
-      <Helmet>
-        <title>Jouw Stijlanalyse Resultaten - FashionFinder</title>
-        <meta name="description" content="Ontdek jouw persoonlijke stijl en shop de perfecte outfits die bij je passen." />
-      </Helmet>
-      <div className="min-h-screen bg-gray-50">
-        <main className="ff-results">
-    <>
-      <Helmet>
-        <title>Jouw Styling Resultaten - FitFi</title>
-        <meta name="description" content="Ontdek je gepersonaliseerde outfit-aanbevelingen, perfect afgestemd op jouw stijl en voorkeuren." />
-      </Helmet>
-      
-          <div className="res-grid">
-            <article className="res-card card">
-              <div className="res-card__tiles">
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-          </div>
-              <div className="res-card__body">
-                <h3 className="res-card__title">Casual Weekend Look</h3>
-                <p className="text-muted">
-                  Perfect voor ontspannen weekenden. De zachte kleuren en comfortabele pasvorm 
-                  passen bij je voorkeur voor casual elegantie.
-                </p>
-                <div className="d-flex">
-                  <button className="btn btn--primary">Shop look</button>
-                  <button className="btn btn--ghost">Bekijk details</button>
-                </div>
-              </div>
-            </article>
-            <ul className="chips" aria-label="USP's">
-            <article className="res-card card">
-              <div className="res-card__tiles">
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="res-card__mosaic">
-              <div className="res-card__body">
-                <h3 className="res-card__title">Business Professional</h3>
-                <p className="text-muted">
-                  Strak en professioneel voor belangrijke meetings. De donkere tinten 
-                  en getailleerde snit geven je de zelfverzekerde uitstraling die je zoekt.
-                </p>
-                <div className="d-flex">
-                  <button className="btn btn--primary">Shop look</button>
-                  <button className="btn btn--ghost">Bekijk details</button>
-                </div>
-              </div>
-            </article>
-                  ))}
-            <article className="res-card card">
-              <div className="res-card__tiles">
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-                <div className="skel round" style={{aspectRatio:'1/1'}} />
-
-              <div className="res-card__body">
-                <h3 className="res-card__title">Evening Chic</h3>
-                <p className="text-muted">
-                  Elegant en verfijnd voor speciale gelegenheden. De luxe materialen 
-                  en subtiele details maken deze look perfect voor avonduitjes.
-                </p>
-                <div className="d-flex">
-                  <button className="btn btn--primary">Shop look</button>
-                  <button className="btn btn--ghost">Bekijk details</button>
-                </div>
-              </div>
-            </article>
-          </div>
-        </main>
+    <main id="main" className="bg-surface text-text">
+      {/* Header */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+        <h1 className="font-heading text-2xl sm:text-3xl ff-text-balance">
+          Jouw AI Style Report
+        </h1>
+        <p className="mt-2 text-text/80">
+          Dit zijn je beste matches op basis van je voorkeuren. Bij elke look zie je kort <em>waarom</em> dit voor jou werkt.
+        </p>
       </section>
-    </>
-  );
-};
 
-export default EnhancedResultsPage;
-  )
+      {/* Grid */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-24 md:pb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {outfits.map((o) => (
+            <article key={o.id} className="ff-card ff-hover-lift overflow-hidden">
+              {/* Afbeelding — skeleton placeholder; vervang met echte afbeelding als beschikbaar */}
+              <div className="aspect-[4/5] ff-skeleton" aria-hidden="true" />
+
+              <div className="p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <h2 className="font-heading text-lg leading-tight">{o.title}</h2>
+                  <span
+                    className="ff-chip text-xs"
+                    aria-label={`Match ${o.match} procent`}
+                    title={`${o.match}% match`}
+                  >
+                    {o.match}% match
+                  </span>
+                </div>
+
+                {/* Explainability badges */}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {o.tags.map((t) => (
+                    <ExplainBadge key={t}>{t}</ExplainBadge>
+                  ))}
+                </div>
+
+                {/* Waarom dit werkt */}
+                <p className="mt-3 text-sm text-text/80">{o.why}</p>
+
+                {/* CTA's per kaart */}
+                <div className="mt-4 flex items-center gap-2">
+                  <NavLink to="/preview" className="ff-btn ff-btn-secondary h-9">
+                    Bewaar
+                  </NavLink>
+                  <NavLink to="/start" className="ff-btn ff-btn-primary h-9">
+                    Shop links
+                  </NavLink>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Mobiele sticky CTA (alleen <= md) */}
+      <StickyCTA primaryTo="/start" primaryLabel="Shop links" secondaryTo="/preview" secondaryLabel="Bewaar" />
+    </main>
+  );
 }
