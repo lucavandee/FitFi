@@ -104,8 +104,8 @@ export default function HowItWorksPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <NavLink to="/start" className="ff-btn ff-btn-primary h-10">Start gratis</NavLink>
-              <NavLink to="/pricing" className="ff-btn ff-btn-secondary h-10">Bekijk plannen</NavLink>
+              <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-10">Bekijk plannen</NavLink>
+              <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary h-10">FAQ</NavLink>
             </div>
           </div>
         </section>

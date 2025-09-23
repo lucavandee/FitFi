@@ -24,10 +24,10 @@ export default function Hero() {
           </p>
 
           <div className="ff-hero-cta-row mt-5">
-            <NavLink to="/start" className="ff-btn ff-btn-primary h-10">
+            <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-primary h-10">
               Start gratis
             </NavLink>
-            <NavLink to="/preview" className="ff-btn ff-btn-secondary h-10">
+            <NavLink to="/prijzen" className="ff-btn ff-btn-secondary h-10">
               Bekijk voorbeeld
             </NavLink>
           </div>
