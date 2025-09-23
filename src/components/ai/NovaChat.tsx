@@ -358,12 +358,14 @@ const NovaChat: React.FC = () => {
       <div
         key={message.id}
         className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}
-      >
+      />
         <div
           className={[
             'max-w-[85%] rounded-2xl px-3 py-2 shadow-sm',
             isUser ? 'ml-auto bg-[var(--ff-bubble-user)] text-ink shadow-[0_2px_12px_rgba(13,27,42,0.04)]'
-                   : 'mr-auto bg-[var(--ff-panel)] text-ink shadow-[0_4px_20px_rgba(13,27,42,0.06)]'
+          </div>
+        </div>
+      </div>
           ].join(' ')}
         >
           {/* Assistant message header with copy button */}
