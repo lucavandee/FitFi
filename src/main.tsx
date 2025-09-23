@@ -32,9 +32,6 @@ import '@/styles/polish/90-blog.css';
 import { BrowserRouter } from "react-router-dom";
 import '@/styles/polish/95-header-footer.css';
 
-// LAAD ALLES VIA DIT ÉNE BESTAND
-import "@/styles/index.css";
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HelmetProvider>
