@@ -1,8 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import SkipLink from "@/components/a11y/SkipLink";
-import { BLOG_POSTS } from "@/data/blog";
+
+const posts = [
+  {
+    title: "De kracht van kleur in je garderobe",
+    excerpt: "Hoe kleurtemperatuur je uitstraling beïnvloedt, en hoe Nova dit vertaalt naar outfits.",
+    href: "/blog/kleur-garderobe",
+  },
+  {
+    title: "Minimalistische essentials",
+    excerpt: "Waarom minder meer kan zijn — en hoe je outfits samenstelt die altijd werken.",
+    href: "/blog/minimalistische-essentials",
+  },
+  {
+    title: "AI in mode",
+    excerpt: "Geen hype maar praktijk: hoe FitFi AI inzet voor transparantie en eenvoud.",
+    href: "/blog/ai-in-mode",
+  },
+];
 
 const BlogPage: React.FC = () => {
   return (
@@ -11,7 +27,7 @@ const BlogPage: React.FC = () => {
       <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen">
         <Seo
           title="Blog — Inzichten & inspiratie | FitFi"
-          description="Lees over kleur, silhouet, AI en minimalistische stijl. Rustige, duidelijke artikelen zonder ruis."
+          description="Lees over kleur, silhouet, AI en minimalistische stijl. Inzichten die je garderobe slimmer maken."
           canonical="https://fitfi.ai/blog"
         />
 
@@ -20,49 +36,24 @@ const BlogPage: React.FC = () => {
           <div className="ff-container text-center flow-sm">
             <p className="kicker">Blog</p>
             <h1 className="display-title">Inzichten & inspiratie</h1>
-            <p className="lead">Rustig, editorial en direct toepasbaar.</p>
+            <p className="lead">Rustige artikelen, geen modehype.</p>
           </div>
         </section>
 
         {/* GRID */}
-        <section className="ff-section" aria-labelledby="blog-lijst">
-          <div className="ff-container">
-            <h2 id="blog-lijst" className="sr-only">Artikelen</h2>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              {BLOG_POSTS.map((post) => (
-                <article key={post.slug} className="blog-card card-hover flow-sm">
-                  <figure className="blog-card__media" aria-hidden="true">
-                    <img
-                      src={post.cover}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      className="blog-card__img"
-                    />
-                  </figure>
-
-                  <header className="flow-sm">
-                    <h3 className="ff-h4">
-                      <Link to={`/blog/${post.slug}`} className="blog-card__titlelink">
-                        {post.title}
-                      </Link>
-                    </h3>
-                    <p className="ff-body text-[var(--color-muted)]">{post.excerpt}</p>
-                  </header>
-
-                  <footer className="blog-card__meta">
-                    <span>{new Date(post.date).toLocaleDateString("nl-NL")}</span>
-                    <span aria-hidden="true">•</span>
-                    <span>{post.readingMinutes} min</span>
-                  </footer>
-
-                  <Link to={`/blog/${post.slug}`} className="btn btn-ghost mt-auto" aria-label={`Lees: ${post.title}`}>
-                    Lees meer
-                  </Link>
-                </article>
-              ))}
-            </div>
+        <section className="ff-section">
+          <div className="ff-container grid gap-8 md:grid-cols-3">
+            {posts.map((post) => (
+              <article key={post.title} className="blog-card card-hover flow-sm">
+                <h2 className="ff-h4">
+                  <a href={post.href} className="blog-card__link">{post.title}</a>
+                </h2>
+                <p className="ff-body text-[var(--color-muted)]">{post.excerpt}</p>
+                <a href={post.href} className="btn btn-ghost mt-auto">
+                  Lees meer
+                </a>
+              </article>
+            ))}
           </div>
         </section>
       </main>
