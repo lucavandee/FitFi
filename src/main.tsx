@@ -1,3 +1,4 @@
+// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -8,7 +9,7 @@ import './index.css';
 // Providers
 import { UserProvider } from '@/context/UserContext';
 import { GamificationProvider } from '@/context/GamificationContext';
-import { NovaChatProvider } from '@/components/nova/NovaChatProvider';
+import NovaChatProvider from '@/components/nova/NovaChatProvider';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

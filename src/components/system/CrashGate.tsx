@@ -1,3 +1,4 @@
+// src/components/system/CrashGate.tsx
 import React from "react";
 
 function CrashOverlay({ error, onRetry }: { error: Error; onRetry: () => void }) {
@@ -6,18 +7,18 @@ function CrashOverlay({ error, onRetry }: { error: Error; onRetry: () => void })
       <div className="max-w-3xl mx-auto">
         <div className="mb-3 text-sm opacity-80">Nova • Crash Report</div>
         <h2 className="text-2xl font-semibold mb-4">Er ging iets mis</h2>
-        <pre className="bg-surface border border-border rounded-lg p-4 whitespace-pre-wrap text-sm overflow-auto text-text">
+        <pre className="bg-text/20 border border-border rounded-lg p-4 whitespace-pre-wrap text-sm overflow-auto text-surface">
           {String(error?.stack || error?.message || error)}
         </pre>
         <div className="mt-4 flex gap-2">
           <button
-            className="px-3 h-9 rounded-md border border-border hover:bg-[color:color-mix(in_oklab,var(--color-surface) 92%,white)] focus:outline-none focus:ring-2 focus:ring-primary600 focus:ring-offset-2 focus:ring-offset-surface"
+            className="px-3 h-9 rounded-md border border-border bg-surface/10 text-surface hover:bg-surface/20 focus:outline-none focus:ring-2 focus:ring-primary600 focus:ring-offset-2 focus:ring-offset-text"
             onClick={onRetry}
           >
             Opnieuw proberen
           </button>
           <a
-            className="px-3 h-9 rounded-md border border-border hover:bg-[color:color-mix(in_oklab,var(--color-surface) 92%,white)] focus:outline-none focus:ring-2 focus:ring-primary600 focus:ring-offset-2 focus:ring-offset-surface"
+            className="px-3 h-9 rounded-md border border-border bg-surface/10 text-surface hover:bg-surface/20 focus:outline-none focus:ring-2 focus:ring-primary600 focus:ring-offset-2 focus:ring-offset-text"
             href="mailto:team@fitfi.ai?subject=Crash%20Report"
           >
             Contact opnemen
