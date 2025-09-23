@@ -1,89 +1,75 @@
+// src/components/layout/Navbar.tsx
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import Button from "@/components/ui/Button";
+import { NavLink } from "react-router-dom";
 
-function cx(...cls: Array<string | false | null | undefined>) {
-  return cls.filter(Boolean).join(" ");
-}
-
+/**
+ * Eén enkele, semantische Navbar.
+ * - Tokens-first (geen hex).
+ * - Actieve link gebruikt `.ff-nav-active`.
+ * - CTA's: .ff-btn-primary (solid), .ff-btn-secondary (ghost).
+ */
 const links = [
-  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/how-it-works", label: "Hoe het werkt" },
   { to: "/pricing", label: "Prijzen" },
-  { to: "/over-ons", label: "Over ons" },
-  { to: "/veelgestelde-vragen", label: "FAQ" },
+  { to: "/about", label: "Over ons" },
+  { to: "/faq", label: "FAQ" },
   { to: "/blog", label: "Blog" },
 ];
 
-const Navbar: React.FC = () => {
-  const navigate = useNavigate();
-  const onStart = () => navigate("/onboarding");
-
+export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 nav-glass">
+    <header role="banner" className="bg-surface border-b border-border sticky top-0 z-50">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded px-3 py-1 text-sm shadow-[var(--shadow-soft)]"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-surface focus:border focus:border-border focus:px-3 focus:py-2 focus:rounded-md"
       >
         Naar hoofdinhoud
       </a>
 
-      <nav
-        aria-label="Hoofdnavigatie"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
-      >
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shadow-ring)]"
-            aria-label="Ga naar home"
-          >
-            <span className="text-lg font-semibold text-[var(--color-text)]">FitFi</span>
-          </button>
-        </div>
+      <nav aria-label="Hoofdmenu" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="h-16 flex items-center justify-between">
+          {/* Brand */}
+          <div className="min-w-0">
+            <NavLink to="/" className="font-heading text-lg tracking-wide text-text hover:opacity-90">
+              FitFi
+            </NavLink>
+          </div>
 
-        <ul className="hidden md:flex items-center gap-2">
-          {links.map((l) => (
-            <li key={l.to}>
-              <NavLink
-                to={l.to}
-                className={({ isActive }) =>
-                  cx(
-                    "px-3 py-2 text-sm rounded-md transition-colors duration-200",
-                    isActive 
-                      ? "accent-chip" 
-                      : "text-[var(--color-text)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface)]"
-                  )
-                }
-              >
-                {l.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+          {/* Desktop nav */}
+          <ul className="hidden md:flex items-center gap-3">
+            {links.map((item) => (
+              <li key={item.to}>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    [
+                      "px-3 py-2 rounded-md text-sm font-medium text-text/90 hover:text-text transition-colors",
+                      isActive ? "ff-nav-active" : "border border-transparent",
+                    ].join(" ")
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hidden md:inline-flex"
-            onClick={() => navigate("/inloggen")}
-            aria-label="Inloggen"
-          >
-            Inloggen
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            className="nav-cta btn-primary"
-            onClick={onStart}
-            aria-label="Start je gratis AI Style Report"
-          >
-            Start gratis
-          </Button>
+          {/* Actions */}
+          <div className="hidden md:flex items-center gap-2">
+            <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
+              Inloggen
+            </NavLink>
+            <NavLink to="/start" className="ff-btn ff-btn-primary h-9">
+              Start gratis
+            </NavLink>
+          </div>
+
+          {/* Mobile placeholder (bestaand drawer-component kan hier worden gemount) */}
+          <div className="md:hidden">
+            {/* Laat bestaande MobileNavDrawer staan indien aanwezig */}
+          </div>
         </div>
       </nav>
     </header>
   );
-};
-
-export default Navbar;
+}

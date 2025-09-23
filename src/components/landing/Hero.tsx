@@ -1,75 +1,45 @@
+// src/components/landing/Hero.tsx
 import React from "react";
-import Button from "@/components/ui/Button";
-import SmartImage from "@/components/media/SmartImage";
+import { NavLink } from "react-router-dom";
 
-type Props = {
-  onCTAClick?: () => void;
-  onSecondaryClick?: () => void;
-  /** CSS object-position, bv. "50% 35%" om het focuspunt van de afbeelding te sturen */
-  focal?: string;
-  imageId?: string;
-  imageAlt?: string;
-  showSecondary?: boolean;
-};
-
-const Hero: React.FC<Props> = ({
-  onCTAClick,
-  onSecondaryClick,
-  focal = "50% 35%",
-  imageId = "hero-main",
-  imageAlt = "Voorbeeld van het AI Style Report in een rustige interface",
-  showSecondary = true,
-}) => {
+/**
+ * Hero sectie — opt-in polish via ff-utilities.
+ * Geen gradients/overrides; we raken alleen markup/classes aan.
+ */
+export default function Hero() {
   return (
-    <section className="ff-section hero-wrap alt-bg" aria-labelledby="hero-title">
-      <div className="ff-container hero-grid">
-        {/* COPY */}
-        <div className="hero-copy">
-          <p className="kicker">Gratis AI Style Report</p>
-          <h1 id="hero-title" className="section-title">
+    <section
+      id="hero"
+      aria-labelledby="hero-title"
+      className="bg-surface text-text"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="max-w-2xl">
+          <p className="text-sm text-text/70 mb-2">GRATIS AI STYLE REPORT</p>
+          <h1 id="hero-title" className="font-heading text-3xl sm:text-4xl leading-tight ff-text-balance">
             Ontdek wat jouw stijl over je zegt
           </h1>
-          <p className="lead">
-            Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en
-            shoplinks — privacy-first, zonder ruis.
+          <p className="mt-3 text-base text-text/80">
+            Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.
           </p>
 
-          <div className="cluster mt-3">
-            <Button variant="primary" size="lg" className="cta-raise" onClick={onCTAClick}>
+          <div className="ff-hero-cta-row mt-5">
+            <NavLink to="/start" className="ff-btn ff-btn-primary h-10">
               Start gratis
-            </Button>
-            {showSecondary && (
-              <Button variant="ghost" size="lg" onClick={onSecondaryClick}>
-                Bekijk voorbeeld
-              </Button>
-            )}
+            </NavLink>
+            <NavLink to="/preview" className="ff-btn ff-btn-secondary h-10">
+              Bekijk voorbeeld
+            </NavLink>
           </div>
 
-          {/* USP-rail (compacte chips onder de CTA's) */}
-          <ul className="usp-rail" aria-label="Belangrijkste voordelen">
-            <li className="usp-chip">100% gratis</li>
-            <li className="usp-chip">Klaar in 2 min</li>
-            <li className="usp-chip">Outfits + shoplinks</li>
-            <li className="usp-chip">Privacy-first</li>
+          <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-text/70">
+            <li>100% gratis</li>
+            <li>Klaar in 2 min</li>
+            <li>Outfits + shoplinks</li>
+            <li>Privacy-first</li>
           </ul>
         </div>
-
-        {/* MEDIA */}
-        <figure
-          className="hero-media"
-          style={
-            {
-              // @ts-expect-error CSS custom property
-              "--hero-object-position": focal,
-            } as React.CSSProperties
-          }
-        >
-          <SmartImage id={imageId} kind="generic" alt={imageAlt} className="hero-img" />
-          <figcaption className="sr-only">{imageAlt}</figcaption>
-        </figure>
       </div>
     </section>
   );
-};
-
-export default Hero;
+}
