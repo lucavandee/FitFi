@@ -1,112 +1,57 @@
 import React from "react";
-import Seo from "@/components/Seo";
-import SkipLink from "@/components/a11y/SkipLink";
 
-const tiers = [
-  {
-    name: "Gratis",
-    price: "€0",
-    features: [
-      "AI Style Rapport (basis)",
-      "3 outfits per scan",
-      "Shop the look links",
-    ],
-    cta: "Start gratis",
-    href: "/onboarding",
-    popular: false,
-  },
-  {
-    name: "Pro",
-    price: "€9 /maand",
-    features: [
-      "Uitgebreid rapport met kleuren & silhouet",
-      "10 outfits per scan",
-      "Wishlist + seizoensupdates",
-      "Prioriteit support",
-    ],
-    cta: "Upgrade naar Pro",
-    href: "/onboarding",
-    popular: true,
-  },
-  {
-    name: "Team",
-    price: "Custom",
-    features: [
-      "Whitelabel onboarding",
-      "Styling voor events of merken",
-      "API + integraties",
-      "Dedicated support",
-    ],
-    cta: "Neem contact op",
-    href: "/contact",
-    popular: false,
-  },
-];
-
-const PricingPage: React.FC = () => {
+export default function PricingPage() {
   return (
-    <>
-      <SkipLink />
-      <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen">
-        <Seo
-          title="Prijzen — Ontdek het plan dat bij jou past | FitFi"
-          description="Kies tussen Gratis, Pro of Team. Toegankelijke styling voor iedereen, van individueel tot professioneel."
-          canonical="https://fitfi.ai/prijzen"
-        />
-
-        {/* HERO */}
-        <section className="hero-wrap">
-          <div className="ff-container text-center flow-sm">
-            <p className="kicker">Prijzen</p>
-            <h1 className="display-title">Eenvoudig & transparant</h1>
-            <p className="lead">Start gratis. Upgrade wanneer je wilt.</p>
-          </div>
-        </section>
-
-        {/* TIERS */}
-        <section className="ff-section">
-          <div className="ff-container grid gap-8 md:grid-cols-3">
-            {tiers.map((tier) => (
-              <div
-                key={tier.name}
-                className={`pricing-card card-hover flow-sm ${
-                  tier.popular ? "pricing-card--popular" : ""
-                }`}
-              >
-                <header className="flow-sm">
-                  <h2 className="ff-h4">{tier.name}</h2>
-                  <p className="pricing-price">{tier.price}</p>
-                </header>
-                <ul className="flow-sm" role="list">
-                  {tier.features.map((f) => (
-                    <li key={f} className="ff-body text-[var(--color-muted)]">
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <a href={tier.href} className="btn btn-primary mt-auto">
-                  {tier.cta}
-                </a>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="ff-section bg-[var(--color-surface)] text-center">
-          <div className="ff-container flow-sm">
-            <h2 className="section-title">Twijfel je nog?</h2>
-            <p className="section-intro">
-              Probeer gratis. Je kunt later altijd upgraden.
-            </p>
-            <a href="/onboarding" className="btn btn-primary">
-              Start gratis
-            </a>
-          </div>
-        </section>
-      </main>
-    </>
+    <section className="ff-section">
+      <div className="ff-container">
+        <div className="ff-hero">
+          <h1 className="ff-hero__title">Prijzen</h1>
+          <p className="ff-hero__lead">
+            Kies het plan dat bij jou past. Altijd transparant, geen verborgen kosten.
+          </p>
+        </div>
+        
+        <div className="pr-grid">
+          <article className="card pr-card">
+            <h3 className="card__title">Starter</h3>
+            <p className="pr-card__price">€0</p>
+            <p className="text-muted">Begin meteen, privacy-first.</p>
+            <ul style={{margin: 'var(--sp-4) 0', paddingLeft: 'var(--sp-4)'}}>
+              <li>5 outfits per maand</li>
+              <li>Basis stijladvies</li>
+              <li>Privacy-first</li>
+            </ul>
+            <button className="btn">Probeer nu</button>
+          </article>
+          
+          <article className="card pr-card pr-card--best">
+            <div className="pr-card__badge">Meest gekozen</div>
+            <h3 className="card__title">Premium</h3>
+            <p className="pr-card__price">€9<span>/m</span></p>
+            <p className="text-muted">Alles wat je nodig hebt om slimmer te shoppen.</p>
+            <ul style={{margin: 'var(--sp-4) 0', paddingLeft: 'var(--sp-4)'}}>
+              <li>Onbeperkte outfits</li>
+              <li>AI-powered matching</li>
+              <li>Seizoensadvies</li>
+              <li>Premium support</li>
+            </ul>
+            <button className="btn btn--primary">Start gratis</button>
+          </article>
+          
+          <article className="card pr-card">
+            <h3 className="card__title">Pro</h3>
+            <p className="pr-card__price">€19<span>/m</span></p>
+            <p className="text-muted">Voor power users en personal shoppers.</p>
+            <ul style={{margin: 'var(--sp-4) 0', paddingLeft: 'var(--sp-4)'}}>
+              <li>Alles van Premium</li>
+              <li>Personal styling sessies</li>
+              <li>Exclusieve merken</li>
+              <li>Priority support</li>
+            </ul>
+            <button className="btn btn--ghost">Contact</button>
+          </article>
+        </div>
+      </div>
+    </section>
   );
-};
-
-export default PricingPage;
+}
