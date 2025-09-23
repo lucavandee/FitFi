@@ -17,18 +17,14 @@ const FaqAccordion: React.FC<Props> = ({ items, query = "", selectedTags = [] })
 
     return items.filter((it) => {
       const matchesQ = !q || norm(it.q).includes(q) || norm(it.a).includes(q);
-      const matchesTags =
-        !hasTags || (it.tags && selectedTags.every((t) => it.tags!.includes(t)));
+      const matchesTags = !hasTags || (it.tags && selectedTags.every((t) => it.tags!.includes(t)));
       return matchesQ && matchesTags;
     });
   }, [items, query, selectedTags]);
 
   if (filtered.length === 0) {
     return (
-      <div
-        role="status"
-        className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center shadow-[var(--shadow-soft)]"
-      >
+      <div role="status" className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center shadow-[var(--shadow-soft)]">
         Geen resultaten. Pas je zoekterm of filters aan.
       </div>
     );
@@ -37,9 +33,9 @@ const FaqAccordion: React.FC<Props> = ({ items, query = "", selectedTags = [] })
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {filtered.map((f) => (
-        <details key={f.q} className="faq-item">
-          <summary className="faq-summary">{f.q}</summary>
-          <div className="faq-answer">{f.a}</div>
+        <details key={f.q} className="faq-item ff-card">
+          <summary className="faq-summary ff-card__title">{f.q}</summary>
+          <div className="faq-answer ff-card__body">{f.a}</div>
         </details>
       ))}
     </div>
