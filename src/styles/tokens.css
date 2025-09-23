@@ -1,101 +1,43 @@
-/* src/styles/tokens.css */
-/* FitFi vNext — Light/Neutral Beige — CANONIEK */
-:root {
-  /* Palet */
-  --color-bg: #F7F3EC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E2333;
-  --color-muted: #6B7280;
+:root{
+  /* Brand (neutrale crème + diepblauw met warme accentknop) */
+  --ff-bg:        #fcfaf3;
+  --ff-surface:   #ffffff;
+  --ff-ink:       #171717;
+  --ff-ink-2:     #333;
+  --ff-muted:     #6b7280;
 
-  --color-primary: #A6886A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #8F7459;   /* hover */
-  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+  --ff-primary-700:#0e2a47;
+  --ff-primary-600:#153b6a;
+  --ff-primary-500:#214f92;
+  --ff-primary-400:#2e67c1;
+  --ff-primary-300:#5a8dde;
+  --ff-primary-100:#eaf1fb;
 
-  --color-accent: #D8CABA;
-  --color-border: rgba(30, 35, 51, 0.08);
+  --ff-cta-600:#8b6a55;  /* warme cappuccino (knop) */
+  --ff-cta-500:#a07c62;
+  --ff-cta-100:#efe8e2;
 
-  /* Status */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger:  #DC2626;
+  --ff-success:#16a34a;
+  --ff-warning:#f59e0b;
+  --ff-danger: #ef4444;
 
-  /* Overlays */
-  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
-  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
+  /* Layout */
+  --ff-maxw: 1200px;
+  --ff-pad-x: clamp(16px, 3vw, 28px);
+  --ff-radius: 16px;
+  --ff-radius-xl: 22px;
+  --ff-shadow: 0 10px 30px rgba(0,0,0,.06);
 
-  /* ============ TOKENS: CTA (Start gratis) ============ */
-  /* Basis warm bruin; tint/tonen voor states & surfaces */
-  --ff-cta-50:  #F6EFE9;
-  --ff-cta-100: #EEE2D7;
-  --ff-cta-200: #E2D0BF;
-  --ff-cta-300: #CEB39A;
-  --ff-cta-400: #B98F71;
-  --ff-cta-500: #9D6E52;   /* ≈ huidige Start gratis */
-  --ff-cta-600: #8A6048;   /* hover */
-  --ff-cta-700: #724E3B;   /* active/focus ring donker */
-  --ff-cta-800: #5C3E2E;
-  --ff-cta-900: #493123;
+  /* Type schaal met clamp -> premium, rustig */
+  --ff-font: ui-sans-serif, system-ui, -apple-system, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --ff-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  /* Tekst op CTA-vlakken */
-  --ff-cta-contrast: #FFFFFF;
+  --ff-h1: clamp(34px, 4.5vw, 64px);
+  --ff-h2: clamp(26px, 3vw, 40px);
+  --ff-h3: clamp(20px, 2.2vw, 28px);
+  --ff-body: 17px;
+  --ff-small: 14px;
 
-  /* Neutrale inkt & border die mooi samengaan met CTA */
-  --ff-ink-600: #1D2430;
-  --ff-ink-500: #2B3342;
-  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
-
-  /* Accent color - matches "Start gratis" button */
-  --ff-color-accent: #9C745E;
-  --ff-color-accent-contrast: #fff;
-
-  /* Links consistent with accent */
-  --ff-link: var(--ff-color-accent);
-  --ff-link-hover: color-mix(
-    in oklab,
-    var(--ff-color-accent) 84%,
-    black 16%
-  );
-  --ff-focus: color-mix(
-    in oklab,
-    var(--ff-color-accent) 20%,
-    white 80%
-  );
-
-  /* Radii */
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
-
-  /* Shadows */
-  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
-  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
-
-  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
-  font-synthesis-weight: none;
+  /* Section ritme */
+  --ff-sec-y: clamp(48px, 8vw, 96px);
 }
-
-/* Basiselementen */
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Cards */
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-}
-
-/* CTA – solid (AA) */
-.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
-.ff-cta:hover { background: var(--ff-color-primary-600); }
-
-/* Focus-ring tokenized */
-.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
-
-/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
