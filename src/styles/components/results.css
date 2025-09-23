@@ -1,20 +1,10 @@
-/* skeletons voor kapotte/placeholder afbeeldingen */
-.skel {
-  background: color-mix(in oklab, var(--ff-primary-900) 85%, var(--ff-primary-700));
-  border-radius: var(--radius);
-  position:relative; overflow:hidden;
-}
-.skel::after{
-  content:""; position:absolute; inset:0;
-  background: linear-gradient(90deg, #0000, rgba(255,255,255,.07), #0000);
-  transform: translateX(-100%); animation: skel 2s infinite;
-}
-@keyframes skel { to{ transform: translateX(100%); } }
-
-.res-grid { display:grid; gap: var(--sp-4); grid-template-columns: repeat(3, minmax(0,1fr)); }
-@media (max-width: 992px){ .res-grid{ grid-template-columns: 1fr; } }
-
-.res-card { composes: card; }
-.res-card__tiles { display:grid; grid-template-columns: repeat(2,1fr); gap: var(--sp-3); padding: var(--sp-3) var(--sp-3) 0; }
-.res-card__body { padding: var(--sp-4); }
-.res-card__title { font-size: var(--fs-18); font-weight:700; margin-bottom:.4rem; }
+.skel{background:color-mix(in oklab,var(--ff-primary-900) 85%, var(--ff-primary-700));
+  border-radius:var(--radius);position:relative;overflow:hidden}
+.skel::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0000,rgba(255,255,255,.07),#0000);
+  transform:translateX(-100%);animation:skel 2s infinite}
+@keyframes skel{to{transform:translateX(100%)}}
+.res-grid{display:grid;gap:var(--sp-4);grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:992px){.res-grid{grid-template-columns:1fr}}
+.res-card{composes: card}
+.res-card__tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3);padding:var(--sp-3) var(--sp-3) 0}
+.res-card__body{padding:var(--sp-4)} .res-card__title{font-size:var(--fs-18);font-weight:700;margin-bottom:.4rem}

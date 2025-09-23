@@ -1,11 +1,5 @@
-.chip {
-  display:inline-flex; align-items:center; gap:.4rem;
-  padding:.35rem .7rem; border-radius:999px;
-  border:1px solid color-mix(in oklab, var(--ff-ink) 8%, transparent);
-  background:#fff; color: var(--ff-ink-2); font-weight:600;
-}
-.chip--active {
-  background: color-mix(in oklab, var(--ff-primary-100) 60%, #fff);
-  color: var(--ff-primary-700);
-  border-color: color-mix(in oklab, var(--ff-primary-600) 35%, transparent);
-}
+.chip{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .7rem;border-radius:999px;
+  border:1px solid color-mix(in oklab,var(--ff-ink) 8%, transparent);
+  background:#fff;color:var(--ff-ink-2);font-weight:600}
+.chip--active{background:color-mix(in oklab,var(--ff-primary-100) 60%, #fff);color:var(--ff-primary-700);
+  border-color:color-mix(in oklab,var(--ff-primary-600) 35%, transparent)}

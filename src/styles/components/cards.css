@@ -1,10 +1,4 @@
-.card {
-  background: var(--ff-surface);
-  border: 1px solid color-mix(in oklab, var(--ff-ink) 6%, transparent);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1);
-  overflow: hidden;
-}
-.card__body { padding: var(--sp-4); }
-.card__title { font-size: var(--fs-20); margin-bottom: var(--sp-3); }
-.card--hover:hover { box-shadow: var(--shadow-2); transform: translateY(-1px); transition: .2s ease; }
+.card{background:var(--ff-surface);border:1px solid color-mix(in oklab,var(--ff-ink) 6%, transparent);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-1);overflow:hidden}
+.card__body{padding:var(--sp-4)} .card__title{font-size:var(--fs-20);margin-bottom:var(--sp-3)}
+.card--hover:hover{box-shadow:var(--shadow-2);transform:translateY(-1px);transition:.2s}

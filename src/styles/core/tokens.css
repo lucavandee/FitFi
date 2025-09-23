@@ -1,83 +1,21 @@
-:root {
-  /* Brand neutraal (ivory / off-white) */
-  --ff-bg: #fdfaf4;
-  --ff-surface: #ffffff;
-  --ff-ink: #161616;
-  --ff-ink-2: #2d2d2d;
-  --ff-ink-muted: #6b7280;
-
-  /* Primair (FitFi blauw gradient family) */
-  --ff-primary-50:  #eef4ff;
-  --ff-primary-100: #d9e6ff;
-  --ff-primary-200: #b7ceff;
-  --ff-primary-300: #8aafff;
-  --ff-primary-400: #5d90ff;
-  --ff-primary-500: #3a6def;       /* hoofd */
-  --ff-primary-600: #2f57c7;
-  --ff-primary-700: #24439c;
-  --ff-primary-800: #1c357c;
-  --ff-primary-900: #152a62;
-
-  /* CTA (warm neutral brown / premium) */
-  --ff-cta-50:  #f7efe9;
-  --ff-cta-200: #e4d2c3;
-  --ff-cta-400: #c8a98d;
-  --ff-cta-500: #af8a6d;            /* hoofd */
-  --ff-cta-600: #8f6f58;
-
-  /* Status */
-  --ff-success: #22c55e;
-  --ff-warning: #f59e0b;
-  --ff-danger:  #ef4444;
-
-  /* Typografie */
-  --ff-font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  --ff-font-display: var(--ff-font-sans);
-
-  /* Type scale (optical sizes) */
-  --fs-12: 0.75rem;
-  --fs-14: 0.875rem;
-  --fs-16: 1rem;
-  --fs-18: 1.125rem;
-  --fs-20: 1.25rem;
-  --fs-24: 1.5rem;
-  --fs-30: 1.875rem;
-  --fs-36: 2.25rem;
-  --fs-48: 3rem;
-  --fs-60: 3.75rem;
-
-  /* Spacing */
-  --sp-2: .5rem;
-  --sp-3: .75rem;
-  --sp-4: 1rem;
-  --sp-6: 1.5rem;
-  --sp-8: 2rem;
-  --sp-10: 2.5rem;
-  --sp-12: 3rem;
-  --sp-16: 4rem;
-  --sp-20: 5rem;
-
-  /* Radii & Shadows */
-  --radius-sm: .5rem;
-  --radius: .875rem;
-  --radius-lg: 1.25rem;
-  --shadow-1: 0 1px 2px rgba(0,0,0,.06), 0 1px 8px rgba(0,0,0,.05);
-  --shadow-2: 0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.08);
-
-  /* Gradients */
-  --grad-primary: linear-gradient(160deg, var(--ff-primary-500), var(--ff-primary-800));
-  --grad-ink: linear-gradient(160deg, #10131a, #1c2433);
+:root{
+  --ff-bg:#fdfaf4; --ff-surface:#fff; --ff-ink:#161616; --ff-ink-2:#2d2d2d; --ff-ink-muted:#6b7280;
+  --ff-primary-500:#3a6def; --ff-primary-600:#2f57c7; --ff-primary-700:#24439c; --ff-primary-800:#1c357c;
+  --ff-cta-500:#af8a6d; --ff-cta-600:#8f6f58;
+  --ff-success:#22c55e; --ff-warning:#f59e0b; --ff-danger:#ef4444;
+  --ff-font-sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  --ff-font-display:var(--ff-font-sans);
+  --fs-12:.75rem; --fs-14:.875rem; --fs-16:1rem; --fs-18:1.125rem; --fs-20:1.25rem;
+  --fs-24:1.5rem; --fs-30:1.875rem; --fs-36:2.25rem; --fs-48:3rem; --fs-60:3.75rem;
+  --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem; --sp-6:1.5rem; --sp-8:2rem; --sp-10:2.5rem; --sp-12:3rem; --sp-16:4rem; --sp-20:5rem;
+  --radius-sm:.5rem; --radius:.875rem; --radius-lg:1.25rem;
+  --shadow-1:0 1px 2px rgba(0,0,0,.06),0 1px 8px rgba(0,0,0,.05);
+  --shadow-2:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.08);
+  --grad-primary:linear-gradient(160deg,var(--ff-primary-600),var(--ff-primary-800));
+  --grad-ink:linear-gradient(160deg,#10131a,#1c2433);
 }
-
-/* Dark mode (optioneel: later activeren) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ff-bg: #0e0f11;
-    --ff-surface: #14161a;
-    --ff-ink: #f7f8fa;
-    --ff-ink-2: #dfe3ea;
-    --ff-ink-muted: #98a2b3;
-    --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 1px 8px rgba(0,0,0,.3);
-    --shadow-2: 0 2px 8px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.35);
-  }
+@media (prefers-color-scheme:dark){
+  :root{ --ff-bg:#0e0f11; --ff-surface:#14161a; --ff-ink:#f7f8fa; --ff-ink-2:#dfe3ea; --ff-ink-muted:#98a2b3;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4),0 1px 8px rgba(0,0,0,.3);
+    --shadow-2:0 2px 8px rgba(0,0,0,.4),0 8px 28px rgba(0,0,0,.35); }
 }
