@@ -1,125 +1,201 @@
+// src/pages/ContactPage.tsx
 import React from "react";
-import Seo from "@/components/Seo";
-import Footer from "@/components/layout/Footer";
-import SkipLink from "@/components/a11y/SkipLink";
 
-const ContactPage: React.FC = () => {
-  return (
-    <>
-      <SkipLink />
-      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-      <Seo
-        title="Contact — We helpen je graag | FitFi"
-        description="Vragen over het AI Style Report, privacy of samenwerkingen? Stuur ons een bericht — we reageren snel en helder."
-        canonical="https://fitfi.ai/contact"
-      />
+/**
+ * ContactPage — tokens-first + ff-utilities
+ * - Toegankelijk formulier met labels, beschrijvingen en foutmeldingen.
+ * - Geen externe deps; client-side validatie en success state.
+ * - Honeypot veld voor eenvoudige spamreductie.
+ */
 
-      <section className="ff-section">
-        <div className="ff-container">
-          <header className="section-header">
-            <p className="kicker">Contact</p>
-            <h1 className="section-title">We helpen je graag</h1>
-            <p className="section-intro">
-              Korte vragen, feedback of een idee voor samenwerking? Stuur ons een bericht.
-              We antwoorden doorgaans binnen één werkdag.
-            </p>
-          </header>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Contactkaart */}
-            <aside className="card p-6">
-              <h2 className="text-lg font-semibold">Snelle links</h2>
-              <ul className="mt-3 space-y-2 text-sm">
-                <li><a className="link" href="/faq">FAQ</a></li>
-                <li><a className="link" href="/privacy">Privacy</a></li>
-                <li><a className="link" href="/cookies">Cookies</a></li>
-                <li><a className="link" href="/prijzen">Prijzen</a></li>
-              </ul>
-
-              <div className="mt-6">
-                <h3 className="text-sm font-semibold opacity-80">E-mail</h3>
-                <a className="link" href="mailto:hello@fitfi.ai" aria-label="Stuur e-mail naar hello@fitfi.ai">
-                  hello@fitfi.ai
-                </a>
-              </div>
-            </aside>
-
-            {/* Formulier */}
-            <form
-              className="card p-6 md:col-span-2"
-              method="post"
-              action="#"
-              noValidate
-              aria-labelledby="contact-form-title"
-            >
-              <h2 id="contact-form-title" className="text-lg font-semibold mb-2">
-                Stuur ons een bericht
-              </h2>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium opacity-80">
-                    Naam
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    autoComplete="name"
-                    required
-                    className="mt-1 w-full rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] px-4 py-3 placeholder:opacity-60 focus:outline-none focus-visible:ring-2 shadow-[var(--shadow-soft)]"
-                    placeholder="Voor- en achternaam"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium opacity-80">
-                    E-mail
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="mt-1 w-full rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] px-4 py-3 placeholder:opacity-60 focus:outline-none focus-visible:ring-2 shadow-[var(--shadow-soft)]"
-                    placeholder="jij@voorbeeld.nl"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label htmlFor="message" className="block text-sm font-medium opacity-80">
-                    Bericht
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={6}
-                    required
-                    className="mt-1 w-full rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-border)] px-4 py-3 placeholder:opacity-60 focus:outline-none focus-visible:ring-2 shadow-[var(--shadow-soft)]"
-                    placeholder="Waarmee kunnen we helpen?"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  aria-label="Verstuur bericht"
-                >
-                  Versturen
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-      </main>
-    </>
-  );
+type FormState = {
+  name: string;
+  email: string;
+  topic: "support" | "pricing" | "feedback" | "other";
+  message: string;
+  consent: boolean;
+  honey: string; // honeypot
 };
 
-export default ContactPage;
+type Errors = Partial<Record<keyof FormState, string>>;
+
+export default function ContactPage() {
+  const [state, setState] = React.useState<FormState>({
+    name: "",
+    email: "",
+    topic: "support",
+    message: "",
+    consent: false,
+    honey: "",
+  });
+  const [errors, setErrors] = React.useState<Errors>({});
+  const [submitted, setSubmitted] = React.useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  function validate(s: FormState): Errors {
+    const e: Errors = {};
+    if (!s.name.trim()) e.name = "Vul je naam in.";
+    if (!/^\S+@\S+\.\S+$/.test(s.email)) e.email = "Vul een geldig e-mailadres in.";
+    if (!s.message.trim() || s.message.trim().length < 10) e.message = "Schrijf minimaal 10 tekens.";
+    if (!s.consent) e.consent = "Geef toestemming om te reageren op je bericht.";
+    if (s.honey) e.honey = "Spam gedetecteerd.";
+    return e;
+    }
+  function onChange<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setState((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const v = validate(state);
+    setErrors(v);
+    if (Object.keys(v).length > 0) return;
+
+    // Hier zou je normaal een fetch/POST doen naar je function/endpoint.
+    // In deze polish-stap simuleren we een succesflow:
+    setSubmitted(true);
+    formRef.current?.reset();
+  }
+
+  if (submitted) {
+    return (
+      <main id="main" className="bg-surface text-text">
+        <section className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+          <div className="ff-card p-6 text-center ff-fade-in">
+            <p className="font-heading text-xl">Bedankt voor je bericht!</p>
+            <p className="mt-2 text-text/80">
+              We reageren meestal binnen 1–2 werkdagen. Wil je intussen verder?
+            </p>
+            <div className="mt-4 flex justify-center gap-2">
+              <a href="/how-it-works" className="ff-btn ff-btn-secondary h-10">Hoe het werkt</a>
+              <a href="/start" className="ff-btn ff-btn-primary h-10">Start gratis</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main id="main" className="bg-surface text-text">
+      <section aria-labelledby="contact-title" className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <header className="mb-6 sm:mb-8">
+          <p className="text-sm text-text/70">We helpen je graag</p>
+          <h1 id="contact-title" className="font-heading text-2xl sm:text-3xl ff-text-balance">
+            Neem contact op
+          </h1>
+          <p className="mt-2 text-text/80">
+            Stel je vraag of geef feedback. We antwoorden zo snel mogelijk.
+          </p>
+        </header>
+
+        <form ref={formRef} noValidate onSubmit={onSubmit} className="ff-card p-5 sm:p-6">
+          {/* Honeypot (verborgen voor screenreaders en visueel) */}
+          <div aria-hidden="true" className="hidden">
+            <label>
+              Laat dit veld leeg
+              <input
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                onChange={(e) => onChange("honey", e.target.value)}
+              />
+            </label>
+          </div>
+
+          {/* Naam */}
+          <div className="grid gap-1">
+            <label htmlFor="name" className="font-medium">Naam</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 focus:outline-none ff-focus-ring"
+              onChange={(e) => onChange("name", e.target.value)}
+              aria-invalid={Boolean(errors.name) || undefined}
+              aria-describedby={errors.name ? "name-error" : undefined}
+              required
+            />
+            {errors.name && <p id="name-error" className="text-sm text-text/80">{errors.name}</p>}
+          </div>
+
+          {/* E-mail */}
+          <div className="grid gap-1 mt-4">
+            <label htmlFor="email" className="font-medium">E-mail</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 focus:outline-none ff-focus-ring"
+              onChange={(e) => onChange("email", e.target.value)}
+              aria-invalid={Boolean(errors.email) || undefined}
+              aria-describedby={errors.email ? "email-error" : undefined}
+              required
+            />
+            {errors.email && <p id="email-error" className="text-sm text-text/80">{errors.email}</p>}
+          </div>
+
+          {/* Onderwerp */}
+          <div className="grid gap-1 mt-4">
+            <label htmlFor="topic" className="font-medium">Onderwerp</label>
+            <select
+              id="topic"
+              name="topic"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 focus:outline-none ff-focus-ring"
+              defaultValue={state.topic}
+              onChange={(e) => onChange("topic", e.target.value as FormState["topic"])}
+            >
+              <option value="support">Support</option>
+              <option value="pricing">Prijzen/abonnement</option>
+              <option value="feedback">Feedback/idee</option>
+              <option value="other">Overig</option>
+            </select>
+          </div>
+
+          {/* Bericht */}
+          <div className="grid gap-1 mt-4">
+            <div className="flex items-center justify-between">
+              <label htmlFor="message" className="font-medium">Bericht</label>
+              <span className="text-xs text-text/70">Minimaal 10 tekens</span>
+            </div>
+            <textarea
+              id="message"
+              name="message"
+              rows={5}
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 resize-y focus:outline-none ff-focus-ring"
+              onChange={(e) => onChange("message", e.target.value)}
+              aria-invalid={Boolean(errors.message) || undefined}
+              aria-describedby={errors.message ? "message-error" : undefined}
+              required
+            />
+            {errors.message && <p id="message-error" className="text-sm text-text/80">{errors.message}</p>}
+          </div>
+
+          {/* Toestemming */}
+          <div className="mt-4 flex items-start gap-2">
+            <input
+              id="consent"
+              name="consent"
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-border bg-surface focus:outline-none ff-focus-ring"
+              onChange={(e) => onChange("consent", e.target.checked)}
+              aria-invalid={Boolean(errors.consent) || undefined}
+              aria-describedby={errors.consent ? "consent-error" : undefined}
+              required
+            />
+            <label htmlFor="consent" className="text-sm">
+              Ik geef toestemming om te reageren op mijn bericht en mijn gegevens te gebruiken volgens de privacyverklaring.
+            </label>
+          </div>
+          {errors.consent && <p id="consent-error" className="mt-1 text-sm text-text/80">{errors.consent}</p>}
+
+          {/* Submit */}
+          <div className="mt-5 flex gap-2">
+            <button type="submit" className="ff-btn ff-btn-primary h-10">Versturen</button>
+            <a href="/faq" className="ff-btn ff-btn-secondary h-10">Naar FAQ</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  );
+}

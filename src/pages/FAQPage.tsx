@@ -1,82 +1,97 @@
-import React, { useState } from "react";
-import Seo from "@/components/Seo";
-import Button from "@/components/ui/Button";
-import FaqAccordion, { FaqItem } from "@/components/faq/FaqAccordion";
-import FaqFilters from "@/components/faq/FaqFilters";
-import FaqSearch from "@/components/faq/FaqSearch";
-import SkipLink from "@/components/a11y/SkipLink";
+// src/pages/FAQPage.tsx
+import React from "react";
 
-const ITEMS: FaqItem[] = [
+/**
+ * FAQPage — tokens-first + ff-utilities
+ * - Compact, snel scanbaar, AA-contrast.
+ * - <details>/<summary> voor toegankelijke accordeons.
+ * - Geen externe imports, default export.
+ */
+
+type QA = { q: string; a: React.ReactNode };
+
+const QAS: QA[] = [
   {
-    q: "Wat is FitFi precies?",
-    a: "FitFi is een AI-stylist. We analyseren je stijlvoorkeuren en silhouet en genereren outfits met uitleg en shopbare suggesties.",
-    tags: ["algemeen"],
+    q: "Is FitFi echt gratis te proberen?",
+    a: (
+      <>
+        Ja. Met <strong>Starter</strong> begin je direct gratis. Wil je meer outfits en functies,
+        kies dan voor Pro of Elite — je kunt op elk moment downgraden of annuleren.
+      </>
+    ),
   },
   {
-    q: "Hoe snel krijg ik mijn AI Style Report?",
-    a: "Binnen 2 minuten. Je doorloopt een korte stijlquiz en ontvangt direct je rapport met concrete outfits.",
-    tags: ["algemeen"],
+    q: "Wat houdt het AI Style Report in?",
+    a: (
+      <>
+        Je ontvangt een persoonlijk stijlprofiel met 3–10 outfitvoorstellen (per plan),
+        inclusief uitleg <em>waarom</em> het werkt (silhouet, kleur, materiaal) en shoplinks.
+      </>
+    ),
   },
   {
-    q: "Is FitFi gratis?",
-    a: "Je kunt gratis starten. Voor extra functies zoals onbeperkte outfits en diepgaande analyses kun je upgraden naar Premium.",
-    tags: ["prijzen"],
+    q: "Wat doen jullie met mijn gegevens?",
+    a: (
+      <>
+        We zijn <strong>privacy-first</strong>. Je antwoorden worden uitsluitend gebruikt om jouw
+        stijl te personaliseren. Geen doorverkoop. Meer in onze privacyverklaring.
+      </>
+    ),
   },
   {
-    q: "Hoe gaan jullie om met privacy?",
-    a: "We verwerken alleen gegevens die nodig zijn om je outfits te genereren. Je data wordt niet doorverkocht en je kunt altijd verwijderen.",
-    tags: ["privacy"],
+    q: "Kan ik op elk moment opzeggen?",
+    a: (
+      <>
+        Ja. Maandabonnementen zijn maandelijks opzegbaar. Jaarabonnementen lopen tot het einde van
+        de periode; we verlengen niet zonder bevestiging.
+      </>
+    ),
+  },
+  {
+    q: "Werken jullie met affiliate links?",
+    a: (
+      <>
+        Ja, soms. We linken alleen naar betrouwbare shops. Dit beïnvloedt onze aanbevelingen niet:
+        stijl & pasvorm gaan altijd voor.
+      </>
+    ),
   },
 ];
 
-const TAGS = ["algemeen", "prijzen", "privacy"];
-
-const FAQPage: React.FC = () => {
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
-
+export default function FAQPage() {
   return (
-    <>
-      <SkipLink />
-      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-        <Seo
-          title="Veelgestelde vragen | FitFi"
-          description="Antwoorden over je AI Style Report, privacy en prijzen. Vind snel wat je zoekt."
-          canonical="https://fitfi.ai/veelgestelde-vragen"
-        />
+    <main id="main" className="bg-surface text-text">
+      <section aria-labelledby="faq-title" className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <header className="mb-6 sm:mb-8">
+          <p className="text-sm text-text/70">Helder en nuchter</p>
+          <h1 id="faq-title" className="font-heading text-2xl sm:text-3xl ff-text-balance">
+            Veelgestelde vragen
+          </h1>
+          <p className="mt-2 text-text/80">
+            Staat je vraag er niet tussen? Stuur ons gerust een bericht via het contactformulier.
+          </p>
+        </header>
 
-        <section className="ff-section bg-white">
-          <div className="ff-container">
-            <header className="section-header">
-              <p className="kicker">Help</p>
-              <h1 className="section-title">Veelgestelde vragen</h1>
-              <p className="section-intro">Zoek of filter op onderwerp.</p>
-            </header>
+        <div className="space-y-3 sm:space-y-4">
+          {QAS.map(({ q, a }) => (
+            <details key={q} className="ff-card p-4">
+              <summary className="cursor-pointer font-medium select-none">{q}</summary>
+              <div className="mt-2 text-sm text-text/80">{a}</div>
+            </details>
+          ))}
+        </div>
 
-            <div className="mt-6 grid gap-6 md:grid-cols-[280px_1fr]">
-              <aside className="space-y-6">
-                <FaqSearch value={query} onChange={setQuery} />
-                <FaqFilters
-                  tags={TAGS}
-                  selected={selected}
-                  onChange={setSelected}
-                />
-              </aside>
-
-              <div>
-                <FaqAccordion items={ITEMS} query={query} selectedTags={selected} />
-                <div className="mt-10 text-center">
-                  <Button as="a" href="/contact" variant="primary" size="lg">
-                    Stel je vraag
-                  </Button>
-                </div>
-              </div>
-            </div>
+        <aside className="mt-8 ff-glass p-4 sm:p-5">
+          <p className="font-heading text-lg">Nog vragen?</p>
+          <p className="text-sm text-text/80">
+            Bekijk ook onze uitlegpagina of neem contact met ons op — we helpen je graag verder.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <a href="/how-it-works" className="ff-btn ff-btn-secondary h-10">Hoe het werkt</a>
+            <a href="/contact" className="ff-btn ff-btn-primary h-10">Contact</a>
           </div>
-        </section>
-      </main>
-    </>
+        </aside>
+      </section>
+    </main>
   );
-};
-
-export default FAQPage;
+}
