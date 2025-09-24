@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import getQueryClient from "@/system/queryClient";
+import "@/styles/polish.addon.css"; // ← Alleen de opt-in .ff-* polish laden
 import "./index.css"; // Tailwind + tokens + polish
 
 const queryClient = getQueryClient();
