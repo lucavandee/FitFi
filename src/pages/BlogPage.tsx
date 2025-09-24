@@ -9,7 +9,7 @@ const posts = [
 
 export default function BlogPage() {
   return (
-    <main id="main" className="bg-bg text-text">
+    <main id="main" className="ff-scope bg-bg text-text">
       <section className="ff-container ff-stack-lg py-10 sm:py-12">
         <BlogHeader />
         <div className="ff-blog-grid mt-6">

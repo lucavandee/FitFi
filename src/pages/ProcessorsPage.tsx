@@ -10,7 +10,7 @@ const PROCESSORS: Proc[] = [
 
 export default function ProcessorsPage() {
   return (
-    <main id="main" className="bg-bg text-text">
+    <main id="main" className="ff-scope bg-bg text-text">
       <section className="ff-container ff-stack-lg py-10 sm:py-12">
         <header className="ff-stack">
           <p className="text-sm text-text/70">Overzicht verwerkers</p>
