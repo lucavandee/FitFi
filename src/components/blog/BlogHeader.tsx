@@ -1,17 +1,14 @@
+// /src/components/blog/BlogHeader.tsx
 import React from "react";
 
-type Props = {
-  title: string;
-  intro?: string;
-  kicker?: string;
-};
-
-const BlogHeader: React.FC<Props> = ({ title, intro, kicker = "Blog" }) => {
+const BlogHeader: React.FC = () => {
   return (
-    <header className="section-header">
-      <p className="kicker">{kicker}</p>
-      <h1 className="section-title">{title}</h1>
-      {intro && <p className="section-intro">{intro}</p>}
+    <header className="ff-stack">
+      <p className="text-sm text-text/70">Rust in je keuzes</p>
+      <h1 className="font-heading text-2xl sm:text-3xl ff-text-balance">Blog</h1>
+      <p className="text-text/80 max-w-2xl">
+        Korte, toepasbare gidsen over silhouet, kleur en outfits. Premium stijl, nuchtere uitleg.
+      </p>
     </header>
   );
 };

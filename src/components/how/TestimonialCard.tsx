@@ -1,30 +1,24 @@
-// src/components/how/TestimonialCard.tsx
+// /src/components/how/TestimonialCard.tsx
 import React from "react";
+import { Quote } from "lucide-react";
 
 type Props = {
   quote: string;
   author: string;
   role?: string;
-  className?: string;
 };
 
-function cx(...parts: Array<string | false | undefined>): string {
-  return parts.filter(Boolean).join(" ");
-}
-
-/**
- * TestimonialCard
- * - Tokens-first; gebruikt ff-card + typografie nuance.
- * - Toegankelijk: blockquote met <footer><cite>.
- */
-export default function TestimonialCard({ quote, author, role, className }: Props) {
+const TestimonialCard: React.FC<Props> = ({ quote, author, role }) => {
   return (
-    <blockquote className={cx("ff-card p-5 ff-fade-in", className)}>
-      <p className="text-base">&ldquo;{quote}&rdquo;</p>
-      <footer className="mt-3 text-sm text-text/80">
-        <cite className="not-italic font-medium">{author}</cite>
-        {role ? <span className="ml-2">• {role}</span> : null}
-      </footer>
-    </blockquote>
+    <figure className="ff-card p-5 ff-hover-raise">
+      <Quote aria-hidden className="w-5 h-5 text-text/60" />
+      <blockquote className="mt-3 text-text">{quote}</blockquote>
+      <figcaption className="mt-4 text-sm text-text/70">
+        <span className="font-medium">{author}</span>
+        {role ? <span className="ml-1">• {role}</span> : null}
+      </figcaption>
+    </figure>
   );
-}
+};
+
+export default TestimonialCard;

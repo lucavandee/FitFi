@@ -1,54 +1,53 @@
-import React, { forwardRef } from "react";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { twMerge } from "tailwind-merge";
+// /src/components/ui/Button.tsx
+import React from "react";
 
-type ButtonVariant = "primary" | "ghost" | "outline";
-type ButtonSize = "sm" | "md" | "lg";
+type Variant = "primary" | "secondary" | "quiet";
+type Size = "sm" | "md" | "lg";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  children?: ReactNode;
-}
-
-const base =
-  "inline-flex items-center justify-center rounded-2xl font-medium transition-all " +
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
-  "focus-visible:ring-[var(--shadow-ring)] disabled:opacity-50 disabled:cursor-not-allowed";
-
-const variants: Record<ButtonVariant, string> = {
-  // Solid CTA via polish.css (fallback-keten naar primary/accent)
-  primary: "btn-primary",
-  ghost:
-    "bg-transparent border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]",
-  outline:
-    "border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface)]",
+type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: Variant;
+  size?: Size;
+  as?: "button" | "a";
+  href?: string;
 };
 
-const sizes: Record<ButtonSize, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-11 px-4 text-base",
-  lg: "h-12 px-6 text-base",
-};
-
-function cn(...cls: Array<string | false | null | undefined>) {
-  return twMerge(cls.filter(Boolean).join(" "));
+function classes(variant: Variant, size: Size, extra?: string) {
+  const base = "ff-btn";
+  const v =
+    variant === "primary"
+      ? "ff-btn-primary"
+      : variant === "secondary"
+      ? "ff-btn-secondary"
+      : "ff-btn-quiet";
+  const s =
+    size === "sm" ? "h-9 px-3 text-sm" : size === "lg" ? "h-12 px-6 text-base" : "h-10 px-5";
+  return [base, v, s, extra].filter(Boolean).join(" ");
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className, variant = "primary", size = "md", type = "button", children, ...props },
-  ref
-) {
+const Button: React.FC<Props> = ({
+  variant = "secondary",
+  size = "md",
+  as = "button",
+  href,
+  className,
+  children,
+  ...rest
+}) => {
+  const cls = classes(variant, size, className);
+
+  if (as === "a") {
+    return (
+      <a href={href} className={cls} {...(rest as any)}>
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <button
-      ref={ref}
-      type={type}
-      className={cn(base, variants[variant], sizes[size], className)}
-      {...props}
-    >
+    <button type="button" className={cls} {...rest}>
       {children}
     </button>
   );
-});
+};
 
 export default Button;
