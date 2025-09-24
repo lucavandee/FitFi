@@ -1,8 +1,7 @@
-/* src/styles/polish.css — Conservative v2.1
+/* src/styles/polish.css — Conservative v2.2
    - Geen globale h1/h2/p/a overrides
    - Opt-in utilities
-   - Tokens-first (geen hex)
-   - Extra fallback voor color-mix()
+   - Uitsluitend tokens (géén #kleuren)
 */
 
 /* ===== A11Y ===== */
@@ -22,12 +21,10 @@
   }
 }
 
-/* ===== NAV ===== */
+/* ===== NAV (scoped) ===== */
 header nav a[aria-current="page"],
 header .nav a.active {
-  /* Fallback: rustige surface-tint als color-mix niet ondersteund is */
-  background-color: var(--color-surface);
-  /* Preferred: subtiele accent-tint met mix */
+  background-color: var(--color-surface); /* fallback */
   background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
   color: var(--color-text);
   border: 1px solid var(--color-border);
@@ -45,7 +42,7 @@ header nav a:hover { color: var(--ff-color-primary-600); }
 .btn-primary,
 button[data-variant="primary"] {
   background: var(--ff-color-primary-700);
-  color: var(--color-on-primary, #fff);
+  color: var(--color-on-primary, var(--color-bg));
   border-radius: var(--radius-2xl);
   padding: 0.625rem 1.25rem;
   box-shadow: var(--shadow-soft);
@@ -81,10 +78,7 @@ button[data-variant="secondary"]:hover {
 
 /* ===== IMAGES (opt-in) ===== */
 .smart-image,
-.hero-image {
-  overflow: hidden;
-  border-radius: 1rem;
-}
+.hero-image { overflow: hidden; border-radius: 1rem; }
 
 /* ===== UTILITIES (opt-in) ===== */
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
