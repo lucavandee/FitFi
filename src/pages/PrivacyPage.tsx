@@ -1,53 +1,43 @@
-import React from 'react';
-import Seo from '@/components/Seo';
+// /src/pages/PrivacyPage.tsx
+import React from "react";
 
-const PrivacyPage: React.FC = () => {
+export default function PrivacyPage() {
   return (
-    <>
-      <Seo 
-        title="Privacy - FitFi"
-        description="Lees ons privacybeleid en ontdek hoe FitFi jouw persoonlijke gegevens beschermt en gebruikt."
-        canonical="https://fitfi.ai/privacy"
-      />
-      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-        <div className="max-w-4xl mx-auto px-4 py-16">
-          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-8">
-            Privacybeleid
-          </h1>
+    <main id="main" className="bg-bg text-text">
+      <section className="ff-container ff-stack-lg py-12 sm:py-14">
+        <header className="ff-stack">
+          <p className="text-sm text-text/70">Transparant en nuchter</p>
+          <h1 className="font-heading text-2xl sm:text-3xl">Privacyverklaring</h1>
+          <p className="text-text/80 max-w-2xl">
+            We verzamelen zo min mogelijk gegevens, uitsluitend om FitFi te laten werken en verbeteren. We verkopen nooit data.
+          </p>
+        </header>
 
-          <div className="prose prose-lg max-w-none text-[var(--color-text)]">
-            <p>Wij respecteren je privacy. Deze policy beschrijft welke persoonsgegevens we verwerken en waarom.</p>
+        <article className="ff-card p-5 ff-prose">
+          <h2>Welke gegevens verwerken we?</h2>
+          <ul>
+            <li>Accountgegevens (e-mail, wachtwoord-hash)</li>
+            <li>Stijlprofiel antwoorden (6 vragen)</li>
+            <li>Technische logs (beperkt, voor foutanalyse)</li>
+          </ul>
 
-            <h2>Verwerkingsdoelen</h2>
-            <ul>
-              <li>Account & dienstverlening (stijlquiz, rapporten, outfits).</li>
-              <li>Analytics (geanonimiseerd waar mogelijk) om de service te verbeteren.</li>
-              <li>Marketing (alleen met toestemming, opt-out altijd beschikbaar).</li>
-            </ul>
+          <h2>Waarom verwerken we die gegevens?</h2>
+          <p>Om outfits te genereren, je voorkeuren te bewaren en de app te beveiligen/verbeteren.</p>
 
-            <h2>Soorten gegevens</h2>
-            <ul>
-              <li>Profielgegevens die je actief invult (bv. maat/voorkeuren).</li>
-              <li>Technische data (device/OS, IP, cookie-ID's) t.b.v. beveiliging en analytics.</li>
-            </ul>
+          <h2>Hoe lang bewaren we je gegevens?</h2>
+          <p>Zo kort mogelijk. Je kunt verwijderen en export aanvragen via support.</p>
 
-            <h2>Rechtsgronden</h2>
-            <ul>
-              <li>Toestemming (bijv. voor marketing cookies/nieuwsbrief).</li>
-              <li>Uitvoering van overeenkomst (account/rapporten).</li>
-              <li>Gerechtvaardigd belang (beveiliging, misbruikpreventie).</li>
-            </ul>
+          <h2>Jouw rechten</h2>
+          <ul>
+            <li>Inzage, rectificatie en dataportabiliteit</li>
+            <li>Verwijderen van je account en gegevens</li>
+            <li>Bezwaar maken tegen verwerking</li>
+          </ul>
 
-            <h2>Bewaartermijnen & derden</h2>
-            <p>We bewaren niet langer dan nodig. We delen alleen data met verwerkers die onze dienst mogelijk maken en passende beveiliging bieden.</p>
-
-            <h2>Jouw rechten</h2>
-            <p>Je kunt inzage, correctie of verwijdering vragen via <a href="mailto:privacy@fitfi.ai">privacy@fitfi.ai</a>.</p>
-          </div>
-        </div>
-      </main>
-    </>
+          <h2>Contact</h2>
+          <p>Vragen? Mail <a href="mailto:privacy@fitfi.ai">privacy@fitfi.ai</a>.</p>
+        </article>
+      </section>
+    </main>
   );
-};
-
-export default PrivacyPage;
+}

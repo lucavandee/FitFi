@@ -1,28 +1,36 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import MarkdownPage from '../components/ui/MarkdownPage';
+// /src/pages/TermsPage.tsx
+import React from "react";
 
-const TermsPage: React.FC = () => {
+export default function TermsPage() {
   return (
-    <>
-      <Helmet>
-        <title>Algemene Voorwaarden - Gebruiksvoorwaarden FitFi | FitFi</title>
-        <meta name="description" content="Lees onze algemene voorwaarden en gebruiksvoorwaarden voor het gebruik van FitFi's AI-powered styling platform." />
-        <meta property="og:title" content="Algemene Voorwaarden - Gebruiksvoorwaarden FitFi" />
-        <meta property="og:description" content="Gebruiksvoorwaarden voor FitFi's AI-powered styling platform." />
-        <link rel="canonical" href="https://fitfi.app/algemene-voorwaarden" />
-      </Helmet>
-      
-      <MarkdownPage
-        title="Algemene Voorwaarden"
-        description="Gebruiksvoorwaarden voor FitFi"
-        markdownPath="/content/legal/algemene-voorwaarden.md"
-        downloadUrl="/documents/algemene-voorwaarden.pdf"
-        backLink="/"
-        backLabel="Terug naar home"
-      />
-    </>
-  );
-};
+    <main id="main" className="bg-bg text-text">
+      <section className="ff-container ff-stack-lg py-12 sm:py-14">
+        <header className="ff-stack">
+          <p className="text-sm text-text/70">Eerlijk en duidelijk</p>
+          <h1 className="font-heading text-2xl sm:text-3xl">Algemene voorwaarden</h1>
+          <p className="text-text/80 max-w-2xl">
+            De spelregels van onze dienst in begrijpelijke taal. Kort, nuchter en zonder verrassingen.
+          </p>
+        </header>
 
-export default TermsPage;
+        <article className="ff-card p-5 ff-prose">
+          <h2>Dienst</h2>
+          <p>FitFi levert stijladvies en outfitvoorstellen op basis van je input. Je behoudt controle over wat je koopt.</p>
+
+          <h2>Gebruik</h2>
+          <ul>
+            <li>Je account is persoonlijk; delen is niet toegestaan.</li>
+            <li>Misbruik (scraping, fraude) is verboden.</li>
+            <li>We verbeteren de dienst continu; features kunnen wijzigen.</li>
+          </ul>
+
+          <h2>Betaling/Abonnement</h2>
+          <p>Maandelijks of jaarlijks. Opzeggen kan op elk moment per eind van de periode.</p>
+
+          <h2>Aansprakelijkheid</h2>
+          <p>We streven naar juistheid en beschikbaarheid; indirecte schade is uitgesloten binnen de wettelijke grenzen.</p>
+        </article>
+      </section>
+    </main>
+  );
+}
