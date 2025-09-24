@@ -1,4 +1,3 @@
-// /src/pages/CookiesPage.tsx
 import React from "react";
 
 export default function CookiesPage() {
@@ -13,18 +12,22 @@ export default function CookiesPage() {
           </p>
         </header>
 
-        <article className="ff-card p-5 ff-prose">
-          <h2>Soorten cookies</h2>
-          <ul>
+        <article className="ff-card p-6 ff-prose max-w-4xl">
+          <h2 className="font-heading text-xl text-text">Soorten cookies</h2>
+          <ul className="text-text/90">
             <li><strong>Functioneel:</strong> sessie, taal, voorkeuren</li>
             <li><strong>Analytisch:</strong> geaggregeerd gebruik om te verbeteren</li>
           </ul>
 
-          <h2>Voorkeuren beheren</h2>
-          <p>Je kunt cookies beheren via je browserinstellingen. Functionele cookies zijn nodig om FitFi te laten werken.</p>
+          <h2 className="font-heading text-xl text-text">Voorkeuren beheren</h2>
+          <p className="text-text/90">
+            Je kunt cookies beheren via je browserinstellingen. Functionele cookies zijn nodig om FitFi te laten werken.
+          </p>
 
-          <h2>Bewaartermijn</h2>
-          <p>Kort en proportioneel. Technische logs verlopen automatisch.</p>
+          <h2 className="font-heading text-xl text-text">Bewaartermijn</h2>
+          <p className="text-text/90">
+            Kort en proportioneel. Technische logs verlopen automatisch.
+          </p>
         </article>
       </section>
     </main>

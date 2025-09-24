@@ -9,7 +9,14 @@ import App from "./App";
 import "./index.css";               // tokens + Tailwind
 import "@/styles/polish.addon.css"; // opt-in premium polish (laatste)
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -17,7 +24,17 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <App />
-          <Toaster position="top-center" />
+          <Toaster 
+            position="top-center"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: 'var(--color-surface)',
+                color: 'var(--color-text)',
+                border: '1px solid var(--color-border)',
+              },
+            }}
+          />
         </QueryClientProvider>
       </BrowserRouter>
     </HelmetProvider>

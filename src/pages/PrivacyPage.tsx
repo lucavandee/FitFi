@@ -1,4 +1,3 @@
-// /src/pages/PrivacyPage.tsx
 import React from "react";
 
 export default function PrivacyPage() {
@@ -13,29 +12,39 @@ export default function PrivacyPage() {
           </p>
         </header>
 
-        <article className="ff-card p-5 ff-prose">
-          <h2>Welke gegevens verwerken we?</h2>
-          <ul>
+        <article className="ff-card p-6 ff-prose max-w-4xl">
+          <h2 className="font-heading text-xl text-text">Welke gegevens verwerken we?</h2>
+          <ul className="text-text/90">
             <li>Accountgegevens (e-mail, wachtwoord-hash)</li>
             <li>Stijlprofiel antwoorden (6 vragen)</li>
             <li>Technische logs (beperkt, voor foutanalyse)</li>
           </ul>
 
-          <h2>Waarom verwerken we die gegevens?</h2>
-          <p>Om outfits te genereren, je voorkeuren te bewaren en de app te beveiligen/verbeteren.</p>
+          <h2 className="font-heading text-xl text-text">Waarom verwerken we die gegevens?</h2>
+          <p className="text-text/90">
+            Om outfits te genereren, je voorkeuren te bewaren en de app te beveiligen/verbeteren.
+          </p>
 
-          <h2>Hoe lang bewaren we je gegevens?</h2>
-          <p>Zo kort mogelijk. Je kunt verwijderen en export aanvragen via support.</p>
+          <h2 className="font-heading text-xl text-text">Hoe lang bewaren we je gegevens?</h2>
+          <p className="text-text/90">
+            Zo kort mogelijk. Je kunt verwijderen en export aanvragen via support.
+          </p>
 
-          <h2>Jouw rechten</h2>
-          <ul>
+          <h2 className="font-heading text-xl text-text">Jouw rechten</h2>
+          <ul className="text-text/90">
             <li>Inzage, rectificatie en dataportabiliteit</li>
             <li>Verwijderen van je account en gegevens</li>
             <li>Bezwaar maken tegen verwerking</li>
           </ul>
 
-          <h2>Contact</h2>
-          <p>Vragen? Mail <a href="mailto:privacy@fitfi.ai">privacy@fitfi.ai</a>.</p>
+          <h2 className="font-heading text-xl text-text">Contact</h2>
+          <p className="text-text/90">
+            Vragen? Mail{" "}
+            <a href="mailto:privacy@fitfi.ai" className="text-primary underline">
+              privacy@fitfi.ai
+            </a>
+            .
+          </p>
         </article>
       </section>
     </main>

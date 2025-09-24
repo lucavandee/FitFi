@@ -1,4 +1,3 @@
-// /src/pages/TermsPage.tsx
 import React from "react";
 
 export default function TermsPage() {
@@ -13,22 +12,28 @@ export default function TermsPage() {
           </p>
         </header>
 
-        <article className="ff-card p-5 ff-prose">
-          <h2>Dienst</h2>
-          <p>FitFi levert stijladvies en outfitvoorstellen op basis van je input. Je behoudt controle over wat je koopt.</p>
+        <article className="ff-card p-6 ff-prose max-w-4xl">
+          <h2 className="font-heading text-xl text-text">Dienst</h2>
+          <p className="text-text/90">
+            FitFi levert stijladvies en outfitvoorstellen op basis van je input. Je behoudt controle over wat je koopt.
+          </p>
 
-          <h2>Gebruik</h2>
-          <ul>
+          <h2 className="font-heading text-xl text-text">Gebruik</h2>
+          <ul className="text-text/90">
             <li>Je account is persoonlijk; delen is niet toegestaan.</li>
             <li>Misbruik (scraping, fraude) is verboden.</li>
             <li>We verbeteren de dienst continu; features kunnen wijzigen.</li>
           </ul>
 
-          <h2>Betaling/Abonnement</h2>
-          <p>Maandelijks of jaarlijks. Opzeggen kan op elk moment per eind van de periode.</p>
+          <h2 className="font-heading text-xl text-text">Betaling/Abonnement</h2>
+          <p className="text-text/90">
+            Maandelijks of jaarlijks. Opzeggen kan op elk moment per eind van de periode.
+          </p>
 
-          <h2>Aansprakelijkheid</h2>
-          <p>We streven naar juistheid en beschikbaarheid; indirecte schade is uitgesloten binnen de wettelijke grenzen.</p>
+          <h2 className="font-heading text-xl text-text">Aansprakelijkheid</h2>
+          <p className="text-text/90">
+            We streven naar juistheid en beschikbaarheid; indirecte schade is uitgesloten binnen de wettelijke grenzen.
+          </p>
         </article>
       </section>
     </main>
