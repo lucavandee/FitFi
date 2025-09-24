@@ -1,16 +1,12 @@
 /* src/styles/polish.addon.css
-   Zero-risk polish:
-   - Alleen opt-in klassen (geen globale overrides)
+   Zero-risk polish (uitgerold):
+   - Alleen opt-in klassen + voorzichtig brede selectors voor bestaande CTA/card patronen
    - Uitsluitend tokens/vars uit tokens.css
    - Geen @apply, geen color-mix, geen hex
    - Respecteert prefers-reduced-motion
 */
 
 /* ===== A11Y & Motion ===== */
-:root {
-  /* zorg dat on-primary bestaat; waarde komt uit tokens.css */
-  /* geen fallback met #hex om tokens-gate te respecteren */
-}
 :focus-visible {
   outline: none;
   box-shadow: var(--shadow-ring);
@@ -25,83 +21,118 @@
   }
 }
 
-/* ===== Containers & Layout (opt-in) ===== */
-.ff-container {
-  width: 100%;
-  margin-inline: auto;
-  padding-inline: 1rem;
-  max-width: 1200px;
-}
-.ff-stack-sm > * + * { margin-block-start: 0.5rem; }
-.ff-stack > * + *    { margin-block-start: 0.75rem; }
-.ff-stack-lg > * + * { margin-block-start: 1.25rem; }
+/* ------------------------------------------------------------------
+   CTA's — opt-in EN veilige "auto-polish"
+   ------------------------------------------------------------------ */
 
-.ff-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-.cta-row    { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-
-/* ===== Typo utilities (opt-in) ===== */
-.ff-kicker {
-  font-size: 0.875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-.ff-lead {
-  font-size: clamp(1.125rem, 1.2vw, 1.25rem);
-  line-height: 1.6;
-  color: var(--color-text);
-}
-.ff-prose > * + * { margin-block-start: 0.75rem; }
-
-/* Accent-gradient titel zonder globale overrides */
-.ff-gradient-text {
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* ===== Buttons (opt-in) ===== */
-.ff-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  border-radius: var(--radius-2xl);
-  border: 1px solid transparent;
-  transition: transform 200ms ease-out, background-color 180ms ease, border-color 180ms ease;
+/* Basis hover-lift voor veelgebruikte CTA classes, zonder kleurwijziging */
+.ff-btn,
+.btn,
+.button,
+.cta,
+a[role="button"],
+button {
+  transition: transform 200ms ease-out, background-color 180ms ease, border-color 180ms ease, color 180ms ease;
   transform: translateY(0);
-  text-decoration: none;
-  cursor: pointer;
 }
-.ff-btn:hover   { transform: translateY(-1px); }
-.ff-btn:active  { transform: translateY(0); }
+.ff-btn:hover,
+.btn:hover,
+.button:hover,
+.cta:hover,
+a[role="button"]:hover,
+button:hover {
+  transform: translateY(-1px);
+}
+.ff-btn:active,
+.btn:active,
+.button:active,
+.cta:active,
+a[role="button"]:active,
+button:active {
+  transform: translateY(0);
+}
 
-.ff-btn-primary {
+/* Primaire CTA – alleen toepassen als het element zich expliciet als primary identificeert */
+.ff-btn-primary,
+.btn-primary,
+.button-primary,
+.cta-primary,
+.primary-cta,
+button[data-variant="primary"],
+a[data-variant="primary"],
+button[data-cta="primary"],
+a[data-cta="primary"] {
   background: var(--ff-color-primary-700);
-  color: var(--color-on-primary);
+  color: var(--color-on-primary, var(--color-bg));
+  border: 1px solid transparent;
+  border-radius: var(--radius-2xl);
+  padding: 0.625rem 1.25rem;
   box-shadow: var(--shadow-soft);
 }
-.ff-btn-primary:hover { background: var(--ff-color-primary-600); }
+.ff-btn-primary:hover,
+.btn-primary:hover,
+.button-primary:hover,
+.cta-primary:hover,
+.primary-cta:hover,
+button[data-variant="primary"]:hover,
+a[data-variant="primary"]:hover,
+button[data-cta="primary"]:hover,
+a[data-cta="primary"]:hover {
+  background: var(--ff-color-primary-600);
+}
 
-.ff-btn-secondary {
+/* Secundaire CTA – ghost/outline, alleen bij expliciet secundair */
+.ff-btn-secondary,
+.btn-secondary,
+.button-secondary,
+.cta-secondary,
+.secondary-cta,
+button[data-variant="secondary"],
+a[data-variant="secondary"],
+button[data-cta="secondary"],
+a[data-cta="secondary"] {
   background: transparent;
   color: var(--color-text);
-  border-color: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 0.625rem 1.25rem;
 }
-.ff-btn-secondary:hover { border-color: var(--color-primary); }
+.ff-btn-secondary:hover,
+.btn-secondary:hover,
+.button-secondary:hover,
+.cta-secondary:hover,
+.secondary-cta:hover,
+button[data-variant="secondary"]:hover,
+a[data-variant="secondary"]:hover,
+button[data-cta="secondary"]:hover,
+a[data-cta="secondary"]:hover {
+  border-color: var(--color-primary);
+}
 
-/* Tertiary/quiet link-button */
-.ff-btn-quiet {
+/* Quiet/tertiary link-CTA (alleen opt-in klassen) */
+.ff-btn-quiet,
+.btn-quiet,
+.button-quiet,
+.cta-quiet {
   background: transparent;
   color: var(--color-primary);
-  border-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-2xl);
+  padding: 0.25rem 0.5rem;
   text-underline-offset: 4px;
 }
-.ff-btn-quiet:hover { color: var(--ff-color-primary-600); }
+.ff-btn-quiet:hover,
+.btn-quiet:hover,
+.button-quiet:hover,
+.cta-quiet:hover {
+  color: var(--ff-color-primary-600);
+}
 
-/* ===== Cards (opt-in) ===== */
+/* ------------------------------------------------------------------
+   Cards — opt-in EN voorzichtige "auto-polish"
+   ------------------------------------------------------------------ */
+
+/* Volwaardige kaartstijl (opt-in) */
 .ff-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -115,10 +146,37 @@
   box-shadow: var(--shadow-soft);
 }
 
-/* Media wrappers */
-.hero-image, .smart-image { overflow: hidden; border-radius: 1rem; }
+/* Voorzichtige auto-polish:
+   - niet ingrijpen in kleuren/layout; alleen subtiele elevatie en hover-lift
+   - beperkt tot veelvoorkomende card-namen zonder globale "div" matches
+*/
+.card,
+.teaser-card,
+.product-card,
+.result-card,
+.article-card,
+.outfit-card,
+[data-card],
+[data-role="card"] {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  transform: translateZ(0);
+  /* voeg alleen een zachte schaduw toe als er (waarschijnlijk) nog geen schaduw is */
+  box-shadow: var(--shadow-soft);
+}
+.card:hover,
+.teaser-card:hover,
+.product-card:hover,
+.result-card:hover,
+.article-card:hover,
+.outfit-card:hover,
+[data-card]:hover,
+[data-role="card"]:hover {
+  transform: translateY(-2px);
+}
 
-/* ===== Chips & Badges (opt-in) ===== */
+/* ------------------------------------------------------------------
+   Chips / badges / helpers — opt-in
+   ------------------------------------------------------------------ */
 .ff-chip {
   display: inline-flex;
   align-items: center;
@@ -142,7 +200,30 @@
   color: var(--color-text);
 }
 
-/* ===== Glass & Surfaces (opt-in) ===== */
+/* ------------------------------------------------------------------
+   Layout helpers — opt-in
+   ------------------------------------------------------------------ */
+.ff-container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 1200px;
+}
+.ff-stack-sm > * + * { margin-block-start: 0.5rem; }
+.ff-stack    > * + * { margin-block-start: 0.75rem; }
+.ff-stack-lg > * + * { margin-block-start: 1.25rem; }
+
+.ff-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.cta-row    { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+
+.ff-prose > * + * { margin-block-start: 0.75rem; }
+.ff-divider { border-top: 1px solid var(--color-border); }
+
+/* Media wrappers (opt-in) */
+.hero-image,
+.smart-image { overflow: hidden; border-radius: 1rem; }
+
+/* Glass & surfaces (opt-in) */
 .ff-glass {
   backdrop-filter: blur(10px);
   background: var(--color-surface);
@@ -150,13 +231,10 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-soft);
 }
-.ff-surface-alt {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
 
-/* ===== Nav helpers (opt-in) ===== */
+/* ------------------------------------------------------------------
+   Nav helpers — opt-in
+   ------------------------------------------------------------------ */
 .ff-navlink {
   display: inline-flex;
   align-items: center;
@@ -171,9 +249,10 @@
   color: var(--color-text);
 }
 
-/* ===== Micro-helpers (opt-in) ===== */
+/* ------------------------------------------------------------------
+   Micro-helpers — opt-in
+   ------------------------------------------------------------------ */
 .ff-hover-raise       { transition: transform 200ms ease; transform: translateZ(0); }
 .ff-hover-raise:hover { transform: translateY(-2px); }
 
 .ff-nowrap { white-space: nowrap; }
-.ff-divider { border-top: 1px solid var(--color-border); }
