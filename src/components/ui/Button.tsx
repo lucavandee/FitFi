@@ -1,4 +1,3 @@
-// /src/components/ui/Button.tsx
 import React from "react";
 
 type Variant = "primary" | "secondary" | "quiet";
@@ -19,12 +18,11 @@ function classes(variant: Variant, size: Size, extra?: string) {
       : variant === "secondary"
       ? "ff-btn-secondary"
       : "ff-btn-quiet";
-  const s =
-    size === "sm" ? "h-9 px-3 text-sm" : size === "lg" ? "h-12 px-6 text-base" : "h-10 px-5";
+  const s = size === "sm" ? "h-9 px-3" : size === "lg" ? "h-12 px-6" : "h-10 px-5";
   return [base, v, s, extra].filter(Boolean).join(" ");
 }
 
-const Button: React.FC<Props> = ({
+export default function Button({
   variant = "secondary",
   size = "md",
   as = "button",
@@ -32,22 +30,8 @@ const Button: React.FC<Props> = ({
   className,
   children,
   ...rest
-}) => {
+}: Props) {
   const cls = classes(variant, size, className);
-
-  if (as === "a") {
-    return (
-      <a href={href} className={cls} {...(rest as any)}>
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <button type="button" className={cls} {...rest}>
-      {children}
-    </button>
-  );
-};
-
-export default Button;
+  if (as === "a") return <a href={href} className={cls} {...(rest as any)}>{children}</a>;
+  return <button type="button" className={cls} {...rest}>{children}</button>;
+}

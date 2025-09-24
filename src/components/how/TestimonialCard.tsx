@@ -1,24 +1,11 @@
-// /src/components/how/TestimonialCard.tsx
 import React from "react";
-import { Quote } from "lucide-react";
 
-type Props = {
-  quote: string;
-  author: string;
-  role?: string;
-};
-
-const TestimonialCard: React.FC<Props> = ({ quote, author, role }) => {
+export default function TestimonialCard({ quote, author }: { quote: string; author: string; }) {
   return (
     <figure className="ff-card p-5 ff-hover-raise">
-      <Quote aria-hidden className="w-5 h-5 text-text/60" />
+      <div aria-hidden className="text-text/60">"</div>
       <blockquote className="mt-3 text-text">{quote}</blockquote>
-      <figcaption className="mt-4 text-sm text-text/70">
-        <span className="font-medium">{author}</span>
-        {role ? <span className="ml-1">• {role}</span> : null}
-      </figcaption>
+      <figcaption className="mt-4 text-sm text-text/70">— {author}</figcaption>
     </figure>
   );
-};
-
-export default TestimonialCard;
+}

@@ -1,41 +1,28 @@
-// src/pages/AboutPage.tsx
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-/**
- * AboutPage — tokens-first + ff-utilities
- * - Hero split + teamgrid
- * - Geen globale overrides; opt-in klassen
- */
-
-type Value = { title: string; desc: string };
-type Metric = { label: string; value: string; help?: string };
-
-const VALUES: Value[] = [
-  { title: "Persoonlijk, niet generiek", desc: "We vertalen jouw stijl naar outfits die kloppen – van silhouet tot materiaal en kleur." },
-  { title: "Minimal & warm", desc: "Premium, rustig en functioneel. Elke pixel heeft een reden, geen ruis of drukte." },
-  { title: "Eerlijke aanbevelingen", desc: "We linken soms naar shops, maar advies blijft stijl- en pasvorm-gedreven." },
+const VALUES = [
+  { title: "Persoonlijk, niet generiek", desc: "We vertalen jouw stijl naar outfits die kloppen – van silhouet tot kleur." },
+  { title: "Minimal & warm", desc: "Premium, rustig en functioneel. Geen ruis of drukte." },
+  { title: "Eerlijke aanbevelingen", desc: "We linken soms naar shops, maar advies blijft stijl- en pasvorm-gedreven." }
 ];
 
-const METRICS: Metric[] = [
+const METRICS = [
   { label: "Vragen naar stijlprofiel", value: "6", help: "Klaar in ±2 min" },
   { label: "Outfits in Starter", value: "3", help: "Per maand" },
   { label: "Outfits in Pro", value: "10", help: "Per maand" },
-  { label: "Shoplinks & alerts", value: "✓", help: "Optioneel" },
+  { label: "Shoplinks & alerts", value: "✓", help: "Optioneel" }
 ];
 
 export default function AboutPage() {
   return (
     <main id="main" className="ff-container ff-stack-lg bg-surface text-text">
-      {/* Hero */}
       <section className="ff-about-hero mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <div>
+        <div className="ff-stack">
           <p className="text-sm text-text/70">Over FitFi</p>
-          <h1 className="font-heading text-2xl sm:text-3xl ff-text-balance">Wij maken kleden weer makkelijk</h1>
-          <p className="mt-2 text-text/80">
-            Geen eindeloos scrollen. Gewoon outfits die passen bij jouw smaak en leven. Nuchter, slim en prettig.
-          </p>
-          <div className="mt-4 cta-row">
+          <h1 className="font-heading text-2xl sm:text-3xl">Wij maken kleden weer makkelijk</h1>
+          <p className="text-text/80">Geen eindeloos scrollen. Gewoon outfits die passen bij jouw smaak en leven.</p>
+          <div className="cta-row">
             <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
             <NavLink to="/prijzen" className="ff-btn ff-btn-primary">Proberen</NavLink>
           </div>
@@ -45,7 +32,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Waarden + metrics */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-4 md:grid-cols-3">
           {VALUES.map((v, i) => (
@@ -67,7 +53,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team */}
       <section className="ff-container ff-team-grid px-4 sm:px-6 lg:px-8 py-8">
         {[1,2,3].map((n) => (
           <article key={n} className="ff-team-card">
