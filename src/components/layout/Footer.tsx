@@ -27,10 +27,12 @@ export default function Footer() {
             <p className="text-text/80">Rust in je garderobe. Outfits die kloppen — elke dag.</p>
           </div>
 
-        <nav aria-label="Footer" className="grid grid-cols-2 sm:grid-cols-3 gap-8">
+          <nav aria-label="Footer" className="grid grid-cols-2 sm:grid-cols-3 gap-8">
             <div>
               <h3 className="text-sm font-semibold text-text/80">Product</h3>
-              <ul className="mt-2 ff-stack-sm">{productLinks.map((l) => <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>)}</ul>
+              <ul className="mt-2 ff-stack-sm">
+                {productLinks.map((l) => <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>)}
+              </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-text/80">Resources</h3>
@@ -42,7 +44,9 @@ export default function Footer() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-text/80">Juridisch</h3>
-              <ul className="mt-2 ff-stack-sm">{legalLinks.map((l) => <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>)}</ul>
+              <ul className="mt-2 ff-stack-sm">
+                {legalLinks.map((l) => <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>)}
+              </ul>
             </div>
           </nav>
         </div>
