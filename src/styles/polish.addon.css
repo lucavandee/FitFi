@@ -1,60 +1,29 @@
 /* src/styles/polish.addon.css
-   Zero-risk polish (uitgerold):
-   - Alleen opt-in klassen + voorzichtige auto-polish voor gangbare CTA/card-patronen
+   Zero-risk premium polish:
+   - Alleen opt-in klassen + voorzichtige auto-polish (CTA/card)
    - Uitsluitend tokens/vars (geen hex, geen @apply, geen color-mix)
    - Respecteert prefers-reduced-motion
 */
 
 /* ===== A11Y & Motion ===== */
-:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-  border-radius: 0.5rem;
-}
+:focus-visible { outline: none; box-shadow: var(--shadow-ring); border-radius: 0.5rem; }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
 }
 
 /* ------------------------------------------------------------------
    CTA's — opt-in ÉN veilige "auto-polish"
    ------------------------------------------------------------------ */
-.ff-btn,
-.btn,
-.button,
-.cta,
-a[role="button"],
-button {
+.ff-btn,.btn,.button,.cta,a[role="button"],button {
   transition: transform 200ms ease-out, background-color 180ms ease, border-color 180ms ease, color 180ms ease;
   transform: translateY(0);
 }
-.ff-btn:hover,
-.btn:hover,
-.button:hover,
-.cta:hover,
-a[role="button"]:hover,
-button:hover { transform: translateY(-1px); }
-.ff-btn:active,
-.btn:active,
-.button:active,
-.cta:active,
-a[role="button"]:active,
-button:active { transform: translateY(0); }
+.ff-btn:hover,.btn:hover,.button:hover,.cta:hover,a[role="button"]:hover,button:hover { transform: translateY(-1px); }
+.ff-btn:active,.btn:active,.button:active,.cta:active,a[role="button"]:active,button:active { transform: translateY(0); }
 
 /* Primaire CTA – alleen als expliciet "primary" */
-.ff-btn-primary,
-.btn-primary,
-.button-primary,
-.cta-primary,
-.primary-cta,
-button[data-variant="primary"],
-a[data-variant="primary"],
-button[data-cta="primary"],
-a[data-cta="primary"] {
+.ff-btn-primary,.btn-primary,.button-primary,.cta-primary,.primary-cta,
+button[data-variant="primary"],a[data-variant="primary"],button[data-cta="primary"],a[data-cta="primary"]{
   background: var(--ff-color-primary-700);
   color: var(--color-on-primary, var(--color-bg));
   border: 1px solid transparent;
@@ -62,180 +31,125 @@ a[data-cta="primary"] {
   padding: 0.625rem 1.25rem;
   box-shadow: var(--shadow-soft);
 }
-.ff-btn-primary:hover,
-.btn-primary:hover,
-.button-primary:hover,
-.cta-primary:hover,
-.primary-cta:hover,
-button[data-variant="primary"]:hover,
-a[data-variant="primary"]:hover,
-button[data-cta="primary"]:hover,
-a[data-cta="primary"]:hover {
+.ff-btn-primary:hover,.btn-primary:hover,.button-primary:hover,.cta-primary:hover,.primary-cta:hover,
+button[data-variant="primary"]:hover,a[data-variant="primary"]:hover,button[data-cta="primary"]:hover,a[data-cta="primary"]:hover{
   background: var(--ff-color-primary-600);
 }
 
 /* Secundaire CTA – ghost/outline */
-.ff-btn-secondary,
-.btn-secondary,
-.button-secondary,
-.cta-secondary,
-.secondary-cta,
-button[data-variant="secondary"],
-a[data-variant="secondary"],
-button[data-cta="secondary"],
-a[data-cta="secondary"] {
+.ff-btn-secondary,.btn-secondary,.button-secondary,.cta-secondary,.secondary-cta,
+button[data-variant="secondary"],a[data-variant="secondary"],button[data-cta="secondary"],a[data-cta="secondary"]{
   background: transparent;
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   padding: 0.625rem 1.25rem;
 }
-.ff-btn-secondary:hover,
-.btn-secondary:hover,
-.button-secondary:hover,
-.cta-secondary:hover,
-.secondary-cta:hover,
-button[data-variant="secondary"]:hover,
-a[data-variant="secondary"]:hover,
-button[data-cta="secondary"]:hover,
-a[data-cta="secondary"]:hover {
+.ff-btn-secondary:hover,.btn-secondary:hover,.button-secondary:hover,.cta-secondary:hover,.secondary-cta:hover,
+button[data-variant="secondary"]:hover,a[data-variant="secondary"]:hover,button[data-cta="secondary"]:hover,a[data-cta="secondary"]:hover{
   border-color: var(--color-primary);
 }
 
 /* Quiet/tertiary link-CTA (opt-in) */
-.ff-btn-quiet,
-.btn-quiet,
-.button-quiet,
-.cta-quiet {
-  background: transparent;
-  color: var(--color-primary);
-  border: 1px solid transparent;
-  border-radius: var(--radius-2xl);
-  padding: 0.25rem 0.5rem;
-  text-underline-offset: 4px;
+.ff-btn-quiet,.btn-quiet,.button-quiet,.cta-quiet{
+  background: transparent; color: var(--color-primary); border: 1px solid transparent;
+  border-radius: var(--radius-2xl); padding: .25rem .5rem; text-underline-offset: 4px;
 }
-.ff-btn-quiet:hover,
-.btn-quiet:hover,
-.button-quiet:hover,
-.cta-quiet:hover {
-  color: var(--ff-color-primary-600);
-}
+.ff-btn-quiet:hover,.btn-quiet:hover,.button-quiet:hover,.cta-quiet:hover{ color: var(--ff-color-primary-600); }
 
 /* ------------------------------------------------------------------
    Cards — opt-in ÉN voorzichtige auto-polish
    ------------------------------------------------------------------ */
 /* Volwaardige kaartstijl (opt-in) */
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-  transform: translateZ(0);
+.ff-card{
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-soft);
+  transition: transform 200ms ease, box-shadow 200ms ease; transform: translateZ(0);
 }
-.ff-card:hover {
+.ff-card:hover{ transform: translateY(-2px); }
+
+/* Voorzichtige auto-polish (subtiele elevatie/hover-lift) */
+.card,.teaser-card,.product-card,.result-card,.article-card,.outfit-card,[data-card],[data-role="card"]{
+  transition: transform 200ms ease, box-shadow 200ms ease; transform: translateZ(0); box-shadow: var(--shadow-soft);
+}
+.card:hover,.teaser-card:hover,.product-card:hover,.result-card:hover,.article-card:hover,.outfit-card:hover,[data-card]:hover,[data-role="card"]:hover{
   transform: translateY(-2px);
-}
-
-/* Voorzichtige auto-polish: subtiele elevatie/hover-lift, geen kleur/layout-wijziging */
-.card,
-.teaser-card,
-.product-card,
-.result-card,
-.article-card,
-.outfit-card,
-[data-card],
-[data-role="card"] {
-  transition: transform 200ms ease, box-shadow 200ms ease;
-  transform: translateZ(0);
-  box-shadow: var(--shadow-soft);
-}
-.card:hover,
-.teaser-card:hover,
-.product-card:hover,
-.result-card:hover,
-.article-card:hover,
-.outfit-card:hover,
-[data-card]:hover,
-[data-role="card"]:hover {
-  transform: translateY(-2px);
-}
-
-/* ------------------------------------------------------------------
-   Chips / badges / helpers — opt-in
-   ------------------------------------------------------------------ */
-.ff-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-}
-
-.ff-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  font-size: 0.75rem;
-  color: var(--color-text);
 }
 
 /* ------------------------------------------------------------------
    Layout helpers — opt-in
    ------------------------------------------------------------------ */
-.ff-container { width: 100%; margin-inline: auto; padding-inline: 1rem; max-width: 1200px; }
-.ff-stack-sm > * + * { margin-block-start: 0.5rem; }
-.ff-stack    > * + * { margin-block-start: 0.75rem; }
-.ff-stack-lg > * + * { margin-block-start: 1.25rem; }
-.ff-cluster  { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-.cta-row     { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-
-.ff-prose > * + * { margin-block-start: 0.75rem; }
-.ff-divider { border-top: 1px solid var(--color-border); }
-
-/* Media wrappers (opt-in) */
-.hero-image, .smart-image { overflow: hidden; border-radius: 1rem; }
-
-/* Glass & surfaces (opt-in) */
-.ff-glass {
-  backdrop-filter: blur(10px);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-soft);
-}
+.ff-container{ width:100%; margin-inline:auto; padding-inline:1rem; max-width:1200px; }
+.ff-stack-sm>*+*{ margin-block-start:.5rem; }
+.ff-stack>*+*   { margin-block-start:.75rem; }
+.ff-stack-lg>*+*{ margin-block-start:1.25rem; }
+.ff-cluster{ display:flex; flex-wrap:wrap; align-items:center; gap:.75rem; }
+.cta-row   { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem; }
+.ff-prose>*+*{ margin-block-start:.75rem; }
+.ff-divider{ border-top:1px solid var(--color-border); }
+.hero-image,.smart-image{ overflow:hidden; border-radius:1rem; }
 
 /* ------------------------------------------------------------------
    Nav helpers — opt-in
    ------------------------------------------------------------------ */
-.ff-navlink {
-  display: inline-flex;
-  align-items: center;
-  border-radius: var(--radius-2xl);
-  padding: 0.375rem 0.75rem;
-  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
-}
-.ff-navlink:hover { color: var(--ff-color-primary-600); }
-
-/* ← Dit sluit aan op jouw bestaande markup: */
-.ff-nav-active {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  border-radius: var(--radius-2xl);
-  padding: 0.375rem 0.75rem;
-}
+.ff-navlink{ display:inline-flex; align-items:center; border-radius:var(--radius-2xl); padding:.375rem .75rem; transition:color 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+.ff-navlink:hover{ color:var(--ff-color-primary-600); }
+.ff-nav-active{ background:var(--color-surface); border:1px solid var(--color-border); color:var(--color-text); border-radius:var(--radius-2xl); padding:.375rem .75rem; }
 
 /* ------------------------------------------------------------------
-   Micro-helpers — opt-in
+   PAGE KITS (opt-in) — voor de 5 doelpagina's
    ------------------------------------------------------------------ */
-.ff-hover-raise       { transition: transform 200ms ease; transform: translateZ(0); }
-.ff-hover-raise:hover { transform: translateY(-2px); }
-.ff-nowrap { white-space: nowrap; }
+
+/* === Hoe het werkt — stappenraster === */
+.ff-steps{ display:grid; gap:1rem; }
+@media (min-width:640px){ .ff-steps{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (min-width:1024px){ .ff-steps{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
+.ff-step{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); padding:1rem; }
+.ff-step-index{ width:2rem; height:2rem; display:inline-grid; place-items:center; border-radius:9999px; background:var(--ff-color-primary-700); color:var(--color-on-primary, var(--color-bg)); font-weight:600; margin-bottom:.5rem; }
+.ff-step-title{ font-weight:600; color:var(--color-text); margin-bottom:.25rem; }
+.ff-step-desc{ color:var(--color-text); opacity:.9; }
+
+/* === Prijzen — pricing grid/cards === */
+.ff-price-grid{ display:grid; gap:1rem; align-items:stretch; }
+@media (min-width:768px){ .ff-price-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.ff-price-card{
+  background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-xl); box-shadow:var(--shadow-soft);
+  padding:1.25rem; display:flex; flex-direction:column; gap:1rem;
+}
+.ff-price-card.is-featured{ outline:2px solid var(--ff-color-primary-700); outline-offset:2px; }
+.ff-price-header{ display:flex; align-items:baseline; justify-content:space-between; }
+.ff-price-name{ font-weight:700; color:var(--color-text); }
+.ff-price-value{ font-weight:800; font-size:1.75rem; color:var(--color-text); }
+.ff-feature-list{ list-style:none; padding:0; margin:0; display:grid; gap:.5rem; }
+.ff-feature-list li{ display:flex; align-items:center; gap:.5rem; color:var(--color-text); }
+.ff-price-actions{ margin-top:auto; display:flex; gap:.5rem; }
+
+/* === Over ons — hero + team === */
+.ff-about-hero{ display:grid; gap:1rem; align-items:center; }
+@media (min-width:1024px){ .ff-about-hero{ grid-template-columns:1.1fr .9fr; } }
+.ff-about-hero .media{ border-radius:var(--radius-2xl); overflow:hidden; box-shadow:var(--shadow-soft); }
+.ff-team-grid{ display:grid; gap:1rem; }
+@media (min-width:768px){ .ff-team-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.ff-team-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); padding:1rem; text-align:center; }
+.ff-team-card img{ width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:var(--radius-lg); }
+.ff-team-name{ font-weight:700; margin-top:.5rem; }
+.ff-team-role{ color:var(--color-muted); font-size:.9rem; }
+
+/* === FAQ — accordion look (structure-agnostic, opt-in) === */
+.ff-faq{ display:grid; gap:.75rem; }
+.ff-accordion{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); }
+.ff-accordion .head{ display:flex; justify-content:space-between; align-items:center; padding:1rem; cursor:pointer; }
+.ff-accordion .title{ font-weight:600; color:var(--color-text); }
+.ff-accordion .content{ padding:0 1rem 1rem 1rem; color:var(--color-text); }
+details.ff-accordion summary{ list-style:none; }
+details.ff-accordion summary::-webkit-details-marker{ display:none; }
+
+/* === Blog — grid + cards === */
+.ff-blog-grid{ display:grid; gap:1rem; }
+@media (min-width:768px){ .ff-blog-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.ff-blog-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); overflow:hidden; display:flex; flex-direction:column; }
+.ff-blog-card img{ width:100%; aspect-ratio:16/9; object-fit:cover; }
+.ff-blog-meta{ display:flex; gap:.5rem; align-items:center; padding:0.75rem 1rem; color:var(--color-muted); font-size:.9rem; }
+.ff-blog-title{ padding:0 1rem .5rem 1rem; font-weight:700; color:var(--color-text); }
+.ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color:var(--color-text); opacity:.95; }
+.ff-blog-actions{ margin-top:auto; padding:0 1rem 1rem 1rem; }
