@@ -1,150 +1,179 @@
 /* src/styles/polish.addon.css
-   Additieve premium polish — tokens-first, géén hex, nul globale overrides.
-   Prefix: .ff-  → voorkomt conflicten met bestaande 3000+ regels in polish.css.
-   Bronvariabelen: src/styles/tokens.css
+   Zero-risk polish:
+   - Alleen opt-in klassen (geen globale overrides)
+   - Uitsluitend tokens/vars uit tokens.css
+   - Geen @apply, geen color-mix, geen hex
+   - Respecteert prefers-reduced-motion
 */
 
-/* ---------- Helpers & focus ---------- */
-
-.ff-text-balance { text-wrap: balance; }
-.ff-text-pretty  { text-wrap: pretty; }
-.ff-antialiased  { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-
-.ff-focus-ring { outline: none; box-shadow: var(--shadow-ring); }
-.ff-focus-ring:focus-visible { outline: none; box-shadow: var(--shadow-ring); }
-
-/* ---------- Cards & chips ---------- */
-
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+/* ===== A11Y & Motion ===== */
+:root {
+  /* zorg dat on-primary bestaat; waarde komt uit tokens.css */
+  /* geen fallback met #hex om tokens-gate te respecteren */
+}
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: 0.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.ff-chip {
-  --_chip-bg: color-mix(in oklab, var(--color-surface) 92%, var(--color-text));
-  background: var(--_chip-bg);
-  border: 1px solid var(--color-border);
+/* ===== Containers & Layout (opt-in) ===== */
+.ff-container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 1200px;
+}
+.ff-stack-sm > * + * { margin-block-start: 0.5rem; }
+.ff-stack > * + *    { margin-block-start: 0.75rem; }
+.ff-stack-lg > * + * { margin-block-start: 1.25rem; }
+
+.ff-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.cta-row    { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+
+/* ===== Typo utilities (opt-in) ===== */
+.ff-kicker {
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.ff-lead {
+  font-size: clamp(1.125rem, 1.2vw, 1.25rem);
+  line-height: 1.6;
   color: var(--color-text);
-  border-radius: calc(var(--radius-lg) / 1.5);
-  padding: 0.25rem 0.625rem;
-  line-height: 1.15;
 }
-.ff-chip--active {
-  background: color-mix(in oklab, var(--ff-color-primary-700) 12%, var(--color-surface));
-  border-color: color-mix(in oklab, var(--ff-color-primary-700) 35%, var(--color-border));
+.ff-prose > * + * { margin-block-start: 0.75rem; }
+
+/* Accent-gradient titel zonder globale overrides */
+.ff-gradient-text {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* ---------- Buttons (conform CTA-regels) ---------- */
-
+/* ===== Buttons (opt-in) ===== */
 .ff-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: .5rem; height: 2.5rem; padding-inline: .875rem;
-  border-radius: calc(var(--radius-lg) - 2px);
-  border: 1px solid transparent; font-weight: 600; line-height: 1;
-  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-2xl);
+  border: 1px solid transparent;
+  transition: transform 200ms ease-out, background-color 180ms ease, border-color 180ms ease;
+  transform: translateY(0);
+  text-decoration: none;
+  cursor: pointer;
 }
-.ff-btn:focus-visible { box-shadow: var(--shadow-ring); }
+.ff-btn:hover   { transform: translateY(-1px); }
+.ff-btn:active  { transform: translateY(0); }
 
 .ff-btn-primary {
   background: var(--ff-color-primary-700);
-  color: #fff; /* toegestaan: CTA-tekst wit volgens CTA-regels */
-  border-color: color-mix(in oklab, var(--ff-color-primary-700) 50%, var(--color-border));
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-soft);
 }
 .ff-btn-primary:hover { background: var(--ff-color-primary-600); }
-.ff-btn-primary:active { transform: translateY(1px); }
 
 .ff-btn-secondary {
   background: transparent;
   color: var(--color-text);
   border-color: var(--color-border);
 }
-.ff-btn-secondary:hover { border-color: var(--ff-color-primary-700); }
+.ff-btn-secondary:hover { border-color: var(--color-primary); }
 
-/* ---------- Glass & scrims (zonder globale bg) ---------- */
+/* Tertiary/quiet link-button */
+.ff-btn-quiet {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: transparent;
+  text-underline-offset: 4px;
+}
+.ff-btn-quiet:hover { color: var(--ff-color-primary-600); }
 
-.ff-glass {
-  backdrop-filter: saturate(160%) blur(10px);
-  background: color-mix(in oklab, var(--color-surface) 80%, transparent);
+/* ===== Cards (opt-in) ===== */
+.ff-card {
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  transform: translateZ(0);
 }
-.ff-glass-strong {
-  backdrop-filter: saturate(180%) blur(16px);
-  background: color-mix(in oklab, var(--color-surface) 68%, transparent);
-  border: 1px solid color-mix(in oklab, var(--color-border) 70%, var(--color-text));
-  border-radius: var(--radius-lg);
+.ff-card:hover {
+  transform: translateY(-2px);
   box-shadow: var(--shadow-soft);
 }
 
-.ff-scrim-top {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--color-surface) 85%, transparent) 0%,
-    transparent 60%
-  );
-}
-.ff-scrim-bottom {
-  background: linear-gradient(
-    to top,
-    color-mix(in oklab, var(--color-surface) 85%, transparent) 0%,
-    transparent 60%
-  );
-}
+/* Media wrappers */
+.hero-image, .smart-image { overflow: hidden; border-radius: 1rem; }
 
-/* ---------- Micro-animaties ---------- */
-
-.ff-hover-lift { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
-.ff-hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
-.ff-pressable:active { transform: translateY(1px); }
-
-.ff-fade-in {
-  opacity: 0; transform: translateY(4px);
-  animation: ffFadeInUp .32s ease forwards;
-}
-@keyframes ffFadeInUp { to { opacity: 1; transform: translateY(0); } }
-
-/* ---------- Skeletons ---------- */
-
-.ff-skeleton {
-  position: relative; overflow: hidden;
-  background: color-mix(in oklab, var(--color-surface) 95%, var(--color-text));
-  border-radius: calc(var(--radius-lg) - 2px);
-}
-.ff-skeleton::after {
-  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in oklab, var(--color-text) 4%, var(--color-surface)) 40%,
-    color-mix(in oklab, var(--color-text) 12%, var(--color-surface)) 50%,
-    color-mix(in oklab, var(--color-text) 4%, var(--color-surface)) 60%,
-    transparent 100%
-  );
-  animation: ffShimmer 1.35s ease-in-out infinite;
-}
-@keyframes ffShimmer { 100% { transform: translateX(100%); } }
-
-/* ---------- Nav active chip ---------- */
-
-.ff-nav-active {
-  background: color-mix(in oklab, var(--ff-color-primary-700) 12%, var(--color-surface));
+/* ===== Chips & Badges (opt-in) ===== */
+.ff-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--color-surface);
   color: var(--color-text);
-  border: 1px solid color-mix(in oklab, var(--ff-color-primary-700) 30%, var(--color-border));
-  border-radius: calc(var(--radius-lg) / 1.5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
 }
 
-/* ---------- Hero CTA layout ---------- */
-
-.ff-hero-cta-row { display: flex; flex-wrap: wrap; gap: .625rem; }
-.ff-hero-cta-row .ff-btn { min-width: 9.5rem; }
-
-/* ---------- Reduce motion ---------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .ff-hover-lift, .ff-pressable, .ff-fade-in, .ff-skeleton::after {
-    transform: none !important; animation: none !important; transition: none !important;
-  }
+.ff-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.75rem;
+  color: var(--color-text);
 }
+
+/* ===== Glass & Surfaces (opt-in) ===== */
+.ff-glass {
+  backdrop-filter: blur(10px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+}
+.ff-surface-alt {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* ===== Nav helpers (opt-in) ===== */
+.ff-navlink {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-2xl);
+  padding: 0.375rem 0.75rem;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+.ff-navlink:hover { color: var(--ff-color-primary-600); }
+.ff-navlink--active {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+/* ===== Micro-helpers (opt-in) ===== */
+.ff-hover-raise       { transition: transform 200ms ease; transform: translateZ(0); }
+.ff-hover-raise:hover { transform: translateY(-2px); }
+
+.ff-nowrap { white-space: nowrap; }
+.ff-divider { border-top: 1px solid var(--color-border); }
