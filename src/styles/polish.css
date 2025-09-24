@@ -1,27 +1,18 @@
-/* src/styles/polish.css (SAFE EDITION)
-   - Alleen pure CSS + tokens
-   - Geen @apply, geen @layer → geen Tailwind-parse risico's
-   - Micro-interacties en typografische finesse
+/* src/styles/polish.css — Conservative v2.1
+   - Geen globale h1/h2/p/a overrides
+   - Opt-in utilities
+   - Tokens-first (geen hex)
+   - Extra fallback voor color-mix()
 */
 
-/* ===== Typografie-ritme ===== */
-h1, h2, h3 { 
-  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif; 
-  color: var(--color-text);
-  letter-spacing: -0.01em;
+/* ===== A11Y ===== */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: 0.5rem;
 }
-h1 { font-size: clamp(2.25rem, 3.5vw, 3.25rem); line-height: 1.1; margin-block: 0.25em 0.5em; letter-spacing: -0.02em; }
-h2 { font-size: clamp(1.5rem, 2.2vw, 2rem);   line-height: 1.2; margin-block: 1.25em 0.5em; }
-h3 { font-size: clamp(1.125rem, 1.5vw, 1.25rem); line-height: 1.35; margin-block: 1.25em 0.5em; }
 
-p { line-height: 1.7; margin-block: 0.75em; color: var(--color-text); }
-a { color: var(--color-primary); text-underline-offset: 4px; }
-a:hover { color: var(--ff-color-primary-600); }
-
-/* ===== Focus states (WCAG) ===== */
-:focus-visible { outline: none; box-shadow: var(--shadow-ring); border-radius: 0.5rem; }
-
-/* ===== Reduced motion ===== */
+/* Reduced motion respecteren */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -31,45 +22,54 @@ a:hover { color: var(--ff-color-primary-600); }
   }
 }
 
-/* ===== Nav: actieve "chip" zonder Tailwind utilities ===== */
-nav a[aria-current="page"], .nav a.active {
+/* ===== NAV ===== */
+header nav a[aria-current="page"],
+header .nav a.active {
+  /* Fallback: rustige surface-tint als color-mix niet ondersteund is */
+  background-color: var(--color-surface);
+  /* Preferred: subtiele accent-tint met mix */
   background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   padding: 0.375rem 0.75rem;
 }
-nav a { transition: color 180ms ease; }
-nav a:hover { color: var(--ff-color-primary-600); }
+header nav a { transition: color 180ms ease; }
+header nav a:hover { color: var(--ff-color-primary-600); }
 
-/* ===== Buttons / CTA's: subtiele lift ===== */
-button, [role="button"], .btn {
-  transition: transform 200ms ease-out;
-  transform: translateY(0);
-}
-button:hover, [role="button"]:hover, .btn:hover { transform: translateY(-1px); }
-button:active, [role="button"]:active, .btn:active { transform: translateY(0); }
+/* ===== BUTTONS (opt-in) ===== */
+.btn { transition: transform 200ms ease-out; transform: translateY(0); }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
 
-/* Optionele varianten (geen kleur-hardcodes, alleen tokens) */
-.btn-primary, button[data-variant="primary"] {
+.btn-primary,
+button[data-variant="primary"] {
   background: var(--ff-color-primary-700);
-  color: var(--color-on-primary, var(--color-bg)); /* gebruikt token als aanwezig */
+  color: var(--color-on-primary, #fff);
   border-radius: var(--radius-2xl);
   padding: 0.625rem 1.25rem;
   box-shadow: var(--shadow-soft);
 }
-.btn-primary:hover, button[data-variant="primary"]:hover { background: var(--ff-color-primary-600); }
-.btn-secondary, button[data-variant="secondary"] {
+.btn-primary:hover,
+button[data-variant="primary"]:hover {
+  background: var(--ff-color-primary-600);
+}
+
+.btn-secondary,
+button[data-variant="secondary"] {
   background: transparent;
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   padding: 0.625rem 1.25rem;
 }
-.btn-secondary:hover, button[data-variant="secondary"]:hover { border-color: var(--color-primary); }
+.btn-secondary:hover,
+button[data-variant="secondary"]:hover {
+  border-color: var(--color-primary);
+}
 
-/* ===== Cards: zachte elevatie ===== */
-.card, .ff-card {
+/* ===== CARDS (opt-in) ===== */
+.ff-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -77,15 +77,18 @@ button:active, [role="button"]:active, .btn:active { transform: translateY(0); }
   transition: transform 200ms ease;
   transform: translateZ(0);
 }
-.card:hover, .ff-card:hover { transform: translateY(-2px); }
+.ff-card:hover { transform: translateY(-2px); }
 
-/* ===== Hero/afbeeldingen ===== */
-img { border-radius: 0.75rem; }
-.smart-image, .hero-image { overflow: hidden; border-radius: 1rem; }
+/* ===== IMAGES (opt-in) ===== */
+.smart-image,
+.hero-image {
+  overflow: hidden;
+  border-radius: 1rem;
+}
 
-/* ===== Utilities ===== */
+/* ===== UTILITIES (opt-in) ===== */
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-.ff-prose > * + * { margin-block-start: 0.75em; }
+.ff-prose > * + * { margin-block-start: 0.75rem; }
 .ff-divider { border-top: 1px solid var(--color-border); }
 .ff-glass {
   backdrop-filter: blur(10px);
