@@ -30,7 +30,7 @@ export default function MobileNavDrawer() {
 
   React.useEffect(() => {
     if (open) panelRef.current?.focus();
-  }, []);
+  }, [open]);
 
   return (
     <>
@@ -38,8 +38,8 @@ export default function MobileNavDrawer() {
         type="button"
         aria-controls="mobile-drawer"
         aria-expanded={open}
+        className="ff-btn ff-btn-secondary h-9"
         onClick={() => setOpen(true)}
-        className="ff-btn ff-btn-secondary h-9 md:hidden"
       >
         Menu
       </button>
@@ -88,13 +88,7 @@ export default function MobileNavDrawer() {
                 <NavLink
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className={({ isActive }) =>
-                    [
-                      "block px-3 py-2 rounded-md text-base",
-                      "text-text/90 hover:text-text transition-colors",
-                      isActive ? "ff-nav-active" : "border border-transparent",
-                    ].join(" ")
-                  }
+                  className={({ isActive }) => [ "ff-navlink", isActive ? "ff-nav-active" : "" ].join(" ")}
                 >
                   {item.label}
                 </NavLink>
