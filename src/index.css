@@ -1,31 +1,19 @@
-/* /src/index.css */
-/* Volgorde is belangrijk: eerst tokens/polish, dan Tailwind layers */
-@import "./styles/tokens.css";
-@import "./styles/polish.css";
+/* src/index.css */
 
+/* 1) Tokens eerst, zodat vars overal beschikbaar zijn */
+@import "./styles/tokens.css";
+
+/* 2) Tailwind core layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Baseline: systeemkleurenschema + body-font volgens tokens */
+/* 3) Projectpolish – altijd als laatste, zodat we subtiel kunnen overriden */
+@import "./styles/polish.css";
+
+/* Basis: systeemkleurenschema */
 :root { color-scheme: light; }
 
-html {
-  background: var(--color-bg);
-  color: var(--color-text);
-}
-
-body {
-  font-family: theme("fontFamily.body");
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* A11Y: nette focus-ring via token */
-:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-/* Optioneel: visuele polish zonder hex-kleuren */
-/* Buttons houden hun tokens-styling vanuit component-classes */
+/* Baseline body smoothing – geen Tailwind nodig */
+html { background: var(--color-bg); color: var(--color-text); }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
