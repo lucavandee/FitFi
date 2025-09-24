@@ -1,4 +1,3 @@
-// /src/pages/ProcessorsPage.tsx
 import React from "react";
 
 type Proc = { name: string; purpose: string; region: string };
@@ -12,7 +11,7 @@ const PROCESSORS: Proc[] = [
 export default function ProcessorsPage() {
   return (
     <main id="main" className="bg-bg text-text">
-      <section className="ff-container ff-stack-lg py-12 sm:py-14">
+      <section className="ff-container ff-stack-lg py-10 sm:py-12">
         <header className="ff-stack">
           <p className="text-sm text-text/70">Overzicht verwerkers</p>
           <h1 className="font-heading text-2xl sm:text-3xl">Verwerkers</h1>
@@ -23,7 +22,7 @@ export default function ProcessorsPage() {
 
         <div className="ff-card p-0 overflow-x-auto">
           <table className="min-w-full text-left">
-            <thead className="bg-surface">
+            <thead>
               <tr className="border-b border-border">
                 <th className="px-4 py-3 text-sm font-semibold text-text">Partij</th>
                 <th className="px-4 py-3 text-sm font-semibold text-text">Doel</th>
