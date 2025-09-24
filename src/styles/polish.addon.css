@@ -1,8 +1,7 @@
 /* src/styles/polish.addon.css
    Zero-risk polish (uitgerold):
-   - Alleen opt-in klassen + voorzichtig brede selectors voor bestaande CTA/card patronen
-   - Uitsluitend tokens/vars uit tokens.css
-   - Geen @apply, geen color-mix, geen hex
+   - Alleen opt-in klassen + voorzichtige auto-polish voor gangbare CTA/card-patronen
+   - Uitsluitend tokens/vars (geen hex, geen @apply, geen color-mix)
    - Respecteert prefers-reduced-motion
 */
 
@@ -22,10 +21,8 @@
 }
 
 /* ------------------------------------------------------------------
-   CTA's — opt-in EN veilige "auto-polish"
+   CTA's — opt-in ÉN veilige "auto-polish"
    ------------------------------------------------------------------ */
-
-/* Basis hover-lift voor veelgebruikte CTA classes, zonder kleurwijziging */
 .ff-btn,
 .btn,
 .button,
@@ -40,19 +37,15 @@ button {
 .button:hover,
 .cta:hover,
 a[role="button"]:hover,
-button:hover {
-  transform: translateY(-1px);
-}
+button:hover { transform: translateY(-1px); }
 .ff-btn:active,
 .btn:active,
 .button:active,
 .cta:active,
 a[role="button"]:active,
-button:active {
-  transform: translateY(0);
-}
+button:active { transform: translateY(0); }
 
-/* Primaire CTA – alleen toepassen als het element zich expliciet als primary identificeert */
+/* Primaire CTA – alleen als expliciet "primary" */
 .ff-btn-primary,
 .btn-primary,
 .button-primary,
@@ -81,7 +74,7 @@ a[data-cta="primary"]:hover {
   background: var(--ff-color-primary-600);
 }
 
-/* Secundaire CTA – ghost/outline, alleen bij expliciet secundair */
+/* Secundaire CTA – ghost/outline */
 .ff-btn-secondary,
 .btn-secondary,
 .button-secondary,
@@ -109,7 +102,7 @@ a[data-cta="secondary"]:hover {
   border-color: var(--color-primary);
 }
 
-/* Quiet/tertiary link-CTA (alleen opt-in klassen) */
+/* Quiet/tertiary link-CTA (opt-in) */
 .ff-btn-quiet,
 .btn-quiet,
 .button-quiet,
@@ -129,9 +122,8 @@ a[data-cta="secondary"]:hover {
 }
 
 /* ------------------------------------------------------------------
-   Cards — opt-in EN voorzichtige "auto-polish"
+   Cards — opt-in ÉN voorzichtige auto-polish
    ------------------------------------------------------------------ */
-
 /* Volwaardige kaartstijl (opt-in) */
 .ff-card {
   background: var(--color-surface);
@@ -143,13 +135,9 @@ a[data-cta="secondary"]:hover {
 }
 .ff-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-soft);
 }
 
-/* Voorzichtige auto-polish:
-   - niet ingrijpen in kleuren/layout; alleen subtiele elevatie en hover-lift
-   - beperkt tot veelvoorkomende card-namen zonder globale "div" matches
-*/
+/* Voorzichtige auto-polish: subtiele elevatie/hover-lift, geen kleur/layout-wijziging */
 .card,
 .teaser-card,
 .product-card,
@@ -160,7 +148,6 @@ a[data-cta="secondary"]:hover {
 [data-role="card"] {
   transition: transform 200ms ease, box-shadow 200ms ease;
   transform: translateZ(0);
-  /* voeg alleen een zachte schaduw toe als er (waarschijnlijk) nog geen schaduw is */
   box-shadow: var(--shadow-soft);
 }
 .card:hover,
@@ -203,25 +190,18 @@ a[data-cta="secondary"]:hover {
 /* ------------------------------------------------------------------
    Layout helpers — opt-in
    ------------------------------------------------------------------ */
-.ff-container {
-  width: 100%;
-  margin-inline: auto;
-  padding-inline: 1rem;
-  max-width: 1200px;
-}
+.ff-container { width: 100%; margin-inline: auto; padding-inline: 1rem; max-width: 1200px; }
 .ff-stack-sm > * + * { margin-block-start: 0.5rem; }
 .ff-stack    > * + * { margin-block-start: 0.75rem; }
 .ff-stack-lg > * + * { margin-block-start: 1.25rem; }
-
-.ff-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-.cta-row    { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.ff-cluster  { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.cta-row     { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 
 .ff-prose > * + * { margin-block-start: 0.75rem; }
 .ff-divider { border-top: 1px solid var(--color-border); }
 
 /* Media wrappers (opt-in) */
-.hero-image,
-.smart-image { overflow: hidden; border-radius: 1rem; }
+.hero-image, .smart-image { overflow: hidden; border-radius: 1rem; }
 
 /* Glass & surfaces (opt-in) */
 .ff-glass {
@@ -243,10 +223,14 @@ a[data-cta="secondary"]:hover {
   transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 .ff-navlink:hover { color: var(--ff-color-primary-600); }
-.ff-navlink--active {
+
+/* ← Dit sluit aan op jouw bestaande markup: */
+.ff-nav-active {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text);
+  border-radius: var(--radius-2xl);
+  padding: 0.375rem 0.75rem;
 }
 
 /* ------------------------------------------------------------------
@@ -254,5 +238,4 @@ a[data-cta="secondary"]:hover {
    ------------------------------------------------------------------ */
 .ff-hover-raise       { transition: transform 200ms ease; transform: translateZ(0); }
 .ff-hover-raise:hover { transform: translateY(-2px); }
-
 .ff-nowrap { white-space: nowrap; }
