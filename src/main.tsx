@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import "./index.css";               // Tailwind + tokens
-import "@/styles/polish.addon.css"; // opt-in premium polish (laatste)
+import "@/styles/polish.addon.css"; // opt-in premium polish v3 (laatste)
 
 const queryClient = new QueryClient();
 

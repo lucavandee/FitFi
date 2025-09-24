@@ -11,7 +11,7 @@ const links = [
 
 export default function Navbar() {
   return (
-    <header role="banner" className="bg-surface border-b border-border sticky top-0 z-50">
+    <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 flex items-center justify-between">
           <NavLink to="/" className="font-heading text-lg tracking-wide text-text">FitFi</NavLink>
@@ -34,6 +34,7 @@ export default function Navbar() {
             <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
           </div>
 
+          {/* Simplistic mobile button; behoud je bestaande drawer als die er is */}
           <div className="md:hidden">
             <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Menu</NavLink>
           </div>

@@ -54,10 +54,9 @@ export default function PricingPage() {
       <section className="ff-container ff-stack-lg py-10 sm:py-12">
         <header className="ff-stack">
           <h1 className="font-heading text-2xl sm:text-3xl">Prijzen</h1>
-          <div className="cta-row">
-            <button type="button" className="ff-btn ff-btn-secondary" aria-pressed={yearly} onClick={() => setYearly(!yearly)}>
-              {yearly ? "Toon maandprijzen" : "Toon jaarprijzen"}
-            </button>
+          <div className="ff-pill-switch" role="group" aria-label="Prijsperiode">
+            <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>Jaar</button>
+            <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>Maand</button>
           </div>
         </header>
 
