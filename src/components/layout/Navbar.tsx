@@ -43,12 +43,7 @@ export default function Navbar() {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  className={({ isActive }) =>
-                    [
-                      "px-3 py-2 rounded-md text-sm font-medium text-text/90 hover:text-text transition-colors",
-                      isActive ? "ff-nav-active" : "border border-transparent",
-                    ].join(" ")
-                  }
+                  className={({ isActive }) => [ "ff-navlink", isActive ? "ff-nav-active" : "" ].join(" ")}
                 >
                   {item.label}
                 </NavLink>
