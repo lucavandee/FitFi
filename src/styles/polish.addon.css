@@ -1,22 +1,25 @@
-/* src/styles/polish.addon.css — Premium v3.1 (STRICT, SCOPED)
-   - Uitsluitend .ff-* en nav-helpers
-   - Alle component-styles zijn gescoped onder .ff-scope zodat de homepage ongemoeid blijft
-   - Geen hex/rgb; alleen tokens
+/* src/styles/polish.addon.css — Premium v3.2
+   - STRIKT gescoped (.ff-scope) voor nieuwe UI
+   - Kleine legacy-compat voor homepage (.btn/.button/.cta), zonder element-selectors
+   - Uitsluitend tokens; geen hex/rgb
 */
 
-/* A11Y blijft globaal (veilig) */
+/* ===== A11Y (veilig globaal) ===== */
 :focus-visible{outline:none;box-shadow:var(--shadow-ring);border-radius:.5rem}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
-/* ===== Nav (niet gescoped; alleen gebruikt in Navbar) ===== */
+/* ===== Navbar helpers (alleen via component gebruikt) ===== */
 .ff-nav-glass{position:sticky;top:0;z-index:50;background:var(--color-surface);backdrop-filter:blur(10px);border-bottom:1px solid var(--color-border)}
 .ff-navlink{display:inline-flex;align-items:center;border-radius:var(--radius-2xl);padding:.375rem .75rem;transition:color 180ms,background-color 180ms,border-color 180ms}
 .ff-navlink:hover{color:var(--ff-color-primary-600)}
 .ff-nav-active{background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);border-radius:var(--radius-2xl);padding:.375rem .75rem}
 
-/* ===== Alles hieronder is GEEN globale impact: alleen binnen .ff-scope ===== */
+/* =================================================================== */
+/* =====================  PREMIUM UI — SCOPED  ======================= */
+/* =================================================================== */
+
 .ff-scope .ff-container{width:100%;margin-inline:auto;max-width:1200px;padding-inline:1rem}
 .ff-scope .ff-stack-sm>*+*{margin-block-start:.5rem}
 .ff-scope .ff-stack>*+*{margin-block-start:.75rem}
@@ -27,7 +30,7 @@
 .ff-scope .ff-divider{border-top:1px solid var(--color-border)}
 .ff-scope .hero-image,.ff-scope .smart-image{overflow:hidden;border-radius:1rem}
 
-/* Buttons — alleen opt-in .ff-btn varianten */
+/* Buttons (opt-in) */
 .ff-scope .ff-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
   transition:transform 200ms,background-color 180ms,border-color 180ms,color 180ms;
@@ -47,7 +50,7 @@
 .ff-scope .ff-card:hover{transform:translateY(-2px)}
 .ff-scope .ff-glass{backdrop-filter:blur(10px);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-soft)}
 
-/* Steps (How it works) */
+/* Steps */
 .ff-scope .ff-steps{display:grid;gap:1rem}
 @media (min-width:640px){.ff-scope .ff-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1024px){.ff-scope .ff-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -102,3 +105,38 @@
 .ff-scope .ff-blog-title{padding:0 1rem .5rem 1rem;font-weight:700;color:var(--color-text)}
 .ff-scope .ff-blog-excerpt{padding:0 1rem 1rem 1rem;color:var(--color-text);opacity:.95}
 .ff-scope .ff-blog-actions{margin-top:auto;padding:0 1rem 1rem 1rem}
+
+/* =================================================================== */
+/* ================= LEGACY HOMEPAGE COMPAT (SAFE) =================== */
+/* =================================================================== */
+
+/* Let alleen op klassen die de homepage gebruikt; GEEN element-selectors */
+.btn, .button, .cta {
+  display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+  border:1px solid transparent; border-radius: var(--radius-2xl);
+  padding:.625rem 1.25rem; cursor:pointer; text-decoration:none;
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  transform: translateY(0);
+}
+.btn:hover, .button:hover, .cta:hover { transform: translateY(-1px); }
+.btn:active, .button:active, .cta:active { transform: translateY(0); }
+
+/* primaire/secondaire varianten */
+.btn-primary, .button-primary, .cta-primary { background: var(--ff-color-primary-700); color: var(--color-on-primary, var(--color-bg)); box-shadow: var(--shadow-soft); }
+.btn-primary:hover, .button-primary:hover, .cta-primary:hover { background: var(--ff-color-primary-600); }
+.btn-secondary, .button-secondary, .cta-secondary { background: transparent; color: var(--color-text); border-color: var(--color-border); }
+.btn-secondary:hover, .button-secondary:hover, .cta-secondary:hover { border-color: var(--color-primary); }
+
+/* eenvoudige button group spacing */
+.btn + .btn, .button + .button, .cta + .cta,
+.btn + .button, .button + .btn,
+.btn + .cta, .cta + .btn,
+.button + .cta, .cta + .button { margin-left: .5rem; }
+
+/* chips/badges die op de home gebruikt kunnen zijn */
+.chip, .tag {
+  display:inline-flex; align-items:center; gap:.375rem;
+  background: var(--color-surface); color: var(--color-text);
+  border:1px solid var(--color-border); border-radius: var(--radius-2xl);
+  padding:.375rem .75rem; font-size:.875rem;
+}
