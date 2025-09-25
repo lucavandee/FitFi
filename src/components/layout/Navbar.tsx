@@ -34,6 +34,7 @@ export default function Navbar() {
             <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
           </div>
 
+          {/* Simplistic mobile button; behoud je bestaande drawer als die er is */}
           <div className="md:hidden">
             <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Menu</NavLink>
           </div>
