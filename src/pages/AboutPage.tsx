@@ -16,7 +16,7 @@ const METRICS = [
 
 export default function AboutPage() {
   return (
-    <main id="main" className="ff-scope bg-bg text-text">
+    <main id="main" className="bg-bg text-text">
       <section className="ff-container ff-about-hero py-10 sm:py-12">
         <div className="ff-stack">
           <p className="text-sm text-text/70">Over FitFi</p>
