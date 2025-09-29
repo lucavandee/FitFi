@@ -5,10 +5,12 @@ import DarkModeToggle from "@/components/ui/DarkModeToggle";
 /**
  * Sticky, translucente navigatie met snelle links.
  * Respecteert tokens en bestaande glass-styles via `ff-nav-glass`.
+ * Hersteld: géén "Product" — wel "Hoe het werkt".
  */
 const links = [
-  { to: "/product", label: "Product" },
-  { to: "/prijzen", label: "Prijs" },
+  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/prijzen", label: "Prijzen" },
+  { to: "/over-ons", label: "Over ons" },
   { to: "/veelgestelde-vragen", label: "FAQ" },
   { to: "/contact", label: "Contact" },
 ];
