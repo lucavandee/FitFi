@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import Seo from '@/components/Seo';
+import SectionHeader from '@/components/marketing/SectionHeader';
 import share from '@/utils/share';
 import urls from '@/utils/urls';
 import { useUser } from '../context/UserContext';
@@ -473,6 +474,14 @@ const QuizPage: React.FC = () => {
       />
 
       <main className="min-h-screen bg-[var(--color-bg)]">
+        <SectionHeader
+          eyebrow="JOUW STIJLQUIZ"
+          title="Krijg in 2 minuten jouw stijlprofiel"
+          subtitle="Slimme vragen, duidelijke keuzes. Daarna meteen outfits die kloppen."
+          align="left"
+          as="h1"
+        />
+
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">

@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import Seo from "@/components/Seo";
-import urls from "@/utils/urls";
+import SectionHeader from "@/components/marketing/SectionHeader";
 
 // Bestaande imports:
 import LoadingFallback from "@/components/ui/LoadingFallback";
@@ -20,7 +20,7 @@ const BlogDetailPage: React.FC = () => {
 
   const title = post?.title ? `${post.title} — FitFi` : "Blog — FitFi";
   const description = post?.excerpt || "Lees meer over stijl, outfits en AI-gedreven styling.";
-  const image = post?.imageUrl || `${urls.CANONICAL_HOST}/og-blog.jpg`;
+  const image = post?.imageUrl;
 
   return (
     <>
@@ -45,6 +45,14 @@ const BlogDetailPage: React.FC = () => {
       />
 
       <main className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16 bg-[var(--color-bg)]">
+        <SectionHeader
+          eyebrow="ARTIKEL"
+          title={post?.title || "Blog"}
+          subtitle={post?.excerpt}
+          align="left"
+          as="h1"
+        />
+
         {/* Bestaande blog content UI ongewijzigd */}
         {/* <ArticleView post={post} /> etc. */}
       </main>
