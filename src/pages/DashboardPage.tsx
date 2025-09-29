@@ -78,9 +78,7 @@ const DashboardPage: React.FC = () => {
     level: userStats?.level || 1
   };
 
-  if (userLoading) {
-    return <LoadingFallback fullScreen message="Dashboard laden..." />;
-  }
+  if (userLoading) return <LoadingFallback fullScreen message="Dashboard laden..." />;
 
   if (!user) {
     return (
@@ -97,13 +95,15 @@ const DashboardPage: React.FC = () => {
   }
 
   const referralUrl = user ? urls.buildReferralUrl(user.id) : urls.buildReferralUrl("guest");
-  const inviteShare = user ? share.makeInviteShare(user.id) : share.makeShareData({
-    title: "Probeer FitFi — AI-styling",
-    text: "Ontdek je stijl met onze AI-stylist. Start gratis.",
-  });
+  const inviteShare = user
+    ? share.makeInviteShare(user.id)
+    : share.makeShareData({
+        title: "Probeer FitFi — AI-styling",
+        text: "Ontdek je stijl met onze AI-stylist. Start gratis.",
+      });
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
       <Seo
         title="Dashboard — FitFi"
         description="Jouw stijlvoortgang, punten, referrals en persoonlijke acties in één overzicht."
@@ -119,140 +119,142 @@ const DashboardPage: React.FC = () => {
         <meta name="description" content="Bekijk je stijlprofiel, outfits, challenges en voortgang op je persoonlijke FitFi dashboard." />
       </Helmet>
 
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <ErrorBoundary>
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2">
-                  Welkom terug, {user.name}!
-                </h1>
-                <p className="text-gray-600">
-                  Hier is je persoonlijke stijloverzicht
-                </p>
+      <main className="min-h-screen bg-[var(--color-bg)]">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <ErrorBoundary>
+            <div className="mb-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2">
+                    Welkom terug, {user.name}!
+                  </h1>
+                  <p className="text-gray-600">
+                    Hier is je persoonlijke stijloverzicht
+                  </p>
+                </div>
+                
+                <Button
+                  as={Link}
+                  to="/profile"
+                  variant="outline"
+                  size="sm"
+                  icon={<Settings size={16} />}
+                  iconPosition="left"
+                  className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                >
+                  Instellingen
+                </Button>
               </div>
-              
-              <Button
-                as={Link}
-                to="/profile"
-                variant="outline"
-                size="sm"
-                icon={<Settings size={16} />}
-                iconPosition="left"
-                className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
-              >
-                Instellingen
-              </Button>
+            </div>
+          </ErrorBoundary>
+
+          {/* Dashboard Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Quick Actions */}
+              <ErrorBoundary>
+                <SafeWidget name="Quick Actions">
+                  <div className="bg-white rounded-3xl shadow-sm p-6">
+                    <h2 className="text-xl font-medium text-gray-900 mb-6">Aanbevolen acties</h2>
+                    <NBAQuickActions ctx={nbaContext} />
+                  </div>
+                </SafeWidget>
+              </ErrorBoundary>
+
+              {/* Featured Outfit */}
+              <ErrorBoundary>
+                <SafeWidget name="Featured Outfit">
+                  <FeaturedOutfitCard 
+                    outfit={featuredOutfit}
+                    loading={false}
+                  />
+                </SafeWidget>
+              </ErrorBoundary>
+
+              {/* Challenge Snapshot */}
+              <ErrorBoundary>
+                <SafeWidget name="Challenge Snapshot">
+                  <ChallengeSnapshot />
+                </SafeWidget>
+              </ErrorBoundary>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Gamification Panel */}
+              <ErrorBoundary>
+                <SafeWidget name="Gamification Panel">
+                  <GamificationPanel 
+                    level={userStats?.level}
+                    xp={userStats?.xp}
+                    streak={userStreak?.current_streak}
+                    loading={statsLoading || streakLoading}
+                  />
+                </SafeWidget>
+              </ErrorBoundary>
+
+              {/* Nova Insight */}
+              <ErrorBoundary>
+                <SafeWidget name="Nova Insight">
+                  <NovaInsightCard 
+                    text="Je stijl evolueert naar meer verfijnde keuzes. Probeer eens een statement accessoire!"
+                    loading={false}
+                  />
+                </SafeWidget>
+              </ErrorBoundary>
+
+              {/* Referral Card — nu 100% via centrale URL helper */}
+              <ErrorBoundary>
+                <div>
+                  <ReferralCard codeUrl={referralUrl} count={referrals?.length || 0} goal={3} />
+                </div>
+              </ErrorBoundary>
+
+              {/* Notifications */}
+              <ErrorBoundary>
+                <SafeWidget name="Notifications">
+                  <NotificationsMini 
+                    items={notifications}
+                    loading={notificationsLoading}
+                  />
+                </SafeWidget>
+              </ErrorBoundary>
             </div>
           </div>
-        </ErrorBoundary>
 
-        {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Quick Actions */}
-            <ErrorBoundary>
-              <SafeWidget name="Quick Actions">
-                <div className="bg-white rounded-3xl shadow-sm p-6">
-                  <h2 className="text-xl font-medium text-gray-900 mb-6">Aanbevolen acties</h2>
-                  <NBAQuickActions ctx={nbaContext} />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
-
-            {/* Featured Outfit */}
-            <ErrorBoundary>
-              <SafeWidget name="Featured Outfit">
-                <FeaturedOutfitCard 
-                  outfit={featuredOutfit}
-                  loading={false}
-                />
-              </SafeWidget>
-            </ErrorBoundary>
-
-            {/* Challenge Snapshot */}
-            <ErrorBoundary>
-              <SafeWidget name="Challenge Snapshot">
-                <ChallengeSnapshot />
-              </SafeWidget>
-            </ErrorBoundary>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Gamification Panel */}
-            <ErrorBoundary>
-              <SafeWidget name="Gamification Panel">
-                <GamificationPanel 
-                  level={userStats?.level}
-                  xp={userStats?.xp}
-                  streak={userStreak?.current_streak}
-                  loading={statsLoading || streakLoading}
-                />
-              </SafeWidget>
-            </ErrorBoundary>
-
-            {/* Nova Insight */}
-            <ErrorBoundary>
-              <SafeWidget name="Nova Insight">
-                <NovaInsightCard 
-                  text="Je stijl evolueert naar meer verfijnde keuzes. Probeer eens een statement accessoire!"
-                  loading={false}
-                />
-              </SafeWidget>
-            </ErrorBoundary>
-
-            {/* Referral Card */}
-            <ErrorBoundary>
-              <SafeWidget name="Referral Card">
-                <ReferralCard codeUrl={referralUrl} count={referrals?.length || 0} goal={3} />
-              </SafeWidget>
-            </ErrorBoundary>
-
-            {/* Notifications */}
-            <ErrorBoundary>
-              <SafeWidget name="Notifications">
-                <NotificationsMini 
-                  items={notifications}
-                  loading={notificationsLoading}
-                />
-              </SafeWidget>
-            </ErrorBoundary>
-          </div>
+          {/* Quick Links */}
+          <ErrorBoundary>
+            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { href: '/outfits', label: 'Outfits', icon: <TrendingUp size={20} />, color: 'bg-blue-50 text-blue-600' },
+                { href: '/gamification', label: 'Levels', icon: <Trophy size={20} />, color: 'bg-yellow-50 text-yellow-600' },
+                { href: '/tribes', label: 'Tribes', icon: <Users size={20} />, color: 'bg-purple-50 text-purple-600' },
+                { href: '/quiz', label: 'Quiz', icon: <Target size={20} />, color: 'bg-green-50 text-green-600' }
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all hover:transform hover:scale-105 text-center group"
+                >
+                  <div className={`w-12 h-12 ${link.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                    {link.icon}
+                  </div>
+                  <span className="font-medium text-gray-900">{link.label}</span>
+                </Link>
+              ))}
+            </div>
+          </ErrorBoundary>
         </div>
 
-        {/* Quick Links */}
-        <ErrorBoundary>
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { href: '/outfits', label: 'Outfits', icon: <TrendingUp size={20} />, color: 'bg-blue-50 text-blue-600' },
-              { href: '/gamification', label: 'Levels', icon: <Trophy size={20} />, color: 'bg-yellow-50 text-yellow-600' },
-              { href: '/tribes', label: 'Tribes', icon: <Users size={20} />, color: 'bg-purple-50 text-purple-600' },
-              { href: '/quiz', label: 'Quiz', icon: <Target size={20} />, color: 'bg-green-50 text-green-600' }
-            ].map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all hover:transform hover:scale-105 text-center group"
-              >
-                <div className={`w-12 h-12 ${link.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
-                  {link.icon}
-                </div>
-                <span className="font-medium text-gray-900">{link.label}</span>
-              </Link>
-            ))}
-          </div>
-        </ErrorBoundary>
-      </div>
-
-      {/* Mobile Sticky Bottom Bar */}
-      <StickyBottomBar 
-        onClaimDaily={handleClaimDaily}
-        userId={user.id}
-      />
-    </main>
+        {/* Mobile Sticky Bottom Bar */}
+        <StickyBottomBar 
+          onClaimDaily={handleClaimDaily}
+          userId={user.id}
+        />
+      </main>
+    </>
   );
 };
 
