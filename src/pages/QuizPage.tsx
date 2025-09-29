@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import Seo from '@/components/Seo';
+import urls from '@/utils/urls';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import { QuizAnswers, QuizProgress } from '../types/quiz';
@@ -463,6 +465,12 @@ const QuizPage: React.FC = () => {
   
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+      <Seo
+        title="Stijlquiz — FitFi"
+        description="Beantwoord enkele slimme vragen en ontvang direct jouw AI-gestuurde stijlprofiel en outfit-ideeën."
+        canonical="/quiz"
+      />
+
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -621,7 +629,7 @@ const QuizPage: React.FC = () => {
                 matchPercentage: 87 // Would be calculated based on answers
               },
               shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
-              shareUrl: 'https://fitfi.ai?ref=achievement'
+              shareUrl: urls.buildShareUrl(undefined, { ref: 'achievement' })
             }}
             onClose={() => setShowSocialShare(false)}
             onShare={handleSocialShare}

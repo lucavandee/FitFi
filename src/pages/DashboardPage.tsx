@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import Seo from "@/components/Seo";
+import Seo from '@/components/Seo';
+import urls from '@/utils/urls';
 import { 
   User, 
   Settings, 
@@ -96,6 +97,12 @@ const DashboardPage: React.FC = () => {
 
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+      <Seo
+        title="Dashboard — FitFi"
+        description="Jouw stijlvoortgang, punten, referrals en persoonlijke acties in één overzicht."
+        canonical="/dashboard"
+      />
+
       <Seo 
         title="Dashboard - FitFi"
         description="Jouw persoonlijke stijldashboard met outfit geschiedenis, aanbevelingen en styling insights."
@@ -194,7 +201,7 @@ const DashboardPage: React.FC = () => {
             <ErrorBoundary>
               <SafeWidget name="Referral Card">
                 <ReferralCard 
-                  codeUrl={`https://fitfi.ai/?ref=${user.id}`}
+                  codeUrl={urls.buildReferralUrl(user.id)}
                   count={referrals?.length || 0}
                   goal={3}
                 />
