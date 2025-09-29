@@ -20,7 +20,7 @@ import ProgressMotivation from '../components/quiz/ProgressMotivation';
 import CompletionCelebration from '../components/quiz/CompletionCelebration';
 import toast from 'react-hot-toast';
 
-// ✅ Import lazy Nova Agent loader
+import PageHero from "@/components/marketing/PageHero";
 import { loadNovaAgent } from '@/ai/nova/load';
 
 const QuizPage: React.FC = () => {
@@ -474,16 +474,18 @@ const QuizPage: React.FC = () => {
       />
 
       <main className="min-h-screen bg-[var(--color-bg)]">
-        <SectionHeader
-          eyebrow="JOUW STIJLQUIZ"
+        <PageHero
+          id="page-quiz"
+          eyebrow="GRATIS AI STYLE REPORT"
           title="Krijg in 2 minuten jouw stijlprofiel"
-          subtitle="Slimme vragen, duidelijke keuzes. Daarna meteen outfits die kloppen."
+          subtitle="Slimme vragen, duidelijke keuzes — daarna meteen outfits die kloppen."
           align="left"
           as="h1"
           size="lg"
         />
 
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Bestaande quiz-flow ongewijzigd */}
+        {/* ... */}
           {/* Header */}
           <div className="mb-8">
             <Link 

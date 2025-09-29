@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import Seo from "@/components/Seo";
-import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 
 // Bestaande imports:
 import LoadingFallback from "@/components/ui/LoadingFallback";
@@ -24,7 +24,12 @@ const BlogDetailPage: React.FC = () => {
 
   return (
     <>
-      <Seo
+      <Seo 
+        title={title} 
+        description={description} 
+        image={image} 
+        canonical={`/blog/${slug}`} 
+      />
         title={title}
         description={description}
         image={image}
@@ -44,14 +49,16 @@ const BlogDetailPage: React.FC = () => {
         }
       />
 
-      <main className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16 bg-[var(--color-bg)]">
-        <SectionHeader
+      <main className="max-w-4xl mx-auto bg-[var(--color-bg)]">
+        <PageHero
+          id="page-blog-detail"
           eyebrow="ARTIKEL"
           title={post?.title || "Blog"}
           subtitle={post?.excerpt}
           align="left"
           as="h1"
           size="sm"
+          className="mx-[-1rem] sm:mx-0" // zodat de hero-gradient mooi doorloopt in smal layout
         />
 
         {/* Bestaande blog content UI ongewijzigd */}

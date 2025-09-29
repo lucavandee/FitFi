@@ -1,6 +1,6 @@
 import React from "react";
 import Seo from "@/components/Seo";
-import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 
 // Bestaande imports ongewijzigd:
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -18,7 +18,8 @@ const GamificationPage: React.FC = () => {
       />
 
       <main className="min-h-screen bg-[var(--color-bg)]">
-        <SectionHeader
+        <PageHero
+          id="page-gamification"
           eyebrow="LEVELS & BADGES"
           title="Maak van stijl een spel dat je wint"
           subtitle="Verdien XP, bouw streaks en unlock perks met dagelijkse micro-acties."

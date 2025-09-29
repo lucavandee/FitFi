@@ -1,6 +1,6 @@
 import React from "react";
 import Seo from "@/components/Seo";
-import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 
 // Bestaande imports:
 import MarkdownPage from "@/components/ui/MarkdownPage";
@@ -16,7 +16,8 @@ const PrivacyPolicyPage: React.FC = () => {
       />
 
       <main className="min-h-screen bg-[var(--color-bg)]">
-        <SectionHeader
+        <PageHero
+          id="page-privacy-policy"
           eyebrow="TRANSPARANTIE"
           title="Privacybeleid"
           subtitle="We behandelen je gegevens met respect. Hier lees je precies hoe."

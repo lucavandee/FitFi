@@ -1,6 +1,6 @@
 import React from "react";
 import Seo from "@/components/Seo";
-import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 
 // Bestaande imports:
 // import { BlogList } from "@/components/blog/BlogList"; etc.
@@ -22,7 +22,8 @@ const BlogIndexPage: React.FC = () => {
       />
 
       <main className="min-h-screen bg-[var(--color-bg)]">
-        <SectionHeader
+        <PageHero
+          id="page-blog-index"
           eyebrow="INSIGHTS"
           title="Blog"
           subtitle="Praktische stijltips, psychologie achter kleding en AI-styling in eenvoudig Nederlands."
