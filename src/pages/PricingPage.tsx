@@ -3,6 +3,21 @@ import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 
+function Check(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" {...props}>
+      <path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function Dash(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" {...props}>
+      <path d="M5 12h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 type Plan = {
   id: "starter" | "pro" | "elite";
   title: string; tagline: string;
@@ -47,6 +62,13 @@ function PlanCard({ plan, yearly }: { plan: Plan; yearly: boolean; }) {
   );
 }
 
+const PRICE_FAQ = [
+  { q: "Kan ik op elk moment opzeggen?", a: "Ja. Maandabonnementen kun je op elk moment opzeggen in je account." },
+  { q: "Welke betaalmethoden accepteren jullie?", a: "De bekendste methoden worden ondersteund (o.a. iDEAL/kaart); exacte opties zie je bij het afrekenen." },
+  { q: "Krijg ik een factuur?", a: "Ja, je ontvangt automatisch facturen die je kunt downloaden." },
+  { q: "Wat gebeurt er na de proefperiode?", a: "Je blijft in Starter of kiest zelf een betaald plan—geen automatische verrassingen." },
+];
+
 export default function PricingPage() {
   const [yearly, setYearly] = React.useState(true);
 
@@ -68,12 +90,13 @@ export default function PricingPage() {
           as="h1"
           size="sm"
           ctas={[
-            { label: "Probeer gratis", to: "/results", variant: "primary", "data-event": "cta_pricing_try" },
-            { label: "Veelgestelde vragen", to: "/veelgestelde-vragen", variant: "secondary", "data-event": "cta_pricing_faq" }
+            { label: "Probeer gratis", to: "/results", variant: "primary" },
+            { label: "Veelgestelde vragen", to: "#pricing-faq", variant: "secondary" }
           ]}
           note="Je kunt op elk moment opzeggen."
         />
 
+        {/* Prijsperiode + kaarten */}
         <section className="ff-container ff-stack-lg py-10 sm:py-12">
           <div className="inline-flex items-center gap-2 text-sm text-[var(--color-text)]/70 mb-4" role="group" aria-label="Prijsperiode">
             <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)} className="ff-btn ff-btn-secondary">Jaar</button>
@@ -83,10 +106,73 @@ export default function PricingPage() {
           <div className="grid gap-6 md:grid-cols-3">
             {PLANS.map((p) => <PlanCard key={p.id} plan={p} yearly={yearly} />)}
           </div>
+        </section>
 
-          <div className="mt-8 flex gap-3">
-            <NavLink to="/register" className="ff-btn ff-btn-primary">Start nu</NavLink>
-            <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
+        {/* Vergelijkende tabel */}
+        <section className="ff-container py-8 sm:py-12">
+          <header className="mb-4 sm:mb-6">
+            <h2 className="font-montserrat text-2xl sm:text-3xl">Vergelijk plannen</h2>
+            <p className="text-[var(--color-text)]/80 mt-2">Zie in één oogopslag wat je krijgt in Starter, Pro en Elite.</p>
+          </header>
+
+          <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+            <table className="min-w-[720px] w-full text-sm">
+              <thead className="text-left border-b border-[var(--color-border)]">
+                <tr>
+                  <th className="p-4">Feature</th>
+                  <th className="p-4">Starter</th>
+                  <th className="p-4">Pro</th>
+                  <th className="p-4">Elite</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Outfits per maand", "3", "10", "Onbeperkt"],
+                  ["AI Style Scan", <Check key="s1"/>, <Check key="p1"/>, <Check key="e1"/>],
+                  ["Seizoensadvies", <Dash key="s2"/>, <Check key="p2"/>, <Check key="e2"/>],
+                  ["Wishlist + prijsalerts", <Dash key="s3"/>, <Check key="p3"/>, <Check key="e3"/>],
+                  ["Premium support", <Dash key="s4"/>, <Dash key="p4"/>, <Check key="e4"/>],
+                ].map((row, idx) => (
+                  <tr key={idx} className="border-b border-[var(--color-border)] last:border-0">
+                    <td className="p-4 font-medium">{row[0] as string}</td>
+                    <td className="p-4">{row[1] as React.ReactNode}</td>
+                    <td className="p-4">{row[2] as React.ReactNode}</td>
+                    <td className="p-4">{row[3] as React.ReactNode}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Garantie & veiligheid */}
+        <section className="ff-container py-6 sm:py-10">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+            {[
+              { t: "Opzeggen wanneer jij wilt", d: "Geen kleine lettertjes. Je regelt alles zelf in je account." },
+              { t: "Privacy-first", d: "We minimaliseren data en verkopen niets door. AVG-proof." },
+              { t: "Eerlijke aanbevelingen", d: "Affiliate-links kunnen voorkomen, het advies blijft stijl-gedreven." },
+            ].map((c, i) => (
+              <article key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+                <h3 className="font-montserrat text-lg">{c.t}</h3>
+                <p className="text-[var(--color-text)]/80 mt-1">{c.d}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* Prijs FAQ */}
+        <section id="pricing-faq" className="ff-container py-8 sm:py-12">
+          <header className="mb-4 sm:mb-6">
+            <h2 className="font-montserrat text-2xl sm:text-3xl">Veelgestelde vragen over prijzen</h2>
+          </header>
+          <div className="grid gap-3">
+            {PRICE_FAQ.map((item, i) => (
+              <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+                <summary className="cursor-pointer font-montserrat">{item.q}</summary>
+                <p className="mt-2 text-[var(--color-text)]/80">{item.a}</p>
+              </details>
+            ))}
           </div>
         </section>
       </main>

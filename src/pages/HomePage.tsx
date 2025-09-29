@@ -1,174 +1,99 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import Hero from "@/components/landing/Hero";
-import SmartImage from "@/components/media/SmartImage";
-import Seo from "@/components/Seo";
-import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import HeroTitle from "@/components/marketing/HeroTitle";
-import Chip from "@/components/ui/Chip";
-import { useUser } from "@/context/UserContext";
-import SectionHeader from "@/components/marketing/SectionHeader";
+import { NavLink } from "react-router-dom";
+import PageHero from "@/components/marketing/PageHero";
 
-const HomePage: React.FC = () => {
-  const { user } = useUser();
-
-  const handleStartQuiz = () => {
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", "quiz_start", {
-        location: "home_hero",
-        event_category: "conversion",
-        event_label: "home_cta_click",
-      });
-    }
-  };
-
+function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <>
-      {/* Uniforme SEO (vervangt eerdere dubbele Helmet/Seo zonder contentverlies) */}
-      <Seo
-        title="FitFi — AI Style Report voor jouw perfecte look"
-        description="Ontdek jouw unieke stijl met onze AI-stylist. Krijg persoonlijke outfit-aanbevelingen die echt werken voor jouw leven."
-        canonical="/"
-        image="https://fitfi.ai/og-default.jpg"
-        keywords="AI stylist, outfit aanbevelingen, stijlquiz, fashion advies, Nederlandse mode"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "FitFi",
-          url: "https://fitfi.ai",
-          logo: "https://fitfi.ai/logo.png",
-        }}
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" {...props}>
+      <path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      {/* HERO (reeds in lijn met site) */}
+      <PageHero
+        id="page-home"
+        eyebrow="GRATIS AI STYLE REPORT"
+        title="Ontdek wat jouw stijl over je zegt"
+        subtitle="Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis."
+        align="left"
+        as="h1"
+        size="lg"
+        ctas={[
+          { label: "Start gratis", to: "/results", variant: "primary", "data-event": "cta_home_start" },
+          { label: "Bekijk voorbeeld", to: "/hoe-het-werkt", variant: "secondary", "data-event": "cta_home_example" },
+        ]}
+        note="Geen spam. Opzeggen kan altijd."
       />
 
-      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
-        <SectionHeader
-          eyebrow="GRATIS AI STYLE REPORT"
-          title="Ontdek wat jouw stijl over je zegt"
-          subtitle="Wij combineren smaak, context en pasvorm tot outfits die je elke dag met vertrouwen draagt."
-          align="left"
-          as="h1"
-          size="lg"
-        />
-
-        {/* Bestaande hero/sections blijven ongewijzigd */}
-        {/* Hero */}
-        <Hero />
-
-        {/* Hero content (bestaande layout en classes ongewijzigd) */}
-        <section className="hero-gradient py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h1 className="text-4xl md:text-6xl font-bold font-montserrat text-[var(--color-text)] mb-6">
-                  Ontdek jouw perfecte stijl — snel, slim en persoonlijk
-                </h1>
-                <p className="text-lg md:text-xl text-[var(--color-text)]/80 mb-8">
-                  Onze AI-stylist leert jouw smaak kennen en stelt outfits samen die écht werken voor jouw leven.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link to="/results" onClick={handleStartQuiz} className="ff-cta px-6 py-3 rounded-2xl text-center">
-                    Start gratis
-                  </Link>
-                  <Link
-                    to="/hoe-het-werkt"
-                    className="px-6 py-3 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center"
-                  >
-                    Hoe het werkt
-                  </Link>
-                </div>
+      {/* FEATURES OVERVIEW */}
+      <section className="ff-container py-10 sm:py-14">
+        <header className="mb-6 sm:mb-8">
+          <h2 className="font-montserrat text-2xl sm:text-3xl">Waarom FitFi werkt</h2>
+          <p className="text-[var(--color-text)]/80 mt-2 max-w-2xl">
+            Slimme AI + rustige uitleg. Jij houdt de regie over je garderobe—zonder ellenlang scrollen of miskopen.
+          </p>
+        </header>
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            { title: "AI-analyse", desc: "Stijl, silhouet en kleur—helder vertaald naar outfits." },
+            { title: "Persoonlijke outfits", desc: "Per gelegenheid (werk/weekend/diner) met toelichting." },
+            { title: "Wishlist & alerts", desc: "Bewaar favorieten en krijg prijs-signalen (optioneel)." },
+            { title: "Rust & eenvoud", desc: "Geen ruis. Alleen keuzes die bij jou passen." },
+          ].map((f, i) => (
+            <article key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+              <div className="inline-flex items-center justify-center rounded-full border border-[var(--color-border)] w-9 h-9 mb-3">
+                <CheckIcon />
               </div>
+              <h3 className="font-montserrat text-lg">{f.title}</h3>
+              <p className="text-[var(--color-text)]/80 mt-1">{f.desc}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
-              <div>
-                <SmartImage
-                  src="/images/hero/ai-stylist.jpg"
-                  alt="AI-stylist die outfits samenstelt"
-                  className="rounded-2xl shadow-xl w-full h-auto"
-                  priority
-                />
+      {/* PREVIEW PLACEHOLDER (kader voor toekomstige screenshot/video) */}
+      <section className="ff-container py-8 sm:py-12">
+        <header className="mb-4 sm:mb-6">
+          <h2 className="font-montserrat text-2xl sm:text-3xl">Kijk mee in de ervaring</h2>
+          <p className="text-[var(--color-text)]/80 mt-2 max-w-2xl">
+            Een rustige interface die direct duidelijk maakt wat bij je past. Hieronder komt een preview van het stijlprofiel en outfit-overzicht.
+          </p>
+        </header>
+
+        <figure
+          aria-label="Preview placeholder — hier komt een afbeelding of video van het dashboard"
+          className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]/60 backdrop-blur shadow-[var(--shadow-soft)] overflow-hidden"
+        >
+          <div
+            className="relative w-full"
+            style={{ paddingTop: "56.25%" }}
+          >
+            <div className="absolute inset-0 grid place-items-center">
+              <div className="text-center">
+                <div className="inline-block rounded-full border border-[var(--color-border)] px-3 py-1 text-xs tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
+                  Preview
+                </div>
+                <div className="font-montserrat text-xl">Stijlprofiel & outfits (beeld volgt)</div>
+                <p className="text-[var(--color-text)]/70 mt-1 max-w-lg">
+                  Placeholder-kader: vervang dit later door een screenshot of korte video.
+                </p>
               </div>
             </div>
           </div>
-        </section>
+          <figcaption className="px-4 py-3 text-[var(--color-text)]/70 text-sm border-t border-[var(--color-border)]">
+            Tip: toon straks het kleurenpalet, een outfitgrid en een "Toevoegen aan wishlist" flow.
+          </figcaption>
+        </figure>
 
-        {/* Features Section */}
-        <section className="py-20 bg-[var(--color-surface)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold font-montserrat text-[var(--color-text)] mb-4">
-                Waarom FitFi?
-              </h2>
-              <p className="text-lg text-[var(--color-text)]/80 max-w-2xl mx-auto">
-                Onze AI begrijpt jouw unieke stijl en helpt je outfits te vinden die perfect passen bij wie je bent.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="text-center p-8">
-                <div className="w-16 h-16 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <h3 className="text-xl font-semibold font-montserrat text-[var(--color-text)] mb-4">
-                  Persoonlijk
-                </h3>
-                <p className="text-[var(--color-text)]/80">
-                  Onze AI leert jouw voorkeuren, lichaamsbouw en lifestyle kennen voor perfect passende aanbevelingen.
-                </p>
-              </Card>
-
-              <Card className="text-center p-8">
-                <div className="w-16 h-16 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl">⚡</span>
-                </div>
-                <h3 className="text-xl font-semibold font-montserrat text-[var(--color-text)] mb-4">
-                  Snel & Slim
-                </h3>
-                <p className="text-[var(--color-text)]/80">
-                  In enkele minuten krijg je een compleet stijlprofiel met concrete outfit-ideeën die je direct kunt dragen.
-                </p>
-              </Card>
-
-              <Card className="text-center p-8">
-                <div className="w-16 h-16 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl">🛍️</span>
-                </div>
-                <h3 className="text-xl font-semibold font-montserrat text-[var(--color-text)] mb-4">
-                  Praktisch
-                </h3>
-                <p className="text-[var(--color-text)]/80">
-                  Alle aanbevelingen zijn direct te kopen bij Nederlandse webshops. Van budget tot premium merken.
-                </p>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20">
-          <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold font-montserrat text-[var(--color-text)] mb-6">
-              Klaar om jouw perfecte stijl te ontdekken?
-            </h2>
-            <p className="text-lg text-[var(--color-text)]/80 mb-8 max-w-2xl mx-auto">
-              Start nu met onze gratis stijlquiz en ontvang binnen enkele minuten jouw persoonlijke AI Style Report.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/results" onClick={handleStartQuiz} className="ff-cta px-8 py-4 rounded-2xl text-center">
-                Start gratis stijlquiz
-              </Link>
-              <Link
-                to="/pricing"
-                className="px-8 py-4 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center"
-              >
-                Bekijk prijzen
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-    </>
+        <div className="mt-6 flex gap-3">
+          <NavLink to="/results" className="ff-btn ff-btn-primary">Start gratis</NavLink>
+          <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Zo werkt het</NavLink>
+        </div>
+      </section>
+    </main>
   );
-};
-
-export default HomePage;
+}
