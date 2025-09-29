@@ -19,56 +19,52 @@ export default function OverOnsPage() {
         ]}
       />
 
-      {/* Missie & verhaal (uit jouw input opgebouwd) */}
       <section className="ff-container py-10">
         <div className="grid gap-6 lg:grid-cols-2">
           <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
             <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Ons verhaal</h2>
             <p className="mt-3 text-[var(--color-text)]/80">
-              FitFi is ontstaan uit een simpele vraag: waarom staat de ene kleur je geweldig en de andere juist niet?
-              We doken in kleur, huidtinten en pasvormen – en merkten dat mensen vooral vastlopen op tijd: uren scrollen,
-              eindeloos vergelijken en tóch twijfelen. Dat moest slimmer kunnen.
+              FitFi ontstond vanuit een simpele vraag: waarom staat de ene kleur je geweldig en de andere niet?
+              We doken in kleur, lichaamsvormen en pasvormen – en merkten dat mensen vooral vastlopen op tijd:
+              uren scrollen, eindeloos vergelijken en tóch twijfelen. Dat moest slimmer kunnen.
             </p>
             <p className="mt-3 text-[var(--color-text)]/80">
-              Met FitFi combineren we persoonlijke voorkeur met heldere logica. Geen grote woorden, wel praktische keuzes.
+              Met FitFi combineren we jouw persoonlijke voorkeur met heldere logica. Geen grote woorden, wel praktische keuzes.
               Minder zoeken, meer dragen.
             </p>
           </article>
 
-          {/* Behind the scenes – zonder te veel prijs te geven */}
           <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-            <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Hoe we het aanpakken</h2>
+            <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Hoe we het doen</h2>
             <p className="mt-3 text-[var(--color-text)]/80">
-              We koppelen je antwoorden aan duidelijke regels voor silhouet, kleurtemperatuur en materiaal.
-              Achter de schermen gebruiken we modellen en referentiedata om combinaties te beoordelen.
-              De exacte receptuur houden we compact – het resultaat is wat telt: rust in je keuzes.
+              We koppelen je antwoorden aan simpele regels voor silhouet, kleur en materiaal.
+              Zo zie je waarom iets werkt, niet alleen dát het werkt. Onze modellen blijven op de achtergrond – het resultaat is wat telt.
             </p>
             <p className="mt-3 text-[var(--color-text)]/80">
-              Privacy blijft leidend. We vragen weinig en gebruiken het gericht voor jouw advies.
+              We verzamelen zo weinig mogelijk data en gebruiken die alleen voor jouw advies. Je privacy staat voorop.
             </p>
           </article>
         </div>
       </section>
 
-      {/* Sustainability & ethics */}
       <section className="ff-container py-6">
         <div className="grid gap-6 md:grid-cols-3">
           <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
             <h3 className="font-montserrat text-lg text-[var(--color-text)]">Bewust kopen</h3>
             <p className="mt-2 text-[var(--color-text)]/80">
-              Minder impulsaankopen, meer outfits die je echt draagt. Dat is duurzamer voor je kast én je portemonnee.
+              Minder impulsaankopen, meer outfits die je echt draagt. Dat is beter voor je kast én voor de planeet.
             </p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
             <h3 className="font-montserrat text-lg text-[var(--color-text)]">Eerlijke links</h3>
             <p className="mt-2 text-[var(--color-text)]/80">
-              Soms verdienen we commissie via shoplinks. Aanbevelingen blijven altijd stijl- en pasvormgedreven, niet om de commissie.
+              Soms verdienen we iets via shoplinks. Maar ons advies komt altijd op de eerste plaats.
             </p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-            <h3 className="font-montserrat text-lg text-[var(--color-text)]">Privacy-first</h3>
+            <h3 className="font-montserrat text-lg text-[var(--color-text)]">Privacy gegarandeerd</h3>
             <p className="mt-2 text-[var(--color-text)]/80">
-              Zo min mogelijk data, netjes verwerkt. Geen doorverkoop. Je behoudt controle.
+              Zo min mogelijk verzamelen, netjes verwerken en niets doorverkopen. Jij bepaalt.
             </p>
           </article>
         </div>
@@ -79,7 +75,7 @@ export default function OverOnsPage() {
         </div>
       </section>
 
-      {/* Team-sectie blijft zoals op de site (later uitbreiden) */}
+      {/* Team informatie kan hier later toegevoegd worden */}
     </main>
   );
 }

@@ -6,15 +6,15 @@ type Row = { label: string; starter: boolean | string; pro: boolean | string; el
 
 const ROWS: Row[] = [
   { label: "Outfits per maand", starter: "3", pro: "10", elite: "Onbeperkt" },
-  { label: "AI-style analyse", starter: true, pro: true, elite: "Uitgebreid" },
+  { label: "AI‑analyse", starter: true, pro: true, elite: "Uitgebreid" },
   { label: "Wishlist", starter: "Beperkt", pro: "Volledig", elite: "Volledig + alerts" },
   { label: "Support", starter: "Basis", pro: "Sneller", elite: "Prioriteit" },
 ];
 
 const PRICE_FAQ = [
   { q: "Kan ik op elk moment opzeggen?", a: "Ja. Je zit nergens aan vast en kunt maandelijks opzeggen." },
-  { q: "Welke betaalmethodes zijn er?", a: "Gangbare betaalmethodes, afhankelijk van je land. We maken het zo makkelijk mogelijk." },
-  { q: "Kan ik wisselen tussen maand en jaar?", a: "Ja. Wisselen kan; we verrekenen netjes." },
+  { q: "Welke betaalmethodes accepteren jullie?", a: "We ondersteunen de gebruikelijke betaalmethoden. Je kunt eenvoudig betalen zoals je gewend bent." },
+  { q: "Kan ik wisselen tussen maand en jaar?", a: "Ja. Je kunt altijd switchen; we verrekenen het verschil netjes." },
   { q: "Is er een gratis optie?", a: "Ja. Je kunt gratis starten met Starter en later upgraden." },
 ];
 
@@ -49,10 +49,9 @@ export default function PricingPage() {
             { label: "Probeer gratis", to: "/results", variant: "primary" },
             { label: "Veelgestelde vragen", to: "#price-faq", variant: "secondary" }
           ]}
-          note="Jaar = voordeliger. Opzeggen kan altijd."
+          note="Jaar is voordeliger. Opzeggen kan altijd."
         />
 
-        {/* Periode-schakelaar (jaar/maand) */}
         <section className="ff-container py-8">
           <div role="group" aria-label="Prijsperiode" className="inline-flex gap-2">
             <button className="ff-btn ff-btn-secondary" aria-pressed={yearly} onClick={() => setYearly(true)}>Jaar</button>
@@ -60,7 +59,6 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Vergelijkingstabel */}
         <section className="ff-container py-6">
           <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
             <table className="w-full text-left">
@@ -91,7 +89,6 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Garantie & veiligheid */}
         <section className="ff-container py-10">
           <div className="grid gap-6 md:grid-cols-3">
             <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
@@ -99,17 +96,16 @@ export default function PricingPage() {
               <p className="mt-2 text-[var(--color-text)]/80">Geen kleine lettertjes. Je zit nergens aan vast.</p>
             </article>
             <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-              <h3 className="font-montserrat text-lg text-[var(--color-text)]">Privacy-first</h3>
-              <p className="mt-2 text-[var(--color-text)]/80">We doen netjes met data. Zo min mogelijk verzamelen, niet doorverkopen.</p>
+              <h3 className="font-montserrat text-lg text-[var(--color-text)]">Privacy staat voorop</h3>
+              <p className="mt-2 text-[var(--color-text)]/80">We gaan zorgvuldig om met je data en verkopen niets door.</p>
             </article>
             <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-              <h3 className="font-montserrat text-lg text-[var(--color-text)]">Veilig betalen</h3>
-              <p className="mt-2 text-[var(--color-text)]/80">Betrouwbare providers en versleuteling. Gewoon zoals het hoort.</p>
+              <h3 className="font-montserrat text-lg text-[var(--color-text)]">Veilige betalingen</h3>
+              <p className="mt-2 text-[var(--color-text)]/80">Afrekenen gaat via betrouwbare betaalpartners, zoals je gewend bent.</p>
             </article>
           </div>
         </section>
 
-        {/* FAQ prijs */}
         <section id="price-faq" className="ff-container py-8">
           <h2 className="font-montserrat text-2xl text-[var(--color-text)] mb-4">Veelgestelde prijs-vragen</h2>
           <div className="grid gap-3">
