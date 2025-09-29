@@ -129,7 +129,7 @@ const BlogDetailPage: React.FC = () => {
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:image" content={post.imageUrl} />
         <meta property="og:type" content="article" />
-        <link rel="canonical" href={`https://fitfi.app/blog/${slug}`} />
+        <link rel="canonical" href={`https://fitfi.ai/blog/${slug}`} />
       </Helmet>
 
       <div className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16">

@@ -621,7 +621,7 @@ const QuizPage: React.FC = () => {
                 matchPercentage: 87 // Would be calculated based on answers
               },
               shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
-              shareUrl: 'https://fitfi.app?ref=achievement'
+              shareUrl: 'https://fitfi.ai?ref=achievement'
             }}
             onClose={() => setShowSocialShare(false)}
             onShare={handleSocialShare}

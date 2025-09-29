@@ -85,8 +85,8 @@ const BlogIndexPage: React.FC = () => {
         title="Blog - Styling Tips & Mode Trends"
         description="Ontdek de laatste styling tips, mode trends en persoonlijke groei-inzichten op de FitFi blog. Van psychologie tot praktische stijladvies."
         canonical="https://fitfi.app/blog"
-        image="https://fitfi.app/og-blog.jpg"
-        keywords="styling tips, mode trends, fashion blog, stijl advies, persoonlijke groei, mode psychologie"
+        canonical="https://fitfi.ai/blog"
+        image="https://fitfi.ai/og-blog.jpg"
         type="website"
       />
 
