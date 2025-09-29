@@ -1,101 +1,113 @@
 /* src/styles/tokens.css */
-/* FitFi vNext — Light/Neutral Beige — CANONIEK */
+/* Bron van waarheid — GEEN hex/rgb elders in src/** */
+
+/* Kleuren (light) */
 :root {
-  /* Palet */
-  --color-bg: #F7F3EC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E2333;
-  --color-muted: #6B7280;
+  /* Basiskleuren */
+  --ff-color-bg: #F7F3EC;
+  --ff-color-surface: #FFFFFF;
+  --ff-color-text: #1E2333;
+  --ff-color-muted: #6B7280;
 
-  --color-primary: #A6886A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #8F7459;   /* hover */
-  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+  /* Primair palet (beige/bruin) */
+  --ff-color-primary: #A6886A;
+  --ff-color-primary-600: #8F7459;
+  --ff-color-primary-700: #7A614A;
 
-  --color-accent: #D8CABA;
-  --color-border: rgba(30, 35, 51, 0.08);
+  /* Accent */
+  --ff-color-accent: #D8CABA;
 
   /* Status */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger:  #DC2626;
+  --ff-color-success: #16A34A;
+  --ff-color-warning: #D97706;
+  --ff-color-danger:  #DC2626;
 
-  /* Overlays */
-  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
-  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
+  /* Randen & overlays */
+  --ff-color-border: rgba(30,35,51,.08);
+  --ff-overlay-primary-12a: rgba(166,136,106,.12);
+  --ff-overlay-accent-08a: rgba(216,202,186,.10);
 
-  /* ============ TOKENS: CTA (Start gratis) ============ */
-  /* Basis warm bruin; tint/tonen voor states & surfaces */
+  /* CTA gradient stops (optioneel) */
   --ff-cta-50:  #F6EFE9;
   --ff-cta-100: #EEE2D7;
   --ff-cta-200: #E2D0BF;
   --ff-cta-300: #CEB39A;
   --ff-cta-400: #B98F71;
-  --ff-cta-500: #9D6E52;   /* ≈ huidige Start gratis */
-  --ff-cta-600: #8A6048;   /* hover */
-  --ff-cta-700: #724E3B;   /* active/focus ring donker */
+  --ff-cta-500: #9D6E52;
+  --ff-cta-600: #8A6048;
+  --ff-cta-700: #724E3B;
   --ff-cta-800: #5C3E2E;
   --ff-cta-900: #493123;
 
-  /* Tekst op CTA-vlakken */
-  --ff-cta-contrast: #FFFFFF;
+  /* Contrast op primair/cta */
+  --ff-color-on-primary: #FFFFFF;
 
-  /* Neutrale inkt & border die mooi samengaan met CTA */
-  --ff-ink-600: #1D2430;
-  --ff-ink-500: #2B3342;
-  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
-
-  /* Accent color - matches "Start gratis" button */
-  --ff-color-accent: #9C745E;
-  --ff-color-accent-contrast: #fff;
-
-  /* Links consistent with accent */
-  --ff-link: var(--ff-color-accent);
-  --ff-link-hover: color-mix(
-    in oklab,
-    var(--ff-color-accent) 84%,
-    black 16%
-  );
-  --ff-focus: color-mix(
-    in oklab,
-    var(--ff-color-accent) 20%,
-    white 80%
-  );
+  /* Typografie */
+  --ff-font-heading: 'Montserrat', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --ff-font-body: 'Lato', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
 
   /* Radii */
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
+  --ff-radius-lg: 1rem;
+  --ff-radius-xl: 1.25rem;
+  --ff-radius-2xl: 1.5rem;
 
-  /* Shadows */
-  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
-  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
+  /* Schaduwen */
+  --ff-shadow-soft: 0 4px 24px rgba(30,35,51,.06);
+  --ff-shadow-elev-2: 0 6px 14px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
+  --ff-shadow-elev-3: 0 10px 22px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05);
+  --ff-shadow-ring: 0 0 0 3px rgba(166,136,106,.20);
 
-  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
-  font-synthesis-weight: none;
+  /* Links */
+  --ff-link: var(--ff-color-primary);
+  --ff-link-hover: color-mix(in oklab, var(--ff-color-primary) 84%, black 16%);
+
+  /* Focus kleur */
+  --ff-focus: color-mix(in oklab, var(--ff-color-primary) 20%, white 80%);
 }
 
-/* Basiselementen */
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Dark mode — via data-theme="dark" of OS-pref */
+[data-theme="dark"] {
+  --ff-color-bg: #111315;
+  --ff-color-surface: #14171A;
+  --ff-color-text: #EAEFF5;
+  --ff-color-muted: #9AA3AF;
+
+  --ff-color-primary: #BFA289;
+  --ff-color-primary-600: #A98869;
+  --ff-color-primary-700: #8F7459;
+
+  --ff-color-accent: #CDB79E;
+
+  --ff-color-border: rgba(234,239,245,.08);
+
+  --ff-color-on-primary: #0E1113;
+
+  --ff-shadow-soft: 0 4px 24px rgba(0,0,0,.35);
+  --ff-shadow-elev-2: 0 6px 14px rgba(0,0,0,.40), 0 2px 4px rgba(0,0,0,.25);
+  --ff-shadow-elev-3: 0 10px 22px rgba(0,0,0,.45), 0 4px 8px rgba(0,0,0,.3);
 }
 
-/* Cards */
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+/* OS-voorkeur fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Zelfde waarden als data-theme="dark" */
+    --ff-color-bg: #111315;
+    --ff-color-surface: #14171A;
+    --ff-color-text: #EAEFF5;
+    --ff-color-muted: #9AA3AF;
+
+    --ff-color-primary: #BFA289;
+    --ff-color-primary-600: #A98869;
+    --ff-color-primary-700: #8F7459;
+
+    --ff-color-accent: #CDB79E;
+
+    --ff-color-border: rgba(234,239,245,.08);
+
+    --ff-color-on-primary: #0E1113;
+
+    --ff-shadow-soft: 0 4px 24px rgba(0,0,0,.35);
+    --ff-shadow-elev-2: 0 6px 14px rgba(0,0,0,.40), 0 2px 4px rgba(0,0,0,.25);
+    --ff-shadow-elev-3: 0 10px 22px rgba(0,0,0,.45), 0 4px 8px rgba(0,0,0,.3);
+  }
 }
-
-/* CTA – solid (AA) */
-.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
-.ff-cta:hover { background: var(--ff-color-primary-600); }
-
-/* Focus-ring tokenized */
-.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
-
-/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
