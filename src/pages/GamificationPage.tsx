@@ -24,6 +24,7 @@ const GamificationPage: React.FC = () => {
           subtitle="Verdien XP, bouw streaks en unlock perks met dagelijkse micro-acties."
           align="left"
           as="h1"
+          size="lg"
         />
 
         {/* Bestaande gamification-secties ongewijzigd */}

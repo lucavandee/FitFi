@@ -7,6 +7,7 @@ type Props = {
   align?: "left" | "center";
   as?: keyof JSX.IntrinsicElements; // h1/h2/...
   className?: string;
+  size?: "sm" | "md" | "lg";
 };
 
 const SectionHeader: React.FC<Props> = ({
@@ -15,21 +16,38 @@ const SectionHeader: React.FC<Props> = ({
   subtitle,
   align = "left",
   as = "h1",
-  className = ""
+  className = "",
+  size = "lg",
 }) => {
   const HeadingTag: any = as;
+
+  // Compacte/middel/large varianten (tokens-first)
+  const titleSize =
+    size === "sm"
+      ? "text-[clamp(1.5rem,3vw,2.25rem)]"
+      : size === "md"
+      ? "text-[clamp(1.75rem,3.5vw,2.75rem)]"
+      : "text-[clamp(2rem,4vw,3.5rem)]";
+
+  const padY =
+    size === "sm"
+      ? "py-8 md:py-10"
+      : size === "md"
+      ? "py-9 md:py-12"
+      : "py-10 md:py-14";
 
   return (
     <header
       className={[
-        "ff-section-header rounded-[var(--radius-lg)] px-6 py-10 md:py-14",
+        "ff-section-header rounded-[var(--radius-lg)] px-6",
+        padY,
         align === "center" ? "text-center" : "text-left",
-        "bg-[var(--color-surface)]"
+        "bg-[var(--color-surface)]",
       ].join(" ") + (className ? " " + className : "")}
       style={{
         // Subtiele warme achtergrond (tokens-first; geen hex)
         background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))"
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))",
       }}
     >
       {eyebrow && (
@@ -41,7 +59,12 @@ const SectionHeader: React.FC<Props> = ({
         </div>
       )}
 
-      <HeadingTag className="mt-4 font-montserrat text-[clamp(2rem,4vw,3.5rem)] leading-tight text-[var(--color-text)]">
+      <HeadingTag
+        className={[
+          "mt-4 font-montserrat leading-tight text-[var(--color-text)]",
+          titleSize,
+        ].join(" ")}
+      >
         {title}
       </HeadingTag>
 

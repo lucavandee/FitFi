@@ -480,6 +480,7 @@ const QuizPage: React.FC = () => {
           subtitle="Slimme vragen, duidelijke keuzes. Daarna meteen outfits die kloppen."
           align="left"
           as="h1"
+          size="lg"
         />
 
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -250,6 +250,7 @@ const TribeDetailPage: React.FC = () => {
           subtitle={tribe?.description}
           align="left"
           as="h1"
+          size="sm"
         />
 
         <ErrorBoundary>

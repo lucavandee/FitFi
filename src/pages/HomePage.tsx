@@ -49,6 +49,7 @@ const HomePage: React.FC = () => {
           subtitle="Wij combineren smaak, context en pasvorm tot outfits die je elke dag met vertrouwen draagt."
           align="left"
           as="h1"
+          size="lg"
         />
 
         {/* Bestaande hero/sections blijven ongewijzigd */}

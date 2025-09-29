@@ -22,6 +22,7 @@ const PrivacyPolicyPage: React.FC = () => {
           subtitle="We behandelen je gegevens met respect. Hier lees je precies hoe."
           align="left"
           as="h1"
+          size="sm"
         />
 
         <MarkdownPage

@@ -51,6 +51,7 @@ const BlogDetailPage: React.FC = () => {
           subtitle={post?.excerpt}
           align="left"
           as="h1"
+          size="sm"
         />
 
         {/* Bestaande blog content UI ongewijzigd */}

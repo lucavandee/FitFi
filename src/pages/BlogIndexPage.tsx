@@ -28,6 +28,7 @@ const BlogIndexPage: React.FC = () => {
           subtitle="Praktische stijltips, psychologie achter kleding en AI-styling in eenvoudig Nederlands."
           align="left"
           as="h1"
+          size="sm"
         />
 
         {/* Bestaande blog index UI ongewijzigd */}
