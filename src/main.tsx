@@ -9,7 +9,7 @@ import App from "./App";
 import "./index.css";               // Tailwind + tokens
 import "@/styles/polish.addon.css"; // opt-in premium polish v3 (laatste)
 
-// Context providers (lightweight, no SSR dependencies)
+// Context providers
 import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@/context/UserContext";
 import { GamificationProvider } from "@/context/GamificationContext";
@@ -22,7 +22,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <HelmetProvider>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          {/* Order matters: Theme → User → Gamification (needs user) → Onboarding */}
           <ThemeProvider>
             <UserProvider>
               <GamificationProvider>
