@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import Seo from '@/components/Seo';
 import share from '@/utils/share';
+import urls from '@/utils/urls';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import { QuizAnswers, QuizProgress } from '../types/quiz';
@@ -619,18 +620,14 @@ const QuizPage: React.FC = () => {
             />
           )}
 
-          {/* Social share — nu via centrale share helper */}
+          {/* Social share — nu via centrale helper */}
           {showSocialShare && newAchievements.length > 0 && (
             <SocialShareModal
-              shareData={{
-                achievement: newAchievements[0],
-                userProfile: {
-                  name: user?.name || 'FitFi User',
-                  styleType: 'Modern Minimalist', // Would be dynamic based on answers
-                  matchPercentage: 87 // Would be calculated based on answers
-                },
-                shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
-                shareUrl: share.makeAchievementShare(newAchievements?.[0]?.title)
+              isOpen={showSocialShare}
+              data={{
+                title: 'Mijn stijlprofiel is af! 🎯',
+                text: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
+                shareUrl: urls.buildShareUrl(undefined, { ref: 'achievement' })
               }}
               onClose={() => setShowSocialShare(false)}
               onShare={handleSocialShare}
