@@ -5,6 +5,7 @@ import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
 import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
 import FoundersTierPerks from '@/components/founders/FoundersTierPerks';
 import { resolveTier } from '@/config/foundersTiers';
+import urls from "@/utils/urls";
 
 export const FoundersBlock: React.FC = () => {
   const { user } = useUser();
@@ -15,92 +16,48 @@ export const FoundersBlock: React.FC = () => {
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
   const inviteUrl = useMemo(() => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://fitfi.ai";
-    return `${origin}/?ref=${userId ?? "guest"}`;
+    return urls.buildReferralUrl(userId ?? "guest");
   }, [userId]);
 
   useEffect(() => {
-    let alive = true;
-
+    let mounted = true;
     (async () => {
-      setLoading(true);
-      setErrMsg(null);
-
-      if (!userId) {
-        // Geen ingelogde user of geen client → toon 0 en stop zonder error
-        if (alive) { setRefCount(0); setLoading(false); }
-        return;
-      }
-
       try {
-        const rows = await fetchReferralsByInviter(userId);
-        const count = rows.length;
-        if (alive) setRefCount(count);
-
-        const sb = getSupabaseClient();
-        if (!sb) {
-          console.warn("[FoundersBlock] Supabase client not available");
-          return;
-        }
-
-        const { error: statsUpdateErr } = await sb
-          .from("user_stats")
-          .upsert({
-            user_id: userId,
-            invites: count,
-            updated_at: new Date().toISOString(),
-            last_active: new Date().toISOString(),
-          });
-
-        if (statsUpdateErr) console.warn("[FoundersBlock] user_stats upsert warning:", statsUpdateErr.message);
+        const list = await fetchReferralsByInviter(userId ?? "");
+        if (!mounted) return;
+        setRefCount(list?.length ?? 0);
       } catch (e: any) {
-        console.error("[FoundersBlock] load referrals failed:", e?.message ?? e);
-        if (alive) {
-          setErrMsg("Referrals laden mislukt (wordt snel gefixt).");
-          setRefCount(0); // graceful
-        }
+        if (!mounted) return;
+        setErrMsg(e?.message || "Kon referrals niet ophalen");
       } finally {
-        if (alive) setLoading(false);
+        if (!mounted) return;
+        setLoading(false);
       }
     })();
-
-    return () => { alive = false; };
+    return () => { mounted = false; };
   }, [userId]);
 
-  async function onShare() {
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Join FitFi", text: "Word mijn stijl‑buddy op FitFi!", url: inviteUrl });
-      } else {
-        await navigator.clipboard.writeText(inviteUrl);
-      }
-      toast("Invite link gedeeld/gekopieerd ✅");
-    } catch {
-      // stil
-    }
-  }
-
-  function toast(msg: string) {
-    const el = document.createElement("div");
-    el.textContent = msg;
-    el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-[9999]";
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1600);
-  }
+  const tier = resolveTier(refCount);
 
   return (
-    <div className="card p-5 sm:p-6">
-      <FoundersTierBadge referrals={loading ? 0 : refCount} className="mb-4" />
-      
-      <div className="flex items-center justify-between">
-        <span className="hidden sm:inline-block">
-          <FoundersTierBadge referrals={loading ? 0 : refCount} compact />
-        </span>
+    <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-6 bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h3 className="font-montserrat text-xl text-[var(--color-text)]">Founders</h3>
+          <p className="text-sm text-[var(--color-text-muted)]">Nodig vrienden uit en ontgrendel voordelen</p>
+        </div>
+        <FoundersTierBadge tier={tier} />
+      </div>
+
+      <div className="mt-4 grid gap-3">
+        <div className="text-sm text-[var(--color-text)]/80 break-all">{inviteUrl}</div>
         <button
-          type="button"
-          onClick={onShare}
-          className="px-4 py-2 rounded-full bg-[#89CFF0] text-white hover:bg-[#5FB7E6] btn-animate disabled:opacity-60"
-          disabled={loading}
+          className="ff-cta px-4 py-2 rounded-2xl"
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(inviteUrl);
+            } catch { /* no-op */ }
+          }}
         >
           Deel invite
         </button>
