@@ -5,20 +5,20 @@ import PageHero from "@/components/marketing/PageHero";
 type Feature = { title: string; body: string; };
 const FEATURES: Feature[] = [
   {
-    title: "AI‑advies dat klopt",
-    body: "Geen vage termen. Op basis van jouw voorkeuren geven we duidelijke richtlijnen voor silhouet, kleur en materiaal."
+    title: "AI-analyse die wél klopt",
+    body: "Geen vage termen. We vertalen jouw voorkeuren naar duidelijke richtlijnen voor silhouet, kleur en materiaal."
   },
   {
     title: "Outfits zonder ruis",
-    body: "Per situatie – werk, weekend, diner – zodat je sneller kiest en minder twijfelt."
+    body: "Per gelegenheid – werk, weekend, diner – zodat je sneller kiest en minder twijfelt."
   },
   {
-    title: "Wishlist & prijsalerts",
-    body: "Bewaar favorieten en krijg een seintje als er korting is. Jij houdt de regie."
+    title: "Wishlist en prijsalerts",
+    body: "Bewaar favorieten en laat je waarschuwen als iets in de aanbieding is. Jij houdt de regie."
   },
   {
-    title: "Privacy staat voorop",
-    body: "We vragen weinig en verkopen niets door. Je data blijft van jou."
+    title: "Privacy-first",
+    body: "We vragen weinig en doen er netjes mee. Geen doorverkoop. Geen onnodige tracking."
   }
 ];
 
@@ -29,7 +29,7 @@ export default function HomePage() {
         id="page-home"
         eyebrow="GRATIS AI STYLE REPORT"
         title="Ontdek wat jouw stijl over je zegt"
-        subtitle="Beantwoord 6 korte vragen en zie meteen outfits en uitleg die bij je passen. Rust in je keuzes, zonder ruis."
+        subtitle="Beantwoord 6 korte vragen en krijg direct outfits en heldere uitleg. Rust in je keuzes, zonder ruis."
         align="left"
         as="h1"
         size="lg"
@@ -56,13 +56,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Preview-kader */}
+      {/* Preview-kader (afbeelding kan later ingevuld worden) */}
       <section id="preview" className="ff-container py-12">
         <div className="grid gap-6 lg:grid-cols-2 items-center">
           <div>
-            <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Zo ziet je stijl­advies eruit</h2>
+            <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Zo ziet je stijlrapport eruit</h2>
             <p className="mt-3 text-[var(--color-text)]/80">
-              Je ontvangt een helder overzicht met kleuren die je laten stralen, vormen die kloppen en outfits die je direct kunt dragen.
+              Je krijgt een helder profiel met kleuren die je laten stralen, vormen die kloppen en outfits die je direct kunt dragen.
               Alles rustig uitgelegd, zonder poeha.
             </p>
             <div className="mt-6 flex gap-3">
@@ -71,7 +71,7 @@ export default function HomePage() {
             </div>
           </div>
           <figure
-            aria-label="Voorbeeld van stijlrapport"
+            aria-label="Voorbeeld van resultaten"
             className="aspect-[16/10] w-full rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] overflow-hidden grid place-items-center"
           >
             <div className="text-[var(--color-text)]/50 text-sm">

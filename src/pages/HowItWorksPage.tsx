@@ -6,23 +6,23 @@ type Step = { title: string; body: string; };
 const STEPS: Step[] = [
   {
     title: "1) Korte stijlscan",
-    body: "Zes vragen over je smaak – er is geen goed of fout. We willen jou leren kennen."
+    body: "Zes vragen over wat je mooi vindt en wat niet. Geen goede of foute antwoorden – we willen jouw smaak begrijpen."
   },
   {
-    title: "2) Logica achter je look",
-    body: "We koppelen je antwoorden aan simpele regels voor silhouet, kleur en materiaal. Zo snap je waarom iets werkt."
+    title: "2) Logica achter jouw stijl",
+    body: "We koppelen je antwoorden aan kleur, silhouet en materiaal. Zo zie je waarom iets werkt, niet alleen dát het werkt."
   },
   {
-    title: "3) Outfits die meteen kloppen",
-    body: "Per situatie – werk, weekend, diner. Duidelijk en overzichtelijk, zodat kiezen makkelijk wordt."
+    title: "3) Outfits die je meteen kunt dragen",
+    body: "Per gelegenheid: werk, weekend, diner. Rustig gepresenteerd, zodat kiezen makkelijk wordt."
   }
 ];
 
 const HOW_FAQ = [
-  { q: "Hoe lang duurt de scan?", a: "Een paar minuten. Je bent zo klaar." },
-  { q: "Wat gebeurt er met mijn gegevens?", a: "We gebruiken ze alleen voor jouw advies en verkopen ze niet door." },
-  { q: "Kan ik mijn antwoorden later aanpassen?", a: "Ja, je kunt je profiel altijd bijwerken." },
-  { q: "Krijg ik meteen outfits te zien?", a: "Absoluut. Je ziet direct voorbeelden per gelegenheid." }
+  { q: "Hoe lang duurt de scan?", a: "Ongeveer twee minuten. Je bent zo klaar." },
+  { q: "Wat gebeurt er met mijn gegevens?", a: "We vragen weinig en gebruiken het alleen voor je stijladvies. Geen doorverkoop." },
+  { q: "Kan ik later iets wijzigen?", a: "Ja. Je kunt altijd terug naar je profiel om aan te passen." },
+  { q: "Heb ik direct outfits?", a: "Ja, je ziet meteen voorbeelden per gelegenheid." }
 ];
 
 export default function HowItWorksPage() {
@@ -32,7 +32,7 @@ export default function HowItWorksPage() {
         id="page-how"
         eyebrow="GRATIS AI STYLE REPORT"
         title="Hoe FitFi werkt"
-        subtitle="We leren jouw stijl kennen en laten zien wat werkt – met outfits die meteen kloppen."
+        subtitle="Eerst begrijpen we je smaak. Daarna laten we zien wat voor jou werkt – met outfits die je zo kunt dragen."
         align="left"
         as="h1"
         size="lg"
@@ -57,6 +57,7 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Demo placeholder */}
       <section className="ff-container py-12">
         <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
           <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Korte demo (video volgt)</h2>
@@ -69,6 +70,7 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Inline FAQ */}
       <section id="faq" className="ff-container py-12">
         <h2 className="font-montserrat text-2xl text-[var(--color-text)] mb-4">Veelgestelde vragen</h2>
         <div className="grid gap-3">
