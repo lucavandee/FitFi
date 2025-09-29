@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/Seo';
+import urls from '@/utils/urls';
 import { 
   ArrowLeft, 
   Users, 
@@ -12,8 +13,8 @@ import {
   Plus,
   Settings
 } from 'lucide-react';
-import { useUser } from '../context/UserContext';
-import { useTribeBySlug, useTribes } from '../hooks/useTribes';
+import { useUser } from '@/context/UserContext';
+import { useTribeBySlug, useTribes } from '@/hooks/useTribes';
 import { useTribeChallenges, useChallengeSubmissions, useCreateChallengeSubmission, useCreateTribeChallenge } from '../hooks/useTribeChallenges';
 import { useIsAdmin } from '../hooks/useIsAdmin';
 import { JoinButton } from '../components/tribes/JoinButton';
@@ -29,8 +30,8 @@ import { useAddXp } from '../hooks/useDashboard';
 import type { Tribe, TribeChallenge } from '../services/data/types';
 import Button from '../components/ui/Button';
 import ImageWithFallback from '../components/ui/ImageWithFallback';
-import LoadingFallback from '../components/ui/LoadingFallback';
-import { ErrorBoundary } from '../components/ErrorBoundary';
+import LoadingFallback from '@/components/ui/LoadingFallback';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import toast from 'react-hot-toast';
 
 // Helper component for challenge section
@@ -119,12 +120,14 @@ const AdminChallengeControls: React.FC<{ challenge: TribeChallenge; onUpdate: ()
     </div>
   );
 };
+
 const TribeDetailPage: React.FC = () => {
   const { slug, tribeId } = useParams<{ slug?: string; tribeId?: string }>();
   const { user, status } = useUser();
   const navigate = useNavigate();
   const { data: fitFiUser } = useFitFiUser(user?.id);
   const { data: tribes } = useTribes();
+  const { data: tribe, isLoading } = useTribeBySlug(slug || tribeId || "");
   const { isAdmin } = useIsAdmin();
   
   // Challenges state
@@ -138,9 +141,20 @@ const TribeDetailPage: React.FC = () => {
     () => challenges?.find(c => c.id === activeChallengeId) ?? null,
     [challenges, activeChallengeId]
   );
+
+  const title = useMemo(
+    () => (tribe?.name ? `${tribe.name} — FitFi` : "Tribe — FitFi"),
+    [tribe?.name]
+  );
+  const description = useMemo(
+    () =>
+      tribe?.description ||
+      "Word lid van een Tribe, doe mee aan challenges en bouw aan jouw stijl met de community.",
+    [tribe?.description]
+  );
   
   // Find tribe by slug or tribeId
-  const tribe = useMemo(() => {
+  const tribeFromList = useMemo(() => {
     if (!tribes) return null;
     if (slug) {
       return tribes.find(t => t.slug === slug);
@@ -153,13 +167,16 @@ const TribeDetailPage: React.FC = () => {
 
   const { loading: tribesLoading } = useTribes();
 
+  // Use tribe from useTribeBySlug hook or fallback to tribes list
+  const finalTribe = tribe || tribeFromList;
+
   // Redirect if tribe not found
   useEffect(() => {
-    if (!tribesLoading && !tribe) {
+    if (!isLoading && !tribesLoading && !finalTribe) {
       toast.error('Tribe niet gevonden');
       navigate('/tribes');
     }
-  }, [tribesLoading, tribe, navigate]);
+  }, [isLoading, tribesLoading, finalTribe, navigate]);
 
   const handleCreateChallenge = async (challengeData: Omit<TribeChallenge, 'id' | 'createdAt'>) => {
     try {
@@ -174,233 +191,254 @@ const TribeDetailPage: React.FC = () => {
     // Refresh challenges data
     // React Query will automatically refetch
   };
-  if (tribesLoading) {
+
+  if (isLoading || tribesLoading) {
     return <LoadingFallback fullScreen message="Tribe laden..." />;
   }
 
-  if (!tribe) {
+  if (!finalTribe) {
     return (
-      <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Tribe niet gevonden</h2>
-          <p className="text-gray-600 mb-6">Deze tribe bestaat niet of is niet beschikbaar.</p>
-          <div className="space-y-3">
-            <Button onClick={() => window.location.reload()} variant="primary">
-              Probeer opnieuw
-            </Button>
-            <Button as={Link} to="/tribes" variant="outline">
-              Terug naar Tribes
-            </Button>
+      <>
+        <Seo
+          title="Tribe niet gevonden — FitFi"
+          description="Deze tribe bestaat niet of is niet beschikbaar."
+          canonical={`/tribes/${slug || tribeId || ""}`}
+        />
+        <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
+          <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
+            <h2 className="text-2xl font-light text-gray-900 mb-4">Tribe niet gevonden</h2>
+            <p className="text-gray-600 mb-6">Deze tribe bestaat niet of is niet beschikbaar.</p>
+            <div className="space-y-3">
+              <Button onClick={() => window.location.reload()} variant="primary">
+                Probeer opnieuw
+              </Button>
+              <Button as={Link} to="/tribes" variant="outline">
+                Terug naar Tribes
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F6F6]">
-      <Helmet>
-        <title>{tribe.name} - Style Tribe | FitFi</title>
-        <meta name="description" content={tribe.description} />
-        <meta property="og:title" content={`${tribe.name} - Style Tribe`} />
-        <meta property="og:description" content={tribe.description} />
-        <meta property="og:image" content={tribe.cover_img} />
-        <link rel="canonical" href={`https://fitfi.ai/tribes/${slug || tribeId}`} />
-      </Helmet>
+    <>
+      <Seo
+        title={title}
+        description={description}
+        canonical={`/tribes/${slug || tribeId || ""}`}
+        image={finalTribe?.cover_img}
+        jsonLd={
+          finalTribe
+            ? {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: finalTribe.name,
+                url: urls.canonicalUrl(`/tribes/${slug || tribeId || ""}`),
+                logo: finalTribe.cover_img,
+              }
+            : undefined
+        }
+      />
 
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <Link 
-            to="/tribes" 
-            className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
-          >
-            <ArrowLeft size={20} className="mr-2" />
-            Terug naar tribes
-          </Link>
-        </div>
-
-        {/* Tribe Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{tribe.name}</h1>
-            <p className="text-gray-600 mb-4">{tribe.description}</p>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <div className="flex items-center space-x-1">
-                <Users size={16} />
-                <span>{tribe.member_count} members</span>
-              </div>
-              {tribe.user_role === 'owner' && (
-                <div className="flex items-center space-x-1">
-                  <Crown size={16} />
-                  <span>Owner</span>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Join Button Integration */}
-          <JoinButton 
-            tribeId={tribe.id} 
-            userId={user?.id}
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-            size="lg"
-            variant="primary"
-          />
-        </div>
-
-        {/* Challenges Section */}
+      <main className="min-h-screen bg-[var(--color-bg)]">
         <ErrorBoundary>
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
-                  <Trophy className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-medium text-gray-900">Tribe Challenges</h2>
-                  <p className="text-gray-600">Verdien punten en toon je stijl</p>
-                </div>
-              </div>
-              
-              {/* Admin Controls */}
-              {isAdmin && (
-                <div className="flex items-center space-x-2">
-                  <Button
-                    onClick={() => setShowAdminForm(!showAdminForm)}
-                    variant="outline"
-                    size="sm"
-                    icon={<Plus size={16} />}
-                    iconPosition="left"
-                    className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
-                  >
-                    {showAdminForm ? 'Annuleren' : 'Nieuwe Challenge'}
-                  </Button>
-                </div>
-              )}
-              
-              {challenges && challenges.length > 0 && (
-                <div className="text-sm text-gray-600">
-                  {challenges.filter(c => c.status === 'open').length} actieve challenges
-                </div>
-              )}
+          <div className="max-w-3xl mx-auto px-4 py-8">
+            {/* Header */}
+            <div className="mb-6">
+              <Link 
+                to="/tribes" 
+                className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
+              >
+                <ArrowLeft size={20} className="mr-2" />
+                Terug naar tribes
+              </Link>
             </div>
 
-            {/* Admin Form */}
-            {isAdmin && showAdminForm && (
-              <div className="mb-8">
-                <ChallengeAdminForm
-                  tribeId={tribe.id}
-                  onCreate={handleCreateChallenge}
-                  onCancel={() => setShowAdminForm(false)}
-                />
-              </div>
-            )}
-
-            {challengesLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl p-6 animate-pulse">
-                    <div className="h-32 bg-gray-200 rounded-xl mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            {/* Tribe Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{finalTribe.name}</h1>
+                <p className="text-gray-600 mb-4">{finalTribe.description}</p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <div className="flex items-center space-x-1">
+                    <Users size={16} />
+                    <span>{finalTribe.member_count} members</span>
                   </div>
-                ))}
-              </div>
-            ) : challenges && challenges.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {challenges.map((challenge, index) => (
-                  <div
-                    key={challenge.id}
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <ChallengeCard 
-                      c={challenge} 
-                      onOpen={setActiveChallengeId}
-                      className="hover:transform hover:scale-105 transition-all"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Target className="w-8 h-8 text-gray-400" />
+                  {finalTribe.user_role === 'owner' && (
+                    <div className="flex items-center space-x-1">
+                      <Crown size={16} />
+                      <span>Owner</span>
+                    </div>
+                  )}
                 </div>
-                <h3 className="text-xl font-medium text-gray-900 mb-4">
-                  Nog geen challenges
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {isAdmin 
-                    ? 'Maak de eerste challenge voor deze tribe!'
-                    : 'Deze tribe heeft nog geen actieve challenges. Check later terug!'
-                  }
-                </p>
-                {isAdmin && (
-                  <Button
-                    onClick={() => setShowAdminForm(true)}
-                    variant="primary"
-                    icon={<Plus size={20} />}
-                    iconPosition="left"
-                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
-                  >
-                    Maak eerste challenge
-                  </Button>
-                )}
               </div>
-            )}
-          </div>
-        </ErrorBoundary>
+              
+              {/* Join Button Integration */}
+              <JoinButton 
+                tribeId={finalTribe.id} 
+                userId={user?.id}
+                className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                size="lg"
+                variant="primary"
+              />
+            </div>
 
-        {/* Active Challenge Detail */}
-        {activeChallenge && (
-          <ErrorBoundary>
-            <div className="mt-8">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-medium text-gray-900">Challenge Details</h3>
-                <div className="flex items-center space-x-2">
-                  {/* Admin Status Controls */}
+            {/* Challenges Section */}
+            <ErrorBoundary>
+              <div className="mt-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
+                      <Trophy className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-medium text-gray-900">Tribe Challenges</h2>
+                      <p className="text-gray-600">Verdien punten en toon je stijl</p>
+                    </div>
+                  </div>
+                  
+                  {/* Admin Controls */}
                   {isAdmin && (
-                    <AdminChallengeControls 
-                      challenge={activeChallenge} 
-                      onUpdate={handleChallengeUpdate}
-                    />
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        onClick={() => setShowAdminForm(!showAdminForm)}
+                        variant="outline"
+                        size="sm"
+                        icon={<Plus size={16} />}
+                        iconPosition="left"
+                        className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                      >
+                        {showAdminForm ? 'Annuleren' : 'Nieuwe Challenge'}
+                      </Button>
+                    </div>
                   )}
                   
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setActiveChallengeId(null)}
-                    className="text-gray-600 hover:bg-gray-100"
-                  >
-                    Sluiten
-                  </Button>
+                  {challenges && challenges.length > 0 && (
+                    <div className="text-sm text-gray-600">
+                      {challenges.filter(c => c.status === 'open').length} actieve challenges
+                    </div>
+                  )}
                 </div>
+
+                {/* Admin Form */}
+                {isAdmin && showAdminForm && (
+                  <div className="mb-8">
+                    <ChallengeAdminForm
+                      tribeId={finalTribe.id}
+                      onCreate={handleCreateChallenge}
+                      onCancel={() => setShowAdminForm(false)}
+                    />
+                  </div>
+                )}
+
+                {challengesLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="bg-white rounded-2xl p-6 animate-pulse">
+                        <div className="h-32 bg-gray-200 rounded-xl mb-4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : challenges && challenges.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {challenges.map((challenge, index) => (
+                      <div
+                        key={challenge.id}
+                        className="animate-fade-in"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        <ChallengeCard 
+                          c={challenge} 
+                          onOpen={setActiveChallengeId}
+                          className="hover:transform hover:scale-105 transition-all"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Target className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-medium text-gray-900 mb-4">
+                      Nog geen challenges
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      {isAdmin 
+                        ? 'Maak de eerste challenge voor deze tribe!'
+                        : 'Deze tribe heeft nog geen actieve challenges. Check later terug!'
+                      }
+                    </p>
+                    {isAdmin && (
+                      <Button
+                        onClick={() => setShowAdminForm(true)}
+                        variant="primary"
+                        icon={<Plus size={20} />}
+                        iconPosition="left"
+                        className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+                      >
+                        Maak eerste challenge
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
-              
-              <ChallengeSection challenge={activeChallenge} userId={user?.id} />
+            </ErrorBoundary>
+
+            {/* Active Challenge Detail */}
+            {activeChallenge && (
+              <ErrorBoundary>
+                <div className="mt-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-medium text-gray-900">Challenge Details</h3>
+                    <div className="flex items-center space-x-2">
+                      {/* Admin Status Controls */}
+                      {isAdmin && (
+                        <AdminChallengeControls 
+                          challenge={activeChallenge} 
+                          onUpdate={handleChallengeUpdate}
+                        />
+                      )}
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setActiveChallengeId(null)}
+                        className="text-gray-600 hover:bg-gray-100"
+                      >
+                        Sluiten
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <ChallengeSection challenge={activeChallenge} userId={user?.id} />
+                </div>
+              </ErrorBoundary>
+            )}
+
+            {/* Post Composer Integration */}
+            <div className="mb-6">
+              <PostComposer 
+                tribeId={finalTribe.id}
+                className="shadow-sm"
+                placeholder={`Deel iets met ${finalTribe.name}...`}
+              />
             </div>
-          </ErrorBoundary>
-        )}
 
-        {/* Post Composer Integration */}
-        <div className="mb-6">
-          <PostComposer 
-            tribeId={tribe.id}
-            className="shadow-sm"
-            placeholder={`Deel iets met ${tribe.name}...`}
-          />
-        </div>
-
-        {/* Posts Feed Integration */}
-        <PostsList 
-          tribeId={tribe.id} 
-          userId={user?.id}
-          showComposer={false}
-        />
-      </div>
-    </div>
+            {/* Posts Feed Integration */}
+            <PostsList 
+              tribeId={finalTribe.id} 
+              userId={user?.id}
+              showComposer={false}
+            />
+          </div>
+        </ErrorBoundary>
+      </main>
+    </>
   );
 };
 
