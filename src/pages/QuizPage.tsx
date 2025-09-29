@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import Seo from '@/components/Seo';
-import urls from '@/utils/urls';
+import share from '@/utils/share';
 import { useUser } from '../context/UserContext';
 import { useQuizAnswers } from '../hooks/useQuizAnswers';
 import { QuizAnswers, QuizProgress } from '../types/quiz';
@@ -629,7 +629,7 @@ const QuizPage: React.FC = () => {
                 matchPercentage: 87 // Would be calculated based on answers
               },
               shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
-              shareUrl: urls.buildShareUrl(undefined, { ref: 'achievement' })
+              shareUrl: share.makeAchievementShare(newAchievements?.[0]?.title)
             }}
             onClose={() => setShowSocialShare(false)}
             onShare={handleSocialShare}

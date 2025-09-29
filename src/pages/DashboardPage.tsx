@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Seo from '@/components/Seo';
 import urls from '@/utils/urls';
+import share from '@/utils/share';
 import { 
   User, 
   Settings, 
@@ -33,7 +34,7 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 
 const DashboardPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
-  const { points, level, streak } = useGamification();
+  const { level } = useGamification();
   
   // Dashboard data hooks
   const { data: userStats, isLoading: statsLoading } = useUserStats(user?.id);
@@ -94,6 +95,12 @@ const DashboardPage: React.FC = () => {
       </div>
     );
   }
+
+  const referralUrl = user ? urls.buildReferralUrl(user.id) : urls.buildReferralUrl("guest");
+  const inviteShare = user ? share.makeInviteShare(user.id) : share.makeShareData({
+    title: "Probeer FitFi — AI-styling",
+    text: "Ontdek je stijl met onze AI-stylist. Start gratis.",
+  });
 
   return (
     <main id="main" className="bg-[var(--color-bg)] min-h-screen">
@@ -200,11 +207,7 @@ const DashboardPage: React.FC = () => {
             {/* Referral Card */}
             <ErrorBoundary>
               <SafeWidget name="Referral Card">
-                <ReferralCard 
-                  codeUrl={urls.buildReferralUrl(user.id)}
-                  count={referrals?.length || 0}
-                  goal={3}
-                />
+                <ReferralCard codeUrl={referralUrl} count={referrals?.length || 0} goal={3} />
               </SafeWidget>
             </ErrorBoundary>
 
