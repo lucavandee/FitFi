@@ -19,7 +19,7 @@ export default function BlogIndexPage() {
       />
 
       <section className="ff-container ff-stack-lg py-10 sm:py-12">
-        {/* Hier kan jullie bestaande BlogList component in plaats van deze placeholders */}
+        {/* Vervang deze placeholder door je bestaande BlogList component */}
         <div className="grid gap-6 md:grid-cols-3">
           {[1,2,3].map((n) => (
             <article key={n} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)]">

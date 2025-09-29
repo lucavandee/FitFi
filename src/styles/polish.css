@@ -3857,3 +3857,22 @@
 .ff-btn:hover {
   filter: brightness(1.02);
 }
+@media (prefers-reduced-motion: no-preference) {
+  .ff-animate-fade-in {
+    opacity: 0.001;
+    transform: translateY(4px);
+    animation: ff-fade-in 360ms ease forwards;
+  }
+
+  @keyframes ff-fade-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Optionele hover-finesse voor CTA's (respecteert tokens) */
+.ff-btn:hover {
+  filter: brightness(1.02);
+}

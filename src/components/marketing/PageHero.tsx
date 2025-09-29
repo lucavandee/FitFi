@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 type Cta = {
   label: string;
-  to: string;                       // interne route (/results) of extern (https://, mailto:)
+  to: string;                       // interne route (/results) of externe (https://, mailto:)
   variant?: "primary" | "secondary";
   target?: "_blank" | "_self";
   rel?: string;
