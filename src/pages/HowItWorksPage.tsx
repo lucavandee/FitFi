@@ -1,8 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
-import StepCard from "@/components/how/StepCard";
-import TestimonialCard from "@/components/how/TestimonialCard";
 
 const STEPS = [
   { title: "Beantwoord 6 korte vragen", description: "Smaak, pasvorm en kleur. Klaar in ±2 minuten." },
@@ -10,16 +8,9 @@ const STEPS = [
   { title: "Shop bewust", description: "Wishlist & prijsalerts (optioneel). Jij houdt de regie." }
 ] as const;
 
-const BENEFITS = [
-  "Persoonlijk stijlprofiel — geen generieke adviezen",
-  "Outfits per gelegenheid (werk, weekend, diner)",
-  "Wishlist & alerts",
-  "Kleur- & silhouetlogica helder uitgelegd"
-] as const;
-
 export default function HowItWorksPage() {
   return (
-    <main id="main" className="bg-bg text-text">
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <PageHero
         id="page-how"
         eyebrow="GRATIS AI STYLE REPORT"
@@ -28,31 +19,26 @@ export default function HowItWorksPage() {
         align="left"
         as="h1"
         size="lg"
+        ctas={[
+          { label: "Start gratis", to: "/results", variant: "primary", "data-event": "cta_how_start" },
+          { label: "Bekijk prijzen", to: "/prijzen", variant: "secondary", "data-event": "cta_how_pricing" }
+        ]}
       />
 
-      <section className="ff-container ff-steps-grid py-10 sm:py-12">
-        {STEPS.map((s, i) => <StepCard key={i} title={s.title} description={s.description} index={i+1} />)}
-      </section>
-
-      <section className="ff-container py-8">
-        <ul className="grid gap-3 md:grid-cols-2">
-          {BENEFITS.map((b, i) => (
-            <li key={i} className="ff-benefit">{b}</li>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="grid gap-6 md:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <article key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-6 bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
+              <div className="text-[var(--color-text-muted)] text-sm mb-2">Stap {i + 1}</div>
+              <h3 className="font-montserrat text-lg text-[var(--color-text)]">{s.title}</h3>
+              <p className="text-[var(--color-text)]/80 mt-2">{s.description}</p>
+            </article>
           ))}
-        </ul>
-      </section>
-
-      <section className="ff-container py-8">
-        <div className="cta-row">
-          <NavLink to="/results" className="ff-btn ff-btn-primary">Start gratis</NavLink>
-          <NavLink to="/prijzen" className="ff-btn ff-btn-secondary">Bekijk prijzen</NavLink>
         </div>
-      </section>
 
-      <section className="ff-container py-12">
-        <h2 className="font-heading text-xl sm:text-2xl mb-4">Ervaringen</h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          {[1,2,3].map((n) => <TestimonialCard key={n} index={n} />)}
+        <div className="mt-8 flex flex-wrap gap-3">
+          <NavLink to="/results" className="ff-cta px-6 py-3 rounded-2xl text-center">Start gratis</NavLink>
+          <NavLink to="/veelgestelde-vragen" className="px-6 py-3 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center hover:border-[var(--ff-color-primary-600)] transition-colors">FAQ</NavLink>
         </div>
       </section>
     </main>

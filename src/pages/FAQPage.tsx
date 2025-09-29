@@ -1,14 +1,13 @@
 import React from "react";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from "react-helmet-async";
 import PageHero from "@/components/marketing/PageHero";
-import { FaqAccordion } from '@/components/faq/FaqAccordion';
 
-const QAS = [
-  { q: "Is FitFi echt gratis te proberen?", a: <>Ja. Met <strong>Starter</strong> kun je gratis starten. Later upgraden kan altijd.</> },
-  { q: "Wat houdt het AI Style Report in?", a: <>Een helder overzicht van wat werkt voor jou (silhouet, kleur, materiaal) en waarom.</> },
-  { q: "Wat doen jullie met mijn gegevens?", a: <>We minimaliseren data en verkopen niets door. Zie de privacyverklaring.</> },
-  { q: "Kan ik op elk moment opzeggen?", a: <>Ja. Maandabonnementen zijn flexibel — geen gedoe.</> },
-  { q: "Werken jullie met affiliate links?", a: <>Soms. Aanbevelingen blijven altijd stijl- en pasvorm-gedreven.</> }
+const QA = [
+  { q: "Is FitFi echt gratis te proberen?", a: "Ja. Met Starter kun je gratis starten. Later upgraden kan altijd." },
+  { q: "Wat is het AI Style Report?", a: "Een helder overzicht van wat werkt voor jou (silhouet, kleur, materiaal) en waarom." },
+  { q: "Wat doen jullie met mijn gegevens?", a: "We minimaliseren data en verkopen niets door. Zie onze privacyverklaring." },
+  { q: "Kan ik op elk moment opzeggen?", a: "Ja. Maandabonnementen zijn flexibel — geen gedoe." },
+  { q: "Werken jullie met affiliate links?", a: "Soms. Aanbevelingen blijven altijd stijl- en pasvormgedreven." }
 ];
 
 export default function FAQPage() {
@@ -19,7 +18,7 @@ export default function FAQPage() {
         <link rel="canonical" href="https://fitfi.ai/veelgestelde-vragen" />
       </Helmet>
 
-      <main id="main" className="bg-bg text-text">
+      <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
         <PageHero
           id="page-faq"
           eyebrow="FAQ"
@@ -28,20 +27,22 @@ export default function FAQPage() {
           align="left"
           as="h1"
           size="sm"
+          ctas={[
+            { label: "Stel je vraag", to: "/contact", variant: "primary", "data-event": "cta_faq_contact" },
+            { label: "Start gratis", to: "/results", variant: "secondary", "data-event": "cta_faq_start" }
+          ]}
         />
 
-        <div className="ff-container py-10 sm:py-12">
-          {QAS.map((item, i) => (
-            <details key={i} className="ff-accordion">
-              <summary className="head"><span className="title">{item.q}</span></summary>
-              <div className="content">{item.a}</div>
-            </details>
-          ))}
-
-          <div className="cta-row mt-4">
-            <a className="ff-btn ff-btn-secondary" href="mailto:support@fitfi.ai">Stel je vraag</a>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+          <div className="grid gap-3">
+            {QA.map((item, i) => (
+              <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+                <summary className="cursor-pointer font-montserrat text-[var(--color-text)]">{item.q}</summary>
+                <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
+              </details>
+            ))}
           </div>
-        </div>
+        </section>
       </main>
     </>
   );

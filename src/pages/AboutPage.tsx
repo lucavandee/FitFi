@@ -5,19 +5,12 @@ import PageHero from "@/components/marketing/PageHero";
 const VALUES = [
   { title: "Persoonlijk, niet generiek", desc: "We vertalen jouw stijl naar outfits die kloppen – van silhouet tot kleur." },
   { title: "Minimal & warm", desc: "Premium, rustig en functioneel. Geen ruis of drukte." },
-  { title: "Eerlijke aanbevelingen", desc: "We linken soms naar shops, maar advies blijft stijl- en pasvorm-gedreven." }
-];
-
-const METRICS = [
-  { label: "Vragen naar stijlprofiel", value: "6", help: "Klaar in ±2 min" },
-  { label: "Outfits in Starter", value: "3", help: "Per maand" },
-  { label: "Outfits in Pro", value: "10", help: "Per maand" },
-  { label: "Shoplinks & alerts", value: "✓", help: "Optioneel" }
+  { title: "Eerlijk advies", desc: "We linken soms naar shops, maar aanbevelingen blijven stijl- en pasvormgedreven." }
 ];
 
 export default function AboutPage() {
   return (
-    <main id="main" className="bg-bg text-text">
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <PageHero
         id="page-about"
         eyebrow="OVER ONS"
@@ -26,43 +19,25 @@ export default function AboutPage() {
         align="left"
         as="h1"
         size="sm"
+        ctas={[
+          { label: "Doe de stijlscan", to: "/results", variant: "primary", "data-event": "cta_about_scan" },
+          { label: "Hoe het werkt", to: "/hoe-het-werkt", variant: "secondary", "data-event": "cta_about_how" }
+        ]}
       />
 
-      {/* Team/waarden/metrics */}
-      <section className="ff-container py-10 sm:py-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid gap-6 md:grid-cols-3">
           {VALUES.map((v, i) => (
-            <article key={i} className="ff-value-card">
-              <h3 className="ff-value-title">{v.title}</h3>
-              <p className="ff-value-desc">{v.desc}</p>
+            <article key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-6 bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
+              <h3 className="font-montserrat text-lg text-[var(--color-text)]">{v.title}</h3>
+              <p className="text-[var(--color-text)]/80 mt-2">{v.desc}</p>
             </article>
           ))}
         </div>
 
-        <div className="ff-metrics mt-8">
-          {METRICS.map((m, i) => (
-            <div key={i} className="ff-metric">
-              <div className="value">{m.value}</div>
-              <div className="label">{m.label}</div>
-              <div className="help">{m.help}</div>
-            </div>
-          ))}
+        <div className="mt-8 flex flex-wrap gap-3">
+          <NavLink to="/prijzen" className="px-6 py-3 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center hover:border-[var(--ff-color-primary-600)] transition-colors">Bekijk prijzen</NavLink>
         </div>
-
-        <div className="cta-row mt-8">
-          <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
-          <NavLink to="/prijzen" className="ff-btn ff-btn-primary">Proberen</NavLink>
-        </div>
-      </section>
-
-      <section className="ff-container ff-team-grid py-8">
-        {[1,2,3].map((n) => (
-          <article key={n} className="ff-team-card">
-            <img alt="" src={`https://picsum.photos/seed/${n}/400/400`} />
-            <div className="ff-team-name">Team member {n}</div>
-            <div className="ff-team-role">Stylist</div>
-          </article>
-        ))}
       </section>
     </main>
   );

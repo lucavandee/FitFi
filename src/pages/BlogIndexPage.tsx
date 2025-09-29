@@ -1,42 +1,35 @@
 import React from "react";
-import Seo from "@/components/Seo";
 import PageHero from "@/components/marketing/PageHero";
 
-// Bestaande imports:
-// import { BlogList } from "@/components/blog/BlogList"; etc.
-
-const BlogIndexPage: React.FC = () => {
+export default function BlogIndexPage() {
   return (
-    <>
-      <Seo
-        title="Blog — FitFi"
-        description="Artikelen over stijl, outfits en AI-gedreven styling. Van psychologische inzichten tot praktische stijltips."
-        canonical="/blog"
-        image={`${urls.CANONICAL_HOST}/og-blog.jpg`}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Blog",
-          name: "FitFi Blog",
-          url: urls.canonicalUrl("/blog"),
-        }}
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <PageHero
+        id="page-blog-index"
+        eyebrow="INSIGHTS"
+        title="Blog"
+        subtitle="Praktische gidsen over silhouet, kleur en outfits — premium stijl, nuchtere uitleg."
+        align="left"
+        as="h1"
+        size="sm"
+        ctas={[
+          { label: "Start gratis", to: "/results", variant: "primary", "data-event": "cta_blog_start" },
+          { label: "Hoe het werkt", to: "/hoe-het-werkt", variant: "secondary", "data-event": "cta_blog_how" }
+        ]}
       />
 
-      <main className="min-h-screen bg-[var(--color-bg)]">
-        <PageHero
-          id="page-blog-index"
-          eyebrow="INSIGHTS"
-          title="Blog"
-          subtitle="Praktische stijltips, psychologie achter kleding en AI-styling in eenvoudig Nederlands."
-          align="left"
-          as="h1"
-          size="sm"
-        />
-
-        {/* Bestaande blog index UI ongewijzigd */}
-        {/* <BlogList /> etc. */}
-      </main>
-    </>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        {/* Jouw bestaande blog listing (component) kan hier blijven; placeholder cards hieronder puur ter demonstratie */}
+        <div className="grid gap-6 md:grid-cols-3">
+          {[1,2,3].map((n) => (
+            <article key={n} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)]">
+              <div className="text-[var(--color-text)]/70 text-sm">Stijl • 5 min</div>
+              <h2 className="font-montserrat text-lg text-[var(--color-text)] mt-1">Artikel {n}</h2>
+              <p className="text-[var(--color-text)]/80 mt-1">Korte intro van het artikel.</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
   );
-};
-
-export default BlogIndexPage;
+}
