@@ -1,31 +1,79 @@
-/* /src/index.css */
-/* Volgorde is belangrijk: eerst tokens/polish, dan Tailwind layers */
-@import "./styles/tokens.css";
-@import "./styles/polish.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Baseline: systeemkleurenschema + body-font volgens tokens */
-:root { color-scheme: light; }
+/* Design tokens (bron van waarheid) */
+@import './styles/tokens.css';
 
-html {
-  background: var(--color-bg);
-  color: var(--color-text);
-}
+/* Extra polish (glas/blur, micro-animaties) */
+@import './styles/polish.css';
+
+:root { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+
+html, body, #root { height: 100%; }
 
 body {
-  font-family: theme("fontFamily.body");
+  background: var(--ff-color-bg);
+  color: var(--ff-color-text);
+  font-family: var(--ff-font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* A11Y: nette focus-ring via token */
-:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
+/* Layout helpers */
+.ff-container { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 1rem; }
+.ff-section { padding-block: clamp(2.5rem, 4vw, 5rem); }
+
+/* Nav link states */
+.ff-navlink {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--ff-radius-2xl);
+  padding: .375rem .75rem;
+  transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+}
+.ff-nav-active {
+  background: var(--ff-color-surface);
+  border: 1px solid var(--ff-color-border);
+  color: var(--ff-color-text);
+  border-radius: var(--ff-radius-2xl);
 }
 
-/* Optioneel: visuele polish zonder hex-kleuren */
-/* Buttons houden hun tokens-styling vanuit component-classes */
+/* Buttons */
+.ff-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  border: 1px solid transparent; border-radius: var(--ff-radius-2xl);
+  padding: .625rem 1.25rem; text-decoration: none; cursor: pointer;
+  transition: transform .2s ease-out, background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.ff-btn:hover { transform: translateY(-1px); }
+.ff-btn:active { transform: translateY(0); }
+
+.ff-btn-primary {
+  background: var(--ff-color-primary-700);
+  color: var(--ff-color-on-primary);
+}
+.ff-btn-primary:hover { background: var(--ff-color-primary-600); }
+
+.ff-btn-secondary {
+  background: transparent; color: var(--ff-color-text); border-color: var(--ff-color-border);
+}
+.ff-btn-secondary:hover { border-color: var(--ff-color-primary); }
+
+.ff-cta-raise { box-shadow: var(--ff-shadow-elev-2); }
+.ff-cta-raise:hover { box-shadow: var(--ff-shadow-elev-3); }
+
+/* Skeleton */
+.ff-skeleton {
+  --shine: color-mix(in oklab, var(--ff-color-surface) 88%, white);
+  background: linear-gradient(90deg, transparent 0%, var(--shine) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: ff-shimmer 1.1s linear infinite;
+  border-radius: .75rem;
+  border: 1px solid var(--ff-color-border);
+}
+@keyframes ff-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
