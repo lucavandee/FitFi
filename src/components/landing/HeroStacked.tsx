@@ -1,12 +1,14 @@
 import React from "react";
 import Button from "@/components/ui/Button";
 import SmartImage from "@/components/media/SmartImage";
+import TrustBelt from "@/components/landing/TrustBelt";
 
 type Props = {
   onStart?: () => void;
   onExample?: () => void;
   /** CSS object-position, bv. "50% 38%" */
   focal?: string;
+  /** Bestaande asset-id; wijzig beeld via /public, niet in code. */
   imageId?: string;
   imageAlt?: string;
   kicker?: string;
@@ -36,7 +38,8 @@ const HeroStacked: React.FC<Props> = ({
             <Button variant="primary" size="lg" className="cta-raise" onClick={onStart}>
               Start gratis
             </Button>
-            <Button variant="ghost" size="lg" onClick={onExample}>
+            {/* Gebruik secondary i.p.v. ghost om contrast te garanderen op alle achtergronden */}
+            <Button variant="secondary" size="lg" onClick={onExample}>
               Bekijk voorbeeld
             </Button>
           </div>
@@ -48,19 +51,22 @@ const HeroStacked: React.FC<Props> = ({
             <li className="usp-chip">Outfits + shoplinks</li>
             <li className="usp-chip">Privacy-first</li>
           </ul>
+
+          {/* Trust & privacy badges (compact, consistent) */}
+          <TrustBelt />
         </header>
 
-        {/* Groot beeld onder de chips */}
+        {/* Groot beeld — behoud huidige asset via id; vervang het daadwerkelijke bestand in /public */}
         <figure
           className="stack-media"
           style={
             {
-              // @ts-expect-error custom CSS var
+              // @ts-expect-error custom CSS var toegestaan in CSS
               "--hero-object-position": focal,
             } as React.CSSProperties
           }
         >
-          <SmartImage id={imageId} kind="generic" alt={imageAlt} className="stack-img" />
+          <SmartImage id={imageId} alt={imageAlt} className="stack-img" width={800} height={1000} />
           <figcaption className="sr-only">{imageAlt}</figcaption>
         </figure>
       </div>
