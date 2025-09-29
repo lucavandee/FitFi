@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import Seo from '@/components/Seo';
-import urls from '@/utils/urls';
-import share from '@/utils/share';
+import Seo from "@/components/Seo";
 import { 
   User, 
   Settings, 
@@ -31,10 +29,11 @@ import SafeWidget from '../components/dashboard/SafeWidget';
 import Button from '../components/ui/Button';
 import LoadingFallback from '../components/ui/LoadingFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import urls from "@/utils/urls";
 
 const DashboardPage: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
-  const { level } = useGamification();
+  const { points, level, streak } = useGamification();
   
   // Dashboard data hooks
   const { data: userStats, isLoading: statsLoading } = useUserStats(user?.id);
@@ -78,29 +77,21 @@ const DashboardPage: React.FC = () => {
     level: userStats?.level || 1
   };
 
-  if (userLoading) return <LoadingFallback fullScreen message="Dashboard laden..." />;
+  if (userLoading) {
+    return <LoadingFallback fullScreen message="Dashboard laden..." />;
+  }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#FAF8F6] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm text-center max-w-md">
-          <h2 className="text-2xl font-light text-gray-900 mb-4">Inloggen vereist</h2>
-          <p className="text-gray-600 mb-6">Je moet ingelogd zijn om je dashboard te bekijken.</p>
-          <Button as={Link} to="/inloggen" variant="primary" fullWidth>
-            Inloggen
-          </Button>
+      <div className="min-h-screen grid place-items-center bg-[var(--color-bg)]">
+        <div className="text-center">
+          <h2 className="text-[var(--color-text)] text-2xl mb-2">Inloggen vereist</h2>
+          <p className="text-[var(--color-text-muted)] mb-4">Je moet ingelogd zijn om je dashboard te bekijken.</p>
+          <Button as={Link} to="/inloggen" variant="primary">Inloggen</Button>
         </div>
       </div>
     );
   }
-
-  const referralUrl = user ? urls.buildReferralUrl(user.id) : urls.buildReferralUrl("guest");
-  const inviteShare = user
-    ? share.makeInviteShare(user.id)
-    : share.makeShareData({
-        title: "Probeer FitFi — AI-styling",
-        text: "Ontdek je stijl met onze AI-stylist. Start gratis.",
-      });
 
   return (
     <>
@@ -109,15 +100,6 @@ const DashboardPage: React.FC = () => {
         description="Jouw stijlvoortgang, punten, referrals en persoonlijke acties in één overzicht."
         canonical="/dashboard"
       />
-
-      <Seo 
-        title="Dashboard - FitFi"
-        description="Jouw persoonlijke stijldashboard met outfit geschiedenis, aanbevelingen en styling insights."
-      />
-      <Helmet>
-        <title>Dashboard - Jouw Stijlcentrum | FitFi</title>
-        <meta name="description" content="Bekijk je stijlprofiel, outfits, challenges en voortgang op je persoonlijke FitFi dashboard." />
-      </Helmet>
 
       <main className="min-h-screen bg-[var(--color-bg)]">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -205,11 +187,15 @@ const DashboardPage: React.FC = () => {
                 </SafeWidget>
               </ErrorBoundary>
 
-              {/* Referral Card — nu 100% via centrale URL helper */}
+              {/* Referral Card */}
               <ErrorBoundary>
-                <div>
-                  <ReferralCard codeUrl={referralUrl} count={referrals?.length || 0} goal={3} />
-                </div>
+                <SafeWidget name="Referral Card">
+                  <ReferralCard 
+                    codeUrl={urls.buildReferralUrl(user.id)}
+                    count={referrals?.length || 0}
+                    goal={3}
+                  />
+                </SafeWidget>
               </ErrorBoundary>
 
               {/* Notifications */}
@@ -248,7 +234,6 @@ const DashboardPage: React.FC = () => {
           </ErrorBoundary>
         </div>
 
-        {/* Mobile Sticky Bottom Bar */}
         <StickyBottomBar 
           onClaimDaily={handleClaimDaily}
           userId={user.id}
