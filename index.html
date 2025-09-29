@@ -1,21 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="var(--ff-color-primary)" />
-    <link rel="icon" href="/favicon.ico" />
-    <!-- Fonts: Montserrat (headings) + Lato (body) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600&family=Montserrat:wght@600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <!-- ✅ Performance optimizations -->
+    <link rel="preconnect" href="https://images.pexels.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+    <!-- ✅ Fonts: Montserrat (headings) + Lato (body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- ✅ Favicon and meta -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#A6886A" />
+
+    <!-- ✅ SEO defaults -->
+    <link rel="canonical" href="https://fitfi.ai/" />
+    <meta property="og:site_name" content="FitFi" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="nl_NL" />
+
     <title>FitFi — AI Style Report</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/components/nova/boot.tsx"></script>
   </body>
 </html>

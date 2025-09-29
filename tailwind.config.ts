@@ -1,38 +1,38 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{ts,tsx,js,jsx}',
-  ],
+// /tailwind.config.ts
+import type { Config } from "tailwindcss";
+
+export default {
+  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        heading: ['Montserrat', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial'],
-        sans: ['Lato', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'Apple Color Emoji', 'Segoe UI Emoji'],
+      colors: {
+        bg: "var(--color-bg)",
+        surface: "var(--color-surface)",
+        text: "var(--color-text)",
+        muted: "var(--color-muted)",
+        primary: "var(--color-primary)",
+        primary600: "var(--ff-color-primary-600)",
+        primary700: "var(--ff-color-primary-700)",
+        accent: "var(--color-accent)",
+        border: "var(--color-border)",
+        success: "var(--color-success)",
+        warning: "var(--color-warning)",
+        danger: "var(--color-danger)",
       },
-      borderRadius: {
-        lg: 'var(--ff-radius-lg)',
-        xl: 'var(--ff-radius-xl)',
-        '2xl': 'var(--ff-radius-2xl)',
+      fontFamily: {
+        heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        soft: 'var(--ff-shadow-soft)',
+        soft: "var(--shadow-soft)",
+        ring: "var(--shadow-ring)",
       },
-      colors: {
-        bg: 'var(--ff-color-bg)',
-        surface: 'var(--ff-color-surface)',
-        text: 'var(--ff-color-text)',
-        muted: 'var(--ff-color-muted)',
-        primary: 'var(--ff-color-primary)',
+      borderRadius: {
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
       },
     },
   },
-  safelist: [
-    'focus-visible',
-    'sr-only',
-    'focus:not-sr-only',
-  ],
-  corePlugins: {
-    preflight: true,
-  },
-};
+  plugins: [],
+} satisfies Config;
