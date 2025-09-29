@@ -1,21 +1,27 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
+import SmartImage from "@/components/media/SmartImage";
+import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
+import { Sparkles, Brain, CheckCircle2 } from "lucide-react";
 
-type Step = { title: string; body: string; };
+type Step = { title: string; body: string; icon: React.ComponentType<any>; };
 const STEPS: Step[] = [
   {
-    title: "1) Korte stijlscan",
-    body: "Zes vragen over je smaak – er is geen goed of fout. We willen jou leren kennen."
+    title: "Korte stijlscan",
+    body: "Zes vragen over je smaak – er is geen goed of fout. We willen jou leren kennen.",
+    icon: Sparkles,
   },
   {
-    title: "2) Logica achter je look",
-    body: "We koppelen je antwoorden aan simpele regels voor silhouet, kleur en materiaal. Zo snap je waarom iets werkt."
+    title: "Logica achter je look",
+    body: "We koppelen je antwoorden aan simpele regels voor silhouet, kleur en materiaal. Zo snap je waarom iets werkt.",
+    icon: Brain,
   },
   {
-    title: "3) Outfits die meteen kloppen",
-    body: "Per situatie – werk, weekend, diner. Duidelijk en overzichtelijk, zodat kiezen makkelijk wordt."
-  }
+    title: "Outfits die meteen kloppen",
+    body: "Per situatie – werk, weekend, diner. Duidelijk en overzichtelijk, zodat kiezen makkelijk wordt.",
+    icon: CheckCircle2,
+  },
 ];
 
 const HOW_FAQ = [
@@ -27,7 +33,7 @@ const HOW_FAQ = [
 
 export default function HowItWorksPage() {
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+    <main id="main" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]">
       <PageHero
         id="page-how"
         eyebrow="GRATIS AI STYLE REPORT"
@@ -45,39 +51,61 @@ export default function HowItWorksPage() {
 
       <section className="ff-container py-12">
         <div className="grid gap-6 md:grid-cols-3">
-          {STEPS.map((s, i) => (
-            <article
-              key={i}
-              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]"
-            >
-              <h3 className="font-montserrat text-lg text-[var(--color-text)]">{s.title}</h3>
-              <p className="mt-2 text-[var(--color-text)]/80">{s.body}</p>
-            </article>
-          ))}
+          {STEPS.map((step, i) => {
+            const { ref, visible } = useFadeInOnVisible<HTMLArticleElement>();
+            const Icon = step.icon;
+            return (
+              <article
+                key={i}
+                ref={ref as any}
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? "translateY(0)" : "translateY(12px)",
+                  transition: "opacity 600ms ease, transform 600ms ease",
+                }}
+                className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
+              >
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ff-color-border)] bg-[color-mix(in oklab, var(--ff-color-accent) 10%, var(--ff-color-surface))] text-[var(--ff-color-accent)]">
+                  <Icon size={20} aria-hidden />
+                </span>
+                <h3 className="mt-3 font-heading text-lg text-[var(--ff-color-text)]">{step.title}</h3>
+                <p className="mt-2 text-[var(--ff-color-text)]/80">{step.body}</p>
+              </article>
+            );
+          })}
         </div>
       </section>
 
       <section className="ff-container py-12">
-        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-          <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Korte demo (video volgt)</h2>
-          <p className="mt-2 text-[var(--color-text)]/80">
-            Hier komt een korte video van de scan en het stijlrapport. Tot die tijd zie je een rustige afbeelding of animatie.
+        <div className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]">
+          <h2 className="font-heading text-2xl text-[var(--ff-color-text)]">Korte demo</h2>
+          <p className="mt-2 text-[var(--ff-color-text)]/80">
+            Bekijk een voorproefje van het stijlrapport op een mobiel scherm. Dit geeft je meteen een gevoel bij het resultaat.
           </p>
-          <div className="mt-4 aspect-video w-full grid place-items-center rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)]/40">
-            <span className="text-[var(--color-text)]/50 text-sm">Videoplaatsing</span>
+          <div className="mt-4 overflow-hidden rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-bg)]/40">
+            {/* Gebruik een statische mock-up ter vervanging van de video-placeholder */}
+            <SmartImage src="/images/hero-highres.png" alt="Voorbeeld van het stijlrapport op mobiel" className="w-full h-auto" width={1200} height={800} />
           </div>
         </div>
       </section>
 
       <section id="faq" className="ff-container py-12">
-        <h2 className="font-montserrat text-2xl text-[var(--color-text)] mb-4">Veelgestelde vragen</h2>
+        <h2 className="font-heading text-2xl text-[var(--ff-color-text)] mb-4">Veelgestelde vragen</h2>
         <div className="grid gap-3">
           {HOW_FAQ.map((item, i) => (
-            <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <summary className="cursor-pointer font-montserrat text-[var(--color-text)]">{item.q}</summary>
-              <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
+            <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4">
+              <summary className="cursor-pointer font-heading text-[var(--ff-color-text)]">{item.q}</summary>
+              <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
             </details>
           ))}
+        </div>
+      </section>
+
+      {/* Call-to-action blok onderaan de pagina */}
+      <section className="ff-container py-10">
+        <div className="flex flex-wrap gap-3">
+          <a href="/results" className="ff-btn ff-btn-primary">Start gratis</a>
+          <a href="/prijzen" className="ff-btn ff-btn-secondary">Bekijk plannen</a>
         </div>
       </section>
     </main>

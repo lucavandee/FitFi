@@ -1,6 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import PageHero from "@/components/marketing/PageHero";
+import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
+import { HelpCircle, User2, Palette, ShieldCheck } from "lucide-react";
 
 type QA = { q: string; a: string; };
 const ACCOUNT: QA[] = [
@@ -30,7 +32,7 @@ export default function FAQPage() {
         <link rel="canonical" href="https://fitfi.ai/veelgestelde-vragen" />
       </Helmet>
 
-      <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <main id="main" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]">
         <PageHero
           id="page-faq"
           eyebrow="FAQ"
@@ -47,56 +49,44 @@ export default function FAQPage() {
 
         <section className="ff-container py-10">
           <div className="grid gap-8 md:grid-cols-2">
-            <div>
-              <h2 className="font-montserrat text-xl text-[var(--color-text)] mb-3">Account & betalingen</h2>
-              <div className="grid gap-3">
-                {ACCOUNT.map((item, i) => (
-                  <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-                    <summary className="cursor-pointer font-montserrat text-[var(--color-text)]">{item.q}</summary>
-                    <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-                  </details>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="font-montserrat text-xl text-[var(--color-text)] mb-3">Over de scan</h2>
-              <div className="grid gap-3">
-                {QUIZ.map((item, i) => (
-                  <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-                    <summary className="cursor-pointer font-montserrat text-[var(--color-text)]">{item.q}</summary>
-                    <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-                  </details>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="font-montserrat text-xl text-[var(--color-text)] mb-3">Outfits & advies</h2>
-              <div className="grid gap-3">
-                {OUTFITS.map((item, i) => (
-                  <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-                    <summary className="cursor-pointer font-montserrat text-[var(--color-text)]">{item.q}</summary>
-                    <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-                  </details>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="font-montserrat text-xl text-[var(--color-text)] mb-3">Privacy & links</h2>
-              <div className="grid gap-3">
-                {PRIVACY.map((item, i) => (
-                  <details key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-                    <summary className="cursor-pointer font-montserrat text-[var(--color-text)]">{item.q}</summary>
-                    <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-                  </details>
-                ))}
-              </div>
-            </div>
+            {[
+              { title: "Account & betalingen", items: ACCOUNT, icon: User2 },
+              { title: "Over de scan", items: QUIZ, icon: HelpCircle },
+              { title: "Outfits & advies", items: OUTFITS, icon: Palette },
+              { title: "Privacy & links", items: PRIVACY, icon: ShieldCheck },
+            ].map((group, idx) => {
+              const { ref, visible } = useFadeInOnVisible<HTMLDivElement>();
+              const Icon = group.icon;
+              return (
+                <div
+                  key={idx}
+                  ref={ref as any}
+                  style={{
+                    opacity: visible ? 1 : 0,
+                    transform: visible ? "translateY(0)" : "translateY(12px)",
+                    transition: "opacity 600ms ease, transform 600ms ease",
+                  }}
+                >
+                  <h2 className="flex items-center gap-2 font-heading text-xl text-[var(--ff-color-text)] mb-3">
+                    <Icon size={20} className="text-[var(--ff-color-accent)]" aria-hidden />
+                    {group.title}
+                  </h2>
+                  <div className="grid gap-3">
+                    {group.items.map((item, i) => (
+                      <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4">
+                        <summary className="cursor-pointer font-heading text-[var(--ff-color-text)] flex items-center justify-between">
+                          {item.q}
+                        </summary>
+                        <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          <div className="mt-8 flex gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <a href="/results" className="ff-btn ff-btn-primary">Start gratis</a>
             <a href="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</a>
           </div>

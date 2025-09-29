@@ -1,41 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Geeft ref + boolean `visible` terug. Zet bv. opacity/translate op basis van visible.
- * Respecteert prefers-reduced-motion: animatie wordt dan overgeslagen.
+ * useFadeInOnVisible
+ *
+ * A simple hook that reveals an element when it enters the viewport.
+ * It leverages the IntersectionObserver API and returns a ref to be
+ * attached to the target element along with a boolean flag indicating
+ * visibility. Consumers can use the flag to control inline styles or
+ * class names for animations.
  */
 export function useFadeInOnVisible<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-
-    if (reduce) {
-      setVisible(true);
-      return;
-    }
-
-    const io = new IntersectionObserver(
+    const el = ref.current;
+    if (!el || visible) return;
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setVisible(true);
-            io.disconnect();
+            observer.unobserve(entry.target);
           }
         });
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+      { threshold: 0.15 }
     );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [visible]);
 
-    io.observe(node);
-    return () => io.disconnect();
-  }, []);
-
-  return { ref, visible } as const;
+  return { ref, visible };
 }
