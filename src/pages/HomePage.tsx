@@ -9,6 +9,7 @@ import Card from "@/components/ui/Card";
 import HeroTitle from "@/components/marketing/HeroTitle";
 import Chip from "@/components/ui/Chip";
 import { useUser } from "@/context/UserContext";
+import SectionHeader from "@/components/marketing/SectionHeader";
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
@@ -42,6 +43,15 @@ const HomePage: React.FC = () => {
       />
 
       <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+        <SectionHeader
+          eyebrow="GRATIS AI STYLE REPORT"
+          title="Ontdek wat jouw stijl over je zegt"
+          subtitle="Wij combineren smaak, context en pasvorm tot outfits die je elke dag met vertrouwen draagt."
+          align="left"
+          as="h1"
+        />
+
+        {/* Bestaande hero/sections blijven ongewijzigd */}
         {/* Hero */}
         <Hero />
 
