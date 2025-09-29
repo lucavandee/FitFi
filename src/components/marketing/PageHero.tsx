@@ -23,7 +23,7 @@ const PageHero: React.FC<Props> = ({
 }) => {
   const HeadingTag: any = as;
 
-  // homepage-matching schaal & spacing
+  // schaal & spacing als op de homepage
   const padY =
     size === "sm" ? "py-14 md:py-16" : size === "md" ? "py-16 md:py-20" : "py-20 md:py-24";
   const titleSize =
@@ -35,19 +35,21 @@ const PageHero: React.FC<Props> = ({
 
   const alignCls = align === "center" ? "text-center" : "text-left";
 
-  // id's voor a11y koppeling
   const headingId = id ? `${id}__heading` : undefined;
   const eyebrowId = id ? `${id}__eyebrow` : undefined;
   const subId = id ? `${id}__subtitle` : undefined;
 
   return (
-    <section className={`hero-gradient ${padY} ${className}`}>
+    <section
+      className={[padY, className].join(" ")}
+      style={{
+        background:
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header
-          className={[
-            alignCls,
-            "rounded-[var(--radius-lg)]",
-          ].join(" ")}
+          className={[alignCls, "rounded-[var(--radius-lg)]"].join(" ")}
           aria-labelledby={headingId}
           aria-describedby={subtitle ? subId : undefined}
         >
@@ -70,7 +72,12 @@ const PageHero: React.FC<Props> = ({
             {title}
           </HeadingTag>
 
-          <div className={["mt-4 h-px w-24 bg-[var(--color-border)]", align === "center" ? "mx-auto" : "mx-0"].join(" ")} />
+          <div
+            className={[
+              "mt-4 h-px w-24 bg-[var(--color-border)]",
+              align === "center" ? "mx-auto" : "mx-0",
+            ].join(" ")}
+          />
 
           {subtitle && (
             <p id={subId} className="mt-5 max-w-3xl text-[var(--color-text)]/80">

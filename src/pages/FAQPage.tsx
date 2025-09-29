@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from 'react-helmet-async';
-import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 import { FaqAccordion } from '@/components/faq/FaqAccordion';
 
 const QAS = [
@@ -15,12 +15,13 @@ export default function FAQPage() {
   return (
     <>
       <Helmet>
-        <title>Veelgestelde vragen - FitFi</title>
-        <meta name="description" content="Vind antwoorden op de meest gestelde vragen over FitFi's AI-gedreven styling service." />
+        <title>Veelgestelde vragen — FitFi</title>
+        <link rel="canonical" href="https://fitfi.ai/veelgestelde-vragen" />
       </Helmet>
 
-      <main className="min-h-screen bg-[var(--color-bg)]">
-        <SectionHeader
+      <main id="main" className="bg-bg text-text">
+        <PageHero
+          id="page-faq"
           eyebrow="FAQ"
           title="Veelgestelde vragen"
           subtitle="De snelste weg naar je antwoord."
@@ -29,17 +30,17 @@ export default function FAQPage() {
           size="sm"
         />
 
-        <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="ff-container py-10 sm:py-12">
           {QAS.map((item, i) => (
             <details key={i} className="ff-accordion">
               <summary className="head"><span className="title">{item.q}</span></summary>
               <div className="content">{item.a}</div>
             </details>
           ))}
-        </div>
 
-        <div className="cta-row mt-4">
-          <a className="ff-btn ff-btn-secondary" href="mailto:support@fitfi.ai">Stel je vraag</a>
+          <div className="cta-row mt-4">
+            <a className="ff-btn ff-btn-secondary" href="mailto:support@fitfi.ai">Stel je vraag</a>
+          </div>
         </div>
       </main>
     </>

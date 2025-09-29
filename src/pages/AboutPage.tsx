@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 
 const VALUES = [
   { title: "Persoonlijk, niet generiek", desc: "We vertalen jouw stijl naar outfits die kloppen – van silhouet tot kleur." },
@@ -18,7 +18,8 @@ const METRICS = [
 export default function AboutPage() {
   return (
     <main id="main" className="bg-bg text-text">
-      <SectionHeader
+      <PageHero
+        id="page-about"
         eyebrow="OVER ONS"
         title="Waarom wij om stijl geven"
         subtitle="Geen hype. Geen regels. Wel vertrouwen in de spiegel — elke dag."
@@ -27,39 +28,30 @@ export default function AboutPage() {
         size="sm"
       />
 
-      <section className="ff-container ff-about-hero py-10 sm:py-12">
-        <div className="ff-stack">
-          <p className="text-sm text-text/70">Over FitFi</p>
-          <h1 className="font-heading text-2xl sm:text-3xl">Wij maken kleden weer makkelijk</h1>
-          <p className="text-text/80">Geen eindeloos scrollen. Gewoon outfits die passen bij jouw smaak en leven.</p>
-          <div className="cta-row">
-            <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
-            <NavLink to="/prijzen" className="ff-btn ff-btn-primary">Proberen</NavLink>
-          </div>
-        </div>
-        <div className="media">
-          <div style={{ aspectRatio: "16/10", background: "var(--color-surface)" }} />
-        </div>
-      </section>
-
-      <section className="ff-container">
-        <div className="grid gap-4 md:grid-cols-3">
+      {/* Team/waarden/metrics */}
+      <section className="ff-container py-10 sm:py-12">
+        <div className="grid gap-6 md:grid-cols-3">
           {VALUES.map((v, i) => (
-            <article key={i} className="ff-card p-5">
-              <h3 className="font-semibold">{v.title}</h3>
-              <p className="mt-1">{v.desc}</p>
+            <article key={i} className="ff-value-card">
+              <h3 className="ff-value-title">{v.title}</h3>
+              <p className="ff-value-desc">{v.desc}</p>
             </article>
           ))}
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="ff-metrics mt-8">
           {METRICS.map((m, i) => (
-            <div key={i} className="ff-glass p-4 text-center">
-              <div className="text-2xl font-bold">{m.value}</div>
-              <div className="text-sm text-text/70">{m.label}</div>
-              {m.help && <div className="text-xs text-text/60 mt-1">{m.help}</div>}
+            <div key={i} className="ff-metric">
+              <div className="value">{m.value}</div>
+              <div className="label">{m.label}</div>
+              <div className="help">{m.help}</div>
             </div>
           ))}
+        </div>
+
+        <div className="cta-row mt-8">
+          <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
+          <NavLink to="/prijzen" className="ff-btn ff-btn-primary">Proberen</NavLink>
         </div>
       </section>
 

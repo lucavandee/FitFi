@@ -1,17 +1,26 @@
 import React from "react";
-import BlogHeader from "@/components/blog/BlogHeader";
+import PageHero from "@/components/marketing/PageHero";
 
 const posts = [
-  { title: "Wat je silhouet zegt over je outfitkeuzes", excerpt: "Zo laat je proportie en snit voor je werken — met rust in je keuzes.", href: "/blog/silhouet-outfits" },
-  { title: "Kleurtemperatuur: warm, koel of neutraal?", excerpt: "Herken je kleurfamilie en combineer zonder twijfelen.", href: "/blog/kleurtemperatuur-gids" },
-  { title: "Capsule wardrobe: weinig kopen, alles dragen", excerpt: "Met 20–30 items het seizoen door — meer combinaties, minder twijfel.", href: "/blog/capsule-wardrobe" }
+  { title: "Wat je silhouet zegt over je outfitkeuzes", excerpt: "Leer verhoudingen lezen en combineren — met rust in je keuzes.", href: "/blog/silhouet-outfits" },
+  { title: "Kleurtemperatuur: warm, koel of neutraal?", excerpt: "Ontdek je kleurwereld en combineer zonder twijfelen.", href: "/blog/kleurtemperatuur-gids" },
+  { title: "Capsule wardrobe: weinig kopen, alles dragen", excerpt: "Maximale combinaties, minder twijfel.", href: "/blog/capsule-wardrobe" }
 ];
 
 export default function BlogPage() {
   return (
     <main id="main" className="bg-bg text-text">
+      <PageHero
+        id="page-blog"
+        eyebrow="INSIGHTS"
+        title="Blog"
+        subtitle="Praktische gidsen over silhouet, kleur en outfits — premium stijl, nuchtere uitleg."
+        align="left"
+        as="h1"
+        size="sm"
+      />
+
       <section className="ff-container ff-stack-lg py-10 sm:py-12">
-        <BlogHeader />
         <div className="ff-blog-grid mt-6">
           {posts.map((p) => (
             <article key={p.href} className="ff-blog-card">
