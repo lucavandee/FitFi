@@ -194,7 +194,7 @@ const DashboardPage: React.FC = () => {
             <ErrorBoundary>
               <SafeWidget name="Referral Card">
                 <ReferralCard 
-                  codeUrl={`https://fitfi.app/?ref=${user.id}`}
+                  codeUrl={`https://fitfi.ai/?ref=${user.id}`}
                   count={referrals?.length || 0}
                   goal={3}
                 />

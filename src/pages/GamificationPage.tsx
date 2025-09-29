@@ -89,7 +89,7 @@ const GamificationPage: React.FC = () => {
         <meta name="description" content="Bekijk je level, voltooi challenges en vergelijk je score met andere FitFi gebruikers op het gamification dashboard." />
         <meta property="og:title" content="FitFi Gamification Dashboard" />
         <meta property="og:description" content="Levels, challenges en leaderboards voor de ultieme FitFi ervaring." />
-        <link rel="canonical" href="https://fitfi.app/gamification" />
+        <link rel="canonical" href="https://fitfi.ai/gamification" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50 py-8 px-4">

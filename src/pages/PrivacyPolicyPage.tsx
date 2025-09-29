@@ -10,7 +10,7 @@ const PrivacyPolicyPage: React.FC = () => {
         <meta name="description" content="Lees ons privacybeleid en ontdek hoe FitFi omgaat met jouw persoonlijke gegevens. Transparant, veilig en AVG-compliant." />
         <meta property="og:title" content="Privacybeleid - Hoe we omgaan met jouw gegevens" />
         <meta property="og:description" content="Transparant, veilig en AVG-compliant gegevensbeheer bij FitFi." />
-        <link rel="canonical" href="https://fitfi.app/privacy-policy" />
+        <link rel="canonical" href="https://fitfi.ai/privacy-policy" />
       </Helmet>
       
       <MarkdownPage

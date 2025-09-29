@@ -205,7 +205,7 @@ const TribeDetailPage: React.FC = () => {
         <meta property="og:title" content={`${tribe.name} - Style Tribe`} />
         <meta property="og:description" content={tribe.description} />
         <meta property="og:image" content={tribe.cover_img} />
-        <link rel="canonical" href={`https://fitfi.app/tribes/${slug || tribeId}`} />
+        <link rel="canonical" href={`https://fitfi.ai/tribes/${slug || tribeId}`} />
       </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
