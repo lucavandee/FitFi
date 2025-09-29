@@ -24,7 +24,7 @@ export default function BlogPage() {
         ]}
       />
 
-      <section id="posts" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+      <section id="posts" className="ff-container ff-stack-lg py-10 sm:py-12">
         <div className="grid gap-6 md:grid-cols-3">
           {POSTS.map((p) => (
             <article key={p.href} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] overflow-hidden">
@@ -34,9 +34,7 @@ export default function BlogPage() {
                   <div className="text-[var(--color-text)]/70 text-sm">Stijl • 5 min</div>
                   <h2 className="font-montserrat text-lg text-[var(--color-text)] mt-1">{p.title}</h2>
                   <p className="text-[var(--color-text)]/80 mt-1">{p.excerpt}</p>
-                  <div className="mt-3">
-                    <span className="px-4 py-2 rounded-lg text-sm text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors">Lees meer</span>
-                  </div>
+                  <div className="mt-3"><span className="ff-btn ff-btn-quiet">Lees meer</span></div>
                 </div>
               </a>
             </article>

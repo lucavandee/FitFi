@@ -41,7 +41,7 @@ function PlanCard({ plan, yearly }: { plan: Plan; yearly: boolean; }) {
       </ul>
 
       <div className="mt-6">
-        <NavLink to="/register" className="ff-cta px-6 py-3 rounded-2xl text-center block">{plan.ctaLabel}</NavLink>
+        <NavLink to="/register" className="ff-btn ff-btn-primary">{plan.ctaLabel}</NavLink>
       </div>
     </article>
   );
@@ -71,26 +71,13 @@ export default function PricingPage() {
             { label: "Probeer gratis", to: "/results", variant: "primary", "data-event": "cta_pricing_try" },
             { label: "Veelgestelde vragen", to: "/veelgestelde-vragen", variant: "secondary", "data-event": "cta_pricing_faq" }
           ]}
+          note="Je kunt op elk moment opzeggen."
         />
 
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <section className="ff-container ff-stack-lg py-10 sm:py-12">
           <div className="inline-flex items-center gap-2 text-sm text-[var(--color-text)]/70 mb-4" role="group" aria-label="Prijsperiode">
-            <button 
-              type="button" 
-              aria-pressed={yearly} 
-              onClick={() => setYearly(true)} 
-              className={`px-4 py-2 rounded-lg border transition-colors ${yearly ? 'bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)]' : 'border-[var(--color-border)] text-[var(--color-text)]'}`}
-            >
-              Jaar
-            </button>
-            <button 
-              type="button" 
-              aria-pressed={!yearly} 
-              onClick={() => setYearly(false)} 
-              className={`px-4 py-2 rounded-lg border transition-colors ${!yearly ? 'bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)]' : 'border-[var(--color-border)] text-[var(--color-text)]'}`}
-            >
-              Maand
-            </button>
+            <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)} className="ff-btn ff-btn-secondary">Jaar</button>
+            <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)} className="ff-btn ff-btn-secondary">Maand</button>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -98,8 +85,8 @@ export default function PricingPage() {
           </div>
 
           <div className="mt-8 flex gap-3">
-            <NavLink to="/register" className="ff-cta px-6 py-3 rounded-2xl text-center">Start nu</NavLink>
-            <NavLink to="/hoe-het-werkt" className="px-6 py-3 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center hover:border-[var(--ff-color-primary-600)] transition-colors">Hoe het werkt</NavLink>
+            <NavLink to="/register" className="ff-btn ff-btn-primary">Start nu</NavLink>
+            <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
           </div>
         </section>
       </main>

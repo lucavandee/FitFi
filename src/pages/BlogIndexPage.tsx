@@ -18,8 +18,8 @@ export default function BlogIndexPage() {
         ]}
       />
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        {/* Jouw bestaande blog listing (component) kan hier blijven; placeholder cards hieronder puur ter demonstratie */}
+      <section className="ff-container ff-stack-lg py-10 sm:py-12">
+        {/* Hier kan jullie bestaande BlogList component in plaats van deze placeholders */}
         <div className="grid gap-6 md:grid-cols-3">
           {[1,2,3].map((n) => (
             <article key={n} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)]">

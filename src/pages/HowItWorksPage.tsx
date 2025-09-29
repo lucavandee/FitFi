@@ -23,9 +23,10 @@ export default function HowItWorksPage() {
           { label: "Start gratis", to: "/results", variant: "primary", "data-event": "cta_how_start" },
           { label: "Bekijk prijzen", to: "/prijzen", variant: "secondary", "data-event": "cta_how_pricing" }
         ]}
+        note="Geen spam. Opzeggen kan altijd."
       />
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+      <section className="ff-container py-10 sm:py-12">
         <div className="grid gap-6 md:grid-cols-3">
           {STEPS.map((s, i) => (
             <article key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-6 bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
@@ -37,8 +38,8 @@ export default function HowItWorksPage() {
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <NavLink to="/results" className="ff-cta px-6 py-3 rounded-2xl text-center">Start gratis</NavLink>
-          <NavLink to="/veelgestelde-vragen" className="px-6 py-3 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center hover:border-[var(--ff-color-primary-600)] transition-colors">FAQ</NavLink>
+          <NavLink to="/results" className="ff-btn ff-btn-primary">Start gratis</NavLink>
+          <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">FAQ</NavLink>
         </div>
       </section>
     </main>
