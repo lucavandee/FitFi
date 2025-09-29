@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Seo from '@/components/Seo';
 import SectionHeader from "@/components/marketing/SectionHeader";
+import PageHero from "@/components/marketing/PageHero";
 import urls from '@/utils/urls';
 import { 
   ArrowLeft, 
@@ -244,7 +245,8 @@ const TribeDetailPage: React.FC = () => {
       />
 
       <main className="min-h-screen bg-[var(--color-bg)]">
-        <SectionHeader
+        <PageHero
+          id="page-tribe"
           eyebrow="COMMUNITY"
           title={tribe?.name || "Tribe"}
           subtitle={tribe?.description}
