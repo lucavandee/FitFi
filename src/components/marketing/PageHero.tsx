@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 
 type Cta = {
   label: string;
-  to: string;                 // internal route (/results) of extern (https://, mailto:)
+  to: string;                       // interne route (/results) of extern (https://, mailto:)
   variant?: "primary" | "secondary";
   target?: "_blank" | "_self";
   rel?: string;
-  "data-event"?: string;      // analytics hook optioneel
+  "data-event"?: string;            // optioneel: analytics hook
 };
 
 type Props = {
@@ -15,11 +15,12 @@ type Props = {
   eyebrow?: string;
   title: string;
   subtitle?: string;
+  note?: string;                    // kleine vertrouwensregel onder CTA (optioneel)
   align?: "left" | "center";
-  as?: keyof JSX.IntrinsicElements;       // h1/h2/...
+  as?: keyof JSX.IntrinsicElements; // h1/h2/...
   size?: "sm" | "md" | "lg";
   className?: string;
-  ctas?: Cta[];                           // CTA-knoppen in de hero
+  ctas?: Cta[];
 };
 
 const isExternal = (to: string) =>
@@ -30,6 +31,7 @@ const PageHero: React.FC<Props> = ({
   eyebrow,
   title,
   subtitle,
+  note,
   align = "left",
   as = "h1",
   size = "lg",
@@ -38,7 +40,7 @@ const PageHero: React.FC<Props> = ({
 }) => {
   const HeadingTag: any = as;
 
-  // Schaal & spacing exact als homepage-gevoel
+  // Schaal & spacing in lijn met homepage-gevoel
   const padY =
     size === "sm" ? "py-14 md:py-16" : size === "md" ? "py-16 md:py-20" : "py-20 md:py-24";
   const titleSize =
@@ -50,7 +52,7 @@ const PageHero: React.FC<Props> = ({
 
   const alignCls = align === "center" ? "text-center" : "text-left";
 
-  // Mount-fade voor micro-animatie (respecteert reduced motion door alleen op opacity te animeren)
+  // Micro-animatie (prefers-reduced-motion: handled via CSS in polish)
   const [ready, setReady] = React.useState(false);
   React.useEffect(() => {
     const t = requestAnimationFrame(() => setReady(true));
@@ -60,12 +62,13 @@ const PageHero: React.FC<Props> = ({
   const headingId = id ? `${id}__heading` : undefined;
   const eyebrowId = id ? `${id}__eyebrow` : undefined;
   const subId = id ? `${id}__subtitle` : undefined;
+  const noteId = id ? `${id}__note` : undefined;
 
   return (
     <section
       className={[padY, className].join(" ")}
       style={{
-        // Warme hero-gradient in tokens (geen hex)
+        // Warme, premium gradient in tokens (geen hex)
         background:
           "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))",
         opacity: ready ? 1 : 0,
@@ -74,7 +77,7 @@ const PageHero: React.FC<Props> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header
-          className={[alignCls, "rounded-[var(--radius-lg)]"].join(" ")}
+          className={[alignCls, "rounded-[var(--radius-lg)] ff-animate-fade-in"].join(" ")}
           aria-labelledby={headingId}
           aria-describedby={subtitle ? subId : undefined}
         >
@@ -120,8 +123,8 @@ const PageHero: React.FC<Props> = ({
               {ctas.map((cta, i) => {
                 const cls =
                   cta.variant === "secondary"
-                    ? "px-6 py-3 rounded-2xl border text-[var(--color-text)] border-[var(--color-border)] text-center hover:border-[var(--ff-color-primary-600)] transition-colors"
-                    : "ff-cta px-6 py-3 rounded-2xl text-center";
+                    ? "ff-btn ff-btn-secondary"
+                    : "ff-btn ff-btn-primary";
                 return isExternal(cta.to) ? (
                   <a
                     key={i}
@@ -149,6 +152,18 @@ const PageHero: React.FC<Props> = ({
                 );
               })}
             </div>
+          )}
+
+          {note && (
+            <p
+              id={noteId}
+              className={[
+                "mt-3 text-sm text-[var(--color-text-muted)]",
+                align === "center" ? "mx-auto" : "mx-0",
+              ].join(" ")}
+            >
+              {note}
+            </p>
           )}
         </header>
       </div>
