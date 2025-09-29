@@ -1,5 +1,6 @@
 // src/pages/ContactPage.tsx
 import React from "react";
+import SectionHeader from "@/components/marketing/SectionHeader";
 
 /**
  * ContactPage — tokens-first + ff-utilities
@@ -75,6 +76,15 @@ export default function ContactPage() {
 
   return (
     <main id="main" className="bg-surface text-text">
+      <SectionHeader
+        eyebrow="CONTACT"
+        title="Stuur ons een bericht"
+        subtitle="Vriendelijke support met verstand van stijl."
+        align="left"
+        as="h1"
+        size="sm"
+      />
+
       <section aria-labelledby="contact-title" className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <header className="mb-6 sm:mb-8">
           <p className="text-sm text-text/70">We helpen je graag</p>

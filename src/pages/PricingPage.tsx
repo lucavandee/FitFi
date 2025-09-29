@@ -1,4 +1,6 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
+import SectionHeader from "@/components/marketing/SectionHeader";
 import { NavLink } from "react-router-dom";
 
 type Plan = {
@@ -50,27 +52,43 @@ export default function PricingPage() {
   const [yearly, setYearly] = React.useState(true);
 
   return (
-    <main id="main" className="bg-bg text-text">
-      <section className="ff-container ff-stack-lg py-10 sm:py-12">
-        <header className="ff-stack">
-          <h1 className="font-heading text-2xl sm:text-3xl">Prijzen</h1>
-          <div className="ff-pill-switch" role="group" aria-label="Prijsperiode">
-            <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>Jaar</button>
-            <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>Maand</button>
+    <>
+      <Helmet>
+        <title>Prijzen - FashionFinder</title>
+        <meta name="description" content="Kies het plan dat bij je past. Start gratis of upgrade naar Pro of Elite voor meer features." />
+      </Helmet>
+
+      <main className="min-h-screen bg-[var(--color-bg)]">
+        <SectionHeader
+          eyebrow="PRIJZEN"
+          title="Betaal wat bij je past"
+          subtitle="Een gratis start, plus premium opties wanneer jij er klaar voor bent."
+          align="left"
+          as="h1"
+          size="sm"
+        />
+
+        <section className="ff-container ff-stack-lg py-10 sm:py-12">
+          <header className="ff-stack">
+            <h1 className="font-heading text-2xl sm:text-3xl">Prijzen</h1>
+            <div className="ff-pill-switch" role="group" aria-label="Prijsperiode">
+              <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>Jaar</button>
+              <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>Maand</button>
+            </div>
+          </header>
+
+          <div className="ff-price-grid">
+            {PLANS.map((p) => <PlanCard key={p.id} plan={p} yearly={yearly} />)}
           </div>
-        </header>
+        </section>
 
-        <div className="ff-price-grid">
-          {PLANS.map((p) => <PlanCard key={p.id} plan={p} yearly={yearly} />)}
-        </div>
-      </section>
-
-      <section className="ff-container">
-        <div className="cta-row">
-          <NavLink to="/register" className="ff-btn ff-btn-primary">Start gratis</NavLink>
-          <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">FAQ</NavLink>
-        </div>
-      </section>
-    </main>
+        <section className="ff-container">
+          <div className="cta-row">
+            <NavLink to="/register" className="ff-btn ff-btn-primary">Start gratis</NavLink>
+            <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">FAQ</NavLink>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
