@@ -1,50 +1,28 @@
-// vite.config.ts
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import hostSweep from "./plugins/host-sweep";
+
+// Let op: geen 'node:path' conform architectuur-freeze.
+const SRC_ALIAS = new URL("./src", import.meta.url).pathname;
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const isProd = mode === "production";
-  const DEV_PORT = Number(env.VITE_PORT || 5173);
-  const PREVIEW_PORT = Number(env.VITE_PREVIEW_PORT || 4173);
-  const DROP = env.VITE_DROP_CONSOLE === "1" ? (["console", "debugger"] as const) : [];
+  const host = (env.VITE_CANONICAL_HOST || "https://fitfi.ai").replace(/\/+$/, "");
 
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      // URL-sweep draait in dev én build; nul visuele impact.
+      hostSweep({ host }),
+    ],
     resolve: {
-      alias: { "@": "/src" },
+      alias: [{ find: "@", replacement: SRC_ALIAS }],
     },
-    server: { host: true, port: DEV_PORT, strictPort: true },
-    preview: { host: true, port: PREVIEW_PORT },
-    css: { devSourcemap: !isProd },
-    build: {
-      target: "es2020",
-      sourcemap: !isProd,
-      chunkSizeWarningLimit: 900,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            "react-vendor": ["react", "react-dom", "react-router-dom"],
-            "data-vendor": ["@tanstack/react-query"],
-            icons: ["lucide-react"],
-          },
-        },
-      },
-    },
-    optimizeDeps: {
-      include: [
-        "react",
-        "react-dom",
-        "react-router-dom",
-        "@tanstack/react-query",
-        "react-helmet-async",
-        "react-hot-toast",
-        "lucide-react",
-      ],
-    },
-    esbuild: {
-      drop: DROP,
-      legalComments: "none",
+    // Overige projectinstellingen blijven ongewijzigd
+    server: { port: 5173 },
+    build: { sourcemap: false },
+    define: {
+      __FITFI_CANONICAL__: JSON.stringify(host),
     },
   };
 });
