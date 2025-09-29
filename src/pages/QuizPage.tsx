@@ -464,179 +464,181 @@ const QuizPage: React.FC = () => {
   }
   
   return (
-    <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+    <>
       <Seo
         title="Stijlquiz — FitFi"
         description="Beantwoord enkele slimme vragen en ontvang direct jouw AI-gestuurde stijlprofiel en outfit-ideeën."
         canonical="/quiz"
       />
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link 
-            to="/onboarding" 
-            className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
-          >
-            <ArrowLeft size={20} className="mr-2" />
-            Terug naar onboarding
-          </Link>
-          
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2">
-              Stijlquiz
-            </h1>
-            <p className="text-gray-600">
-              Beantwoord enkele vragen voor gepersonaliseerd stijladvies
-            </p>
+      <main className="min-h-screen bg-[var(--color-bg)]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="mb-8">
+            <Link 
+              to="/onboarding" 
+              className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
+            >
+              <ArrowLeft size={20} className="mr-2" />
+              Terug naar onboarding
+            </Link>
             
-            {/* Progress Motivation */}
-            <ProgressMotivation 
-              currentStep={progress.currentStep}
-              totalSteps={progress.totalSteps}
-              className="mt-4"
-            />
-          </div>
-        </div>
-
-        {/* Quiz Card */}
-        <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-          {/* Progress Bar */}
-          <div className="h-2 bg-gray-200">
-            <div 
-              className="h-full bg-[#89CFF0] transition-all duration-300 ease-out"
-              style={{ width: `${progressPercentage}%` }}
-              role="progressbar"
-              aria-valuenow={progressPercentage}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`Quiz voortgang: ${Math.round(progressPercentage)}%`}
-            />
-          </div>
-
-          <div className="p-8">
-            {/* Step Info */}
-            <div className="text-center mb-8">
-              <div className="text-sm text-gray-500 mb-2">
-                Vraag {progress.currentStep} van {progress.totalSteps}
-              </div>
-              <h2 className="text-2xl font-medium text-gray-900 mb-3">
-                {currentStepData.title}
-              </h2>
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2">
+                Stijlquiz
+              </h1>
               <p className="text-gray-600">
-                {currentStepData.description}
+                Beantwoord enkele vragen voor gepersonaliseerd stijladvies
               </p>
+              
+              {/* Progress Motivation */}
+              <ProgressMotivation 
+                currentStep={progress.currentStep}
+                totalSteps={progress.totalSteps}
+                className="mt-4"
+              />
+            </div>
+          </div>
+
+          {/* Quiz Card */}
+          <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
+            {/* Progress Bar */}
+            <div className="h-2 bg-gray-200">
+              <div 
+                className="h-full bg-[#89CFF0] transition-all duration-300 ease-out"
+                style={{ width: `${progressPercentage}%` }}
+                role="progressbar"
+                aria-valuenow={progressPercentage}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Quiz voortgang: ${Math.round(progressPercentage)}%`}
+              />
             </div>
 
-            {/* Question Input */}
-            <div className="mb-8">
-              {renderQuestionInput()}
-              
-              {/* Error Message */}
-              {errors[currentStepData.field] && (
-                <div 
-                  className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-3"
-                  role="alert"
-                  aria-live="polite"
-                >
-                  <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                  <p className="text-red-700 text-sm">{errors[currentStepData.field]}</p>
+            <div className="p-8">
+              {/* Step Info */}
+              <div className="text-center mb-8">
+                <div className="text-sm text-gray-500 mb-2">
+                  Vraag {progress.currentStep} van {progress.totalSteps}
+                </div>
+                <h2 className="text-2xl font-medium text-gray-900 mb-3">
+                  {currentStepData.title}
+                </h2>
+                <p className="text-gray-600">
+                  {currentStepData.description}
+                </p>
+              </div>
+
+              {/* Question Input */}
+              <div className="mb-8">
+                {renderQuestionInput()}
+                
+                {/* Error Message */}
+                {errors[currentStepData.field] && (
+                  <div 
+                    className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-3"
+                    role="alert"
+                    aria-live="polite"
+                  >
+                    <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                    <p className="text-red-700 text-sm">{errors[currentStepData.field]}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Style Preview - Show after answering */}
+              {showPreview && Object.keys(progress.answers).length > 0 && (
+                <div className="mb-8 animate-fade-in">
+                  <StylePreview 
+                    answers={progress.answers}
+                    currentStep={progress.currentStep}
+                  />
                 </div>
               )}
-            </div>
 
-            {/* Style Preview - Show after answering */}
-            {showPreview && Object.keys(progress.answers).length > 0 && (
-              <div className="mb-8 animate-fade-in">
-                <StylePreview 
-                  answers={progress.answers}
-                  currentStep={progress.currentStep}
-                />
+              {/* Navigation */}
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  onClick={handlePrevious}
+                  disabled={progress.currentStep === 1}
+                  icon={<ArrowLeft size={16} />}
+                  iconPosition="left"
+                  className="text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Vorige
+                </Button>
+
+                {isLastStep ? (
+                  <Button
+                    variant="primary"
+                    onClick={handleSubmit}
+                    disabled={!canProceed || isSubmitting}
+                    icon={isSubmitting ? undefined : <CheckCircle size={16} />}
+                    iconPosition="right"
+                    className="cta-btn disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Versturen...
+                      </div>
+                    ) : (
+                      'Verstuur Quiz'
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="primary"
+                    onClick={handleNext}
+                    disabled={!canProceed}
+                    icon={<ArrowRight size={16} />}
+                    iconPosition="right"
+                    className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Volgende
+                  </Button>
+                )}
               </div>
-            )}
-
-            {/* Navigation */}
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                onClick={handlePrevious}
-                disabled={progress.currentStep === 1}
-                icon={<ArrowLeft size={16} />}
-                iconPosition="left"
-                className="text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Vorige
-              </Button>
-
-              {isLastStep ? (
-                <Button
-                  variant="primary"
-                  onClick={handleSubmit}
-                  disabled={!canProceed || isSubmitting}
-                  icon={isSubmitting ? undefined : <CheckCircle size={16} />}
-                  iconPosition="right"
-                  className="cta-btn disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Versturen...
-                    </div>
-                  ) : (
-                    'Verstuur Quiz'
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  variant="primary"
-                  onClick={handleNext}
-                  disabled={!canProceed}
-                  icon={<ArrowRight size={16} />}
-                  iconPosition="right"
-                  className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Volgende
-                </Button>
-              )}
             </div>
           </div>
+
+          {/* Quiz Info */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-500">
+              Je antwoorden worden veilig opgeslagen en alleen gebruikt voor jouw persoonlijke stijladvies
+            </p>
+          </div>
+
+          {/* Achievement Notification */}
+          {showAchievement && newAchievements.length > 0 && (
+            <AchievementNotification
+              achievement={newAchievements[0]}
+              onClose={handleAchievementClose}
+              onShare={handleAchievementShare}
+            />
+          )}
+
+          {/* Social share — nu via centrale share helper */}
+          {showSocialShare && newAchievements.length > 0 && (
+            <SocialShareModal
+              shareData={{
+                achievement: newAchievements[0],
+                userProfile: {
+                  name: user?.name || 'FitFi User',
+                  styleType: 'Modern Minimalist', // Would be dynamic based on answers
+                  matchPercentage: 87 // Would be calculated based on answers
+                },
+                shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
+                shareUrl: share.makeAchievementShare(newAchievements?.[0]?.title)
+              }}
+              onClose={() => setShowSocialShare(false)}
+              onShare={handleSocialShare}
+            />
+          )}
         </div>
-
-        {/* Quiz Info */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
-            Je antwoorden worden veilig opgeslagen en alleen gebruikt voor jouw persoonlijke stijladvies
-          </p>
-        </div>
-
-        {/* Achievement Notification */}
-        {showAchievement && newAchievements.length > 0 && (
-          <AchievementNotification
-            achievement={newAchievements[0]}
-            onClose={handleAchievementClose}
-            onShare={handleAchievementShare}
-          />
-        )}
-
-        {/* Social Share Modal */}
-        {showSocialShare && newAchievements.length > 0 && (
-          <SocialShareModal
-            shareData={{
-              achievement: newAchievements[0],
-              userProfile: {
-                name: user?.name || 'FitFi User',
-                styleType: 'Modern Minimalist', // Would be dynamic based on answers
-                matchPercentage: 87 // Would be calculated based on answers
-              },
-              shareText: `Ik heb zojuist mijn stijlprofiel ontdekt met FitFi! 🎨 Achievement unlocked: ${newAchievements[0].title}`,
-              shareUrl: share.makeAchievementShare(newAchievements?.[0]?.title)
-            }}
-            onClose={() => setShowSocialShare(false)}
-            onShare={handleSocialShare}
-          />
-        )}
-      </div>
-    </main>
+      </main>
+    </>
   );
 };
 
