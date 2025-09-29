@@ -1,16 +1,28 @@
 import React from 'react';
-import Seo from '@/components/Seo';
+import { Helmet } from 'react-helmet-async';
+import SectionHeader from "@/components/marketing/SectionHeader";
+import { Shield, Eye, Heart, CheckCircle } from 'lucide-react';
 
 export default function BrandSafetyPage() {
   return (
     <div className="section">
-      <Seo
-        title="Brand Safety & Editorial"
-        description="Onze richtlijnen voor merkveiligheid, redactionele integriteit en advertentiebeleid."
-        canonical="https://www.fitfi.ai/brand-safety"
-      />
-      <div className="container">
-        <h1 className="text-ink text-3xl md:text-4xl font-extrabold">Brand Safety & Editorial</h1>
+      <Helmet>
+        <title>Brand Safety & Editorial</title>
+        <meta name="description" content="Onze richtlijnen voor merkveiligheid, redactionele integriteit en advertentiebeleid." />
+        <link rel="canonical" href="https://www.fitfi.ai/brand-safety" />
+      </Helmet>
+
+      <main className="min-h-screen bg-[var(--color-bg)]">
+        <SectionHeader
+          eyebrow="BRAND SAFETY"
+          title="Onze belofte: stijl vóór sales"
+          subtitle="Transparant, editorial onafhankelijk en privacy-eerlijk."
+          align="left"
+          as="h1"
+          size="sm"
+        />
+
+        <div className="max-w-4xl mx-auto px-4 py-12">
 
         <div className="prose max-w-3xl mt-6">
           <h2>Onze belofte</h2>
@@ -38,7 +50,8 @@ export default function BrandSafetyPage() {
 
           <p className="text-sm text-gray-500 mt-8">Vragen van merken? Mail ons via <a href="mailto:partners@fitfi.ai">partners@fitfi.ai</a>.</p>
         </div>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

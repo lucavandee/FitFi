@@ -1,10 +1,28 @@
 // src/pages/SupportPage.tsx
 import React from "react";
+import { Helmet } from 'react-helmet-async';
+import SectionHeader from "@/components/marketing/SectionHeader";
 import { Mail, MessageSquare, HelpCircle } from "lucide-react";
 
 export default function SupportPage() {
   return (
     <main id="main" className="bg-bg text-text">
+      <Helmet>
+        <title>Support - FitFi</title>
+        <meta name="description" content="Vragen over je stijlrapport, outfits of account? We helpen snel en nuchter." />
+      </Helmet>
+
+      <main className="min-h-screen bg-[var(--color-bg)]">
+        <SectionHeader
+          eyebrow="HELP"
+          title="Ondersteuning"
+          subtitle="Antwoord binnen 24 uur. Korte lijntjes, echte mensen."
+          align="left"
+          as="h1"
+          size="sm"
+        />
+
+        <div className="max-w-4xl mx-auto px-4 py-12">
       <section className="ff-container py-12 sm:py-14 ff-stack-lg">
         <header className="ff-stack">
           <p className="text-sm text-text/70">We helpen snel en nuchter</p>
@@ -55,6 +73,8 @@ export default function SupportPage() {
           </ul>
         </section>
       </section>
+        </div>
+      </main>
     </main>
   );
 }

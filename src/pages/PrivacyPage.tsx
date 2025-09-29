@@ -1,42 +1,58 @@
 import React from "react";
+import { Helmet } from 'react-helmet-async';
+import SectionHeader from "@/components/marketing/SectionHeader";
+import MarkdownPage from '@/components/ui/MarkdownPage';
 
 export default function PrivacyPage() {
   return (
-    <main id="main" className="bg-bg text-text">
-      <section className="ff-container ff-stack-lg py-10 sm:py-12">
-        <header className="ff-stack">
-          <p className="text-sm text-text/70">Transparant en nuchter</p>
-          <h1 className="font-heading text-2xl sm:text-3xl">Privacyverklaring</h1>
-          <p className="text-text/80 max-w-2xl">
-            We verzamelen zo min mogelijk gegevens, uitsluitend om FitFi te laten werken en verbeteren. We verkopen nooit data.
-          </p>
-        </header>
+    <>
+      <Helmet>
+        <title>Privacy - FitFi</title>
+        <meta name="description" content="Privacyverklaring van FitFi. Transparant over hoe we omgaan met je gegevens." />
+      </Helmet>
 
-        <article className="ff-card p-5 ff-prose">
-          <h2>Welke gegevens verwerken we?</h2>
-          <ul>
-            <li>Accountgegevens (e-mail, wachtwoord-hash)</li>
-            <li>Stijlprofiel antwoorden (6 vragen)</li>
-            <li>Technische logs (beperkt, voor foutanalyse)</li>
-          </ul>
+      <main className="min-h-screen bg-[var(--color-bg)]">
+        <SectionHeader
+          eyebrow="PRIVACY"
+          title="Privacy in gewoon Nederlands"
+          subtitle="Wat we wel en niet doen met je data. Kort en eerlijk."
+          align="left"
+          as="h1"
+          size="sm"
+        />
 
-          <h2>Waarom verwerken we die gegevens?</h2>
-          <p>Om outfits te genereren, je voorkeuren te bewaren en de app te beveiligen/verbeteren.</p>
+        <MarkdownPage
+          content={`
+# Privacyverklaring
 
-          <h2>Hoe lang bewaren we je gegevens?</h2>
-          <p>Zo kort mogelijk. Je kunt verwijderen en export aanvragen via support.</p>
+We verzamelen zo min mogelijk gegevens, uitsluitend om FitFi te laten werken en verbeteren. We verkopen nooit data.
 
-          <h2>Jouw rechten</h2>
-          <ul>
-            <li>Inzage, rectificatie en dataportabiliteit</li>
-            <li>Verwijderen van je account en gegevens</li>
-            <li>Bezwaar maken tegen verwerking</li>
-          </ul>
+## Welke gegevens verwerken we?
 
-          <h2>Contact</h2>
-          <p>Vragen? Mail <a href="mailto:privacy@fitfi.ai">privacy@fitfi.ai</a>.</p>
-        </article>
-      </section>
-    </main>
+- Accountgegevens (e-mail, wachtwoord-hash)
+- Stijlprofiel antwoorden (6 vragen)
+- Technische logs (beperkt, voor foutanalyse)
+
+## Waarom verwerken we die gegevens?
+
+Om outfits te genereren, je voorkeuren te bewaren en de app te beveiligen/verbeteren.
+
+## Hoe lang bewaren we je gegevens?
+
+Zo kort mogelijk. Je kunt verwijderen en export aanvragen via support.
+
+## Jouw rechten
+
+- Inzage, rectificatie en dataportabiliteit
+- Verwijderen van je account en gegevens
+- Bezwaar maken tegen verwerking
+
+## Contact
+
+Vragen? Mail [privacy@fitfi.ai](mailto:privacy@fitfi.ai).
+          `}
+        />
+      </main>
+    </>
   );
 }

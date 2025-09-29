@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import SectionHeader from "@/components/marketing/SectionHeader";
 
 const VALUES = [
   { title: "Persoonlijk, niet generiek", desc: "We vertalen jouw stijl naar outfits die kloppen – van silhouet tot kleur." },
@@ -17,6 +18,15 @@ const METRICS = [
 export default function AboutPage() {
   return (
     <main id="main" className="bg-bg text-text">
+      <SectionHeader
+        eyebrow="OVER ONS"
+        title="Waarom wij om stijl geven"
+        subtitle="Geen hype. Geen regels. Wel vertrouwen in de spiegel — elke dag."
+        align="left"
+        as="h1"
+        size="sm"
+      />
+
       <section className="ff-container ff-about-hero py-10 sm:py-12">
         <div className="ff-stack">
           <p className="text-sm text-text/70">Over FitFi</p>

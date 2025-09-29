@@ -21,7 +21,7 @@ const SectionHeader: React.FC<Props> = ({
 }) => {
   const HeadingTag: any = as;
 
-  // Compacte/middel/large varianten (tokens-first)
+  // Compacte / middel / large varianten (tokens-first)
   const titleSize =
     size === "sm"
       ? "text-[clamp(1.5rem,3vw,2.25rem)]"
@@ -45,7 +45,7 @@ const SectionHeader: React.FC<Props> = ({
         "bg-[var(--color-surface)]",
       ].join(" ") + (className ? " " + className : "")}
       style={{
-        // Subtiele warme achtergrond (tokens-first; geen hex)
+        // Subtiele warme achtergrond (geen hex; tokens-first)
         background:
           "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))",
       }}
