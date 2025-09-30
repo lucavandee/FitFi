@@ -73,7 +73,7 @@ export default function FAQPage() {
                   </h2>
                   <div className="grid gap-3">
                     {group.items.map((item, i) => (
-                      <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4">
+                      <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]">
                         <summary className="cursor-pointer font-heading text-[var(--ff-color-text)] flex items-center justify-between">
                           {item.q}
                         </summary>

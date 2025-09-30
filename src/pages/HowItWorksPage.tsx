@@ -93,7 +93,7 @@ export default function HowItWorksPage() {
         <h2 className="font-heading text-2xl text-[var(--ff-color-text)] mb-4">Veelgestelde vragen</h2>
         <div className="grid gap-3">
           {HOW_FAQ.map((item, i) => (
-            <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4">
+            <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]">
               <summary className="cursor-pointer font-heading text-[var(--ff-color-text)]">{item.q}</summary>
               <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
             </details>
