@@ -1,42 +1,88 @@
 import React, { useEffect, useState } from "react";
-import Container from "./Container";
+import { NavLink, useLocation } from "react-router-dom";
+import DarkModeToggle from "@/components/ui/DarkModeToggle";
+import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
+
+const NAV_LINKS = [
+  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/prijzen", label: "Prijzen" },
+  { to: "/over-ons", label: "Over ons" },
+  { to: "/veelgestelde-vragen", label: "FAQ" },
+];
 
 export default function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
+  );
+  const location = useLocation();
+
+  // Sluit menu bij routewissel
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    setOpen(false);
+  }, [location.pathname]);
+
+  // Sluit menu bij resize naar desktop
+  useEffect(() => {
+    const onResize = () => {
+      const desktop = window.matchMedia("(min-width: 768px)").matches;
+      setIsDesktop(desktop);
+      if (desktop) setOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
-    <header
-      className={`sticky top-0 z-40 transition-all ${
-        scrolled ? "backdrop-blur-md bg-[rgba(11,16,32,.65)] border-b border-white/10" : "bg-transparent"
-      }`}
-    >
-      <Container className="flex items-center justify-between h-16">
-        <a href="/" className="flex items-center gap-3">
-          <div
-            aria-hidden
-            className="w-8 h-8 rounded-xl ff-grad ff-float"
-            style={{ boxShadow: "0 10px 30px rgba(43,106,243,.35)" }}
-          />
-          <span className="text-white font-semibold tracking-wide">FitFi</span>
-        </a>
+    <header role="banner" className="ff-nav-glass">
+      <nav aria-label="Hoofdmenu" className="ff-container">
+        <div className="h-16 flex items-center justify-between">
+          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
+            FitFi
+          </NavLink>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--fitfi-muted)]">
-          <a href="/#how-it-works" className="hover:text-white">Hoe het werkt</a>
-          <a href="/#previews" className="hover:text-white">Voorbeelden</a>
-          <a href="/#faq" className="hover:text-white">FAQ</a>
-          <a href="/privacy" className="hover:text-white">Privacy</a>
-        </nav>
+          {/* Desktop navigatie */}
+          <ul className="hidden md:flex items-center gap-5">
+            {NAV_LINKS.map((item) => (
+              <li key={item.to}>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden md:flex items-center gap-2">
+            <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">Inloggen</NavLink>
+            <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
+            <DarkModeToggle />
+          </div>
 
-        <div className="flex items-center gap-2">
-          <a href="/quiz" className="ff-cta">Doe de stijlscan</a>
+          {/* Mobiel trigger */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-controls="ff-mobile-menu"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
+            >
+              <svg className="h-5 w-5 text-[var(--ff-color-text)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <DarkModeToggle />
+          </div>
         </div>
-      </Container>
+      </nav>
+
+      {/* Portal overlay (boven ALLES) */}
+      <MobileNavDrawer open={open && !isDesktop} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );
 }

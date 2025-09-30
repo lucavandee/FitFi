@@ -27,16 +27,16 @@ export default function Footer() {
   return (
     <footer role="contentinfo" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] border-t border-[var(--ff-color-border)]">
       <div className="ff-container py-12">
-        {/* Strakke 12-koloms grid (4/3/3/2) met identieke baseline */}
+        {/* Strakke 12-koloms grid: 4/3/3/2 */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8 items-start">
-          {/* Merk / nieuwsbrief */}
+          {/* Merk & nieuwsbrief */}
           <section aria-label="Over FitFi" className="md:col-span-4 flex flex-col gap-4">
             <NavLink to="/" className="font-heading text-xl tracking-wide">FitFi</NavLink>
-            <p className="text-[var(--ff-color-text)]/80">
+            <p className="text-[var(--ff-color-text)]/80 max-w-sm">
               Rust in je garderobe. Outfits die kloppen — elke dag.
             </p>
 
-            <form onSubmit={(e) => e.preventDefault()} aria-label="Nieuwsbrief" className="flex w-full max-w-md items-center gap-2">
+            <form onSubmit={(e) => e.preventDefault()} aria-label="Nieuwsbrief" className="flex w-full max-w-sm items-center gap-2">
               <label htmlFor="ff-news-email" className="sr-only">E-mail</label>
               <input
                 id="ff-news-email"
@@ -100,7 +100,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        {/* Onderbalk — zelfde container & baseline */}
+        {/* Onderbalk (zelfde container; 6/6) */}
         <div className="mt-10 border-t border-[var(--ff-color-border)] pt-4 grid grid-cols-1 md:grid-cols-12 items-center gap-y-4">
           <p className="md:col-span-6 text-sm text-[var(--ff-color-text)]/70">
             © {year} FitFi — Alle rechten voorbehouden

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
 /**
- * iOS-veilige body scroll-lock.
+ * iOS-veilige body scroll-lock:
  * - Bewaart scrollpositie
- * - Zet body fixed zodat er géén bleed is (ook niet in Safari)
- * - Herstelt exact naar de oude positie bij unlock
+ * - Zet body fixed (voorkomt bleed in Safari/iOS)
+ * - Herstelt exact naar oude positie bij unlock
  */
 export default function useBodyScrollLock(locked: boolean) {
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function useBodyScrollLock(locked: boolean) {
     const prevBodyWidth = body.style.width;
 
     // Lock
-    html.style.overflow = "hidden"; // voorkomt ook pinch-scroll
+    html.style.overflow = "hidden";
     body.style.position = "fixed";
     body.style.top = `-${scrollY}px`;
     body.style.width = "100%";
