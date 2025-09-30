@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
 
-// Publieke navigatie (desktop + mobiel)
 const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
@@ -13,21 +12,22 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(
-    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
+    typeof window !== "undefined"
+      ? window.matchMedia("(min-width: 768px)").matches
+      : false
   );
   const location = useLocation();
 
-  // Focus management voor het mobiele menu
+  // Refs voor focus-trap
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
-  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
-  // Sluit bij routewissel (voorkomt 'hangend' menu)
+  // Auto-close bij routewissel
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
-  // Desktop-resize → menu dicht & layout switch
+  // Desktop/resize switch
   useEffect(() => {
     const onResize = () => {
       const desktop = window.matchMedia("(min-width: 768px)").matches;
@@ -38,41 +38,41 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Esc-toets & focus-trap in overlay
+  // Esc, focus-trap en scroll-lock
   useEffect(() => {
     if (!open) return;
-    // scroll-lock
     const root = document.documentElement;
     const prevOverflow = root.style.overflow;
     root.style.overflow = "hidden";
 
-    // focus binnen menu
+    // eerste focus
     firstLinkRef.current?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
         setOpen(false);
+        return;
       }
-      if (e.key === "Tab") {
-        // Simpele trap tussen eerste link en sluitknop
-        const focusables = overlayRef.current?.querySelectorAll<HTMLElement>(
-          'a,button,[tabindex]:not([tabindex="-1"])'
+      if (e.key === "Tab" && overlayRef.current) {
+        const focusables = overlayRef.current.querySelectorAll<HTMLElement>(
+          'a, button, [tabindex]:not([tabindex="-1"])'
         );
-        if (!focusables || focusables.length === 0) return;
+        if (focusables.length === 0) return;
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
+        const active = document.activeElement as HTMLElement | null;
+
+        if (e.shiftKey && active === first) {
           e.preventDefault();
-          (last as HTMLElement).focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
           e.preventDefault();
-          (first as HTMLElement).focus();
+          first.focus();
         }
       }
     };
     window.addEventListener("keydown", onKeyDown);
-
     return () => {
       root.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKeyDown);
@@ -99,7 +99,9 @@ export default function Navbar() {
                     <NavLink
                       to={item.to}
                       className={({ isActive }) =>
-                        ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
+                        ["ff-navlink", isActive ? "ff-nav-active" : ""].join(
+                          " "
+                        )
                       }
                     >
                       {item.label}
@@ -119,13 +121,13 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Mobiel trigger */}
+          {/* Mobiele trigger */}
           {!isDesktop && (
             <div className="md:hidden flex items-center gap-2">
               <button
                 type="button"
                 aria-label="Open menu"
-                aria-controls="mobile-menu"
+                aria-controls="ff-mobile-menu"
                 aria-expanded={open}
                 onClick={() => setOpen(true)}
                 className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
@@ -150,16 +152,17 @@ export default function Navbar() {
       {/* Mobiele overlay */}
       {!isDesktop && open && (
         <div
-          id="mobile-menu"
+          id="ff-mobile-menu"
           role="dialog"
           aria-modal="true"
           ref={overlayRef}
-          className="fixed inset-0 z-[100] flex flex-col bg-[var(--ff-color-bg)]/95 backdrop-blur-md"
+          className="fixed inset-0 z-[9999] flex flex-col bg-[var(--ff-color-bg)]/96 backdrop-blur-md"
         >
-          {/* Close */}
-          <div className="flex justify-end p-4">
+          <div className="flex items-center justify-between p-4 ff-container">
+            <span aria-hidden className="font-heading text-base">
+              Menu
+            </span>
             <button
-              ref={closeBtnRef}
               type="button"
               aria-label="Sluit menu"
               onClick={() => setOpen(false)}
@@ -180,10 +183,10 @@ export default function Navbar() {
 
           <nav aria-label="Mobiele navigatie" className="ff-container flex-1 pb-6">
             <ul className="flex flex-col gap-4">
-              {NAV_LINKS.map((item, idx) => (
+              {NAV_LINKS.map((item, i) => (
                 <li key={item.to}>
                   <NavLink
-                    ref={idx === 0 ? firstLinkRef : undefined}
+                    ref={i === 0 ? firstLinkRef : undefined}
                     to={item.to}
                     className={({ isActive }) =>
                       ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")
@@ -195,6 +198,7 @@ export default function Navbar() {
                 </li>
               ))}
             </ul>
+
             <div className="mt-6 flex flex-col gap-2">
               <NavLink
                 to="/login"

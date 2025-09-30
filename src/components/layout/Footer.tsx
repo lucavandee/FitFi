@@ -28,10 +28,10 @@ export default function Footer() {
       role="contentinfo"
       className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] border-t border-[var(--ff-color-border)]"
     >
-      {/* Top grid */}
+      {/* Bovenste grid */}
       <div className="ff-container py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand / tagline / newsletter / socials */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 items-start">
+          {/* Merk / tagline / nieuwsbrief / socials */}
           <section aria-label="Over FitFi" className="flex flex-col gap-4">
             <NavLink to="/" className="font-heading text-xl tracking-wide">
               FitFi
@@ -139,7 +139,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        {/* Bottom bar */}
+        {/* Onderrij */}
         <div className="mt-8 border-t border-[var(--ff-color-border)] pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-[var(--ff-color-text)]/70">
             © {year} FitFi — Alle rechten voorbehouden
