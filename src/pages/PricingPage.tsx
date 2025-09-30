@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import PageHero from "@/components/marketing/PageHero";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { ShieldCheck, UserCheck, LockKeyhole, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, UserCheck, LockKeyhole, CircleCheck as CheckCircle2 } from "lucide-react";
 
 type Row = { label: string; starter: boolean | string; pro: boolean | string; elite: boolean | string; };
 
