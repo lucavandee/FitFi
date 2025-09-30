@@ -7,30 +7,32 @@ type LinkItem = { to: string; label: string };
 type Props = { open: boolean; onClose: () => void; links: LinkItem[] };
 
 /**
- * Portal-overlay die ALLES dekt:
- * - createPortal(..., document.body)
- * - Opaak bg + inline zIndex (kan niet weggepurd worden)
- * - iOS scroll-lock, focus-trap, Esc, klik-buiten sluit
- * - Document 'inert' + data-inert (fallback) tijdens open
+ * Volledig dekkende mobile overlay:
+ * - React Portal naar document.body (boven alle stacking contexts)
+ * - Maximum z-index met inline styling (purge-proof)
+ * - iOS-veilige scroll lock + document inert
+ * - Focus trap + keyboard navigation
+ * - Click-outside en ESC sluiten
  */
 export default function MobileNavDrawer({ open, onClose, links }: Props) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
 
+  // iOS-veilige body lock
   useBodyScrollLock(open);
 
-  // Achterliggende app inert maken
+  // Document inert toggelen (sinds Safari 16.4 breed ondersteund)
   useEffect(() => {
     if (!open) return;
-    const children = Array.from(document.body.children);
-    children.forEach((el) => {
+    const nodes = Array.from(document.body.children);
+    nodes.forEach((el) => {
       if (el.id !== "ff-mobile-menu") {
         el.setAttribute("inert", "");
-        el.setAttribute("data-inert", "true"); // css fallback
+        el.setAttribute("data-inert", "true");
       }
     });
     return () => {
-      children.forEach((el) => {
+      nodes.forEach((el) => {
         el.removeAttribute("inert");
         el.removeAttribute("data-inert");
       });
@@ -40,19 +42,36 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
   // Esc + focus-trap + init focus
   useEffect(() => {
     if (!open) return;
+
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); onClose(); return; }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
       if (e.key === "Tab" && overlayRef.current) {
-        const nodes = overlayRef.current.querySelectorAll<HTMLElement>('a,button,[tabindex]:not([tabindex="-1"])');
-        if (!nodes.length) return;
-        const first = nodes[0]; const last = nodes[nodes.length - 1];
+        const focusables = overlayRef.current.querySelectorAll<HTMLElement>(
+          'a,button,[tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
         const active = document.activeElement as HTMLElement | null;
-        if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
+
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          (last as HTMLElement).focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          (first as HTMLElement).focus();
+        }
       }
     };
+
     window.addEventListener("keydown", onKeyDown);
+    // eerste focus
     setTimeout(() => firstLinkRef.current?.focus(), 0);
+
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
@@ -64,10 +83,15 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
       id="ff-mobile-menu"
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 flex flex-col bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] overscroll-contain"
-      // inline zIndex + bgColor = immuun voor purge/stacking-contexts
+      className="
+        fixed inset-0 isolation-isolate
+        bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]
+        flex flex-col
+      "
       style={{ zIndex: 2147483647, backgroundColor: "var(--ff-color-bg)" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div className="ff-container flex items-center justify-between p-4">
         <span aria-hidden className="font-heading text-base">Menu</span>
@@ -77,7 +101,14 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
           onClick={onClose}
           className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <svg
+            className="h-5 w-5 text-[var(--ff-color-text)]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -90,7 +121,9 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
               <NavLink
                 ref={i === 0 ? firstLinkRef : undefined}
                 to={item.to}
-                className={({ isActive }) => ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")}
+                className={({ isActive }) =>
+                  ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")
+                }
                 onClick={onClose}
               >
                 {item.label}
@@ -100,8 +133,12 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
         </ul>
 
         <div className="mt-6 flex flex-col gap-2">
-          <NavLink to="/login" className="ff-btn ff-btn-secondary h-10 w-full" onClick={onClose}>Inloggen</NavLink>
-          <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-10 w-full" onClick={onClose}>Start gratis</NavLink>
+          <NavLink to="/login" className="ff-btn ff-btn-secondary h-10 w-full" onClick={onClose}>
+            Inloggen
+          </NavLink>
+          <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-10 w-full" onClick={onClose}>
+            Start gratis
+          </NavLink>
         </div>
       </nav>
     </div>,

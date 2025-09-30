@@ -17,8 +17,12 @@ export default function SiteHeader() {
   );
   const location = useLocation();
 
-  useEffect(() => { setOpen(false); }, [location.pathname]);
+  // Sluit bij routewissel
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
+  // Sluit bij resize naar desktop
   useEffect(() => {
     const onResize = () => {
       const desktop = window.matchMedia("(min-width: 768px)").matches;
@@ -33,13 +37,20 @@ export default function SiteHeader() {
     <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 flex items-center justify-between">
-          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">FitFi</NavLink>
+          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
+            FitFi
+          </NavLink>
 
-          {/* Desktop */}
+          {/* Desktop navigatie */}
           <ul className="hidden md:flex items-center gap-5">
             {NAV_LINKS.map((item) => (
               <li key={item.to}>
-                <NavLink to={item.to} className={({ isActive }) => ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")}>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
+                  }
+                >
                   {item.label}
                 </NavLink>
               </li>
@@ -61,7 +72,14 @@ export default function SiteHeader() {
               onClick={() => setOpen(true)}
               className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
             >
-              <svg className="h-5 w-5 text-[var(--ff-color-text)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <svg
+                className="h-5 w-5 text-[var(--ff-color-text)]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
@@ -70,7 +88,7 @@ export default function SiteHeader() {
         </div>
       </nav>
 
-      {/* Portal overlay */}
+      {/* Portal overlay (boven ALLES) */}
       <MobileNavDrawer open={open && !isDesktop} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );
