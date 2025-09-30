@@ -58,7 +58,7 @@ export default function FAQPage() {
               const { ref, visible } = useFadeInOnVisible<HTMLDivElement>();
               const Icon = group.icon;
               return (
-                <div
+                <article
                   key={idx}
                   ref={ref as any}
                   style={{
@@ -66,14 +66,22 @@ export default function FAQPage() {
                     transform: visible ? "translateY(0)" : "translateY(12px)",
                     transition: "opacity 600ms ease, transform 600ms ease",
                   }}
+                  // Elk FAQ-blok krijgt een subtiele achtergrondkleur en schaduw, zonder border,
+                  // zodat het minder hoekig en vriendelijker oogt. Dit sluit aan op de Over-ons stijl.
+                  className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
                 >
-                  <h2 className="flex items-center gap-2 font-heading text-xl text-[var(--ff-color-text)] mb-3">
+                  <h2 className="flex items-center gap-2 font-heading text-xl text-[var(--ff-color-text)] mb-4">
                     <Icon size={20} className="text-[var(--ff-color-accent)]" aria-hidden />
                     {group.title}
                   </h2>
                   <div className="grid gap-3">
                     {group.items.map((item, i) => (
-                      <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]">
+                      <details
+                        key={i}
+                        // We gebruiken een halve opacity achtergrond om het vlak onderscheidend te maken,
+                        // met een zachte schaduw i.p.v. een border.
+                        className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-bg)]/40 p-4 shadow-[var(--ff-shadow-soft)]"
+                      >
                         <summary className="cursor-pointer font-heading text-[var(--ff-color-text)] flex items-center justify-between">
                           {item.q}
                         </summary>
@@ -81,7 +89,7 @@ export default function FAQPage() {
                       </details>
                     ))}
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>

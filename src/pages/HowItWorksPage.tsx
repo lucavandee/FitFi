@@ -63,9 +63,11 @@ export default function HowItWorksPage() {
                   transform: visible ? "translateY(0)" : "translateY(12px)",
                   transition: "opacity 600ms ease, transform 600ms ease",
                 }}
-                className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
+                // Verwijder de border en vervang door een zachte achtergrondkleur en schaduw. Dit
+                // geeft een luchtig, premium gevoel zoals op de Over-ons pagina.
+                className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
               >
-                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ff-color-border)] bg-[color-mix(in oklab, var(--ff-color-accent) 10%, var(--ff-color-surface))] text-[var(--ff-color-accent)]">
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[color-mix(in oklab, var(--ff-color-accent) 10%, var(--ff-color-surface))] text-[var(--ff-color-accent)]">
                   <Icon size={20} aria-hidden />
                 </span>
                 <h3 className="mt-3 font-heading text-lg text-[var(--ff-color-text)]">{step.title}</h3>
@@ -77,12 +79,12 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="ff-container py-12">
-        <div className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]">
+        <div className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]">
           <h2 className="font-heading text-2xl text-[var(--ff-color-text)]">Korte demo</h2>
           <p className="mt-2 text-[var(--ff-color-text)]/80">
             Bekijk een voorproefje van het stijlrapport op een mobiel scherm. Dit geeft je meteen een gevoel bij het resultaat.
           </p>
-          <div className="mt-4 overflow-hidden rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-bg)]/40">
+          <div className="mt-4 overflow-hidden rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-bg)]/40">
             {/* Gebruik een statische mock-up ter vervanging van de video-placeholder */}
             <SmartImage src="/images/hero-highres.png" alt="Voorbeeld van het stijlrapport op mobiel" className="w-full h-auto" width={1200} height={800} />
           </div>
@@ -93,7 +95,11 @@ export default function HowItWorksPage() {
         <h2 className="font-heading text-2xl text-[var(--ff-color-text)] mb-4">Veelgestelde vragen</h2>
         <div className="grid gap-3">
           {HOW_FAQ.map((item, i) => (
-            <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]">
+            <details
+              key={i}
+              // Gebruik een subtiele achtergrond en schaduw in plaats van een border.
+              className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]"
+            >
               <summary className="cursor-pointer font-heading text-[var(--ff-color-text)]">{item.q}</summary>
               <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
             </details>

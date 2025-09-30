@@ -127,9 +127,7 @@ export default function PricingPage() {
                   }}
                   className={[
                     "flex flex-col rounded-[var(--ff-radius-lg)] border p-6 shadow-[var(--ff-shadow-soft)]",
-                    plan.popular
-                      ? "border-[var(--ff-color-accent)] bg-[color-mix(in oklab, var(--ff-color-accent) 6%, var(--ff-color-surface))]"
-                      : "border-[var(--ff-color-border)] bg-[var(--ff-color-surface)]",
+                    plan.popular ? "border-[var(--ff-color-accent)] bg-[color-mix(in oklab, var(--ff-color-accent) 5%, var(--ff-color-surface))]" : "border-[var(--ff-color-border)] bg-[var(--ff-color-surface)]",
                   ].join(" ")}
                 >
                   {plan.popular && (
@@ -148,7 +146,7 @@ export default function PricingPage() {
                       <span className="ml-1 text-sm text-[var(--ff-color-text)]/70">Gratis</span>
                     )}
                   </div>
-                  <ul className="mt-4 space-y-2 text-[var(--ff-color-text)]/80">
+                    <ul className="mt-4 space-y-2 text-[var(--ff-color-text)]/80">
                     {plan.features.map((f, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <CheckCircle2 size={16} className="text-[var(--ff-color-accent)] mt-[2px]" aria-hidden />
@@ -227,7 +225,8 @@ export default function PricingPage() {
                     transform: visible ? "translateY(0)" : "translateY(12px)",
                     transition: "opacity 600ms ease, transform 600ms ease",
                   }}
-                  className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
+                  // Gebruik enkel een zachte achtergrond en schaduw, zonder border.
+                  className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
                 >
                   <Icon size={24} className="text-[var(--ff-color-accent)]" aria-hidden />
                   <h3 className="mt-3 font-heading text-lg text-[var(--ff-color-text)]">{feat.title}</h3>
@@ -242,7 +241,11 @@ export default function PricingPage() {
           <h2 className="font-heading text-2xl text-[var(--ff-color-text)] mb-4">Veelgestelde prijs-vragen</h2>
           <div className="grid gap-3">
             {PRICE_FAQ.map((item, i) => (
-              <details key={i} className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]">
+              <details
+                key={i}
+                // Zachte achtergrond en schaduw in plaats van border voor een premium gevoel.
+                className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]"
+              >
                 <summary className="cursor-pointer font-heading text-[var(--ff-color-text)]">{item.q}</summary>
                 <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
               </details>
