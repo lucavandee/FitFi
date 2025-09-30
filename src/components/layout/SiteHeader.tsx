@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
 
 const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
@@ -12,18 +13,18 @@ export default function SiteHeader() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  // Sluit de mobile drawer bij routewissel
+  // Drawer altijd sluiten bij routewissel (geen 'open menu' na navigatie)
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   return (
     <header role="banner" className="ff-nav-glass">
-      {/* BELANGRIJK: exact dezelfde containerbreedte/padding als homepage */}
-      <div className="ff-container px-4 md:px-6">
+      {/* Zelfde container-ritme als de rest van de site */}
+      <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 w-full flex items-center justify-between">
           {/* Brand */}
           <NavLink
             to="/"
-            className="font-heading text-lg tracking-wide text-[var(--color-text)]"
+            className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]"
           >
             FitFi
           </NavLink>
@@ -44,7 +45,7 @@ export default function SiteHeader() {
             ))}
           </ul>
 
-          {/* Mobiele trigger – alleen zichtbaar < md */}
+          {/* Mobiele trigger — puur via breakpoint (geen inline hidden/aria-hidden hacks) */}
           <button
             type="button"
             aria-label="Open menu"
@@ -73,9 +74,10 @@ export default function SiteHeader() {
             </svg>
           </button>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile drawer wordt in bestaand component gerenderd (ongewijzigd) */}
+      {/* Drawer */}
+      <MobileNavDrawer open={open} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );
 }

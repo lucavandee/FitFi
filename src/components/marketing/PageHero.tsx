@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 
 type Cta = {
   label: string;
-  to: string;                       // interne route (/results) of externe (https://, mailto:)
+  to: string;                       // intern (/results) of extern (https://, mailto:)
   variant?: "primary" | "secondary";
   target?: "_blank" | "_self";
   rel?: string;
-  "data-event"?: string;            // optioneel: analytics hook
+  "data-event"?: string;            // optioneel analytics hook
 };
 
 type Props = {
@@ -33,14 +33,13 @@ const PageHero: React.FC<Props> = ({
   subtitle,
   note,
   align = "left",
-  as = "h1",
-  size = "lg",
+  as = "h2",
+  size = "md",
   className = "",
   ctas = [],
 }) => {
-  const HeadingTag: any = as;
+  const HeadingTag = as as any;
 
-  // Schaal & spacing in lijn met homepage-gevoel
   const padY =
     size === "sm" ? "py-14 md:py-16" : size === "md" ? "py-16 md:py-20" : "py-20 md:py-24";
   const titleSize =
@@ -52,7 +51,7 @@ const PageHero: React.FC<Props> = ({
 
   const alignCls = align === "center" ? "text-center" : "text-left";
 
-  // Micro-animatie (prefers-reduced-motion: handled via CSS in polish)
+  // Micro-animatie (respecteert prefers-reduced-motion in CSS)
   const [ready, setReady] = React.useState(false);
   React.useEffect(() => {
     const t = requestAnimationFrame(() => setReady(true));
@@ -68,14 +67,15 @@ const PageHero: React.FC<Props> = ({
     <section
       className={[padY, className].join(" ")}
       style={{
-        // Warme, premium gradient in tokens (geen hex)
+        // Warme, premium tokens-gradient (geen hex)
         background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))",
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-accent) 10%, transparent) 0%, transparent 60%), linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 98%, white) 0%, color-mix(in oklab, var(--color-surface) 100%, white) 100%)",
         opacity: ready ? 1 : 0,
         transition: "opacity 360ms ease",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* BELANGRIJK: identieke container als elders → perfecte uitlijning met header/homepage */}
+      <div className="ff-container">
         <header
           className={[alignCls, "rounded-[var(--radius-lg)] ff-animate-fade-in"].join(" ")}
           aria-labelledby={headingId}
@@ -84,7 +84,8 @@ const PageHero: React.FC<Props> = ({
           {eyebrow && (
             <div
               id={eyebrowId}
-              className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 backdrop-blur px-4 py-1.5 text-xs font-medium tracking-widest uppercase text-[var(--color-text-muted)]"
+              className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-[var(--color-muted)] text-[0.8rem] tracking-widest uppercase"
+              aria-label="Eyebrow"
             >
               {eyebrow}
             </div>
@@ -93,14 +94,16 @@ const PageHero: React.FC<Props> = ({
           <HeadingTag
             id={headingId}
             className={[
-              "mt-5 font-montserrat font-bold leading-tight text-[var(--color-text)]",
+              "font-heading font-semibold leading-[1.06] text-[var(--color-text)]",
               titleSize,
+              "mt-3"
             ].join(" ")}
           >
             {title}
           </HeadingTag>
 
           <div
+            aria-hidden
             className={[
               "mt-4 h-px w-24 bg-[var(--color-border)]",
               align === "center" ? "mx-auto" : "mx-0",
@@ -141,8 +144,6 @@ const PageHero: React.FC<Props> = ({
                   <Link
                     key={i}
                     to={cta.to}
-                    target={cta.target}
-                    rel={cta.rel}
                     className={cls}
                     aria-label={cta.label}
                     data-event={cta["data-event"]}
