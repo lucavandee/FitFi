@@ -15,80 +15,82 @@ const resources = [
   { to: "/contact", label: "Contact" },
 ];
 
-const legal = [
+const company = [
   { to: "/privacy", label: "Privacy" },
-  { to: "/voorwaarden", label: "Voorwaarden" },
   { to: "/cookies", label: "Cookies" },
+  { to: "/juridisch", label: "Juridisch" },
 ];
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer role="contentinfo" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] border-t border-[var(--ff-color-border)]">
-      <div className="ff-container py-12">
-        {/* 12-koloms grid: 4/3/3/2 */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8 items-start">
-          <section aria-label="Over FitFi" className="md:col-span-4 flex flex-col gap-4">
-            <NavLink to="/" className="font-heading text-xl tracking-wide">FitFi</NavLink>
-            <p className="text-[var(--ff-color-text)]/80 max-w-sm">Rust in je garderobe. Outfits die kloppen — elke dag.</p>
+    <footer className="mt-16 border-t border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]">
+      <div className="ff-container py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div>
+            <div className="font-heading text-lg">FitFi</div>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">AI Style Report — helder, persoonlijk en privacy-first.</p>
+            <div className="mt-3 flex gap-3">
+              {[
+                { Icon: Mail, href: "mailto:support@fitfi.ai", label: "E-mail" },
+                { Icon: Instagram, href: "https://instagram.com/fitfi.ai", label: "Instagram" },
+                { Icon: Twitter, href: "https://x.com/fitfi_ai", label: "Twitter" },
+                { Icon: Linkedin, href: "https://linkedin.com/company/fitfi-ai", label: "LinkedIn" }
+              ].map(({ Icon, href, label }) => (
+                <a key={href} href={href} aria-label={label} className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-[var(--color-border)]">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </div>
 
-            <form onSubmit={(e) => e.preventDefault()} aria-label="Nieuwsbrief" className="flex w-full max-w-sm items-center gap-2">
+          <div>
+            <div className="font-semibold mb-3">Product</div>
+            <ul className="space-y-2">
+              {product.map((l) => (
+                <li key={l.to}><NavLink to={l.to} className="underline-offset-4 hover:underline">{l.label}</NavLink></li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <div className="font-semibold mb-3">Resources</div>
+            <ul className="space-y-2">
+              {resources.map((l) => (
+                <li key={l.to}><NavLink to={l.to} className="underline-offset-4 hover:underline">{l.label}</NavLink></li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <div className="font-semibold mb-3">Company</div>
+            <ul className="space-y-2">
+              {company.map((l) => (
+                <li key={l.to}><NavLink to={l.to} className="underline-offset-4 hover:underline">{l.label}</NavLink></li>
+              ))}
+            </ul>
+            <form className="mt-4 flex gap-2" onSubmit={(e) => e.preventDefault()}>
               <label htmlFor="ff-news-email" className="sr-only">E-mail</label>
               <input
                 id="ff-news-email"
                 type="email"
                 inputMode="email"
-                placeholder="Jouw e-mailadres"
-                className="w-full rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] px-3 py-2 text-sm focus:outline-none ff-focus-ring"
+                placeholder="Jouw e-mail"
+                className="w-full rounded-lg border border-[var(--color-border)] px-3 h-9 text-sm focus:outline-none"
+                style={{ boxShadow: "var(--shadow-ring)" }}
               />
-              <button type="submit" className="ff-btn ff-btn-primary h-9">Aanmelden</button>
+              <button type="submit" className="px-3 h-9 inline-flex items-center rounded-lg text-white" style={{ background: "var(--ff-color-primary-700)" }}>
+                Aanmelden
+              </button>
             </form>
-
-            <div className="flex gap-3 pt-1">
-              {[
-                { Icon: Mail, href: "mailto:support@fitfi.ai", label: "E-mail" },
-                { Icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-                { Icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-                { Icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-              ].map(({ Icon, href, label }) => (
-                <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noopener" : undefined} aria-label={label}
-                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--ff-color-border)] hover:bg-[var(--ff-color-surface)] ff-focus-ring">
-                  <Icon size={16} />
-                </a>
-              ))}
-            </div>
-          </section>
-
-          <nav aria-label="Product" className="md:col-span-3">
-            <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Product</h3>
-            <ul className="space-y-2">
-              {product.map((l) => (<li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Resources" className="md:col-span-3">
-            <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Resources</h3>
-            <ul className="space-y-2">
-              {resources.map((l) => (<li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Juridisch" className="md:col-span-2">
-            <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Juridisch</h3>
-            <ul className="space-y-2">
-              {legal.map((l) => (<li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>))}
-            </ul>
-          </nav>
+          </div>
         </div>
 
-        {/* Onderbalk 6/6 */}
-        <div className="mt-10 border-t border-[var(--ff-color-border)] pt-4 grid grid-cols-1 md:grid-cols-12 items-center gap-y-4">
-          <p className="md:col-span-6 text-sm text-[var(--ff-color-text)]/70">© {year} FitFi — Alle rechten voorbehouden</p>
-          <div className="md:col-span-6 md:justify-self-end flex flex-wrap gap-6">
-            <NavLink to="/privacy" className="ff-navlink text-sm">Privacy</NavLink>
-            <NavLink to="/voorwaarden" className="ff-navlink text-sm">Voorwaarden</NavLink>
-            <NavLink to="/cookies" className="ff-navlink text-sm">Cookies</NavLink>
+        <div className="mt-10 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-muted)] flex flex-col md:flex-row items-center justify-between gap-3">
+          <div>© {new Date().getFullYear()} FitFi — Alle rechten voorbehouden.</div>
+          <div className="flex gap-4">
+            <NavLink to="/privacy" className="underline">Privacy</NavLink>
+            <NavLink to="/cookies" className="underline">Cookies</NavLink>
+            <NavLink to="/juridisch" className="underline">Juridisch</NavLink>
           </div>
         </div>
       </div>

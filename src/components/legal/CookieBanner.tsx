@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const LS_KEY = 'fitfi.cookiePrefs.v1';
+const LS_KEY = "fitfi.cookiePrefs.v1";
 type Prefs = { analytics: boolean; marketing: boolean; consented: boolean };
 
 function readPrefs(): Prefs | null {
@@ -17,41 +17,56 @@ export default function CookieBanner() {
   const [prefs, setPrefs] = React.useState<Prefs>(getCookiePrefs());
 
   React.useEffect(() => {
-    if (!prefs.consented) setOpen(true);
+    if (!readPrefs()) setOpen(true);
   }, []);
 
   const acceptAll = () => {
-    const p = { analytics: true, marketing: true, consented: true };
-    setPrefs(p); writePrefs(p); setOpen(false);
+    const next = { analytics: true, marketing: true, consented: true };
+    setPrefs(next); writePrefs(next); setOpen(false);
   };
-  const save = () => { setPrefs({ ...prefs, consented: true }); writePrefs({ ...prefs, consented: true }); setOpen(false); };
+  const save = () => {
+    const next = { ...prefs, consented: true };
+    setPrefs(next); writePrefs(next); setOpen(false);
+  };
 
   if (!open) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[90] p-4">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-4 shadow-xl">
-        <div className="text-ink font-semibold">Cookies</div>
-        <p className="mt-1 text-sm text-gray-600">
+      <div className="mx-auto max-w-3xl rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl">
+        <div className="text-[var(--color-text)] font-semibold">Cookies</div>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">
           We gebruiken noodzakelijke cookies en (optioneel) analytics/marketing. Beheer je voorkeuren hieronder.
           Zie ook onze <a href="/cookies" className="underline">Cookie Policy</a>.
         </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-4">
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-sm text-[var(--color-text)]">
             <input type="checkbox" checked readOnly /> Noodzakelijk (altijd aan)
           </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={prefs.analytics} onChange={(e)=>setPrefs(p=>({ ...p, analytics: e.target.checked }))}/> Analytics
+          <label className="flex items-center gap-2 text-sm text-[var(--color-text)]">
+            <input
+              type="checkbox"
+              checked={prefs.analytics}
+              onChange={(e) => setPrefs(p => ({ ...p, analytics: e.target.checked }))}
+            /> Analytics
           </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={prefs.marketing} onChange={(e)=>setPrefs(p=>({ ...p, marketing: e.target.checked }))}/> Marketing
+          <label className="flex items-center gap-2 text-sm text-[var(--color-text)]">
+            <input
+              type="checkbox"
+              checked={prefs.marketing}
+              onChange={(e) => setPrefs(p => ({ ...p, marketing: e.target.checked }))}
+            /> Marketing
           </label>
         </div>
 
-        <div className="mt-4 flex items-center gap-3">
-          <button onClick={acceptAll} className="rounded-full bg-[#89CFF0] px-4 py-2 text-white btn-animate">Alles accepteren</button>
-          <button onClick={save} className="rounded-full border px-4 py-2">Opslaan</button>
+        <div className="mt-4 flex gap-2">
+          <button onClick={acceptAll} className="px-3 h-9 inline-flex items-center rounded-lg text-white" style={{ background: "var(--ff-color-primary-700)" }}>
+            Alles accepteren
+          </button>
+          <button onClick={save} className="px-3 h-9 inline-flex items-center rounded-lg border border-[var(--color-border)] text-[var(--color-text)]">
+            Opslaan
+          </button>
         </div>
       </div>
     </div>

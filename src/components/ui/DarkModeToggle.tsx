@@ -1,62 +1,43 @@
 import React from "react";
 import { Sun, Moon } from "lucide-react";
 
-/**
- * DarkModeToggle
- *
- * A small button that toggles the data-theme attribute on the
- * <html> element between light and dark. It stores the preference
- * in localStorage so that the choice persists across sessions. The
- * component uses inline styles to avoid reliance on external CSS
- * definitions and keeps icons sized consistently.
- */
-const DarkModeToggle: React.FC = () => {
+const LS_KEY = "fitfi.theme";
+
+export default function DarkModeToggle() {
   const [dark, setDark] = React.useState(false);
 
-  // On mount, sync with stored preference
+  // Init vanuit localStorage of systeemvoorkeur
   React.useEffect(() => {
-    if (typeof document === "undefined") return;
-    const root = document.documentElement;
-    const stored = localStorage.getItem("theme");
-    const isDark = stored ? stored === "dark" : root.dataset.theme === "dark";
-    setDark(isDark);
-    if (stored) {
-      root.dataset.theme = stored;
-    }
+    try {
+      const saved = localStorage.getItem(LS_KEY);
+      if (saved) {
+        const val = saved === "dark";
+        setDark(val);
+        document.documentElement.setAttribute("data-theme", val ? "dark" : "light");
+        return;
+      }
+    } catch {}
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    setDark(!!prefersDark);
+    document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
   }, []);
 
-  const toggleTheme = () => {
-    if (typeof document === "undefined") return;
-    const root = document.documentElement;
-    const newTheme = dark ? "light" : "dark";
-    root.dataset.theme = newTheme;
-    localStorage.setItem("theme", newTheme);
-    setDark(!dark);
+  const toggle = () => {
+    const next = !dark;
+    setDark(next);
+    try { localStorage.setItem(LS_KEY, next ? "dark" : "light"); } catch {}
+    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
   };
 
   return (
     <button
-      type="button"
-      onClick={toggleTheme}
+      onClick={toggle}
+      aria-pressed={dark}
       aria-label="Wissel kleurmodus"
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0.375rem",
-        borderRadius: "0.5rem",
-        border: "1px solid var(--ff-color-border)",
-        background: "var(--ff-color-surface)",
-        cursor: "pointer",
-      }}
+      className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]"
+      style={{ boxShadow: "var(--shadow-ring)" }}
     >
-      {dark ? (
-        <Sun size={18} strokeWidth={1.8} style={{ color: "var(--ff-color-primary)" }} />
-      ) : (
-        <Moon size={18} strokeWidth={1.8} style={{ color: "var(--ff-color-primary)" }} />
-      )}
+      {dark ? <Sun className="h-5 w-5" aria-hidden="true" /> : <Moon className="h-5 w-5" aria-hidden="true" />}
     </button>
   );
-};
-
-export default DarkModeToggle;
+}

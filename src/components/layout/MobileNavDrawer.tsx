@@ -6,42 +6,35 @@ import useBodyScrollLock from "@/hooks/useBodyScrollLock";
 type LinkItem = { to: string; label: string };
 type Props = { open: boolean; onClose: () => void; links: LinkItem[] };
 
-/**
- * Volledig dekkende mobile overlay:
- * - React Portal naar document.body (boven alle stacking contexts)
- * - Maximum z-index met inline styling (purge-proof)
- * - iOS-veilige scroll lock + document inert
- * - Focus trap + keyboard navigation
- * - Click-outside en ESC sluiten
- */
-export default function MobileNavDrawer({ open, onClose, links }: Props) {
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
+function getFocusableElements(container: HTMLElement): HTMLElement[] {
+  const selectors = [
+    'a[href]',
+    'button:not([disabled])',
+    'textarea:not([disabled])',
+    'input[type="text"]:not([disabled])',
+    'input[type="radio"]:not([disabled])',
+    'input[type="checkbox"]:not([disabled])',
+    'select:not([disabled])'
+  ].join(',');
+  return Array.from(container.querySelectorAll<HTMLElement>(selectors))
+    .filter(el => !el.hasAttribute('tabindex') || el.tabIndex >= 0);
+}
 
-  // iOS-veilige body lock
+export default function MobileNavDrawer({ open, onClose, links }: Props) {
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // Scroll lock zolang open
   useBodyScrollLock(open);
 
-  // Document inert toggelen (sinds Safari 16.4 breed ondersteund)
+  // Focus-trap + ESC
   useEffect(() => {
-    if (!open) return;
-    const nodes = Array.from(document.body.children);
-    nodes.forEach((el) => {
-      if (el.id !== "ff-mobile-menu") {
-        el.setAttribute("inert", "");
-        el.setAttribute("data-inert", "true");
-      }
-    });
-    return () => {
-      nodes.forEach((el) => {
-        el.removeAttribute("inert");
-        el.removeAttribute("data-inert");
-      });
-    };
-  }, [open]);
+    if (!open || !panelRef.current) return;
+    const panel = panelRef.current;
 
-  // Esc + focus-trap + init focus
-  useEffect(() => {
-    if (!open) return;
+    const focusables = getFocusableElements(panel);
+    const target = closeBtnRef.current ?? focusables[0];
+    target?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -49,98 +42,112 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
         onClose();
         return;
       }
-      if (e.key === "Tab" && overlayRef.current) {
-        const focusables = overlayRef.current.querySelectorAll<HTMLElement>(
-          'a,button,[tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusables.length) return;
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
+      if (e.key === "Tab") {
+        const elems = getFocusableElements(panel);
+        if (elems.length === 0) return;
+        const first = elems[0];
+        const last = elems[elems.length - 1];
         const active = document.activeElement as HTMLElement | null;
-
-        if (e.shiftKey && active === first) {
+        if (!e.shiftKey && active === last) {
           e.preventDefault();
-          (last as HTMLElement).focus();
-        } else if (!e.shiftKey && active === last) {
+          first.focus();
+        } else if (e.shiftKey && active === first) {
           e.preventDefault();
-          (first as HTMLElement).focus();
+          last.focus();
         }
       }
     };
 
-    window.addEventListener("keydown", onKeyDown);
-    // eerste focus
-    setTimeout(() => firstLinkRef.current?.focus(), 0);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
 
-    return () => window.removeEventListener("keydown", onKeyDown);
+  // Click-outside
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: MouseEvent | TouchEvent) => {
+      const panel = panelRef.current;
+      if (!panel) return;
+      if (!panel.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("touchstart", onPointerDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("touchstart", onPointerDown);
+    };
   }, [open, onClose]);
 
   if (!open) return null;
 
   return createPortal(
-    <div
-      ref={overlayRef}
-      id="ff-mobile-menu"
-      role="dialog"
-      aria-modal="true"
-      className="
-        fixed inset-0 isolation-isolate
-        bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]
-        flex flex-col
-      "
-      style={{ zIndex: 2147483647, backgroundColor: "var(--ff-color-bg)" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="ff-container flex items-center justify-between p-4">
-        <span aria-hidden className="font-heading text-base">Menu</span>
-        <button
-          type="button"
-          aria-label="Sluit menu"
-          onClick={onClose}
-          className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
-        >
-          <svg
-            className="h-5 w-5 text-[var(--ff-color-text)]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
+    <div className="fixed inset-0 z-[9999]" role="presentation" aria-hidden={!open}>
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backdropFilter: "saturate(180%) blur(6px)",
+          background: "color-mix(in oklab, var(--color-surface) 72%, transparent)"
+        }}
+      />
+
+      {/* Panel */}
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobiele navigatie"
+        className="absolute inset-x-0 top-0 mx-auto max-w-md w-full rounded-b-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl ff-animate-fade-in"
+      >
+        <div className="flex items-center justify-between h-16 px-4">
+          <NavLink to="/" onClick={onClose} className="font-heading text-lg tracking-wide text-[var(--color-text)]">
+            FitFi
+          </NavLink>
+          <button
+            ref={closeBtnRef}
+            onClick={onClose}
+            aria-label="Sluit menu"
+            className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] focus:outline-none"
+            style={{ boxShadow: "var(--shadow-ring)" }}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <nav aria-label="Mobiele navigatie" className="ff-container flex-1 pb-6 overflow-y-auto">
-        <ul className="flex flex-col gap-4">
-          {links.map((item, i) => (
-            <li key={item.to}>
-              <NavLink
-                ref={i === 0 ? firstLinkRef : undefined}
-                to={item.to}
-                className={({ isActive }) =>
-                  ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")
-                }
-                onClick={onClose}
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-6 flex flex-col gap-2">
-          <NavLink to="/login" className="ff-btn ff-btn-secondary h-10 w-full" onClick={onClose}>
-            Inloggen
-          </NavLink>
-          <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-10 w-full" onClick={onClose}>
-            Start gratis
-          </NavLink>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" aria-hidden="true" className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      </nav>
+
+        <nav aria-label="Mobiele hoofdmenu" className="px-4 pb-6 max-h-[calc(100dvh-4rem)] overflow-y-auto">
+          <ul className="flex flex-col gap-2">
+            {links.map((item) => (
+              <li key={item.to}>
+                <NavLink
+                  to={item.to}
+                  className="px-3 py-2 rounded-full text-base font-medium text-[var(--color-text)]"
+                  style={({ isActive }) => (isActive ? { background: "color-mix(in oklab, var(--color-accent) 22%, white)" } : undefined) as any}
+                  onClick={onClose}
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-6 grid grid-cols-1 gap-2">
+            <NavLink to="/login" className="h-10 inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-text)]" onClick={onClose}>
+              Inloggen
+            </NavLink>
+            <NavLink to="/prijzen" className="h-10 inline-flex items-center justify-center rounded-lg text-white"
+              style={{ background: "var(--ff-color-primary-700)" }}
+              onClick={onClose}
+            >
+              Start gratis
+            </NavLink>
+          </div>
+        </nav>
+      </div>
     </div>,
     document.body
   );
