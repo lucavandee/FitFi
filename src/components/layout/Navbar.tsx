@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
 
+// Publieke navigatie
 const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
@@ -12,13 +13,11 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(
-    typeof window !== "undefined"
-      ? window.matchMedia("(min-width: 768px)").matches
-      : false
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
   );
   const location = useLocation();
 
-  // Refs voor focus-trap
+  // Focus-trap refs
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
@@ -27,7 +26,7 @@ export default function Navbar() {
     setOpen(false);
   }, [location.pathname]);
 
-  // Desktop/resize switch
+  // Desktop-resize → menu dicht & layout switch
   useEffect(() => {
     const onResize = () => {
       const desktop = window.matchMedia("(min-width: 768px)").matches;
@@ -41,11 +40,13 @@ export default function Navbar() {
   // Esc, focus-trap en scroll-lock
   useEffect(() => {
     if (!open) return;
-    const root = document.documentElement;
-    const prevOverflow = root.style.overflow;
-    root.style.overflow = "hidden";
 
-    // eerste focus
+    // Scroll-lock op <html>
+    const html = document.documentElement;
+    const prev = html.style.overflow;
+    html.style.overflow = "hidden";
+
+    // Eerste focus
     firstLinkRef.current?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -56,7 +57,7 @@ export default function Navbar() {
       }
       if (e.key === "Tab" && overlayRef.current) {
         const focusables = overlayRef.current.querySelectorAll<HTMLElement>(
-          'a, button, [tabindex]:not([tabindex="-1"])'
+          'a,button,[tabindex]:not([tabindex="-1"])'
         );
         if (focusables.length === 0) return;
         const first = focusables[0];
@@ -72,9 +73,10 @@ export default function Navbar() {
         }
       }
     };
+
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      root.style.overflow = prevOverflow;
+      html.style.overflow = prev;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
@@ -83,10 +85,7 @@ export default function Navbar() {
     <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 flex items-center justify-between">
-          <NavLink
-            to="/"
-            className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]"
-          >
+          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
             FitFi
           </NavLink>
 
@@ -99,9 +98,7 @@ export default function Navbar() {
                     <NavLink
                       to={item.to}
                       className={({ isActive }) =>
-                        ["ff-navlink", isActive ? "ff-nav-active" : ""].join(
-                          " "
-                        )
+                        ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
                       }
                     >
                       {item.label}
@@ -110,12 +107,8 @@ export default function Navbar() {
                 ))}
               </ul>
               <div className="hidden md:flex items-center gap-2">
-                <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
-                  Inloggen
-                </NavLink>
-                <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">
-                  Start gratis
-                </NavLink>
+                <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">Inloggen</NavLink>
+                <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
                 <DarkModeToggle />
               </div>
             </>
@@ -134,10 +127,10 @@ export default function Navbar() {
               >
                 <svg
                   className="h-5 w-5 text-[var(--ff-color-text)]"
-                  viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
+                  viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -149,19 +142,17 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobiele overlay */}
+      {/* Mobiele overlay (altijd hoogste z-index; de achtergrond is 100% — geen doorschijnende CTA's) */}
       {!isDesktop && open && (
         <div
           id="ff-mobile-menu"
           role="dialog"
           aria-modal="true"
           ref={overlayRef}
-          className="fixed inset-0 z-[9999] flex flex-col bg-[var(--ff-color-bg)]/96 backdrop-blur-md"
+          className="fixed inset-0 z-[2147483647] flex flex-col bg-[var(--ff-color-bg)]"
         >
           <div className="flex items-center justify-between p-4 ff-container">
-            <span aria-hidden className="font-heading text-base">
-              Menu
-            </span>
+            <span aria-hidden className="font-heading text-base">Menu</span>
             <button
               type="button"
               aria-label="Sluit menu"
@@ -170,10 +161,10 @@ export default function Navbar() {
             >
               <svg
                 className="h-5 w-5 text-[var(--ff-color-text)]"
-                viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
+                viewBox="0 0 24 24"
                 aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
