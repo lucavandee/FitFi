@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { createPortal } from "react-dom";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
 
-// Publieke navigatie-items
+// Publieke navigatie
 const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
@@ -13,40 +13,27 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(
-    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
-  );
   const location = useLocation();
 
-  // Focus-trap refs
-  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-
-  // Sluit mobiel menu bij routewissel
+  // Routewissel -> altijd sluiten
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
-  // Desktop-switch en auto-close bij resize
-  useEffect(() => {
-    const onResize = () => {
-      const desktop = window.matchMedia("(min-width: 768px)").matches;
-      setIsDesktop(desktop);
-      if (desktop) setOpen(false);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
   // Esc, focus-trap en scroll-lock (op <html>)
+  const firstFocusRef = useRef<HTMLAnchorElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (!open) return;
 
+    // Scroll lock op het hoogste niveau om bleed te voorkomen
     const html = document.documentElement;
     const prevOverflow = html.style.overflow;
     html.style.overflow = "hidden";
 
-    firstLinkRef.current?.focus();
+    // Initiele focus
+    firstFocusRef.current?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -58,7 +45,7 @@ export default function Navbar() {
         const focusables = overlayRef.current.querySelectorAll<HTMLElement>(
           'a,button,[tabindex]:not([tabindex="-1"])'
         );
-        if (focusables.length === 0) return;
+        if (!focusables.length) return;
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
         const active = document.activeElement as HTMLElement | null;
@@ -80,22 +67,20 @@ export default function Navbar() {
     };
   }, [open]);
 
-  // Overlay als portal om wél boven elke stacking context te zitten
-  const MobileOverlay = open
+  // Portal-overlay (boven elke stacking context, opaak — geen "doorlekken")
+  const Overlay = open
     ? createPortal(
         <div
+          ref={overlayRef}
           id="ff-mobile-menu"
           role="dialog"
           aria-modal="true"
-          ref={overlayRef}
-          // Volledig dekken + hoogste z-index. OPAQUE bg → niets "lekt" erdoorheen.
           className="fixed inset-0 z-[2147483647] flex flex-col bg-[var(--ff-color-bg)]"
           onClick={(e) => {
-            // Klik op achtergrond sluit; kliks binnen content bubbelen niet
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div className="flex items-center justify-between p-4 ff-container">
+          <div className="ff-container flex items-center justify-between p-4">
             <span aria-hidden className="font-heading text-base">Menu</span>
             <button
               type="button"
@@ -121,7 +106,7 @@ export default function Navbar() {
               {NAV_LINKS.map((item, i) => (
                 <li key={item.to}>
                   <NavLink
-                    ref={i === 0 ? firstLinkRef : undefined}
+                    ref={i === 0 ? firstFocusRef : undefined}
                     to={item.to}
                     className={({ isActive }) =>
                       ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")
@@ -211,8 +196,8 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Portal overlay (boven ALLES) */}
-      {MobileOverlay}
+      {/* Portal overlay boven ALLES */}
+      {Overlay}
     </header>
   );
 }
