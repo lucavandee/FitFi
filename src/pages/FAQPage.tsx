@@ -1,32 +1,32 @@
 import React from "react";
+import PageHero from "@/components/marketing/PageHero";
 
-type QA = { q: string; a: string; };
-const FAQS: QA[] = [
+const FAQS = [
   { q: "Is FitFi echt gratis?", a: "Ja. Je krijgt een persoonlijk stijlprofiel en outfits met shoplinks zonder kosten." },
-  { q: "Wat gebeurt er met mijn data?", a: "We werken privacy-first. We verwerken tijdelijk wat strikt nodig is om je te adviseren en bewaren niets onnodigs." },
-  { q: "Krijg ik direct outfits te zien?", a: "Ja. Na 6 korte vragen tonen we direct meerdere looks, inclusief uitleg en shoplinks." },
-  { q: "Kan ik later upgraden?", a: "Ja. Plus-functies worden later geactiveerd. Tot die tijd blijft de gratis ervaring volledig bruikbaar." },
+  { q: "Wat gebeurt er met mijn data?", a: "We werken privacy-first. Alleen wat strikt nodig is voor je advies wordt tijdelijk verwerkt." },
+  { q: "Krijg ik direct outfits te zien?", a: "Ja. Na 6 korte vragen tonen we direct meerdere looks, met uitleg en shoplinks." },
+  { q: "Komt er Plus?", a: "Ja. Later kun je optioneel upgraden voor extra's als wishlist en updates." },
 ];
 
 export default function FAQPage() {
   return (
-    <main id="main" className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-text)]">
-      <section className="ff-container ff-page-hero">
-        <span className="ff-eyebrow">FAQ</span>
-        <h1 className="ff-hero-title text-3xl md:text-5xl mt-3">Veelgestelde vragen</h1>
-        <p className="ff-hero-sub mt-4 max-w-2xl">
-          Kort en duidelijk. Staat je vraag er niet tussen? Laat het ons weten.
-        </p>
-      </section>
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <PageHero
+        id="page-faq"
+        eyebrow="FAQ"
+        title="Veelgestelde vragen"
+        subtitle="Kort en duidelijk. Staat je vraag er niet tussen? Laat het ons weten."
+        align="left"
+        as="h1"
+        size="sm"
+      />
 
-      <section className="ff-container ff-section">
-        <div className="ff-accordion">
+      <section className="ff-container py-10 sm:py-12">
+        <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
           {FAQS.map((item, i) => (
-            <details key={i} className="ff-accordion">
-              <summary className="row">
-                <span className="font-medium">{item.q}</span>
-              </summary>
-              <div className="content">{item.a}</div>
+            <details key={i} className="border-t border-[var(--color-border)] first:border-t-0 p-4">
+              <summary className="cursor-pointer font-heading text-[var(--color-text)]">{item.q}</summary>
+              <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
             </details>
           ))}
         </div>
