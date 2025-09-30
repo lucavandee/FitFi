@@ -1,25 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
 
-// Hoofdmenu items. In lijn met de SaaS standaard wordt er expliciet
-// verwezen naar het product, prijzen, veelgestelde vragen en een
-// contactpagina. De volgorde is bewust gekozen om gebruikers snel
-// naar de juiste plek te leiden.
-const links = [
-  { to: "/product", label: "Product" },
-  { to: "/prijzen", label: "Prijs" },
-  { to: "/veelgestelde-vragen", label: "FAQ" },
-  { to: "/contact", label: "Contact" },
-];
-
-// Definitieve navigatie voor het hoofdmenu. We verwijzen naar de
-// belangrijkste publieke pagina's en laten de contactpagina weg
-// (support verloopt via mail of het contactformulier). De labels
-// sluiten aan op de live routes. Deze array wordt gebruikt in de
-// rendering i.p.v. `links`, dat behouden blijft voor backwards
-// compatibiliteit van andere modules.
-const navLinks = [
+// Publieke navigatie (desktop + mobiel)
+const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
   { to: "/over-ons", label: "Over ons" },
@@ -27,133 +11,206 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  /**
-   * De navigatie heeft twee belangrijke toestanden: `open` voor het mobiele
-   * overlay‑menu en `isDesktop` voor het bepalen welke layout getoond moet
-   * worden. We luisteren naar `resize` zodat het overlay automatisch
-   * sluit wanneer de gebruiker naar een groter scherm navigeert. Dit voorkomt
-   * dat het hamburger‑menu per ongeluk open blijft bij een herlaad of
-   * schermrotatie.
-   */
   const [open, setOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(
     typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
   );
+  const location = useLocation();
 
+  // Focus management voor het mobiele menu
+  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  // Sluit bij routewissel (voorkomt 'hangend' menu)
   useEffect(() => {
-    const handleResize = () => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  // Desktop-resize → menu dicht & layout switch
+  useEffect(() => {
+    const onResize = () => {
       const desktop = window.matchMedia("(min-width: 768px)").matches;
       setIsDesktop(desktop);
-      // Sluit het mobiele menu bij overschakeling naar desktop
       if (desktop) setOpen(false);
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // Esc-toets & focus-trap in overlay
+  useEffect(() => {
+    if (!open) return;
+    // scroll-lock
+    const root = document.documentElement;
+    const prevOverflow = root.style.overflow;
+    root.style.overflow = "hidden";
+
+    // focus binnen menu
+    firstLinkRef.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+      }
+      if (e.key === "Tab") {
+        // Simpele trap tussen eerste link en sluitknop
+        const focusables = overlayRef.current?.querySelectorAll<HTMLElement>(
+          'a,button,[tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusables || focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          (last as HTMLElement).focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          (first as HTMLElement).focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      root.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
     <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 flex items-center justify-between">
-          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
+          <NavLink
+            to="/"
+            className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]"
+          >
             FitFi
           </NavLink>
-          {/* Links & CTA's voor desktop */}
+
+          {/* Desktop */}
           {isDesktop && (
             <>
-              <ul className="flex items-center gap-4">
-                {navLinks.map((item) => (
+              <ul className="hidden md:flex items-center gap-5">
+                {NAV_LINKS.map((item) => (
                   <li key={item.to}>
                     <NavLink
                       to={item.to}
-                      className={({ isActive }) => ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")}
+                      className={({ isActive }) =>
+                        ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
+                      }
                     >
                       {item.label}
                     </NavLink>
                   </li>
                 ))}
               </ul>
-              <div className="flex items-center gap-2">
-                <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">Inloggen</NavLink>
-                <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
+              <div className="hidden md:flex items-center gap-2">
+                <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
+                  Inloggen
+                </NavLink>
+                <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">
+                  Start gratis
+                </NavLink>
                 <DarkModeToggle />
               </div>
             </>
           )}
-          {/* Mobiele menu knop */}
+
+          {/* Mobiel trigger */}
           {!isDesktop && (
-            <div className="flex items-center gap-2">
+            <div className="md:hidden flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setOpen(true)}
                 aria-label="Open menu"
-                className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)]"
+                aria-controls="mobile-menu"
+                aria-expanded={open}
+                onClick={() => setOpen(true)}
+                className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
               >
                 <svg
                   className="h-5 w-5 text-[var(--ff-color-text)]"
+                  viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <span className="sr-only">Menu</span>
               </button>
               <DarkModeToggle />
             </div>
           )}
         </div>
       </nav>
+
       {/* Mobiele overlay */}
       {!isDesktop && open && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[var(--ff-color-bg)]/95 backdrop-blur-md">
+        <div
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          ref={overlayRef}
+          className="fixed inset-0 z-[100] flex flex-col bg-[var(--ff-color-bg)]/95 backdrop-blur-md"
+        >
+          {/* Close */}
           <div className="flex justify-end p-4">
             <button
+              ref={closeBtnRef}
               type="button"
-              onClick={() => setOpen(false)}
               aria-label="Sluit menu"
-              className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)]"
+              onClick={() => setOpen(false)}
+              className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)] ff-focus-ring"
             >
               <svg
                 className="h-5 w-5 text-[var(--ff-color-text)]"
+                viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                viewBox="0 0 24 24"
                 aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-              <span className="sr-only">Sluit</span>
             </button>
           </div>
-          <nav aria-label="Mobiele navigatie" className="flex flex-col gap-4 p-6 overflow-y-auto">
-            {navLinks.map((item) => (
+
+          <nav aria-label="Mobiele navigatie" className="ff-container flex-1 pb-6">
+            <ul className="flex flex-col gap-4">
+              {NAV_LINKS.map((item, idx) => (
+                <li key={item.to}>
+                  <NavLink
+                    ref={idx === 0 ? firstLinkRef : undefined}
+                    to={item.to}
+                    className={({ isActive }) =>
+                      ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")
+                    }
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 flex flex-col gap-2">
               <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) => ["ff-navlink text-lg", isActive ? "ff-nav-active" : ""].join(" ")}
+                to="/login"
+                className="ff-btn ff-btn-secondary h-10 w-full"
                 onClick={() => setOpen(false)}
               >
-                {item.label}
+                Inloggen
               </NavLink>
-            ))}
-            <NavLink
-              to="/login"
-              className="ff-btn ff-btn-secondary h-10 w-full"
-              onClick={() => setOpen(false)}
-            >
-              Inloggen
-            </NavLink>
-            <NavLink
-              to="/prijzen"
-              className="ff-btn ff-btn-primary h-10 w-full"
-              onClick={() => setOpen(false)}
-            >
-              Start gratis
-            </NavLink>
+              <NavLink
+                to="/prijzen"
+                className="ff-btn ff-btn-primary h-10 w-full"
+                onClick={() => setOpen(false)}
+              >
+                Start gratis
+              </NavLink>
+            </div>
           </nav>
         </div>
       )}
