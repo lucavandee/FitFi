@@ -1,2 +1,2 @@
-// Hou compatibiliteit: sommige projecten importeren `Navbar` i.p.v. `SiteHeader`.
+// Compatibiliteit: sommige code importeert `Navbar` i.p.v. `SiteHeader`.
 export { default } from "@/components/layout/SiteHeader";

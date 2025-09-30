@@ -10,12 +10,32 @@ type Props = {
   links: LinkItem[];
 };
 
+/**
+ * Volledige, dekkende overlay:
+ * - Portal naar <body> (buiten alle stacking contexts)
+ * - Inline zIndex (tegen purge/compile issues)
+ * - Opaak bg (géén bleed)
+ * - iOS scroll-lock, focus-trap, ESC, klik-buiten sluit
+ * - Document 'inert' wanneer open (onderliggende UI NIET klikbaar)
+ */
 export default function MobileNavDrawer({ open, onClose, links }: Props) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
 
   // iOS-veilige body lock
   useBodyScrollLock(open);
+
+  // Document inert toggelen (sinds Safari 16.4 breed ondersteund)
+  useEffect(() => {
+    if (!open) return;
+    const nodes = Array.from(document.body.children);
+    nodes.forEach((el) => {
+      if (el.id !== "ff-mobile-menu") el.setAttribute("inert", "");
+    });
+    return () => {
+      nodes.forEach((el) => el.removeAttribute("inert"));
+    };
+  }, [open]);
 
   // Esc + focus-trap + init focus
   useEffect(() => {
@@ -61,8 +81,17 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
       id="ff-mobile-menu"
       role="dialog"
       aria-modal="true"
-      // Volledig dekkend, boven alle stacking-contexten, geen transparantie
-      className="fixed inset-0 z-[2147483647] isolation-isolate bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] flex flex-col"
+      className="
+        fixed inset-0
+        flex flex-col
+        bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]
+        overscroll-contain
+      "
+      // Kritisch: inline style zodat z-index NOOIT weggepurd wordt
+      style={{
+        zIndex: 2147483647,
+        backgroundColor: "var(--ff-color-bg)",
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
