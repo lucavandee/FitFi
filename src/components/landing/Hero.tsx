@@ -50,7 +50,7 @@ export default function Hero() {
           {/* Hero Image */}
           <div className="relative">
             <div className="relative mx-auto max-w-sm lg:max-w-md">
-              src="/images/hero-style-report.png"
+              src="/images/hero-highres copy.png"
                 src="/images/hero-highres copy.png"
                 alt="FitFi Style Report interface op iPhone met aardse tinten outfit aanbevelingen"
                 className="w-full h-auto rounded-2xl shadow-2xl"
