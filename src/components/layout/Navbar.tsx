@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
 
@@ -27,9 +27,30 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  // Gebruik een state om te bepalen of het mobiele menu open is. Wanneer
-  // het menu open staat, tonen we een overlay met de navigatie-items.
-  const [open, setOpen] = React.useState(false);
+  /**
+   * De navigatie heeft twee belangrijke toestanden: `open` voor het mobiele
+   * overlay‑menu en `isDesktop` voor het bepalen welke layout getoond moet
+   * worden. We luisteren naar `resize` zodat het overlay automatisch
+   * sluit wanneer de gebruiker naar een groter scherm navigeert. Dit voorkomt
+   * dat het hamburger‑menu per ongeluk open blijft bij een herlaad of
+   * schermrotatie.
+   */
+  const [open, setOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      const desktop = window.matchMedia("(min-width: 768px)").matches;
+      setIsDesktop(desktop);
+      // Sluit het mobiele menu bij overschakeling naar desktop
+      if (desktop) setOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
@@ -37,64 +58,64 @@ export default function Navbar() {
           <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
             FitFi
           </NavLink>
-          {/* Desktop navigatie */}
-          <ul className="hidden md:flex items-center gap-4">
-            {navLinks.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) => ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")}
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-          {/* Desktop CTA's */}
-          <div className="hidden md:flex items-center gap-2">
-            <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">Inloggen</NavLink>
-            <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
-            <DarkModeToggle />
-          </div>
-          {/* Mobiele navigatie: hamburger en dark mode toggle */}
-          <div className="md:hidden flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              aria-label="Open menu"
-              className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)]"
-            >
-              {/* Hamburger icoon */}
-              <span className="sr-only">Menu</span>
-              {/* We gebruiken een eenvoudige unicode hamburger als fallback */}
-              <svg
-                className="h-5 w-5 text-[var(--ff-color-text)]"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+          {/* Links & CTA's voor desktop */}
+          {isDesktop && (
+            <>
+              <ul className="flex items-center gap-4">
+                {navLinks.map((item) => (
+                  <li key={item.to}>
+                    <NavLink
+                      to={item.to}
+                      className={({ isActive }) => ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")}
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex items-center gap-2">
+                <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">Inloggen</NavLink>
+                <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
+                <DarkModeToggle />
+              </div>
+            </>
+          )}
+          {/* Mobiele menu knop */}
+          {!isDesktop && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                aria-label="Open menu"
+                className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)]"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <DarkModeToggle />
-          </div>
+                <svg
+                  className="h-5 w-5 text-[var(--ff-color-text)]"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <span className="sr-only">Menu</span>
+              </button>
+              <DarkModeToggle />
+            </div>
+          )}
         </div>
       </nav>
-      {/* Mobiele menu overlay */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[var(--ff-color-bg)]/90 backdrop-blur-sm">
-          {/* Sluitknop */}
+      {/* Mobiele overlay */}
+      {!isDesktop && open && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-[var(--ff-color-bg)]/95 backdrop-blur-md">
           <div className="flex justify-end p-4">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Sluit menu"
-              className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)]"
+              className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] shadow-[var(--ff-shadow-soft)]"
             >
-              {/* Kruisicoon */}
-              <span className="sr-only">Sluit</span>
               <svg
                 className="h-5 w-5 text-[var(--ff-color-text)]"
                 fill="none"
@@ -105,10 +126,10 @@ export default function Navbar() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
+              <span className="sr-only">Sluit</span>
             </button>
           </div>
-          {/* Mobiele navigatie-items */}
-          <nav aria-label="Mobiel" className="flex flex-col items-start gap-4 p-6 pt-0">
+          <nav aria-label="Mobiele navigatie" className="flex flex-col gap-4 p-6 overflow-y-auto">
             {navLinks.map((item) => (
               <NavLink
                 key={item.to}
@@ -119,10 +140,18 @@ export default function Navbar() {
                 {item.label}
               </NavLink>
             ))}
-            <NavLink to="/login" className="ff-btn ff-btn-secondary w-full h-10" onClick={() => setOpen(false)}>
+            <NavLink
+              to="/login"
+              className="ff-btn ff-btn-secondary h-10 w-full"
+              onClick={() => setOpen(false)}
+            >
               Inloggen
             </NavLink>
-            <NavLink to="/prijzen" className="ff-btn ff-btn-primary w-full h-10" onClick={() => setOpen(false)}>
+            <NavLink
+              to="/prijzen"
+              className="ff-btn ff-btn-primary h-10 w-full"
+              onClick={() => setOpen(false)}
+            >
               Start gratis
             </NavLink>
           </nav>
