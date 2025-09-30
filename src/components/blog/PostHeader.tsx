@@ -3,7 +3,7 @@ import React from "react";
 type Props = {
   title: string;
   excerpt?: string;
-  date?: string;       // bv. "16 sep 2025"
+  date?: string;        // bv. "16 sep 2025"
   readingTime?: string; // bv. "4 min"
 };
 

@@ -16,50 +16,39 @@ const BlogCard: React.FC<Props> = ({ post }) => {
         {post.imageId ? (
           <SmartImage
             id={post.imageId}
-            kind="generic"
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-auto"
+            width={1280}
+            height={720}
+            loading="lazy"
           />
-        ) : (
-          <div className="blog-media-fallback" aria-hidden />
-        )}
+        ) : null}
       </div>
 
-      <header className="blog-head flow-xs">
-        <time className="blog-date" dateTime={post.date}>{pretty}</time>
-        <h3 id={`post-${post.id}`} className="card-title">
-          <Link className="underlined" to={`/blog/${post.id}`} aria-label={`Lees artikel: ${post.title}`}>
-            {post.title}
+      <div className="blog-content">
+        <p className="blog-meta">{pretty}</p>
+        <h3 id={`post-${post.id}`} className="blog-title">{post.title}</h3>
+        <p className="blog-excerpt">{post.excerpt}</p>
+
+        {open && (
+          <div id={`content-${post.id}`} className="blog-more">
+            <p>{post.excerpt}</p>
+          </div>
+        )}
+
+        <div className="blog-actions">
+          <button
+            className="btn btn-sm ghost"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls={`content-${post.id}`}
+          >
+            {open ? "Minder lezen" : "Lees meer"}
+          </button>
+          <Link className="share-link" to={`/blog/${post.id}`} aria-label={`Lees artikel: ${post.title}`}>
+            Lees artikel
           </Link>
-        </h3>
-        <ul className="blog-tags" aria-label="Tags">
-          {post.tags.map((t) => (
-            <li key={t} className="tag-chip">{t}</li>
-          ))}
-        </ul>
-      </header>
-
-      <p className="card-text">{post.excerpt}</p>
-
-      {/* Inline reader (geen extra route nodig) */}
-      {open && (
-        <div className="blog-content">
-          <p className="card-text">{post.content}</p>
         </div>
-      )}
-
-      <div className="cluster">
-        <button
-          className="btn btn-sm"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls={`content-${post.id}`}
-        >
-          {open ? "Minder lezen" : "Lees meer"}
-        </button>
-        <Link className="share-link" to={`/blog/${post.id}`} aria-label={`Lees artikel: ${post.title}`}>
-          Lees artikel
-        </Link>
       </div>
     </article>
   );
