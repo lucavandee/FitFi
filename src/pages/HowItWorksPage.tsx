@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { Sparkles, Brain, CheckCircle2 } from "lucide-react";
+import { Sparkles, Brain, CircleCheck as CheckCircle2 } from "lucide-react";
 
 type Step = { title: string; body: string; icon: React.ComponentType<any>; };
 
