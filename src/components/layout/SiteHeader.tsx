@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import DarkModeToggle from "@/components/ui/DarkModeToggle";
 import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
 
 const NAV_LINKS = [
@@ -11,33 +10,53 @@ const NAV_LINKS = [
 ];
 
 export default function SiteHeader() {
-  const [open, setOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(
-    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
-  );
   const location = useLocation();
 
-  // Sluit menu bij routewissel
+  // Is desktop?
+  const [isDesktop, setIsDesktop] = useState<boolean>(
+    typeof window !== "undefined"
+      ? window.matchMedia("(min-width: 768px)").matches
+      : false
+  );
+
+  // Mobile drawer state
+  const [open, setOpen] = useState(false);
+
+  // Sluit drawer bij routewissel
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
-  // Houd md-breuk in sync; sluit drawer zodra we desktop raken
+  // Houd breakpoint in sync en sluit drawer zodra we desktop raken
   useEffect(() => {
-    const onResize = () => {
-      const desktop = window.matchMedia("(min-width: 768px)").matches;
-      setIsDesktop(desktop);
-      if (desktop) setOpen(false);
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(min-width: 768px)");
+    const onChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const matches = "matches" in e ? e.matches : (e as MediaQueryList).matches;
+      setIsDesktop(matches);
+      if (matches) setOpen(false);
     };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+
+    // init + subscribe (backwards compatible APIs)
+    onChange(mql);
+    try {
+      mql.addEventListener("change", onChange as (e: MediaQueryListEvent) => void);
+      return () => mql.removeEventListener("change", onChange as (e: MediaQueryListEvent) => void);
+    } catch {
+      mql.addListener(onChange as () => void);
+      return () => mql.removeListener(onChange as () => void);
+    }
   }, []);
 
   return (
     <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 flex items-center justify-between">
-          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
+          {/* Brand */}
+          <NavLink
+            to="/"
+            className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]"
+          >
             FitFi
           </NavLink>
 
@@ -57,17 +76,20 @@ export default function SiteHeader() {
             ))}
           </ul>
 
-          {/* Desktop CTA's */}
+          {/* Desktop CTA's (geen toggles in de header om dubbel-icoon te voorkomen) */}
           <div className="hidden md:flex items-center gap-2">
-            <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">Inloggen</NavLink>
-            <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">Start gratis</NavLink>
-            <DarkModeToggle />
+            <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
+              Inloggen
+            </NavLink>
+            <NavLink to="/prijzen" className="ff-btn ff-btn-primary h-9">
+              Start gratis
+            </NavLink>
           </div>
 
-          {/* Mobiel trigger (triple-guard: Tailwind + runtime + a11y) */}
+          {/* Mobiele trigger (enige icoon op mobiel) */}
           <div
             data-mobile-only
-            className="md:hidden flex items-center gap-2"
+            className="md:hidden flex items-center"
             aria-hidden={isDesktop}
             hidden={isDesktop}
             style={{ display: isDesktop ? "none" : undefined }}
@@ -80,7 +102,7 @@ export default function SiteHeader() {
               onClick={() => setOpen(true)}
               disabled={isDesktop}
               tabIndex={isDesktop ? -1 : 0}
-              className="h-9 w-9 inline-flex items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[color-mix(in oklab, var(--ff-color-surface) 90%, white)] shadow-[var(--shadow-soft)] ff-focus-ring"
+              className="h-9 w-9 inline-flex items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--ff-color-surface)] shadow-[var(--shadow-soft)] ff-focus-ring"
             >
               <svg
                 className="h-5 w-5 text-[var(--ff-color-text)]"
@@ -93,12 +115,11 @@ export default function SiteHeader() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <DarkModeToggle />
           </div>
         </div>
       </nav>
 
-      {/* Portal overlay (boven ALLES) */}
+      {/* Drawer alleen actief op mobiel */}
       <MobileNavDrawer open={open && !isDesktop} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );
