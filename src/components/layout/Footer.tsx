@@ -27,20 +27,16 @@ export default function Footer() {
   return (
     <footer role="contentinfo" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] border-t border-[var(--ff-color-border)]">
       <div className="ff-container py-12">
-        {/* Strakke 12-koloms layout met vaste spans — perfect uitgelijnd */}
+        {/* Strakke 12-koloms grid (4/3/3/2) met identieke baseline */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8 items-start">
-          {/* Merk & nieuwsbrief (4 kolommen) */}
+          {/* Merk / nieuwsbrief */}
           <section aria-label="Over FitFi" className="md:col-span-4 flex flex-col gap-4">
             <NavLink to="/" className="font-heading text-xl tracking-wide">FitFi</NavLink>
-            <p className="text-[var(--ff-color-text)]/80 max-w-sm">
+            <p className="text-[var(--ff-color-text)]/80">
               Rust in je garderobe. Outfits die kloppen — elke dag.
             </p>
 
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              aria-label="Nieuwsbrief"
-              className="flex w-full max-w-sm items-center gap-2"
-            >
+            <form onSubmit={(e) => e.preventDefault()} aria-label="Nieuwsbrief" className="flex w-full max-w-md items-center gap-2">
               <label htmlFor="ff-news-email" className="sr-only">E-mail</label>
               <input
                 id="ff-news-email"
@@ -73,38 +69,38 @@ export default function Footer() {
             </div>
           </section>
 
-          {/* Product (3 kolommen) */}
+          {/* Product */}
           <nav aria-label="Product" className="md:col-span-3">
             <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Product</h3>
             <ul className="space-y-2">
               {product.map((l) => (
-                <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>
+                <li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>
               ))}
             </ul>
           </nav>
 
-          {/* Resources (3 kolommen) */}
+          {/* Resources */}
           <nav aria-label="Resources" className="md:col-span-3">
             <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Resources</h3>
             <ul className="space-y-2">
               {resources.map((l) => (
-                <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>
+                <li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>
               ))}
             </ul>
           </nav>
 
-          {/* Juridisch (2 kolommen) */}
+          {/* Juridisch */}
           <nav aria-label="Juridisch" className="md:col-span-2">
             <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Juridisch</h3>
             <ul className="space-y-2">
               {legal.map((l) => (
-                <li key={l.to}><NavLink className="ff-navlink" to={l.to}>{l.label}</NavLink></li>
+                <li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>
               ))}
             </ul>
           </nav>
         </div>
 
-        {/* Onderste rij — zelfde container, perfecte baseline */}
+        {/* Onderbalk — zelfde container & baseline */}
         <div className="mt-10 border-t border-[var(--ff-color-border)] pt-4 grid grid-cols-1 md:grid-cols-12 items-center gap-y-4">
           <p className="md:col-span-6 text-sm text-[var(--ff-color-text)]/70">
             © {year} FitFi — Alle rechten voorbehouden
