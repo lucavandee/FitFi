@@ -7,24 +7,25 @@ const NAV_LINKS = [
   { to: "/prijzen", label: "Prijzen" },
   { to: "/over-ons", label: "Over ons" },
   { to: "/veelgestelde-vragen", label: "FAQ" },
+  { to: "/blog", label: "Blog" },
 ];
 
 export default function SiteHeader() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  // Drawer altijd sluiten bij routewissel (geen 'open menu' na navigatie)
+  // Drawer sluit altijd bij route-wissel
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   return (
     <header role="banner" className="ff-nav-glass">
-      {/* Zelfde container-ritme als de rest van de site */}
+      {/* Exact dezelfde containerbreedte/padding als homepage */}
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 w-full flex items-center justify-between">
           {/* Brand */}
           <NavLink
             to="/"
-            className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]"
+            className="font-heading text-lg tracking-wide text-[var(--color-text)]"
           >
             FitFi
           </NavLink>
@@ -45,7 +46,7 @@ export default function SiteHeader() {
             ))}
           </ul>
 
-          {/* Mobiele trigger — puur via breakpoint (geen inline hidden/aria-hidden hacks) */}
+          {/* Mobiele trigger — puur via CSS-breakpoint */}
           <button
             type="button"
             aria-label="Open menu"
@@ -76,7 +77,7 @@ export default function SiteHeader() {
         </div>
       </nav>
 
-      {/* Drawer */}
+      {/* Drawer (bestaand component) */}
       <MobileNavDrawer open={open} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );

@@ -1,15 +1,17 @@
 import React from "react";
 
-const faqs = [
+type QA = { q: string; a: string; };
+const FAQS: QA[] = [
   { q: "Is FitFi echt gratis?", a: "Ja. Je krijgt een persoonlijk stijlprofiel en outfits met shoplinks zonder kosten." },
-  { q: "Wat gebeurt er met mijn data?", a: "We werken privacy-first. Alleen wat strikt nodig is voor je advies wordt tijdelijk verwerkt." },
-  { q: "Krijg ik direct outfits te zien?", a: "Ja. Na 6 korte vragen tonen we direct meerdere looks, met uitleg en shoplinks." },
+  { q: "Wat gebeurt er met mijn data?", a: "We werken privacy-first. We verwerken tijdelijk wat strikt nodig is om je te adviseren en bewaren niets onnodigs." },
+  { q: "Krijg ik direct outfits te zien?", a: "Ja. Na 6 korte vragen tonen we direct meerdere looks, inclusief uitleg en shoplinks." },
+  { q: "Kan ik later upgraden?", a: "Ja. Plus-functies worden later geactiveerd. Tot die tijd blijft de gratis ervaring volledig bruikbaar." },
 ];
 
 export default function FAQPage() {
   return (
-    <main id="main" className="min-h-screen bg-[var(--color-canvas)]">
-      <section className="ff-container px-4 md:px-6 ff-page-hero">
+    <main id="main" className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-text)]">
+      <section className="ff-container ff-page-hero">
         <span className="ff-eyebrow">FAQ</span>
         <h1 className="ff-hero-title text-3xl md:text-5xl mt-3">Veelgestelde vragen</h1>
         <p className="ff-hero-sub mt-4 max-w-2xl">
@@ -17,20 +19,14 @@ export default function FAQPage() {
         </p>
       </section>
 
-      <section className="ff-container px-4 md:px-6 ff-section">
-        <div className="divide-y divide-[var(--color-border)] ff-card">
-          {faqs.map((item, idx) => (
-            <details key={idx} className="group open:bg-[var(--color-surface)]">
-              <summary
-                className="list-none cursor-pointer px-4 md:px-5 py-4 flex items-center justify-between gap-4"
-                aria-controls={`faq-${idx}`}
-              >
-                <span className="font-medium text-[var(--color-text)]">{item.q}</span>
-                <span className="inline-block transition-transform group-open:rotate-45" aria-hidden>＋</span>
+      <section className="ff-container ff-section">
+        <div className="ff-accordion">
+          {FAQS.map((item, i) => (
+            <details key={i} className="ff-accordion">
+              <summary className="row">
+                <span className="font-medium">{item.q}</span>
               </summary>
-              <div id={`faq-${idx}`} className="px-4 md:px-5 pb-5 text-[var(--color-muted)]">
-                {item.a}
-              </div>
+              <div className="content">{item.a}</div>
             </details>
           ))}
         </div>

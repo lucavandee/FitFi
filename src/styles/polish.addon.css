@@ -1,12 +1,12 @@
-/* Nav glasplaat: zelfde visuele taal als homepage */
+/* tokens-only polish — nav/hero/sections/cards/blog/faq consistent met homepage */
+
+/* NAV */
 .ff-nav-glass{
   position: sticky; top: 0; z-index: 50;
   background: var(--color-surface);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--color-border);
 }
-
-/* Nav links */
 .ff-navlink{
   display:inline-flex; align-items:center;
   border-radius: var(--radius-2xl);
@@ -21,11 +21,9 @@
   border:1px solid var(--color-border);
   color: var(--color-text);
 }
-
-/* Focus ring utility (tokens) */
 .ff-focus-ring{ outline: none; box-shadow: var(--shadow-ring); }
 
-/* Pagina-hero utilities voor subpagina's — 1:1 met homepage-ritme */
+/* PAGE FRAME */
 .ff-page-hero{ padding-block: 3.5rem 2rem; }
 .ff-eyebrow{
   display:inline-flex; align-items:center; gap:.5ch;
@@ -37,15 +35,12 @@
 }
 .ff-hero-title{
   font-family: Montserrat, ui-sans-serif, system-ui;
-  font-weight: 700; line-height:1.1;
-  color: var(--color-text);
+  font-weight: 700; line-height:1.1; color: var(--color-text);
 }
 .ff-hero-sub{ color: var(--color-muted); }
-
-/* Sectieritme */
 .ff-section{ padding-block: 2rem; }
 
-/* Kaarten (bijv. pricing) */
+/* GENERIC CARDS */
 .ff-card{
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -53,25 +48,31 @@
   box-shadow: var(--shadow-soft);
 }
 .ff-card-body{ padding: 1.25rem; }
-.ff-list-dot li{ display:flex; gap:.75rem; align-items:flex-start; }
 
-/* CTA's volgens regels */
-.ff-btn-primary{
-  background: var(--ff-color-primary-700); color:#fff;
-}
+/* CTA's */
+.ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.5rem; border-radius: var(--radius-xl); padding:0 .9rem; font-weight:600; }
+.ff-btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
 .ff-btn-primary:hover{ background: var(--ff-color-primary-600); }
-.ff-btn-ghost{
-  background: transparent; color: var(--color-text);
-  border: 1px solid var(--color-border);
-}
-.ff-btn-ghost:hover{ border-color: var(--ff-color-primary-600); }
+.ff-btn-secondary{ background: transparent; color: var(--color-text); border:1px solid var(--color-border); }
+.ff-btn-secondary:hover{ border-color: var(--ff-color-primary-600); }
 
-/* Footer social icon (consistent) */
-.ff-icon-btn{
-  width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;
-  border-radius: var(--radius-lg);
-  border:1px solid var(--color-border);
-  background: var(--color-surface);
-  transition: transform .12s ease;
-}
-.ff-icon-btn:hover{ transform: translateY(-1px); }
+/* BLOG */
+.ff-blog-grid{ display:grid; gap:1rem; }
+@media (min-width:768px){ .ff-blog-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.ff-blog-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); overflow:hidden; display:flex; flex-direction:column; }
+.ff-blog-card img{ width:100%; aspect-ratio:16/9; object-fit:cover; }
+.ff-blog-meta{ display:flex; gap:.5rem; align-items:center; padding:.75rem 1rem; color:var(--color-muted); font-size:.9rem; }
+.ff-blog-title{ padding:0 1rem .5rem 1rem; font-weight:700; color:var(--color-text); }
+.ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color:var(--color-text); opacity:.95; }
+.ff-blog-actions{ margin-top:auto; padding:0 1rem 1rem 1rem; }
+
+/* FAQ (accordion) */
+.ff-accordion{ border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); background:var(--color-surface); }
+.ff-accordion .row{ border-top:1px solid var(--color-border); }
+.ff-accordion .row:first-child{ border-top:0; }
+.ff-accordion summary{ cursor:pointer; padding:1rem; display:flex; align-items:center; justify-content:space-between; color:var(--color-text); }
+.ff-accordion .content{ padding:0 1rem 1rem 1rem; color:var(--color-text); }
+details.ff-accordion summary{ list-style:none; }
+details.ff-accordion summary::-webkit-details-marker{ display:none; }
+details.ff-accordion summary::after{ content:"▾"; margin-left:.5rem; transition: transform 200ms ease; }
+details[open].ff-accordion summary::after{ transform: rotate(-180deg); }
