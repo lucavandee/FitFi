@@ -76,7 +76,7 @@ export default function SiteHeader() {
             ))}
           </ul>
 
-          {/* Desktop CTA's (geen toggles in de header om dubbel-icoon te voorkomen) */}
+          {/* Desktop CTA's */}
           <div className="hidden md:flex items-center gap-2">
             <NavLink to="/login" className="ff-btn ff-btn-secondary h-9">
               Inloggen
@@ -86,7 +86,7 @@ export default function SiteHeader() {
             </NavLink>
           </div>
 
-          {/* Mobiele trigger (enige icoon op mobiel) */}
+          {/* Mobiele trigger — beter zichtbaar (groter, solid primary, hoge contrast) */}
           <div
             data-mobile-only
             className="md:hidden flex items-center"
@@ -102,10 +102,21 @@ export default function SiteHeader() {
               onClick={() => setOpen(true)}
               disabled={isDesktop}
               tabIndex={isDesktop ? -1 : 0}
-              className="h-9 w-9 inline-flex items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--ff-color-surface)] shadow-[var(--shadow-soft)] ff-focus-ring"
+              className={[
+                // grootte & layout
+                "h-11 w-11 inline-flex items-center justify-center",
+                // visuele hiërarchie
+                "rounded-[var(--radius-xl)] border border-transparent",
+                "bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)]",
+                "shadow-[var(--shadow-soft)] ff-focus-ring",
+                // typografie/icon
+                "text-white",
+                // feedback
+                "transition-transform active:scale-[0.98]"
+              ].join(" ")}
             >
               <svg
-                className="h-5 w-5 text-[var(--ff-color-text)]"
+                className="h-5 w-5 text-white"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
