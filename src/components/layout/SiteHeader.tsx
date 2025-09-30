@@ -17,12 +17,8 @@ export default function SiteHeader() {
   );
   const location = useLocation();
 
-  // Sluit menu bij routewissel
-  useEffect(() => {
-    setOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setOpen(false); }, [location.pathname]);
 
-  // Sluit menu bij resize naar desktop
   useEffect(() => {
     const onResize = () => {
       const desktop = window.matchMedia("(min-width: 768px)").matches;
@@ -37,20 +33,13 @@ export default function SiteHeader() {
     <header role="banner" className="ff-nav-glass">
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 flex items-center justify-between">
-          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">
-            FitFi
-          </NavLink>
+          <NavLink to="/" className="font-heading text-lg tracking-wide text-[var(--ff-color-text)]">FitFi</NavLink>
 
-          {/* Desktop navigatie */}
+          {/* Desktop */}
           <ul className="hidden md:flex items-center gap-5">
             {NAV_LINKS.map((item) => (
               <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) =>
-                    ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
-                  }
-                >
+                <NavLink to={item.to} className={({ isActive }) => ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")}>
                   {item.label}
                 </NavLink>
               </li>
@@ -81,7 +70,7 @@ export default function SiteHeader() {
         </div>
       </nav>
 
-      {/* Portal overlay (boven ALLES) */}
+      {/* Portal overlay */}
       <MobileNavDrawer open={open && !isDesktop} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );
