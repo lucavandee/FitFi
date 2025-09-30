@@ -26,10 +26,10 @@ export default function Footer() {
 
   return (
     <footer role="contentinfo" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)] border-t border-[var(--ff-color-border)]">
+      {/* Top: strakke 12-koloms grid met vaste spans → perfecte uitlijning */}
       <div className="ff-container py-12">
-        {/* 12-koloms grid met strakke uitlijning */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8 items-start">
-          {/* Merk / tagline / nieuwsbrief / socials */}
+          {/* Merk + nieuwsbrief (4 kolommen) */}
           <section aria-label="Over FitFi" className="md:col-span-4 flex flex-col gap-4">
             <NavLink to="/" className="font-heading text-xl tracking-wide">FitFi</NavLink>
             <p className="text-[var(--ff-color-text)]/80 max-w-sm">
@@ -49,9 +49,7 @@ export default function Footer() {
                 placeholder="Jouw e-mailadres"
                 className="w-full rounded-md border border-[var(--ff-color-border)] bg-[var(--ff-color-surface)] px-3 py-2 text-sm focus:outline-none ff-focus-ring"
               />
-              <button type="submit" className="ff-btn ff-btn-primary h-9">
-                Aanmelden
-              </button>
+              <button type="submit" className="ff-btn ff-btn-primary h-9">Aanmelden</button>
             </form>
 
             <div className="flex gap-3 pt-1">
@@ -75,49 +73,43 @@ export default function Footer() {
             </div>
           </section>
 
-          {/* Product */}
+          {/* Product (3 kolommen) */}
           <nav aria-label="Product" className="md:col-span-3">
             <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Product</h3>
             <ul className="space-y-2">
               {product.map((l) => (
-                <li key={l.to}>
-                  <NavLink to={l.to} className="ff-navlink">{l.label}</NavLink>
-                </li>
+                <li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>
               ))}
             </ul>
           </nav>
 
-          {/* Resources */}
+          {/* Resources (3 kolommen) */}
           <nav aria-label="Resources" className="md:col-span-3">
             <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Resources</h3>
             <ul className="space-y-2">
               {resources.map((l) => (
-                <li key={l.to}>
-                  <NavLink to={l.to} className="ff-navlink">{l.label}</NavLink>
-                </li>
+                <li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>
               ))}
             </ul>
           </nav>
 
-          {/* Juridisch */}
+          {/* Juridisch (2 kolommen) */}
           <nav aria-label="Juridisch" className="md:col-span-2">
             <h3 className="text-sm font-semibold text-[var(--ff-color-text)]/80 mb-2">Juridisch</h3>
             <ul className="space-y-2">
               {legal.map((l) => (
-                <li key={l.to}>
-                  <NavLink to={l.to} className="ff-navlink">{l.label}</NavLink>
-                </li>
+                <li key={l.to}><NavLink to={l.to} className="ff-navlink">{l.label}</NavLink></li>
               ))}
             </ul>
           </nav>
         </div>
 
-        {/* Onderste balk met perfecte uitlijning */}
-        <div className="mt-10 border-t border-[var(--ff-color-border)] pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-[var(--ff-color-text)]/70">
+        {/* Bottom bar (zelfde container & baseline) */}
+        <div className="mt-10 border-t border-[var(--ff-color-border)] pt-4 grid grid-cols-1 md:grid-cols-12 items-center gap-y-4">
+          <p className="md:col-span-6 text-sm text-[var(--ff-color-text)]/70">
             © {year} FitFi — Alle rechten voorbehouden
           </p>
-          <div className="flex flex-wrap gap-6">
+          <div className="md:col-span-6 md:justify-self-end flex flex-wrap gap-6">
             <NavLink to="/privacy" className="ff-navlink text-sm">Privacy</NavLink>
             <NavLink to="/voorwaarden" className="ff-navlink text-sm">Voorwaarden</NavLink>
             <NavLink to="/cookies" className="ff-navlink text-sm">Cookies</NavLink>
