@@ -1,105 +1,40 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
-import PageHero from "@/components/marketing/PageHero";
-import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { HelpCircle, User2, Palette, ShieldCheck } from "lucide-react";
 
-type QA = { q: string; a: string; };
-const ACCOUNT: QA[] = [
-  { q: "Hoe maak ik een account?", a: "Start met de scan. Je kunt daarna een account aanmaken om je profiel te bewaren." },
-  { q: "Hoe zeg ik op?", a: "In je account kun je op elk moment opzeggen. Het is zo geregeld." },
-  { q: "Kan ik mijn e-mail aanpassen?", a: "Ja. In je profiel kun je je gegevens wijzigen." },
-];
-const QUIZ: QA[] = [
-  { q: "Hoe lang duurt de scan?", a: "Ongeveer twee minuten. Zes korte vragen." },
-  { q: "Wat als ik twijfels heb over een vraag?", a: "Ga op gevoel. Je kunt later altijd bijsturen." },
-  { q: "Krijg ik direct outfits?", a: "Ja. Je ziet meteen voorbeelden per gelegenheid." },
-];
-const OUTFITS: QA[] = [
-  { q: "Werken outfits ook voor verschillende budgetten?", a: "Ja. Je krijgt richtlijnen die je zelf kunt vertalen naar je favoriete winkels." },
-  { q: "Kan ik items bewaren?", a: "Ja, met Wishlist. In Pro en Elite kun je alerts instellen." },
-];
-const PRIVACY: QA[] = [
-  { q: "Wat doen jullie met mijn data?", a: "Zo min mogelijk verzamelen, netjes verwerken, niets doorverkopen." },
-  { q: "Werken jullie met affiliate links?", a: "Soms. Aanbevelingen blijven stijl- en pasvormgedreven, niet om de commissie." },
+const faqs = [
+  { q: "Is FitFi echt gratis?", a: "Ja. Je krijgt een persoonlijk stijlprofiel en outfits met shoplinks zonder kosten." },
+  { q: "Wat gebeurt er met mijn data?", a: "We werken privacy-first. Alleen wat strikt nodig is voor je advies wordt tijdelijk verwerkt." },
+  { q: "Krijg ik direct outfits te zien?", a: "Ja. Na 6 korte vragen tonen we direct meerdere looks, met uitleg en shoplinks." },
 ];
 
 export default function FAQPage() {
   return (
-    <>
-      <Helmet>
-        <title>Veelgestelde vragen — FitFi</title>
-        <link rel="canonical" href="https://fitfi.ai/veelgestelde-vragen" />
-      </Helmet>
+    <main id="main" className="min-h-screen bg-[var(--color-canvas)]">
+      <section className="ff-container px-4 md:px-6 ff-page-hero">
+        <span className="ff-eyebrow">FAQ</span>
+        <h1 className="ff-hero-title text-3xl md:text-5xl mt-3">Veelgestelde vragen</h1>
+        <p className="ff-hero-sub mt-4 max-w-2xl">
+          Kort en duidelijk. Staat je vraag er niet tussen? Laat het ons weten.
+        </p>
+      </section>
 
-      <main id="main" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]">
-        <PageHero
-          id="page-faq"
-          eyebrow="FAQ"
-          title="Veelgestelde vragen"
-          subtitle="Snel antwoord. En anders: stel je vraag gerust."
-          align="left"
-          as="h1"
-          size="sm"
-          ctas={[
-            { label: "Start gratis", to: "/results", variant: "primary" },
-            { label: "Mail ons", to: "mailto:support@fitfi.ai", variant: "secondary" }
-          ]}
-        />
-
-        <section className="ff-container py-10">
-          <div className="grid gap-8 md:grid-cols-2">
-            {[
-              { title: "Account & betalingen", items: ACCOUNT, icon: User2 },
-              { title: "Over de scan", items: QUIZ, icon: HelpCircle },
-              { title: "Outfits & advies", items: OUTFITS, icon: Palette },
-              { title: "Privacy & links", items: PRIVACY, icon: ShieldCheck },
-            ].map((group, idx) => {
-              const { ref, visible } = useFadeInOnVisible<HTMLDivElement>();
-              const Icon = group.icon;
-              return (
-                <article
-                  key={idx}
-                  ref={ref as any}
-                  style={{
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? "translateY(0)" : "translateY(12px)",
-                    transition: "opacity 600ms ease, transform 600ms ease",
-                  }}
-                  // Elk FAQ-blok krijgt een subtiele achtergrondkleur en schaduw, zonder border,
-                  // zodat het minder hoekig en vriendelijker oogt. Dit sluit aan op de Over-ons stijl.
-                  className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
-                >
-                  <h2 className="flex items-center gap-2 font-heading text-xl text-[var(--ff-color-text)] mb-4">
-                    <Icon size={20} className="text-[var(--ff-color-accent)]" aria-hidden />
-                    {group.title}
-                  </h2>
-                  <div className="grid gap-3">
-                    {group.items.map((item, i) => (
-                      <details
-                        key={i}
-                        // We gebruiken een halve opacity achtergrond om het vlak onderscheidend te maken,
-                        // met een zachte schaduw i.p.v. een border.
-                        className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-bg)]/40 p-4 shadow-[var(--ff-shadow-soft)]"
-                      >
-                        <summary className="cursor-pointer font-heading text-[var(--ff-color-text)] flex items-center justify-between">
-                          {item.q}
-                        </summary>
-                        <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
-                      </details>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="/results" className="ff-btn ff-btn-primary">Start gratis</a>
-            <a href="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</a>
-          </div>
-        </section>
-      </main>
-    </>
+      <section className="ff-container px-4 md:px-6 ff-section">
+        <div className="divide-y divide-[var(--color-border)] ff-card">
+          {faqs.map((item, idx) => (
+            <details key={idx} className="group open:bg-[var(--color-surface)]">
+              <summary
+                className="list-none cursor-pointer px-4 md:px-5 py-4 flex items-center justify-between gap-4"
+                aria-controls={`faq-${idx}`}
+              >
+                <span className="font-medium text-[var(--color-text)]">{item.q}</span>
+                <span className="inline-block transition-transform group-open:rotate-45" aria-hidden>＋</span>
+              </summary>
+              <div id={`faq-${idx}`} className="px-4 md:px-5 pb-5 text-[var(--color-muted)]">
+                {item.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }

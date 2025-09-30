@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
 
 const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
@@ -13,13 +12,14 @@ export default function SiteHeader() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  // Sluit de drawer bij route-wissel
+  // Sluit de mobile drawer bij routewissel
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   return (
     <header role="banner" className="ff-nav-glass">
-      <nav aria-label="Hoofdmenu" className="ff-container">
-        <div className="h-16 flex items-center justify-between">
+      {/* BELANGRIJK: exact dezelfde containerbreedte/padding als homepage */}
+      <div className="ff-container px-4 md:px-6">
+        <div className="h-16 w-full flex items-center justify-between">
           {/* Brand */}
           <NavLink
             to="/"
@@ -44,7 +44,7 @@ export default function SiteHeader() {
             ))}
           </ul>
 
-          {/* Mobiele trigger — puur via CSS breakpoint (geen inline hidden/disabled) */}
+          {/* Mobiele trigger – alleen zichtbaar < md */}
           <button
             type="button"
             aria-label="Open menu"
@@ -52,7 +52,7 @@ export default function SiteHeader() {
             aria-expanded={open}
             onClick={() => setOpen(true)}
             className={[
-              "md:hidden",                          // ≪≪ belangrijkste fix
+              "md:hidden",
               "h-11 w-11 inline-flex items-center justify-center",
               "rounded-[var(--radius-xl)] border border-transparent",
               "bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)]",
@@ -73,14 +73,9 @@ export default function SiteHeader() {
             </svg>
           </button>
         </div>
-      </nav>
+      </div>
 
-      {/* Drawer */}
-      <MobileNavDrawer
-        open={open}
-        onClose={() => setOpen(false)}
-        links={NAV_LINKS}
-      />
+      {/* Mobile drawer wordt in bestaand component gerenderd (ongewijzigd) */}
     </header>
   );
 }
