@@ -1,530 +1,416 @@
-import React, { useEffect, useMemo, useState, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
-import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag, ImageDown, LogIn, LayoutDashboard } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+// /src/pages/EnhancedResultsPage.tsx
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  Sparkles,
+  SlidersHorizontal,
+  Share2,
+  Bookmark,
+  BookmarkCheck,
+  Info,
+  List as ListIcon,
+  Grid3X3 as GridIcon,
+  ShoppingBag,
+  Shirt,
+  ExternalLink,
+} from "lucide-react";
 
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
-import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
-import ResultsQuizGate from "@/components/results/ResultsQuizGate";
-import FoundersWall from "@/components/results/FoundersWall";
-import { generateOutfitShareImage } from "@/utils/shareImage";
 
-const PremiumUpsellStrip = lazy(() => import("@/components/results/PremiumUpsellStrip"));
+/** -------- UX helpers -------- */
 
-type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
-type ViewMode = "list" | "grid";
-
-type DemoOutfit = {
+type Outfit = {
   id: string;
   title: string;
-  description: string;
-  imageUrl: string;
-  matchPercentage: number;
-  archetype: "Casual" | "Smart" | "Minimal";
-  tags: string[];
+  vibe: string;
+  notes: string;
+  palette: string; // textual
 };
 
-const DEMO_OUTFITS: DemoOutfit[] = [
-  {
-    id: "smart-italian-01",
-    title: "Smart Casual — Italiaans",
-    description:
-      "Lichte polo met ongestructureerd jasje en tapered chino. Sandaal- of loafer-proof.",
-    imageUrl: "/images/fallbacks/default.jpg",
-    matchPercentage: 92,
-    archetype: "Smart",
-    tags: ["Italiaans", "Semi-formeel", "Lente/Zomer"],
-  },
-  {
-    id: "elevated-minimal-02",
-    title: "Elevated Minimal",
-    description:
-      "Monochroom pak in zachte taupe-tint met knitted tee. Clean, subtiel en modern.",
-    imageUrl: "/images/fallbacks/default.jpg",
-    matchPercentage: 88,
-    archetype: "Minimal",
-    tags: ["Monochroom", "Business-lite", "Vier seizoenen"],
-  },
-  {
-    id: "street-tailored-03",
-    title: "Street × Tailored",
-    description:
-      "Boxy overshirt met cropped pantalon; sneaker-vriendelijk zonder in te leveren op lijn.",
-    imageUrl: "/images/fallbacks/default.jpg",
-    matchPercentage: 85,
-    archetype: "Casual",
-    tags: ["Urban", "Comfort", "Weekend"],
-  },
+const OUTFITS: Outfit[] = [
+  { id: "o1", title: "Clean Casual", vibe: "Smart-casual", notes: "Neutrals, rustige textuur.", palette: "steen • zand • wit" },
+  { id: "o2", title: "Office Minimal", vibe: "Werk / meeting", notes: "Strakke lijnen, laag contrast.", palette: "beige • greige • off-white" },
+  { id: "o3", title: "Weekend Uniform", vibe: "Ontspannen", notes: "Praktisch, subtiele structuur.", palette: "taupe • ecru • olijf-tint" },
+  { id: "o4", title: "Monochrome Light", vibe: "Tonal", notes: "Lang silhouet, 2 lagen.", palette: "ecru • bot • crème" },
+  { id: "o5", title: "Warm Neutral Mix", vibe: "Casual", notes: "Warm koord + katoen.", palette: "klei • room • zand" },
+  { id: "o6", title: "Sporty Sharp", vibe: "Sportief-net", notes: "Clean sportswear, *no logos*.", palette: "steenkleur • wolk • room" },
 ];
 
-function readAuth(): boolean {
+function readFavs(): string[] {
   try {
-    return typeof window !== "undefined" && window.localStorage.getItem("ff_auth") === "1";
+    const raw = window.localStorage.getItem("ff_fav_outfits");
+    return raw ? (JSON.parse(raw) as string[]) : [];
   } catch {
-    return false;
+    return [];
   }
 }
+function writeFavs(ids: string[]) {
+  try {
+    window.localStorage.setItem("ff_fav_outfits", JSON.stringify(ids));
+  } catch {}
+}
 
-const StatChip: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
-  <div
-    className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-sm shadow-[var(--shadow-soft)]"
-    aria-label={typeof label === "string" ? label : undefined}
-  >
-    <span className="opacity-80">{icon}</span>
-    <span className="text-[var(--color-text)]">{label}</span>
-  </div>
-);
-
-const NewHintChip: React.FC = () => (
-  <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] text-xs font-medium">
-    <Sparkles className="w-3.5 h-3.5" />
-    Nieuw: waarom dit werkt
-  </span>
-);
-
-const ExplainList: React.FC<{ id: string; archetype?: string; isOpen: boolean }> = ({
+/** Herbruikbare section card met royale top-padding (premium ademruimte) */
+function SectionCard({
   id,
-  archetype,
-  isOpen,
-}) => {
-  const points = useMemo(() => {
-    const base = [
-      { k: "Silhouet", v: "Bovenstuk iets ruimer, onderstuk tapered: heldere V-vorm en schone lijn." },
-      { k: "Kleur", v: "Rustige taupe/monochroom basis — materiaal en fit krijgen de hoofdrol." },
-      { k: "Schoen", v: "Loafer of minimal sneaker houdt het geheel licht en modern." },
-      { k: "Fit", v: "Ongestructureerd jasje/overshirt geeft beweging zonder bulk." },
-      { k: "Kapsel", v: "Netjes met lichte textuur; voorkomt conflict met kraag/schouderlijn." },
-    ];
-    if (archetype === "Smart") base[2].v = "Loafer/derby in glad leer voor een verfijnde finish.";
-    if (archetype === "Minimal") base[1].v = "Monochroom palet versterkt minimalistische esthetiek.";
-    if (archetype === "Casual") base[3].v = "Relaxte top + tapered broek: comfort zonder vorm te verliezen.";
-    return base;
-  }, [archetype]);
-
+  title,
+  subtitle,
+  icon,
+  children,
+}: {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <AnimatePresence initial={false}>
-      {isOpen && (
-        <motion.div
-          key={`exp-${id}`}
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.25 }}
-          className="overflow-hidden"
-          aria-live="polite"
-        >
-          <ul className="mt-3 grid gap-2 text-sm">
-            {points.map((p) => (
-              <li key={p.k} className="flex gap-2">
-                <span className="min-w-20 text-[var(--color-text)]/70">{p.k}</span>
-                <span className="text-[var(--color-text)]">{p.v}</span>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
-
-/** Voorbereiding Shop-de-look (zonder echte deeplinks) */
-type ShopItem = { part: string; productId?: string };
-const buildDeeplink = (_productId?: string): string | null => {
-  return null; // disabled tot we echte data/tagging hebben
-};
-
-const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
-  const items: ShopItem[] = [
-    { part: outfit.archetype === "Smart" ? "Jasje" : "Overshirt" },
-    { part: outfit.archetype === "Minimal" ? "Knitted tee" : "Polo" },
-    { part: "Pantalon / Chino" },
-    { part: outfit.archetype === "Smart" ? "Loafer" : "Minimal sneaker" },
-  ];
-  const links = items.map((it) => ({ ...it, href: buildDeeplink(it.productId) }));
-  return (
-    <div className="mt-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
-          <ShoppingBag className="w-3.5 h-3.5 text-white" />
+    <section
+      id={id}
+      className={[
+        "rounded-[var(--radius-2xl)]",
+        "border border-[var(--color-border)]",
+        "bg-[var(--color-surface)]",
+        "shadow-[var(--shadow-soft)]",
+        "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
+      ].join(" ")}
+      aria-labelledby={id ? `${id}-title` : undefined}
+    >
+      <header className="mb-4 flex items-start gap-3">
+        {icon ? <div className="mt-0.5 text-[var(--color-text)]/90">{icon}</div> : null}
+        <div>
+          <h2 id={id ? `${id}-title` : undefined} className="text-lg font-semibold">
+            {title}
+          </h2>
+          {subtitle ? (
+            <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{subtitle}</p>
+          ) : null}
         </div>
-        <p className="font-medium text-[var(--color-text)]">Shop de look</p>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {links.map((l, idx) => {
-          const disabled = !l.href;
-          return (
-            <div
-              key={`${l.part}-${idx}`}
-              className="flex items-center justify-between rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2"
-            >
-              <span className="text-sm text-[var(--color-text)]">{l.part}</span>
-              <a
-                href={l.href ?? "#"}
-                aria-disabled={disabled}
-                onClick={(e) => disabled && e.preventDefault()}
-                className={`text-sm underline ${disabled ? "pointer-events-none opacity-50" : ""}`}
-              >
-                Shop
-              </a>
-            </div>
-          );
-        })}
-      </div>
+      </header>
+      <div className="text-sm">{children}</div>
+    </section>
+  );
+}
+
+/** Kleine visuele placeholder voor outfit (geen externe assets nodig) */
+function OutfitVisual({ label }: { label: string }) {
+  return (
+    <div
+      className={[
+        "relative w-full",
+        "aspect-[4/5]",
+        "rounded-[var(--radius-xl)]",
+        "border border-[var(--color-border)]",
+        "bg-[var(--color-bg)]",
+        "flex items-center justify-center",
+      ].join(" ")}
+      aria-hidden
+    >
+      <Shirt className="w-10 h-10 opacity-50" />
+      <span className="sr-only">{label}</span>
     </div>
   );
-};
+}
 
-const OutfitCard: React.FC<{
-  outfit: DemoOutfit;
-  view: ViewMode;
-  index: number;
-}> = ({ outfit, view, index }) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [downloading, setDownloading] = useState(false);
-
-  const onShare = async () => {
-    try {
-      setDownloading(true);
-      const dataUrl = await generateOutfitShareImage({
-        title: outfit.title,
-        match: outfit.matchPercentage,
-        archetype: outfit.archetype,
-        imageUrl: outfit.imageUrl,
-        pageUrl: typeof window !== "undefined" ? window.location.origin + "/results" : "https://fitfi.ai/results",
-      });
-      if (navigator.share && dataUrl) {
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        const file = new File([blob], "fitfi-outfit.png", { type: "image/png" });
-        await navigator.share({
-          title: "Mijn FitFi outfit",
-          text: `${outfit.title} — ${outfit.matchPercentage}% match`,
-          files: [file],
-        });
-      } else if (dataUrl) {
-        const a = document.createElement("a");
-        a.href = dataUrl;
-        a.download = "fitfi-outfit.png";
-        a.click();
-      }
-    } catch {
-      // stil falen
-    } finally {
-      setDownloading(false);
-    }
-  };
-
-  return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
-      className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow"
-    >
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <h3 className="text-lg font-medium text-[var(--color-text)]">{outfit.title}</h3>
-            <p className="text-sm text-[var(--color-text)]/70">{outfit.archetype}</p>
-          </div>
-        </div>
-        <NewHintChip />
-      </div>
-
-      <div className={view === "grid" ? "grid grid-cols-1 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
-        <div className="rounded-2xl overflow-hidden">
-          <SmartImage
-            src={outfit.imageUrl}
-            alt={outfit.title}
-            id={outfit.id}
-            kind="outfit"
-            aspect="3/4"
-            containerClassName="rounded-2xl"
-            imgClassName="transition-transform duration-300 hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 480px"
-            // @ts-expect-error best-effort hints
-            loading={index === 0 ? "eager" : undefined}
-            // @ts-expect-error
-            fetchpriority={index === 0 ? "high" : undefined}
-            // @ts-expect-error
-            decoding={index === 0 ? "sync" : undefined}
-          />
-        </div>
-
-        <div className="flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <StatChip icon={<BookmarkCheck className="w-4 h-4" />} label={`${outfit.matchPercentage}% match`} />
-              <StatChip icon={<Info className="w-4 h-4" />} label="Waarom dit werkt" />
-            </div>
-
-            <p className="text-[var(--color-text)]/80 leading-relaxed mb-3">{outfit.description}</p>
-
-            {outfit.tags && outfit.tags.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {outfit.tags.slice(0, 4).map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] rounded-full text-xs font-medium"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            ) : null}
-
-            {/* Explainability */}
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => setOpen((s) => !s)}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-surface)] transition-colors"
-                aria-expanded={open}
-                aria-controls={`explain-${outfit.id}`}
-              >
-                <Info className="w-4 h-4" />
-                <span className="text-sm">{open ? "Verberg uitleg" : "Toon uitleg"}</span>
-              </button>
-              <div id={`explain-${outfit.id}`}>
-                <ExplainList id={outfit.id} archetype={outfit.archetype} isOpen={open} />
-              </div>
-            </div>
-
-            {/* Shop de look — disabled tot deeplinks live zijn */}
-            <ShopTheLookStrip outfit={outfit} />
-          </div>
-
-          {/* CTA's */}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button
-              as={Link}
-              to="/outfits"
-              variant="primary"
-              size="lg"
-              icon={<ExternalLink className="w-4 h-4" />}
-              iconPosition="right"
-            >
-              Bekijk vergelijkbare outfits
-            </Button>
-            <Button variant="secondary" size="lg" icon={<Bookmark className="w-4 h-4" />}>
-              Bewaar
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              icon={<Share2 className="w-4 h-4" />}
-              onClick={onShare}
-              disabled={downloading}
-            >
-              {downloading ? "Genereren…" : "Deel kaart"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-};
+/** -------- Pagina -------- */
 
 export default function EnhancedResultsPage() {
-  // Persistente voorkeuren (filter + weergave)
-  const [filter, setFilter] = useState<Filter>(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_results_filter") : null;
-    return (saved as Filter) || "Alle";
-  });
-
-  const [view, setView] = useState<ViewMode>(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_results_view") : null;
-    return (saved as ViewMode) || "list";
-  });
-
-  useEffect(() => {
+  // Schrijf 'last updated' zodra resultaten bekeken worden (leest Dashboard)
+  React.useEffect(() => {
     try {
-      window.localStorage.setItem("ff_results_filter", filter);
+      window.localStorage.setItem("ff_results_ts", Date.now().toString());
     } catch {}
-  }, [filter]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem("ff_results_view", view);
-    } catch {}
-  }, [view]);
-
-  const outfits = useMemo(() => DEMO_OUTFITS, []);
-  const filtered = useMemo(() => {
-    if (filter === "Alle") return outfits;
-    return outfits.filter((o) => (o.archetype || "").toLowerCase() === filter.toLowerCase());
-  }, [outfits, filter]);
-
-  // Auth-state (alleen voor UI)
-  const [isAuthed, setIsAuthed] = useState<boolean>(() => readAuth());
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => e.key === "ff_auth" && setIsAuthed(readAuth());
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // Quiz Gate v2 (client-side, opt-in via flag)
-  const quizEnabled = (import.meta as any).env?.VITE_QUIZ_GATE === "on";
-  const [quizOpen, setQuizOpen] = useState<boolean>(() => {
-    if (!quizEnabled) return false;
-    try {
-      return !window.localStorage.getItem("ff_quiz_done");
-    } catch {
-      return false;
+  const [view, setView] = React.useState<"grid" | "list">("grid");
+  const [favs, setFavs] = React.useState<string[]>(() => readFavs());
+
+  function toggleFav(id: string) {
+    setFavs((curr) => {
+      const next = curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id];
+      writeFavs(next);
+      return next;
+    });
+  }
+
+  function sharePage() {
+    const url = typeof window !== "undefined" ? window.location.href : "https://fitfi.ai/results";
+    if (navigator.share) {
+      navigator.share({ title: "Mijn FitFi resultaten", url }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).catch(() => {});
     }
-  });
-
-  // Founders-Wall e-mailcapture (flag optioneel, standaard aan)
-  const foundersEnabled = (import.meta as any).env?.VITE_FOUNDERS_WALL !== "off";
-
-  // Sticky mobile bar (filters + mini login)
-  const stickyBarEnabled = (import.meta as any).env?.VITE_RESULTS_STICKY_BAR !== "off";
+  }
 
   return (
-    <main>
+    <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Seo
         title="Jouw resultaten — FitFi"
-        description="Bekijk jouw AI-gegenereerde outfits en uitleg waarom ze voor je werken. Minimalistisch, overzichtelijk en deelbaar."
+        description="Outfits op maat met duidelijke uitleg en rust in de presentatie."
         path="/results"
       />
+
       <PageHero
-        eyebrow="Jouw resultaten"
-        title="Outfits op maat — rustig, clean en premium"
-        subtitle="Geïnspireerd door jouw voorkeuren en archetype. Minimalistisch gepresenteerd zodat je blik op stijl en silhouet blijft."
+        eyebrow="JOUW RESULTATEN"
+        title="Outfits op maat — rustig en premium"
+        subtitle="Gefocust op silhouet, proportie en een kalme kleurenreeks."
+        align="left"
+        size="sm"
+        ctas={[
+          { label: "Dashboard", to: "/dashboard", variant: "secondary" },
+          { label: "Deel", to: "#", variant: "primary" },
+        ]}
+        onPrimaryClick={(e: any) => {
+          e?.preventDefault?.();
+          sharePage();
+        }}
       />
 
-      {/* Sticky mobile quick bar (onder Navbar, alleen mobiel) */}
-      {stickyBarEnabled && (
-        <div className="md:hidden sticky top-16 z-40">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] px-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1">
-                  {(["Casual", "Smart", "Minimal"] as Filter[]).map((f) => (
-                    <button
-                      key={f}
-                      onClick={() => setFilter(f)}
-                      aria-pressed={f === filter}
-                      className={[
-                        "px-2.5 py-1 rounded-lg border text-sm",
-                        f === filter
-                          ? "border-[var(--color-primary)] bg-[color-mix(in oklab,var(--color-primary) 12%,transparent)]"
-                          : "border-[var(--color-border)] bg-[var(--color-bg)]",
-                      ].join(" ")}
-                    >
-                      {f}
-                    </button>
-                  ))}
-                </div>
-                {!isAuthed ? (
-                  <a href="/login" className="inline-flex items-center gap-1 text-sm underline hover:no-underline">
-                    <LogIn className="w-4 h-4" /> Log in
-                  </a>
-                ) : (
-                  <a href="/dashboard" className="inline-flex items-center gap-1 text-sm underline hover:no-underline">
-                    <LayoutDashboard className="w-4 h-4" /> Dashboard
-                  </a>
-                )}
-              </div>
+      {/* Content met royale afstand tot hero */}
+      <section className="ff-container pt-12 sm:pt-14 md:pt-16 lg:pt-20 pb-20">
+        {/* Toolbalk */}
+        <div
+          className={[
+            "mb-6 flex flex-wrap items-center justify-between gap-3",
+            "rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)]",
+            "px-4 py-3",
+          ].join(" ")}
+        >
+          <div className="inline-flex items-center gap-2 text-sm">
+            <SlidersHorizontal className="w-4 h-4" aria-hidden />
+            <span className="opacity-80">Weergave</span>
+            <div
+              role="tablist"
+              aria-label="Weergave"
+              className="ml-2 inline-flex items-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-1"
+            >
+              <button
+                role="tab"
+                aria-selected={view === "grid"}
+                className={[
+                  "px-3 py-1.5 rounded-lg text-sm inline-flex items-center gap-1",
+                  view === "grid"
+                    ? "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
+                    : "hover:bg-[color-mix(in oklab,var(--color-primary) 8%,transparent)]",
+                ].join(" ")}
+                onClick={() => setView("grid")}
+              >
+                <GridIcon className="w-4 h-4" aria-hidden /> Grid
+              </button>
+              <button
+                role="tab"
+                aria-selected={view === "list"}
+                className={[
+                  "px-3 py-1.5 rounded-lg text-sm inline-flex items-center gap-1",
+                  view === "list"
+                    ? "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
+                    : "hover:bg-[color-mix(in oklab,var(--color-primary) 8%,transparent)]",
+                ].join(" ")}
+                onClick={() => setView("list")}
+              >
+                <ListIcon className="w-4 h-4" aria-hidden /> Lijst
+              </button>
             </div>
           </div>
-        </div>
-      )}
 
-      <section className="container mx-auto px-4 md:px-6 -mt-6 md:-mt-8">
-        {/* Toolbar: Filters & view */}
-        <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:p-6 shadow-[var(--shadow-soft)] mb-6 md:mb-8">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="inline-flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
-                <SlidersHorizontal className="w-4 h-4 text-white" />
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" onClick={sharePage} className="inline-flex items-center gap-2">
+              <Share2 className="w-4 h-4" /> Deel resultaten
+            </Button>
+          </div>
+        </div>
+
+        {/* OUTIFTS */}
+        <SectionCard
+          id="outfits"
+          title="Voor jou samengestelde outfits"
+          subtitle="Stijlvol maar rustig — zodat de focus op vorm en proportie blijft."
+          icon={<Sparkles className="w-5 h-5" aria-hidden />}
+        >
+          {view === "grid" ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {OUTFITS.map((o) => {
+                const active = favs.includes(o.id);
+                return (
+                  <article
+                    key={o.id}
+                    className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden"
+                  >
+                    <OutfitVisual label={o.title} />
+                    <div className="p-4 border-t border-[var(--color-border)]">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-base font-semibold">{o.title}</h3>
+                          <p className="text-sm opacity-70">{o.vibe} • {o.palette}</p>
+                        </div>
+                        <button
+                          className="inline-flex h-9 items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm"
+                          aria-pressed={active}
+                          onClick={() => toggleFav(o.id)}
+                        >
+                          {active ? (
+                            <>
+                              <BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard
+                            </>
+                          ) : (
+                            <>
+                              <Bookmark className="w-4 h-4" aria-hidden /> Bewaren
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="mt-2 text-sm opacity-80">{o.notes}</p>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button as={NavLink} to="/results#archetype" variant="secondary" className="inline-flex items-center gap-2">
+                          <Info className="w-4 h-4" aria-hidden /> Waarom dit werkt
+                        </Button>
+                        <Button as={NavLink} to="/results?shop=1" variant="primary" className="inline-flex items-center gap-2">
+                          <ShoppingBag className="w-4 h-4" aria-hidden /> Shop (binnenkort)
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <ul role="list" className="grid gap-4">
+              {OUTFITS.map((o) => {
+                const active = favs.includes(o.id);
+                return (
+                  <li
+                    key={o.id}
+                    className="flex items-center gap-4 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4"
+                  >
+                    <div className="w-20">
+                      <OutfitVisual label={o.title} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <h3 className="text-base font-semibold">{o.title}</h3>
+                          <p className="text-sm opacity-70">{o.vibe} • {o.palette}</p>
+                        </div>
+                        <button
+                          className="inline-flex h-9 items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm"
+                          aria-pressed={active}
+                          onClick={() => toggleFav(o.id)}
+                        >
+                          {active ? (
+                            <>
+                              <BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard
+                            </>
+                          ) : (
+                            <>
+                              <Bookmark className="w-4 h-4" aria-hidden /> Bewaren
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="mt-1 text-sm opacity-80">{o.notes}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </SectionCard>
+
+        {/* UITLEG / ARCHETYPE */}
+        <div className="mt-8 grid gap-7 lg:gap-9 lg:grid-cols-2">
+          <SectionCard
+            id="archetype"
+            title="Waarom dit voor je werkt"
+            subtitle="Kern: proportie, rustige texturen en een zachte tonaliteit."
+            icon={<Info className="w-5 h-5" aria-hidden />}
+          >
+            <ul className="grid gap-2 text-sm" role="list">
+              <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                Silhouet: kies 2 lagen max; laat je bovenlaag ±1/3 langer vallen voor lengte.
+              </li>
+              <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                Textuur: combineer **glad** en **gebreid** voor diepte zonder drukte.
+              </li>
+              <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                Kleur: werk tonal (licht-neutraal) met 1 warme accenttint per look.
+              </li>
+            </ul>
+
+            <div className="mt-4 text-xs text-[var(--color-text)]/70">
+              Dit is een startpunt — jouw favorieten sturen de volgende generatie outfits.
+            </div>
+          </SectionCard>
+
+          {/* PASVORM / FIT */}
+          <SectionCard
+            id="fit"
+            title="Pasvorm-instellingen"
+            subtitle="Fijnslijpen voor silhouet & comfort."
+            icon={<SlidersHorizontal className="w-5 h-5" aria-hidden />}
+          >
+            <div className="grid gap-3">
+              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                <span>Bovenlaag</span>
+                <span className="text-sm opacity-70">Regular-slim</span>
               </div>
-              <span className="font-medium text-[var(--color-text)]">Filters & voorkeuren</span>
+              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                <span>Broek</span>
+                <span className="text-sm opacity-70">Tapered</span>
+              </div>
+              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                <span>Lengte</span>
+                <span className="text-sm opacity-70">Licht cropped (–2 cm)</span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {(["Casual", "Smart", "Minimal", "Alle"] as Filter[]).map((f) => (
-                <Button
-                  key={f}
-                  variant="secondary"
-                  size="md"
-                  className={f === filter ? "ring-2 ring-[var(--color-primary)]" : ""}
-                  onClick={() => setFilter(f)}
-                  aria-pressed={f === filter}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button as={NavLink} to="/results?refresh=1" variant="secondary">Genereer opnieuw</Button>
+              <Button as={NavLink} to="/veelgestelde-vragen" variant="primary" className="inline-flex items-center gap-2">
+                <ExternalLink className="w-4 h-4" aria-hidden /> Hulp
+              </Button>
+            </div>
+          </SectionCard>
+        </div>
+
+        {/* FAVORIETEN */}
+        <SectionCard
+          id="favorites"
+          title="Je favorieten"
+          subtitle="Bewaar 1–2 outfits als ankerpunt voor volgende suggesties."
+          icon={<BookmarkCheck className="w-5 h-5" aria-hidden />}
+        >
+          {favs.length === 0 ? (
+            <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
+              <p className="text-sm opacity-80">
+                Nog geen favorieten. Klik op <em>Bewaren</em> bij een outfit om te starten.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {OUTFITS.filter((o) => favs.includes(o.id)).map((o) => (
+                <div
+                  key={o.id}
+                  className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4"
                 >
-                  {f}
-                </Button>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium">{o.title}</h3>
+                    <button
+                      className="inline-flex h-8 items-center gap-1 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+                      onClick={() => toggleFav(o.id)}
+                    >
+                      <Bookmark className="w-4 h-4" aria-hidden /> Verwijder
+                    </button>
+                  </div>
+                  <p className="mt-1 text-sm opacity-70">{o.vibe} • {o.palette}</p>
+                </div>
               ))}
             </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="md"
-                className={view === "list" ? "ring-2 ring-[var(--color-primary)]" : ""}
-                onClick={() => setView("list")}
-                aria-pressed={view === "list"}
-                icon={<ListIcon className="w-4 h-4" />}
-              >
-                Lijst
-              </Button>
-              <Button
-                variant="secondary"
-                size="md"
-                className={view === "grid" ? "ring-2 ring-[var(--color-primary)]" : ""}
-                onClick={() => setView("grid")}
-                aria-pressed={view === "grid"}
-                icon={<GridIcon className="w-4 h-4" />}
-              >
-                Grid
-              </Button>
-              <Button variant="secondary" size="md" icon={<ImageDown className="w-4 h-4" />} as="a" href="#share-help">
-                Delen
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Result cards + Founders Wall */}
-        <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" : "grid grid-cols-1 gap-6 md:gap-8"}>
-          <AnimatePresence initial={false}>
-            {filtered.map((o, i) => (
-              <React.Fragment key={o.id}>
-                <OutfitCard outfit={o} view={view} index={i} />
-                {foundersEnabled && i === 2 && <FoundersWall key="founders-wall" />}
-              </React.Fragment>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Premium upsell — lazy voor betere LCP */}
-        <div className="mt-10 md:mt-12">
-          <Suspense fallback={<div className="h-24 rounded-[var(--radius-2xl)] bg-[var(--color-surface)] border border-[var(--color-border)] animate-pulse" />}>
-            <PremiumUpsellStrip />
-          </Suspense>
-        </div>
-
-        {/* Deel-instructie anker */}
-        <div id="share-help" className="sr-only">Gebruik "Deel kaart" op een outfit om een deelbare afbeelding te maken.</div>
+          )}
+        </SectionCard>
       </section>
-
-      {/* Quiz Gate v2 */}
-      {quizOpen && quizEnabled && (
-        <ResultsQuizGate
-          onClose={() => {
-            setQuizOpen(false);
-            try {
-              window.localStorage.setItem("ff_quiz_done", "1");
-            } catch {}
-          }}
-        />
-      )}
     </main>
   );
 }
