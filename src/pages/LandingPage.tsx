@@ -1,272 +1,140 @@
-// /src/pages/LandingPage.tsx
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
-import { Sparkles, Ruler, Palette, ShieldCheck, Timer, Shirt, ArrowRight } from "lucide-react";
-
-/**
- * Let op:
- * - CTA's gebruiken NavLink rechtstreeks (geen custom wrappers) zodat routering gegarandeerd werkt.
- * - Alle kleuren via tokens/vars; geen hex in src/**.
- * - Afbeelding staat in /public/media/hero-style-report.png (zie aanname).
- */
-
-function CtaPrimary({ to, children }: { to: string; children: React.ReactNode }) {
-  return (
-    <NavLink
-      to={to}
-      className={[
-        "inline-flex items-center justify-center gap-2 rounded-[var(--radius-2xl)]",
-        "px-5 py-3 text-sm font-semibold",
-        "bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)]",
-        "text-white", // kleur uit tokens.css: CTA-regel schrijft #fff voor; Tailwind 'text-white' compileert naar rgb(), geen # in broncode vereist.
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        "focus-visible:ring-[var(--ff-color-primary-700)] focus-visible:ring-offset-[var(--color-bg)]",
-        "transition-colors",
-      ].join(" ")}
-      aria-label="Start gratis"
-    >
-      {children}
-    </NavLink>
-  );
-}
-
-function CtaSecondary({ to, children }: { to: string; children: React.ReactNode }) {
-  return (
-    <NavLink
-      to={to}
-      className={[
-        "inline-flex items-center justify-center gap-2 rounded-[var(--radius-2xl)]",
-        "px-5 py-3 text-sm font-semibold",
-        "border border-[var(--color-border)] bg-transparent",
-        "text-[var(--color-text)] hover:border-[var(--color-primary)]",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        "focus-visible:ring-[var(--ff-color-primary-700)] focus-visible:ring-offset-[var(--color-bg)]",
-        "transition-colors",
-      ].join(" ")}
-      aria-label="Bekijk voorbeeld"
-    >
-      {children}
-    </NavLink>
-  );
-}
+import Button from "@/components/ui/Button";
 
 export default function LandingPage() {
-  // Debug: Log the image path to console
-  React.useEffect(() => {
-    console.log('Attempting to load image from:', '/public/media/hero-style-report.png');
-    
-    // Test if image exists
-    const img = new Image();
-    img.onload = () => console.log('✅ Image loaded successfully');
-    img.onerror = () => console.log('❌ Image failed to load');
-    img.src = '/public/media/hero-style-report.png';
-  }, []);
-
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Seo
         title="FitFi — Ontdek wat jouw stijl over je zegt"
-        description="Beantwoord 6–10 korte vragen. Ontvang een persoonlijk stijlprofiel met kleurpalet en outfits — privacy-first, zonder ruis."
+        description="Beantwoord 6–10 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis."
         path="/"
       />
 
       {/* HERO */}
-      <section aria-labelledby="hero-title">
-        <div className="ff-container pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-10 md:pb-14">
-          <div className="grid items-center gap-8 lg:grid-cols-2">
-            {/* Copy */}
+      <section className="relative">
+        <div className="ff-container pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-10 sm:pb-12">
+          <div className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm tracking-wide">
+            GRATIS AI STYLE REPORT
+          </div>
+
+          <h1 className="mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.08] max-w-[22ch]">
+            Ontdek wat jouw stijl over je zegt
+          </h1>
+
+          <div className="mt-4 h-[3px] w-24 rounded-full bg-[var(--color-border)]" aria-hidden />
+
+          <p className="mt-5 text-base sm:text-lg md:text-xl text-[var(--color-text)]/80 max-w-[56ch]">
+            Beantwoord 6–10 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.
+          </p>
+
+          {/* CTA's — gefixt met echte routes */}
+          <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
+            <Button as={NavLink} to="/stijlquiz" variant="primary" size="lg" aria-label="Start gratis stijlquiz">
+              Start gratis
+            </Button>
+            <Button as={NavLink} to="/results" variant="secondary" size="lg" aria-label="Bekijk voorbeeld resultaten">
+              Bekijk voorbeeld
+            </Button>
+          </div>
+
+          {/* badges */}
+          <div className="mt-6 sm:mt-7 flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">100% gratis</span>
+            <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">Klaar in 2 min</span>
+            <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">Outfits + shoplinks</span>
+            <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">Privacy-first</span>
+          </div>
+        </div>
+
+        {/* Hero visual rechts/onder — jouw aangeleverde afbeelding uit /public */}
+        <div className="ff-container">
+          <div className="mt-4 md:mt-6 lg:mt-8 grid md:grid-cols-2 gap-6 items-center">
+            <div className="order-2 md:order-1">
+              <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+                <h2 className="text-lg font-semibold">Voorbeeld van je Style Report</h2>
+                <p className="mt-1 text-sm text-[var(--color-text)]/80">
+                  Rustig en premium. We focussen op pasvorm, kleurpalet en draagbare combinaties — zonder ruis.
+                </p>
+                <ul className="mt-3 grid gap-2 text-sm" role="list">
+                  <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">• Kleurpalet (warm/koel, licht/donker, contrast)</li>
+                  <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">• Silhouet & pasvorm-instellingen</li>
+                  <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">• 6 outfits op maat + favorieten</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="order-1 md:order-2 flex justify-center">
+              <picture>
+                <source srcSet="/hero/style-report.webp" type="image/webp" />
+                <img
+                  src="/hero/style-report.png"
+                  alt="Voorbeeld van het FitFi Style Report op mobiel, met kleurpalet en aanbevolen items"
+                  width={900}
+                  height={1200}
+                  loading="eager"
+                  className="w-full max-w-[520px] h-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
+                />
+              </picture>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hoe het werkt (3 stappen) */}
+      <section className="ff-container pt-16 md:pt-20">
+        <h2 className="text-2xl sm:text-3xl font-semibold">Hoe het werkt</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[
+            { title: "Beantwoord 6–10 vragen", text: "Korte, visuele keuzes. Privacy-first, geen account nodig om te starten." },
+            { title: "Ontvang je Style Report", text: "Kleurprofiel, pasvorm-instellingen en 6 outfits — rustig en draagbaar." },
+            { title: "Bewaar & shop", text: "Favorieten opslaan. Shoplinks worden geactiveerd zodra partners live zijn." },
+          ].map((s, i) => (
+            <div key={i} className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+              <div className="text-sm opacity-60">Stap {i + 1}</div>
+              <div className="mt-1 text-base font-semibold">{s.title}</div>
+              <p className="mt-1 text-sm text-[var(--color-text)]/80">{s.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Waarom FitFi (trust) */}
+      <section className="ff-container pt-14">
+        <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
+          <h2 className="text-lg font-semibold">Waarom FitFi</h2>
+          <div className="mt-3 grid gap-3 md:grid-cols-3 text-sm">
+            <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">• Premium, nuchter en persoonlijk</div>
+            <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">• AVG-compliant & privacy-first</div>
+            <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">• Rustige UI — geen ruis, geen upsell-druk</div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ teaser + CTA einde */}
+      <section className="ff-container pt-14 pb-20">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
+            <h2 className="text-lg font-semibold">Veelgestelde vragen</h2>
+            <details className="mt-3 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+              <summary className="cursor-pointer text-sm font-medium">Hoe werkt de kleuranalyse?</summary>
+              <p className="mt-2 text-sm text-[var(--color-text)]/80">We bepalen temperatuur (warm/koel), lichtheid en contrast op basis van je voorkeuren (optioneel met foto).</p>
+            </details>
+            <details className="mt-3 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+              <summary className="cursor-pointer text-sm font-medium">Wat gebeurt er met mijn foto?</summary>
+              <p className="mt-2 text-sm text-[var(--color-text)]/80">Foto's blijven lokaal in je browser en worden niet geüpload.</p>
+            </details>
+          </div>
+
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] flex flex-col justify-between">
             <div>
-              <div className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm tracking-wide">
-                GRATIS AI STYLE REPORT
-              </div>
-
-              <h1 id="hero-title" className="mt-5 text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.08] max-w-[22ch]">
-                Ontdek wat jouw stijl over je zegt
-              </h1>
-
-              <div className="mt-4 h-[3px] w-24 rounded-full bg-[var(--color-border)]" aria-hidden />
-
-              <p className="mt-5 text-base sm:text-lg text-[var(--color-text)]/80 max-w-[58ch]">
-                Beantwoord een handvol vragen en ontvang direct je kleurprofiel en 6 outfits op maat — nu al klaar voor shoplinks. Privacy-first, zonder ruis.
-              </p>
-
-              <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
-                <CtaPrimary to="/stijlquiz">
-                  Start gratis <ArrowRight className="h-4 w-4" aria-hidden />
-                </CtaPrimary>
-                <CtaSecondary to="/results">Bekijk voorbeeld</CtaSecondary>
-              </div>
-
-              {/* Badges */}
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm">
-                  <ShieldCheck className="h-4 w-4" aria-hidden /> Privacy-first
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm">
-                  <Timer className="h-4 w-4" aria-hidden /> Klaar in 2 min
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm">
-                  <Shirt className="h-4 w-4" aria-hidden /> Outfits + shoplinks
-                </span>
-              </div>
+              <h2 className="text-lg font-semibold">Klaar om te starten?</h2>
+              <p className="mt-1 text-sm text-[var(--color-text)]/80">Begin gratis — je kunt later altijd finetunen.</p>
             </div>
-
-            {/* Visual */}
-            <div className="relative">
-              <div
-                className={[
-                  "rounded-[var(--radius-3xl)] border border-[var(--color-border)]",
-                  "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
-                  "p-3 sm:p-4",
-                ].join(" ")}
-              >
-                {/* Debug: Show multiple image attempts */}
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-2">Attempt 1: /public/media/hero-style-report.png</p>
-                    <img
-                      src="/public/media/hero-style-report.png"
-                      alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
-                      loading="eager"
-                      className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)] border border-red-200"
-                      onError={(e) => {
-                        console.log('❌ Image 1 failed to load');
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      onLoad={() => console.log('✅ Image 1 loaded')}
-                    />
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs text-gray-500 mb-2">Attempt 2: /media/hero-style-report.png</p>
-                    <img
-                      src="/media/hero-style-report.png"
-                      alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
-                      loading="eager"
-                      className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)] border border-blue-200"
-                      onError={(e) => {
-                        console.log('❌ Image 2 failed to load');
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      onLoad={() => console.log('✅ Image 2 loaded')}
-                    />
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs text-gray-500 mb-2">Attempt 3: ./media/hero-style-report.png</p>
-                    <img
-                      src="./media/hero-style-report.png"
-                      alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
-                      loading="eager"
-                      className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)] border border-green-200"
-                      onError={(e) => {
-                        console.log('❌ Image 3 failed to load');
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      onLoad={() => console.log('✅ Image 3 loaded')}
-                    />
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs text-gray-500 mb-2">Fallback: Placeholder</p>
-                    <div className="w-full aspect-[4/5] bg-gray-100 rounded-[calc(var(--radius-3xl)-0.5rem)] flex items-center justify-center border border-gray-300">
-                      <div className="text-center text-gray-500">
-                        <div className="text-2xl mb-2">📱</div>
-                        <div className="text-sm">Style Report Preview</div>
-                        <div className="text-xs mt-1">Image not found</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* zachte achtergrond halo */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -inset-6 rounded-[var(--radius-3xl)]"
-                style={{
-                  background:
-                    "radial-gradient(120% 80% at 20% 10%, color-mix(in oklab, var(--ff-color-primary-700) 8%, transparent), transparent 60%)",
-                  maskImage:
-                    "radial-gradient(90% 70% at 50% 50%, black, transparent 70%)",
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Hoe het werkt */}
-      <section aria-labelledby="how-title" className="border-t border-[var(--color-border)] bg-[var(--color-surface)]/50">
-        <div className="ff-container py-12 md:py-16">
-          <h2 id="how-title" className="text-2xl sm:text-3xl font-semibold">Hoe het werkt</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <Sparkles className="h-5 w-5" aria-hidden />
-              <h3 className="mt-2 font-semibold">Korte stijlquiz</h3>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                6–10 rustige vragen. Eén vraag per scherm, privacy-vriendelijk en zonder ruis.
-              </p>
-            </div>
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <Palette className="h-5 w-5" aria-hidden />
-              <h3 className="mt-2 font-semibold">Kleurprofiel</h3>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                Bepaal je temperatuur, contrast en seizoen. Krijg heldere do's & don'ts.
-              </p>
-            </div>
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <Ruler className="h-5 w-5" aria-hidden />
-              <h3 className="mt-2 font-semibold">Outfits op maat</h3>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                6 outfits passend bij jouw archetype — klaar voor shoplinks via partners.
-              </p>
-            </div>
-          </div>
-          <div className="mt-6">
-            <CtaSecondary to="/stijlquiz">Start nu — gratis</CtaSecondary>
-          </div>
-        </div>
-      </section>
-
-      {/* Waarom FitFi */}
-      <section aria-labelledby="why-title">
-        <div className="ff-container py-12 md:py-16">
-          <h2 id="why-title" className="text-2xl sm:text-3xl font-semibold">Waarom FitFi</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <h3 className="font-semibold">Premium, zonder ruis</h3>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                Heldere aanbevelingen — geen eindeloze feeds. Je houdt regie over je stijl.
-              </p>
-            </div>
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <h3 className="font-semibold">Privacy-first</h3>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                Je data blijft van jou. Foto's worden lokaal verwerkt en niet geüpload.
-              </p>
-            </div>
-            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <h3 className="font-semibold">Klaar voor affiliate</h3>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                Shoplinks via geverifieerde partners — zonder spam of tracking-rommel.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Callout */}
-      <section className="border-t border-[var(--color-border)]">
-        <div className="ff-container py-10 md:py-14">
-          <div className="rounded-[var(--radius-3xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">Klaar voor een rustige, premium garderobe?</h2>
-              <p className="mt-1 text-sm md:text-base text-[var(--color-text)]/80">Start gratis — je ziet je resultaat direct.</p>
-            </div>
-            <div className="flex gap-3">
-              <CtaPrimary to="/stijlquiz">Start gratis</CtaPrimary>
-              <CtaSecondary to="/results">Bekijk voorbeeld</CtaSecondary>
+            <div className="mt-4 flex gap-3">
+              <Button as={NavLink} to="/stijlquiz" variant="primary">Start gratis</Button>
+              <Button as={NavLink} to="/results" variant="secondary">Bekijk voorbeeld</Button>
             </div>
           </div>
         </div>
