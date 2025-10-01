@@ -3,12 +3,12 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 /**
- * Premium, rustige Navbar:
+ * Eén premium Navbar:
  * - Sticky + lichte blur
- * - Eén Navbar (geen extra headers)
- * - Desktop: links + Log in (secondary) + Start gratis (primary)
- * - Mobiel: sheet met dezelfde links + Log in / Start gratis
+ * - Desktop: links + (Login/Start gratis) of (Dashboard/Uitloggen) bij auth
+ * - Mobiel: sheet met dezelfde opties
  * - A11Y: skiplink, aria-expanded, ESC sluit, focus-ring via tokens
+ * - Auth: client-only mock via localStorage.ff_auth === "1"
  */
 
 function useLockBody(lock: boolean) {
@@ -19,6 +19,28 @@ function useLockBody(lock: boolean) {
       document.body.style.overflow = original;
     };
   }, [lock]);
+}
+
+function readAuth(): boolean {
+  try {
+    return typeof window !== "undefined" && window.localStorage.getItem("ff_auth") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function useAuthState() {
+  const [isAuthed, setIsAuthed] = React.useState<boolean>(() => readAuth());
+
+  React.useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "ff_auth") setIsAuthed(readAuth());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  return { isAuthed, setIsAuthed };
 }
 
 const links: Array<{ to: string; label: string }> = [
@@ -32,6 +54,7 @@ const links: Array<{ to: string; label: string }> = [
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const { pathname } = useLocation();
+  const { isAuthed, setIsAuthed } = useAuthState();
   useLockBody(open);
 
   // Sluit menu bij routewissel of ESC
@@ -41,6 +64,18 @@ export default function Navbar() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
+
+  const handleLogout = () => {
+    try {
+      window.localStorage.removeItem("ff_auth");
+      window.localStorage.removeItem("ff_user_name");
+      window.localStorage.removeItem("ff_user_initial");
+    } catch {}
+    setIsAuthed(false);
+  };
+
+  const userInitial =
+    (typeof window !== "undefined" && window.localStorage.getItem("ff_user_initial")) || "U";
 
   return (
     <header
@@ -78,14 +113,36 @@ export default function Navbar() {
 
         {/* CTA's + Mobile toggle */}
         <div className="flex items-center gap-2">
-          {/* Nieuw: Log in (secondary/ghost) — ≥ sm */}
-          <a href="/login" className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
-            Log in
-          </a>
-          {/* Primaire CTA */}
-          <a href="/results" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
-            Start gratis
-          </a>
+          {!isAuthed ? (
+            <>
+              <a href="/login" className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
+                Log in
+              </a>
+              <a href="/results" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
+                Start gratis
+              </a>
+            </>
+          ) : (
+            <>
+              <a href="/dashboard" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_dashboard">
+                Dashboard
+              </a>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9"
+                data-event="nav_logout"
+              >
+                Uitloggen
+              </button>
+              <div
+                aria-label="Account"
+                className="hidden sm:inline-flex items-center justify-center h-9 w-9 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)]"
+              >
+                <span className="text-sm font-semibold">{userInitial}</span>
+              </div>
+            </>
+          )}
 
           {/* Mobile toggle */}
           <button
@@ -130,14 +187,17 @@ export default function Navbar() {
           </ul>
 
           {/* Auth CTA's mobiel */}
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <a href="/login" className="ff-btn ff-btn-secondary h-10 w-full">
-              Log in
-            </a>
-            <a href="/results" className="ff-btn ff-btn-primary h-10 w-full">
-              Start gratis
-            </a>
-          </div>
+          {!isAuthed ? (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <a href="/login" className="ff-btn ff-btn-secondary h-10 w-full">Log in</a>
+              <a href="/results" className="ff-btn ff-btn-primary h-10 w-full">Start gratis</a>
+            </div>
+          ) : (
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <a href="/dashboard" className="ff-btn ff-btn-primary h-10 w-full col-span-2">Dashboard</a>
+              <button onClick={handleLogout} className="ff-btn ff-btn-secondary h-10 w-full">Uitloggen</button>
+            </div>
+          )}
         </div>
       </div>
     </header>

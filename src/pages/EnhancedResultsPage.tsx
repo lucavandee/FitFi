@@ -1,7 +1,20 @@
-// /src/pages/EnhancedResultsPage.tsx
 import React, { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag, ImageDown } from "lucide-react";
+import {
+  Sparkles,
+  SlidersHorizontal,
+  Share2,
+  Bookmark,
+  BookmarkCheck,
+  Info,
+  ExternalLink,
+  List as ListIcon,
+  Grid3X3 as GridIcon,
+  ShoppingBag,
+  ImageDown,
+  LogIn,
+  LayoutDashboard,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import PageHero from "@/components/marketing/PageHero";
@@ -11,7 +24,6 @@ import ResultsQuizGate from "@/components/results/ResultsQuizGate";
 import FoundersWall from "@/components/results/FoundersWall";
 import { generateOutfitShareImage } from "@/utils/shareImage";
 
-// LCP: lazy-load niet-kritische strip
 const PremiumUpsellStrip = lazy(() => import("@/components/results/PremiumUpsellStrip"));
 
 type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
@@ -59,6 +71,14 @@ const DEMO_OUTFITS: DemoOutfit[] = [
     tags: ["Urban", "Comfort", "Weekend"],
   },
 ];
+
+function readAuth(): boolean {
+  try {
+    return typeof window !== "undefined" && window.localStorage.getItem("ff_auth") === "1";
+  } catch {
+    return false;
+  }
+}
 
 const StatChip: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
   <div
@@ -187,7 +207,6 @@ const OutfitCard: React.FC<{
         imageUrl: outfit.imageUrl,
         pageUrl: typeof window !== "undefined" ? window.location.origin + "/results" : "https://fitfi.ai/results",
       });
-      // Native share indien beschikbaar
       if (navigator.share && dataUrl) {
         const res = await fetch(dataUrl);
         const blob = await res.blob();
@@ -204,7 +223,7 @@ const OutfitCard: React.FC<{
         a.click();
       }
     } catch {
-      // stil falen; UI blijft rustig
+      // stil falen
     } finally {
       setDownloading(false);
     }
@@ -233,7 +252,6 @@ const OutfitCard: React.FC<{
 
       <div className={view === "grid" ? "grid grid-cols-1 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
         <div className="rounded-2xl overflow-hidden">
-          {/* LCP: eerste kaart is vaak in viewport; geef hem voorrang door eager te laden indien SmartImage dit doorzet */}
           <SmartImage
             src={outfit.imageUrl}
             alt={outfit.title}
@@ -243,7 +261,7 @@ const OutfitCard: React.FC<{
             containerClassName="rounded-2xl"
             imgClassName="transition-transform duration-300 hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 480px"
-            // @ts-expect-error: indien SmartImage passthrough toepast gaan deze mee naar <img>; anders genegeerd (non-breaking)
+            // @ts-expect-error best-effort hints
             loading={index === 0 ? "eager" : undefined}
             // @ts-expect-error
             fetchpriority={index === 0 ? "high" : undefined}
@@ -326,7 +344,7 @@ const OutfitCard: React.FC<{
   );
 };
 
-const EnhancedResultsPage: React.FC = () => {
+export default function EnhancedResultsPage() {
   // Persistente voorkeuren (filter + weergave)
   const [filter, setFilter] = useState<Filter>(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_results_filter") : null;
@@ -356,6 +374,14 @@ const EnhancedResultsPage: React.FC = () => {
     return outfits.filter((o) => (o.archetype || "").toLowerCase() === filter.toLowerCase());
   }, [outfits, filter]);
 
+  // Auth-state (alleen voor UI)
+  const [isAuthed, setIsAuthed] = useState<boolean>(() => readAuth());
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => e.key === "ff_auth" && setIsAuthed(readAuth());
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   // Quiz Gate v2 (client-side, opt-in via flag)
   const quizEnabled = (import.meta as any).env?.VITE_QUIZ_GATE === "on";
   const [quizOpen, setQuizOpen] = useState<boolean>(() => {
@@ -370,6 +396,9 @@ const EnhancedResultsPage: React.FC = () => {
   // Founders-Wall e-mailcapture (flag optioneel, standaard aan)
   const foundersEnabled = (import.meta as any).env?.VITE_FOUNDERS_WALL !== "off";
 
+  // Sticky mobile bar (filters + mini login)
+  const stickyBarEnabled = (import.meta as any).env?.VITE_RESULTS_STICKY_BAR !== "off";
+
   return (
     <main>
       <PageHero
@@ -377,6 +406,44 @@ const EnhancedResultsPage: React.FC = () => {
         title="Outfits op maat — rustig, clean en premium"
         subtitle="Geïnspireerd door jouw voorkeuren en archetype. Minimalistisch gepresenteerd zodat je blik op stijl en silhouet blijft."
       />
+
+      {/* Sticky mobile quick bar (onder Navbar, alleen mobiel) */}
+      {stickyBarEnabled && (
+        <div className="md:hidden sticky top-16 z-40">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] px-3 py-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1">
+                  {(["Casual", "Smart", "Minimal"] as Filter[]).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      aria-pressed={f === filter}
+                      className={[
+                        "px-2.5 py-1 rounded-lg border text-sm",
+                        f === filter
+                          ? "border-[var(--color-primary)] bg-[color-mix(in oklab,var(--color-primary) 12%,transparent)]"
+                          : "border-[var(--color-border)] bg-[var(--color-bg)]",
+                      ].join(" ")}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+                {!isAuthed ? (
+                  <a href="/login" className="inline-flex items-center gap-1 text-sm underline hover:no-underline">
+                    <LogIn className="w-4 h-4" /> Log in
+                  </a>
+                ) : (
+                  <a href="/dashboard" className="inline-flex items-center gap-1 text-sm underline hover:no-underline">
+                    <LayoutDashboard className="w-4 h-4" /> Dashboard
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="container mx-auto px-4 md:px-6 -mt-6 md:-mt-8">
         {/* Toolbar: Filters & view */}
@@ -425,13 +492,7 @@ const EnhancedResultsPage: React.FC = () => {
               >
                 Grid
               </Button>
-              <Button
-                variant="secondary"
-                size="md"
-                icon={<ImageDown className="w-4 h-4" />}
-                as="a"
-                href="#share-help"
-              >
+              <Button variant="secondary" size="md" icon={<ImageDown className="w-4 h-4" />} as="a" href="#share-help">
                 Delen
               </Button>
             </div>
@@ -444,9 +505,7 @@ const EnhancedResultsPage: React.FC = () => {
             {filtered.map((o, i) => (
               <React.Fragment key={o.id}>
                 <OutfitCard outfit={o} view={view} index={i} />
-                {foundersEnabled && i === 2 && (
-                  <FoundersWall key="founders-wall" />
-                )}
+                {foundersEnabled && i === 2 && <FoundersWall key="founders-wall" />}
               </React.Fragment>
             ))}
           </AnimatePresence>
@@ -459,7 +518,7 @@ const EnhancedResultsPage: React.FC = () => {
           </Suspense>
         </div>
 
-        {/* Deel-instructie anker (visueel subtiel) */}
+        {/* Deel-instructie anker */}
         <div id="share-help" className="sr-only">Gebruik "Deel kaart" op een outfit om een deelbare afbeelding te maken.</div>
       </section>
 
@@ -476,6 +535,4 @@ const EnhancedResultsPage: React.FC = () => {
       )}
     </main>
   );
-};
-
-export default EnhancedResultsPage;
+}

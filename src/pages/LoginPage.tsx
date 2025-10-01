@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
-import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, Mail, Link as LinkIcon } from "lucide-react";
+import { Eye, EyeOff, CircleAlert as AlertCircle, CheckCircle2, Mail, Link as LinkIcon, X } from "lucide-react";
 
 function isEmail(v: string) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
@@ -22,6 +22,11 @@ export default function LoginPage() {
   const [showPw, setShowPw] = React.useState(false);
   const [remember, setRemember] = React.useState(true);
 
+  // Forgot password
+  const [forgotOpen, setForgotOpen] = React.useState(false);
+  const [forgotEmail, setForgotEmail] = React.useState("");
+  const [forgotSent, setForgotSent] = React.useState(false);
+
   // Magic-link-mode
   const [magicSent, setMagicSent] = React.useState(false);
 
@@ -41,15 +46,24 @@ export default function LoginPage() {
     if (hasErrors) return;
 
     if (mode === "password") {
-      // Demo: navigeer door bij geldige input
+      try {
+        window.localStorage.setItem("ff_auth", "1");
+        const init = (email[0] || "U").toUpperCase();
+        window.localStorage.setItem("ff_user_initial", init);
+      } catch {}
       nav("/results");
     } else {
-      // Magic-link demo: toon succes en "disable" knoppen
       setMagicSent(true);
       try {
         localStorage.setItem("ff_magic_pending", email);
       } catch {}
     }
+  }
+
+  function openForgot() {
+    setForgotEmail(email);
+    setForgotSent(false);
+    setForgotOpen(true);
   }
 
   return (
@@ -115,7 +129,12 @@ export default function LoginPage() {
             {mode === "password" ? (
               <>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium">Wachtwoord</label>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="block text-sm font-medium">Wachtwoord</label>
+                    <button type="button" onClick={openForgot} className="text-sm underline hover:no-underline">
+                      Wachtwoord vergeten?
+                    </button>
+                  </div>
                   <div className="mt-1 relative">
                     <input
                       id="password"
@@ -212,6 +231,77 @@ export default function LoginPage() {
           </div>
         </div>
       </section>
+
+      {forgotOpen && (
+        <ResetPasswordModal
+          initialEmail={forgotEmail}
+          onClose={() => setForgotOpen(false)}
+          onSend={(mail) => {
+            setForgotEmail(mail);
+            setForgotSent(true);
+            setTimeout(() => setForgotOpen(false), 1200);
+          }}
+          sent={forgotSent}
+        />
+      )}
     </main>
+  );
+}
+
+/** Wachtwoord reset modal — client-only feedback */
+function ResetPasswordModal({
+  initialEmail,
+  onClose,
+  onSend,
+  sent,
+}: {
+  initialEmail: string;
+  onClose: () => void;
+  onSend: (email: string) => void;
+  sent: boolean;
+}) {
+  const [mail, setMail] = React.useState(initialEmail || "");
+  const valid = isEmail(mail);
+
+  return (
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30">
+      <div className="w-full max-w-md rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+          <h2 className="text-lg font-medium text-[var(--color-text)]">Wachtwoord resetten</h2>
+          <button aria-label="Sluiten" className="opacity-70 hover:opacity-100" onClick={onClose}>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-4">
+          <p className="text-sm text-[var(--color-text)]/80 mb-3">
+            Vul je e-mail in. Je ontvangt een link om je wachtwoord te resetten.
+          </p>
+          <label htmlFor="reset-email" className="block text-sm font-medium">E-mail</label>
+          <input
+            id="reset-email"
+            type="email"
+            className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
+            value={mail}
+            onChange={(e) => setMail(e.target.value)}
+            autoFocus
+          />
+          {sent ? (
+            <p className="mt-3 text-sm inline-flex items-center gap-2 text-green-700">
+              <Mail className="h-4 w-4" aria-hidden /> Als dit je e-mail is, staat er zo een resetlink in je inbox.
+            </p>
+          ) : null}
+          <div className="mt-5 flex justify-end gap-2">
+            <button className="ff-btn ff-btn-secondary h-10" onClick={onClose}>Annuleren</button>
+            <button
+              className="ff-btn ff-btn-primary h-10"
+              disabled={!valid}
+              onClick={() => onSend(mail)}
+            >
+              Stuur resetlink
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
