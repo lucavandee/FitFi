@@ -111,7 +111,7 @@ export default function LandingPage() {
                 ].join(" ")}
               >
                 <img
-                  src="/media/hero-style-report.png"
+                  src="/public/media/hero-style-report.png"
                   alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
                   loading="eager"
                   className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)]"
