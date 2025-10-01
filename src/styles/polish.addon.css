@@ -24,23 +24,26 @@
 .ff-focus-ring{ outline: none; box-shadow: var(--shadow-ring); }
 
 /* === PAGE FRAME & HERO-BAND (MOBILE-FIRST) === */
-/* Zorgt ervoor dat alle pagina's dezelfde canvas/bg gebruiken (HowItWorks had canvas). */
+/* Basiskleuren voor de pagina-wrapper (failsafe). */
 #main{ background: var(--color-bg); color: var(--color-text); }
 
-/* Consistente hero-band op alle pagina's die .ff-page-hero gebruiken
-   (How it works + Blog). We voegen hier de lichte band toe, bovenaan de pagina. */
-.ff-page-hero{
-  padding-block: 3.5rem 2rem;
+/* 1) UNIVERSELE FIX — forceer overal een consistente hero-band
+   We targetten het EERSTE child van #main (meestal de hero-sectie).
+   Dit dekt: Home, Hoe-het-werkt en alle andere pagina's.
+   NB: radial-gradient gebruikt overlay-token voor subtiele 'Apple-achtige' band. */
+#main > *:first-child{
+  position: relative;
   background:
-    radial-gradient(1200px 200px at 50% -40px, var(--overlay-surface-12), transparent 70%),
+    radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%),
     var(--color-bg);
 }
 
-/* Fallback: pagina's zonder .ff-page-hero (homepage) krijgen dezelfde band
-   op de eerste sectie. We gebruiken :has() om dubbele bands te voorkomen. */
-main:not(:has(.ff-page-hero)) > section:first-of-type{
+/* 2) Extra: pagina's die expliciet .ff-page-hero gebruiken behouden dezelfde band.
+   (Dubbele background is geen issue; deze regel houdt consistentie bij specifieke secties.) */
+.ff-page-hero{
+  padding-block: 3.5rem 2rem;
   background:
-    radial-gradient(1200px 200px at 50% -40px, var(--overlay-surface-12), transparent 70%),
+    radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%),
     var(--color-bg);
 }
 
@@ -73,7 +76,7 @@ main:not(:has(.ff-page-hero)) > section:first-of-type{
 }
 .ff-card-body{ padding: 1.25rem; }
 
-/* CTA's */
+/* CTA's (conform CTA-regels) */
 .ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.5rem; border-radius: var(--radius-xl); padding:0 .9rem; font-weight:600; }
 .ff-btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
 .ff-btn-primary:hover{ background: var(--ff-color-primary-600); }
@@ -86,8 +89,8 @@ main:not(:has(.ff-page-hero)) > section:first-of-type{
 .ff-blog-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); overflow:hidden; display:flex; flex-direction:column; }
 .ff-blog-card img{ width:100%; aspect-ratio:16/9; object-fit:cover; }
 .ff-blog-meta{ display:flex; gap:.5rem; align-items:center; padding:.75rem 1rem; color:var(--color-muted); font-size:.9rem; }
-.ff-blog-title{ padding:0 1rem .5rem 1rem; font-weight:700; color:var(--color-text); }
-.ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color:var(--color-text); opacity:.95; }
+.ff-blog-title{ padding:0 1rem .5rem 1rem; font-weight:700; color: var(--color-text); }
+.ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color: var(--color-text); opacity:.95; }
 .ff-blog-actions{ margin-top:auto; padding:0 1rem 1rem 1rem; }
 
 /* FAQ (accordion) */
@@ -95,7 +98,7 @@ main:not(:has(.ff-page-hero)) > section:first-of-type{
 .ff-accordion .row{ border-top:1px solid var(--color-border); }
 .ff-accordion .row:first-child{ border-top:0; }
 .ff-accordion summary{ cursor:pointer; padding:1rem; display:flex; align-items:center; justify-content:space-between; color:var(--color-text); }
-.ff-accordion .content{ padding:0 1rem 1rem 1rem; color:var(--color-text); }
+.ff-accordion .content{ padding:0 1rem 1rem 1rem; color: var(--color-text); }
 details.ff-accordion summary{ list-style:none; }
 details.ff-accordion summary::-webkit-details-marker{ display:none; }
 details.ff-accordion summary::after{ content:"▾"; margin-left:.5rem; transition: transform 200ms ease; }
@@ -107,6 +110,6 @@ details[open].ff-accordion summary::after{ transform: rotate(-180deg); }
   .ff-btn{ height:2.75rem; padding-inline:1rem; }
   .ff-navlink{ padding:.45rem .8rem; }
   .ff-card-body{ padding:1rem; }
-  /* Kleinere gaps voor strakker 'app'-gevoel */
+  /* Compactere grids voor meer 'app'-gevoel */
   .ff-blog-grid{ gap:.75rem; }
 }
