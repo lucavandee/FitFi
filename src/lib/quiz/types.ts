@@ -25,7 +25,6 @@ export type AnswerMap = {
   prints?: "effen" | "subtiel" | "statement" | "geen";
   materials?: "mat" | "textuur" | "glans";
   occasions?: ("office" | "smartcasual" | "leisure")[];
-  // client-only foto
   photoDataUrl?: string | null;
 };
 

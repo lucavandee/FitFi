@@ -5,46 +5,25 @@ import { Bookmark, BookmarkCheck, Share2, Info } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
-import { track } from "@/utils/analytics";
+import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
+import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
 
-/**
- * Premium Results — ultra clean:
- * - Heldere hiërarchie, royale maar consistente spacing.
- * - Outfits met 1 primaire actie (Bewaren).
- * - "Waarom dit werkt" en "Pasvorm" zijn minimal cards met platte typografie,
- *   subtiele scheidingslijnen en begrensde breedte voor rust.
- * - Geen globale CSS; alles tokens-first via Tailwind utilities.
- */
-
-type Outfit = { id: string; title: string; vibe: string; notes: string };
-const OUTFITS: Outfit[] = [
-  { id: "o1", title: "Clean Casual",     vibe: "Smart-casual",  notes: "Neutrals en rustige textuur — draagbaar elke dag." },
-  { id: "o2", title: "Office Minimal",   vibe: "Werk/meeting",  notes: "Strakke lijnen met laag contrast voor focus." },
-  { id: "o3", title: "Weekend Uniform",  vibe: "Ontspannen",    notes: "Comfortabel maar geordend; subtiele structuur." },
-  { id: "o4", title: "Monochrome Light", vibe: "Tonal",         notes: "Lang silhouet in 2 lagen; rustig en clean." },
-  { id: "o5", title: "Warm Neutral Mix", vibe: "Casual",        notes: "Warme neutrale mix; zacht contrast." },
-  { id: "o6", title: "Sporty Sharp",     vibe: "Sportief-net",  notes: "Clean sportswear — zonder schreeuwerige branding." },
-];
-
-function readFavs(): string[] {
-  try { return JSON.parse(window.localStorage.getItem("ff_fav_outfits") || "[]"); } catch { return []; }
-}
-function writeFavs(ids: string[]) {
-  try { window.localStorage.setItem("ff_fav_outfits", JSON.stringify(ids)); } catch {}
+function readJson<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    return null;
+  }
 }
 
-/** Visuele 4:5 placeholder — geen externe assets nodig */
+/** 4:5 visual placeholder — klaar voor SmartImage */
 function OutfitVisual({ label }: { label: string }) {
   return (
-    <div
-      role="img"
-      aria-label={label}
-      className="w-full aspect-[4/5] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)]"
-    />
+    <div role="img" aria-label={label} className="w-full aspect-[4/5] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)]" />
   );
 }
 
-/** Compacte sectie-card met royale ademruimte */
 function SectionCard({
   id, title, subtitle, children,
 }: { id?: string; title: string; subtitle?: string; children: React.ReactNode }) {
@@ -56,9 +35,7 @@ function SectionCard({
     >
       <header className="mb-3">
         <h2 id={id ? `${id}-title` : undefined} className="text-lg font-semibold">{title}</h2>
-        {subtitle ? (
-          <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{subtitle}</p>
-        ) : null}
+        {subtitle ? <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{subtitle}</p> : null}
       </header>
       <div className="text-sm">{children}</div>
     </section>
@@ -66,48 +43,61 @@ function SectionCard({
 }
 
 export default function EnhancedResultsPage() {
-  // Schrijf 'last updated' voor Dashboard
+  // Schrijf "last updated" zodra je hier komt.
   React.useEffect(() => {
-    try { window.localStorage.setItem("ff_results_ts", Date.now().toString()); } catch {}
-    track("view_results");
+    try { localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString()); } catch {}
   }, []);
 
-  const [favs, setFavs] = React.useState<string[]>(() => readFavs());
-  const toggleFav = (id: string) => {
-    setFavs(curr => {
-      const exists = curr.includes(id);
-      const next = exists ? curr.filter(x => x !== id) : [...curr, id];
-      writeFavs(next);
-      track(exists ? "favorite_remove" : "favorite_add", { id });
+  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
+  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE) ?? "Smart Casual";
+
+  // Bereid outfits voor op basis van quiz; fallback naar een generieke set
+  const seeds: OutfitSeed[] = React.useMemo(() => {
+    if (color) return getSeedOutfits(color, archetype);
+    // Fallback: Smart Casual + zachte tonals
+    return getSeedOutfits({
+      temperature: "neutraal",
+      value: "medium",
+      contrast: "laag",
+      chroma: "zacht",
+      season: "zomer",
+      paletteName: "Soft Cool Tonals (neutraal)",
+      notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
+    }, "Smart Casual");
+  }, [color, archetype]);
+
+  const [favs, setFavs] = React.useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("ff_fav_outfits") || "[]"); } catch { return []; }
+  });
+
+  function toggleFav(id: string) {
+    setFavs((curr) => {
+      const next = curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id];
+      try { localStorage.setItem("ff_fav_outfits", JSON.stringify(next)); } catch {}
       return next;
     });
-  };
-  const share = () => {
+  }
+
+  function sharePage() {
     const url = typeof window !== "undefined" ? window.location.href : "https://fitfi.ai/results";
-    track("share_results");
     if (navigator.share) { navigator.share({ title: "Mijn FitFi resultaten", url }).catch(() => {}); }
     else if (navigator.clipboard) { navigator.clipboard.writeText(url).catch(() => {}); }
-  };
+  }
 
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Seo
-        title="Jouw resultaten — FitFi"
-        description="Rustige, premium presentatie van jouw outfits en kernuitleg."
-        path="/results"
-      />
-
+      <Seo title="Jouw resultaten — FitFi" description="Jouw kleurprofiel en stijl-archetype met rustige, premium outfits." path="/results" />
       <PageHero
         eyebrow="RESULTATEN"
         title="Outfits op maat — rustig en premium"
         subtitle="Eenvoudig en helder: focus op silhouet, proportie en draagbaarheid."
         align="left"
         size="sm"
-        ctas={[{ label: "Dashboard", to: "/dashboard", variant: "secondary" }]}
+        ctas={[{ label: "Herstart quiz", to: "/stijlquiz", variant: "secondary" }]}
         note={
           <button
             type="button"
-            onClick={share}
+            onClick={sharePage}
             className="inline-flex items-center gap-2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm"
             aria-label="Deel resultaten"
           >
@@ -116,17 +106,39 @@ export default function EnhancedResultsPage() {
         }
       />
 
-      {/* Content: extra afstand tot hero voor rust */}
       <section className="ff-container pt-16 md:pt-20 lg:pt-24 pb-20">
-        {/* Outfits grid */}
-        <div className="mx-auto max-w-[1100px] grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {OUTFITS.map(o => {
+        {/* Profiel-samenvatting */}
+        <div className="mx-auto max-w-[1100px] grid gap-8">
+          <SectionCard
+            id="profile"
+            title="Jouw kleurprofiel"
+            subtitle={color ? color.paletteName : "Standaard palet (quiz nog niet voltooid)"}
+          >
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                <strong>Seizoen:</strong> { (color?.season ?? "zomer") } • <strong>Temperatuur:</strong> { (color?.temperature ?? "neutraal") }
+              </div>
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+                <strong>Contrast:</strong> { (color?.contrast ?? "laag") } • <strong>Lichtheid:</strong> { (color?.value ?? "medium") }
+              </div>
+            </div>
+            <ul className="mt-3 space-y-2 text-sm" role="list">
+              {(color?.notes ?? ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."]).slice(0, 3).map((n, i) => (
+                <li key={i} className="flex gap-3">
+                  <span aria-hidden className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--color-text)]/40" />
+                  <p className="flex-1">{n}</p>
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        </div>
+
+        {/* Outfits */}
+        <div className="mx-auto mt-8 max-w-[1100px] grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {seeds.map((o) => {
             const active = favs.includes(o.id);
             return (
-              <article
-                key={o.id}
-                className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5"
-              >
+              <article key={o.id} className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5">
                 <OutfitVisual label={o.title} />
                 <div className="mt-4 flex items-start justify-between gap-4">
                   <div>
@@ -143,7 +155,7 @@ export default function EnhancedResultsPage() {
                 </div>
                 <p className="mt-2 text-sm text-[var(--color-text)]/80">{o.notes}</p>
                 <div className="mt-3">
-                  <NavLink to="#uitleg" className="text-sm underline hover:no-underline inline-flex items-center gap-1">
+                  <NavLink to="#profile" className="text-sm underline hover:no-underline inline-flex items-center gap-1">
                     <Info className="w-4 h-4" aria-hidden /> Waarom dit werkt
                   </NavLink>
                 </div>
@@ -152,64 +164,7 @@ export default function EnhancedResultsPage() {
           })}
         </div>
 
-        {/* Kennis & Fit — 2 kolommen op desktop, smal en luchtig */}
-        <div className="mx-auto mt-16 grid max-w-[1100px] gap-8 lg:grid-cols-2">
-          {/* Waarom dit werkt */}
-          <SectionCard
-            id="uitleg"
-            title="Waarom dit voor je werkt"
-            subtitle="Kern: proportie, rustige texturen en een zachte tonaliteit."
-          >
-            <ul className="mt-1 space-y-3 leading-relaxed" role="list">
-              {[
-                "Silhouet: max. twee lagen; bovenlaag ±1/3 langer voor visuele lengte.",
-                "Textuur: combineer glad en gebreid voor diepte zonder drukte.",
-                "Kleur: werk tonal (licht-neutraal) met één warme accenttint.",
-              ].map((t, i) => (
-                <li key={i} className="flex gap-3">
-                  <span aria-hidden className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--color-text)]/40" />
-                  <p className="flex-1">{t}</p>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5 text-xs text-[var(--color-text)]/70">
-              Dit is een startpunt — jouw favorieten sturen de volgende generatie outfits.
-            </p>
-          </SectionCard>
-
-          {/* Pasvorm-instellingen */}
-          <SectionCard
-            id="fit"
-            title="Pasvorm-instellingen"
-            subtitle="Fijnslijpen voor silhouet & comfort."
-          >
-            <dl className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)]">
-              {[
-                ["Bovenlaag", "Regular-slim"],
-                ["Broek", "Tapered"],
-                ["Lengte", "Licht cropped (–2 cm)"],
-              ].map(([k, v], i, arr) => (
-                <div
-                  key={k}
-                  className={[
-                    "grid grid-cols-2 items-center px-3 py-2 text-sm",
-                    i < arr.length - 1 ? "border-b border-[var(--color-border)]" : "",
-                  ].join(" ")}
-                >
-                  <dt className="opacity-80">{k}</dt>
-                  <dd className="justify-self-end opacity-70">{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="mt-4 flex justify-end">
-              <Button as={NavLink} to="/results?refresh=1" variant="secondary" onClick={() => track("regenerate_results")}>
-                Genereer opnieuw
-              </Button>
-            </div>
-          </SectionCard>
-        </div>
-
-        {/* Favorieten — rustig chipsblok; zelfde max-breedte */}
+        {/* Favorieten */}
         <section
           id="favorites"
           className="mx-auto mt-10 max-w-[1100px] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] pt-6 pb-6 px-5 sm:px-6"
@@ -222,7 +177,7 @@ export default function EnhancedResultsPage() {
             </p>
           ) : (
             <ul className="mt-3 flex flex-wrap gap-2" role="list">
-              {OUTFITS.filter(o => favs.includes(o.id)).map(o => (
+              {seeds.filter((o) => favs.includes(o.id)).map((o) => (
                 <li key={o.id}>
                   <span className="inline-flex items-center gap-2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm">
                     <BookmarkCheck className="w-4 h-4" aria-hidden /> {o.title}
