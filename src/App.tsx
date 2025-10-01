@@ -12,9 +12,12 @@ const AboutPage          = lazy(() => import("@/pages/AboutPage"));
 const BlogPage           = lazy(() => import("@/pages/BlogPage"));
 const BlogPostPage       = lazy(() => import("@/pages/BlogPostPage"));
 const FAQPage            = lazy(() => import("@/pages/FAQPage"));
-const ContactPage        = lazy(() => import("@/pages/ContactPage"));  // ← toegevoegd
-const TermsPage          = lazy(() => import("@/pages/TermsPage"));    // ← toegevoegd
+const ContactPage        = lazy(() => import("@/pages/ContactPage"));
+const TermsPage          = lazy(() => import("@/pages/TermsPage"));
+const DisclosurePage     = lazy(() => import("@/pages/DisclosurePage"));
 const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
+const LoginPage          = lazy(() => import("@/pages/LoginPage"));     // ← nieuw
+const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));  // ← nieuw
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 export default function App() {
@@ -29,20 +32,16 @@ export default function App() {
               <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
               <Route path="/prijzen" element={<PricingPage />} />
               <Route path="/over-ons" element={<AboutPage />} />
-
-              {/* Blog */}
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
-
-              {/* Nieuw */}
-              <Route path="/contact" element={<ContactPage />} />   {/* ← werkt nu */}
-              <Route path="/terms" element={<TermsPage />} />       {/* ← werkt nu */}
-
               <Route path="/veelgestelde-vragen" element={<FAQPage />} />
               <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/disclosure" element={<DisclosurePage />} />
+              <Route path="/login" element={<LoginPage />} />           {/* ← nieuw */}
+              <Route path="/register" element={<RegisterPage />} />     {/* ← nieuw */}
               <Route path="/results" element={<EnhancedResults />} />
-
-              {/* 404 */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
