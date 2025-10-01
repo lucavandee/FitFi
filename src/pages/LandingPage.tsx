@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
-import { ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Lock, CircleCheck as CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
   return (
