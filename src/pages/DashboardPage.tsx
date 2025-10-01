@@ -28,7 +28,7 @@ function fmt(ts?: number) {
   }
 }
 
-/** Kleine, herbruikbare card zonder globale CSS */
+/** Card met extra top-ademruimte (pt-7/pt-8) — geen globale CSS nodig */
 function Card({
   title,
   icon,
@@ -50,15 +50,16 @@ function Card({
         "border border-[var(--color-border)]",
         "bg-[var(--color-surface)]",
         "shadow-[var(--shadow-soft)]",
-        "p-5 sm:p-6",
+        // >>> verhoogde top-padding voor meer lucht
+        "pt-7 sm:pt-8 pb-5 sm:pb-6 px-5 sm:px-6",
       ].join(" ")}
     >
-      <header className="mb-3 flex items-center gap-3">
+      <header className="mb-4 flex items-center gap-3">
         {icon ? <div className="shrink-0 text-[var(--color-text)]/90">{icon}</div> : null}
         <h2 className="text-base font-semibold">{title}</h2>
       </header>
       <div className="text-sm">{children}</div>
-      {footer ? <div className="mt-4">{footer}</div> : null}
+      {footer ? <div className="mt-5">{footer}</div> : null}
     </article>
   );
 }
@@ -95,7 +96,6 @@ export default function DashboardPage() {
         path="/dashboard"
       />
 
-      {/* HERO — rustige hiërarchie, links uitgelijnd */}
       <PageHero
         id="page-dashboard"
         eyebrow="ACCOUNT"
@@ -116,7 +116,6 @@ export default function DashboardPage() {
         }
       />
 
-      {/* CONTENT */}
       <section className="ff-container pb-14">
         <div className="grid gap-6 md:grid-cols-3 items-stretch">
           {/* Jouw status */}
@@ -144,15 +143,12 @@ export default function DashboardPage() {
               {lastUpdated ? (
                 <> Laatst geüpdatet op <strong>{fmt(lastUpdated)}</strong>.</>
               ) : (
-                <>
-                  {" "}
-                  Klik op <em>Begin opnieuw</em> om je profiel te (her)genereren.
-                </>
+                <> Klik op <em>Begin opnieuw</em> om je profiel te (her)genereren.</>
               )}
             </p>
 
             {/* Mini-stat strip */}
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-5 grid grid-cols-3 gap-3">
               <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
                 <Shirt className="mx-auto h-4 w-4 opacity-80" aria-hidden />
                 <div className="mt-1 text-xs opacity-70">Outfits</div>
@@ -172,20 +168,14 @@ export default function DashboardPage() {
           </Card>
 
           {/* Snelle acties */}
-          <Card
-            title="Snelle acties"
-            icon={<Sparkles className="w-5 h-5" aria-hidden />}
-          >
+          <Card title="Snelle acties" icon={<Sparkles className="w-5 h-5" aria-hidden />}>
             <ul className="grid gap-2" role="list">
               <li className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
                 <div>
                   <div className="text-sm font-medium">Verbeter je pasvorm-instellingen</div>
                   <p className="text-xs opacity-70">Maak silhouet en proportie nog scherper.</p>
                 </div>
-                <NavLink
-                  to="/results#fit"
-                  className="inline-flex items-center gap-1 underline hover:no-underline"
-                >
+                <NavLink to="/results#fit" className="inline-flex items-center gap-1 underline hover:no-underline">
                   Open <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </li>
@@ -194,10 +184,7 @@ export default function DashboardPage() {
                   <div className="text-sm font-medium">Bekijk uitleg bij je archetype</div>
                   <p className="text-xs opacity-70">Waarom werkt dit voor jou?</p>
                 </div>
-                <NavLink
-                  to="/results#archetype"
-                  className="inline-flex items-center gap-1 underline hover:no-underline"
-                >
+                <NavLink to="/results#archetype" className="inline-flex items-center gap-1 underline hover:no-underline">
                   Open <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </li>
@@ -206,16 +193,13 @@ export default function DashboardPage() {
                   <div className="text-sm font-medium">Bewaar je favoriete outfits</div>
                   <p className="text-xs opacity-70">Curate je eigen selectie voor later.</p>
                 </div>
-                <NavLink
-                  to="/results#favorites"
-                  className="inline-flex items-center gap-1 underline hover:no-underline"
-                >
+                <NavLink to="/results#favorites" className="inline-flex items-center gap-1 underline hover:no-underline">
                   Open <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </li>
             </ul>
 
-            <div className="mt-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+            <div className="mt-5 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
               <div className="flex items-start gap-2 text-sm">
                 <Info className="mt-0.5 h-4 w-4 opacity-80" aria-hidden />
                 <p className="opacity-80">
@@ -254,13 +238,14 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Support teaser */}
+        {/* Support teaser (matching spacing) */}
         <div
           className={[
             "mt-6",
             "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
             "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
-            "p-5 sm:p-6",
+            // iets meer top-padding zodat het visueel in lijn ligt met de cards
+            "pt-7 sm:pt-8 pb-5 sm:pb-6 px-5 sm:px-6",
           ].join(" ")}
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
