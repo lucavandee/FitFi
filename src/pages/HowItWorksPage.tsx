@@ -1,54 +1,130 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-
-type Step = { title: string; desc: string; };
-const STEPS: Step[] = [
-  { title: "1) Beantwoord 6 vragen", desc: "Snel en duidelijk. Zonder account of upload. Je kiest voorkeuren en doelen." },
-  { title: "2) Jouw stijlprofiel", desc: "We berekenen je archetypen (bijv. Minimal, Smart Casual, Italiaans) en kleuraccenten." },
-  { title: "3) Outfits met uitleg", desc: "Complete sets + waarom het werkt voor jouw silhouet, kleur en gelegenheid." },
-  { title: "4) Slim shoppen", desc: "Shoplinks per item, privacy-first. We kiezen kwaliteit boven ruis." },
-  { title: "5) Updates & variaties", desc: "Later: seizoensupdates, wishlist, alternatieven in jouw smaak en budget." },
-  { title: "6) Uitleg & vertrouwen", desc: "Geen 'black box': we leggen kort uit waarom elk item matcht. Transparant en nuchter." },
-];
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 export default function HowItWorksPage() {
   return (
-    <main id="main" className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-text)]">
-      <section className="ff-container ff-page-hero">
-        <span className="ff-eyebrow">Uitleg</span>
-        <h1 className="ff-hero-title text-3xl md:text-5xl mt-3">Hoe FitFi werkt</h1>
-        <p className="ff-hero-sub mt-4 max-w-2xl">
-          Antwoord op 6 korte vragen en ontvang direct looks die bij je passen — inclusief context, match-uitleg en shoplinks.
-        </p>
-        <div className="mt-6 flex gap-3">
-          <NavLink to="/" className="ff-btn ff-btn-primary">Start gratis</NavLink>
-          <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>
-        </div>
-      </section>
+    <main id="main">
+      <Helmet>
+        <title>Hoe het werkt — FitFi</title>
+        <meta
+          name="description"
+          content="Beantwoord 6 korte vragen en ontvang direct looks die bij je passen — inclusief context, match-uitleg en shoplinks."
+        />
+      </Helmet>
 
-      <section className="ff-container ff-section">
-        <div className="grid md:grid-cols-3 gap-6">
-          {STEPS.map((s, i) => (
-            <article key={i} className="ff-card">
-              <div className="ff-card-body">
-                <h3 className="font-heading text-lg">{s.title}</h3>
-                <p className="text-[var(--color-text)]/80 mt-2">{s.desc}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      {/* HERO — identieke constructie als 'Prijzen': lichte band + ff-page-hero */}
+      <section
+        aria-label="Introductie"
+        // Subtiele lichte band direct onder de header (tokens-only, geen hex)
+        style={{
+          background:
+            "radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%), var(--color-bg)",
+        }}
+      >
+        <div className="ff-container ff-page-hero">
+          <span className="ff-eyebrow">Uitleg</span>
+          <h1 className="ff-hero-title text-4xl md:text-5xl">
+            Hoe FitFi werkt
+          </h1>
+          <p className="ff-hero-sub mt-3 max-w-prose">
+            Antwoord op 6 korte vragen en ontvang direct looks die bij je passen
+            — inclusief context, match-uitleg en shoplinks.
+          </p>
 
-      <section className="ff-container ff-section">
-        <div className="ff-card">
-          <div className="ff-card-body">
-            <h2 className="font-heading text-xl">Wat je ervan mag verwachten</h2>
-            <ul className="mt-3 space-y-2 list-disc pl-5 text-[var(--color-text)]/90">
-              <li>Rustige, premium UI — dezelfde stijl als de homepage.</li>
-              <li>Uitleg per outfit zodat je snapt waarom iets bij je past.</li>
-              <li>Privacy-first: alleen wat nodig is om je te adviseren.</li>
-            </ul>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link to="/onboarding" className="ff-btn ff-btn-primary">
+              Start gratis
+            </Link>
+            <Link to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">
+              Veelgestelde vragen
+            </Link>
           </div>
+        </div>
+      </section>
+
+      {/* STAPPEN — laat bestaande inhoud in stand, alleen tokens/klassen voor polish */}
+      <section className="ff-section">
+        <div className="ff-container grid gap-4 md:grid-cols-3">
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">1) Beantwoord 6 vragen</h3>
+              <p className="mt-1 ff-hero-sub">
+                Snel en duidelijk. Zonder account of upload. Je kiest voorkeuren
+                en doelen.
+              </p>
+            </div>
+          </article>
+
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">2) Jouw stijlprofiel</h3>
+              <p className="mt-1 ff-hero-sub">
+                We berekenen je archetypen (bijv. Minimal, Smart Casual,
+                Italiaans) en kleuraccenten.
+              </p>
+            </div>
+          </article>
+
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">3) Outfits met uitleg</h3>
+              <p className="mt-1 ff-hero-sub">
+                Complete sets + waarom het werkt voor jouw silhouet, kleur en
+                gelegenheid.
+              </p>
+            </div>
+          </article>
+
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">4) Slim shoppen</h3>
+              <p className="mt-1 ff-hero-sub">
+                Shoplinks per item, privacy-first. We kiezen kwaliteit boven
+                ruis.
+              </p>
+            </div>
+          </article>
+
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">5) Updates & variaties</h3>
+              <p className="mt-1 ff-hero-sub">
+                Later: seizoensupdates, wishlist, alternatieven in jouw smaak en
+                budget.
+              </p>
+            </div>
+          </article>
+
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">6) Uitleg & vertrouwen</h3>
+              <p className="mt-1 ff-hero-sub">
+                Geen 'black box': we leggen kort uit waarom elk item matcht.
+                Transparant en nuchter.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* Verwachtingen — ongewijzigde inhoud, card-stijl voor rust & consistentie */}
+      <section className="ff-section">
+        <div className="ff-container">
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h2 className="text-xl font-semibold">Wat je ervan mag verwachten</h2>
+              <ul className="mt-2 space-y-1 ff-hero-sub">
+                <li>Rustige, premium UI — dezelfde stijl als de homepage.</li>
+                <li>
+                  Uitleg per outfit zodat je snapt waarom iets bij je past.
+                </li>
+                <li>
+                  Privacy-first: alleen wat nodig is om je te adviseren.
+                </li>
+              </ul>
+            </div>
+          </article>
         </div>
       </section>
     </main>
