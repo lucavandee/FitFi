@@ -1,9 +1,18 @@
-// /src/pages/LoginPage.tsx
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
-import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, Mail, Link as LinkIcon, X, ShieldCheck } from "lucide-react";
+import Seo from "@/components/seo/Seo";
+import {
+  Eye,
+  EyeOff,
+  CircleAlert as AlertCircle,
+  CheckCircle2,
+  Mail,
+  Link as LinkIcon,
+  X,
+  ShieldCheck,
+} from "lucide-react";
 
 /** Basale e-mailvalidatie (client-side) */
 function isEmail(v: string) {
@@ -25,7 +34,7 @@ function passwordStrength(pw: string) {
   if (pw.length < 12) tips.push("Gebruik ≥ 12 tekens");
   if (!/[A-Z]/.test(pw) || !/[a-z]/.test(pw)) tips.push("Mix hoofd-/kleine letters");
   if (!/\d/.test(pw)) tips.push("Voeg een cijfer toe");
-  if (!/[^A-Za-z0-9]/.test(pw)) tips.push("Voeg een symbool toe");
+  if (/[^A-Za-z0-9]/.test(pw)) tips.push("Voeg een symbool toe");
 
   return { score, label: labels[score], tips };
 }
@@ -103,10 +112,8 @@ export default function LoginPage() {
     setForgotOpen(true);
   }
 
-  // Helpers: velden 'touched' markeren
   const touch = (key: string) => setTouched((t) => (t[key] ? t : { ...t, [key]: true }));
 
-  // Primair disablen tot geldig
   const canSubmit =
     mode === "password"
       ? isEmail(email) && password.length >= 8
@@ -114,7 +121,12 @@ export default function LoginPage() {
 
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      {/* HERO — luchtig, links uitgelijnd, tokens-first */}
+      <Seo
+        title="Inloggen — FitFi"
+        description="Log in bij FitFi om je AI Style Report, outfits en shoplinks te bekijken."
+        path="/inloggen"
+      />
+
       <PageHero
         id="page-login"
         eyebrow="ACCOUNT"
@@ -143,7 +155,7 @@ export default function LoginPage() {
           ].join(" ")}
           aria-label="Login formulier"
         >
-          {/* Tabs / mode switch — segment control zonder globale CSS */}
+          {/* Tabs */}
           <div className="px-5 pt-5">
             <div
               className="inline-flex items-center gap-2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-1"
@@ -196,10 +208,7 @@ export default function LoginPage() {
                   "border-[var(--color-border)] focus:outline-none focus:shadow-[var(--shadow-ring)]",
                 ].join(" ")}
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  touch("email");
-                }}
+                onChange={(e) => { setEmail(e.target.value); touch("email"); }}
                 onBlur={() => touch("email")}
                 aria-invalid={!!(touched.email && emailError)}
                 aria-describedby={touched.email && emailError ? "err-email" : undefined}
@@ -235,10 +244,7 @@ export default function LoginPage() {
                         "border-[var(--color-border)] focus:outline-none focus:shadow-[var(--shadow-ring)]",
                       ].join(" ")}
                       value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        touch("password");
-                      }}
+                      onChange={(e) => { setPassword(e.target.value); touch("password"); }}
                       onBlur={() => touch("password")}
                       aria-invalid={!!(touched.password && pwError)}
                       aria-describedby={touched.password && pwError ? "err-password" : undefined}
@@ -259,12 +265,9 @@ export default function LoginPage() {
                     </p>
                   )}
 
-                  {/* Strength meter — volledig inline, tokens-first */}
+                  {/* Strength meter */}
                   <div className="mt-2">
-                    <div
-                      className="h-2 w-full rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden"
-                      aria-hidden="true"
-                    >
+                    <div className="h-2 w-full rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden" aria-hidden="true">
                       <div
                         className="h-full"
                         style={{
@@ -286,11 +289,7 @@ export default function LoginPage() {
                 </div>
 
                 <label className="flex items-center gap-2 select-none">
-                  <input
-                    type="checkbox"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                  />
+                  <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                   <span className="text-sm">Ingelogd blijven</span>
                 </label>
               </>
@@ -308,73 +307,45 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Acties — via ons Button component (tokens-first) */}
+            {/* Acties */}
             <div className="mt-2 flex flex-wrap gap-3">
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                disabled={!canSubmit}
-                aria-disabled={!canSubmit}
-              >
+              <Button type="submit" variant="primary" size="lg" disabled={!canSubmit} aria-disabled={!canSubmit}>
                 {mode === "password" ? "Inloggen" : magicSent ? "Verzonden" : "Stuur magic-link"}
               </Button>
 
               {mode === "password" ? (
-                <Button as={NavLink} to="/registreren" variant="secondary" size="lg">
-                  Account aanmaken
-                </Button>
+                <Button as={NavLink} to="/registreren" variant="secondary" size="lg">Account aanmaken</Button>
               ) : (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="lg"
-                  onClick={() => {
-                    setMode("password");
-                    setMagicSent(false);
-                  }}
-                >
+                <Button type="button" variant="secondary" size="lg" onClick={() => { setMode("password"); setMagicSent(false); }}>
                   Inloggen met wachtwoord
                 </Button>
               )}
             </div>
 
-            {/* Hulptekst na submit met fouten */}
             {submitted && hasErrors ? (
               <p className="text-[12px] text-[var(--color-text)]/70">
-                Tip: vul een geldig e-mailadres
-                {mode === "password" ? " en een wachtwoord van ≥ 8 tekens" : ""} in om door te gaan.
+                Tip: vul een geldig e-mailadres{mode === "password" ? " en een wachtwoord van ≥ 8 tekens" : ""} in om door te gaan.
               </p>
             ) : null}
 
-            {/* Juridisch / reassurance */}
+            {/* Juridisch */}
             <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[var(--color-text)]/70">
-              <NavLink to="/algemene-voorwaarden" className="underline hover:no-underline">
-                Voorwaarden
-              </NavLink>
+              <NavLink to="/algemene-voorwaarden" className="underline hover:no-underline">Voorwaarden</NavLink>
               <span>•</span>
-              <NavLink to="/disclosure" className="underline hover:no-underline">
-                Disclosure
-              </NavLink>
+              <NavLink to="/disclosure" className="underline hover:no-underline">Disclosure</NavLink>
               <span>•</span>
-              <NavLink to="/veelgestelde-vragen" className="underline hover:no-underline">
-                FAQ
-              </NavLink>
+              <NavLink to="/veelgestelde-vragen" className="underline hover:no-underline">FAQ</NavLink>
             </div>
           </form>
         </div>
       </section>
 
-      {/* Forgot password modal — volledig lokaal gestyled */}
+      {/* Forgot password modal */}
       {forgotOpen && (
         <ResetPasswordModal
           initialEmail={forgotEmail}
           onClose={() => setForgotOpen(false)}
-          onSend={(mail) => {
-            setForgotEmail(mail);
-            setForgotSent(true);
-            setTimeout(() => setForgotOpen(false), 1200);
-          }}
+          onSend={(mail) => { setForgotEmail(mail); setForgotSent(true); setTimeout(() => setForgotOpen(false), 1200); }}
           sent={forgotSent}
         />
       )}
@@ -382,7 +353,7 @@ export default function LoginPage() {
   );
 }
 
-/** Reset modal — geen globale CSS afhankelijkheden */
+/** Reset modal — focus-trap + ESC; geen globale CSS afhankelijkheden */
 function ResetPasswordModal({
   initialEmail,
   onClose,
@@ -396,20 +367,30 @@ function ResetPasswordModal({
 }) {
   const [mail, setMail] = React.useState(initialEmail || "");
   const valid = isEmail(mail);
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const root = dialogRef.current;
+    if (!root) return;
+    const focusables = root.querySelectorAll<HTMLElement>('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    first?.focus();
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") { e.preventDefault(); onClose(); }
+      if (e.key === "Tab" && focusables.length > 0) {
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30"
-    >
-      <div
-        className={[
-          "w-full max-w-md",
-          "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
-          "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
-        ].join(" ")}
-      >
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30">
+      <div ref={dialogRef} className={["w-full max-w-md","rounded-[var(--radius-2xl)] border border-[var(--color-border)]","bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"].join(" ")}>
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
           <h2 className="text-lg font-medium text-[var(--color-text)]">Wachtwoord resetten</h2>
           <button aria-label="Sluiten" className="opacity-70 hover:opacity-100" onClick={onClose}>
@@ -417,32 +398,17 @@ function ResetPasswordModal({
           </button>
         </div>
         <div className="p-4">
-          <p className="text-[12px] text-[var(--color-text)]/70 mb-3">
-            Vul je e-mail in. Je ontvangt een link om je wachtwoord te resetten.
-          </p>
-          <label htmlFor="reset-email" className="block text-sm font-medium">
-            E-mail
-          </label>
-          <input
-            id="reset-email"
-            type="email"
-            className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 focus:outline-none focus:shadow-[var(--shadow-ring)]"
-            value={mail}
-            onChange={(e) => setMail(e.target.value)}
-            autoFocus
-          />
+          <p className="text-[12px] text-[var(--color-text)]/70 mb-3">Vul je e-mail in. Je ontvangt een link om je wachtwoord te resetten.</p>
+          <label htmlFor="reset-email" className="block text-sm font-medium">E-mail</label>
+          <input id="reset-email" type="email" className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 focus:outline-none focus:shadow-[var(--shadow-ring)]" value={mail} onChange={(e) => setMail(e.target.value)} autoFocus />
           {sent ? (
             <p className="mt-3 text-sm inline-flex items-center gap-2 text-[var(--color-primary)]">
               <Mail className="h-4 w-4" aria-hidden /> Als dit je e-mail is, staat er zo een resetlink in je inbox.
             </p>
           ) : null}
           <div className="mt-5 flex justify-end gap-2">
-            <Button variant="secondary" size="lg" onClick={onClose}>
-              Annuleren
-            </Button>
-            <Button variant="primary" size="lg" disabled={!valid} onClick={() => onSend(mail)}>
-              Stuur resetlink
-            </Button>
+            <Button variant="secondary" size="lg" onClick={onClose}>Annuleren</Button>
+            <Button variant="primary" size="lg" disabled={!valid} onClick={() => onSend(mail)}>Stuur resetlink</Button>
           </div>
         </div>
       </div>
