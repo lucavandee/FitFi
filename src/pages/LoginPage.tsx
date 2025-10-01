@@ -86,7 +86,7 @@ export default function LoginPage() {
         const init = (email[0] || "U").toUpperCase();
         window.localStorage.setItem("ff_user_initial", init);
       } catch {}
-      nav("/results");
+      nav("/dashboard");
     } else {
       // Magic-link demo: toon succes en disable primair
       setMagicSent(true);
