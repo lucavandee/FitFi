@@ -2,16 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import {
-  ShieldCheck,
-  Sparkles,
-  Handshake,
-  Gauge,
-  Leaf,
-  CheckCircle2,
-  Shapes,
-  Brain,
-} from "lucide-react";
+import { ShieldCheck, Sparkles, Handshake, Gauge, Leaf, CircleCheck as CheckCircle2, Shapes, Brain } from "lucide-react";
 
 type Value = { icon: React.ComponentType<any>; title: string; desc: string };
 type Principle = { icon: React.ComponentType<any>; title: string; desc: string };
