@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import Button from "@/components/ui/Button";
+import HeroImage from "@/components/media/HeroImage";
 
 export default function LandingPage() {
   return (
@@ -29,7 +30,7 @@ export default function LandingPage() {
             Beantwoord 6–10 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.
           </p>
 
-          {/* CTA's — gefixt met echte routes */}
+          {/* CTA's */}
           <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
             <Button as={NavLink} to="/stijlquiz" variant="primary" size="lg" aria-label="Start gratis stijlquiz">
               Start gratis
@@ -48,14 +49,14 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Hero visual rechts/onder — jouw aangeleverde afbeelding uit /public */}
+        {/* Hero visual */}
         <div className="ff-container">
           <div className="mt-4 md:mt-6 lg:mt-8 grid md:grid-cols-2 gap-6 items-center">
             <div className="order-2 md:order-1">
               <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
                 <h2 className="text-lg font-semibold">Voorbeeld van je Style Report</h2>
                 <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                  Rustig en premium. We focussen op pasvorm, kleurpalet en draagbare combinaties — zonder ruis.
+                  Rustig en premium. Focus op pasvorm, kleurpalet en draagbare combinaties — zonder ruis.
                 </p>
                 <ul className="mt-3 grid gap-2 text-sm" role="list">
                   <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">• Kleurpalet (warm/koel, licht/donker, contrast)</li>
@@ -66,83 +67,33 @@ export default function LandingPage() {
             </div>
 
             <div className="order-1 md:order-2 flex justify-center">
-              {/* Debug: Test multiple image paths */}
-              <div className="space-y-4">
-                <div className="text-sm text-red-500">Debug: Testing image paths</div>
-                
-                {/* Test 1: /hero/style-report.webp */}
-                <div className="border-2 border-blue-500 p-2">
-                  <div className="text-xs">Test 1: /hero/style-report.webp</div>
-                  <img
-                    src="/hero/style-report.webp"
-                    alt="Test 1"
-                    className="w-32 h-auto"
-                    onLoad={() => console.log('✅ /hero/style-report.webp loaded')}
-                    onError={() => console.log('❌ /hero/style-report.webp failed')}
-                  />
-                </div>
-
-                {/* Test 2: /hero/style-report.png */}
-                <div className="border-2 border-green-500 p-2">
-                  <div className="text-xs">Test 2: /hero/style-report.png</div>
-                  <img
-                    src="/hero/style-report.png"
-                    alt="Test 2"
-                    className="w-32 h-auto"
-                    onLoad={() => console.log('✅ /hero/style-report.png loaded')}
-                    onError={() => console.log('❌ /hero/style-report.png failed')}
-                  />
-                </div>
-
-                {/* Test 3: public/hero/style-report.png */}
-                <div className="border-2 border-yellow-500 p-2">
-                  <div className="text-xs">Test 3: public/hero/style-report.png</div>
-                  <img
-                    src="public/hero/style-report.png"
-                    alt="Test 3"
-                    className="w-32 h-auto"
-                    onLoad={() => console.log('✅ public/hero/style-report.png loaded')}
-                    onError={() => console.log('❌ public/hero/style-report.png failed')}
-                  />
-                </div>
-
-                {/* Test 4: ./hero/style-report.png */}
-                <div className="border-2 border-purple-500 p-2">
-                  <div className="text-xs">Test 4: ./hero/style-report.png</div>
-                  <img
-                    src="./hero/style-report.png"
-                    alt="Test 4"
-                    className="w-32 h-auto"
-                    onLoad={() => console.log('✅ ./hero/style-report.png loaded')}
-                    onError={() => console.log('❌ ./hero/style-report.png failed')}
-                  />
-                </div>
-
-                {/* Test 5: Known working image */}
-                <div className="border-2 border-red-500 p-2">
-                  <div className="text-xs">Test 5: /placeholder.png (should work)</div>
-                  <img
-                    src="/placeholder.png"
-                    alt="Test 5"
-                    className="w-32 h-auto"
-                    onLoad={() => console.log('✅ /placeholder.png loaded')}
-                    onError={() => console.log('❌ /placeholder.png failed')}
-                  />
-                </div>
-              </div>
+              <HeroImage
+                className="w-full max-w-[520px] h-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
+                alt="FitFi Style Report — voorbeeldweergave op mobiel"
+                // Probeer eerst jouw geüploade naam; daarna alternatieven
+                sources={[
+                  "/hero/hero-highres.webp",
+                  "/hero/hero-highres.png",
+                  "/hero/style-report.webp",
+                  "/hero/style-report.png",
+                ]}
+                width={900}
+                height={1200}
+                eager
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Hoe het werkt (3 stappen) */}
+      {/* Hoe het werkt */}
       <section className="ff-container pt-16 md:pt-20">
         <h2 className="text-2xl sm:text-3xl font-semibold">Hoe het werkt</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[
-            { title: "Beantwoord 6–10 vragen", text: "Korte, visuele keuzes. Privacy-first, geen account nodig om te starten." },
+            { title: "Beantwoord 6–10 vragen", text: "Korte, visuele keuzes. Privacy-first; geen account nodig om te starten." },
             { title: "Ontvang je Style Report", text: "Kleurprofiel, pasvorm-instellingen en 6 outfits — rustig en draagbaar." },
-            { title: "Bewaar & shop", text: "Favorieten opslaan. Shoplinks worden geactiveerd zodra partners live zijn." },
+            { title: "Bewaar & shop", text: "Favorieten opslaan. Shoplinks gaan aan zodra partners live zijn." },
           ].map((s, i) => (
             <div key={i} className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
               <div className="text-sm opacity-60">Stap {i + 1}</div>
@@ -153,7 +104,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Waarom FitFi (trust) */}
+      {/* Waarom FitFi */}
       <section className="ff-container pt-14">
         <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
           <h2 className="text-lg font-semibold">Waarom FitFi</h2>
@@ -165,7 +116,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ teaser + CTA einde */}
+      {/* FAQ + eind-CTA */}
       <section className="ff-container pt-14 pb-20">
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
