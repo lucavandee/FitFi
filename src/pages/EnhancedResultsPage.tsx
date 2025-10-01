@@ -1,12 +1,27 @@
 // /src/pages/EnhancedResultsPage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag } from "lucide-react";
 
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import Button from "@/components/ui/Button";
+
+// Framer Motion fallback - gebruik CSS animations als framer-motion niet beschikbaar is
+let AnimatePresence: any = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+let motion: any = {
+  article: "article",
+  div: "div"
+};
+
+// Probeer framer-motion te laden, maar faal gracefully
+try {
+  const framerMotion = require("framer-motion");
+  AnimatePresence = framerMotion.AnimatePresence;
+  motion = framerMotion.motion;
+} catch {
+  // Gebruik CSS fallbacks
+}
 
 // Conditional framer-motion import with fallback
 let AnimatePresence: any = ({ children }: { children: React.ReactNode }) => <>{children}</>;

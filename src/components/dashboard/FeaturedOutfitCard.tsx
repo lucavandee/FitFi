@@ -1,10 +1,22 @@
 // /src/components/dashboard/FeaturedOutfitCard.tsx
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star, Sparkles } from "lucide-react";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
 import { track } from "@/utils/analytics";
+
+// Framer Motion fallback
+let motion: any = {
+  div: "div"
+};
+
+// Probeer framer-motion te laden, maar faal gracefully
+try {
+  const framerMotion = require("framer-motion");
+  motion = framerMotion.motion;
+} catch {
+  // Gebruik CSS fallbacks
+}
 
 interface FeaturedOutfitCardProps {
   outfit?: {

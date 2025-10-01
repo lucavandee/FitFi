@@ -20,7 +20,13 @@ export default defineConfig(({ mode }) => {
     },
     // Overige projectinstellingen blijven ongewijzigd
     server: { port: 5173 },
-    build: { sourcemap: false },
+    build: { 
+      sourcemap: false,
+      target: 'es2022',
+      rollupOptions: {
+        external: [],
+      },
+    },
     define: {
       __FITFI_CANONICAL__: JSON.stringify(host),
     },
