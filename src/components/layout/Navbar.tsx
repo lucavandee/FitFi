@@ -1,4 +1,3 @@
-// /src/components/layout/Navbar.tsx
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -6,12 +5,10 @@ import { Menu, X } from "lucide-react";
 /**
  * Premium, rustige Navbar:
  * - Sticky + lichte blur
- * - Perfecte horizontale uitlijning via ff-container
- * - EÉN header, EÉN Navbar
- * - Primaire CTA: "Start gratis"
- * - Secundaire CTA: "Log in" (nieuw)
+ * - Eén Navbar (geen extra headers)
+ * - Desktop: links + Log in (secondary) + Start gratis (primary)
+ * - Mobiel: sheet met dezelfde links + Log in / Start gratis
  * - A11Y: skiplink, aria-expanded, ESC sluit, focus-ring via tokens
- * - Active nav = subtiele chip (accent-tint)
  */
 
 function useLockBody(lock: boolean) {
@@ -37,12 +34,10 @@ export default function Navbar() {
   const { pathname } = useLocation();
   useLockBody(open);
 
-  // Sluit mobiel menu bij routewissel of ESC
+  // Sluit menu bij routewissel of ESC
   React.useEffect(() => setOpen(false), [pathname]);
   React.useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
@@ -51,7 +46,7 @@ export default function Navbar() {
     <header
       className={[
         "sticky top-0 z-50 border-b border-[var(--color-border)]",
-        "backdrop-blur supports-[backdrop-filter]:bg-[color-mix(in_oklab,var(--color-surface)_80%,transparent)]",
+        "backdrop-blur supports-[backdrop-filter]:bg-[color-mix(in oklab,var(--color-surface) 80%,transparent)]",
         "bg-[var(--color-surface)]/90",
       ].join(" ")}
       role="banner"
@@ -64,18 +59,15 @@ export default function Navbar() {
         Naar hoofdinhoud
       </a>
 
-      <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+      <div className="ff-container h-16 flex items-center justify-between">
         {/* Brand */}
-        <div className="flex items-center gap-2">
-          <a
-            href="/"
-            className="inline-flex items-center rounded-xl px-2 py-1 focus-visible:shadow-[var(--shadow-ring)]"
-            aria-label="FitFi Home"
-          >
-            {/* Tekst-wordmark; vervang gerust door <img> met alt als je logo-asset gebruikt */}
-            <span className="text-base font-semibold tracking-wide text-[var(--color-text)]">FitFi</span>
-          </a>
-        </div>
+        <a
+          href="/"
+          className="inline-flex items-center rounded-xl px-2 py-1 focus-visible:shadow-[var(--shadow-ring)]"
+          aria-label="FitFi Home"
+        >
+          <span className="text-base font-semibold tracking-wide">FitFi</span>
+        </a>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-2" aria-label="Hoofdmenu">
@@ -86,28 +78,19 @@ export default function Navbar() {
 
         {/* CTA's + Mobile toggle */}
         <div className="flex items-center gap-2">
-          {/* Nieuw: Log in (secondary/ghost) — zichtbaar op ≥sm */}
-          <a
-            href="/login"
-            className="hidden sm:inline-flex items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)] h-9"
-            data-event="nav_login"
-          >
+          {/* Nieuw: Log in (secondary/ghost) — ≥ sm */}
+          <a href="/login" className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
             Log in
           </a>
-
-          {/* Bestond: Start gratis (primary) */}
-          <a
-            href="/results"
-            className="hidden sm:inline-flex items-center justify-center rounded-[var(--radius-xl)] bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-primary-hover)] focus-visible:shadow-[var(--shadow-ring)] h-9"
-            data-event="nav_start_gratis"
-          >
+          {/* Primaire CTA */}
+          <a href="/results" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
             Start gratis
           </a>
 
           {/* Mobile toggle */}
           <button
             type="button"
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] focus-visible:shadow-[var(--shadow-ring)]"
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)]"
             aria-label={open ? "Menu sluiten" : "Menu openen"}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -125,7 +108,7 @@ export default function Navbar() {
         className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]"
         aria-label="Mobiel menu"
       >
-        <div className="container mx-auto px-4 md:px-6 py-3">
+        <div className="ff-container py-3">
           <ul className="flex flex-col divide-y divide-[var(--color-border)]">
             {links.map((l) => (
               <li key={l.to}>
@@ -133,11 +116,10 @@ export default function Navbar() {
                   to={l.to}
                   className={({ isActive }) =>
                     [
-                      "block px-2 py-3 rounded-xl focus-visible:shadow-[var(--shadow-ring)]",
-                      "transition-colors text-[var(--color-text)]",
+                      "block px-2 py-3 rounded-xl focus-visible:shadow-[var(--shadow-ring)] transition-colors",
                       isActive
-                        ? "bg-[color-mix(in_oklab,var(--color-primary)_14%,transparent)] border border-[var(--color-primary)]"
-                        : "hover:bg-[color-mix(in_oklab,var(--color-primary)_10%,transparent)] border border-transparent",
+                        ? "bg-[color-mix(in oklab,var(--color-primary) 14%,transparent)] border border-[var(--color-primary)]"
+                        : "hover:bg-[color-mix(in oklab,var(--color-primary) 10%,transparent)] border border-transparent",
                     ].join(" ")
                   }
                 >
@@ -147,18 +129,12 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Nieuw: Auth CTA's ook mobiel beschikbaar */}
+          {/* Auth CTA's mobiel */}
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <a 
-              href="/login" 
-              className="inline-flex items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)] h-10 w-full"
-            >
+            <a href="/login" className="ff-btn ff-btn-secondary h-10 w-full">
               Log in
             </a>
-            <a 
-              href="/results" 
-              className="inline-flex items-center justify-center rounded-[var(--radius-xl)] bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-primary-hover)] focus-visible:shadow-[var(--shadow-ring)] h-10 w-full"
-            >
+            <a href="/results" className="ff-btn ff-btn-primary h-10 w-full">
               Start gratis
             </a>
           </div>
@@ -174,12 +150,12 @@ function NavChip({ to, label }: { to: string; label: string }) {
       to={to}
       className={({ isActive }) =>
         [
-          "inline-flex items-center rounded-full px-3 py-1.5 text-sm text-[var(--color-text)]",
+          "inline-flex items-center rounded-full px-3 py-1.5 text-sm",
           "focus-visible:outline-none focus-visible:shadow-[var(--shadow-ring)]",
           "transition-colors",
           isActive
-            ? "bg-[color-mix(in_oklab,var(--color-primary)_12%,transparent)] border border-[var(--color-primary)]"
-            : "hover:bg-[color-mix(in_oklab,var(--color-primary)_10%,transparent)] border border-transparent",
+            ? "bg-[color-mix(in oklab,var(--color-primary) 12%,transparent)] border border-[var(--color-primary)]"
+            : "hover:bg-[color-mix(in oklab,var(--color-primary) 10%,transparent)] border border-transparent",
         ].join(" ")
       }
       aria-current={({ isActive }) => (isActive ? "page" : undefined) as any}

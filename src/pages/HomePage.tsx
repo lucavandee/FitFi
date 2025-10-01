@@ -2,24 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 
-type Feature = { title: string; body: string; };
+type Feature = { title: string; body: string };
 const FEATURES: Feature[] = [
-  {
-    title: "AI‑advies dat klopt",
-    body: "Geen vage termen. Op basis van jouw voorkeuren geven we duidelijke richtlijnen voor silhouet, kleur en materiaal."
-  },
-  {
-    title: "Outfits zonder ruis",
-    body: "Per situatie – werk, weekend, diner – zodat je sneller kiest en minder twijfelt."
-  },
-  {
-    title: "Wishlist & prijsalerts",
-    body: "Bewaar favorieten en krijg een seintje als er korting is. Jij houdt de regie."
-  },
-  {
-    title: "Privacy staat voorop",
-    body: "We vragen weinig en verkopen niets door. Je data blijft van jou."
-  }
+  { title: "AI-advies dat klopt", body: "Op basis van jouw voorkeuren geven we heldere richtlijnen voor silhouet, kleur en materiaal." },
+  { title: "Outfits zonder ruis", body: "Per situatie – werk, weekend, diner – zodat je sneller kiest en minder twijfelt." },
+  { title: "Wishlist & prijsalerts", body: "Bewaar favorieten en ontvang prijsdalingen van items die je echt wilt." },
+  { title: "Privacy eerst", body: "We vragen weinig en verkopen niets door. Je data blijft van jou." },
 ];
 
 export default function HomePage() {
@@ -35,7 +23,9 @@ export default function HomePage() {
         size="lg"
         ctas={[
           { label: "Start gratis", to: "/results", variant: "primary", "data-event": "cta_home_start" },
-          { label: "Bekijk voorbeeld", to: "#preview", variant: "secondary", "data-event": "cta_home_preview" }
+          { label: "Bekijk voorbeeld", to: "#preview", variant: "secondary", "data-event": "cta_home_preview" },
+          // Nieuw: zichtbare inlog voor terugkerende gebruikers
+          { label: "Log in", to: "/login", variant: "quiet", "data-event": "cta_home_login" },
         ]}
         note="Klaar in ±2 minuten. Opzeggen kan altijd."
       />
@@ -62,7 +52,7 @@ export default function HomePage() {
           <div>
             <h2 className="font-montserrat text-2xl text-[var(--color-text)]">Zo ziet je stijl­advies eruit</h2>
             <p className="mt-3 text-[var(--color-text)]/80">
-              Je ontvangt een helder overzicht met kleuren die je laten stralen, vormen die kloppen en outfits die je direct kunt dragen.
+              Je ontvangt een helder overzicht met kleuren die je staan, vormen die kloppen en outfits die je direct kunt dragen.
               Alles rustig uitgelegd, zonder poeha.
             </p>
             <div className="mt-6 flex gap-3">
@@ -70,9 +60,10 @@ export default function HomePage() {
               <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
             </div>
           </div>
+
           <figure
             aria-label="Voorbeeld van stijlrapport"
-            className="aspect-[16/10] w-full rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] overflow-hidden grid place-items-center"
+            className="aspect-[16/10] w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] overflow-hidden grid place-items-center"
           >
             <div className="text-[var(--color-text)]/50 text-sm">
               Voorbeeldafbeelding komt hier

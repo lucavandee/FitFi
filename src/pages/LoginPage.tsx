@@ -1,142 +1,217 @@
-// /src/pages/LoginPage.tsx
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, ShieldCheck, BookmarkCheck } from "lucide-react";
 import PageHero from "@/components/marketing/PageHero";
-import Button from "@/components/ui/Button";
+import { Eye, EyeOff, CircleAlert as AlertCircle, CheckCircle2, Mail, Link as LinkIcon } from "lucide-react";
 
-const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+function isEmail(v: string) {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+}
 
-  const canSubmit = email.trim().length > 3 && pw.length >= 6;
+type Mode = "password" | "magic";
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+export default function LoginPage() {
+  const nav = useNavigate();
 
-    if (!canSubmit) {
-      setError("Vul je e-mail en wachtwoord correct in.");
-      return;
-    }
-    // Demo: direct door naar resultaten
-    navigate("/results");
+  // Gedeelde state
+  const [email, setEmail] = React.useState("");
+  const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+  const [submitted, setSubmitted] = React.useState(false);
+
+  // Wachtwoord-mode
+  const [password, setPassword] = React.useState("");
+  const [showPw, setShowPw] = React.useState(false);
+  const [remember, setRemember] = React.useState(true);
+
+  // Magic-link-mode
+  const [magicSent, setMagicSent] = React.useState(false);
+
+  // Mode toggle
+  const [mode, setMode] = React.useState<Mode>("password");
+
+  const errors: Record<string, string | null> = {
+    email: !email ? "E-mail is verplicht." : !isEmail(email) ? "Voer een geldig e-mailadres in." : null,
+    password: mode === "password" ? (!password ? "Wachtwoord is verplicht." : password.length < 8 ? "Minimaal 8 tekens." : null) : null,
   };
+  const hasErrors = Object.values(errors).some(Boolean);
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitted(true);
+    setTouched({ email: true, password: true });
+    if (hasErrors) return;
+
+    if (mode === "password") {
+      // Demo: navigeer door bij geldige input
+      nav("/results");
+    } else {
+      // Magic-link demo: toon succes en "disable" knoppen
+      setMagicSent(true);
+      try {
+        localStorage.setItem("ff_magic_pending", email);
+      } catch {}
+    }
+  }
 
   return (
-    <main>
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <PageHero
-        eyebrow="Welkom terug"
-        title="Log in — ga verder met je stijl"
-        subtitle="Bewaarde outfits, punten en challenges: log in en ga verder waar je was."
+        id="page-login"
+        eyebrow="ACCOUNT"
+        title="Inloggen"
+        subtitle="Snel en rustig — zoals het hoort."
+        align="left"
+        as="h1"
+        size="sm"
+        ctas={[{ label: "Nog geen account? Registreren", to: "/register", variant: "secondary" }]}
       />
 
-      <section className="container mx-auto px-4 md:px-6 -mt-6 md:-mt-8">
-        {/* Waarom inloggen — compacte callout */}
-        <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:p-6 shadow-[var(--shadow-soft)] mb-6 md:mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center" aria-hidden>
-                <BookmarkCheck className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <p className="font-medium text-[var(--color-text)]">Bewaar favorieten</p>
-                <p className="text-[var(--color-text)]/70 text-sm">Snel terug naar je beste matches.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center" aria-hidden>
-                <ShieldCheck className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <p className="font-medium text-[var(--color-text)]">Levels & streaks</p>
-                <p className="text-[var(--color-text)]/70 text-sm">Behoud je voortgang en beloningen.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center" aria-hidden>
-                <CheckCircle2 className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <p className="font-medium text-[var(--color-text)]">Persoonlijker advies</p>
-                <p className="text-[var(--color-text)]/70 text-sm">Hoe meer je gebruikt, hoe beter de tips.</p>
-              </div>
-            </div>
+      <section className="ff-container pb-12">
+        <div className="mx-auto max-w-[560px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
+          {/* Mode toggle */}
+          <div className="inline-flex rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-1 mb-5" role="tablist" aria-label="Inlogmethode">
+            <button
+              role="tab"
+              aria-selected={mode === "password"}
+              className={`px-3 py-1.5 rounded-lg ${mode === "password" ? "bg-[var(--color-surface)]" : ""}`}
+              onClick={() => setMode("password")}
+            >
+              Wachtwoord
+            </button>
+            <button
+              role="tab"
+              aria-selected={mode === "magic"}
+              className={`px-3 py-1.5 rounded-lg ${mode === "magic" ? "bg-[var(--color-surface)]" : ""}`}
+              onClick={() => setMode("magic")}
+            >
+              Magic-link
+            </button>
           </div>
-        </div>
 
-        {/* Formulier */}
-        <form onSubmit={onSubmit} className="max-w-xl mx-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 md:p-8 shadow-[var(--shadow-soft)]">
-          <div className="space-y-4">
-            <label className="block">
-              <span className="block text-sm text-[var(--color-text)]/80 mb-1">E-mail</span>
+          <form onSubmit={onSubmit} noValidate className="grid gap-5">
+            {/* E-mail */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
               <input
+                id="email"
+                name="email"
                 type="email"
-                required
-                inputMode="email"
                 autoComplete="email"
+                className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                placeholder="jij@voorbeeld.nl"
-                aria-label="E-mail"
+                onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "err-email" : undefined}
+                required
               />
-            </label>
+              {touched.email && errors.email && (
+                <p id="err-email" className="mt-1 text-sm inline-flex items-center gap-1 text-red-600">
+                  <AlertCircle className="h-4 w-4" aria-hidden /> {errors.email}
+                </p>
+              )}
+            </div>
 
-            <label className="block">
-              <span className="block text-sm text-[var(--color-text)]/80 mb-1">Wachtwoord</span>
-              <div className="relative">
-                <input
-                  type={showPw ? "text" : "password"}
-                  required
-                  minLength={6}
-                  autoComplete="current-password"
-                  value={pw}
-                  onChange={(e) => setPw(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                  placeholder="Je wachtwoord"
-                  aria-label="Wachtwoord"
-                />
+            {/* Conditievelds op basis van mode */}
+            {mode === "password" ? (
+              <>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium">Wachtwoord</label>
+                  <div className="mt-1 relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPw ? "text" : "password"}
+                      autoComplete="current-password"
+                      className="w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 pr-10"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                      aria-invalid={!!errors.password}
+                      aria-describedby={errors.password ? "err-password" : undefined}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPw((v) => !v)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)]"
+                      aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                    >
+                      {showPw ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+                    </button>
+                  </div>
+                  {touched.password && errors.password && (
+                    <p id="err-password" className="mt-1 text-sm inline-flex items-center gap-1 text-red-600">
+                      <AlertCircle className="h-4 w-4" aria-hidden /> {errors.password}
+                    </p>
+                  )}
+                </div>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                  />
+                  <span className="text-sm">Ingelogd blijven</span>
+                </label>
+              </>
+            ) : (
+              <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+                <p className="text-sm text-[var(--color-text)]/80">
+                  We sturen je een eenmalige login-link. Geen wachtwoord nodig.
+                </p>
+                {magicSent && (
+                  <p className="mt-2 text-sm inline-flex items-center gap-2 text-green-700">
+                    <CheckCircle2 className="h-4 w-4" aria-hidden /> Als dit je e-mail is, staat er zo een link in je inbox.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Acties */}
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="submit"
+                className="ff-btn ff-btn-primary h-10 min-w-[140px]"
+                disabled={mode === "magic" && magicSent}
+              >
+                {mode === "password" ? "Inloggen" : magicSent ? "Verzonden" : "Stuur magic-link"}
+              </button>
+              {mode === "password" ? (
+                <NavLink to="/register" className="ff-btn ff-btn-secondary h-10">Account aanmaken</NavLink>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => setShowPw((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100"
-                  aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                  className="ff-btn ff-btn-secondary h-10"
+                  onClick={() => {
+                    setMode("password");
+                    setMagicSent(false);
+                  }}
                 >
-                  {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  Inloggen met wachtwoord
                 </button>
-              </div>
-            </label>
+              )}
+            </div>
 
-            {error ? (
-              <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-[var(--color-text)]">
-                <AlertCircle className="w-4 h-4" />
-                <p className="text-sm">{error}</p>
-              </div>
-            ) : null}
+            {/* Demo-notitie (alleen zichtbaar na submit met fouten) */}
+            {submitted && hasErrors && (
+              <p className="text-sm text-[var(--color-text)]/60">
+                Tip: dit is een demo zonder backend. Vul een geldig e-mailadres
+                {mode === "password" ? " en een wachtwoord van ≥ 8 tekens" : ""} in om door te gaan.
+              </p>
+            )}
+          </form>
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full"
-              disabled={!canSubmit}
-            >
-              Log in
-            </Button>
-
-            <p className="text-center text-sm text-[var(--color-text)]/70">
-              Nog geen account?{" "}
-              <NavLink to="/register" className="underline">Maak er gratis één</NavLink>
-            </p>
+          {/* Foot links */}
+          <div className="mt-6 flex flex-wrap gap-3 text-sm text-[var(--color-text)]/70">
+            <NavLink to="/terms" className="underline hover:no-underline">Voorwaarden</NavLink>
+            <span>•</span>
+            <NavLink to="/disclosure" className="underline hover:no-underline">Disclosure</NavLink>
+            <span>•</span>
+            <NavLink to="/veelgestelde-vragen" className="underline hover:no-underline">FAQ</NavLink>
           </div>
-        </form>
+        </div>
       </section>
     </main>
   );
-};
-
-export default LoginPage;
+}
