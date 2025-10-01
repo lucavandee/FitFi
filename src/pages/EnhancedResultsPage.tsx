@@ -1,32 +1,39 @@
 // /src/pages/EnhancedResultsPage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon } from "lucide-react";
+import {
+  Sparkles,
+  SlidersHorizontal,
+  Share2,
+  Bookmark,
+  BookmarkCheck,
+  Info,
+  ExternalLink,
+  List as ListIcon,
+  Grid3X3 as GridIcon,
+  ShoppingBag,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import Button from "@/components/ui/Button";
 
-// Conditional framer-motion import with fallback
-let AnimatePresence: any = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-let motion: any = {
-  article: "article",
-  div: "div",
-};
-
-try {
-  const framerMotion = await import("framer-motion");
-  AnimatePresence = framerMotion.AnimatePresence;
-  motion = framerMotion.motion;
-} catch {
-  // Fallback to regular HTML elements if framer-motion is not available
-}
-
 type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
 type ViewMode = "list" | "grid";
 
-const DEMO_OUTFITS = [
+type DemoOutfit = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  matchPercentage: number;
+  archetype: "Casual" | "Smart" | "Minimal";
+  tags: string[];
+};
+
+const DEMO_OUTFITS: DemoOutfit[] = [
   {
     id: "smart-italian-01",
     title: "Smart Casual — Italiaans",
@@ -69,13 +76,18 @@ const StatChip: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, la
   </div>
 );
 
-const ExplainList: React.FC<{ id: string; title: string; archetype?: string; isOpen: boolean }> = ({
+const NewHintChip: React.FC = () => (
+  <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] text-xs font-medium">
+    <Sparkles className="w-3.5 h-3.5" />
+    Nieuw: waarom dit werkt
+  </span>
+);
+
+const ExplainList: React.FC<{ id: string; archetype?: string; isOpen: boolean }> = ({
   id,
-  title,
   archetype,
   isOpen,
 }) => {
-  // Uitlegpunten (generiek, licht afgestemd op archetype)
   const points = useMemo(() => {
     const base = [
       { k: "Silhouet", v: "Bovenstuk iets ruimer, onderstuk tapered: heldere V-vorm en schone lijn." },
@@ -91,10 +103,15 @@ const ExplainList: React.FC<{ id: string; title: string; archetype?: string; isO
   }, [archetype]);
 
   return (
-    <>
+    <AnimatePresence initial={false}>
       {isOpen && (
-        <div
-          className="overflow-hidden transition-all duration-300"
+        <motion.div
+          key={`exp-${id}`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25 }}
+          className="overflow-hidden"
           aria-live="polite"
         >
           <ul className="mt-3 grid gap-2 text-sm">
@@ -105,9 +122,64 @@ const ExplainList: React.FC<{ id: string; title: string; archetype?: string; isO
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
+  );
+};
+
+/** Voorbereiding Shop-de-look (zonder echte deeplinks). */
+type ShopItem = { part: string; productId?: string };
+const buildDeeplink = (_productId?: string): string | null => {
+  // Zodra echte data + partner tags beschikbaar zijn, deze functie laten terugkeren naar een geldige URL.
+  return null; // nu bewust uitgeschakeld -> UI toont disabled CTA's.
+};
+
+const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
+  // Simpel afgeleid van archetype; echte mapping komt later vanuit data.
+  const items: ShopItem[] = [
+    { part: outfit.archetype === "Smart" ? "Jasje" : "Overshirt" },
+    { part: outfit.archetype === "Minimal" ? "Knitted tee" : "Polo" },
+    { part: "Pantalon / Chino" },
+    { part: outfit.archetype === "Smart" ? "Loafer" : "Minimal sneaker" },
+  ];
+
+  const links = items.map((it) => ({ ...it, href: buildDeeplink(it.productId) }));
+
+  // Als er geen geldige links zijn, tonen we de strip nog steeds (visuele voorbereiding),
+  // maar met disabled CTA's zodat het non-breaking is.
+  return (
+    <div className="mt-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
+          <ShoppingBag className="w-3.5 h-3.5 text-white" />
+        </div>
+        <p className="font-medium text-[var(--color-text)]">Shop de look</p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {links.map((l, idx) => {
+          const disabled = !l.href;
+          return (
+            <div
+              key={`${l.part}-${idx}`}
+              className="flex items-center justify-between rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2"
+            >
+              <span className="text-sm text-[var(--color-text)]">{l.part}</span>
+              <a
+                href={l.href ?? "#"}
+                aria-disabled={disabled}
+                onClick={(e) => disabled && e.preventDefault()}
+                className={`text-sm underline ${
+                  disabled ? "pointer-events-none opacity-50" : ""
+                }`}
+              >
+                Shop
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
@@ -117,24 +189,31 @@ const OutfitCard: React.FC<{
   description: string;
   imageUrl: string;
   matchPercentage: number;
-  archetype?: string;
+  archetype?: DemoOutfit["archetype"];
   tags?: string[];
   view: ViewMode;
 }> = ({ id, title, description, imageUrl, matchPercentage, archetype, tags, view }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <article
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
       className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow"
     >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-white" />
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div className="flex flex-col">
+            <h3 className="text-lg font-medium text-[var(--color-text)]">{title}</h3>
+            {archetype ? <p className="text-sm text-[var(--color-text)]/70">{archetype}</p> : null}
+          </div>
         </div>
-        <div className="flex flex-col">
-          <h3 className="text-lg font-medium text-[var(--color-text)]">{title}</h3>
-          {archetype ? <p className="text-sm text-[var(--color-text)]/70">{archetype}</p> : null}
-        </div>
+        <NewHintChip />
       </div>
 
       <div className={view === "grid" ? "grid grid-cols-1 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
@@ -173,7 +252,7 @@ const OutfitCard: React.FC<{
               </div>
             ) : null}
 
-            {/* Explainability toggle */}
+            {/* Explainability */}
             <div className="mt-4">
               <button
                 type="button"
@@ -186,9 +265,22 @@ const OutfitCard: React.FC<{
                 <span className="text-sm">{open ? "Verberg uitleg" : "Toon uitleg"}</span>
               </button>
               <div id={`explain-${id}`}>
-                <ExplainList id={id} title={title} archetype={archetype} isOpen={open} />
+                <ExplainList id={id} archetype={archetype} isOpen={open} />
               </div>
             </div>
+
+            {/* Shop de look — voorbereid; CTA's disabled zolang geen deeplinks */}
+            <ShopTheLookStrip
+              outfit={{
+                id,
+                title,
+                description,
+                imageUrl,
+                matchPercentage,
+                archetype: (archetype as DemoOutfit["archetype"]) || "Casual",
+                tags: tags || [],
+              }}
+            />
           </div>
 
           {/* CTA's */}
@@ -212,12 +304,12 @@ const OutfitCard: React.FC<{
           </div>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 };
 
 const EnhancedResultsPage: React.FC = () => {
-  // Filters en weergave (persist in localStorage)
+  // Persistente voorkeuren (filter + weergave)
   const [filter, setFilter] = useState<Filter>(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_results_filter") : null;
     return (saved as Filter) || "Alle";
@@ -307,9 +399,11 @@ const EnhancedResultsPage: React.FC = () => {
 
         {/* Lijst met outfits */}
         <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" : "grid grid-cols-1 gap-6 md:gap-8"}>
-          {filtered.map((o) => (
-            <OutfitCard key={o.id} {...o} view={view} />
-          ))}
+          <AnimatePresence initial={false}>
+            {filtered.map((o) => (
+              <OutfitCard key={o.id} {...o} view={view} />
+            ))}
+          </AnimatePresence>
         </div>
 
         {/* Premium upsell */}

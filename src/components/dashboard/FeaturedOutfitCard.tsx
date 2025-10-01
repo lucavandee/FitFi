@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
 import { track } from "@/utils/analytics";
@@ -19,6 +20,13 @@ interface FeaturedOutfitCardProps {
   loading?: boolean;
   className?: string;
 }
+
+const NewHintChip: React.FC = () => (
+  <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] text-xs font-medium">
+    <Sparkles className="w-3.5 h-3.5" />
+    Nieuw: waarom dit werkt
+  </span>
+);
 
 const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   outfit,
@@ -43,16 +51,18 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
     });
   };
 
-  // Loading skeleton
   if (loading || !outfit) {
     return (
       <div
         className={`rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] animate-pulse ${className}`}
         aria-busy="true"
       >
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-6 h-6 rounded-full bg-[var(--color-bg)]/60" />
-          <div className="h-4 rounded bg-[var(--color-bg)]/60 w-32" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-6 h-6 rounded-full bg-[var(--color-bg)]/60" />
+            <div className="h-4 rounded bg-[var(--color-bg)]/60 w-32" />
+          </div>
+          <div className="h-5 rounded bg-[var(--color-bg)]/60 w-40" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="aspect-[3/4] bg-[var(--color-bg)]/60 rounded-2xl" />
@@ -68,18 +78,24 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   }
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
       className={`rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]">
-          <Sparkles className="w-4 h-4 text-white" />
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg font-medium text-[var(--color-text)]">Uitgelichte Outfit</h3>
+            <p className="text-[var(--color-text)]/70 text-sm">Perfect voor jouw stijl</p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-lg font-medium text-[var(--color-text)]">Uitgelichte Outfit</h3>
-          <p className="text-[var(--color-text)]/70 text-sm">Perfect voor jouw stijl</p>
-        </div>
+        <NewHintChip />
       </div>
 
       {/* Content */}
@@ -146,7 +162,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
