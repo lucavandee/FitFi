@@ -1,19 +1,7 @@
 // /src/pages/EnhancedResultsPage.tsx
 import React, { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import {
-  Sparkles,
-  SlidersHorizontal,
-  Share2,
-  Bookmark,
-  BookmarkCheck,
-  Info,
-  ExternalLink,
-  List as ListIcon,
-  Grid3X3 as GridIcon,
-  ShoppingBag,
-  ImageDown,
-} from "lucide-react";
+import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag, ImageDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import PageHero from "@/components/marketing/PageHero";

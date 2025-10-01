@@ -1,6 +1,6 @@
 // /src/components/results/FoundersWall.tsx
 import React, { useState } from "react";
-import { Mail, Unlock } from "lucide-react";
+import { Mail, Clock as Unlock } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 const FoundersWall: React.FC = () => {
