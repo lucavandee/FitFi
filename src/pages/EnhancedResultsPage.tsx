@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag, ImageDown, LogIn, LayoutDashboard } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
+import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
@@ -387,6 +388,11 @@ export default function EnhancedResultsPage() {
 
   return (
     <main>
+      <Seo
+        title="Jouw resultaten — FitFi"
+        description="Bekijk jouw AI-gegenereerde outfits en uitleg waarom ze voor je werken. Minimalistisch, overzichtelijk en deelbaar."
+        path="/results"
+      />
       <PageHero
         eyebrow="Jouw resultaten"
         title="Outfits op maat — rustig, clean en premium"

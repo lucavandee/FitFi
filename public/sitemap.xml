@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://fitfi.ai/</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/hoe-het-werkt</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/prijzen</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/over-ons</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/blog</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/veelgestelde-vragen</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/contact</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/privacy</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/algemene-voorwaarden</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/disclosure</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/inloggen</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/registreren</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/results</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/brand-safety</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
-  <url><loc>https://fitfi.ai/ondersteuning</loc><lastmod>2025-10-01</lastmod><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/hoe-het-werkt</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/prijzen</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/over-ons</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/blog</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://fitfi.ai/veelgestelde-vragen</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/contact</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/privacy</loc><changefreq>yearly</changefreq></url>
+  <url><loc>https://fitfi.ai/algemene-voorwaarden</loc><changefreq>yearly</changefreq></url>
+  <url><loc>https://fitfi.ai/disclosure</loc><changefreq>yearly</changefreq></url>
+  <url><loc>https://fitfi.ai/inloggen</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/registreren</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://fitfi.ai/results</loc><changefreq>weekly</changefreq></url>
 </urlset>

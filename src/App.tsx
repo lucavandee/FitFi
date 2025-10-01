@@ -1,9 +1,9 @@
-// /src/App.tsx
 import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 
 // Lazy pages
 const LandingPage        = lazy(() => import("@/pages/LandingPage"));
@@ -29,7 +29,6 @@ export default function App() {
       <ErrorBoundary>
         <Navbar />
         <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
-          {/* Let op: id = "main" i.v.m. skiplink in Navbar */}
           <main id="main">
             <Routes>
               {/* Marketing */}
@@ -43,7 +42,7 @@ export default function App() {
               <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
               <Route path="/contact" element={<ContactPage />} />
 
-              {/* Juridisch / trust (NL canoniek) */}
+              {/* Juridisch (NL canoniek) */}
               <Route path="/algemene-voorwaarden" element={<TermsPage />} />
               <Route path="/terms" element={<Navigate to="/algemene-voorwaarden" replace />} />
               <Route path="/privacy" element={<PrivacyPage />} />
@@ -65,6 +64,8 @@ export default function App() {
           </main>
         </Suspense>
         <Footer />
+        {/* Consent-aware analytics voor SPA pageviews */}
+        <AnalyticsLoader />
       </ErrorBoundary>
     </div>
   );

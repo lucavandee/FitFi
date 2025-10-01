@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 type Props = {
   title: string;
   description?: string;
-  /** Path starting with '/', e.g. '/inloggen' */
+  /** Absolute of relatieve path; bv. "/inloggen" */
   path?: string;
   noindex?: boolean;
   ogImage?: string;
@@ -12,7 +12,9 @@ type Props = {
 };
 
 function canonicalUrl(path?: string) {
-  const base = import.meta.env.VITE_CANONICAL_HOST || (typeof window !== "undefined" ? window.location.origin : "");
+  const base =
+    import.meta.env.VITE_CANONICAL_HOST ||
+    (typeof window !== "undefined" ? window.location.origin : "");
   const p = path || (typeof window !== "undefined" ? window.location.pathname : "/");
   const joined = (base?.replace(/\/$/, "") || "") + (p?.startsWith("/") ? p : `/${p || ""}`);
   return joined || "";
@@ -27,8 +29,8 @@ export default function Seo({ title, description, path, noindex, ogImage, struct
       <title>{title}</title>
       {description && <meta name="description" content={description} />}
 
-      {/* Canonical & OpenGraph */}
       {url && <link rel="canonical" href={url} />}
+
       <meta property="og:site_name" content="FitFi" />
       <meta property="og:type" content="website" />
       {url && <meta property="og:url" content={url} />}
@@ -36,16 +38,13 @@ export default function Seo({ title, description, path, noindex, ogImage, struct
       {description && <meta property="og:description" content={description} />}
       {ogImage && <meta property="og:image" content={ogImage} />}
 
-      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       {description && <meta name="twitter:description" content={description} />}
       {ogImage && <meta name="twitter:image" content={ogImage} />}
 
-      {/* Indexing */}
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-      {/* Structured Data */}
       {ld && <script type="application/ld+json">{ld}</script>}
     </Helmet>
   );

@@ -1,9 +1,14 @@
-# Canonicals — NL is de waarheid
-/faq                 /veelgestelde-vragen      301
-/privacy-policy      /privacy                  301
-/login               /inloggen                 301
-/terms-of-service    /algemene-voorwaarden     301
-/disclaimer          /disclosure               301
+# Canoniek NL voor auth & legal
+/login                 /inloggen                 301
+/register              /registreren              301
+/terms                 /algemene-voorwaarden     301
+/faq                   /veelgestelde-vragen      301
 
-# SPA fallback (laatste regel!)
-/*                   /index.html               200
+# Eventuele trailing slash varianten (veilig voor deltas)
+/login/                /inloggen                 301
+/register/             /registreren              301
+/terms/                /algemene-voorwaarden     301
+/faq/                  /veelgestelde-vragen      301
+
+# SPA fallback
+/*                     /index.html               200
