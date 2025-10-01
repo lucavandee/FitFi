@@ -1,26 +1,23 @@
 // /src/pages/EnhancedResultsPage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Sparkles,
+  SlidersHorizontal,
+  Share2,
+  Bookmark,
+  BookmarkCheck,
+  Info,
+  ExternalLink,
+  List as ListIcon,
+  Grid3X3 as GridIcon,
+  ShoppingBag,
+} from "lucide-react";
 
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import Button from "@/components/ui/Button";
-
-// Framer Motion fallback - gebruik CSS animations als framer-motion niet beschikbaar is
-let AnimatePresence: any = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-let motion: any = {
-  article: "article",
-  div: "div"
-};
-
-// Probeer framer-motion te laden, maar faal gracefully
-try {
-  AnimatePresence = framerMotion.AnimatePresence;
-  motion = framerMotion.motion;
-} catch {
-  // Gebruik CSS fallbacks
-}
 
 type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
 type ViewMode = "list" | "grid";
@@ -104,37 +101,28 @@ const ExplainList: React.FC<{ id: string; archetype?: string; isOpen: boolean }>
     return base;
   }, [archetype]);
 
+  if (!isOpen) return null;
+
   return (
-    <>
-      {isOpen && (
-        <div
-          key={`exp-${id}`}
-          className="overflow-hidden animate-fade-in"
-          aria-live="polite"
-        >
-          <ul className="mt-3 grid gap-2 text-sm">
-            {points.map((p) => (
-              <li key={p.k} className="flex gap-2">
-                <span className="min-w-20 text-[var(--color-text)]/70">{p.k}</span>
-                <span className="text-[var(--color-text)]">{p.v}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </>
+    <div className="mt-3 animate-fade-in" aria-live="polite">
+      <ul className="grid gap-2 text-sm">
+        {points.map((p) => (
+          <li key={p.k} className="flex gap-2">
+            <span className="min-w-20 text-[var(--color-text)]/70">{p.k}</span>
+            <span className="text-[var(--color-text)]">{p.v}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
-/** Voorbereiding Shop-de-look (zonder echte deeplinks). */
 type ShopItem = { part: string; productId?: string };
 const buildDeeplink = (_productId?: string): string | null => {
-  // Zodra echte data + partner tags beschikbaar zijn, deze functie laten terugkeren naar een geldige URL.
-  return null; // nu bewust uitgeschakeld -> UI toont disabled CTA's.
+  return null;
 };
 
 const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
-  // Simpel afgeleid van archetype; echte mapping komt later vanuit data.
   const items: ShopItem[] = [
     { part: outfit.archetype === "Smart" ? "Jasje" : "Overshirt" },
     { part: outfit.archetype === "Minimal" ? "Knitted tee" : "Polo" },
@@ -144,8 +132,6 @@ const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
 
   const links = items.map((it) => ({ ...it, href: buildDeeplink(it.productId) }));
 
-  // Als er geen geldige links zijn, tonen we de strip nog steeds (visuele voorbereiding),
-  // maar met disabled CTA's zodat het non-breaking is.
   return (
     <div className="mt-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -195,9 +181,12 @@ const OutfitCard: React.FC<{
 
   return (
     <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow animate-fade-in">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <div>
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div className="flex flex-col">
             <h3 className="text-lg font-medium text-[var(--color-text)]">{title}</h3>
             {archetype ? <p className="text-sm text-[var(--color-text)]/70">{archetype}</p> : null}
           </div>
@@ -241,7 +230,6 @@ const OutfitCard: React.FC<{
               </div>
             ) : null}
 
-            {/* Explainability */}
             <div className="mt-4">
               <button
                 type="button"
@@ -258,7 +246,6 @@ const OutfitCard: React.FC<{
               </div>
             </div>
 
-            {/* Shop de look — voorbereid; CTA's disabled zolang geen deeplinks */}
             <ShopTheLookStrip
               outfit={{
                 id,
@@ -272,7 +259,6 @@ const OutfitCard: React.FC<{
             />
           </div>
 
-          {/* CTA's */}
           <div className="mt-6 flex flex-wrap gap-3">
             <Button
               as={Link}
@@ -298,7 +284,6 @@ const OutfitCard: React.FC<{
 };
 
 const EnhancedResultsPage: React.FC = () => {
-  // Persistente voorkeuren (filter + weergave)
   const [filter, setFilter] = useState<Filter>(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_results_filter") : null;
     return (saved as Filter) || "Alle";
@@ -335,7 +320,6 @@ const EnhancedResultsPage: React.FC = () => {
         subtitle="Geïnspireerd door jouw voorkeuren en archetype. Minimalistisch gepresenteerd zodat je blik op stijl en silhouet blijft."
       />
 
-      {/* Filter/acties */}
       <section className="container mx-auto px-4 md:px-6 -mt-6 md:-mt-8">
         <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:p-6 shadow-[var(--shadow-soft)] mb-6 md:mb-8">
           <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -386,14 +370,12 @@ const EnhancedResultsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Lijst met outfits */}
         <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" : "grid grid-cols-1 gap-6 md:gap-8"}>
           {filtered.map((o) => (
             <OutfitCard key={o.id} {...o} view={view} />
           ))}
         </div>
 
-        {/* Premium upsell */}
         <div className="mt-10 md:mt-12">
           <PremiumUpsellStrip />
         </div>

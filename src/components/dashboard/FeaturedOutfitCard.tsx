@@ -1,21 +1,10 @@
 // /src/components/dashboard/FeaturedOutfitCard.tsx
 import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Star, Sparkles } from "lucide-react";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
 import { track } from "@/utils/analytics";
-
-// Framer Motion fallback
-let motion: any = {
-  div: "div"
-};
-
-// Probeer framer-motion te laden, maar faal gracefully
-try {
-  const framerMotion = require("framer-motion");
-  motion = framerMotion.motion;
-} catch {
-  // Gebruik CSS fallbacks
-}
 
 interface FeaturedOutfitCardProps {
   outfit?: {
@@ -89,6 +78,10 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
 
   return (
     <div className={`rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow animate-fade-in ${className}`}>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]">
+            <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
             <h3 className="text-lg font-medium text-[var(--color-text)]">Uitgelichte Outfit</h3>
@@ -98,9 +91,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
         <NewHintChip />
       </div>
 
-      {/* Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Image */}
         <div className="cursor-pointer group" onClick={handleOutfitClick}>
           <SmartImage
             src={outfit.imageUrl}
@@ -114,7 +105,6 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
           />
         </div>
 
-        {/* Details */}
         <div className="flex flex-col justify-between">
           <div>
             <div className="flex items-center space-x-2 mb-3">
@@ -132,7 +122,6 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
               {outfit.description}
             </p>
 
-            {/* Tags */}
             {outfit.tags && outfit.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {outfit.tags.slice(0, 3).map((tag) => (
@@ -147,7 +136,6 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
             )}
           </div>
 
-          {/* CTA */}
           <Button
             as={Link}
             to="/outfits"
