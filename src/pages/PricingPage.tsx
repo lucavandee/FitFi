@@ -2,7 +2,8 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import PageHero from "@/components/marketing/PageHero";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { ShieldCheck, UserCheck, LockKeyhole, CircleCheck as CheckCircle2, Sparkles } from "lucide-react";
+import { ShieldCheck, UserCheck, LockKeyhole, CheckCircle2, Sparkles } from "lucide-react";
+import FeatureComparison, { Row as ComparisonRow } from "@/components/pricing/FeatureComparison";
 
 type Plan = {
   id: "starter" | "pro" | "elite";
@@ -13,8 +14,6 @@ type Plan = {
   cta: { label: string; to: string };
   popular?: boolean;
 };
-
-type Row = { label: string; starter: boolean | string; pro: boolean | string; elite: boolean | string };
 
 const PLANS: Plan[] = [
   {
@@ -44,24 +43,12 @@ const PLANS: Plan[] = [
   },
 ];
 
-const COMPARISON: Row[] = [
+const COMPARISON: ComparisonRow[] = [
   { label: "Outfits per maand", starter: "3", pro: "10", elite: "Onbeperkt" },
   { label: "AI-analyse", starter: true, pro: true, elite: "Uitgebreid" },
   { label: "Wishlist", starter: "Beperkt", pro: "Volledig", elite: "Volledig + alerts" },
   { label: "Support", starter: "Basis", pro: "Sneller", elite: "Prioriteit" },
 ];
-
-const PRICE_FAQ = [
-  { q: "Kan ik op elk moment opzeggen?", a: "Ja. Je zit nergens aan vast en kunt maandelijks opzeggen." },
-  { q: "Welke betaalmethoden ondersteunen jullie?", a: "De gebruikelijke methoden via een betrouwbare payment provider." },
-  { q: "Kan ik wisselen tussen maand en jaar?", a: "Ja. Je kunt altijd switchen; we verrekenen het verschil netjes." },
-  { q: "Blijft er een gratis optie?", a: "Ja. Met Starter kun je gratis starten en later upgraden." },
-];
-
-function Cell({ v }: { v: boolean | string }) {
-  if (typeof v === "boolean") return <span aria-label={v ? "Ja" : "Nee"}>{v ? "✓" : "—"}</span>;
-  return <span>{v}</span>;
-}
 
 export default function PricingPage() {
   const [yearly, setYearly] = React.useState(true);
@@ -96,24 +83,14 @@ export default function PricingPage() {
         {/* Periode-toggle */}
         <section className="ff-container py-6">
           <div role="group" aria-label="Prijsperiode" className="inline-flex gap-2">
-            <button
-              className="ff-btn ff-btn-secondary"
-              aria-pressed={yearly}
-              onClick={() => setYearly(true)}
-            >
+            <button className="ff-btn ff-btn-secondary" aria-pressed={yearly} onClick={() => setYearly(true)}>
               Jaar
             </button>
-            <button
-              className="ff-btn ff-btn-secondary"
-              aria-pressed={!yearly}
-              onClick={() => setYearly(false)}
-            >
+            <button className="ff-btn ff-btn-secondary" aria-pressed={!yearly} onClick={() => setYearly(false)}>
               Maand
             </button>
           </div>
-          <p className="mt-2 text-sm text-[var(--color-text)]/70">
-            Prijzen in EUR, incl. btw waar van toepassing.
-          </p>
+          <p className="mt-2 text-sm text-[var(--color-text)]/70">Prijzen in EUR, incl. btw waar van toepassing.</p>
         </section>
 
         {/* Plan-kaarten */}
@@ -149,9 +126,7 @@ export default function PricingPage() {
                   <div className="mt-4 flex items-baseline gap-1">
                     <span className="text-4xl font-bold">€{price}</span>
                     <span className="text-[var(--color-text)]/70">{period}</span>
-                    {price === 0 && (
-                      <span className="ml-1 text-sm text-[var(--color-text)]/70">Gratis</span>
-                    )}
+                    {price === 0 && <span className="ml-1 text-sm text-[var(--color-text)]/70">Gratis</span>}
                   </div>
                   <ul className="mt-4 space-y-2 text-[var(--color-text)]/80">
                     {plan.features.map((f, idx) => (
@@ -162,10 +137,7 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   <div className="mt-6">
-                    <a
-                      href={plan.cta.to}
-                      className={["ff-btn h-10 w-full", plan.popular ? "ff-btn-primary" : "ff-btn-secondary"].join(" ")}
-                    >
+                    <a href={plan.cta.to} className={["ff-btn h-10 w-full", plan.popular ? "ff-btn-primary" : "ff-btn-secondary"].join(" ")}>
                       {plan.cta.label}
                     </a>
                   </div>
@@ -179,21 +151,9 @@ export default function PricingPage() {
         <section className="ff-container py-10">
           <div className="grid gap-6 md:grid-cols-3">
             {[
-              {
-                icon: UserCheck,
-                title: "Opzeggen kan altijd",
-                desc: "Geen kleine lettertjes. Je zit nergens aan vast.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Privacy-first",
-                desc: "We verwerken alleen wat nodig is. Geen doorverkoop van gegevens.",
-              },
-              {
-                icon: LockKeyhole,
-                title: "Veilige betalingen",
-                desc: "Afrekenen via betrouwbare partners — zoals je gewend bent.",
-              },
+              { icon: UserCheck, title: "Opzeggen kan altijd", desc: "Geen kleine lettertjes. Je zit nergens aan vast." },
+              { icon: ShieldCheck, title: "Privacy-first", desc: "We verwerken alleen wat nodig is. Geen doorverkoop van gegevens." },
+              { icon: LockKeyhole, title: "Veilige betalingen", desc: "Afrekenen via betrouwbare partners — zoals je gewend bent." },
             ].map((f, i) => {
               const { ref, visible } = useFadeInOnVisible<HTMLDivElement>();
               const Icon = f.icon;
@@ -217,64 +177,10 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Functie-overzicht (visueel) */}
+        {/* Functie-overzicht — nieuwe, strakke tabel */}
         <section className="ff-container py-6">
           <h2 className="font-heading text-2xl mb-3">Wat je krijgt per plan</h2>
-          <div className="grid gap-4 md:grid-cols-4">
-            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
-              Functie
-            </div>
-            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
-              Starter
-            </div>
-            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
-              Pro
-            </div>
-            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
-              Elite
-            </div>
-
-            {COMPARISON.map((r, idx) => (
-              <React.Fragment key={idx}>
-                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
-                  {r.label}
-                </div>
-                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
-                  <Cell v={r.starter} />
-                </div>
-                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
-                  <Cell v={r.pro} />
-                </div>
-                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
-                  <Cell v={r.elite} />
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-
-          {/* SR-vriendelijke tabel (alternatief) */}
-          <div className="sr-only">
-            <table className="w-full text-left">
-              <thead>
-                <tr>
-                  <th className="p-2">Functie</th>
-                  <th className="p-2">Starter</th>
-                  <th className="p-2">Pro</th>
-                  <th className="p-2">Elite</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARISON.map((r, i) => (
-                  <tr key={i}>
-                    <td className="p-2">{r.label}</td>
-                    <td className="p-2"><Cell v={r.starter} /></td>
-                    <td className="p-2"><Cell v={r.pro} /></td>
-                    <td className="p-2"><Cell v={r.elite} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <FeatureComparison rows={COMPARISON} />
         </section>
 
         {/* Premium belofte */}
@@ -285,7 +191,7 @@ export default function PricingPage() {
               <div>
                 <h2 className="font-heading text-xl">Onze belofte</h2>
                 <p className="mt-2 text-[var(--color-text)]/80">
-                  Rust, smaak en duidelijkheid. We adviseren wat bij je past — nuchter, uitlegbaar en zonder ruis. 
+                  Rust, smaak en duidelijkheid. We adviseren wat bij je past — nuchter, uitlegbaar en zonder ruis.
                   Upgraden doe je alleen als je voelt dat het waarde toevoegt.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -301,7 +207,12 @@ export default function PricingPage() {
         <section id="price-faq" className="ff-container pb-12">
           <h2 className="font-heading text-2xl mb-4">Veelgestelde prijs-vragen</h2>
           <div className="grid gap-3">
-            {PRICE_FAQ.map((item, i) => (
+            {[ 
+              { q: "Kan ik op elk moment opzeggen?", a: "Ja. Je zit nergens aan vast en kunt maandelijks opzeggen." },
+              { q: "Welke betaalmethoden ondersteunen jullie?", a: "De gebruikelijke methoden via een betrouwbare payment provider." },
+              { q: "Kan ik wisselen tussen maand en jaar?", a: "Ja. Je kunt altijd switchen; we verrekenen het verschil netjes." },
+              { q: "Blijft er een gratis optie?", a: "Ja. Met Starter kun je gratis starten en later upgraden." },
+            ].map((item, i) => (
               <details key={i} className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
                 <summary className="cursor-pointer font-heading">{item.q}</summary>
                 <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
