@@ -1,0 +1,29 @@
+{
+  "heroTitle": "Ontdek wat jouw stijl over je zegt",
+  "heroSubtitle": "Beantwoord 6–10 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.",
+  "heroImage": "/uploads/hero-highres.png",
+  "ctas": [
+    { "label": "Start gratis", "to": "/stijlquiz", "variant": "primary" },
+    { "label": "Bekijk voorbeeld", "to": "/results", "variant": "secondary" }
+  ],
+  "badges": [
+    { "text": "100% gratis" },
+    { "text": "Klaar in 2 min" },
+    { "text": "Outfits + shoplinks" },
+    { "text": "Privacy-first" }
+  ],
+  "steps": [
+    { "title": "Beantwoord 6–10 vragen", "text": "Korte, visuele keuzes. Privacy-first; geen account nodig om te starten." },
+    { "title": "Ontvang je Style Report", "text": "Kleurprofiel, pasvorm-instellingen en 6 outfits — rustig en draagbaar." },
+    { "title": "Bewaar & shop", "text": "Favorieten opslaan. Shoplinks gaan aan zodra partners live zijn." }
+  ],
+  "reasons": [
+    { "text": "Premium, nuchter en persoonlijk" },
+    { "text": "AVG-compliant & privacy-first" },
+    { "text": "Rustige UI — geen ruis, geen upsell-druk" }
+  ],
+  "faq": [
+    { "q": "Hoe werkt de kleuranalyse?", "a": "We bepalen temperatuur (warm/koel), lichtheid en contrast op basis van je voorkeuren (optioneel met foto)." },
+    { "q": "Wat gebeurt er met mijn foto?", "a": "Foto's blijven lokaal in je browser en worden niet geüpload." }
+  ]
+}

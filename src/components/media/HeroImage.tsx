@@ -3,8 +3,8 @@ import React from "react";
 type Props = {
   className?: string;
   alt?: string;
-  // Volgorde van proberen; we zetten de meest waarschijnlijke eerst.
-  sources?: string[];
+  src?: string;                // primaire bron (bijv. vanuit CMS)
+  fallbacks?: string[];        // alternatieven als primaire 404 geeft
   width?: number;
   height?: number;
   eager?: boolean;
@@ -12,24 +12,23 @@ type Props = {
 
 export default function HeroImage({
   className,
-  alt = "Voorbeeld van het FitFi Style Report",
-  sources = [
-    "/hero/style-report.webp",
-  ],
+  alt = "Voorbeeld van het FitFi Style Report op mobiel",
+  src = "/uploads/hero-highres.png",
+  fallbacks = ["/hero/hero-highres.webp", "/hero/hero-highres.png", "/hero/style-report.webp", "/hero/style-report.png"],
   width = 900,
   height = 1200,
   eager = true,
 }: Props) {
-  const [idx, setIdx] = React.useState(0);
-  const src = sources[idx] ?? sources[sources.length - 1];
+  const [i, setI] = React.useState(-1);
+  const current = i < 0 ? src : fallbacks[i];
 
   function onError() {
-    setIdx((i) => (i < sources.length - 1 ? i + 1 : i));
+    setI((prev) => (prev < fallbacks.length - 1 ? prev + 1 : prev));
   }
 
   return (
     <img
-      src={src}
+      src={current}
       alt={alt}
       width={width}
       height={height}
