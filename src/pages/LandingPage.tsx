@@ -52,6 +52,17 @@ function CtaSecondary({ to, children }: { to: string; children: React.ReactNode 
 }
 
 export default function LandingPage() {
+  // Debug: Log the image path to console
+  React.useEffect(() => {
+    console.log('Attempting to load image from:', '/public/media/hero-style-report.png');
+    
+    // Test if image exists
+    const img = new Image();
+    img.onload = () => console.log('✅ Image loaded successfully');
+    img.onerror = () => console.log('❌ Image failed to load');
+    img.src = '/public/media/hero-style-report.png';
+  }, []);
+
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Seo
@@ -110,12 +121,64 @@ export default function LandingPage() {
                   "p-3 sm:p-4",
                 ].join(" ")}
               >
-                <img
-                  src="/public/media/hero-style-report.png"
-                  alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
-                  loading="eager"
-                  className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)]"
-                />
+                {/* Debug: Show multiple image attempts */}
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Attempt 1: /public/media/hero-style-report.png</p>
+                    <img
+                      src="/public/media/hero-style-report.png"
+                      alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
+                      loading="eager"
+                      className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)] border border-red-200"
+                      onError={(e) => {
+                        console.log('❌ Image 1 failed to load');
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      onLoad={() => console.log('✅ Image 1 loaded')}
+                    />
+                  </div>
+                  
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Attempt 2: /media/hero-style-report.png</p>
+                    <img
+                      src="/media/hero-style-report.png"
+                      alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
+                      loading="eager"
+                      className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)] border border-blue-200"
+                      onError={(e) => {
+                        console.log('❌ Image 2 failed to load');
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      onLoad={() => console.log('✅ Image 2 loaded')}
+                    />
+                  </div>
+                  
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Attempt 3: ./media/hero-style-report.png</p>
+                    <img
+                      src="./media/hero-style-report.png"
+                      alt="Voorbeeld van een Style Report met kleurpalet en outfitaanbevelingen"
+                      loading="eager"
+                      className="w-full h-auto rounded-[calc(var(--radius-3xl)-0.5rem)] border border-green-200"
+                      onError={(e) => {
+                        console.log('❌ Image 3 failed to load');
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      onLoad={() => console.log('✅ Image 3 loaded')}
+                    />
+                  </div>
+                  
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Fallback: Placeholder</p>
+                    <div className="w-full aspect-[4/5] bg-gray-100 rounded-[calc(var(--radius-3xl)-0.5rem)] flex items-center justify-center border border-gray-300">
+                      <div className="text-center text-gray-500">
+                        <div className="text-2xl mb-2">📱</div>
+                        <div className="text-sm">Style Report Preview</div>
+                        <div className="text-xs mt-1">Image not found</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               {/* zachte achtergrond halo */}
               <div
