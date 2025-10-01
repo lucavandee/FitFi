@@ -70,12 +70,8 @@ export default function LandingPage() {
               <HeroImage
                 className="w-full max-w-[520px] h-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
                 alt="FitFi Style Report — voorbeeldweergave op mobiel"
-                // Probeer eerst jouw geüploade naam; daarna alternatieven
                 sources={[
-                  "/hero/hero-highres.webp",
-                  "/hero/hero-highres.png",
                   "/hero/style-report.webp",
-                  "/hero/style-report.png",
                 ]}
                 width={900}
                 height={1200}

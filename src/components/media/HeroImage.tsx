@@ -14,10 +14,7 @@ export default function HeroImage({
   className,
   alt = "Voorbeeld van het FitFi Style Report",
   sources = [
-    "/hero/hero-highres.webp",
-    "/hero/hero-highres.png",
     "/hero/style-report.webp",
-    "/hero/style-report.png",
   ],
   width = 900,
   height = 1200,
