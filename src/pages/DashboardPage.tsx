@@ -1,202 +1,162 @@
 // /src/pages/DashboardPage.tsx
-import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { TrendingUp, Trophy, Users, Target, SlidersHorizontal } from "lucide-react";
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Clock, LogOut, Sparkles, FileText, Settings, ArrowRight } from "lucide-react";
+import Seo from "@/components/seo/Seo";
+import PageHero from "@/components/marketing/PageHero";
+import Button from "@/components/ui/Button";
 
-import ErrorBoundary from "@/components/system/ErrorBoundary";
-import SafeWidget from "@/components/dashboard/SafeWidget";
-import FeaturedOutfitCard from "@/components/dashboard/FeaturedOutfitCard";
-import GamificationPanel from "@/components/dashboard/GamificationPanel";
-import ChallengeSnapshot from "@/components/dashboard/ChallengeSnapshot";
-import NovaInsightCard from "@/components/dashboard/NovaInsightCard";
-import ReferralCard from "@/components/dashboard/ReferralCard";
-import NotificationsMini from "@/components/notifications/NotificationsMini";
-import NBAQuickActions from "@/components/dashboard/NBAQuickActions";
-import StickyBottomBar from "@/components/dashboard/StickyBottomBar";
+function fmt(ts?: number) {
+  if (!ts) return "nog niet";
+  try {
+    const d = new Date(ts);
+    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  } catch {
+    return "onbekend";
+  }
+}
 
-import { useUser } from "@/context/UserContext";
-import { useNotifications } from "@/hooks/useNotifications";
-import { urls } from "@/utils/urls";
+export default function DashboardPage() {
+  const nav = useNavigate();
+  const [initial, setInitial] = React.useState<string>("J");
+  const [lastUpdated, setLastUpdated] = React.useState<number | undefined>();
 
-type Density = "comfort" | "compact";
-
-const DashboardPage: React.FC = () => {
-  const {
-    user,
-    userStats,
-    userStreak,
-    featuredOutfit,
-    nbaContext,
-    handleClaimDaily,
-    loading: statsLoading,
-    streakLoading,
-  } = useUser();
-  const { notifications, loading: notificationsLoading } = useNotifications();
-
-  // (1) Weergave-voorkeuren Dashboard (persist)
-  const [density, setDensity] = useState<Density>(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_dash_density") : null;
-    return (saved as Density) || "comfort";
-  });
-  useEffect(() => {
+  React.useEffect(() => {
     try {
-      window.localStorage.setItem("ff_dash_density", density);
+      const init = window.localStorage.getItem("ff_user_initial") || "J";
+      setInitial(init);
+      const tsStr = window.localStorage.getItem("ff_results_ts");
+      setLastUpdated(tsStr ? Number(tsStr) : undefined);
     } catch {}
-  }, [density]);
+  }, []);
 
-  const cardPad = density === "compact" ? "p-4" : "p-6";
-  const gapMain = density === "compact" ? "gap-6" : "gap-8";
-  const cardClassBase =
-    "rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]";
-  const cardClass = `${cardClassBase} ${cardPad}`;
-
-  const quickLinkClass =
-    "rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] text-center group transition-all hover:shadow-md hover:transform hover:scale-105";
-
-  const headerToolbar = useMemo(
-    () => (
-      <div className="mt-2 flex items-center gap-3">
-        <div className="inline-flex items-center gap-2 text-[var(--color-text)]/70">
-          <SlidersHorizontal className="w-4 h-4" />
-          <span className="text-sm">Weergave</span>
-        </div>
-        <button
-          type="button"
-          onClick={() => setDensity("comfort")}
-          aria-pressed={density === "comfort"}
-          className={`px-3 py-1.5 rounded-xl border border-[var(--color-border)] ${
-            density === "comfort" ? "ring-2 ring-[var(--color-primary)]" : ""
-          }`}
-        >
-          Comfort
-        </button>
-        <button
-          type="button"
-          onClick={() => setDensity("compact")}
-          aria-pressed={density === "compact"}
-          className={`px-3 py-1.5 rounded-xl border border-[var(--color-border)] ${
-            density === "compact" ? "ring-2 ring-[var(--color-primary)]" : ""
-          }`}
-        >
-          Compact
-        </button>
-      </div>
-    ),
-    [density]
-  );
+  function logout() {
+    try {
+      window.localStorage.removeItem("ff_auth");
+      window.localStorage.removeItem("ff_user_initial");
+    } catch {}
+    nav("/", { replace: true });
+  }
 
   return (
-    <main>
-      <div className={`container mx-auto px-4 md:px-6 py-8`}>
-        {/* Header */}
-        <ErrorBoundary>
-          <div className="mb-4">
-            <h1 className="text-2xl md:text-3xl font-semibold text-[var(--color-text)]">
-              Welkom terug, {user?.first_name || "Stylish"}
-            </h1>
-            <p className="text-[var(--color-text)]/70">Je persoonlijke hub voor outfits, levels en community.</p>
-            {headerToolbar}
-          </div>
-        </ErrorBoundary>
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <Seo
+        title="Dashboard — FitFi"
+        description="Snel overzicht van je stijlresultaten en acties."
+        path="/dashboard"
+      />
 
-        {/* Dashboard Grid */}
-        <div className={`grid grid-cols-1 lg:grid-cols-3 ${gapMain}`}>
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6 md:space-y-8">
-            {/* Quick Actions */}
-            <ErrorBoundary>
-              <SafeWidget name="Quick Actions">
-                <div className={cardClass}>
-                  <h2 className="text-xl font-medium text-[var(--color-text)] mb-4 md:mb-6">Aanbevolen acties</h2>
-                  <NBAQuickActions ctx={nbaContext} />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
+      <PageHero
+        id="page-dashboard"
+        eyebrow="ACCOUNT"
+        title="Dashboard"
+        subtitle="Rustig overzicht. Vanuit hier open je je resultaten of begin je opnieuw."
+        align="left"
+        as="h1"
+        size="sm"
+        ctas={[
+          { label: "Bekijk resultaten", to: "/results", variant: "primary" },
+          { label: "Begin opnieuw", to: "/results?refresh=1", variant: "secondary" },
+        ]}
+        note={
+          <span className="inline-flex items-center gap-2 text-[var(--color-text)]/70">
+            <Clock className="w-4 h-4" />
+            Laatst bijgewerkt: {fmt(lastUpdated)}
+          </span>
+        }
+      />
 
-            {/* Featured Outfit */}
-            <ErrorBoundary>
-              <SafeWidget name="Featured Outfit">
-                <FeaturedOutfitCard outfit={featuredOutfit} loading={false} />
-              </SafeWidget>
-            </ErrorBoundary>
+      <section className="ff-container pb-14">
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Status */}
+          <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+            <header className="flex items-center gap-3 mb-3">
+              <div className="h-9 w-9 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-sm">
+                {initial}
+              </div>
+              <h2 className="text-base font-semibold">Jouw status</h2>
+            </header>
+            <p className="text-sm text-[var(--color-text)]/80">
+              Je resultaten zijn {lastUpdated ? "beschikbaar" : "nog niet aangemaakt"}.
+              {lastUpdated ? <> Laatst geüpdatet op <strong>{fmt(lastUpdated)}</strong>.</> : null}
+            </p>
+            <div className="mt-4 flex gap-2">
+              <Button as={NavLink} to="/results" variant="primary">Open resultaten</Button>
+              <Button as={NavLink} to="/results?refresh=1" variant="secondary">Begin opnieuw</Button>
+            </div>
+          </article>
 
-            {/* Challenge Snapshot */}
-            <ErrorBoundary>
-              <SafeWidget name="Challenge Snapshot">
-                <div className={cardClass}>
-                  <ChallengeSnapshot />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
-          </div>
+          {/* Tips / Roadmap */}
+          <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+            <header className="flex items-center gap-3 mb-3">
+              <Sparkles className="w-5 h-5" />
+              <h2 className="text-base font-semibold">Snelle acties</h2>
+            </header>
+            <ul className="text-sm grid gap-2">
+              <li className="flex items-center justify-between">
+                <span>Verbeter je pasvorm-instellingen</span>
+                <NavLink to="/results#fit" className="inline-flex items-center gap-1 underline hover:no-underline">
+                  Open <ArrowRight className="w-4 h-4" />
+                </NavLink>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Bekijk uitleg bij je archetype</span>
+                <NavLink to="/results#archetype" className="inline-flex items-center gap-1 underline hover:no-underline">
+                  Open <ArrowRight className="w-4 h-4" />
+                </NavLink>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Bewaar je favoriete outfits</span>
+                <NavLink to="/results#favorites" className="inline-flex items-center gap-1 underline hover:no-underline">
+                  Open <ArrowRight className="w-4 h-4" />
+                </NavLink>
+              </li>
+            </ul>
+          </article>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <ErrorBoundary>
-              <SafeWidget name="Gamification Panel">
-                <div className={cardClass}>
-                  <GamificationPanel
-                    level={userStats?.level}
-                    xp={userStats?.xp}
-                    streak={userStreak?.current_streak}
-                    loading={statsLoading || streakLoading}
-                  />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
-
-            <ErrorBoundary>
-              <SafeWidget name="Nova Insight">
-                <div className={cardClass}>
-                  <NovaInsightCard
-                    text="Je stijl evolueert naar meer verfijnde keuzes. Probeer eens een statement accessoire!"
-                    loading={false}
-                  />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
-
-            <ErrorBoundary>
-              <SafeWidget name="Referral Card">
-                <div className={cardClass}>
-                  <ReferralCard codeUrl={urls.buildReferralUrl(user.id)} count={user?.referrals?.length || 0} goal={3} />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
-
-            <ErrorBoundary>
-              <SafeWidget name="Notifications">
-                <div className={cardClass}>
-                  <NotificationsMini items={notifications} loading={notificationsLoading} />
-                </div>
-              </SafeWidget>
-            </ErrorBoundary>
-          </div>
+          {/* Account */}
+          <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+            <header className="flex items-center gap-3 mb-3">
+              <Settings className="w-5 h-5" />
+              <h2 className="text-base font-semibold">Account</h2>
+            </header>
+            <ul className="text-sm grid gap-2">
+              <li className="flex items-center justify-between">
+                <span>Gegevens & privacy</span>
+                <NavLink to="/privacy" className="underline hover:no-underline inline-flex items-center gap-1">
+                  Open <ArrowRight className="w-4 h-4" />
+                </NavLink>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Voorwaarden</span>
+                <NavLink to="/algemene-voorwaarden" className="underline hover:no-underline inline-flex items-center gap-1">
+                  Open <ArrowRight className="w-4 h-4" />
+                </NavLink>
+              </li>
+            </ul>
+            <div className="mt-4">
+              <Button variant="secondary" onClick={logout} className="inline-flex items-center gap-2">
+                <LogOut className="w-4 h-4" /> Uitloggen
+              </Button>
+            </div>
+          </article>
         </div>
 
-        {/* Quick Links */}
-        <ErrorBoundary>
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { href: "/outfits", label: "Outfits", icon: <TrendingUp size={20} /> },
-              { href: "/gamification", label: "Levels", icon: <Trophy size={20} /> },
-              { href: "/tribes", label: "Tribes", icon: <Users size={20} /> },
-              { href: "/quiz", label: "Quiz", icon: <Target size={20} /> },
-            ].map((link) => (
-              <Link key={link.href} to={link.href} className={`${quickLinkClass} ${cardPad} group`}>
-                <div className="w-12 h-12 bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  {link.icon}
-                </div>
-                <span className="font-medium text-[var(--color-text)]">{link.label}</span>
-              </Link>
-            ))}
+        {/* Documentatie/FAQ teaser */}
+        <div className="mt-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FileText className="w-5 h-5" />
+            <div>
+              <h3 className="font-semibold">Vragen of feedback?</h3>
+              <p className="text-sm text-[var(--color-text)]/80">Bekijk de FAQ of stuur ons een bericht — we lezen alles.</p>
+            </div>
           </div>
-        </ErrorBoundary>
-      </div>
-
-      <StickyBottomBar onClaimDaily={handleClaimDaily} userId={user.id} />
+          <div className="flex gap-2">
+            <Button as={NavLink} to="/veelgestelde-vragen" variant="secondary">FAQ</Button>
+            <Button as={NavLink} to="/contact" variant="primary">Contact</Button>
+          </div>
+        </div>
+      </section>
     </main>
   );
-};
-
-export default DashboardPage;
+}
