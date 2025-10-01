@@ -1,18 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import {
-  Sparkles,
-  SlidersHorizontal,
-  Share2,
-  Bookmark,
-  BookmarkCheck,
-  Info,
-  List as ListIcon,
-  Grid3X3 as GridIcon,
-  ShoppingBag,
-  Shirt,
-  ExternalLink,
-} from "lucide-react";
+import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag, Shirt, ExternalLink } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
