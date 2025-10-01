@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { HelpCircle, ShieldCheck, Lock, CreditCard, Clock } from "lucide-react";
+import { CircleHelp as HelpCircle, ShieldCheck, Lock, CreditCard, Clock } from "lucide-react";
 
 type QA = { q: string; a: React.ReactNode };
 
