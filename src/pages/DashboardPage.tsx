@@ -28,7 +28,7 @@ function fmt(ts?: number) {
   }
 }
 
-/** Card met extra top-ademruimte (pt-7/pt-8) — geen globale CSS nodig */
+/** Card met royale top-ademruimte — tokens-first */
 function Card({
   title,
   icon,
@@ -50,8 +50,8 @@ function Card({
         "border border-[var(--color-border)]",
         "bg-[var(--color-surface)]",
         "shadow-[var(--shadow-soft)]",
-        // >>> verhoogde top-padding voor meer lucht
-        "pt-7 sm:pt-8 pb-5 sm:pb-6 px-5 sm:px-6",
+        // extra lucht binnen de kaart
+        "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
       ].join(" ")}
     >
       <header className="mb-4 flex items-center gap-3">
@@ -96,6 +96,7 @@ export default function DashboardPage() {
         path="/dashboard"
       />
 
+      {/* HERO */}
       <PageHero
         id="page-dashboard"
         eyebrow="ACCOUNT"
@@ -116,8 +117,9 @@ export default function DashboardPage() {
         }
       />
 
-      <section className="ff-container pb-14">
-        <div className="grid gap-6 md:grid-cols-3 items-stretch">
+      {/* SECTION — royale top-padding om afstand tot hero te creëren */}
+      <section className="ff-container pt-12 sm:pt-14 md:pt-16 lg:pt-20 pb-16">
+        <div className="grid gap-7 md:gap-8 lg:gap-9 md:grid-cols-3 items-stretch">
           {/* Jouw status */}
           <Card
             title="Jouw status"
@@ -238,14 +240,13 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Support teaser (matching spacing) */}
+        {/* Support teaser — spacing gelijkgetrokken met cards */}
         <div
           className={[
-            "mt-6",
+            "mt-8 lg:mt-10",
             "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
             "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
-            // iets meer top-padding zodat het visueel in lijn ligt met de cards
-            "pt-7 sm:pt-8 pb-5 sm:pb-6 px-5 sm:px-6",
+            "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
           ].join(" ")}
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
