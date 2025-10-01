@@ -2,16 +2,7 @@
 import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
-import {
-  Eye,
-  EyeOff,
-  CircleAlert as AlertCircle,
-  CheckCircle2,
-  Mail,
-  Link as LinkIcon,
-  X,
-  ShieldCheck,
-} from "lucide-react";
+import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, Mail, Link as LinkIcon, X, ShieldCheck } from "lucide-react";
 
 /** E-mail validatie (basic, client-side) */
 function isEmail(v: string) {
