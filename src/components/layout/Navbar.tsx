@@ -115,7 +115,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {!isAuthed ? (
             <>
-              <a href="/login" className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
+              <a href="/inloggen" className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
                 Log in
               </a>
               <a href="/results" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
@@ -189,7 +189,7 @@ export default function Navbar() {
           {/* Auth CTA's mobiel */}
           {!isAuthed ? (
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <a href="/login" className="ff-btn ff-btn-secondary h-10 w-full">Log in</a>
+              <a href="/inloggen" className="ff-btn ff-btn-secondary h-10 w-full">Log in</a>
               <a href="/results" className="ff-btn ff-btn-primary h-10 w-full">Start gratis</a>
             </div>
           ) : (
