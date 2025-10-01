@@ -1,52 +1,11 @@
-/* /src/index.css */
-/* Volgorde is belangrijk: eerst tokens/polish, dan Tailwind layers */
-@import url('./styles/tokens.css');
-@import url('./styles/polish.css');
-@import url('./styles/animations.css');
-@import url('./styles/fitfi-theme.css');
-@import url('./styles/components/images.css');
-@import url('./styles/components/pricing.css');
-@import url('./styles/utilities/typography.css');
+@import "./styles/tokens.css";
+@import "./styles/polish.css";
+/* NIEUW: addon laadt de hero-band en mobile polish app-breed */
+@import "./styles/polish.addon.css";
 
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+/* Tailwind layers — volgorde behouden */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Fallback animations for when framer-motion is not available */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
-}
-
-/* Baseline: systeemkleurenschema + body-font volgens tokens */
-:root { color-scheme: light; }
-
-html {
-  background: var(--color-bg);
-  color: var(--color-text);
-}
-
-body {
-  font-family: theme("fontFamily.body");
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* A11Y: nette focus-ring via token */
-:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-ring);
-}
-
-/* Optioneel: visuele polish zonder hex-kleuren */
-/* Buttons houden hun tokens-styling vanuit component-classes */
+/* (optioneel) Kleine global fixes die geen content wijzigen kunnen hier later bij */
