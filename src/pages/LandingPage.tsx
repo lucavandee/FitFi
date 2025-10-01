@@ -1,55 +1,80 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import PageHero from "@/components/marketing/PageHero";
-import Button from "@/components/ui/Button";
-import { ShieldCheck, Lock, CircleCheck as CheckCircle2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Seo from "@/components/Seo";
+import HeroStacked from "@/components/landing/HeroStacked";
+import HowItWorksEditorial from "@/components/landing/HowItWorksEditorial";
+import SocialProofEditorial from "@/components/landing/SocialProofEditorial";
+import SkipLink from "@/components/a11y/SkipLink";
 
-export default function LandingPage() {
+const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  // JSON-LD voor de homepage (WebSite + Organization + SearchAction)
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FitFi",
+      "url": "https://www.fitfi.ai/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.fitfi.ai/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FitFi",
+      "url": "https://www.fitfi.ai/",
+      "logo": "https://www.fitfi.ai/og/og-default.jpg",
+      "sameAs": [
+        "https://www.instagram.com/",
+        "https://www.linkedin.com/"
+      ]
+    }
+  ];
+
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <PageHero
-        id="hero"
-        eyebrow="GRATIS AI STYLE REPORT"
-        title="Ontdek wat jouw stijl over je zegt"
-        subtitle="Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis."
-        align="left"
-        as="h1"
-        size="lg"
-        density="airy"             // <<< royale verticale spacing
-        ctas={[
-          { label: "Start gratis", to: "/registreren", variant: "primary" },
-          { label: "Bekijk voorbeeld", to: "/results", variant: "secondary" },
-        ]}
-      >
-        {/* Chips / selling points — compact en rustig */}
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">100% gratis</span>
-          <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">Klaar in 2 min</span>
-          <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">Outfits + shoplinks</span>
-          <span className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm">Privacy-first</span>
-        </div>
-      </PageHero>
+    <>
+      <SkipLink />
+      <main id="main" className="bg-[var(--color-bg)] min-h-screen">
+        <Seo
+          title="FitFi — AI Style Report"
+          description="Antwoord op 6 korte vragen en ontvang direct persoonlijke outfits met uitleg en shoplinks. Rustig, premium en privacy-first."
+          canonical="/"
+          jsonLd={jsonLd}
+          image="https://www.fitfi.ai/og/og-default.jpg"
+          // géén styling-aanpassing; puur meta
+        />
 
-      {/* Mini trust row — zeer discreet */}
-      <section className="ff-container pb-16">
-        <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-[var(--color-text)]/80">
-          <span className="inline-flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4" aria-hidden />
-            Privacy-first
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <Lock className="w-4 h-4" aria-hidden />
-            AVG-compliant
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" aria-hidden />
-            Geverifieerde partners
-          </span>
-          <Button as={NavLink} to="/registreren" variant="primary" className="ml-auto">
-            Start gratis
-          </Button>
-        </div>
-      </section>
-    </main>
+        {/* HERO (ongewijzigde styling) */}
+        <section className="ff-section">
+          <div className="ff-container">
+            <HeroStacked
+              onStart={() => navigate("/results")}
+              onExample={() => navigate("/hoe-het-werkt")}
+              // imageId/alt/focal blijven zoals jouw component default — geen visuele wijziging
+            />
+          </div>
+        </section>
+
+        {/* Uitleg (ongewijzigd) */}
+        <section className="ff-section">
+          <div className="ff-container">
+            <HowItWorksEditorial />
+          </div>
+        </section>
+
+        {/* Social proof / trust (ongewijzigd) */}
+        <section className="ff-section">
+          <div className="ff-container">
+            <SocialProofEditorial />
+          </div>
+        </section>
+      </main>
+    </>
   );
-}
+};
+
+export default LandingPage;
