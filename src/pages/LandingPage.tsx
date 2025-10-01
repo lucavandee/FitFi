@@ -66,17 +66,70 @@ export default function LandingPage() {
             </div>
 
             <div className="order-1 md:order-2 flex justify-center">
-              <picture>
-                <source srcSet="/hero/style-report.webp" type="image/webp" />
-                <img
-                  src="/hero/style-report.png"
-                  alt="Voorbeeld van het FitFi Style Report op mobiel, met kleurpalet en aanbevolen items"
-                  width={900}
-                  height={1200}
-                  loading="eager"
-                  className="w-full max-w-[520px] h-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
-                />
-              </picture>
+              {/* Debug: Test multiple image paths */}
+              <div className="space-y-4">
+                <div className="text-sm text-red-500">Debug: Testing image paths</div>
+                
+                {/* Test 1: /hero/style-report.webp */}
+                <div className="border-2 border-blue-500 p-2">
+                  <div className="text-xs">Test 1: /hero/style-report.webp</div>
+                  <img
+                    src="/hero/style-report.webp"
+                    alt="Test 1"
+                    className="w-32 h-auto"
+                    onLoad={() => console.log('✅ /hero/style-report.webp loaded')}
+                    onError={() => console.log('❌ /hero/style-report.webp failed')}
+                  />
+                </div>
+
+                {/* Test 2: /hero/style-report.png */}
+                <div className="border-2 border-green-500 p-2">
+                  <div className="text-xs">Test 2: /hero/style-report.png</div>
+                  <img
+                    src="/hero/style-report.png"
+                    alt="Test 2"
+                    className="w-32 h-auto"
+                    onLoad={() => console.log('✅ /hero/style-report.png loaded')}
+                    onError={() => console.log('❌ /hero/style-report.png failed')}
+                  />
+                </div>
+
+                {/* Test 3: public/hero/style-report.png */}
+                <div className="border-2 border-yellow-500 p-2">
+                  <div className="text-xs">Test 3: public/hero/style-report.png</div>
+                  <img
+                    src="public/hero/style-report.png"
+                    alt="Test 3"
+                    className="w-32 h-auto"
+                    onLoad={() => console.log('✅ public/hero/style-report.png loaded')}
+                    onError={() => console.log('❌ public/hero/style-report.png failed')}
+                  />
+                </div>
+
+                {/* Test 4: ./hero/style-report.png */}
+                <div className="border-2 border-purple-500 p-2">
+                  <div className="text-xs">Test 4: ./hero/style-report.png</div>
+                  <img
+                    src="./hero/style-report.png"
+                    alt="Test 4"
+                    className="w-32 h-auto"
+                    onLoad={() => console.log('✅ ./hero/style-report.png loaded')}
+                    onError={() => console.log('❌ ./hero/style-report.png failed')}
+                  />
+                </div>
+
+                {/* Test 5: Known working image */}
+                <div className="border-2 border-red-500 p-2">
+                  <div className="text-xs">Test 5: /placeholder.png (should work)</div>
+                  <img
+                    src="/placeholder.png"
+                    alt="Test 5"
+                    className="w-32 h-auto"
+                    onLoad={() => console.log('✅ /placeholder.png loaded')}
+                    onError={() => console.log('❌ /placeholder.png failed')}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
