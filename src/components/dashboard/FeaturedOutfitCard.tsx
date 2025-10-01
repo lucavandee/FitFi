@@ -2,7 +2,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
 import { track } from "@/utils/analytics";
@@ -69,10 +68,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
+    <div
       className={`rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow ${className}`}
     >
       {/* Header */}
@@ -150,7 +146,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
           </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -2,12 +2,26 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import Button from "@/components/ui/Button";
+
+// Conditional framer-motion import with fallback
+let AnimatePresence: any = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+let motion: any = {
+  article: "article",
+  div: "div",
+};
+
+try {
+  const framerMotion = await import("framer-motion");
+  AnimatePresence = framerMotion.AnimatePresence;
+  motion = framerMotion.motion;
+} catch {
+  // Fallback to regular HTML elements if framer-motion is not available
+}
 
 type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
 type ViewMode = "list" | "grid";
@@ -77,15 +91,10 @@ const ExplainList: React.FC<{ id: string; title: string; archetype?: string; isO
   }, [archetype]);
 
   return (
-    <AnimatePresence initial={false}>
+    <>
       {isOpen && (
-        <motion.div
-          key={`exp-${id}`}
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.25 }}
-          className="overflow-hidden"
+        <div
+          className="overflow-hidden transition-all duration-300"
           aria-live="polite"
         >
           <ul className="mt-3 grid gap-2 text-sm">
@@ -96,9 +105,9 @@ const ExplainList: React.FC<{ id: string; title: string; archetype?: string; isO
               </li>
             ))}
           </ul>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 };
 
@@ -115,11 +124,7 @@ const OutfitCard: React.FC<{
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
+    <article
       className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow"
     >
       <div className="flex items-center gap-3 mb-4">
@@ -207,7 +212,7 @@ const OutfitCard: React.FC<{
           </div>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 };
 
@@ -302,11 +307,9 @@ const EnhancedResultsPage: React.FC = () => {
 
         {/* Lijst met outfits */}
         <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" : "grid grid-cols-1 gap-6 md:gap-8"}>
-          <AnimatePresence initial={false}>
-            {filtered.map((o) => (
-              <OutfitCard key={o.id} {...o} view={view} />
-            ))}
-          </AnimatePresence>
+          {filtered.map((o) => (
+            <OutfitCard key={o.id} {...o} view={view} />
+          ))}
         </div>
 
         {/* Premium upsell */}
