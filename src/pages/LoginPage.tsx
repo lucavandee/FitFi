@@ -3,7 +3,16 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
-import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, Mail, Link as LinkIcon, X, ShieldCheck } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  CircleAlert as AlertCircle,
+  CheckCircle2,
+  Mail,
+  Link as LinkIcon,
+  X,
+  ShieldCheck,
+} from "lucide-react";
 
 /** Basale e-mailvalidatie (client-side) */
 function isEmail(v: string) {
@@ -132,8 +141,8 @@ export default function LoginPage() {
         }
       />
 
-      {/* FORM-CARD (géén polish.css afhankelijkheden) */}
-      <section className="ff-container pb-14">
+      {/* FORM-CARD — extra top-padding t.o.v. hero voor lucht */}
+      <section className="ff-container pt-8 sm:pt-10 md:pt-12 pb-14">
         <div
           className={[
             "mx-auto max-w-[640px]",
