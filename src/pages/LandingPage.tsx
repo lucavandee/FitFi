@@ -11,13 +11,8 @@ const home = rawHome as HomeContent;
 export default function LandingPage() {
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Seo
-        title="FitFi — Ontdek wat jouw stijl over je zegt"
-        description={home.heroSubtitle}
-        path="/"
-      />
+      <Seo title="FitFi — Ontdek wat jouw stijl over je zegt" description={home.heroSubtitle} path="/" />
 
-      {/* HERO */}
       <section className="relative">
         <div className="ff-container pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-10 sm:pb-12">
           <div className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm tracking-wide">
@@ -51,7 +46,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Hero visual */}
         <div className="ff-container">
           <div className="mt-4 md:mt-6 lg:mt-8 grid md:grid-cols-2 gap-6 items-center">
             <div className="order-2 md:order-1">
@@ -81,7 +75,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Hoe het werkt */}
       <section className="ff-container pt-16 md:pt-20">
         <h2 className="text-2xl sm:text-3xl font-semibold">Hoe het werkt</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -95,19 +88,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Waarom FitFi */}
       <section className="ff-container pt-14">
         <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
           <h2 className="text-lg font-semibold">Waarom FitFi</h2>
           <div className="mt-3 grid gap-3 md:grid-cols-3 text-sm">
             {home.reasons.map((r, i) => (
-              <div key={i} className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">{`• ${r.text}`}</div>
+              <div key={i} className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">• {r.text}</div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ + eind-CTA */}
       <section className="ff-container pt-14 pb-20">
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">

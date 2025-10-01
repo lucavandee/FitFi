@@ -1,19 +1,18 @@
 backend:
-  name: git-gateway   # op Netlify: Identity + Git Gateway activeren
+  name: git-gateway       # Netlify: zet Identity + Git Gateway aan
   branch: main
 
-media_folder: "public/uploads"   # waar bestanden fysiek terechtkomen
-public_folder: "/uploads"        # hoe de app ze benadert
+media_folder: "public/uploads"   # waar bestanden in de repo staan
+public_folder: "/uploads"        # hoe de app ze benadert (URL)
 
-local_backend: true              # werkt ook lokaal met 'npx decap-server'
+local_backend: true
 
 collections:
   - name: "home"
     label: "Homepage"
     delete: false
     format: "json"
-    editor:
-      preview: false
+    editor: { preview: false }
     files:
       - file: "src/content/home.json"
         label: "Homepage content"
@@ -21,12 +20,7 @@ collections:
         fields:
           - { label: "Hero titel", name: "heroTitle", widget: "string" }
           - { label: "Hero ondertitel", name: "heroSubtitle", widget: "text" }
-          - label: "Hero afbeelding"
-            name: "heroImage"
-            widget: "image"
-            allow_multiple: false
-            media_folder: "public/uploads"
-            public_folder: "/uploads"
+          - { label: "Hero afbeelding", name: "heroImage", widget: "image", allow_multiple: false, media_folder: "public/uploads", public_folder: "/uploads" }
           - label: "CTA's"
             name: "ctas"
             widget: "list"

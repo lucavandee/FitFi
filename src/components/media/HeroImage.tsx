@@ -3,8 +3,8 @@ import React from "react";
 type Props = {
   className?: string;
   alt?: string;
-  src?: string;                // primaire bron (bijv. vanuit CMS)
-  fallbacks?: string[];        // alternatieven als primaire 404 geeft
+  src?: string;                // uit CMS
+  fallbacks?: string[];        // als src 404 geeft
   width?: number;
   height?: number;
   eager?: boolean;
@@ -21,10 +21,7 @@ export default function HeroImage({
 }: Props) {
   const [i, setI] = React.useState(-1);
   const current = i < 0 ? src : fallbacks[i];
-
-  function onError() {
-    setI((prev) => (prev < fallbacks.length - 1 ? prev + 1 : prev));
-  }
+  function onError() { setI((p) => (p < fallbacks.length - 1 ? p + 1 : p)); }
 
   return (
     <img
