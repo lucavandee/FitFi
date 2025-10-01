@@ -1,67 +1,52 @@
-// /src/pages/EnhancedResultsPage.tsx
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag, Shirt, ExternalLink } from "lucide-react";
-
+import {
+  Sparkles,
+  SlidersHorizontal,
+  Share2,
+  Bookmark,
+  BookmarkCheck,
+  Info,
+  List as ListIcon,
+  Grid3X3 as GridIcon,
+  ShoppingBag,
+  Shirt,
+  ExternalLink,
+} from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
+import { track } from "@/utils/analytics";
 
 /** -------- UX helpers -------- */
 
-type Outfit = {
-  id: string;
-  title: string;
-  vibe: string;
-  notes: string;
-  palette: string; // textual
-};
+type Outfit = { id: string; title: string; vibe: string; notes: string; palette: string };
 
 const OUTFITS: Outfit[] = [
-  { id: "o1", title: "Clean Casual", vibe: "Smart-casual", notes: "Neutrals, rustige textuur.", palette: "steen • zand • wit" },
-  { id: "o2", title: "Office Minimal", vibe: "Werk / meeting", notes: "Strakke lijnen, laag contrast.", palette: "beige • greige • off-white" },
-  { id: "o3", title: "Weekend Uniform", vibe: "Ontspannen", notes: "Praktisch, subtiele structuur.", palette: "taupe • ecru • olijf-tint" },
-  { id: "o4", title: "Monochrome Light", vibe: "Tonal", notes: "Lang silhouet, 2 lagen.", palette: "ecru • bot • crème" },
-  { id: "o5", title: "Warm Neutral Mix", vibe: "Casual", notes: "Warm koord + katoen.", palette: "klei • room • zand" },
-  { id: "o6", title: "Sporty Sharp", vibe: "Sportief-net", notes: "Clean sportswear, *no logos*.", palette: "steenkleur • wolk • room" },
+  { id: "o1", title: "Clean Casual",   vibe: "Smart-casual",    notes: "Neutrals, rustige textuur.",        palette: "steen • zand • wit" },
+  { id: "o2", title: "Office Minimal", vibe: "Werk / meeting",  notes: "Strakke lijnen, laag contrast.",    palette: "beige • greige • off-white" },
+  { id: "o3", title: "Weekend Uniform",vibe: "Ontspannen",      notes: "Praktisch, subtiele structuur.",    palette: "taupe • ecru • olijf-tint" },
+  { id: "o4", title: "Monochrome Light",vibe: "Tonal",          notes: "Lang silhouet, 2 lagen.",           palette: "ecru • bot • crème" },
+  { id: "o5", title: "Warm Neutral Mix",vibe: "Casual",         notes: "Warm koord + katoen.",              palette: "klei • room • zand" },
+  { id: "o6", title: "Sporty Sharp",   vibe: "Sportief-net",    notes: "Clean sportswear, *no logos*.",     palette: "steenkleur • wolk • room" },
 ];
 
 function readFavs(): string[] {
-  try {
-    const raw = window.localStorage.getItem("ff_fav_outfits");
-    return raw ? (JSON.parse(raw) as string[]) : [];
-  } catch {
-    return [];
-  }
+  try { return JSON.parse(window.localStorage.getItem("ff_fav_outfits") || "[]"); } catch { return []; }
 }
 function writeFavs(ids: string[]) {
-  try {
-    window.localStorage.setItem("ff_fav_outfits", JSON.stringify(ids));
-  } catch {}
+  try { window.localStorage.setItem("ff_fav_outfits", JSON.stringify(ids)); } catch {}
 }
 
 /** Herbruikbare section card met royale top-padding (premium ademruimte) */
 function SectionCard({
-  id,
-  title,
-  subtitle,
-  icon,
-  children,
-}: {
-  id?: string;
-  title: string;
-  subtitle?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
+  id, title, subtitle, icon, children,
+}: { id?: string; title: string; subtitle?: string; icon?: React.ReactNode; children: React.ReactNode; }) {
   return (
     <section
       id={id}
       className={[
-        "rounded-[var(--radius-2xl)]",
-        "border border-[var(--color-border)]",
-        "bg-[var(--color-surface)]",
-        "shadow-[var(--shadow-soft)]",
+        "rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
         "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
       ].join(" ")}
       aria-labelledby={id ? `${id}-title` : undefined}
@@ -69,12 +54,8 @@ function SectionCard({
       <header className="mb-4 flex items-start gap-3">
         {icon ? <div className="mt-0.5 text-[var(--color-text)]/90">{icon}</div> : null}
         <div>
-          <h2 id={id ? `${id}-title` : undefined} className="text-lg font-semibold">
-            {title}
-          </h2>
-          {subtitle ? (
-            <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{subtitle}</p>
-          ) : null}
+          <h2 id={id ? `${id}-title` : undefined} className="text-lg font-semibold">{title}</h2>
+          {subtitle ? <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{subtitle}</p> : null}
         </div>
       </header>
       <div className="text-sm">{children}</div>
@@ -82,16 +63,12 @@ function SectionCard({
   );
 }
 
-/** Kleine visuele placeholder voor outfit (geen externe assets nodig) */
+/** Visuele outfit placeholder (geen externe assets nodig) */
 function OutfitVisual({ label }: { label: string }) {
   return (
     <div
       className={[
-        "relative w-full",
-        "aspect-[4/5]",
-        "rounded-[var(--radius-xl)]",
-        "border border-[var(--color-border)]",
-        "bg-[var(--color-bg)]",
+        "relative w-full aspect-[4/5] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)]",
         "flex items-center justify-center",
       ].join(" ")}
       aria-hidden
@@ -105,11 +82,10 @@ function OutfitVisual({ label }: { label: string }) {
 /** -------- Pagina -------- */
 
 export default function EnhancedResultsPage() {
-  // Schrijf 'last updated' zodra resultaten bekeken worden (leest Dashboard)
+  // 'Last updated' voor Dashboard + view event
   React.useEffect(() => {
-    try {
-      window.localStorage.setItem("ff_results_ts", Date.now().toString());
-    } catch {}
+    try { window.localStorage.setItem("ff_results_ts", Date.now().toString()); } catch {}
+    track("view_results");
   }, []);
 
   const [view, setView] = React.useState<"grid" | "list">("grid");
@@ -119,12 +95,14 @@ export default function EnhancedResultsPage() {
     setFavs((curr) => {
       const next = curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id];
       writeFavs(next);
+      track(curr.includes(id) ? "favorite_remove" : "favorite_add", { id });
       return next;
     });
   }
 
   function sharePage() {
     const url = typeof window !== "undefined" ? window.location.href : "https://fitfi.ai/results";
+    track("share_results");
     if (navigator.share) {
       navigator.share({ title: "Mijn FitFi resultaten", url }).catch(() => {});
     } else if (navigator.clipboard) {
@@ -150,53 +128,28 @@ export default function EnhancedResultsPage() {
           { label: "Dashboard", to: "/dashboard", variant: "secondary" },
           { label: "Deel", to: "#", variant: "primary" },
         ]}
-        onPrimaryClick={(e: any) => {
-          e?.preventDefault?.();
-          sharePage();
-        }}
+        onPrimaryClick={(e: any) => { e?.preventDefault?.(); sharePage(); }}
       />
 
       {/* Content met royale afstand tot hero */}
       <section className="ff-container pt-12 sm:pt-14 md:pt-16 lg:pt-20 pb-20">
         {/* Toolbalk */}
-        <div
-          className={[
-            "mb-6 flex flex-wrap items-center justify-between gap-3",
-            "rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)]",
-            "px-4 py-3",
-          ].join(" ")}
-        >
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
           <div className="inline-flex items-center gap-2 text-sm">
             <SlidersHorizontal className="w-4 h-4" aria-hidden />
             <span className="opacity-80">Weergave</span>
-            <div
-              role="tablist"
-              aria-label="Weergave"
-              className="ml-2 inline-flex items-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-1"
-            >
+            <div role="tablist" aria-label="Weergave" className="ml-2 inline-flex items-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-1">
               <button
-                role="tab"
-                aria-selected={view === "grid"}
-                className={[
-                  "px-3 py-1.5 rounded-lg text-sm inline-flex items-center gap-1",
-                  view === "grid"
-                    ? "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
-                    : "hover:bg-[color-mix(in oklab,var(--color-primary) 8%,transparent)]",
-                ].join(" ")}
-                onClick={() => setView("grid")}
+                role="tab" aria-selected={view === "grid"}
+                className={["px-3 py-1.5 rounded-lg text-sm inline-flex items-center gap-1", view==="grid"?"bg-[var(--color-surface)] shadow-[var(--shadow-soft)]":"hover:bg-[color-mix(in oklab,var(--color-primary) 8%,transparent)]"].join(" ")}
+                onClick={() => { setView("grid"); track("view_mode_change", { mode: "grid" }); }}
               >
                 <GridIcon className="w-4 h-4" aria-hidden /> Grid
               </button>
               <button
-                role="tab"
-                aria-selected={view === "list"}
-                className={[
-                  "px-3 py-1.5 rounded-lg text-sm inline-flex items-center gap-1",
-                  view === "list"
-                    ? "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
-                    : "hover:bg-[color-mix(in oklab,var(--color-primary) 8%,transparent)]",
-                ].join(" ")}
-                onClick={() => setView("list")}
+                role="tab" aria-selected={view === "list"}
+                className={["px-3 py-1.5 rounded-lg text-sm inline-flex items-center gap-1", view==="list"?"bg-[var(--color-surface)] shadow-[var(--shadow-soft)]":"hover:bg-[color-mix(in oklab,var(--color-primary) 8%,transparent)]"].join(" ")}
+                onClick={() => { setView("list"); track("view_mode_change", { mode: "list" }); }}
               >
                 <ListIcon className="w-4 h-4" aria-hidden /> Lijst
               </button>
@@ -224,7 +177,11 @@ export default function EnhancedResultsPage() {
                 return (
                   <article
                     key={o.id}
-                    className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden"
+                    className={[
+                      "rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden",
+                      // micro-animatie: hover-lift + subtle shadow intensivering
+                      "transform-gpu transition-transform duration-200 ease-out hover:-translate-y-0.5",
+                    ].join(" ")}
                   >
                     <OutfitVisual label={o.title} />
                     <div className="p-4 border-t border-[var(--color-border)]">
@@ -238,15 +195,7 @@ export default function EnhancedResultsPage() {
                           aria-pressed={active}
                           onClick={() => toggleFav(o.id)}
                         >
-                          {active ? (
-                            <>
-                              <BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard
-                            </>
-                          ) : (
-                            <>
-                              <Bookmark className="w-4 h-4" aria-hidden /> Bewaren
-                            </>
-                          )}
+                          {active ? (<><BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard</>) : (<><Bookmark className="w-4 h-4" aria-hidden /> Bewaren</>)}
                         </button>
                       </div>
                       <p className="mt-2 text-sm opacity-80">{o.notes}</p>
@@ -255,7 +204,7 @@ export default function EnhancedResultsPage() {
                         <Button as={NavLink} to="/results#archetype" variant="secondary" className="inline-flex items-center gap-2">
                           <Info className="w-4 h-4" aria-hidden /> Waarom dit werkt
                         </Button>
-                        <Button as={NavLink} to="/results?shop=1" variant="primary" className="inline-flex items-center gap-2">
+                        <Button as={NavLink} to="/results?shop=1" variant="primary" className="inline-flex items-center gap-2" onClick={() => track("click_shop_cta", { id: o.id })}>
                           <ShoppingBag className="w-4 h-4" aria-hidden /> Shop (binnenkort)
                         </Button>
                       </div>
@@ -271,11 +220,12 @@ export default function EnhancedResultsPage() {
                 return (
                   <li
                     key={o.id}
-                    className="flex items-center gap-4 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4"
+                    className={[
+                      "flex items-center gap-4 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4",
+                      "transform-gpu transition-transform duration-200 ease-out hover:-translate-y-0.5",
+                    ].join(" ")}
                   >
-                    <div className="w-20">
-                      <OutfitVisual label={o.title} />
-                    </div>
+                    <div className="w-20"><OutfitVisual label={o.title} /></div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-3">
                         <div>
@@ -287,15 +237,7 @@ export default function EnhancedResultsPage() {
                           aria-pressed={active}
                           onClick={() => toggleFav(o.id)}
                         >
-                          {active ? (
-                            <>
-                              <BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard
-                            </>
-                          ) : (
-                            <>
-                              <Bookmark className="w-4 h-4" aria-hidden /> Bewaren
-                            </>
-                          )}
+                          {active ? (<><BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard</>) : (<><Bookmark className="w-4 h-4" aria-hidden /> Bewaren</>)}
                         </button>
                       </div>
                       <p className="mt-1 text-sm opacity-80">{o.notes}</p>
@@ -320,7 +262,7 @@ export default function EnhancedResultsPage() {
                 Silhouet: kies 2 lagen max; laat je bovenlaag ±1/3 langer vallen voor lengte.
               </li>
               <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                Textuur: combineer **glad** en **gebreid** voor diepte zonder drukte.
+                Textuur: combineer <strong>glad</strong> en <strong>gebreid</strong> voor diepte zonder drukte.
               </li>
               <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
                 Kleur: werk tonal (licht-neutraal) met 1 warme accenttint per look.
@@ -340,22 +282,13 @@ export default function EnhancedResultsPage() {
             icon={<SlidersHorizontal className="w-5 h-5" aria-hidden />}
           >
             <div className="grid gap-3">
-              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                <span>Bovenlaag</span>
-                <span className="text-sm opacity-70">Regular-slim</span>
-              </div>
-              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                <span>Broek</span>
-                <span className="text-sm opacity-70">Tapered</span>
-              </div>
-              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                <span>Lengte</span>
-                <span className="text-sm opacity-70">Licht cropped (–2 cm)</span>
-              </div>
+              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"><span>Bovenlaag</span><span className="text-sm opacity-70">Regular-slim</span></div>
+              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"><span>Broek</span><span className="text-sm opacity-70">Tapered</span></div>
+              <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"><span>Lengte</span><span className="text-sm opacity-70">Licht cropped (–2 cm)</span></div>
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <Button as={NavLink} to="/results?refresh=1" variant="secondary">Genereer opnieuw</Button>
+              <Button as={NavLink} to="/results?refresh=1" variant="secondary" onClick={() => track("regenerate_results")}>Genereer opnieuw</Button>
               <Button as={NavLink} to="/veelgestelde-vragen" variant="primary" className="inline-flex items-center gap-2">
                 <ExternalLink className="w-4 h-4" aria-hidden /> Hulp
               </Button>
@@ -372,23 +305,15 @@ export default function EnhancedResultsPage() {
         >
           {favs.length === 0 ? (
             <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
-              <p className="text-sm opacity-80">
-                Nog geen favorieten. Klik op <em>Bewaren</em> bij een outfit om te starten.
-              </p>
+              <p className="text-sm opacity-80">Nog geen favorieten. Klik op <em>Bewaren</em> bij een outfit om te starten.</p>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {OUTFITS.filter((o) => favs.includes(o.id)).map((o) => (
-                <div
-                  key={o.id}
-                  className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4"
-                >
+                <div key={o.id} className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4 transform-gpu transition-transform duration-200 ease-out hover:-translate-y-0.5">
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium">{o.title}</h3>
-                    <button
-                      className="inline-flex h-8 items-center gap-1 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
-                      onClick={() => toggleFav(o.id)}
-                    >
+                    <button className="inline-flex h-8 items-center gap-1 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm" onClick={() => toggleFav(o.id)}>
                       <Bookmark className="w-4 h-4" aria-hidden /> Verwijder
                     </button>
                   </div>

@@ -1,83 +1,26 @@
-/**
- * Analytics utilities for FitFi
- * Provides safe, fail-safe analytics tracking
- */
+import { getCookiePrefs } from "@/utils/consent";
 
-/**
- * Track a pageview
- */
-export function pageview(url: string, params: Record<string, any> = {}) {
+type Payload = Record<string, unknown>;
+
+function canTrack() {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('config', import.meta.env.VITE_GTAG_ID || 'GA_MEASUREMENT_ID', {
-        page_path: url,
-        ...params
-      });
-    }
-  } catch (error) {
-    console.debug('[Analytics] Pageview failed:', error);
+    const id = import.meta.env.VITE_GTAG_ID as string | undefined;
+    return !!id && getCookiePrefs().analytics && typeof window !== "undefined" && typeof window.gtag === "function";
+  } catch {
+    return false;
   }
 }
 
-/**
- * Track an event
- */
-export function event(name: string, params: Record<string, any> = {}) {
+export function track(event: string, payload: Payload = {}) {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', name, params);
-    }
-  } catch (error) {
-    console.debug('[Analytics] Event failed:', error);
-  }
+    if (!canTrack()) return;
+    window.gtag!("event", event, payload);
+  } catch {}
 }
 
-/**
- * Generic track function (alias for event)
- */
-export function track(event: string, data?: Record<string, any>) {
-  try { (window as any).gtag?.('event', event, data ?? {}); } catch {}
-  try { (window as any).analytics?.track?.(event, data); } catch {}
-}
-
-/**
- * Track an exception
- */
-export function exception(description: string, fatal: boolean = false) {
+export function pageview(path: string) {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'exception', {
-        description,
-        fatal
-      });
-    }
-  } catch (error) {
-    console.debug('[Analytics] Exception failed:', error);
-  }
+    if (!canTrack()) return;
+    window.gtag!("event", "page_view", { page_path: path });
+  } catch {}
 }
-
-/**
- * Generic track function (alias for event)
- */
-
-/**
- * Track event with category and label (legacy format)
- */
-export function trackEvent(
-  action: string,
-  category: string = 'general',
-  label?: string,
-  value?: number,
-  params: Record<string, any> = {}
-) {
-  return event(action, {
-    event_category: category,
-    event_label: label,
-    value,
-    ...params
-  });
-}
-
-// Default export
-const analytics = { pageview, event, exception, track, trackEvent };
-export default analytics;

@@ -16,6 +16,7 @@ import {
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
+import { track } from "@/utils/analytics";
 
 /** Utility: veilige datumweergave */
 function fmt(ts?: number) {
@@ -71,6 +72,7 @@ export default function DashboardPage() {
   const [hasFavorites, setHasFavorites] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    track("view_dashboard");
     try {
       const init = window.localStorage.getItem("ff_user_initial") || "J";
       setInitial(init);
