@@ -2,112 +2,72 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import PageHero from "@/components/marketing/PageHero";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { ShieldCheck, UserCheck, LockKeyhole, CircleCheck as CheckCircle2, Star, Smartphone } from "lucide-react";
+import {
+  ShieldCheck,
+  UserCheck,
+  LockKeyhole,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
 
-type Row = { label: string; starter: boolean | string; pro: boolean | string; elite: boolean | string; };
+type Plan = {
+  id: "starter" | "pro" | "elite";
+  name: string;
+  description: string;
+  price: { monthly: number; yearly: number };
+  features: string[];
+  cta: { label: string; to: string };
+  popular?: boolean;
+};
 
-const ROWS: Row[] = [
-  { label: "Outfits per maand", starter: "3", pro: "10", elite: "Onbeperkt" },
-  { label: "AI‑analyse", starter: true, pro: true, elite: "Uitgebreid" },
-  { label: "Wishlist", starter: "Beperkt", pro: "Volledig", elite: "Volledig + alerts" },
-  { label: "Support", starter: "Basis", pro: "Sneller", elite: "Prioriteit" },
-];
+type Row = { label: string; starter: boolean | string; pro: boolean | string; elite: boolean | string };
 
-const PRICE_FAQ = [
-  { q: "Kan ik op elk moment opzeggen?", a: "Ja. Je zit nergens aan vast en kunt maandelijks opzeggen." },
-  { q: "Welke betaalmethodes accepteren jullie?", a: "We ondersteunen de gebruikelijke betaalmethoden. Je kunt eenvoudig betalen zoals je gewend bent." },
-  { q: "Kan ik wisselen tussen maand en jaar?", a: "Ja. Je kunt altijd switchen; we verrekenen het verschil netjes." },
-  { q: "Is er een gratis optie?", a: "Ja. Je kunt gratis starten met Starter en later upgraden." },
-];
-
-// Extra premium-secties om de pagina gevuld en inspirerend te maken.
-// Deze secties benadrukken de kwaliteitsgarantie van FitFi en onze focus op
-// een harmonie tussen mode en technologie.
-const EXTRA_SECTIONS = [
-  {
-    icon: Star,
-    title: "Premium kwaliteit",
-    desc:
-      "FitFi selecteert uitsluitend items van hoogwaardige labels en vakmanschap. Denk aan kwaliteitsstoffen en tijdloze designs die jaren meegaan.",
-  },
-  {
-    icon: Smartphone,
-    title: "Tech & stijl in balans",
-    desc:
-      "Onze AI combineert bewezen stijlregels met minimalistische tech‑inspiratie. Net zo intuïtief als je favoriete devices, en net zo comfortabel als je beste sportkleding.",
-  },
-];
-
-// Echte ervaringen van gebruikers vergroten vertrouwen en voegen warmte toe.
-const TESTIMONIALS = [
-  {
-    quote:
-      "Ik voelde me direct begrepen. De outfits zijn precies wat ik zocht en besparen me veel tijd in de ochtend.",
-    name: "Sophie",
-    location: "Rotterdam",
-  },
-  {
-    quote:
-      "De combinatie van stijl en comfort is ideaal. Ik draag outfits waar ik eerder nooit aan gedacht zou hebben.",
-    name: "Jeroen",
-    location: "Utrecht",
-  },
-];
-
-function Cell({ v }: { v: boolean | string }) {
-  if (typeof v === "boolean") {
-    return <span aria-label={v ? "Ja" : "Nee"}>{v ? "✓" : "—"}</span>;
-  }
-  return <span>{v}</span>;
-}
-
-// Definitie van de abonnementen om plan-kaarten te renderen. Iedere
-// entry bevat de naam, prijs (per jaar en per maand), een korte
-// omschrijving, featurelijst en een vlag of het plan "meest populair" is.
-const PLANS = [
+const PLANS: Plan[] = [
   {
     id: "starter",
     name: "Starter",
-    price: { yearly: 0, monthly: 0 },
     description: "Voor wie wil kennismaken",
-    features: [
-      "3 outfits per maand",
-      "AI‑analyse",
-      "Wishlist beperkt",
-      "Basis support",
-    ],
+    price: { monthly: 0, yearly: 0 },
+    features: ["3 outfits / maand", "AI-analyse", "Wishlist (beperkt)", "Basis support"],
     cta: { label: "Start gratis", to: "/results" },
-    popular: false,
   },
   {
     id: "pro",
     name: "Pro",
-    price: { yearly: 9, monthly: 12 },
     description: "Voor frequente stijladviezen",
-    features: [
-      "10 outfits per maand",
-      "AI‑analyse",
-      "Wishlist volledig",
-      "Sneller support",
-    ],
+    price: { monthly: 12, yearly: 9 },
+    features: ["10 outfits / maand", "AI-analyse", "Wishlist volledig", "Sneller support"],
     cta: { label: "Start met Pro", to: "/results" },
     popular: true,
   },
   {
     id: "elite",
     name: "Elite",
-    price: { yearly: 19, monthly: 24 },
     description: "Voor onbeperkte inspiratie",
-    features: [
-      "Onbeperkt outfits",
-      "AI‑analyse uitgebreid",
-      "Wishlist alerts",
-      "Prioriteit support",
-    ],
+    price: { monthly: 24, yearly: 19 },
+    features: ["Onbeperkt outfits", "AI-analyse uitgebreid", "Wishlist alerts", "Prioriteit support"],
     cta: { label: "Word Elite", to: "/results" },
-    popular: false,
   },
-] as const;
+];
+
+const COMPARISON: Row[] = [
+  { label: "Outfits per maand", starter: "3", pro: "10", elite: "Onbeperkt" },
+  { label: "AI-analyse", starter: true, pro: true, elite: "Uitgebreid" },
+  { label: "Wishlist", starter: "Beperkt", pro: "Volledig", elite: "Volledig + alerts" },
+  { label: "Support", starter: "Basis", pro: "Sneller", elite: "Prioriteit" },
+];
+
+const PRICE_FAQ = [
+  { q: "Kan ik op elk moment opzeggen?", a: "Ja. Je zit nergens aan vast en kunt maandelijks opzeggen." },
+  { q: "Welke betaalmethoden ondersteunen jullie?", a: "De gebruikelijke methoden via een betrouwbare payment provider." },
+  { q: "Kan ik wisselen tussen maand en jaar?", a: "Ja. Je kunt altijd switchen; we verrekenen het verschil netjes." },
+  { q: "Blijft er een gratis optie?", a: "Ja. Met Starter kun je gratis starten en later upgraden." },
+];
+
+function Cell({ v }: { v: boolean | string }) {
+  if (typeof v === "boolean") return <span aria-label={v ? "Ja" : "Nee"}>{v ? "✓" : "—"}</span>;
+  return <span>{v}</span>;
+}
 
 export default function PricingPage() {
   const [yearly, setYearly] = React.useState(true);
@@ -116,11 +76,14 @@ export default function PricingPage() {
     <>
       <Helmet>
         <title>Prijzen — FitFi</title>
-        <meta name="description" content="Betaal wat bij je past — begin gratis en upgrade wanneer jij er klaar voor bent." />
-        <link rel="canonical" href="https://fitfi.ai/prijzen" />
+        <meta
+          name="description"
+          content="Betaal wat bij je past — begin gratis en upgrade wanneer jij er klaar voor bent. Rustig, premium en privacy-first."
+        />
+        <link rel="canonical" href="https://www.fitfi.ai/prijzen" />
       </Helmet>
 
-      <main id="main" className="bg-[var(--ff-color-bg)] text-[var(--ff-color-text)]">
+      <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
         <PageHero
           id="page-pricing"
           eyebrow="PRIJZEN"
@@ -129,22 +92,37 @@ export default function PricingPage() {
           align="left"
           as="h1"
           size="sm"
+          note="Jaar is voordeliger. Opzeggen kan altijd."
           ctas={[
             { label: "Probeer gratis", to: "/results", variant: "primary" },
-            { label: "Veelgestelde vragen", to: "#price-faq", variant: "secondary" }
+            { label: "FAQ", to: "/veelgestelde-vragen", variant: "secondary" },
           ]}
-          note="Jaar is voordeliger. Opzeggen kan altijd."
         />
 
-        {/* Schakelaar voor maand- of jaarprijzen */}
-        <section className="ff-container py-8">
+        {/* Periode-toggle */}
+        <section className="ff-container py-6">
           <div role="group" aria-label="Prijsperiode" className="inline-flex gap-2">
-            <button className="ff-btn ff-btn-secondary" aria-pressed={yearly} onClick={() => setYearly(true)}>Jaar</button>
-            <button className="ff-btn ff-btn-secondary" aria-pressed={!yearly} onClick={() => setYearly(false)}>Maand</button>
+            <button
+              className="ff-btn ff-btn-secondary"
+              aria-pressed={yearly}
+              onClick={() => setYearly(true)}
+            >
+              Jaar
+            </button>
+            <button
+              className="ff-btn ff-btn-secondary"
+              aria-pressed={!yearly}
+              onClick={() => setYearly(false)}
+            >
+              Maand
+            </button>
           </div>
+          <p className="mt-2 text-sm text-[var(--color-text)]/70">
+            Prijzen in EUR, incl. btw waar van toepassing.
+          </p>
         </section>
 
-        {/* Abonnementen als premium kaarten */}
+        {/* Plan-kaarten */}
         <section className="ff-container py-6">
           <div className="grid gap-6 md:grid-cols-3">
             {PLANS.map((plan) => {
@@ -161,76 +139,49 @@ export default function PricingPage() {
                     transition: "opacity 600ms ease, transform 600ms ease",
                   }}
                   className={[
-                    "flex flex-col rounded-[var(--ff-radius-lg)] border p-6 shadow-[var(--ff-shadow-soft)]",
-                    plan.popular ? "border-[var(--ff-color-accent)] bg-[color-mix(in oklab, var(--ff-color-accent) 5%, var(--ff-color-surface))]" : "border-[var(--ff-color-border)] bg-[var(--ff-color-surface)]",
+                    "flex flex-col rounded-[var(--radius-lg)] border p-6 shadow-[var(--shadow-soft)]",
+                    plan.popular
+                      ? "border-[var(--color-primary)] bg-[color-mix(in oklab, var(--color-primary) 5%, var(--color-surface))]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface)]",
                   ].join(" ")}
                 >
                   {plan.popular && (
-                    <span className="mb-2 inline-block rounded-full bg-[var(--ff-color-accent)]/10 px-3 py-1 text-xs font-semibold text-[var(--ff-color-accent)]">
+                    <span className="mb-2 inline-block rounded-full bg-[var(--color-primary)]/10 px-3 py-1 text-xs font-semibold text-[var(--color-primary)]">
                       Meest gekozen
                     </span>
                   )}
-                  <h3 className="font-heading text-xl text-[var(--ff-color-text)]">{plan.name}</h3>
-                  <p className="mt-1 text-[var(--ff-color-text)]/70">{plan.description}</p>
-                    <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-[var(--ff-color-text)]">
-                        €{price}
-                      </span>
-                      <span className="text-[var(--ff-color-text)]/70">{period}</span>
-                      {price === 0 && (
-                        <span className="ml-1 text-sm text-[var(--ff-color-text)]/70">Gratis</span>
-                      )}
-                    </div>
-                    <ul className="mt-4 space-y-2 text-[var(--ff-color-text)]/80">
-                      {plan.features.map((f, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle2 size={16} className="text-[var(--ff-color-accent)] mt-[2px]" aria-hidden />
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-6">
-                      <a
-                        href={plan.cta.to}
-                        className={[
-                          "ff-btn h-10 w-full",
-                          plan.popular ? "ff-btn-primary" : "ff-btn-secondary",
-                        ].join(" ")}
-                      >
-                        {plan.cta.label}
-                      </a>
-                    </div>
+                  <h3 className="font-heading text-xl">{plan.name}</h3>
+                  <p className="mt-1 text-[var(--color-text)]/70">{plan.description}</p>
+                  <div className="mt-4 flex items-baseline gap-1">
+                    <span className="text-4xl font-bold">€{price}</span>
+                    <span className="text-[var(--color-text)]/70">{period}</span>
+                    {price === 0 && (
+                      <span className="ml-1 text-sm text-[var(--color-text)]/70">Gratis</span>
+                    )}
+                  </div>
+                  <ul className="mt-4 space-y-2 text-[var(--color-text)]/80">
+                    {plan.features.map((f, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <CheckCircle2 size={16} className="text-[var(--color-primary)] mt-[2px]" aria-hidden />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6">
+                    <a
+                      href={plan.cta.to}
+                      className={["ff-btn h-10 w-full", plan.popular ? "ff-btn-primary" : "ff-btn-secondary"].join(" ")}
+                    >
+                      {plan.cta.label}
+                    </a>
+                  </div>
                 </div>
               );
             })}
           </div>
-
-          {/* Screen‑reader alternatieve tabelweergave */}
-          <div className="sr-only">
-            <table className="w-full text-left">
-              <thead className="text-[var(--ff-color-text)]/70">
-                <tr>
-                  <th className="p-4">Functie</th>
-                  <th className="p-4">Starter {yearly ? "€0/jr" : "€0/mnd"}</th>
-                  <th className="p-4">Pro {yearly ? "€9/jr" : "€12/mnd"}</th>
-                  <th className="p-4">Elite {yearly ? "€19/jr" : "€24/mnd"}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--ff-color-border)]">
-                {ROWS.map((r, i) => (
-                  <tr key={i}>
-                    <td className="p-4 text-[var(--ff-color-text)]">{r.label}</td>
-                    <td className="p-4"><Cell v={r.starter} /></td>
-                    <td className="p-4"><Cell v={r.pro} /></td>
-                    <td className="p-4"><Cell v={r.elite} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </section>
 
-        {/* Vertrouwen & veiligheid features */}
+        {/* Vertrouwen & duidelijkheid */}
         <section className="ff-container py-10">
           <div className="grid gap-6 md:grid-cols-3">
             {[
@@ -241,92 +192,125 @@ export default function PricingPage() {
               },
               {
                 icon: ShieldCheck,
-                title: "Privacy staat voorop",
-                desc: "We gaan zorgvuldig om met je data en verkopen niets door.",
+                title: "Privacy-first",
+                desc: "We verwerken alleen wat nodig is. Geen doorverkoop van gegevens.",
               },
               {
                 icon: LockKeyhole,
                 title: "Veilige betalingen",
-                desc: "Afrekenen gaat via betrouwbare betaalpartners, zoals je gewend bent.",
+                desc: "Afrekenen via betrouwbare partners — zoals je gewend bent.",
               },
-            ].map((feat, idx) => {
+            ].map((f, i) => {
               const { ref, visible } = useFadeInOnVisible<HTMLDivElement>();
-              const Icon = feat.icon;
+              const Icon = f.icon;
               return (
                 <article
-                  key={idx}
+                  key={i}
                   ref={ref as any}
                   style={{
                     opacity: visible ? 1 : 0,
                     transform: visible ? "translateY(0)" : "translateY(12px)",
                     transition: "opacity 600ms ease, transform 600ms ease",
                   }}
-                  className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
+                  className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] border border-[var(--color-border)]"
                 >
-                  <Icon size={24} className="text-[var(--ff-color-accent)]" aria-hidden />
-                  <h3 className="mt-3 font-heading text-lg text-[var(--ff-color-text)]">{feat.title}</h3>
-                  <p className="mt-2 text-[var(--ff-color-text)]/80">{feat.desc}</p>
+                  <Icon size={24} className="text-[var(--color-primary)]" aria-hidden />
+                  <h3 className="mt-3 font-heading text-lg">{f.title}</h3>
+                  <p className="mt-2 text-[var(--color-text)]/80">{f.desc}</p>
                 </article>
               );
             })}
           </div>
         </section>
 
-        {/* Premium kwaliteit & tech-secties */}
-        <section className="ff-container py-10 sm:py-12">
-          <div className="grid gap-6 md:grid-cols-2">
-            {EXTRA_SECTIONS.map((item, idx) => {
-              const { ref, visible } = useFadeInOnVisible<HTMLDivElement>();
-              const Icon = item.icon;
-              return (
-                <article
-                  key={idx}
-                  ref={ref as any}
-                  style={{
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? "translateY(0)" : "translateY(12px)",
-                    transition: "opacity 600ms ease, transform 600ms ease",
-                  }}
-                  className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
-                >
-                  <Icon size={24} className="text-[var(--ff-color-accent)]" aria-hidden />
-                  <h3 className="mt-3 font-heading text-lg text-[var(--ff-color-text)]">{item.title}</h3>
-                  <p className="mt-2 text-[var(--ff-color-text)]/80">{item.desc}</p>
-                </article>
-              );
-            })}
-          </div>
-        </section>
+        {/* Functie-overzicht (visueel) */}
+        <section className="ff-container py-6">
+          <h2 className="font-heading text-2xl mb-3">Wat je krijgt per plan</h2>
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
+              Functie
+            </div>
+            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
+              Starter
+            </div>
+            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
+              Pro
+            </div>
+            <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)] font-semibold">
+              Elite
+            </div>
 
-        {/* Testimonials voor sociale bewijskracht */}
-        <section className="ff-container py-10 sm:py-12">
-          <h2 className="font-heading text-2xl text-[var(--ff-color-text)] mb-4">Wat gebruikers zeggen</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {TESTIMONIALS.map((t, idx) => (
-              <figure
-                key={idx}
-                className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-6 shadow-[var(--ff-shadow-soft)]"
-              >
-                <blockquote className="italic leading-relaxed text-[var(--ff-color-text)]/90">"{t.quote}"</blockquote>
-                <figcaption className="mt-3 text-sm text-[var(--ff-color-text)]/60">
-                  — {t.name}, {t.location}
-                </figcaption>
-              </figure>
+            {COMPARISON.map((r, idx) => (
+              <React.Fragment key={idx}>
+                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
+                  {r.label}
+                </div>
+                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
+                  <Cell v={r.starter} />
+                </div>
+                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
+                  <Cell v={r.pro} />
+                </div>
+                <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 border border-[var(--color-border)]">
+                  <Cell v={r.elite} />
+                </div>
+              </React.Fragment>
             ))}
+          </div>
+
+          {/* SR-vriendelijke tabel (alternatief) */}
+          <div className="sr-only">
+            <table className="w-full text-left">
+              <thead>
+                <tr>
+                  <th className="p-2">Functie</th>
+                  <th className="p-2">Starter</th>
+                  <th className="p-2">Pro</th>
+                  <th className="p-2">Elite</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON.map((r, i) => (
+                  <tr key={i}>
+                    <td className="p-2">{r.label}</td>
+                    <td className="p-2"><Cell v={r.starter} /></td>
+                    <td className="p-2"><Cell v={r.pro} /></td>
+                    <td className="p-2"><Cell v={r.elite} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Premium belofte */}
+        <section className="ff-container py-10">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-[var(--color-primary)]" aria-hidden />
+              <div>
+                <h2 className="font-heading text-xl">Onze belofte</h2>
+                <p className="mt-2 text-[var(--color-text)]/80">
+                  Rust, smaak en duidelijkheid. We adviseren wat bij je past — nuchter, uitlegbaar en zonder ruis. 
+                  Upgraden doe je alleen als je voelt dat het waarde toevoegt.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a href="/results" className="ff-btn ff-btn-primary">Start gratis</a>
+                  <a href="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section id="price-faq" className="ff-container py-8">
-          <h2 className="font-heading text-2xl text-[var(--ff-color-text)] mb-4">Veelgestelde prijs-vragen</h2>
+        <section id="price-faq" className="ff-container pb-12">
+          <h2 className="font-heading text-2xl mb-4">Veelgestelde prijs-vragen</h2>
           <div className="grid gap-3">
             {PRICE_FAQ.map((item, i) => (
-              <details
-                key={i}
-                className="rounded-[var(--ff-radius-lg)] bg-[var(--ff-color-surface)] p-4 shadow-[var(--ff-shadow-soft)]"
-              >
-                <summary className="cursor-pointer font-heading text-[var(--ff-color-text)]">{item.q}</summary>
-                <div className="mt-2 text-[var(--ff-color-text)]/80">{item.a}</div>
+              <details key={i} className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
+                <summary className="cursor-pointer font-heading">{item.q}</summary>
+                <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
               </details>
             ))}
           </div>
