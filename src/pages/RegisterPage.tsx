@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
-import { Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2 } from "lucide-react";
 
 function isEmail(v: string) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
