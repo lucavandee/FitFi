@@ -8,30 +8,23 @@ import Button from "@/components/ui/Button";
 import { track } from "@/utils/analytics";
 
 /**
- * Doel van dit bestand:
- * - Visueel veel rustiger: geen toolbars/tabs, minder iconen/knoppen.
- * - Sterke hiërarchie: hero → grid met outfits → korte uitleg → kleine favorieten → pasvorm.
- * - Ruime, consistente spacing; zachte kaarten met één primaire actie per kaart (Bewaren).
- * - Behoudt: timestamp write voor dashboard + favorieten met localStorage.
+ * Clean, minimal Results:
+ * - Geen toolbars/toggles of "shop"-knoppen.
+ * - Outfits met één primaire actie (Bewaren) + korte context.
+ * - Uitleg en Pasvorm: platte typografie (geen pill-chips), dunne delers.
+ * - Royale sectie-afstand; consistente card-styling.
  */
 
-type Outfit = {
-  id: string;
-  title: string;
-  vibe: string;     // korte contextregel
-  notes: string;    // 1 zin, geen bullets
-};
-
+type Outfit = { id: string; title: string; vibe: string; notes: string };
 const OUTFITS: Outfit[] = [
-  { id: "o1", title: "Clean Casual",     vibe: "Smart-casual",   notes: "Neutrals en rustige textuur — draagbaar elke dag." },
-  { id: "o2", title: "Office Minimal",   vibe: "Werk/meeting",   notes: "Strakke lijnen met laag contrast voor focus." },
-  { id: "o3", title: "Weekend Uniform",  vibe: "Ontspannen",     notes: "Comfortabel maar geordend; subtiele structuur." },
-  { id: "o4", title: "Monochrome Light", vibe: "Tonal",          notes: "Lang silhouet in 2 lagen; rustig en clean." },
-  { id: "o5", title: "Warm Neutral Mix", vibe: "Casual",         notes: "Warme neutrale mix; zacht contrast." },
-  { id: "o6", title: "Sporty Sharp",     vibe: "Sportief-net",   notes: "Clean sportswear zonder schreeuwerige branding." },
+  { id: "o1", title: "Clean Casual",     vibe: "Smart-casual",  notes: "Neutrals en rustige textuur — draagbaar elke dag." },
+  { id: "o2", title: "Office Minimal",   vibe: "Werk/meeting",  notes: "Strakke lijnen met laag contrast voor focus." },
+  { id: "o3", title: "Weekend Uniform",  vibe: "Ontspannen",    notes: "Comfortabel maar geordend; subtiele structuur." },
+  { id: "o4", title: "Monochrome Light", vibe: "Tonal",         notes: "Lang silhouet in 2 lagen; rustig en clean." },
+  { id: "o5", title: "Warm Neutral Mix", vibe: "Casual",        notes: "Warme neutrale mix; zacht contrast." },
+  { id: "o6", title: "Sporty Sharp",     vibe: "Sportief-net",  notes: "Clean sportswear — zonder schreeuwerige branding." },
 ];
 
-/** Favorieten helpers */
 function readFavs(): string[] {
   try { return JSON.parse(window.localStorage.getItem("ff_fav_outfits") || "[]"); } catch { return []; }
 }
@@ -39,24 +32,22 @@ function writeFavs(ids: string[]) {
   try { window.localStorage.setItem("ff_fav_outfits", JSON.stringify(ids)); } catch {}
 }
 
-/** Minimalistische beeldplaceholder (geen externe assets nodig). */
+/** Minimal visual placeholder (4:5) — geen externe assets nodig */
 function OutfitVisual({ label }: { label: string }) {
   return (
     <div
-      className={[
-        "relative w-full aspect-[4/5]",
-        "rounded-[var(--radius-2xl)]",
-        "border border-[var(--color-border)]",
-        "bg-[var(--color-bg)]",
-      ].join(" ")}
-      aria-label={label}
       role="img"
+      aria-label={label}
+      className={[
+        "w-full aspect-[4/5] rounded-[var(--radius-2xl)]",
+        "border border-[var(--color-border)] bg-[var(--color-bg)]",
+      ].join(" ")}
     />
   );
 }
 
 export default function EnhancedResultsPage() {
-  // Markeer "laatst bijgewerkt" zodra deze pagina geopend wordt.
+  // Schrijf 'last updated' voor Dashboard
   React.useEffect(() => {
     try { window.localStorage.setItem("ff_results_ts", Date.now().toString()); } catch {}
     track("view_results");
@@ -65,9 +56,10 @@ export default function EnhancedResultsPage() {
   const [favs, setFavs] = React.useState<string[]>(() => readFavs());
   const toggleFav = (id: string) => {
     setFavs(curr => {
-      const next = curr.includes(id) ? curr.filter(x => x !== id) : [...curr, id];
+      const exists = curr.includes(id);
+      const next = exists ? curr.filter(x => x !== id) : [...curr, id];
       writeFavs(next);
-      track(curr.includes(id) ? "favorite_remove" : "favorite_add", { id });
+      track(exists ? "favorite_remove" : "favorite_add", { id });
       return next;
     });
   };
@@ -87,11 +79,10 @@ export default function EnhancedResultsPage() {
         path="/results"
       />
 
-      {/* HERO — heel clean: slechts één secundaire CTA en een discrete deelknop */}
       <PageHero
         eyebrow="RESULTATEN"
         title="Outfits op maat — rustig en premium"
-        subtitle="We houden het eenvoudig. Focus op silhouet, proportie en draagbaarheid."
+        subtitle="Eenvoudig en helder: focus op silhouet, proportie en draagbaarheid."
         align="left"
         size="sm"
         ctas={[{ label: "Dashboard", to: "/dashboard", variant: "secondary" }]}
@@ -108,9 +99,9 @@ export default function EnhancedResultsPage() {
         }
       />
 
-      {/* CONTENT — royale afstand tot de hero voor adem */}
+      {/* Content met royale ademruimte */}
       <section className="ff-container pt-16 md:pt-20 lg:pt-24 pb-20">
-        {/* GRID met outfits — alleen primaire info + één actie */}
+        {/* Outfits — enkel primaire info en 1 actie */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {OUTFITS.map(o => {
             const active = favs.includes(o.id);
@@ -118,11 +109,8 @@ export default function EnhancedResultsPage() {
               <article
                 key={o.id}
                 className={[
-                  "rounded-[var(--radius-2xl)]",
-                  "border border-[var(--color-border)]",
-                  "bg-[var(--color-surface)]",
-                  "shadow-[var(--shadow-soft)]",
-                  "p-4 sm:p-5",
+                  "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
+                  "bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5",
                 ].join(" ")}
               >
                 <OutfitVisual label={o.title} />
@@ -140,8 +128,6 @@ export default function EnhancedResultsPage() {
                   </button>
                 </div>
                 <p className="mt-2 text-sm text-[var(--color-text)]/80">{o.notes}</p>
-
-                {/* Eén rustige link naar uitleg—geen extra knoppenrij */}
                 <div className="mt-3">
                   <NavLink to="#uitleg" className="text-sm underline hover:no-underline inline-flex items-center gap-1">
                     <Info className="w-4 h-4" aria-hidden /> Waarom dit werkt
@@ -152,52 +138,88 @@ export default function EnhancedResultsPage() {
           })}
         </div>
 
-        {/* UITLEG — kort en luchtig, geen ruis */}
+        {/* Waarom dit werkt — platte typografie, geen pill-chips */}
         <section
           id="uitleg"
           className={[
-            "mt-14 lg:mt-16",
-            "rounded-[var(--radius-2xl)]",
-            "border border-[var(--color-border)]",
-            "bg-[var(--color-surface)]",
-            "shadow-[var(--shadow-soft)]",
-            "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
+            "mt-16",
+            "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
+            "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
+            "pt-8 sm:pt-9 pb-7 px-5 sm:px-6",
           ].join(" ")}
           aria-labelledby="uitleg-title"
         >
-          <header className="mb-3 flex items-start gap-3">
-            <div className="mt-0.5 text-[var(--color-text)]/90">
-              <Info className="w-5 h-5" aria-hidden />
-            </div>
-            <div>
-              <h2 id="uitleg-title" className="text-lg font-semibold">Waarom dit voor je werkt</h2>
-              <p className="mt-0.5 text-sm text-[var(--color-text)]/70">Kernprincipes die je outfits rustig en sterk maken.</p>
-            </div>
+          <header className="mb-3">
+            <h2 id="uitleg-title" className="text-lg font-semibold">Waarom dit voor je werkt</h2>
+            <p className="mt-0.5 text-sm text-[var(--color-text)]/70">Kern: proportie, rustige texturen en een zachte tonaliteit.</p>
           </header>
 
-          <ul className="grid gap-2 text-sm" role="list">
-            <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-              Silhouet: max. 2 lagen; bovenlaag iets langer voor visuele lengte.
-            </li>
-            <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-              Textuur: combineer <strong>glad</strong> met <strong>gebreid</strong> — diepte zonder drukte.
-            </li>
-            <li className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-              Kleur: werk tonal met 1 warme accenttint (klein oppervlak).
-            </li>
+          <ul className="mt-3 space-y-3 text-sm" role="list">
+            {[
+              "Silhouet: max. 2 lagen; bovenlaag ±1/3 langer voor visuele lengte.",
+              "Textuur: combineer glad en gebreid voor diepte zonder drukte.",
+              "Kleur: werk tonal (licht-neutraal) met 1 warme accenttint.",
+            ].map((t, i) => (
+              <li key={i} className="flex gap-3">
+                <span aria-hidden className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--color-text)]/40" />
+                <p className="flex-1">{t}</p>
+              </li>
+            ))}
           </ul>
+
+          <p className="mt-4 text-xs text-[var(--color-text)]/70">
+            Dit is een startpunt — jouw favorieten sturen de volgende generatie outfits.
+          </p>
         </section>
 
-        {/* FAVORIETEN — kleine, rustige lijst (chips), geen extra kaarten */}
+        {/* Pasvorm — duidelijke dl met subtiele scheidingslijnen */}
+        <section
+          id="fit"
+          className={[
+            "mt-10",
+            "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
+            "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
+            "pt-8 sm:pt-9 pb-7 px-5 sm:px-6",
+          ].join(" ")}
+          aria-labelledby="fit-title"
+        >
+          <h2 id="fit-title" className="text-lg font-semibold">Pasvorm-instellingen</h2>
+          <p className="mt-0.5 text-sm text-[var(--color-text)]/70">Fijnslijpen voor silhouet & comfort.</p>
+
+          <dl className="mt-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)]">
+            {[
+              ["Bovenlaag", "Regular-slim"],
+              ["Broek", "Tapered"],
+              ["Lengte", "Licht cropped (–2 cm)"],
+            ].map(([k, v], i, arr) => (
+              <div
+                key={k}
+                className={[
+                  "grid grid-cols-2 items-center px-3 py-2 text-sm",
+                  i < arr.length - 1 ? "border-b border-[var(--color-border)]" : "",
+                ].join(" ")}
+              >
+                <dt className="opacity-80">{k}</dt>
+                <dd className="justify-self-end opacity-70">{v}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="mt-4">
+            <Button as={NavLink} to="/results?refresh=1" variant="secondary" onClick={() => track("regenerate_results")}>
+              Genereer opnieuw
+            </Button>
+          </div>
+        </section>
+
+        {/* Favorieten — rustige chips, niets meer */}
         <section
           id="favorites"
           className={[
             "mt-10",
-            "rounded-[var(--radius-2xl)]",
-            "border border-[var(--color-border)]",
-            "bg-[var(--color-surface)]",
-            "shadow-[var(--shadow-soft)]",
-            "pt-6 pb-5 px-5 sm:px-6",
+            "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
+            "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
+            "pt-6 pb-6 px-5 sm:px-6",
           ].join(" ")}
           aria-labelledby="favorites-title"
         >
@@ -217,38 +239,6 @@ export default function EnhancedResultsPage() {
               ))}
             </ul>
           )}
-        </section>
-
-        {/* PASVORM — beknopt en kalm */}
-        <section
-          id="fit"
-          className={[
-            "mt-10",
-            "rounded-[var(--radius-2xl)]",
-            "border border-[var(--color-border)]",
-            "bg-[var(--color-surface)]",
-            "shadow-[var(--shadow-soft)]",
-            "pt-6 pb-5 px-5 sm:px-6",
-          ].join(" ")}
-          aria-labelledby="fit-title"
-        >
-          <h2 id="fit-title" className="text-base font-semibold">Pasvorm-instellingen</h2>
-          <div className="mt-3 grid gap-2 text-sm">
-            <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-              <span>Bovenlaag</span><span className="opacity-70">Regular-slim</span>
-            </div>
-            <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-              <span>Broek</span><span className="opacity-70">Tapered</span>
-            </div>
-            <div className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-              <span>Lengte</span><span className="opacity-70">Licht cropped (–2 cm)</span>
-            </div>
-          </div>
-          <div className="mt-4">
-            <Button as={NavLink} to="/results?refresh=1" variant="secondary" onClick={() => track("regenerate_results")}>
-              Genereer opnieuw
-            </Button>
-          </div>
         </section>
       </section>
     </main>
