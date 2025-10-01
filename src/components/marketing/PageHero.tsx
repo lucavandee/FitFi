@@ -1,13 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import Button from "@/components/ui/Button";
 
-type Cta = {
+type CTA = {
   label: string;
-  to: string;                       // intern (/results) of extern (https://, mailto:)
+  to?: string;
   variant?: "primary" | "secondary";
-  target?: "_blank" | "_self";
-  rel?: string;
-  "data-event"?: string;            // optioneel analytics hook
+  onClick?: (e: React.MouseEvent) => void;
 };
 
 type Props = {
@@ -15,161 +14,150 @@ type Props = {
   eyebrow?: string;
   title: string;
   subtitle?: string;
-  note?: string;                    // kleine vertrouwensregel onder CTA (optioneel)
+  /** Tekstuitlijning */
   align?: "left" | "center";
-  as?: keyof JSX.IntrinsicElements; // h1/h2/...
-  size?: "sm" | "md" | "lg";
-  className?: string;
-  ctas?: Cta[];
+  /** Heading tag */
+  as?: "h1" | "h2";
+  /** Typo-schaal */
+  size?: "xs" | "sm" | "md" | "lg";
+  /** CTA-knoppen (max 2 aanbevolen) */
+  ctas?: CTA[];
+  /** Discrete notitie rechts van de CTA's (bijv. deelknop) */
+  note?: React.ReactNode;
+  /** Densiteit van verticale ruimte */
+  density?: "default" | "comfortable" | "airy";
+  /** Extra inhoud (chips/labels) onder de CTA's */
+  children?: React.ReactNode;
+  /** Wordt (indien meegegeven) aangeroepen bij de 1e CTA-click */
+  onPrimaryClick?: (e: React.MouseEvent) => void;
 };
 
-const isExternal = (to: string) =>
-  to.startsWith("http") || to.startsWith("mailto:") || to.startsWith("#");
-
-const PageHero: React.FC<Props> = ({
+export default function PageHero({
   id,
   eyebrow,
   title,
   subtitle,
-  note,
   align = "left",
-  as = "h2",
+  as = "h1",
   size = "md",
-  className = "",
   ctas = [],
-}) => {
-  const HeadingTag = as as any;
+  note,
+  density = "default",
+  children,
+  onPrimaryClick,
+}: Props) {
+  const Heading = as;
 
-  const padY =
-    size === "sm" ? "py-14 md:py-16" : size === "md" ? "py-16 md:py-20" : "py-20 md:py-24";
-  const titleSize =
-    size === "sm"
+  const alignCls =
+    align === "center"
+      ? "text-center items-center"
+      : "text-left items-start";
+
+  const sizeCls =
+    size === "xs"
+      ? "text-3xl md:text-4xl"
+      : size === "sm"
       ? "text-4xl md:text-5xl"
-      : size === "md"
-      ? "text-[2.75rem] md:text-[3.25rem]"
-      : "text-4xl md:text-6xl";
+      : size === "lg"
+      ? "text-6xl md:text-7xl"
+      : "text-5xl md:text-6xl";
 
-  const alignCls = align === "center" ? "text-center" : "text-left";
+  // Verticale spacing presets (royale ademruimte bij 'airy')
+  const spaceTop =
+    density === "airy"
+      ? "pt-20 md:pt-24 lg:pt-28"
+      : density === "comfortable"
+      ? "pt-14 md:pt-18 lg:pt-20"
+      : "pt-10 md:pt-14 lg:pt-16";
 
-  // Micro-animatie (respecteert prefers-reduced-motion in CSS)
-  const [ready, setReady] = React.useState(false);
-  React.useEffect(() => {
-    const t = requestAnimationFrame(() => setReady(true));
-    return () => cancelAnimationFrame(t);
-  }, []);
-
-  const headingId = id ? `${id}__heading` : undefined;
-  const eyebrowId = id ? `${id}__eyebrow` : undefined;
-  const subId = id ? `${id}__subtitle` : undefined;
-  const noteId = id ? `${id}__note` : undefined;
+  const spaceBottom =
+    density === "airy"
+      ? "pb-14 md:pb-16"
+      : density === "comfortable"
+      ? "pb-10 md:pb-12"
+      : "pb-8 md:pb-10";
 
   return (
     <section
-      className={[padY, className].join(" ")}
-      style={{
-        // Warme, premium tokens-gradient (geen hex)
-        background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-accent) 10%, transparent) 0%, transparent 60%), linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 98%, white) 0%, color-mix(in oklab, var(--color-surface) 100%, white) 100%)",
-        opacity: ready ? 1 : 0,
-        transition: "opacity 360ms ease",
-      }}
+      id={id}
+      className={[
+        "bg-[var(--color-bg)] text-[var(--color-text)]",
+        spaceTop,
+        spaceBottom,
+      ].join(" ")}
     >
-      {/* BELANGRIJK: identieke container als elders → perfecte uitlijning met header/homepage */}
       <div className="ff-container">
-        <header
-          className={[alignCls, "rounded-[var(--radius-lg)] ff-animate-fade-in"].join(" ")}
-          aria-labelledby={headingId}
-          aria-describedby={subtitle ? subId : undefined}
-        >
-          {eyebrow && (
-            <div
-              id={eyebrowId}
-              className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-[var(--color-muted)] text-[0.8rem] tracking-widest uppercase"
-              aria-label="Eyebrow"
-            >
+        <div className={["flex flex-col gap-5 md:gap-6", alignCls].join(" ")}>
+          {eyebrow ? (
+            <div className="inline-flex items-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm tracking-wide">
               {eyebrow}
             </div>
-          )}
+          ) : null}
 
-          <HeadingTag
-            id={headingId}
+          <Heading
             className={[
-              "font-heading font-semibold leading-[1.06] text-[var(--color-text)]",
-              titleSize,
-              "mt-3"
+              "font-semibold leading-[1.08]",
+              sizeCls,
+              // beperk regelbreedte voor rust
+              align === "center"
+                ? "mx-auto max-w-[22ch]"
+                : "max-w-[22ch]",
             ].join(" ")}
           >
             {title}
-          </HeadingTag>
+          </Heading>
 
-          <div
-            aria-hidden
-            className={[
-              "mt-4 h-px w-24 bg-[var(--color-border)]",
-              align === "center" ? "mx-auto" : "mx-0",
-            ].join(" ")}
-          />
-
-          {subtitle && (
-            <p id={subId} className="mt-5 max-w-3xl text-[var(--color-text)]/80">
+          {subtitle ? (
+            <p
+              className={[
+                "text-lg md:text-xl text-[var(--color-text)]/80",
+                align === "center" ? "mx-auto max-w-[56ch]" : "max-w-[56ch]",
+                "mt-1",
+              ].join(" ")}
+            >
               {subtitle}
             </p>
-          )}
+          ) : null}
 
-          {ctas.length > 0 && (
+          {/* CTA's + note */}
+          {(ctas.length > 0 || note) && (
             <div
               className={[
-                "mt-6 flex flex-col sm:flex-row gap-3",
-                align === "center" ? "justify-center" : "justify-start",
+                "mt-6 md:mt-8",
+                "flex flex-wrap items-center gap-3",
+                align === "center" ? "justify-center" : "",
               ].join(" ")}
             >
               {ctas.map((cta, i) => {
-                const cls =
-                  cta.variant === "secondary"
-                    ? "ff-btn ff-btn-secondary"
-                    : "ff-btn ff-btn-primary";
-                return isExternal(cta.to) ? (
-                  <a
-                    key={i}
-                    href={cta.to}
-                    target={cta.target || (cta.to.startsWith("http") ? "_blank" : "_self")}
-                    rel={cta.rel || (cta.to.startsWith("http") ? "noopener noreferrer" : undefined)}
-                    className={cls}
-                    aria-label={cta.label}
-                    data-event={cta["data-event"]}
+                const btn = (
+                  <Button
+                    key={cta.label}
+                    as={cta.to ? NavLink : ("button" as any)}
+                    to={cta.to as any}
+                    onClick={(e: any) => {
+                      if (i === 0 && onPrimaryClick) onPrimaryClick(e);
+                      if (cta.onClick) cta.onClick(e);
+                    }}
+                    variant={cta.variant || (i === 0 ? "primary" : "secondary")}
+                    size="lg"
                   >
                     {cta.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={i}
-                    to={cta.to}
-                    className={cls}
-                    aria-label={cta.label}
-                    data-event={cta["data-event"]}
-                  >
-                    {cta.label}
-                  </Link>
+                  </Button>
                 );
+                return btn;
               })}
+              {note ? <div className="ml-1">{note}</div> : null}
             </div>
           )}
 
-          {note && (
-            <p
-              id={noteId}
-              className={[
-                "mt-3 text-sm text-[var(--color-text-muted)]",
-                align === "center" ? "mx-auto" : "mx-0",
-              ].join(" ")}
-            >
-              {note}
-            </p>
-          )}
-        </header>
+          {/* Extra (chips/labels) */}
+          {children ? (
+            <div className={["mt-6 md:mt-7", align === "center" ? "mx-auto" : ""].join(" ")}>
+              {children}
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );
-};
-
-export default PageHero;
+}
