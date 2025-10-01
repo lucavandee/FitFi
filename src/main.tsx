@@ -9,6 +9,7 @@ import App from "./App";
 import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import "./index.css";               // Tailwind + tokens
 import "@/styles/polish.addon.css"; // opt-in polish
+import "@/styles/polish.addon.css"; // opt-in polish
 
 // Context providers
 import { ThemeProvider } from "@/context/ThemeContext";

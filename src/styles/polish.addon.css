@@ -1,112 +1,35 @@
-/* tokens-only polish — nav/hero/sections/cards/blog/faq consistent met homepage */
+/* FitFi — hero-band consistency (tokens-only). Keep extremely small and robust. */
 
-/* NAV (ongewijzigd uit jouw stijl, voor consistentie) */
-.ff-nav-glass{
-  position: sticky; top: 0; z-index: 50;
-  background: var(--color-surface);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--color-border);
-}
-.ff-navlink{
-  display:inline-flex; align-items:center;
-  border-radius: var(--radius-2xl);
-  padding:.375rem .75rem;
-  color: var(--color-text);
-  border:1px solid transparent;
-  transition: color .18s ease, background-color .18s ease, border-color .18s ease, transform .12s ease;
-}
-.ff-navlink:hover{ color: var(--ff-color-primary-600); }
-.ff-nav-active{
-  background: var(--color-surface);
-  border:1px solid var(--color-border);
-  color: var(--color-text);
-}
-.ff-focus-ring{ outline: none; box-shadow: var(--shadow-ring); }
+/* Apply a subtle light band just under the navbar on every page. */
+/* We render it as an overlay pseudo-element so child backgrounds cannot hide it. */
 
-/* === PAGE FRAME & HERO-BAND (MOBILE-FIRST) === */
-/* Failsafe canvas: sommige pagina's stonden per abuis op 'canvas' ipv 'bg'. */
-#main{ background: var(--color-bg); color: var(--color-text); }
-
-/* UNIVERSELE HERO-BAND:
-   - pakt ALTIJD het eerste child van #main (meestal de hero/blok met H1).
-   - de radial overlay geeft de subtiele 'Apple-achtige' lichte balk onder de header.
-   - werkt voor Home + Hoe-het-werkt én blijft identiek aan Prijzen/Over/Blog/FAQ.
-*/
-#main > *:first-child{
+#main {
   position: relative;
-  background:
-    radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%),
-    var(--color-bg);
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
-/* Specifieke pagina's die .ff-page-hero al gebruiken: zelfde band, consistente padding */
-.ff-page-hero{
+#main:not(:has(.ff-page-hero))::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 220px;
+  background: radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Pages that explicitly mark their hero get the same band via background, */
+/* so we disable the overlay above to avoid double-stacking. */
+.ff-page-hero {
   padding-block: 3.5rem 2rem;
   background:
     radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%),
     var(--color-bg);
 }
-@media (min-width:768px){
-  .ff-page-hero{ padding-block: 4rem 2.5rem; }
-}
 
-/* Eyebrow/chip */
-.ff-eyebrow{
-  display:inline-flex; align-items:center; gap:.5ch;
-  border:1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-muted);
-  padding:.25rem .6rem; border-radius: var(--radius-2xl);
-  font-size:.8rem; letter-spacing:.02em;
-}
-.ff-hero-title{
-  font-family: Montserrat, ui-sans-serif, system-ui;
-  font-weight: 700; line-height:1.1; color: var(--color-text);
-}
-.ff-hero-sub{ color: var(--color-muted); }
-.ff-section{ padding-block: 2rem; }
-
-/* GENERIC CARDS */
-.ff-card{
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-}
-.ff-card-body{ padding: 1.25rem; }
-
-/* CTA's (conform CTA-regels) */
-.ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.5rem; border-radius: var(--radius-xl); padding:0 .9rem; font-weight:600; }
-.ff-btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
-.ff-btn-primary:hover{ background: var(--ff-color-primary-600); }
-.ff-btn-secondary{ background: transparent; color: var(--color-text); border:1px solid var(--color-border); }
-.ff-btn-secondary:hover{ border-color: var(--ff-color-primary-600); }
-
-/* BLOG */
-.ff-blog-grid{ display:grid; gap:1rem; }
-@media (min-width:768px){ .ff-blog-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
-.ff-blog-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); overflow:hidden; display:flex; flex-direction:column; }
-.ff-blog-card img{ width:100%; aspect-ratio:16/9; object-fit:cover; }
-.ff-blog-meta{ display:flex; gap:.5rem; align-items:center; padding:.75rem 1rem; color:var(--color-muted); font-size:.9rem; }
-.ff-blog-title{ padding:0 1rem .5rem 1rem; font-weight:700; color:var(--color-text); }
-.ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color:var(--color-text); opacity:.95; }
-.ff-blog-actions{ margin-top:auto; padding:0 1rem 1rem 1rem; }
-
-/* FAQ (accordion) */
-.ff-accordion{ border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); background:var(--color-surface); }
-.ff-accordion .row{ border-top:1px solid var(--color-border); }
-.ff-accordion .row:first-child{ border-top:0; }
-.ff-accordion summary{ cursor:pointer; padding:1rem; display:flex; align-items:center; justify-content:space-between; color: var(--color-text); }
-.ff-accordion .content{ padding:0 1rem 1rem 1rem; color: var(--color-text); }
-details.ff-accordion summary{ list-style:none; }
-details.ff-accordion summary::-webkit-details-marker{ display:none; }
-details[open].ff-accordion summary::after{ transform: rotate(-180deg); }
-details.ff-accordion summary::after{ content:"▾"; margin-left:.5rem; transition: transform 200ms ease; }
-
-/* === MICRO POLISH VOOR MOBIEL === */
-@media (max-width:480px){
-  .ff-btn{ height:2.75rem; padding-inline:1rem; }
-  .ff-navlink{ padding:.45rem .8rem; }
-  .ff-card-body{ padding:1rem; }
-  .ff-blog-grid{ gap:.75rem; }
+@media (min-width: 768px) {
+  .ff-page-hero { padding-block: 4rem 2.5rem; }
 }
