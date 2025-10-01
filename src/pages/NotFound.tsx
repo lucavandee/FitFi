@@ -4,25 +4,22 @@ import { NavLink, useLocation } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
-
-// Belangrijk: importeer de quiz en render die rechtstreeks wanneer het pad /stijlquiz is.
-// Zo werkt /stijlquiz onmiddellijk zonder router-wijzigingen (veilig & non-invasive).
 import StyleQuizPage from "@/pages/StyleQuizPage";
 
 export default function NotFound() {
   const { pathname } = useLocation();
 
-  // Hotfix: route-alias voor /stijlquiz via NotFound.
-  // - We renderen de quiz rechtstreeks. 
-  // - Dit voorkomt 404 totdat de router expliciet wordt uitgebreid.
-  // - Voldoet aan privacy/tokens-richtlijnen; geen providers aangepast.
-  if (pathname === "/stijlquiz") {
+  // Hotfix: support zowel /stijlquiz als /stijlquiz/ (trailing slash)
+  if (pathname === "/stijlquiz" || pathname === "/stijlquiz/") {
     return <StyleQuizPage />;
   }
 
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Seo title="Pagina niet gevonden — FitFi" description="De pagina die je zocht bestaat niet (404)." path={pathname} />
+      <Seo title="Pagina niet gevonden — FitFi"
+           description="De pagina die je zocht bestaat niet (404)."
+           path={pathname} />
+
       <PageHero
         eyebrow="FOUT 404"
         title="Pagina niet gevonden"

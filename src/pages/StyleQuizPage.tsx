@@ -1,3 +1,4 @@
+// /src/pages/StyleQuizPage.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
@@ -54,7 +55,8 @@ export default function StyleQuizPage() {
 
       <section className="ff-container pt-10 pb-16 space-y-6">
         {current === "goals" && (
-          <QuestionCard multiple title="Waar ga je je outfits vooral voor gebruiken?" help="Je kunt meer dan één optie kiezen."
+          <QuestionCard multiple title="Waar ga je je outfits vooral voor gebruiken?"
+            help="Je kunt meer dan één optie kiezen."
             name="goals" value={answers.goals}
             choices={[
               { value: "werk", label: "Werk / Office" },
@@ -67,7 +69,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "fit" && (
-          <QuestionCard title="Welke silhouet-balans past het meest bij jou?" name="fit" value={answers.fit}
+          <QuestionCard title="Welke silhouet-balans past het meest bij jou?"
+            name="fit" value={answers.fit}
             choices={[
               { value: "slim", label: "Getailleerd / Slim" },
               { value: "straight", label: "Recht / Regular" },
@@ -79,7 +82,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "comfort" && (
-          <QuestionCard title="Hoe gestructureerd wil je dat je kleding voelt?" name="comfort" value={answers.comfort}
+          <QuestionCard title="Hoe gestructureerd wil je dat je kleding voelt?"
+            name="comfort" value={answers.comfort}
             choices={[
               { value: "structured", label: "Gestructureerd", help: "Strakke lijnen, nette look." },
               { value: "balanced", label: "Gebalanceerd", help: "Mix tussen netjes en comfy." },
@@ -90,7 +94,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "jewelry" && (
-          <QuestionCard title="Welke sieraden flatteren je vaak het meest?" name="jewelry" value={answers.jewelry}
+          <QuestionCard title="Welke sieraden flatteren je vaak het meest?"
+            name="jewelry" value={answers.jewelry}
             choices={[
               { value: "goud", label: "Goud" },
               { value: "zilver", label: "Zilver" },
@@ -101,7 +106,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "neutrals" && (
-          <QuestionCard title="Welke neutrale basiskleuren trekken je aan?" name="neutrals" value={answers.neutrals}
+          <QuestionCard title="Welke neutrale basiskleuren trekken je aan?"
+            name="neutrals" value={answers.neutrals}
             choices={[
               { value: "warm", label: "Warm (zand, camel, klei)" },
               { value: "koel", label: "Koel (grijs, navy, steenkleur)" },
@@ -112,7 +118,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "lightness" && (
-          <QuestionCard title="Voel je je het best in lichte of donkere outfits?" name="lightness" value={answers.lightness}
+          <QuestionCard title="Voel je je het best in lichte of donkere outfits?"
+            name="lightness" value={answers.lightness}
             choices={[
               { value: "licht", label: "Licht" },
               { value: "medium", label: "Tussenin" },
@@ -123,7 +130,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "contrast" && (
-          <QuestionCard title="Hoeveel contrast wil je meestal in je look?" name="contrast" value={answers.contrast}
+          <QuestionCard title="Hoeveel contrast wil je meestal in je look?"
+            name="contrast" value={answers.contrast}
             choices={[
               { value: "laag", label: "Laag (tonal, zacht)" },
               { value: "medium", label: "Gemiddeld" },
@@ -134,7 +142,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "prints" && (
-          <QuestionCard title="Wat vind je van prints?" name="prints" value={answers.prints}
+          <QuestionCard title="Wat vind je van prints?"
+            name="prints" value={answers.prints}
             choices={[
               { value: "geen", label: "Liever geen prints" },
               { value: "effen", label: "Overwegend effen" },
@@ -146,7 +155,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "materials" && (
-          <QuestionCard title="Welke materialen spreken je aan?" name="materials" value={answers.materials}
+          <QuestionCard title="Welke materialen spreken je aan?"
+            name="materials" value={answers.materials}
             choices={[
               { value: "mat", label: "Mat" },
               { value: "textuur", label: "Zachte textuur (wol, brei)" },
@@ -157,7 +167,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "occasions" && (
-          <QuestionCard multiple title="Welke setting beschrijft je week het beste?" help="Meerdere keuzes mogelijk."
+          <QuestionCard multiple title="Welke setting beschrijft je week het beste?"
+            help="Meerdere keuzes mogelijk."
             name="occasions" value={answers.occasions}
             choices={[
               { value: "office", label: "Office / Meeting" },
@@ -169,7 +180,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "photo" && (
-          <PhotoUpload value={answers.photoDataUrl} onChange={(v) => setAnswers((s) => ({ ...s, photoDataUrl: v }))} />
+          <PhotoUpload value={answers.photoDataUrl}
+                       onChange={(v) => setAnswers((s) => ({ ...s, photoDataUrl: v }))} />
         )}
 
         {current === "review" && (

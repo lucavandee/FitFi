@@ -1,32 +1,7 @@
 [build]
-  command   = "npm run build"
-  publish   = "dist"
-  functions = "netlify/functions"
+  publish = "dist"
 
-[build.environment]
-  NODE_VERSION = "20.19.0"
-  NPM_FLAGS    = "--no-audit --no-fund"
-
-[functions]
-  node_bundler = "esbuild"
-
-[functions."nova"]
-  timeout = 30
-  memory  = 1024
-
-[functions."shop-redirect"]
-  timeout = 10
-  memory  = 256
-
-# ✅ Shop redirect naar function (toegestaan)
-[[redirects]]
-  from = "/shop/:merchant/:id"
-  to   = "/.netlify/functions/shop-redirect/:merchant/:id"
-  status = 200
-  force = true
-
-# ✅ SPA fallback
 [[redirects]]
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
