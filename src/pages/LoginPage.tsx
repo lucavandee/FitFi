@@ -1,155 +1,142 @@
-import React from "react";
+// /src/pages/LoginPage.tsx
+import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
+import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, ShieldCheck, BookmarkCheck } from "lucide-react";
 import PageHero from "@/components/marketing/PageHero";
-import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2 } from "lucide-react";
+import Button from "@/components/ui/Button";
 
-function isEmail(v: string) {
-  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
-}
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [pw, setPw] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export default function LoginPage() {
-  const nav = useNavigate();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [showPw, setShowPw] = React.useState(false);
-  const [remember, setRemember] = React.useState(true);
-  const [touched, setTouched] = React.useState<Record<string, boolean>>({});
-  const [submitted, setSubmitted] = React.useState(false);
+  const canSubmit = email.trim().length > 3 && pw.length >= 6;
 
-  const errors = {
-    email: !isEmail(email) ? "Vul een geldig e-mailadres in." : "",
-    password: password.length < 8 ? "Je wachtwoord is minimaal 8 tekens." : "",
-  };
-  const hasErrors = Object.values(errors).some(Boolean);
-
-  function onSubmit(e: React.FormEvent) {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ email: true, password: true });
-    setSubmitted(true);
-    if (hasErrors) return;
-    // Demo-login: geen backend; we navigeren naar results
-    nav("/results");
-  }
+    setError(null);
+
+    if (!canSubmit) {
+      setError("Vul je e-mail en wachtwoord correct in.");
+      return;
+    }
+    // Demo: direct door naar resultaten
+    navigate("/results");
+  };
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+    <main>
       <PageHero
-        id="page-login"
-        eyebrow="ACCOUNT"
-        title="Inloggen"
-        subtitle="Snel en rustig — zoals het hoort."
-        align="left"
-        as="h1"
-        size="sm"
-        ctas={[
-          { label: "Nog geen account? Registreren", to: "/register", variant: "secondary" },
-        ]}
+        eyebrow="Welkom terug"
+        title="Log in — ga verder met je stijl"
+        subtitle="Bewaarde outfits, punten en challenges: log in en ga verder waar je was."
       />
 
-      <section className="ff-container pb-12">
-        <div className="mx-auto max-w-[560px] rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-          <form onSubmit={onSubmit} noValidate className="grid gap-5">
-            {/* E-mail */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
+      <section className="container mx-auto px-4 md:px-6 -mt-6 md:-mt-8">
+        {/* Waarom inloggen — compacte callout */}
+        <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:p-6 shadow-[var(--shadow-soft)] mb-6 md:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center" aria-hidden>
+                <BookmarkCheck className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="font-medium text-[var(--color-text)]">Bewaar favorieten</p>
+                <p className="text-[var(--color-text)]/70 text-sm">Snel terug naar je beste matches.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center" aria-hidden>
+                <ShieldCheck className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="font-medium text-[var(--color-text)]">Levels & streaks</p>
+                <p className="text-[var(--color-text)]/70 text-sm">Behoud je voortgang en beloningen.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center" aria-hidden>
+                <CheckCircle2 className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="font-medium text-[var(--color-text)]">Persoonlijker advies</p>
+                <p className="text-[var(--color-text)]/70 text-sm">Hoe meer je gebruikt, hoe beter de tips.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Formulier */}
+        <form onSubmit={onSubmit} className="max-w-xl mx-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 md:p-8 shadow-[var(--shadow-soft)]">
+          <div className="space-y-4">
+            <label className="block">
+              <span className="block text-sm text-[var(--color-text)]/80 mb-1">E-mail</span>
               <input
-                id="email"
-                name="email"
                 type="email"
+                required
+                inputMode="email"
                 autoComplete="email"
-                className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "err-email" : undefined}
-                required
+                className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                placeholder="jij@voorbeeld.nl"
+                aria-label="E-mail"
               />
-              {touched.email && errors.email && (
-                <p id="err-email" className="mt-1 text-sm inline-flex items-center gap-1 text-red-600">
-                  <AlertCircle className="h-4 w-4" aria-hidden /> {errors.email}
-                </p>
-              )}
-            </div>
+            </label>
 
-            {/* Wachtwoord */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium">Wachtwoord</label>
-              <div className="mt-1 relative">
+            <label className="block">
+              <span className="block text-sm text-[var(--color-text)]/80 mb-1">Wachtwoord</span>
+              <div className="relative">
                 <input
-                  id="password"
-                  name="password"
                   type={showPw ? "text" : "password"}
-                  autoComplete="current-password"
-                  className="w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 pr-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                  aria-invalid={!!errors.password}
-                  aria-describedby={errors.password ? "err-password" : undefined}
                   required
+                  minLength={6}
+                  autoComplete="current-password"
+                  value={pw}
+                  onChange={(e) => setPw(e.target.value)}
+                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                  placeholder="Je wachtwoord"
+                  aria-label="Wachtwoord"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPw((v) => !v)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)]"
+                  onClick={() => setShowPw((s) => !s)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
-                  {showPw ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+                  {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              {touched.password && errors.password && (
-                <p id="err-password" className="mt-1 text-sm inline-flex items-center gap-1 text-red-600">
-                  <AlertCircle className="h-4 w-4" aria-hidden /> {errors.password}
-                </p>
-              )}
-              {!errors.password && password.length >= 8 && (
-                <p className="mt-1 text-sm inline-flex items-center gap-1 text-emerald-600">
-                  <CheckCircle2 className="h-4 w-4" aria-hidden /> Klaar om in te loggen
-                </p>
-              )}
-            </div>
+            </label>
 
-            {/* Opties */}
-            <div className="flex items-center justify-between">
-              <label className="inline-flex items-center gap-2 text-sm select-none">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-[var(--color-border)]"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                />
-                Ingelogd blijven
-              </label>
-              <NavLink to="/contact" className="text-sm underline hover:no-underline">
-                Wachtwoord vergeten?
-              </NavLink>
-            </div>
+            {error ? (
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-[var(--color-text)]">
+                <AlertCircle className="w-4 h-4" />
+                <p className="text-sm">{error}</p>
+              </div>
+            ) : null}
 
-            {/* CTA */}
-            <div className="flex flex-wrap gap-3">
-              <button type="submit" className="ff-btn ff-btn-primary h-10 min-w-[140px]">Inloggen</button>
-              <NavLink to="/register" className="ff-btn ff-btn-secondary h-10">Account aanmaken</NavLink>
-            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-full"
+              disabled={!canSubmit}
+            >
+              Log in
+            </Button>
 
-            {/* Demo-notitie (alleen zichtbaar na submit met fouten) */}
-            {submitted && hasErrors && (
-              <p className="text-sm text-[var(--color-text)]/60">
-                Tip: dit is een demo zonder backend. Vul een geldig e-mailadres en een wachtwoord van ≥ 8 tekens in om door te gaan.
-              </p>
-            )}
-          </form>
-
-          {/* Onder */}
-          <div className="mt-6 flex flex-wrap gap-3 text-sm text-[var(--color-text)]/70">
-            <NavLink to="/terms" className="underline hover:no-underline">Voorwaarden</NavLink>
-            <span>•</span>
-            <NavLink to="/disclosure" className="underline hover:no-underline">Disclosure</NavLink>
-            <span>•</span>
-            <NavLink to="/veelgestelde-vragen" className="underline hover:no-underline">FAQ</NavLink>
+            <p className="text-center text-sm text-[var(--color-text)]/70">
+              Nog geen account?{" "}
+              <NavLink to="/register" className="underline">Maak er gratis één</NavLink>
+            </p>
           </div>
-        </div>
+        </form>
       </section>
     </main>
   );
-}
+};
+
+export default LoginPage;
