@@ -14,7 +14,7 @@ export default function LandingPage() {
         />
       </Helmet>
 
-      {/* HERO — identieke constructie als Prijzen/How-it-works via PageHero */}
+      {/* HERO — identiek patroon als Prijzen/How-it-works via PageHero */}
       <PageHero
         eyebrow="AI-stylist"
         title="Outfits die je écht dragen — niet andersom"
@@ -26,6 +26,16 @@ export default function LandingPage() {
         ]}
       />
 
+      {/* MINI TRUST-CHIPS — direct onder hero voor autoriteit & rust */}
+      <section aria-label="Kernpunten" className="ff-section pt-2">
+        <div className="ff-container flex flex-wrap gap-2">
+          <span className="ff-eyebrow">2 min klaar</span>
+          <span className="ff-eyebrow">Geen upload nodig</span>
+          <span className="ff-eyebrow">Uitleg bij elke look</span>
+          <span className="ff-eyebrow">Privacy-first</span>
+        </div>
+      </section>
+
       {/* KERNVOORDELEN — clean 3-up, mobile-first 1 kolom */}
       <section className="ff-section">
         <div className="ff-container grid gap-4 md:grid-cols-3">
@@ -33,7 +43,7 @@ export default function LandingPage() {
             <div className="ff-card-body">
               <h3 className="font-semibold">Snel & moeiteloos</h3>
               <p className="mt-1 text-[var(--color-text)]/70">
-                6 korte vragen. Geen upload nodig. Direct resultaat met heldere uitleg.
+                6 korte vragen. Geen account, geen upload. Direct resultaat met heldere uitleg.
               </p>
             </div>
           </article>
@@ -41,7 +51,7 @@ export default function LandingPage() {
             <div className="ff-card-body">
               <h3 className="font-semibold">Uitleg bij elke look</h3>
               <p className="mt-1 text-[var(--color-text)]/70">
-                Begrijp waarom een item werkt voor jouw silhouet, kleur en gelegenheid.
+                Begrijp waarom items werken voor jouw silhouet, kleur en moment — kort en krachtig.
               </p>
             </div>
           </article>
@@ -49,14 +59,14 @@ export default function LandingPage() {
             <div className="ff-card-body">
               <h3 className="font-semibold">Slim shoppen</h3>
               <p className="mt-1 text-[var(--color-text)]/70">
-                Minder ruis, meer kwaliteit. Privacy-first — jij houdt de regie.
+                Minder ruis, meer kwaliteit. Jij houdt de regie; wij selecteren gericht.
               </p>
             </div>
           </article>
         </div>
       </section>
 
-      {/* MINI FLOW — app-gevoel: 3 compacte stappen (rustig ritme, geen ruis) */}
+      {/* MINI FLOW — app-gevoel: 3 compacte stappen, helder ritme */}
       <section className="ff-section">
         <div className="ff-container grid gap-4 md:grid-cols-3">
           <article className="ff-card">
@@ -71,7 +81,7 @@ export default function LandingPage() {
             <div className="ff-card-body">
               <h3 className="font-semibold">2) Match & uitleg</h3>
               <p className="mt-1 text-[var(--color-text)]/70">
-                We tonen looks die passen — mét korte, heldere toelichting.
+                Je ziet looks die passen — met korte, heldere toelichting.
               </p>
             </div>
           </article>
@@ -79,36 +89,28 @@ export default function LandingPage() {
             <div className="ff-card-body">
               <h3 className="font-semibold">3) Shop bewust</h3>
               <p className="mt-1 text-[var(--color-text)]/70">
-                Selecties op niveau. Je shopt gericht en voorkomt miskopen.
+                Selecties op niveau. Gericht shoppen, minder miskopen.
               </p>
             </div>
           </article>
         </div>
       </section>
 
-      {/* VOORBEELDRESULTAAT — callout met dubbele CTA voor flow naar demo of start */}
+      {/* VOORBEELDRESULTAAT — callout met dubbele CTA naar demo of start */}
       <section className="ff-section">
         <div className="ff-container">
           <article className="ff-card">
             <div className="ff-card-body">
               <h2 className="text-xl font-semibold">Bekijk een voorbeeld</h2>
               <p className="mt-2 text-[var(--color-text)]/80">
-                Wil je eerst zien hoe een FitFi-resultaat eruitziet? Check een voorbeeld met looks,
-                uitleg en shoplinks. Zo weet je precies wat je krijgt.
+                Eerst zien hoe een FitFi-resultaat eruitziet? Check een voorbeeld met
+                looks, uitleg en shoplinks — dan weet je precies wat je krijgt.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <NavLink
-                  to="/results"
-                  className="ff-btn ff-btn-secondary"
-                  data-event="cta_view_example_inline"
-                >
+                <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">
                   Bekijk voorbeeld
                 </NavLink>
-                <NavLink
-                  to="/onboarding"
-                  className="ff-btn ff-btn-primary"
-                  data-event="cta_start_free_inline"
-                >
+                <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">
                   Start gratis
                 </NavLink>
               </div>
@@ -139,7 +141,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ TEASER — subtiele afsluiter met link naar alle vragen */}
+      {/* FAQ TEASER — subtiele afsluiter */}
       <section className="ff-section">
         <div className="ff-container">
           <article className="ff-card">
@@ -148,14 +150,10 @@ export default function LandingPage() {
                 <div>
                   <h2 className="text-xl font-semibold">Vragen over FitFi?</h2>
                   <p className="mt-1 text-[var(--color-text)]/70">
-                    We hebben de belangrijkste antwoorden voor je op een rij gezet.
+                    We hebben de belangrijkste antwoorden voor je op een rij.
                   </p>
                 </div>
-                <NavLink
-                  to="/veelgestelde-vragen"
-                  className="ff-btn ff-btn-secondary"
-                  data-event="cta_faq_home"
-                >
+                <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary" data-event="cta_faq_home">
                   Naar FAQ
                 </NavLink>
               </div>
