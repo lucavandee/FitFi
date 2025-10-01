@@ -1,6 +1,5 @@
 // /src/components/dashboard/FeaturedOutfitCard.tsx
 import React from "react";
-import { Link } from "react-router-dom";
 import SmartImage from "@/components/media/SmartImage";
 import Button from "@/components/ui/Button";
 import { track } from "@/utils/analytics";
@@ -89,12 +88,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   }
 
   return (
-    <div className={`rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-all duration-300 opacity-0 animate-fade-in ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]">
-            <Sparkles className="w-4 h-4 text-white" />
+    <div className={`rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow animate-fade-in ${className}`}>
           </div>
           <div>
             <h3 className="text-lg font-medium text-[var(--color-text)]">Uitgelichte Outfit</h3>

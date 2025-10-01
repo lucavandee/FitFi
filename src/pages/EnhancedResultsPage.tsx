@@ -16,26 +16,10 @@ let motion: any = {
 
 // Probeer framer-motion te laden, maar faal gracefully
 try {
-  const framerMotion = require("framer-motion");
   AnimatePresence = framerMotion.AnimatePresence;
   motion = framerMotion.motion;
 } catch {
   // Gebruik CSS fallbacks
-}
-
-// Conditional framer-motion import with fallback
-let AnimatePresence: any = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-let motion: any = {
-  article: "article",
-  div: "div"
-};
-
-try {
-  const framerMotion = await import("framer-motion");
-  AnimatePresence = framerMotion.AnimatePresence;
-  motion = framerMotion.motion;
-} catch {
-  // Fallback to regular HTML elements
 }
 
 type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
@@ -120,15 +104,11 @@ const ExplainList: React.FC<{ id: string; archetype?: string; isOpen: boolean }>
     return base;
   }, [archetype]);
 
-  return (
     <>
       {isOpen && (
         <div
-          className="overflow-hidden transition-all duration-300 ease-in-out"
-          style={{
-            opacity: isOpen ? 1 : 0,
-            maxHeight: isOpen ? "500px" : "0px"
-          }}
+          key={`exp-${id}`}
+          className="overflow-hidden animate-fade-in"
           aria-live="polite"
         >
           <ul className="mt-3 grid gap-2 text-sm">
@@ -213,13 +193,7 @@ const OutfitCard: React.FC<{
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-all duration-300 opacity-0 animate-fade-in">
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex flex-col">
+    <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow animate-fade-in">
             <h3 className="text-lg font-medium text-[var(--color-text)]">{title}</h3>
             {archetype ? <p className="text-sm text-[var(--color-text)]/70">{archetype}</p> : null}
           </div>
@@ -413,8 +387,6 @@ const EnhancedResultsPage: React.FC = () => {
           {filtered.map((o) => (
             <OutfitCard key={o.id} {...o} view={view} />
           ))}
-        </div>
-
         {/* Premium upsell */}
         <div className="mt-10 md:mt-12">
           <PremiumUpsellStrip />
