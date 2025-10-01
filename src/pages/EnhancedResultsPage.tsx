@@ -1,12 +1,30 @@
 // /src/pages/EnhancedResultsPage.tsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, SlidersHorizontal, Share2, Bookmark, BookmarkCheck, Info, ExternalLink, List as ListIcon, Grid3x3 as GridIcon, ShoppingBag } from "lucide-react";
+import {
+  Sparkles,
+  SlidersHorizontal,
+  Share2,
+  Bookmark,
+  BookmarkCheck,
+  Info,
+  ExternalLink,
+  List as ListIcon,
+  Grid3X3 as GridIcon,
+  ShoppingBag,
+  ImageDown,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import PageHero from "@/components/marketing/PageHero";
 import SmartImage from "@/components/media/SmartImage";
-import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import Button from "@/components/ui/Button";
+import ResultsQuizGate from "@/components/results/ResultsQuizGate";
+import FoundersWall from "@/components/results/FoundersWall";
+import { generateOutfitShareImage } from "@/utils/shareImage";
+
+// LCP: lazy-load niet-kritische strip
+const PremiumUpsellStrip = lazy(() => import("@/components/results/PremiumUpsellStrip"));
 
 type Filter = "Alle" | "Casual" | "Smart" | "Minimal";
 type ViewMode = "list" | "grid";
@@ -90,25 +108,36 @@ const ExplainList: React.FC<{ id: string; archetype?: string; isOpen: boolean }>
     return base;
   }, [archetype]);
 
-  if (!isOpen) return null;
-
   return (
-    <div className="mt-3 animate-fade-in" aria-live="polite">
-      <ul className="grid gap-2 text-sm">
-        {points.map((p) => (
-          <li key={p.k} className="flex gap-2">
-            <span className="min-w-20 text-[var(--color-text)]/70">{p.k}</span>
-            <span className="text-[var(--color-text)]">{p.v}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <AnimatePresence initial={false}>
+      {isOpen && (
+        <motion.div
+          key={`exp-${id}`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25 }}
+          className="overflow-hidden"
+          aria-live="polite"
+        >
+          <ul className="mt-3 grid gap-2 text-sm">
+            {points.map((p) => (
+              <li key={p.k} className="flex gap-2">
+                <span className="min-w-20 text-[var(--color-text)]/70">{p.k}</span>
+                <span className="text-[var(--color-text)]">{p.v}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
+/** Voorbereiding Shop-de-look (zonder echte deeplinks) */
 type ShopItem = { part: string; productId?: string };
 const buildDeeplink = (_productId?: string): string | null => {
-  return null;
+  return null; // disabled tot we echte data/tagging hebben
 };
 
 const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
@@ -118,9 +147,7 @@ const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
     { part: "Pantalon / Chino" },
     { part: outfit.archetype === "Smart" ? "Loafer" : "Minimal sneaker" },
   ];
-
   const links = items.map((it) => ({ ...it, href: buildDeeplink(it.productId) }));
-
   return (
     <div className="mt-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -142,9 +169,7 @@ const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
                 href={l.href ?? "#"}
                 aria-disabled={disabled}
                 onClick={(e) => disabled && e.preventDefault()}
-                className={`text-sm underline ${
-                  disabled ? "pointer-events-none opacity-50" : ""
-                }`}
+                className={`text-sm underline ${disabled ? "pointer-events-none opacity-50" : ""}`}
               >
                 Shop
               </a>
@@ -157,27 +182,62 @@ const ShopTheLookStrip: React.FC<{ outfit: DemoOutfit }> = ({ outfit }) => {
 };
 
 const OutfitCard: React.FC<{
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  matchPercentage: number;
-  archetype?: DemoOutfit["archetype"];
-  tags?: string[];
+  outfit: DemoOutfit;
   view: ViewMode;
-}> = ({ id, title, description, imageUrl, matchPercentage, archetype, tags, view }) => {
+  index: number;
+}> = ({ outfit, view, index }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState(false);
+
+  const onShare = async () => {
+    try {
+      setDownloading(true);
+      const dataUrl = await generateOutfitShareImage({
+        title: outfit.title,
+        match: outfit.matchPercentage,
+        archetype: outfit.archetype,
+        imageUrl: outfit.imageUrl,
+        pageUrl: typeof window !== "undefined" ? window.location.origin + "/results" : "https://fitfi.ai/results",
+      });
+      // Native share indien beschikbaar
+      if (navigator.share && dataUrl) {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const file = new File([blob], "fitfi-outfit.png", { type: "image/png" });
+        await navigator.share({
+          title: "Mijn FitFi outfit",
+          text: `${outfit.title} — ${outfit.matchPercentage}% match`,
+          files: [file],
+        });
+      } else if (dataUrl) {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = "fitfi-outfit.png";
+        a.click();
+      }
+    } catch {
+      // stil falen; UI blijft rustig
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
-    <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow animate-fade-in">
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow"
+    >
       <div className="flex items-center justify-between mb-4 gap-3">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div className="flex flex-col">
-            <h3 className="text-lg font-medium text-[var(--color-text)]">{title}</h3>
-            {archetype ? <p className="text-sm text-[var(--color-text)]/70">{archetype}</p> : null}
+            <h3 className="text-lg font-medium text-[var(--color-text)]">{outfit.title}</h3>
+            <p className="text-sm text-[var(--color-text)]/70">{outfit.archetype}</p>
           </div>
         </div>
         <NewHintChip />
@@ -185,30 +245,37 @@ const OutfitCard: React.FC<{
 
       <div className={view === "grid" ? "grid grid-cols-1 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
         <div className="rounded-2xl overflow-hidden">
+          {/* LCP: eerste kaart is vaak in viewport; geef hem voorrang door eager te laden indien SmartImage dit doorzet */}
           <SmartImage
-            src={imageUrl}
-            alt={title}
-            id={id}
+            src={outfit.imageUrl}
+            alt={outfit.title}
+            id={outfit.id}
             kind="outfit"
             aspect="3/4"
             containerClassName="rounded-2xl"
             imgClassName="transition-transform duration-300 hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 480px"
+            // @ts-expect-error: indien SmartImage passthrough toepast gaan deze mee naar <img>; anders genegeerd (non-breaking)
+            loading={index === 0 ? "eager" : undefined}
+            // @ts-expect-error
+            fetchpriority={index === 0 ? "high" : undefined}
+            // @ts-expect-error
+            decoding={index === 0 ? "sync" : undefined}
           />
         </div>
 
         <div className="flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <StatChip icon={<BookmarkCheck className="w-4 h-4" />} label={`${matchPercentage}% match`} />
+              <StatChip icon={<BookmarkCheck className="w-4 h-4" />} label={`${outfit.matchPercentage}% match`} />
               <StatChip icon={<Info className="w-4 h-4" />} label="Waarom dit werkt" />
             </div>
 
-            <p className="text-[var(--color-text)]/80 leading-relaxed mb-3">{description}</p>
+            <p className="text-[var(--color-text)]/80 leading-relaxed mb-3">{outfit.description}</p>
 
-            {tags && tags.length > 0 ? (
+            {outfit.tags && outfit.tags.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {tags.slice(0, 4).map((tag) => (
+                {outfit.tags.slice(0, 4).map((tag) => (
                   <span
                     key={tag}
                     className="px-3 py-1 bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] rounded-full text-xs font-medium"
@@ -219,35 +286,28 @@ const OutfitCard: React.FC<{
               </div>
             ) : null}
 
+            {/* Explainability */}
             <div className="mt-4">
               <button
                 type="button"
                 onClick={() => setOpen((s) => !s)}
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-surface)] transition-colors"
                 aria-expanded={open}
-                aria-controls={`explain-${id}`}
+                aria-controls={`explain-${outfit.id}`}
               >
                 <Info className="w-4 h-4" />
                 <span className="text-sm">{open ? "Verberg uitleg" : "Toon uitleg"}</span>
               </button>
-              <div id={`explain-${id}`}>
-                <ExplainList id={id} archetype={archetype} isOpen={open} />
+              <div id={`explain-${outfit.id}`}>
+                <ExplainList id={outfit.id} archetype={outfit.archetype} isOpen={open} />
               </div>
             </div>
 
-            <ShopTheLookStrip
-              outfit={{
-                id,
-                title,
-                description,
-                imageUrl,
-                matchPercentage,
-                archetype: (archetype as DemoOutfit["archetype"]) || "Casual",
-                tags: tags || [],
-              }}
-            />
+            {/* Shop de look — disabled tot deeplinks live zijn */}
+            <ShopTheLookStrip outfit={outfit} />
           </div>
 
+          {/* CTA's */}
           <div className="mt-6 flex flex-wrap gap-3">
             <Button
               as={Link}
@@ -262,17 +322,24 @@ const OutfitCard: React.FC<{
             <Button variant="secondary" size="lg" icon={<Bookmark className="w-4 h-4" />}>
               Bewaar
             </Button>
-            <Button variant="secondary" size="lg" icon={<Share2 className="w-4 h-4" />}>
-              Deel
+            <Button
+              variant="secondary"
+              size="lg"
+              icon={<Share2 className="w-4 h-4" />}
+              onClick={onShare}
+              disabled={downloading}
+            >
+              {downloading ? "Genereren…" : "Deel kaart"}
             </Button>
           </div>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 };
 
 const EnhancedResultsPage: React.FC = () => {
+  // Persistente voorkeuren (filter + weergave)
   const [filter, setFilter] = useState<Filter>(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem("ff_results_filter") : null;
     return (saved as Filter) || "Alle";
@@ -301,6 +368,20 @@ const EnhancedResultsPage: React.FC = () => {
     return outfits.filter((o) => (o.archetype || "").toLowerCase() === filter.toLowerCase());
   }, [outfits, filter]);
 
+  // Quiz Gate v2 (client-side, opt-in via flag)
+  const quizEnabled = (import.meta as any).env?.VITE_QUIZ_GATE === "on";
+  const [quizOpen, setQuizOpen] = useState<boolean>(() => {
+    if (!quizEnabled) return false;
+    try {
+      return !window.localStorage.getItem("ff_quiz_done");
+    } catch {
+      return false;
+    }
+  });
+
+  // Founders-Wall e-mailcapture (flag optioneel, standaard aan)
+  const foundersEnabled = (import.meta as any).env?.VITE_FOUNDERS_WALL !== "off";
+
   return (
     <main>
       <PageHero
@@ -310,6 +391,7 @@ const EnhancedResultsPage: React.FC = () => {
       />
 
       <section className="container mx-auto px-4 md:px-6 -mt-6 md:-mt-8">
+        {/* Toolbar: Filters & view */}
         <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:p-6 shadow-[var(--shadow-soft)] mb-6 md:mb-8">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="inline-flex items-center gap-2">
@@ -355,20 +437,55 @@ const EnhancedResultsPage: React.FC = () => {
               >
                 Grid
               </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                icon={<ImageDown className="w-4 h-4" />}
+                as="a"
+                href="#share-help"
+              >
+                Delen
+              </Button>
             </div>
           </div>
         </div>
 
+        {/* Result cards + Founders Wall */}
         <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" : "grid grid-cols-1 gap-6 md:gap-8"}>
-          {filtered.map((o) => (
-            <OutfitCard key={o.id} {...o} view={view} />
-          ))}
+          <AnimatePresence initial={false}>
+            {filtered.map((o, i) => (
+              <React.Fragment key={o.id}>
+                <OutfitCard outfit={o} view={view} index={i} />
+                {foundersEnabled && i === 2 && (
+                  <FoundersWall key="founders-wall" />
+                )}
+              </React.Fragment>
+            ))}
+          </AnimatePresence>
         </div>
 
+        {/* Premium upsell — lazy voor betere LCP */}
         <div className="mt-10 md:mt-12">
-          <PremiumUpsellStrip />
+          <Suspense fallback={<div className="h-24 rounded-[var(--radius-2xl)] bg-[var(--color-surface)] border border-[var(--color-border)] animate-pulse" />}>
+            <PremiumUpsellStrip />
+          </Suspense>
         </div>
+
+        {/* Deel-instructie anker (visueel subtiel) */}
+        <div id="share-help" className="sr-only">Gebruik "Deel kaart" op een outfit om een deelbare afbeelding te maken.</div>
       </section>
+
+      {/* Quiz Gate v2 */}
+      {quizOpen && quizEnabled && (
+        <ResultsQuizGate
+          onClose={() => {
+            setQuizOpen(false);
+            try {
+              window.localStorage.setItem("ff_quiz_done", "1");
+            } catch {}
+          }}
+        />
+      )}
     </main>
   );
 };
