@@ -1,4 +1,3 @@
-// /src/lib/quiz/logic.ts
 import type { AnswerMap, ColorProfile, Archetype, QuizResult } from "./types";
 
 function decideTemperature(a: AnswerMap): ColorProfile["temperature"] {
@@ -21,17 +20,10 @@ function decideSeason(
   temp: ColorProfile["temperature"],
   value: ColorProfile["value"],
   contrast: ColorProfile["contrast"],
-  chroma: ColorProfile["chroma"]
+  _chroma: ColorProfile["chroma"]
 ): ColorProfile["season"] {
-  if (temp === "warm") {
-    if (value === "licht") return "lente";
-    return "herfst";
-  }
-  if (temp === "koel") {
-    if (value === "donker" || contrast === "hoog") return "winter";
-    return "zomer";
-  }
-  // neutraal -> leunen op value/contrast
+  if (temp === "warm") return value === "licht" ? "lente" : "herfst";
+  if (temp === "koel") return value === "donker" || contrast === "hoog" ? "winter" : "zomer";
   if (value === "donker") return "winter";
   if (value === "licht") return "zomer";
   return "herfst";

@@ -1,9 +1,3 @@
-// /src/lib/links/resolver.ts
-/**
- * Eenvoudige affiliate/merchant linkresolver.
- * Houdt alle URL-sjablonen op één plek en voegt optioneel een partner-id toe.
- * Geen netwerkcalls, geen secrets in code — alleen VITE_* env-var toegestaan.
- */
 type Merchant = "lululemon" | "cos" | "arket" | "other";
 
 const TEMPLATES: Record<Merchant, (sku: string, partnerId?: string) => string> = {

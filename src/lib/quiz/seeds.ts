@@ -1,4 +1,3 @@
-// /src/lib/quiz/seeds.ts
 import type { ColorProfile, Archetype } from "./types";
 
 export type OutfitSeed = {
@@ -7,8 +6,6 @@ export type OutfitSeed = {
   vibe: string;
   notes: string;
   tags?: string[];
-  // optioneel voor affiliate-koppeling per item
-  items?: { merchant: string; sku: string; name: string }[];
 };
 
 const BASE_BY_ARCHETYPE: Record<Archetype, Omit<OutfitSeed, "id">[]> = {
@@ -55,7 +52,7 @@ function seasonText(c: ColorProfile): { palette: string; accentTip: string } {
   }
 }
 
-export function getSeedOutfits(color: ColorProfile, archetype: Archetype): OutfitSeed[] {
+export function getSeedOutfits(color: ColorProfile, archetype: Archetype) {
   const base = BASE_BY_ARCHETYPE[archetype];
   const { palette, accentTip } = seasonText(color);
   return base.map((b, i) => ({

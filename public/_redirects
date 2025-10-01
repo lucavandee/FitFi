@@ -1,14 +1,1 @@
-# /public/_redirects
-
-# Canoniek NL voor auth & legal
-/login                 /inloggen                 301
-/register              /registreren              301
-/terms                 /algemene-voorwaarden     301
-/faq                   /veelgestelde-vragen      301
-/login/                /inloggen                 301
-/register/             /registreren              301
-/terms/                /algemene-voorwaarden     301
-/faq/                  /veelgestelde-vragen      301
-
-# SPA fallback
-/*                     /index.html               200
+/*   /index.html   200

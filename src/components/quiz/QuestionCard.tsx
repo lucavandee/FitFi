@@ -1,4 +1,3 @@
-// /src/components/quiz/QuestionCard.tsx
 import React from "react";
 
 type Choice<T extends string> = { value: T; label: string; help?: string };
@@ -13,13 +12,7 @@ type Props<T extends string> = {
 };
 
 export default function QuestionCard<T extends string>({
-  title,
-  help,
-  name,
-  value,
-  multiple,
-  choices,
-  onChange,
+  title, help, name, value, multiple, choices, onChange,
 }: Props<T>) {
   const isActive = (v: T) =>
     multiple ? Array.isArray(value) && (value as T[]).includes(v) : value === v;
@@ -28,8 +21,7 @@ export default function QuestionCard<T extends string>({
     if (multiple) {
       const arr = Array.isArray(value) ? [...(value as T[])] : [];
       const i = arr.indexOf(v);
-      if (i >= 0) arr.splice(i, 1);
-      else arr.push(v);
+      if (i >= 0) arr.splice(i, 1); else arr.push(v);
       onChange(arr as T[]);
     } else {
       onChange(v);
@@ -57,7 +49,6 @@ export default function QuestionCard<T extends string>({
             onClick={() => toggle(c.value)}
             className={[
               "text-left rounded-[var(--radius-xl)] border px-3 py-3",
-              "transition-colors",
               isActive(c.value)
                 ? "border-[var(--color-primary)] bg-[color-mix(in oklab,var(--ff-color-primary-700) 8%,transparent)]"
                 : "border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-primary)]",

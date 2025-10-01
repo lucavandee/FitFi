@@ -1,274 +1,96 @@
-// /src/pages/DashboardPage.tsx
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import {
-  Clock,
-  LogOut,
-  Sparkles,
-  FileText,
-  Settings,
-  ArrowRight,
-  Heart,
-  LayoutList,
-  Shirt,
-  Info,
-} from "lucide-react";
+import { NavLink } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
-import { track } from "@/utils/analytics";
+import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 
-/** Utility: veilige datumweergave */
-function fmt(ts?: number) {
-  if (!ts) return "nog niet";
-  try {
-    const d = new Date(ts);
-    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-  } catch {
-    return "onbekend";
-  }
-}
-
-/** Card met royale top-ademruimte — tokens-first */
-function Card({
-  title,
-  icon,
-  children,
-  footer,
-  ariaLabel,
-}: {
-  title: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-  footer?: React.ReactNode;
-  ariaLabel?: string;
-}) {
-  return (
-    <article
-      aria-label={ariaLabel || title}
-      className={[
-        "rounded-[var(--radius-2xl)]",
-        "border border-[var(--color-border)]",
-        "bg-[var(--color-surface)]",
-        "shadow-[var(--shadow-soft)]",
-        // extra lucht binnen de kaart
-        "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
-      ].join(" ")}
-    >
-      <header className="mb-4 flex items-center gap-3">
-        {icon ? <div className="shrink-0 text-[var(--color-text)]/90">{icon}</div> : null}
-        <h2 className="text-base font-semibold">{title}</h2>
-      </header>
-      <div className="text-sm">{children}</div>
-      {footer ? <div className="mt-5">{footer}</div> : null}
-    </article>
-  );
+function readJson<T>(key: string): T | null {
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : null; } catch { return null; }
 }
 
 export default function DashboardPage() {
-  const nav = useNavigate();
-  const [initial, setInitial] = React.useState<string>("J");
-  const [lastUpdated, setLastUpdated] = React.useState<number | undefined>();
-  const [hasFavorites, setHasFavorites] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    track("view_dashboard");
-    try {
-      const init = window.localStorage.getItem("ff_user_initial") || "J";
-      setInitial(init);
-      const tsStr = window.localStorage.getItem("ff_results_ts");
-      setLastUpdated(tsStr ? Number(tsStr) : undefined);
-      setHasFavorites(!!window.localStorage.getItem("ff_fav_outfits"));
-    } catch {}
+  const ts = React.useMemo(() => {
+    try { const raw = localStorage.getItem(LS_KEYS.RESULTS_TS); return raw ? parseInt(raw, 10) : null; } catch { return null; }
   }, []);
+  const favCount = React.useMemo(() => {
+    try { return (JSON.parse(localStorage.getItem("ff_fav_outfits") || "[]") as string[]).length; } catch { return 0; }
+  }, []);
+  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
+  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
 
-  function logout() {
-    try {
-      window.localStorage.removeItem("ff_auth");
-      window.localStorage.removeItem("ff_user_initial");
-    } catch {}
-    nav("/", { replace: true });
-  }
+  const last = ts ? new Date(ts) : null;
+  const lastText = last ? last.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" }) : "nog niet";
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Seo
-        title="Dashboard — FitFi"
-        description="Sereen overzicht. Vanuit hier open je je resultaten of start je opnieuw."
-        path="/dashboard"
-      />
-
-      {/* HERO */}
+    <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <Seo title="Dashboard — FitFi" description="Rustig overzicht. Open je resultaten of begin opnieuw." path="/dashboard" />
       <PageHero
-        id="page-dashboard"
         eyebrow="ACCOUNT"
         title="Dashboard"
-        subtitle="Rustig overzicht. Vanuit hier open je je resultaten of begin je opnieuw."
+        subtitle="Rustig overzicht. Vanuit hier open je resultaten of begin je opnieuw."
         align="left"
-        as="h1"
         size="sm"
         ctas={[
           { label: "Bekijk resultaten", to: "/results", variant: "primary" },
-          { label: "Begin opnieuw", to: "/results?refresh=1", variant: "secondary" },
+          { label: "Begin opnieuw", to: "/stijlquiz", variant: "secondary" },
         ]}
-        note={
-          <span className="inline-flex items-center gap-2 text-[var(--color-text)]/70">
-            <Clock className="w-4 h-4" />
-            Laatst bijgewerkt: {fmt(lastUpdated)}
-          </span>
-        }
+        note={<span className="text-sm text-[var(--color-text)]/80">Laatst bijgewerkt: {lastText}</span>}
       />
 
-      {/* SECTION — royale top-padding om afstand tot hero te creëren */}
-      <section className="ff-container pt-12 sm:pt-14 md:pt-16 lg:pt-20 pb-16">
-        <div className="grid gap-7 md:gap-8 lg:gap-9 md:grid-cols-3 items-stretch">
-          {/* Jouw status */}
-          <Card
-            title="Jouw status"
-            ariaLabel="Jouw status"
-            icon={
-              <div className="h-9 w-9 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-sm">
-                {initial}
+      <section className="ff-container pt-10 pb-16">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5">
+            <h2 className="text-base font-semibold">Jouw status</h2>
+            <p className="mt-1 text-sm text-[var(--color-text)]/70">Je resultaten zijn {ts ? "aangemaakt" : "nog niet aangemaakt"}.</p>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
+                <div className="text-sm opacity-70">Outfits</div>
+                <div className="text-lg font-semibold">6</div>
               </div>
-            }
-            footer={
-              <div className="flex flex-wrap gap-2">
-                <Button as={NavLink} to="/results" variant="primary">
-                  Open resultaten
-                </Button>
-                <Button as={NavLink} to="/results?refresh=1" variant="secondary">
-                  Begin opnieuw
-                </Button>
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
+                <div className="text-sm opacity-70">Looks</div>
+                <div className="text-lg font-semibold">—</div>
               </div>
-            }
-          >
-            <p className="text-[var(--color-text)]/80">
-              Je resultaten zijn {lastUpdated ? "beschikbaar" : "nog niet aangemaakt"}.
-              {lastUpdated ? (
-                <> Laatst geüpdatet op <strong>{fmt(lastUpdated)}</strong>.</>
-              ) : (
-                <> Klik op <em>Begin opnieuw</em> om je profiel te (her)genereren.</>
-              )}
-            </p>
-
-            {/* Mini-stat strip */}
-            <div className="mt-5 grid grid-cols-3 gap-3">
-              <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
-                <Shirt className="mx-auto h-4 w-4 opacity-80" aria-hidden />
-                <div className="mt-1 text-xs opacity-70">Outfits</div>
-                <div className="text-sm font-medium">{lastUpdated ? "6+" : "—"}</div>
-              </div>
-              <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
-                <LayoutList className="mx-auto h-4 w-4 opacity-80" aria-hidden />
-                <div className="mt-1 text-xs opacity-70">Looks</div>
-                <div className="text-sm font-medium">{lastUpdated ? "3 sets" : "—"}</div>
-              </div>
-              <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
-                <Heart className="mx-auto h-4 w-4 opacity-80" aria-hidden />
-                <div className="mt-1 text-xs opacity-70">Favorieten</div>
-                <div className="text-sm font-medium">{hasFavorites ? "✓" : "—"}</div>
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center">
+                <div className="text-sm opacity-70">Favorieten</div>
+                <div className="text-lg font-semibold">{favCount}</div>
               </div>
             </div>
-          </Card>
+            <div className="mt-4 flex gap-3">
+              <Button as={NavLink} to="/results" variant="primary">Open resultaten</Button>
+              <Button as={NavLink} to="/stijlquiz" variant="secondary">Begin opnieuw</Button>
+            </div>
+          </div>
 
-          {/* Snelle acties */}
-          <Card title="Snelle acties" icon={<Sparkles className="w-5 h-5" aria-hidden />}>
-            <ul className="grid gap-2" role="list">
-              <li className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                <div>
-                  <div className="text-sm font-medium">Verbeter je pasvorm-instellingen</div>
-                  <p className="text-xs opacity-70">Maak silhouet en proportie nog scherper.</p>
-                </div>
-                <NavLink to="/results#fit" className="inline-flex items-center gap-1 underline hover:no-underline">
-                  Open <ArrowRight className="w-4 h-4" />
-                </NavLink>
-              </li>
-              <li className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                <div>
-                  <div className="text-sm font-medium">Bekijk uitleg bij je archetype</div>
-                  <p className="text-xs opacity-70">Waarom werkt dit voor jou?</p>
-                </div>
-                <NavLink to="/results#archetype" className="inline-flex items-center gap-1 underline hover:no-underline">
-                  Open <ArrowRight className="w-4 h-4" />
-                </NavLink>
-              </li>
-              <li className="flex items-center justify-between rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
-                <div>
-                  <div className="text-sm font-medium">Bewaar je favoriete outfits</div>
-                  <p className="text-xs opacity-70">Curate je eigen selectie voor later.</p>
-                </div>
-                <NavLink to="/results#favorites" className="inline-flex items-center gap-1 underline hover:no-underline">
-                  Open <ArrowRight className="w-4 h-4" />
-                </NavLink>
-              </li>
-            </ul>
-
-            <div className="mt-5 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
-              <div className="flex items-start gap-2 text-sm">
-                <Info className="mt-0.5 h-4 w-4 opacity-80" aria-hidden />
-                <p className="opacity-80">
-                  Tip: voeg <em>1–2</em> favorieten toe; dan personaliseren we je volgende outfits nog beter.
-                </p>
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5">
+            <h2 className="text-base font-semibold">Profiel</h2>
+            <div className="mt-3 grid gap-2">
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm">
+                <strong>Kleurpalet:</strong> {color?.paletteName ?? "—"}
+              </div>
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm">
+                <strong>Archetype:</strong> {archetype ?? "—"}
               </div>
             </div>
-          </Card>
+          </div>
 
-          {/* Account */}
-          <Card
-            title="Account"
-            icon={<Settings className="w-5 h-5" aria-hidden />}
-            footer={
-              <div className="flex flex-wrap gap-2">
-                <Button variant="secondary" onClick={logout} className="inline-flex items-center gap-2">
-                  <LogOut className="w-4 h-4" /> Uitloggen
-                </Button>
-              </div>
-            }
-          >
-            <ul className="grid gap-2 text-sm" role="list">
-              <li className="flex items-center justify-between">
-                <span>Gegevens & privacy</span>
-                <NavLink to="/privacy" className="inline-flex items-center gap-1 underline hover:no-underline">
-                  Open <ArrowRight className="w-4 h-4" />
-                </NavLink>
-              </li>
-              <li className="flex items-center justify-between">
-                <span>Voorwaarden</span>
-                <NavLink to="/algemene-voorwaarden" className="inline-flex items-center gap-1 underline hover:no-underline">
-                  Open <ArrowRight className="w-4 h-4" />
-                </NavLink>
-              </li>
-            </ul>
-          </Card>
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5">
+            <h2 className="text-base font-semibold">Account</h2>
+            <div className="mt-3 grid gap-2">
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm">Gegevens & privacy</div>
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm">Voorwaarden</div>
+            </div>
+            <div className="mt-4">
+              <Button as={NavLink} to="/inloggen" variant="secondary">Uitloggen</Button>
+            </div>
+          </div>
         </div>
 
-        {/* Support teaser — spacing gelijkgetrokken met cards */}
-        <div
-          className={[
-            "mt-8 lg:mt-10",
-            "rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
-            "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
-            "pt-8 sm:pt-9 pb-6 sm:pb-7 px-5 sm:px-6",
-          ].join(" ")}
-        >
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <FileText className="w-5 h-5" aria-hidden />
-              <div>
-                <h3 className="font-semibold">Vragen of feedback?</h3>
-                <p className="text-sm text-[var(--color-text)]/80">
-                  Bekijk de FAQ of stuur ons een bericht — we lezen alles.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button as={NavLink} to="/veelgestelde-vragen" variant="secondary">
-                FAQ
-              </Button>
-              <Button as={NavLink} to="/contact" variant="primary">
-                Contact
-              </Button>
-            </div>
+        <div className="mt-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] p-5">
+          <div className="flex items-center gap-3">
+            <Button as={NavLink} to="/veelgestelde-vragen" variant="secondary">FAQ</Button>
+            <Button as={NavLink} to="/contact" variant="primary">Contact</Button>
           </div>
         </div>
       </section>

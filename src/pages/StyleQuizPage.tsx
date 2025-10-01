@@ -1,4 +1,3 @@
-// /src/pages/StyleQuizPage.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
@@ -12,44 +11,20 @@ import type { AnswerMap, QuizStep } from "@/lib/quiz/types";
 import { LS_KEYS } from "@/lib/quiz/types";
 
 const STEPS: QuizStep[] = [
-  "goals",
-  "fit",
-  "comfort",
-  "jewelry",
-  "neutrals",
-  "lightness",
-  "contrast",
-  "prints",
-  "materials",
-  "occasions",
-  "photo",
-  "review",
+  "goals","fit","comfort","jewelry","neutrals","lightness","contrast","prints","materials","occasions","photo","review",
 ];
 
 export default function StyleQuizPage() {
   const nav = useNavigate();
   const [stepIdx, setStepIdx] = React.useState(0);
   const [answers, setAnswers] = React.useState<AnswerMap>(() => {
-    try {
-      const raw = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
-      return raw ? (JSON.parse(raw) as AnswerMap) : {};
-    } catch {
-      return {};
-    }
+    try { const raw = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS); return raw ? JSON.parse(raw) as AnswerMap : {}; } catch { return {}; }
   });
 
-  React.useEffect(() => {
-    try {
-      localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
-    } catch {}
-  }, [answers]);
+  React.useEffect(() => { try { localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers)); } catch {} }, [answers]);
 
-  function next() {
-    setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
-  }
-  function prev() {
-    setStepIdx((i) => Math.max(i - 1, 0));
-  }
+  function next() { setStepIdx((i) => Math.min(i + 1, STEPS.length - 1)); }
+  function prev() { setStepIdx((i) => Math.max(i - 1, 0)); }
 
   function finish() {
     const result = computeResult(answers);
@@ -66,11 +41,7 @@ export default function StyleQuizPage() {
 
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Seo
-        title="Stijlquiz — FitFi"
-        description="Beantwoord enkele vragen en ontvang je kleurprofiel en stijl-archetype."
-        path="/stijlquiz"
-      />
+      <Seo title="Stijlquiz — FitFi" description="Beantwoord enkele vragen en ontvang je kleurprofiel en stijl-archetype." path="/stijlquiz" />
       <PageHero
         eyebrow="STIJLQUIZ"
         title="Snel en rustig — zoals het hoort"
@@ -83,12 +54,8 @@ export default function StyleQuizPage() {
 
       <section className="ff-container pt-10 pb-16 space-y-6">
         {current === "goals" && (
-          <QuestionCard
-            title="Waar ga je je outfits vooral voor gebruiken?"
-            help="Je kunt meer dan één optie kiezen."
-            name="goals"
-            multiple
-            value={answers.goals}
+          <QuestionCard multiple title="Waar ga je je outfits vooral voor gebruiken?" help="Je kunt meer dan één optie kiezen."
+            name="goals" value={answers.goals}
             choices={[
               { value: "werk", label: "Werk / Office" },
               { value: "casual", label: "Casual / Weekend" },
@@ -100,10 +67,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "fit" && (
-          <QuestionCard
-            title="Welke silhouet-balans past het meest bij jou?"
-            name="fit"
-            value={answers.fit}
+          <QuestionCard title="Welke silhouet-balans past het meest bij jou?" name="fit" value={answers.fit}
             choices={[
               { value: "slim", label: "Getailleerd / Slim" },
               { value: "straight", label: "Recht / Regular" },
@@ -115,10 +79,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "comfort" && (
-          <QuestionCard
-            title="Hoe gestructureerd wil je dat je kleding voelt?"
-            name="comfort"
-            value={answers.comfort}
+          <QuestionCard title="Hoe gestructureerd wil je dat je kleding voelt?" name="comfort" value={answers.comfort}
             choices={[
               { value: "structured", label: "Gestructureerd", help: "Strakke lijnen, nette look." },
               { value: "balanced", label: "Gebalanceerd", help: "Mix tussen netjes en comfy." },
@@ -129,10 +90,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "jewelry" && (
-          <QuestionCard
-            title="Welke sieraden flatteren je vaak het meest?"
-            name="jewelry"
-            value={answers.jewelry}
+          <QuestionCard title="Welke sieraden flatteren je vaak het meest?" name="jewelry" value={answers.jewelry}
             choices={[
               { value: "goud", label: "Goud" },
               { value: "zilver", label: "Zilver" },
@@ -143,10 +101,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "neutrals" && (
-          <QuestionCard
-            title="Welke neutrale basiskleuren trekken je aan?"
-            name="neutrals"
-            value={answers.neutrals}
+          <QuestionCard title="Welke neutrale basiskleuren trekken je aan?" name="neutrals" value={answers.neutrals}
             choices={[
               { value: "warm", label: "Warm (zand, camel, klei)" },
               { value: "koel", label: "Koel (grijs, navy, steenkleur)" },
@@ -157,10 +112,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "lightness" && (
-          <QuestionCard
-            title="Voel je je het best in lichte of donkere outfits?"
-            name="lightness"
-            value={answers.lightness}
+          <QuestionCard title="Voel je je het best in lichte of donkere outfits?" name="lightness" value={answers.lightness}
             choices={[
               { value: "licht", label: "Licht" },
               { value: "medium", label: "Tussenin" },
@@ -171,10 +123,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "contrast" && (
-          <QuestionCard
-            title="Hoeveel contrast wil je meestal in je look?"
-            name="contrast"
-            value={answers.contrast}
+          <QuestionCard title="Hoeveel contrast wil je meestal in je look?" name="contrast" value={answers.contrast}
             choices={[
               { value: "laag", label: "Laag (tonal, zacht)" },
               { value: "medium", label: "Gemiddeld" },
@@ -185,10 +134,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "prints" && (
-          <QuestionCard
-            title="Wat vind je van prints?"
-            name="prints"
-            value={answers.prints}
+          <QuestionCard title="Wat vind je van prints?" name="prints" value={answers.prints}
             choices={[
               { value: "geen", label: "Liever geen prints" },
               { value: "effen", label: "Overwegend effen" },
@@ -200,10 +146,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "materials" && (
-          <QuestionCard
-            title="Welke materialen spreken je aan?"
-            name="materials"
-            value={answers.materials}
+          <QuestionCard title="Welke materialen spreken je aan?" name="materials" value={answers.materials}
             choices={[
               { value: "mat", label: "Mat" },
               { value: "textuur", label: "Zachte textuur (wol, brei)" },
@@ -214,12 +157,8 @@ export default function StyleQuizPage() {
         )}
 
         {current === "occasions" && (
-          <QuestionCard
-            title="Welke setting beschrijft je week het beste?"
-            help="Meerdere keuzes mogelijk."
-            name="occasions"
-            multiple
-            value={answers.occasions}
+          <QuestionCard multiple title="Welke setting beschrijft je week het beste?" help="Meerdere keuzes mogelijk."
+            name="occasions" value={answers.occasions}
             choices={[
               { value: "office", label: "Office / Meeting" },
               { value: "smartcasual", label: "Smart-casual" },
@@ -230,10 +169,7 @@ export default function StyleQuizPage() {
         )}
 
         {current === "photo" && (
-          <PhotoUpload
-            value={answers.photoDataUrl}
-            onChange={(v) => setAnswers((s) => ({ ...s, photoDataUrl: v }))}
-          />
+          <PhotoUpload value={answers.photoDataUrl} onChange={(v) => setAnswers((s) => ({ ...s, photoDataUrl: v }))} />
         )}
 
         {current === "review" && (
@@ -241,9 +177,7 @@ export default function StyleQuizPage() {
             <h2 className="text-lg font-semibold">Bijna klaar</h2>
             <p className="mt-1 text-sm text-[var(--color-text)]/80">
               We genereren je kleurprofiel en stijl-archetype op basis van je antwoorden.
-              Je kunt later altijd bijstellen.
             </p>
-
             <div className="mt-4 grid gap-2 text-sm">
               <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
                 <strong>Silhouet:</strong> {answers.fit ?? "—"} • <strong>Comfort:</strong> {answers.comfort ?? "—"}
@@ -258,20 +192,11 @@ export default function StyleQuizPage() {
           </div>
         )}
 
-        {/* Navigatie */}
         <div className="flex items-center justify-between pt-2">
-          <Button variant="secondary" onClick={prev} disabled={stepIdx === 0}>
-            Terug
-          </Button>
-          {current !== "review" ? (
-            <Button variant="primary" onClick={next}>
-              Volgende
-            </Button>
-          ) : (
-            <Button variant="primary" onClick={finish}>
-              Toon mijn resultaten
-            </Button>
-          )}
+          <Button variant="secondary" onClick={prev} disabled={stepIdx === 0}>Terug</Button>
+          {current !== "review"
+            ? <Button variant="primary" onClick={next}>Volgende</Button>
+            : <Button variant="primary" onClick={finish}>Toon mijn resultaten</Button>}
         </div>
       </section>
     </main>

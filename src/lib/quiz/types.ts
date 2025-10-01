@@ -1,4 +1,3 @@
-// /src/lib/quiz/types.ts
 export type QuizStep =
   | "intro"
   | "goals"

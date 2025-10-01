@@ -1,4 +1,3 @@
-// /src/pages/EnhancedResultsPage.tsx
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Bookmark, BookmarkCheck, Share2, Info } from "lucide-react";
@@ -9,30 +8,18 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
 
 function readJson<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch {
-    return null;
-  }
+  try { const raw = localStorage.getItem(key); return raw ? (JSON.parse(raw) as T) : null; } catch { return null; }
 }
 
-/** 4:5 visual placeholder — klaar voor SmartImage */
 function OutfitVisual({ label }: { label: string }) {
   return (
     <div role="img" aria-label={label} className="w-full aspect-[4/5] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)]" />
   );
 }
 
-function SectionCard({
-  id, title, subtitle, children,
-}: { id?: string; title: string; subtitle?: string; children: React.ReactNode }) {
+function SectionCard({ id, title, subtitle, children }:{ id?: string; title: string; subtitle?: string; children: React.ReactNode; }) {
   return (
-    <section
-      id={id}
-      className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] pt-8 sm:pt-9 pb-7 px-5 sm:px-6"
-      aria-labelledby={id ? `${id}-title` : undefined}
-    >
+    <section id={id} className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] pt-8 sm:pt-9 pb-7 px-5 sm:px-6" aria-labelledby={id ? `${id}-title` : undefined}>
       <header className="mb-3">
         <h2 id={id ? `${id}-title` : undefined} className="text-lg font-semibold">{title}</h2>
         {subtitle ? <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{subtitle}</p> : null}
@@ -43,25 +30,16 @@ function SectionCard({
 }
 
 export default function EnhancedResultsPage() {
-  // Schrijf "last updated" zodra je hier komt.
-  React.useEffect(() => {
-    try { localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString()); } catch {}
-  }, []);
+  React.useEffect(() => { try { localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString()); } catch {} }, []);
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE) ?? "Smart Casual";
 
-  // Bereid outfits voor op basis van quiz; fallback naar een generieke set
   const seeds: OutfitSeed[] = React.useMemo(() => {
     if (color) return getSeedOutfits(color, archetype);
-    // Fallback: Smart Casual + zachte tonals
     return getSeedOutfits({
-      temperature: "neutraal",
-      value: "medium",
-      contrast: "laag",
-      chroma: "zacht",
-      season: "zomer",
-      paletteName: "Soft Cool Tonals (neutraal)",
+      temperature: "neutraal", value: "medium", contrast: "laag", chroma: "zacht",
+      season: "zomer", paletteName: "Soft Cool Tonals (neutraal)",
       notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
     }, "Smart Casual");
   }, [color, archetype]);
@@ -69,7 +47,6 @@ export default function EnhancedResultsPage() {
   const [favs, setFavs] = React.useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("ff_fav_outfits") || "[]"); } catch { return []; }
   });
-
   function toggleFav(id: string) {
     setFavs((curr) => {
       const next = curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id];
@@ -77,7 +54,6 @@ export default function EnhancedResultsPage() {
       return next;
     });
   }
-
   function sharePage() {
     const url = typeof window !== "undefined" ? window.location.href : "https://fitfi.ai/results";
     if (navigator.share) { navigator.share({ title: "Mijn FitFi resultaten", url }).catch(() => {}); }
@@ -90,30 +66,16 @@ export default function EnhancedResultsPage() {
       <PageHero
         eyebrow="RESULTATEN"
         title="Outfits op maat — rustig en premium"
-        subtitle="Eenvoudig en helder: focus op silhouet, proportie en draagbaarheid."
+        subtitle="Focus op silhouet, proportie en draagbaarheid."
         align="left"
         size="sm"
         ctas={[{ label: "Herstart quiz", to: "/stijlquiz", variant: "secondary" }]}
-        note={
-          <button
-            type="button"
-            onClick={sharePage}
-            className="inline-flex items-center gap-2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm"
-            aria-label="Deel resultaten"
-          >
-            <Share2 className="w-4 h-4" aria-hidden /> Deel
-          </button>
-        }
+        note={<button type="button" onClick={sharePage} className="inline-flex items-center gap-2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm" aria-label="Deel resultaten"><Share2 className="w-4 h-4" aria-hidden />Deel</button>}
       />
 
       <section className="ff-container pt-16 md:pt-20 lg:pt-24 pb-20">
-        {/* Profiel-samenvatting */}
         <div className="mx-auto max-w-[1100px] grid gap-8">
-          <SectionCard
-            id="profile"
-            title="Jouw kleurprofiel"
-            subtitle={color ? color.paletteName : "Standaard palet (quiz nog niet voltooid)"}
-          >
+          <SectionCard id="profile" title="Jouw kleurprofiel" subtitle={color ? color.paletteName : "Standaard palet (quiz nog niet voltooid)"}>
             <div className="grid gap-2 sm:grid-cols-2">
               <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
                 <strong>Seizoen:</strong> { (color?.season ?? "zomer") } • <strong>Temperatuur:</strong> { (color?.temperature ?? "neutraal") }
@@ -133,7 +95,6 @@ export default function EnhancedResultsPage() {
           </SectionCard>
         </div>
 
-        {/* Outfits */}
         <div className="mx-auto mt-8 max-w-[1100px] grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {seeds.map((o) => {
             const active = favs.includes(o.id);
@@ -145,11 +106,7 @@ export default function EnhancedResultsPage() {
                     <h3 className="text-base font-semibold">{o.title}</h3>
                     <p className="mt-0.5 text-sm text-[var(--color-text)]/70">{o.vibe}</p>
                   </div>
-                  <button
-                    className="inline-flex h-9 items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm"
-                    aria-pressed={active}
-                    onClick={() => toggleFav(o.id)}
-                  >
+                  <button className="inline-flex h-9 items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm" aria-pressed={active} onClick={() => toggleFav(o.id)}>
                     {active ? (<><BookmarkCheck className="w-4 h-4" aria-hidden /> Bewaard</>) : (<><Bookmark className="w-4 h-4" aria-hidden /> Bewaren</>)}
                   </button>
                 </div>
@@ -164,17 +121,10 @@ export default function EnhancedResultsPage() {
           })}
         </div>
 
-        {/* Favorieten */}
-        <section
-          id="favorites"
-          className="mx-auto mt-10 max-w-[1100px] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] pt-6 pb-6 px-5 sm:px-6"
-          aria-labelledby="favorites-title"
-        >
+        <section id="favorites" className="mx-auto mt-10 max-w-[1100px] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] pt-6 pb-6 px-5 sm:px-6" aria-labelledby="favorites-title">
           <h2 id="favorites-title" className="text-base font-semibold">Je favorieten</h2>
           {favs.length === 0 ? (
-            <p className="mt-2 text-sm text-[var(--color-text)]/70">
-              Nog geen favorieten. Klik op <em>Bewaren</em> bij een outfit om te starten.
-            </p>
+            <p className="mt-2 text-sm text-[var(--color-text)]/70">Nog geen favorieten. Klik op <em>Bewaren</em> bij een outfit om te starten.</p>
           ) : (
             <ul className="mt-3 flex flex-wrap gap-2" role="list">
               {seeds.filter((o) => favs.includes(o.id)).map((o) => (
