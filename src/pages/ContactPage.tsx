@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { Mail, HelpCircle, ShieldCheck, Clock } from "lucide-react";
+import { Mail, CircleHelp as HelpCircle, ShieldCheck, Clock } from "lucide-react";
 
 type Topic = "algemeen" | "pers" | "partners" | "feedback" | "bug";
 const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
