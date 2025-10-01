@@ -104,6 +104,7 @@ const ExplainList: React.FC<{ id: string; archetype?: string; isOpen: boolean }>
     return base;
   }, [archetype]);
 
+  return (
     <>
       {isOpen && (
         <div
@@ -194,6 +195,9 @@ const OutfitCard: React.FC<{
 
   return (
     <article className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow animate-fade-in">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div>
             <h3 className="text-lg font-medium text-[var(--color-text)]">{title}</h3>
             {archetype ? <p className="text-sm text-[var(--color-text)]/70">{archetype}</p> : null}
           </div>
@@ -387,6 +391,8 @@ const EnhancedResultsPage: React.FC = () => {
           {filtered.map((o) => (
             <OutfitCard key={o.id} {...o} view={view} />
           ))}
+        </div>
+
         {/* Premium upsell */}
         <div className="mt-10 md:mt-12">
           <PremiumUpsellStrip />
