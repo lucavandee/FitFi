@@ -1,3 +1,4 @@
+// /src/utils/consent.ts
 export type CookiePrefs = {
   necessary: boolean;
   analytics: boolean;
@@ -21,13 +22,13 @@ export function getCookiePrefs(): CookiePrefs {
   }
 }
 
-/** Laat andere delen van de app consent bijwerken. */
 export function setCookiePrefs(prefs: Partial<CookiePrefs>) {
   try {
     const current = getCookiePrefs();
     const next = { ...current, ...prefs, necessary: true };
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-    // trigger storage listeners cross-tab
-    window.dispatchEvent(new StorageEvent("storage", { key: KEY, newValue: JSON.stringify(next) }));
+    const json = JSON.stringify(next);
+    window.localStorage.setItem(KEY, json);
+    // trigger cross-tab listeners
+    window.dispatchEvent(new StorageEvent("storage", { key: KEY, newValue: json }));
   } catch {}
 }

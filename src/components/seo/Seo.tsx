@@ -1,10 +1,11 @@
+// /src/components/seo/Seo.tsx
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
 type Props = {
   title: string;
   description?: string;
-  /** Absolute of relatieve path; bv. "/inloggen" */
+  /** Relatieve path beginnend met '/', bv. '/inloggen' */
   path?: string;
   noindex?: boolean;
   ogImage?: string;
@@ -28,7 +29,6 @@ export default function Seo({ title, description, path, noindex, ogImage, struct
     <Helmet>
       <title>{title}</title>
       {description && <meta name="description" content={description} />}
-
       {url && <link rel="canonical" href={url} />}
 
       <meta property="og:site_name" content="FitFi" />

@@ -1,10 +1,10 @@
+# /public/_redirects
+
 # Canoniek NL voor auth & legal
 /login                 /inloggen                 301
 /register              /registreren              301
 /terms                 /algemene-voorwaarden     301
 /faq                   /veelgestelde-vragen      301
-
-# Eventuele trailing slash varianten (veilig voor deltas)
 /login/                /inloggen                 301
 /register/             /registreren              301
 /terms/                /algemene-voorwaarden     301
