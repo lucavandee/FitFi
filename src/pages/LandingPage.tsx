@@ -12,7 +12,7 @@ export default function LandingPage() {
         <meta property="og:image" content="/hero/style-report%20copy.webp" />
         <script type="application/ld+json">
           {JSON.stringify({
-        <meta property="og:image" content="/hero/style-report%20copy.webp" />
+            "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "FitFi",
             "description": "AI Style Report in 2 minuten – Persoonlijk stijladvies",
@@ -114,16 +114,15 @@ export default function LandingPage() {
                 
                 {/* Device frame */}
                 <figure className="relative bg-[var(--color-surface)] rounded-3xl p-2 shadow-2xl border border-[var(--color-border)] group-hover:scale-105 transition-transform duration-500 max-w-sm mx-auto">
-            <img
-              src="/hero/style-report%20copy.webp"
-              alt="Voorbeeld van het FitFi Style Report op mobiel"
-              loading="eager"
-              fetchPriority="high"
-              fetchPriority="high"
-              decoding="async"
-              className="w-full h-auto rounded-2xl shadow-lg"
-              sizes="(max-width: 1024px) 90vw, 400px"
-            />
+                  <img
+                    src="/hero/style-report%20copy.webp"
+                    alt="Voorbeeld van het FitFi Style Report op mobiel"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="w-full h-auto rounded-2xl shadow-lg"
+                    sizes="(max-width: 1024px) 90vw, 400px"
+                  />
                   
                   {/* Floating feature cards */}
                   <div className="absolute -left-4 top-1/4 transform -translate-y-1/2 hidden lg:block">
@@ -332,14 +331,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* === FOOTER CTA === */}
-      <section className="ff-section">
-        <div className="ff-container--home">
-          <div className="text-center space-y-6 py-8">
-            <h2 className="ff-hero-title">Klaar om je stijl te ontdekken?</h2>
-            <p className="ff-hero-sub">Start nu en krijg binnen 2 minuten je persoonlijke Style Report.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <NavLink 
       {/* Stats section */}
       <section className="py-16 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
         <div className="ff-container--home">
@@ -363,9 +354,18 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* === FOOTER CTA === */}
+      <section className="ff-section">
+        <div className="ff-container--home">
+          <div className="text-center space-y-6 py-8">
+            <h2 className="ff-hero-title">Klaar om je stijl te ontdekken?</h2>
+            <p className="ff-hero-sub">Start nu en krijg binnen 2 minuten je persoonlijke Style Report.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <NavLink 
+                to="/onboarding"
+                className="ff-btn ff-btn-primary"
                 data-event="cta_start_free_footer"
-      {/* FAQ section */}
-      <section className="ff-section pb-20" aria-label="FAQ link">
               >
                 Start gratis Style Report
               </NavLink>
