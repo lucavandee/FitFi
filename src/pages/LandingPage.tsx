@@ -5,8 +5,7 @@ import PageHero from "@/components/marketing/PageHero";
 
 export default function LandingPage() {
   return (
-    // Editorial + Compact mode voor desktop; mobiel blijft identiek
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] ff-editorial-lg ff-compact-lg">
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
         <title>FitFi — AI-stylist. Rust, duidelijkheid en outfits die passen.</title>
         <meta
@@ -15,7 +14,7 @@ export default function LandingPage() {
         />
       </Helmet>
 
-      {/* HERO */}
+      {/* HERO (zelfde hero-balk als /prijzen) */}
       <PageHero
         eyebrow="GRATIS AI STYLE REPORT"
         title="Ontdek wat jouw stijl over je zegt"
@@ -27,33 +26,7 @@ export default function LandingPage() {
         ]}
       />
 
-      {/* HERO VISUAL (breekt rechts uit op desktop) */}
-      <section
-        aria-label="Style Report visual"
-        className="pt-2"
-        style={{
-          background:
-            "radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%), var(--color-bg)",
-        }}
-      >
-        <div className="ff-container--home grid md:grid-cols-12 gap-4 md:items-end">
-          <div className="hidden md:block md:col-span-6" />
-          <figure className="ff-media-frame ff-breakout-r md:col-span-6 max-w-[560px] md:max-w-none mx-auto">
-            <img
-              src="/media/home/style-report.webp"
-              alt="Voorbeeld van het FitFi Style Report op mobiel"
-              loading="lazy"
-              decoding="async"
-              sizes="(max-width: 768px) 90vw, 50vw"
-            />
-            <figcaption className="px-3 py-2 text-[var(--color-text)]/70 text-sm">
-              Voorbeeld van het Style Report — items, palet en score.
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
-      {/* TRUST CHIPS */}
+      {/* Kernchips */}
       <section aria-label="Kernpunten" className="ff-section pt-2">
         <div className="ff-container--home flex flex-wrap gap-2">
           <span className="ff-eyebrow">2 min klaar</span>
@@ -63,73 +36,82 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Waarom FitFi (compact magazine tiles op desktop) */}
+      {/* Sectie: Waarom FitFi (kaart zoals /prijzen) */}
       <section className="ff-section" aria-label="Waarom FitFi">
         <div className="ff-container--home">
-          <article className="ff-block ff-block--split">
-            <div className="ff-block-inner">
-              <aside className="ff-block-aside">
-                <div>
-                  <span className="ff-block-kicker">Voordelen</span>
-                  <h2 className="ff-block-title mt-2">Waarom FitFi</h2>
-                  <p className="ff-lede mt-2">Rustig en functioneel. Jij kiest; wij filteren de ruis.</p>
-                </div>
+          <article className="ff-section-card">
+            <header className="ff-section-card-head">
+              <span className="ff-kicker">Voordelen</span>
+              <h2 className="ff-section-title">Waarom FitFi</h2>
+            </header>
+            <div className="ff-section-card-body ff-split">
+              <aside className="ff-split-aside">
+                <p className="ff-lede">
+                  Rustig en functioneel. Jij kiest; wij filteren de ruis.
+                </p>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
                 </div>
               </aside>
-
-              <div className="ff-block-body">
-                {/* Mobiel: hairline · Desktop: compacte tegels (ff-list--mag) */}
-                <ul className="ff-list ff-list--hairline ff-list--mag ff-list--grid-lg-2 ff-list--grid-xl-3">
-                  <li className="ff-row">
-                    <div className="ff-row-title">Snel & moeiteloos</div>
-                    <div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
-                  </li>
-                  <li className="ff-row">
-                    <div className="ff-row-title">Uitleg bij elke look</div>
-                    <div className="ff-row-sub">Begrijp waarom items werken voor jouw silhouet, kleur en moment.</div>
-                  </li>
-                  <li className="ff-row">
-                    <div className="ff-row-title">Slim shoppen</div>
-                    <div className="ff-row-sub">Minder ruis, meer kwaliteit. Jij houdt de regie.</div>
-                  </li>
-                </ul>
+              <div className="ff-split-main">
+                <div className="ff-grid cols-3">
+                  <div className="ff-tile">
+                    <h3>Snel &amp; moeiteloos</h3>
+                    <p>6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</p>
+                  </div>
+                  <div className="ff-tile">
+                    <h3>Uitleg bij elke look</h3>
+                    <p>Begrijp waarom items werken voor jouw silhouet, kleur en moment.</p>
+                  </div>
+                  <div className="ff-tile">
+                    <h3>Slim shoppen</h3>
+                    <p>Minder ruis, meer kwaliteit. Jij houdt de regie.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </article>
         </div>
       </section>
 
-      {/* BLOK — Zo werkt het (horizontale rail desktop · timeline mobiel) */}
+      {/* Sectie: Zo werkt het — timeline op mobiel, cards op desktop */}
       <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container--home">
-          <article className="ff-block ff-block--split">
-            <div className="ff-block-inner">
-              <aside className="ff-block-aside">
-                <div>
-                  <span className="ff-block-kicker">Uitleg</span>
-                  <h2 className="ff-block-title mt-2">Zo werkt het</h2>
-                  <p className="ff-lede mt-2">Kort en duidelijk. Geen 'black box', wél uitleg.</p>
-                </div>
+          <article className="ff-section-card">
+            <header className="ff-section-card-head">
+              <span className="ff-kicker">Uitleg</span>
+              <h2 className="ff-section-title">Zo werkt het</h2>
+            </header>
+            <div className="ff-section-card-body ff-split">
+              <aside className="ff-split-aside">
+                <p className="ff-lede">Kort en duidelijk. Geen 'black box', wél uitleg.</p>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>
                 </div>
               </aside>
-
-              <div className="ff-block-body">
-                <ul className="ff-list ff-list--spine ff-tight ff-steps ff-list--grid-lg-2 ff-list--grid-xl-3">
-                  <li className="ff-row ff-row--numbered">
-                    <div className="ff-row-title" data-nr="1">Quick scan</div>
-                    <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
+              <div className="ff-split-main">
+                {/* Mobiel: timeline • Desktop: cards (ff-list--md-cards) */}
+                <ul className="ff-list ff-list--spine ff-list--md-cards ff-grid cols-3">
+                  <li className="ff-row">
+                    <div className="relative">
+                      <span className="ff-step-badge">1</span>
+                      <span className="ff-row-title" data-nr="1">Quick scan</span>
+                    </div>
+                    <p className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</p>
                   </li>
-                  <li className="ff-row ff-row--numbered">
-                    <div className="ff-row-title" data-nr="2">Match & uitleg</div>
-                    <div className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</div>
+                  <li className="ff-row">
+                    <div className="relative">
+                      <span className="ff-step-badge">2</span>
+                      <span className="ff-row-title" data-nr="2">Match &amp; uitleg</span>
+                    </div>
+                    <p className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</p>
                   </li>
-                  <li className="ff-row ff-row--numbered">
-                    <div className="ff-row-title" data-nr="3">Shop bewust</div>
-                    <div className="ff-row-sub">Gerichte selectie. Minder miskopen.</div>
+                  <li className="ff-row">
+                    <div className="relative">
+                      <span className="ff-step-badge">3</span>
+                      <span className="ff-row-title" data-nr="3">Shop bewust</span>
+                    </div>
+                    <p className="ff-row-sub">Gerichte selectie. Minder miskopen.</p>
                   </li>
                 </ul>
               </div>
@@ -138,24 +120,23 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Style Report (breakout-image + copy) */}
+      {/* Sectie: Style Report (media + copy, in sectie-kaart) */}
       <section className="ff-section" aria-label="Style Report – preview">
         <div className="ff-container--home">
-          <article className="ff-block ff-block--split">
-            <div className="ff-block-inner">
-              <aside className="ff-block-aside">
-                <div>
-                  <span className="ff-block-kicker">Preview</span>
-                  <h2 className="ff-block-title mt-2">Style Report</h2>
-                  <p className="ff-lede mt-2">Zie hoe jouw resultaat eruit ziet — outfits, palet en score.</p>
-                </div>
+          <article className="ff-section-card">
+            <header className="ff-section-card-head">
+              <span className="ff-kicker">Preview</span>
+              <h2 className="ff-section-title">Style Report</h2>
+            </header>
+            <div className="ff-section-card-body ff-split">
+              <aside className="ff-split-aside">
+                <p className="ff-lede">Zie hoe jouw resultaat eruit ziet — outfits, palet en score.</p>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/results" className="ff-btn ff-btn-secondary">Bekijk voorbeeld</NavLink>
                 </div>
               </aside>
-
-              <div className="ff-block-body grid gap-4 lg:grid-cols-2">
-                <figure className="ff-media-frame ff-breakout-r">
+              <div className="ff-split-main grid gap-4 lg:grid-cols-2">
+                <figure className="ff-media-frame">
                   <img
                     src="/media/home/style-report.webp"
                     alt="Voorbeeld van het Style Report op mobiel"
@@ -183,38 +164,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Privacy & transparantie (compact tiles desktop) */}
-      <section className="ff-section" aria-label="Vertrouwen & privacy">
+      {/* Sectie: Onze belofte (parity met /prijzen) */}
+      <section className="ff-section" aria-label="Onze belofte">
         <div className="ff-container--home">
-          <article className="ff-block ff-block--split">
-            <div className="ff-block-inner">
-              <aside className="ff-block-aside">
-                <div>
-                  <span className="ff-block-kicker">Vertrouwen</span>
-                  <h2 className="ff-block-title mt-2">Privacy & transparantie</h2>
-                  <p className="ff-lede mt-2">Alleen wat nodig is. Eerlijk advies zonder hype.</p>
+          <article className="ff-section-card">
+            <header className="ff-section-card-head">
+              <span className="ff-kicker">Onze belofte</span>
+              <h2 className="ff-section-title">Rust, smaak en duidelijkheid</h2>
+            </header>
+            <div className="ff-section-card-body">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <p className="ff-lede">
+                  We adviseren wat bij je past — nuchter, uitlegbaar en zonder ruis. Upgraden doe je alleen als je voelt
+                  dat het waarde toevoegt.
+                </p>
+                <div className="flex gap-3">
+                  <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
+                  <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
                 </div>
-              </aside>
-
-              <div className="ff-block-body">
-                <ul className="ff-list ff-list--hairline ff-list--mag ff-list--grid-lg-2">
-                  <li className="ff-row">
-                    <div className="ff-row-title">Privacy-first</div>
-                    <div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div>
-                  </li>
-                  <li className="ff-row">
-                    <div className="ff-row-title">Eerlijk & nuchter</div>
-                    <div className="ff-row-sub">Korte uitleg waarom iets werkt — transparant en praktisch.</div>
-                  </li>
-                </ul>
               </div>
             </div>
           </article>
         </div>
       </section>
 
-      {/* FAQ teaser */}
-      <section className="ff-section pb-20">
+      {/* FAQ teaser (kaartenstijl zoals /prijzen) */}
+      <section className="ff-section pb-20" aria-label="FAQ">
         <div className="ff-container--home">
           <article className="ff-card">
             <div className="ff-card-body">
