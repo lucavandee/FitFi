@@ -154,7 +154,7 @@ export default function LandingPage() {
                   <div className="ff-tile ff-tile--slim">
                     <h3>Privacy-first (EU)</h3>
                     <p className="ff-oneliner">Alleen wat nodig is, geen doorverkoop van data.</p>
-                    <details className="ff-more"><summary>Meer</summary><div className="ff-more-body">We zijn helder over data: minimaal verzamelen, geen doorverkoop, EU-toon & beleid. <NavLink to="/privacy" className=\"ff-link">Privacy</NavLink></div></details>
+                    <details className="ff-more"><summary>Meer</summary><div className="ff-more-body">We zijn helder over data: minimaal verzamelen, geen doorverkoop, EU-toon & beleid. <NavLink to="/privacy" className="ff-link">Privacy</NavLink></div></details>
                   </div>
                 </div>
               </div>
