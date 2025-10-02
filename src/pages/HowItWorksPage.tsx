@@ -1,18 +1,7 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
-
-type Step = { title: string; desc: string };
-
-const STEPS: Step[] = [
-  { title: "1) Beantwoord 6 vragen", desc: "Snel en duidelijk. Zonder account of upload. Je kiest voorkeuren en doelen." },
-  { title: "2) Jouw stijlprofiel", desc: "We berekenen je archetypen (bijv. Minimal, Smart Casual, Italiaans) en kleuraccenten." },
-  { title: "3) Outfits met uitleg", desc: "Complete sets + waarom het werkt voor jouw silhouet, kleur en gelegenheid." },
-  { title: "4) Slim shoppen", desc: "Shoplinks per item, privacy-first. We kiezen kwaliteit boven ruis." },
-  { title: "5) Updates & variaties", desc: "Later: seizoensupdates, wishlist, alternatieven in jouw smaak en budget." },
-  { title: "6) Uitleg & vertrouwen", desc: "Geen 'black box': we leggen kort uit waarom elk item matcht. Transparant en nuchter." },
-];
 
 export default function HowItWorksPage() {
   return (
@@ -25,7 +14,6 @@ export default function HowItWorksPage() {
         />
       </Helmet>
 
-      {/* HERO — identiek patroon als op 'Prijzen' via PageHero */}
       <PageHero
         eyebrow="Uitleg"
         title="Hoe FitFi werkt"
@@ -37,35 +25,22 @@ export default function HowItWorksPage() {
         ]}
       />
 
-      {/* STAPPEN — bestaande inhoud, gegoten in rustige kaarten */}
-      <section className="ff-section">
-        <div className="ff-container grid gap-4 md:grid-cols-3">
-          {STEPS.slice(0, 3).map((s) => (
-            <article key={s.title} className="ff-card">
-              <div className="ff-card-body">
-                <h3 className="font-semibold">{s.title}</h3>
-                <p className="mt-1 text-[var(--color-text)]/70">{s.desc}</p>
-              </div>
-            </article>
-          ))}
+      {/* 6 stappen — list-rows op mobiel, cards op md+ */}
+      <section className="ff-section" aria-label="Stappen">
+        <div className="ff-container">
+          <ul className="ff-list ff-list--grid-md-3">
+            <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="1">Beantwoord 6 vragen</div><div className="ff-row-sub">Snel en duidelijk. Zonder account of upload. Je kiest voorkeuren en doelen.</div></li>
+            <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="2">Jouw stijlprofiel</div><div className="ff-row-sub">We berekenen je archetypen (bijv. Minimal, Smart Casual, Italiaans) en kleuraccenten.</div></li>
+            <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="3">Outfits met uitleg</div><div className="ff-row-sub">Complete sets + waarom het werkt voor jouw silhouet, kleur en gelegenheid.</div></li>
+            <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="4">Slim shoppen</div><div className="ff-row-sub">Shoplinks per item, privacy-first. We kiezen kwaliteit boven ruis.</div></li>
+            <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="5">Updates & variaties</div><div className="ff-row-sub">Later: seizoensupdates, wishlist, alternatieven in jouw smaak en budget.</div></li>
+            <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="6">Uitleg & vertrouwen</div><div className="ff-row-sub">Geen 'black box': we leggen kort uit waarom elk item matcht. Transparant en nuchter.</div></li>
+          </ul>
         </div>
       </section>
 
-      <section className="ff-section">
-        <div className="ff-container grid gap-4 md:grid-cols-3">
-          {STEPS.slice(3).map((s) => (
-            <article key={s.title} className="ff-card">
-              <div className="ff-card-body">
-                <h3 className="font-semibold">{s.title}</h3>
-                <p className="mt-1 text-[var(--color-text)]/70">{s.desc}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* Verwachtingen — inhoud ongewijzigd, visueel consistent */}
-      <section className="ff-section">
+      {/* Verwachtingen — laat bewust als card-callout voor ritmevariatie */}
+      <section className="ff-section" aria-label="Wat je mag verwachten">
         <div className="ff-container">
           <article className="ff-card">
             <div className="ff-card-body">
@@ -75,7 +50,6 @@ export default function HowItWorksPage() {
                 <li>Uitleg per outfit zodat je snapt waarom iets bij je past.</li>
                 <li>Privacy-first: alleen wat nodig is om je te adviseren.</li>
               </ul>
-
               <div className="mt-4 flex flex-wrap gap-3">
                 <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
                 <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>

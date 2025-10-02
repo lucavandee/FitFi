@@ -1,14 +1,14 @@
 /* =========================================================
-   FitFi · Mobile Polish Pass (tokens-only, no content changes)
+   FitFi · Mobile Polish (tokens-only, no content changes)
    Pagina's: Home · Hoe-het-werkt · Prijzen · Over · Blog · FAQ
    ========================================================= */
 
-/* ======= PAGE FRAME ======= */
+/* ======= PAGE FRAME & HERO-BAND ======= */
 #main { background: var(--color-bg); color: var(--color-text); }
 
 /* Universele, subtiele hero-band op pagina's zonder expliciete page-hero */
 #main:not(:has(.ff-page-hero))::before{
-  content:""; position:absolute; inset:0 auto auto 0; right:0; height:220px;
+  content:""; position:absolute; left:0; right:0; top:0; height:220px;
   background: radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%);
   pointer-events:none; z-index:1;
 }
@@ -29,7 +29,7 @@
 }
 .ff-hero-sub{ color:var(--color-muted); font-size: clamp(.98rem, .6vw + .82rem, 1.1rem); max-width: 60ch; }
 
-/* ======= CTA'S (stack op mobiel, breed op desktop) ======= */
+/* ======= CTA'S ======= */
 .ff-btn{
   display:inline-flex; align-items:center; justify-content:center;
   height:2.6rem; border-radius: var(--radius-xl); padding:0 .9rem; font-weight:600;
@@ -38,7 +38,6 @@
 .ff-btn-primary:hover{ background: var(--ff-color-primary-600); }
 .ff-btn-secondary{ background: transparent; color: var(--color-text); border:1px solid var(--color-border); }
 .ff-btn-secondary:hover{ border-color: var(--ff-color-primary-600); }
-
 @media (max-width:480px){
   .ff-page-hero .ff-btn{ width:100%; }
   .ff-page-hero .ff-btn + .ff-btn{ margin-left:0; }
@@ -50,6 +49,7 @@
 .ff-section{ padding-block: 1.6rem; }
 @media (min-width:768px){ .ff-section{ padding-block:2rem; } }
 
+/* ======= CARDS (desktop/default) ======= */
 .ff-card{
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -59,15 +59,63 @@
 .ff-card-body{ padding:1.1rem; }
 @media (min-width:768px){ .ff-card-body{ padding:1.25rem; } }
 
-/* ======= HERO VISUAL (homepage) ======= */
-.ff-hero-visual{
-  border:1px solid var(--color-border);
-  background: var(--color-surface);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-soft);
-  overflow:hidden;
+/* ======= NEW: LIST-ROWS (mobile-first alternatief voor 'overal cards') =======
+   Doel: sneller scannen op mobiel. Kop + subregel, subtiele scheiding.
+   Op md+ schakelen we automatisch weer naar grid/cards waar gewenst.
+*/
+.ff-list{
+  display: grid;
+  gap: .75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
-.ff-hero-visual img{ width:100%; height:auto; display:block; }
+.ff-row{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .25rem;
+  padding: .9rem 1rem .95rem 1rem;
+  background: var(--color-bg);               /* tone-on-tone, geen 'witte tegel' gevoel */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+.ff-row::before{
+  content:"";
+  position:absolute; left:0; top:8px; bottom:8px; width:3px;
+  background: var(--ff-color-primary-600);   /* subtiele accentbar voor betekenis */
+  border-top-left-radius: var(--radius-xl);
+  border-bottom-left-radius: var(--radius-xl);
+}
+.ff-row-title{
+  font-weight: 600;
+  color: var(--color-text);
+}
+.ff-row-sub{
+  color: var(--color-text);
+  opacity: .72;
+  font-size: .95rem;
+  line-height: 1.35;
+}
+
+/* Varianten voor secties die cijfers gebruiken (1), (2), (3) */
+.ff-row--numbered .ff-row-title{ padding-left: 1.35rem; }
+.ff-row--numbered .ff-row-title::before{
+  content: attr(data-nr);
+  position: absolute; left: .65rem; top: .9rem;
+  font-size: .9rem; font-weight: 700; color: var(--color-muted);
+}
+
+/* Op md+ mag dit terug naar 'cards' wanneer we grid toepassen in de pagina */
+@media (min-width:768px){
+  .ff-list--grid-md-3{ grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+  .ff-list--grid-md-2{ grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+  .ff-row{
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+  }
+  .ff-row::before{ display:none; } /* accentbar alleen op mobile look */
+}
 
 /* ======= BLOG ======= */
 .ff-blog-grid{ display:grid; gap:1rem; }
@@ -90,44 +138,25 @@ details.ff-accordion summary::-webkit-details-marker{ display:none; }
 details.ff-accordion summary::after{ content:"▾"; margin-left:.5rem; transition: transform 200ms ease; }
 details[open].ff-accordion summary::after{ transform: rotate(-180deg); }
 
-/* ======= PRICING ======= */
-/* Zorgt voor lucht en duidelijke tap targets op mobiel, zonder markup-knowledge */
-.pricing :is(.ff-card, .plan, .plan-card){
+/* ======= HERO VISUAL (homepage) ======= */
+.ff-hero-visual{
+  border:1px solid var(--color-border);
+  background: var(--color-surface);
   border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+  overflow:hidden;
 }
-.pricing :is(.ff-card-body, .plan-body){
-  padding:1.1rem;
-}
-@media (max-width:480px){
-  .pricing .plan-features li{ padding:.4rem 0; }
-  .pricing .plan-cta .ff-btn{ width:100%; }
-}
-
-/* ======= ABOUT ======= */
-.about :is(.ff-card,.bio,.values){ border-radius: var(--radius-2xl); }
-.about .team-grid{ display:grid; gap:1rem; }
-@media (min-width:768px){ .about .team-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.ff-hero-visual img{ width:100%; height:auto; display:block; }
 
 /* ======= MICRO POLISH ======= */
 @media (max-width:480px){
-  .ff-blog-grid{ gap:.8rem; }
-  .ff-card-body{ padding:1rem; }
   .ff-section{ padding-block:1.35rem; }
   .ff-container{ padding-inline: .9rem; }
+  .ff-card-body{ padding:1rem; }
 }
-
-/* Focus ring consistent */
 .ff-focus-ring{ outline: none; box-shadow: var(--shadow-ring); }
-
-/* CTA hover-gedrag */
 .ff-navlink:hover{ color: var(--ff-color-primary-600); }
-.ff-nav-active{
-  background: var(--color-surface);
-  border:1px solid var(--color-border);
-  color: var(--color-text);
-}
-
-/* Eyebrow chips */
+.ff-nav-active{ background: var(--color-surface); border:1px solid var(--color-border); color: var(--color-text); }
 .ff-eyebrow{
   display:inline-flex; align-items:center; gap:.5ch;
   border:1px solid var(--color-border);
