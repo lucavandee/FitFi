@@ -33,7 +33,7 @@ export default function LandingPage() {
           <div className="hidden lg:block" />
           <figure className="ff-media-frame">
             <img
-              src="/hero/style-report.png"
+              src="/images/hero-style-report.png"
               alt="Voorbeeld van het FitFi Style Report op mobiel"
               loading="lazy"
               decoding="async"
