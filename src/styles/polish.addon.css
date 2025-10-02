@@ -180,3 +180,21 @@
 .ff-focus-ring{ outline:none; box-shadow:var(--shadow-ring); }
 .ff-navlink:hover{ color:var(--ff-color-primary-600); }
 .ff-nav-active{ background:var(--color-surface); border:1px solid var(--color-border); color:var(--color-text); }
+
+/* =========================================================
+   FANTASTIC HERO ANIMATIONS
+   ========================================================= */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float {
+    animation: none !important;
+  }
+}
