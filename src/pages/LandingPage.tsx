@@ -14,7 +14,6 @@ export default function LandingPage() {
         />
       </Helmet>
 
-      {/* HERO */}
       <PageHero
         eyebrow="GRATIS AI STYLE REPORT"
         title="Ontdek wat jouw stijl over je zegt"
@@ -26,7 +25,6 @@ export default function LandingPage() {
         ]}
       />
 
-      {/* HERO VISUAL — aligned in same container width */}
       <section
         aria-label="Style Report visual"
         className="pt-2"
@@ -52,7 +50,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TRUST CHIPS */}
       <section aria-label="Kernpunten" className="ff-section pt-2">
         <div className="ff-container--home flex flex-wrap gap-2">
           <span className="ff-eyebrow">2 min klaar</span>
@@ -62,7 +59,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Waarom FitFi (editorial split) */}
+      {/* Waarom FitFi */}
       <section className="ff-section" aria-label="Waarom FitFi">
         <div className="ff-container--home">
           <article className="ff-block ff-block--split">
@@ -77,22 +74,11 @@ export default function LandingPage() {
                   <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
                 </div>
               </aside>
-
               <div className="ff-block-body">
-                {/* Mobiel = hairline (magazine), Desktop = elevated cards */}
                 <ul className="ff-list ff-list--hairline ff-list--grid-lg-2 ff-list--grid-xl-3 ff-list--md-cards">
-                  <li className="ff-row">
-                    <div className="ff-row-title">Snel & moeiteloos</div>
-                    <div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
-                  </li>
-                  <li className="ff-row">
-                    <div className="ff-row-title">Uitleg bij elke look</div>
-                    <div className="ff-row-sub">Begrijp waarom items werken voor jouw silhouet, kleur en moment.</div>
-                  </li>
-                  <li className="ff-row">
-                    <div className="ff-row-title">Slim shoppen</div>
-                    <div className="ff-row-sub">Minder ruis, meer kwaliteit. Jij houdt de regie.</div>
-                  </li>
+                  <li className="ff-row"><div className="ff-row-title">Snel & moeiteloos</div><div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div></li>
+                  <li className="ff-row"><div className="ff-row-title">Uitleg bij elke look</div><div className="ff-row-sub">Begrijp waarom items werken voor jouw silhouet, kleur en moment.</div></li>
+                  <li className="ff-row"><div className="ff-row-title">Slim shoppen</div><div className="ff-row-sub">Minder ruis, meer kwaliteit. Jij houdt de regie.</div></li>
                 </ul>
               </div>
             </div>
@@ -100,7 +86,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Zo werkt het (timeline) */}
+      {/* Zo werkt het */}
       <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container--home">
           <article className="ff-block ff-block--split">
@@ -115,21 +101,12 @@ export default function LandingPage() {
                   <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>
                 </div>
               </aside>
-
               <div className="ff-block-body">
-                <ul className="ff-list ff-list--spine ff-list--grid-lg-2 ff-list--grid-xl-3 ff-list--md-cards">
-                  <li className="ff-row ff-row--numbered">
-                    <div className="ff-row-title" data-nr="1">Quick scan</div>
-                    <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
-                  </li>
-                  <li className="ff-row ff-row--numbered">
-                    <div className="ff-row-title" data-nr="2">Match & uitleg</div>
-                    <div className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</div>
-                  </li>
-                  <li className="ff-row ff-row--numbered">
-                    <div className="ff-row-title" data-nr="3">Shop bewust</div>
-                    <div className="ff-row-sub">Gerichte selectie. Minder miskopen.</div>
-                  </li>
+                {/* ff-tight toegevoegd voor compact mobiel ritme */}
+                <ul className="ff-list ff-list--spine ff-tight ff-list--grid-lg-2 ff-list--grid-xl-3 ff-list--md-cards">
+                  <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="1">Quick scan</div><div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div></li>
+                  <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="2">Match & uitleg</div><div className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</div></li>
+                  <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="3">Shop bewust</div><div className="ff-row-sub">Gerichte selectie. Minder miskopen.</div></li>
                 </ul>
               </div>
             </div>
@@ -137,7 +114,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Style Report preview (media + copy) */}
+      {/* Style Report preview */}
       <section className="ff-section" aria-label="Style Report – preview">
         <div className="ff-container--home">
           <article className="ff-block ff-block--split">
@@ -152,7 +129,6 @@ export default function LandingPage() {
                   <NavLink to="/results" className="ff-btn ff-btn-secondary">Bekijk voorbeeld</NavLink>
                 </div>
               </aside>
-
               <div className="ff-block-body grid gap-4 lg:grid-cols-2">
                 <figure className="ff-media-frame">
                   <img
@@ -163,18 +139,11 @@ export default function LandingPage() {
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                 </figure>
-
                 <div className="flex flex-col justify-between">
-                  <p className="text-[var(--color-text)]/80">
-                    Bekijk eerst een voorbeeld met looks, uitleg en shoplinks. Beslis daarna — zonder gedoe.
-                  </p>
+                  <p className="text-[var(--color-text)]/80">Bekijk eerst een voorbeeld met looks, uitleg en shoplinks. Beslis daarna — zonder gedoe.</p>
                   <div className="mt-4 flex flex-wrap gap-3">
-                    <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">
-                      Bekijk voorbeeld
-                    </NavLink>
-                    <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">
-                      Start gratis
-                    </NavLink>
+                    <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">Bekijk voorbeeld</NavLink>
+                    <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">Start gratis</NavLink>
                   </div>
                 </div>
               </div>
@@ -183,7 +152,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Vertrouwen & privacy (editorial hairline) */}
+      {/* Privacy */}
       <section className="ff-section" aria-label="Vertrouwen & privacy">
         <div className="ff-container--home">
           <article className="ff-block ff-block--split">
@@ -195,17 +164,10 @@ export default function LandingPage() {
                   <p className="ff-lede mt-2">Alleen wat nodig is. Eerlijk advies zonder hype.</p>
                 </div>
               </aside>
-
               <div className="ff-block-body">
                 <ul className="ff-list ff-list--hairline ff-list--grid-lg-2 ff-list--md-cards">
-                  <li className="ff-row">
-                    <div className="ff-row-title">Privacy-first</div>
-                    <div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div>
-                  </li>
-                  <li className="ff-row">
-                    <div className="ff-row-title">Eerlijk & nuchter</div>
-                    <div className="ff-row-sub">Korte uitleg waarom iets werkt — transparant en praktisch.</div>
-                  </li>
+                  <li className="ff-row"><div className="ff-row-title">Privacy-first</div><div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div></li>
+                  <li className="ff-row"><div className="ff-row-title">Eerlijk & nuchter</div><div className="ff-row-sub">Korte uitleg waarom iets werkt — transparant en praktisch.</div></li>
                 </ul>
               </div>
             </div>
@@ -213,7 +175,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ TEASER */}
+      {/* FAQ teaser */}
       <section className="ff-section pb-20">
         <div className="ff-container--home">
           <article className="ff-card">
