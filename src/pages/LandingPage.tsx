@@ -92,7 +92,7 @@ export default function LandingPage() {
           <div className="hidden lg:block" />
           <figure className="ff-media-frame" aria-describedby="hero-preview-caption">
             <img
-              src="/hero/style-report.webp"
+              src="/hero/style-report copy.webp"
               alt="Voorbeeld van het FitFi Style Report op mobiel"
               loading="lazy" decoding="async"
               sizes="(max-width: 1024px) 90vw, 560px"
