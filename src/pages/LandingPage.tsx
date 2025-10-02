@@ -14,7 +14,7 @@ export default function LandingPage() {
         />
       </Helmet>
 
-      {/* HERO (zelfde hero-balk als /prijzen) */}
+      {/* HERO — enige prominente CTA's op de hele pagina */}
       <PageHero
         eyebrow="GRATIS AI STYLE REPORT"
         title="Ontdek wat jouw stijl over je zegt"
@@ -36,7 +36,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Sectie: Waarom FitFi (kaart zoals /prijzen) */}
+      {/* Sectie: Waarom FitFi — sectie-kaart in prijzen-stijl */}
       <section className="ff-section" aria-label="Waarom FitFi">
         <div className="ff-container--home">
           <article className="ff-section-card">
@@ -46,12 +46,7 @@ export default function LandingPage() {
             </header>
             <div className="ff-section-card-body ff-split">
               <aside className="ff-split-aside">
-                <p className="ff-lede">
-                  Rustig en functioneel. Jij kiest; wij filteren de ruis.
-                </p>
-                <div className="mt-4 hidden lg:block">
-                  <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
-                </div>
+                <p className="ff-lede">Rustig en functioneel. Jij kiest; wij filteren de ruis.</p>
               </aside>
               <div className="ff-split-main">
                 <div className="ff-grid cols-3">
@@ -74,7 +69,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Sectie: Zo werkt het — timeline op mobiel, cards op desktop */}
+      {/* Sectie: Zo werkt het — timeline mobiel, cards desktop (geen CTA's) */}
       <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container--home">
           <article className="ff-section-card">
@@ -85,30 +80,26 @@ export default function LandingPage() {
             <div className="ff-section-card-body ff-split">
               <aside className="ff-split-aside">
                 <p className="ff-lede">Kort en duidelijk. Geen 'black box', wél uitleg.</p>
-                <div className="mt-4 hidden lg:block">
-                  <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>
-                </div>
               </aside>
               <div className="ff-split-main">
-                {/* Mobiel: timeline • Desktop: cards (ff-list--md-cards) */}
                 <ul className="ff-list ff-list--spine ff-list--md-cards ff-grid cols-3">
                   <li className="ff-row">
                     <div className="relative">
-                      <span className="ff-step-badge">1</span>
+                      <span className="sr-only">Stap 1</span>
                       <span className="ff-row-title" data-nr="1">Quick scan</span>
                     </div>
                     <p className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</p>
                   </li>
                   <li className="ff-row">
                     <div className="relative">
-                      <span className="ff-step-badge">2</span>
+                      <span className="sr-only">Stap 2</span>
                       <span className="ff-row-title" data-nr="2">Match &amp; uitleg</span>
                     </div>
                     <p className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</p>
                   </li>
                   <li className="ff-row">
                     <div className="relative">
-                      <span className="ff-step-badge">3</span>
+                      <span className="sr-only">Stap 3</span>
                       <span className="ff-row-title" data-nr="3">Shop bewust</span>
                     </div>
                     <p className="ff-row-sub">Gerichte selectie. Minder miskopen.</p>
@@ -120,7 +111,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Sectie: Style Report (media + copy, in sectie-kaart) */}
+      {/* Sectie: Style Report — visual + copy (geen knoppen; rustige text-link) */}
       <section className="ff-section" aria-label="Style Report – preview">
         <div className="ff-container--home">
           <article className="ff-section-card">
@@ -131,9 +122,9 @@ export default function LandingPage() {
             <div className="ff-section-card-body ff-split">
               <aside className="ff-split-aside">
                 <p className="ff-lede">Zie hoe jouw resultaat eruit ziet — outfits, palet en score.</p>
-                <div className="mt-4 hidden lg:block">
-                  <NavLink to="/results" className="ff-btn ff-btn-secondary">Bekijk voorbeeld</NavLink>
-                </div>
+                <p className="mt-3">
+                  <NavLink to="/results" className="ff-link" data-event="cta_view_example_text">Bekijk voorbeeld →</NavLink>
+                </p>
               </aside>
               <div className="ff-split-main grid gap-4 lg:grid-cols-2">
                 <figure className="ff-media-frame">
@@ -145,17 +136,38 @@ export default function LandingPage() {
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                 </figure>
-                <div className="flex flex-col justify-between">
+                <div className="flex flex-col justify-center">
                   <p className="text-[var(--color-text)]/80">
                     Bekijk eerst een voorbeeld met looks, uitleg en shoplinks. Beslis daarna — zonder gedoe.
                   </p>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">
-                      Bekijk voorbeeld
-                    </NavLink>
-                    <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">
-                      Start gratis
-                    </NavLink>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* Sectie: Privacy & transparantie — zonder CTA's */}
+      <section className="ff-section" aria-label="Vertrouwen & privacy">
+        <div className="ff-container--home">
+          <article className="ff-section-card">
+            <header className="ff-section-card-head">
+              <span className="ff-kicker">Vertrouwen</span>
+              <h2 className="ff-section-title">Privacy & transparantie</h2>
+            </header>
+            <div className="ff-section-card-body ff-split">
+              <aside className="ff-split-aside">
+                <p className="ff-lede">Alleen wat nodig is. Eerlijk advies zonder hype.</p>
+              </aside>
+              <div className="ff-split-main">
+                <div className="ff-grid cols-2">
+                  <div className="ff-tile">
+                    <h3>Privacy-first</h3>
+                    <p>Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</p>
+                  </div>
+                  <div className="ff-tile">
+                    <h3>Eerlijk &amp; nuchter</h3>
+                    <p>Korte uitleg waarom iets werkt — transparant en praktisch.</p>
                   </div>
                 </div>
               </div>
@@ -164,31 +176,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Sectie: Onze belofte (parity met /prijzen) */}
-      <section className="ff-section" aria-label="Onze belofte">
-        <div className="ff-container--home">
-          <article className="ff-section-card">
-            <header className="ff-section-card-head">
-              <span className="ff-kicker">Onze belofte</span>
-              <h2 className="ff-section-title">Rust, smaak en duidelijkheid</h2>
-            </header>
-            <div className="ff-section-card-body">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <p className="ff-lede">
-                  We adviseren wat bij je past — nuchter, uitlegbaar en zonder ruis. Upgraden doe je alleen als je voelt
-                  dat het waarde toevoegt.
-                </p>
-                <div className="flex gap-3">
-                  <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
-                  <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      {/* FAQ teaser (kaartenstijl zoals /prijzen) */}
+      {/* Footer teaser — enkel subtiele text-link, geen button */}
       <section className="ff-section pb-20" aria-label="FAQ">
         <div className="ff-container--home">
           <article className="ff-card">
@@ -198,7 +186,7 @@ export default function LandingPage() {
                   <h2 className="text-xl font-semibold">Vragen over FitFi?</h2>
                   <p className="mt-1 text-[var(--color-text)]/70">We hebben de belangrijkste antwoorden voor je op een rij.</p>
                 </div>
-                <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Naar FAQ</NavLink>
+                <NavLink to="/veelgestelde-vragen" className="ff-link">Naar FAQ →</NavLink>
               </div>
             </div>
           </article>
