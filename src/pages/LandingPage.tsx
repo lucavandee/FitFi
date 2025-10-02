@@ -14,7 +14,7 @@ export default function LandingPage() {
         />
       </Helmet>
 
-      {/* HERO — enige prominente CTA-moment (2 knoppen max) */}
+      {/* HERO — enige prominente CTA's */}
       <PageHero
         eyebrow="GRATIS AI STYLE REPORT"
         title="Ontdek wat jouw stijl over je zegt"
@@ -26,7 +26,24 @@ export default function LandingPage() {
         ]}
       />
 
-      {/* Chips — kort vertrouwen, geen overload */}
+      {/* HERO VISUAL — gebruikt /public/hero/style-report.webp */}
+      <section aria-label="Style Report visual" className="ff-hero-visual-wrap">
+        <div className="ff-container--home ff-hero-visual">
+          {/* Lege linker kolom op desktop zorgt dat beeld in de hero-band valt zonder harde sprong */}
+          <div className="hidden lg:block" />
+          <figure className="ff-media-frame">
+            <img
+              src="/hero/style-report.webp"
+              alt="Voorbeeld van het FitFi Style Report op mobiel"
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 1024px) 90vw, 560px"
+            />
+          </figure>
+        </div>
+      </section>
+
+      {/* Kernchips — kort en rustig */}
       <section aria-label="Kernpunten" className="ff-section pt-2">
         <div className="ff-container--home flex flex-wrap gap-2">
           <span className="ff-eyebrow">2 min klaar</span>
@@ -36,7 +53,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* In één oogopslag — 4 oneliner tiles (met 'Meer' voor volledige tekst) */}
+      {/* In één oogopslag — minder kolommen, oneliners + Meer */}
       <section className="ff-section" aria-label="In één oogopslag">
         <div className="ff-container--home">
           <article className="ff-section-card">
@@ -51,40 +68,32 @@ export default function LandingPage() {
                   <p className="ff-oneliner">6 korte vragen — direct resultaat.</p>
                   <details className="ff-more">
                     <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.
-                    </div>
+                    <div className="ff-more-body">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
                   </details>
                 </div>
                 <div className="ff-tile ff-tile--slim">
                   <h3>Uitleg bij elke look</h3>
-                  <p className="ff-oneliner">Begrijp in 1 regel waarom het werkt.</p>
+                  <p className="ff-oneliner">In 1 regel begrijp je waarom het werkt.</p>
                   <details className="ff-more">
                     <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      Begrijp waarom items werken voor jouw silhouet, kleur en moment.
-                    </div>
+                    <div className="ff-more-body">Waarom items passen bij jouw silhouet, kleur en moment — kort en nuchter.</div>
                   </details>
                 </div>
                 <div className="ff-tile ff-tile--slim">
                   <h3>Voorbeeld bekijken</h3>
-                  <p className="ff-oneliner">Zie een écht report voor je start.</p>
+                  <p className="ff-oneliner">Zie een echt report voor je start.</p>
                   <details className="ff-more">
                     <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      Bekijk eerst een voorbeeld met looks, uitleg en shoplinks. Beslis daarna — zonder gedoe.
-                    </div>
+                    <div className="ff-more-body">Bekijk eerst een voorbeeld met looks, uitleg en shoplinks. Beslis daarna — zonder gedoe.</div>
                   </details>
-                  <p className="mt-2"><NavLink to="/results" className="ff-link" data-event="cta_view_example_text">Bekijk voorbeeld →</NavLink></p>
+                  <p className="mt-2"><NavLink to="/results" className="ff-link">Bekijk voorbeeld →</NavLink></p>
                 </div>
                 <div className="ff-tile ff-tile--slim">
                   <h3>Privacy-first</h3>
                   <p className="ff-oneliner">Alleen wat nodig is voor goed advies.</p>
                   <details className="ff-more">
                     <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      Alleen wat nodig is. Eerlijk en transparant: korte uitleg waarom iets werkt — nuchter en praktisch.
-                    </div>
+                    <div className="ff-more-body">Eerlijk en transparant advies. Geen spam, geen gedoe.</div>
                   </details>
                 </div>
               </div>
@@ -93,7 +102,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Zo werkt het — minimal inline steps; volledige tekst onder 'Meer' */}
+      {/* Zo werkt het — maximaal 2 kolommen desktop, timeline mobiel */}
       <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container--home">
           <article className="ff-section-card">
@@ -102,7 +111,6 @@ export default function LandingPage() {
               <h2 className="ff-section-title">Zo werkt het</h2>
             </header>
             <div className="ff-section-card-body">
-              {/* Desktop: max 2 kolommen, kort en scanbaar; mobiel: timeline blijft via CSS */}
               <ul className="ff-list ff-list--spine ff-list--md-cards cols-2">
                 <li className="ff-row">
                   <div className="relative">
@@ -126,16 +134,14 @@ export default function LandingPage() {
                   <p className="ff-row-sub">Gerichte selectie. Minder miskopen.</p>
                 </li>
               </ul>
-              <p className="mt-3">
-                <NavLink to="/hoe-het-werkt" className="ff-link">Meer over hoe het werkt →</NavLink>
-              </p>
+              <p className="mt-3"><NavLink to="/hoe-het-werkt" className="ff-link">Meer over hoe het werkt →</NavLink></p>
             </div>
           </article>
         </div>
       </section>
 
-      {/* Style Report — grote visual + 1 zin; geen extra knoppen */}
-      <section className="ff-section" aria-label="Style Report – preview">
+      {/* Style Report — tekstfocus (beeld staat al in de hero) */}
+      <section className="ff-section" aria-label="Style Report – uitleg">
         <div className="ff-container--home">
           <article className="ff-section-card">
             <header className="ff-section-card-head">
@@ -144,26 +150,18 @@ export default function LandingPage() {
             </header>
             <div className="ff-section-card-body ff-split">
               <aside className="ff-split-aside">
-                <p className="ff-lede">Zie hoe jouw resultaat eruit ziet — outfits, palet en score.</p>
-                <p className="mt-3"><NavLink to="/results" className="ff-link" data-event="cta_view_example_text_2">Bekijk voorbeeld →</NavLink></p>
+                <p className="ff-lede">Bekijk een voorbeeld, zie looks en korte uitleg, besluit daarna.</p>
               </aside>
               <div className="ff-split-main">
-                <figure className="ff-media-frame">
-                  <img
-                    src="/media/home/style-report.webp"
-                    alt="Voorbeeld van het FitFi Style Report op mobiel"
-                    loading="lazy"
-                    decoding="async"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                </figure>
+                <p className="text-[var(--color-text)]/80">Praktisch, rustig en uitlegbaar — precies wat je nodig hebt om sneller te kiezen.</p>
+                <p className="mt-3"><NavLink to="/results" className="ff-link">Bekijk voorbeeld →</NavLink></p>
               </div>
             </div>
           </article>
         </div>
       </section>
 
-      {/* FAQ teaser — subtiele text-link, geen button */}
+      {/* FAQ teaser — subtiele text-link */}
       <section className="ff-section pb-20" aria-label="FAQ">
         <div className="ff-container--home">
           <article className="ff-card">
