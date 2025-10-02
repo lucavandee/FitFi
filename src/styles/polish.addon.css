@@ -58,34 +58,60 @@
 @media (min-width:768px){ .ff-card-body{ padding:1.25rem; } }
 
 /* =========================================================
-   EDITORIAL LIST SYSTEM
-   - Mobile: tone-on-tone rows (geen "tegelmuur")
-   - Desktop: opt-in als subtiele cards via --md-cards
-   Variaties:
-     • .ff-list--plain  → geen bullets (voordelen/waarden)
-     • .ff-list--spine  → timeline spine + kleine dot (stappen/flow)
-     • .ff-list--grid-md-2 / -3 → kolommen vanaf md
-     • .ff-list--md-cards → rows krijgen surface + elevatie op md+
+   BLOCK SYSTEM — gelabelde sectieblokken à la 'Prijzen'
    ========================================================= */
+.ff-block{
+  background: var(--color-surface);
+  border:1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+  overflow:hidden;
+}
+.ff-block-head{
+  display:flex; align-items:center; gap:.8rem;
+  padding:.9rem 1rem;
+  background: color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%);
+  border-bottom:1px solid var(--color-border);
+}
+.ff-block-kicker{
+  display:inline-flex; align-items:center; gap:.4ch;
+  font-size:.78rem; letter-spacing:.06em; text-transform:uppercase;
+  color: var(--color-muted);
+  border:1px solid var(--color-border);
+  background: var(--color-bg);
+  padding:.15rem .5rem;
+  border-radius: var(--radius-xl);
+}
+.ff-block-title{
+  font-weight:700; color:var(--color-text);
+  font-size: clamp(1.05rem, .4vw + 1rem, 1.25rem);
+}
+.ff-block-body{ padding:1rem; }
+@media (min-width:768px){
+  .ff-block-head{ padding:1rem 1.25rem; }
+  .ff-block-body{ padding:1.25rem; }
+}
 
+/* =========================================================
+   EDITORIAL LISTS — rijen in blokken
+   ========================================================= */
 .ff-list{ display:grid; gap:.65rem; list-style:none; padding:0; margin:0; }
 .ff-list.ff-tight{ gap:.5rem; }
-
 .ff-row{
   position: relative;
   display:grid; gap:.25rem;
   padding:.85rem 1rem .9rem 1rem;
-  background: color-mix(in oklab, var(--color-bg) 94%, var(--color-surface) 6%);
+  background: color-mix(in oklab, var(--color-bg) 94%, var(--color-surface) 6%); /* tone-on-tone */
   border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
   border-radius: var(--radius-xl);
 }
 .ff-row-title{ font-weight:600; color:var(--color-text); }
 .ff-row-sub{ color:var(--color-text); opacity:.75; line-height:1.38; font-size:.97rem; }
 
-/* ----- PLAIN: géén bullets/dots ----- */
+/* Plain (voordelen/waarden) */
 .ff-list--plain .ff-row::before{ display:none; }
 
-/* ----- SPINE: premium timeline (stappen) ----- */
+/* Spine (stappen) */
 .ff-list--spine{ position:relative; }
 .ff-list--spine::before{
   content:""; position:absolute; left:1.15rem; top:.25rem; bottom:.25rem; width:2px;
@@ -94,14 +120,12 @@
 }
 .ff-list--spine .ff-row{ padding-left:2.2rem; background: var(--color-bg); }
 .ff-list--spine .ff-row::before{
-  content:"";
-  position:absolute; left:.95rem; top:1.05rem;
+  content:""; position:absolute; left:.95rem; top:1.05rem;
   width:.42rem; height:.42rem; border-radius:9999px;
   background: var(--ff-color-primary-600);
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--ff-color-primary-600) 22%, transparent);
 }
-/* Nummerchip (via data-nr) */
-.ff-row--numbered .ff-row-title{ padding-left: .2rem; }
+.ff-row--numbered .ff-row-title{ padding-left:.2rem; }
 .ff-row--numbered .ff-row-title::after{
   content: attr(data-nr);
   position:absolute; left:2.2rem; top:.7rem;
@@ -114,11 +138,10 @@
   border:1px solid var(--color-border);
 }
 
-/* ----- Desktop: kolommen + subtiele elevatie ----- */
+/* Desktop: kolommen + subtiele elevatie */
 @media (min-width:768px){
   .ff-list--grid-md-3{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
   .ff-list--grid-md-2{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
-
   .ff-list--md-cards .ff-row{
     background: var(--color-surface);
     border:1px solid var(--color-border);
@@ -126,7 +149,6 @@
   }
   .ff-list--md-cards.ff-list--spine::before{ display:none; }
   .ff-list--md-cards.ff-list--spine .ff-row::before{ display:none; }
-
   @media (prefers-reduced-motion:no-preference){
     .ff-list--md-cards .ff-row{ transition: transform .18s ease, box-shadow .18s ease; }
     .ff-list--md-cards .ff-row:hover{
@@ -136,7 +158,7 @@
   }
 }
 
-/* ===== BLOG ===== */
+/* ===== BLOG / FAQ / HERO VISUAL ===== */
 .ff-blog-grid{ display:grid; gap:1rem; }
 @media (min-width:768px){ .ff-blog-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
 .ff-blog-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); overflow:hidden; display:flex; flex-direction:column; }
@@ -146,7 +168,6 @@
 .ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color:var(--color-text); opacity:.95; }
 .ff-blog-actions{ margin-top:auto; padding:0 1rem 1rem 1rem; }
 
-/* ===== FAQ ===== */
 .ff-accordion{ border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); background:var(--color-surface); }
 .ff-accordion .row{ border-top:1px solid var(--color-border); }
 .ff-accordion .row:first-child{ border-top:0; }
@@ -154,10 +175,10 @@
 .ff-accordion .content{ padding:0 1rem 1rem 1rem; color:var(--color-text); }
 details.ff-accordion summary{ list-style:none; }
 details.ff-accordion summary::-webkit-details-marker{ display:none; }
-details.ff-accordion summary::after{ content:"▾"; margin-left:.5rem; transition: transform 200ms ease; }
 details[open].ff-accordion summary::after{ transform: rotate(-180deg); }
+details.ff-accordion summary::after{ content:"▾"; margin-left:.5rem; transition: transform 200ms ease; }
 
-/* ===== HERO VISUAL (home) ===== */
+/* HERO VISUAL (home) */
 .ff-hero-visual{
   border:1px solid var(--color-border);
   background: var(--color-surface);
@@ -167,7 +188,7 @@ details[open].ff-accordion summary::after{ transform: rotate(-180deg); }
 }
 .ff-hero-visual img{ width:100%; height:auto; display:block; }
 
-/* ===== MICRO POLISH ===== */
+/* MICRO POLISH */
 @media (max-width:480px){
   .ff-section{ padding-block:1.35rem; }
   .ff-container{ padding-inline:.9rem; }

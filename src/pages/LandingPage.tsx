@@ -62,81 +62,112 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* KERNVOORDELEN — plain rows (geen bullets) op mobiel; elevated cards op md+ */}
-      <section className="ff-section" aria-label="Kernvoordelen">
+      {/* BLOK — Waarom FitFi */}
+      <section className="ff-section" aria-label="Waarom FitFi">
         <div className="ff-container">
-          <ul className="ff-list ff-list--plain ff-list--grid-md-3 ff-list--md-cards">
-            <li className="ff-row">
-              <div className="ff-row-title">Snel & moeiteloos</div>
-              <div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
-            </li>
-            <li className="ff-row">
-              <div className="ff-row-title">Uitleg bij elke look</div>
-              <div className="ff-row-sub">Begrijp waarom items werken voor jouw silhouet, kleur en moment.</div>
-            </li>
-            <li className="ff-row">
-              <div className="ff-row-title">Slim shoppen</div>
-              <div className="ff-row-sub">Minder ruis, meer kwaliteit. Jij houdt de regie.</div>
-            </li>
-          </ul>
+          <article className="ff-block">
+            <header className="ff-block-head">
+              <span className="ff-block-kicker">Voordelen</span>
+              <h2 className="ff-block-title">Waarom FitFi</h2>
+            </header>
+            <div className="ff-block-body">
+              <ul className="ff-list ff-list--plain ff-list--grid-md-3 ff-list--md-cards">
+                <li className="ff-row">
+                  <div className="ff-row-title">Snel & moeiteloos</div>
+                  <div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
+                </li>
+                <li className="ff-row">
+                  <div className="ff-row-title">Uitleg bij elke look</div>
+                  <div className="ff-row-sub">Begrijp waarom items werken voor jouw silhouet, kleur en moment.</div>
+                </li>
+                <li className="ff-row">
+                  <div className="ff-row-title">Slim shoppen</div>
+                  <div className="ff-row-sub">Minder ruis, meer kwaliteit. Jij houdt de regie.</div>
+                </li>
+              </ul>
+            </div>
+          </article>
         </div>
       </section>
 
-      {/* MINI FLOW — spine (timeline) op mobiel; cards op md+ */}
-      <section className="ff-section" aria-label="Hoe het werkt (kort)">
+      {/* BLOK — Zo werkt het */}
+      <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container">
-          <ul className="ff-list ff-list--spine ff-list--grid-md-3 ff-list--md-cards">
-            <li className="ff-row ff-row--numbered">
-              <div className="ff-row-title" data-nr="1">Quick scan</div>
-              <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
-            </li>
-            <li className="ff-row ff-row--numbered">
-              <div className="ff-row-title" data-nr="2">Match & uitleg</div>
-              <div className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</div>
-            </li>
-            <li className="ff-row ff-row--numbered">
-              <div className="ff-row-title" data-nr="3">Shop bewust</div>
-              <div className="ff-row-sub">Gerichte selectie. Minder miskopen.</div>
-            </li>
-          </ul>
+          <article className="ff-block">
+            <header className="ff-block-head">
+              <span className="ff-block-kicker">Uitleg</span>
+              <h2 className="ff-block-title">Zo werkt het</h2>
+            </header>
+            <div className="ff-block-body">
+              <ul className="ff-list ff-list--spine ff-list--grid-md-3 ff-list--md-cards">
+                <li className="ff-row ff-row--numbered">
+                  <div className="ff-row-title" data-nr="1">Quick scan</div>
+                  <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
+                </li>
+                <li className="ff-row ff-row--numbered">
+                  <div className="ff-row-title" data-nr="2">Match & uitleg</div>
+                  <div className="ff-row-sub">Looks die passen — met korte, heldere toelichting.</div>
+                </li>
+                <li className="ff-row ff-row--numbered">
+                  <div className="ff-row-title" data-nr="3">Shop bewust</div>
+                  <div className="ff-row-sub">Gerichte selectie. Minder miskopen.</div>
+                </li>
+              </ul>
+            </div>
+          </article>
         </div>
       </section>
 
-      {/* VOORBEELD-CALLOUT (card) */}
-      <section className="ff-section">
+      {/* BLOK — Style Report preview + CTA */}
+      <section className="ff-section" aria-label="Style Report – preview">
         <div className="ff-container">
-          <article className="ff-card">
-            <div className="ff-card-body">
-              <h2 className="text-xl font-semibold">Bekijk een voorbeeld</h2>
-              <p className="mt-2 text-[var(--color-text)]/80">
-                Eerst zien hoe een FitFi-resultaat eruitziet? Check een voorbeeld met looks, uitleg en shoplinks.
+          <article className="ff-block">
+            <header className="ff-block-head">
+              <span className="ff-block-kicker">Preview</span>
+              <h2 className="ff-block-title">Style Report — voorbeeld</h2>
+            </header>
+            <div className="ff-block-body">
+              <p className="text-[var(--color-text)]/80 text-sm">
+                Eerst zien hoe een FitFi-resultaat eruitziet? Bekijk een voorbeeld met looks, uitleg en shoplinks.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <NavLink to="/results" className="ff-btn ff-btn-secondary">Bekijk voorbeeld</NavLink>
-                <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
+                <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">
+                  Bekijk voorbeeld
+                </NavLink>
+                <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">
+                  Start gratis
+                </NavLink>
               </div>
             </div>
           </article>
         </div>
       </section>
 
-      {/* VERTROUWEN/PRIVACY — plain rows mobiel; cards md+ */}
-      <section className="ff-section" aria-label="Vertrouwen en privacy">
+      {/* BLOK — Vertrouwen & privacy */}
+      <section className="ff-section" aria-label="Vertrouwen & privacy">
         <div className="ff-container">
-          <ul className="ff-list ff-list--plain ff-list--grid-md-2 ff-list--md-cards">
-            <li className="ff-row">
-              <div className="ff-row-title">Privacy-first</div>
-              <div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div>
-            </li>
-            <li className="ff-row">
-              <div className="ff-row-title">Eerlijk & nuchter</div>
-              <div className="ff-row-sub">Advies zonder hype — met korte uitleg waarom iets werkt.</div>
-            </li>
-          </ul>
+          <article className="ff-block">
+            <header className="ff-block-head">
+              <span className="ff-block-kicker">Vertrouwen</span>
+              <h2 className="ff-block-title">Privacy & transparantie</h2>
+            </header>
+            <div className="ff-block-body">
+              <ul className="ff-list ff-list--plain ff-list--grid-md-2 ff-list--md-cards">
+                <li className="ff-row">
+                  <div className="ff-row-title">Privacy-first</div>
+                  <div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div>
+                </li>
+                <li className="ff-row">
+                  <div className="ff-row-title">Eerlijk & nuchter</div>
+                  <div className="ff-row-sub">Advies zonder hype — met korte uitleg waarom iets werkt.</div>
+                </li>
+              </ul>
+            </div>
+          </article>
         </div>
       </section>
 
-      {/* FAQ TEASER (card) */}
+      {/* BLOK — FAQ teaser (bewust card voor ritmevariatie) */}
       <section className="ff-section pb-20">
         <div className="ff-container">
           <article className="ff-card">
