@@ -25,10 +25,10 @@ export default function HowItWorksPage() {
         ]}
       />
 
-      {/* 6 stappen — list-rows op mobiel, cards op md+ */}
+      {/* 6 stappen — editorial rows mobiel, cards desktop */}
       <section className="ff-section" aria-label="Stappen">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-3">
+          <ul className="ff-list ff-list--grid-md-3 ff-list--md-cards ff-tight">
             <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="1">Beantwoord 6 vragen</div><div className="ff-row-sub">Snel en duidelijk. Zonder account of upload. Je kiest voorkeuren en doelen.</div></li>
             <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="2">Jouw stijlprofiel</div><div className="ff-row-sub">We berekenen je archetypen (bijv. Minimal, Smart Casual, Italiaans) en kleuraccenten.</div></li>
             <li className="ff-row ff-row--numbered"><div className="ff-row-title" data-nr="3">Outfits met uitleg</div><div className="ff-row-sub">Complete sets + waarom het werkt voor jouw silhouet, kleur en gelegenheid.</div></li>
@@ -39,8 +39,8 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* Verwachtingen — laat bewust als card-callout voor ritmevariatie */}
-      <section className="ff-section" aria-label="Wat je mag verwachten">
+      {/* Verwachtingen — card voor ritmevariatie */}
+      <section className="ff-section" aria-label="Wat je ervan mag verwachten">
         <div className="ff-container">
           <article className="ff-card">
             <div className="ff-card-body">

@@ -14,7 +14,7 @@ export default function LandingPage() {
         />
       </Helmet>
 
-      {/* HERO (ongewijzigd patroon) */}
+      {/* HERO */}
       <PageHero
         eyebrow="GRATIS AI STYLE REPORT"
         title="Ontdek wat jouw stijl over je zegt"
@@ -52,7 +52,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TRUST-CHIPS (idem) */}
+      {/* TRUST-CHIPS */}
       <section aria-label="Kernpunten" className="ff-section pt-2">
         <div className="ff-container flex flex-wrap gap-2">
           <span className="ff-eyebrow">2 min klaar</span>
@@ -62,10 +62,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* KERNVOORDELEN — NU: list-rows op mobiel, cards op md+ */}
+      {/* KERNVOORDELEN — Editorial list-rows */}
       <section className="ff-section" aria-label="Kernvoordelen">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-3">
+          <ul className="ff-list ff-list--grid-md-3 ff-list--md-cards">
             <li className="ff-row">
               <div className="ff-row-title">Snel & moeiteloos</div>
               <div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
@@ -82,10 +82,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* MINI FLOW — NU: numbered list-rows op mobiel, cards op md+ */}
+      {/* MINI FLOW — Editorial numbered list-rows */}
       <section className="ff-section" aria-label="Hoe het werkt (kort)">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-3">
+          <ul className="ff-list ff-list--grid-md-3 ff-list--md-cards">
             <li className="ff-row ff-row--numbered">
               <div className="ff-row-title" data-nr="1">Quick scan</div>
               <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
@@ -102,7 +102,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* VOORBEELDRESULTAAT — card blijft (bewust) */}
+      {/* VOORBEELD-CALLOUT — card blijft bewust voor ritmevariatie */}
       <section className="ff-section">
         <div className="ff-container">
           <article className="ff-card">
@@ -120,10 +120,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* VERTROUWEN / PRIVACY — list-rows op mobiel, 2-up cards op md+ */}
+      {/* VERTROUWEN / PRIVACY — editorial rows op mobiel, cards op desktop */}
       <section className="ff-section" aria-label="Vertrouwen en privacy">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-2">
+          <ul className="ff-list ff-list--grid-md-2 ff-list--md-cards">
             <li className="ff-row">
               <div className="ff-row-title">Privacy-first</div>
               <div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div>
@@ -136,7 +136,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ teaser — card blijft */}
+      {/* FAQ TEASER — card */}
       <section className="ff-section pb-20">
         <div className="ff-container">
           <article className="ff-card">

@@ -1,17 +1,19 @@
 /* =========================================================
-   FitFi · Mobile Polish (tokens-only, no content changes)
-   Pagina's: Home · Hoe-het-werkt · Prijzen · Over · Blog · FAQ
+   FitFi · Mobile-First Editorial Polish (tokens-only)
+   Toepasbaar op: Home · Hoe-het-werkt · Prijzen · Over · Blog · FAQ
    ========================================================= */
 
 /* ======= PAGE FRAME & HERO-BAND ======= */
 #main { background: var(--color-bg); color: var(--color-text); }
 
-/* Universele, subtiele hero-band op pagina's zonder expliciete page-hero */
+/* Subtiele hero-band wanneer er geen expliciete ff-page-hero staat */
 #main:not(:has(.ff-page-hero))::before{
   content:""; position:absolute; left:0; right:0; top:0; height:220px;
   background: radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%);
   pointer-events:none; z-index:1;
 }
+
+/* Expliciete hero (zoals Prijzen/How-it-works/Home) */
 .ff-page-hero{
   padding-block:3.5rem 2rem;
   background:
@@ -20,11 +22,11 @@
 }
 @media (min-width:768px){ .ff-page-hero{ padding-block:4rem 2.5rem; }}
 
-/* ======= TYPO CLAMPS (rustig, app-achtig) ======= */
+/* ======= TYPO CLAMPS ======= */
 .ff-hero-title{
   font-family: Montserrat, ui-sans-serif, system-ui;
   font-weight:700; line-height:1.1; letter-spacing:-0.01em; color:var(--color-text);
-  font-size: clamp(1.9rem, 3.5vw + 1rem, 2.75rem);
+  font-size: clamp(1.9rem, 3.5vw + 1rem, 2.75rem);  /* mobiel → desktop */
   max-width: 24ch;
 }
 .ff-hero-sub{ color:var(--color-muted); font-size: clamp(.98rem, .6vw + .82rem, 1.1rem); max-width: 60ch; }
@@ -32,7 +34,7 @@
 /* ======= CTA'S ======= */
 .ff-btn{
   display:inline-flex; align-items:center; justify-content:center;
-  height:2.6rem; border-radius: var(--radius-xl); padding:0 .9rem; font-weight:600;
+  height:2.7rem; border-radius: var(--radius-xl); padding:0 1rem; font-weight:600;
 }
 .ff-btn-primary{ background: var(--ff-color-primary-700); color:#fff; }
 .ff-btn-primary:hover{ background: var(--ff-color-primary-600); }
@@ -44,12 +46,12 @@
   .ff-page-hero .ff-eyebrow{ font-size:.78rem; padding:.22rem .55rem; }
 }
 
-/* ======= CONTAINERS & RHYTHM ======= */
+/* ======= LAYOUT RHYTHM ======= */
 .ff-container{ margin-inline:auto; padding-inline:1rem; max-width:1280px; }
 .ff-section{ padding-block: 1.6rem; }
 @media (min-width:768px){ .ff-section{ padding-block:2rem; } }
 
-/* ======= CARDS (desktop/default) ======= */
+/* ======= DEFAULT CARDS (gebruik op desktop) ======= */
 .ff-card{
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -59,62 +61,63 @@
 .ff-card-body{ padding:1.1rem; }
 @media (min-width:768px){ .ff-card-body{ padding:1.25rem; } }
 
-/* ======= NEW: LIST-ROWS (mobile-first alternatief voor 'overal cards') =======
-   Doel: sneller scannen op mobiel. Kop + subregel, subtiele scheiding.
-   Op md+ schakelen we automatisch weer naar grid/cards waar gewenst.
-*/
-.ff-list{
-  display: grid;
-  gap: .75rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+/* =========================================================
+   EDITORIAL LIST-ROWS — De anti-"overal blokken"-oplossing
+   - Mobile: tone-on-tone rijen met hairline divider en accent-dot
+   - Desktop: automatisch subtiele card-elevatie binnen grid
+   ========================================================= */
+
+.ff-list{ display:grid; gap:.6rem; list-style:none; padding:0; margin:0; }
+.ff-list.ff-tight{ gap:.5rem; } /* optioneel voor compactere secties */
+
 .ff-row{
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: .25rem;
-  padding: .9rem 1rem .95rem 1rem;
-  background: var(--color-bg);               /* tone-on-tone, geen 'witte tegel' gevoel */
-  border: 1px solid var(--color-border);
+  display:grid; gap:.25rem;
+  padding:.8rem 1rem .9rem 1rem;
+  background: var(--color-bg);          /* géén witte tegels op mobiel */
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
   border-radius: var(--radius-xl);
 }
+
+/* Accent-dot + divider: premium, niet schreeuwerig */
 .ff-row::before{
   content:"";
-  position:absolute; left:0; top:8px; bottom:8px; width:3px;
-  background: var(--ff-color-primary-600);   /* subtiele accentbar voor betekenis */
-  border-top-left-radius: var(--radius-xl);
-  border-bottom-left-radius: var(--radius-xl);
+  position:absolute; left:.6rem; top:1.05rem;
+  width:.45rem; height:.45rem; border-radius:9999px;
+  background: var(--ff-color-primary-600);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ff-color-primary-600) 16%, transparent);
 }
-.ff-row-title{
-  font-weight: 600;
-  color: var(--color-text);
-}
-.ff-row-sub{
-  color: var(--color-text);
-  opacity: .72;
-  font-size: .95rem;
-  line-height: 1.35;
-}
+.ff-row + .ff-row{ margin-top:.15rem; }
 
-/* Varianten voor secties die cijfers gebruiken (1), (2), (3) */
-.ff-row--numbered .ff-row-title{ padding-left: 1.35rem; }
+/* Titel en subregel */
+.ff-row-title{ font-weight:600; color:var(--color-text); }
+.ff-row-sub{ color: var(--color-text); opacity:.75; line-height:1.35; font-size:.97rem; }
+
+/* Genummerde variant (stappen) */
+.ff-row--numbered .ff-row-title{ padding-left:1.35rem; }
 .ff-row--numbered .ff-row-title::before{
   content: attr(data-nr);
-  position: absolute; left: .65rem; top: .9rem;
-  font-size: .9rem; font-weight: 700; color: var(--color-muted);
+  position:absolute; left:.6rem; top:.78rem;
+  font-size:.9rem; font-weight:700; color: var(--color-muted);
 }
 
-/* Op md+ mag dit terug naar 'cards' wanneer we grid toepassen in de pagina */
+/* Desktop: grid + lichte elevatie i.p.v. vlakke rijen */
 @media (min-width:768px){
-  .ff-list--grid-md-3{ grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
-  .ff-list--grid-md-2{ grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
-  .ff-row{
+  .ff-list--grid-md-3{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+  .ff-list--grid-md-2{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+
+  /* Binnen list-grids op md+: geef rijen subtiele surface + hover */
+  .ff-list--md-cards .ff-row{
     background: var(--color-surface);
+    border:1px solid var(--color-border);
     box-shadow: var(--shadow-soft);
   }
-  .ff-row::before{ display:none; } /* accentbar alleen op mobile look */
+  .ff-list--md-cards .ff-row::before{ display:none; } /* accent-dot enkel mobiel-look */
+
+  @media (prefers-reduced-motion: no-preference){
+    .ff-list--md-cards .ff-row{ transition: transform .18s ease, box-shadow .18s ease; }
+    .ff-list--md-cards .ff-row:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft), 0 6px 16px -12px color-mix(in oklab, var(--color-text) 14%, transparent); }
+  }
 }
 
 /* ======= BLOG ======= */
