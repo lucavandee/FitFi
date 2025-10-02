@@ -52,7 +52,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TRUST CHIPS */}
+      {/* TRUST-CHIPS */}
       <section aria-label="Kernpunten" className="ff-section pt-2">
         <div className="ff-container flex flex-wrap gap-2">
           <span className="ff-eyebrow">2 min klaar</span>
@@ -62,7 +62,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Waarom FitFi */}
+      {/* BLOK — Waarom FitFi (editorial split) */}
       <section className="ff-section" aria-label="Waarom FitFi">
         <div className="ff-container">
           <article className="ff-block ff-block--split">
@@ -71,13 +71,14 @@ export default function LandingPage() {
                 <div>
                   <span className="ff-block-kicker">Voordelen</span>
                   <h2 className="ff-block-title mt-2">Waarom FitFi</h2>
+                  <p className="ff-lede mt-2">Rustig en functioneel. Jij kiest; wij filteren de ruis.</p>
                 </div>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
                 </div>
               </aside>
               <div className="ff-block-body">
-                {/* Mobile: hairline editorial · Desktop: elevated via --md-cards */}
+                {/* Mobile: editorial hairline · Desktop: elevated via --md-cards */}
                 <ul className="ff-list ff-list--hairline ff-list--grid-md-3 ff-list--md-cards">
                   <li className="ff-row">
                     <div className="ff-row-title">Snel & moeiteloos</div>
@@ -98,7 +99,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Zo werkt het */}
+      {/* BLOK — Zo werkt het (timeline) */}
       <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container">
           <article className="ff-block ff-block--split">
@@ -107,6 +108,7 @@ export default function LandingPage() {
                 <div>
                   <span className="ff-block-kicker">Uitleg</span>
                   <h2 className="ff-block-title mt-2">Zo werkt het</h2>
+                  <p className="ff-lede mt-2">Kort en duidelijk. Geen 'black box', wél uitleg.</p>
                 </div>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>
@@ -133,7 +135,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Style Report preview */}
+      {/* BLOK — Style Report preview (media + copy) */}
       <section className="ff-section" aria-label="Style Report – preview">
         <div className="ff-container">
           <article className="ff-block ff-block--split">
@@ -142,6 +144,7 @@ export default function LandingPage() {
                 <div>
                   <span className="ff-block-kicker">Preview</span>
                   <h2 className="ff-block-title mt-2">Style Report</h2>
+                  <p className="ff-lede mt-2">Zie hoe jouw resultaat eruit ziet — outfits, palet en score.</p>
                 </div>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/results" className="ff-btn ff-btn-secondary">Bekijk voorbeeld</NavLink>
@@ -162,12 +165,8 @@ export default function LandingPage() {
                     Bekijk eerst een voorbeeld met looks, uitleg en shoplinks. Beslis daarna — zonder gedoe.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
-                    <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">
-                      Bekijk voorbeeld
-                    </NavLink>
-                    <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">
-                      Start gratis
-                    </NavLink>
+                    <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">Bekijk voorbeeld</NavLink>
+                    <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">Start gratis</NavLink>
                   </div>
                 </div>
               </div>
@@ -176,7 +175,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Vertrouwen & privacy */}
+      {/* BLOK — Vertrouwen & privacy (editorial hairline) */}
       <section className="ff-section" aria-label="Vertrouwen & privacy">
         <div className="ff-container">
           <article className="ff-block ff-block--split">
@@ -185,6 +184,7 @@ export default function LandingPage() {
                 <div>
                   <span className="ff-block-kicker">Vertrouwen</span>
                   <h2 className="ff-block-title mt-2">Privacy & transparantie</h2>
+                  <p className="ff-lede mt-2">Alleen wat nodig is. Eerlijk advies zonder hype.</p>
                 </div>
               </aside>
               <div className="ff-block-body">
@@ -204,7 +204,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ TEASER */}
+      {/* FAQ TEASER (temporal ritme-variatie) */}
       <section className="ff-section pb-20">
         <div className="ff-container">
           <article className="ff-card">
