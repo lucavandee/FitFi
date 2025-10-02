@@ -1,208 +1,183 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import Seo from "@/components/seo/Seo";
-import Button from "@/components/ui/Button";
 import PageHero from "@/components/marketing/PageHero";
-import SmartImage from "@/components/media/SmartImage";
-import rawHome from "@/content/home.json";
-import type { HomeContent } from "@/lib/content/types";
-
-const home = rawHome as HomeContent;
-
-type PreviewItem = { id: string; title: string; image: string; caption: string };
-
-const PREVIEW: PreviewItem[] = [
-  {
-    id: "coat",
-    title: "Wool coat",
-    image:
-      "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-    caption: "Outerwear · minimal · herfst/winter",
-  },
-  {
-    id: "blouse",
-    title: "Silk blouse",
-    image:
-      "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-    caption: "Top · elegant · office",
-  },
-  {
-    id: "jeans",
-    title: "Mom jeans",
-    image:
-      "https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-    caption: "Bottom · high-waist · denim",
-  },
-  {
-    id: "sneakers",
-    title: "Minimal sneakers",
-    image:
-      "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-    caption: "Footwear · clean · daily",
-  },
-];
 
 export default function LandingPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Seo
-        title="FitFi — Ontdek wat jouw stijl over je zegt"
-        description={home.heroSubtitle}
-        path="/"
-      />
+      <Helmet>
+        <title>FitFi — AI-stylist. Rust, duidelijkheid en outfits die passen.</title>
+        <meta
+          name="description"
+          content="Beantwoord 6 korte vragen en ontvang direct outfits die bij je passen — inclusief uitleg en shoplinks. Rustige, premium UI zoals je van ons verwacht."
+        />
+      </Helmet>
 
-      {/* HERO — identiek patroon als Prijzen/How-it-works via PageHero */}
+      {/* HERO — identiek patroon als Prijzen/How-it-works */}
       <PageHero
         eyebrow="GRATIS AI STYLE REPORT"
-        title={home.heroTitle}
-        subtitle={home.heroSubtitle}
+        title="Ontdek wat jouw stijl over je zegt"
+        subtitle="Binnen 2 minuten. Rustig, duidelijk en zonder gedoe. Je krijgt direct looks met uitleg waarom het bij je past."
         align="left"
-        as="h1"
-        size="lg"
-        ctas={home.ctas.map((c) => ({
-          label: c.label,
-          to: c.to,
-          variant: c.variant === "secondary" ? "secondary" : "primary",
-          "data-event":
-            c.label === "Start gratis" ? "cta_start_free_home" : "cta_view_example_home",
-        }))}
+        ctas={[
+          { label: "Start gratis", to: "/onboarding", variant: "primary", "data-event": "cta_start_free_home" },
+          { label: "Bekijk voorbeeld", to: "/results", variant: "secondary", "data-event": "cta_view_example_home" },
+        ]}
       />
+
+      {/* HERO VISUAL — ruimte voor jouw afbeelding (app-achtig, premium) */}
+      {/* Mobiel: onder hero; Desktop: rechts naast hero-tekst door een 12-col grid en lege linker kolommen */}
+      <section
+        aria-label="Style Report visual"
+        className="pt-2"
+        style={{
+          // subtiel doorlopen van de hero-band, tokens-only
+          background:
+            "radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%), var(--color-bg)",
+        }}
+      >
+        <div className="ff-container grid md:grid-cols-12 gap-4 md:items-end">
+          {/* Linker ruimte voor uitlijning met hero-tekst op desktop */}
+          <div className="hidden md:block md:col-span-6" />
+          {/* Visual rechts */}
+          <figure className="md:col-span-6 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] overflow-hidden">
+            {/* Gebruik public asset (geen import nodig) */}
+            <img
+              src="/media/home/style-report.webp"
+              alt="Voorbeeld van het FitFi Style Report op mobiel"
+              className="block w-full h-auto"
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            <figcaption className="px-3 py-2 text-[var(--color-text)]/70 text-sm">
+              Voorbeeld van het Style Report (mobiel) — items, palet en score.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
 
       {/* TRUST-CHIPS — compact en direct onder hero */}
       <section aria-label="Kernpunten" className="ff-section pt-2">
         <div className="ff-container flex flex-wrap gap-2">
-          {home.badges.map((b, i) => (
-            <span
-              key={i}
-              className="ff-eyebrow"
-            >
-              {b.text}
-            </span>
-          ))}
+          <span className="ff-eyebrow">2 min klaar</span>
+          <span className="ff-eyebrow">Geen upload nodig</span>
+          <span className="ff-eyebrow">Uitleg bij elke look</span>
+          <span className="ff-eyebrow">Privacy-first</span>
         </div>
       </section>
 
-      {/* MINI STYLE PREVIEW — rust, premium; mobile-first (2×2) → desktop (4-up) */}
-      <section aria-label="Mini style preview" className="ff-section">
-        <div className="ff-container">
+      {/* KERNVOORDELEN — 3-up, rustig */}
+      <section className="ff-section">
+        <div className="ff-container grid gap-4 md:grid-cols-3">
           <article className="ff-card">
             <div className="ff-card-body">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-semibold">Mini style preview</h2>
-                  <p className="mt-1 text-[var(--color-text)]/80 text-sm">
-                    Voorbeeld van draagbare combinaties in jouw smaak — rustig en functioneel.
-                  </p>
-                </div>
-                <NavLink
-                  to="/results"
-                  className="ff-btn ff-btn-secondary"
-                  data-event="cta_view_example_inline"
-                >
-                  Bekijk volledig voorbeeld
-                </NavLink>
-              </div>
-
-              {/* Grid: 2×2 op mobiel, 4-up op md+; strakke tegels met SmartImage */}
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-                {PREVIEW.map((item) => (
-                  <figure
-                    key={item.id}
-                    className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden shadow-[var(--shadow-soft)]"
-                  >
-                    <SmartImage
-                      src={item.image}
-                      alt={item.title}
-                      id={item.id}
-                      kind="generic"
-                      aspect="4/5"
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      containerClassName=""
-                      imgClassName=""
-                      eager={false}
-                    />
-                    <figcaption className="px-3 py-2">
-                      <div className="text-sm font-medium">{item.title}</div>
-                      <div className="text-xs text-[var(--color-text)]/70">{item.caption}</div>
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-
-              {/* Contextregel: licht en niet-dominant */}
-              <p className="mt-3 text-[var(--color-text)]/70 text-sm">
-                Jouw uiteindelijke set wordt afgestemd op je stijlprofiel, seizoen en gelegenheid.
+              <h3 className="font-semibold">Snel & moeiteloos</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">
+                6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.
+              </p>
+            </div>
+          </article>
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">Uitleg bij elke look</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">
+                Begrijp waarom items werken voor jouw silhouet, kleur en moment.
+              </p>
+            </div>
+          </article>
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">Slim shoppen</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">
+                Minder ruis, meer kwaliteit. Jij houdt de regie.
               </p>
             </div>
           </article>
         </div>
       </section>
 
-      {/* HOE HET WERKT — behoud bestaande content, compact ritme */}
-      <section className="ff-container pt-12 md:pt-16">
-        <h2 className="text-2xl sm:text-3xl font-semibold">Hoe het werkt</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {home.steps.map((s, i) => (
-            <div
-              key={i}
-              className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]"
-            >
-              <div className="text-sm text-[var(--color-text)]/60">Stap {i + 1}</div>
-              <div className="mt-1 text-base font-semibold">{s.title}</div>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">{s.text}</p>
+      {/* MINI FLOW — 3 stappen */}
+      <section className="ff-section">
+        <div className="ff-container grid gap-4 md:grid-cols-3">
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">1) Quick scan</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">Kies stijlvoorkeuren en doelen. Klaar in 2 minuten.</p>
             </div>
-          ))}
+          </article>
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">2) Match & uitleg</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">Looks die passen — met korte, heldere toelichting.</p>
+            </div>
+          </article>
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">3) Shop bewust</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">Selecties op niveau. Gericht shoppen, minder miskopen.</p>
+            </div>
+          </article>
         </div>
       </section>
 
-      {/* WAAROM — compacte redenen in rustige kaart */}
-      <section className="ff-container pt-12">
-        <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-          <h2 className="text-lg font-semibold">Waarom FitFi</h2>
-          <div className="mt-3 grid gap-3 md:grid-cols-3 text-sm">
-            {home.reasons.map((r, i) => (
-              <div
-                key={i}
-                className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3"
-              >
-                • {r.text}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ + CTA — afsluiter blijft in dezelfde toon en structuur */}
-      <section className="ff-container pt-12 pb-20">
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-            <h2 className="text-lg font-semibold">Veelgestelde vragen</h2>
-            {home.faq.map((f, i) => (
-              <details
-                key={i}
-                className="mt-3 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3"
-              >
-                <summary className="cursor-pointer text-sm font-medium">{f.q}</summary>
-                <p className="mt-2 text-sm text-[var(--color-text)]/80">{f.a}</p>
-              </details>
-            ))}
-          </div>
-
-          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] flex flex-col justify-between">
-            <div>
-              <h2 className="text-lg font-semibold">Klaar om te starten?</h2>
-              <p className="mt-1 text-sm text-[var(--color-text)]/80">
-                Begin gratis — je kunt later altijd finetunen.
+      {/* VOORBEELDRESULTAAT — callout */}
+      <section className="ff-section">
+        <div className="ff-container">
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h2 className="text-xl font-semibold">Bekijk een voorbeeld</h2>
+              <p className="mt-2 text-[var(--color-text)]/80">
+                Eerst zien hoe een FitFi-resultaat eruitziet? Check een voorbeeld met looks, uitleg en shoplinks.
               </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <NavLink to="/results" className="ff-btn ff-btn-secondary" data-event="cta_view_example_inline">
+                  Bekijk voorbeeld
+                </NavLink>
+                <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_inline">
+                  Start gratis
+                </NavLink>
+              </div>
             </div>
-            <div className="mt-4 flex gap-3">
-              {home.ctas.map((c) => (
-                <Button key={c.label} as={NavLink} to={c.to} variant={c.variant}>
-                  {c.label}
-                </Button>
-              ))}
+          </article>
+        </div>
+      </section>
+
+      {/* VERTROUWEN / PRIVACY */}
+      <section className="ff-section">
+        <div className="ff-container grid gap-4 md:grid-cols-2">
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">Privacy-first</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</p>
             </div>
-          </div>
+          </article>
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <h3 className="font-semibold">Eerlijk & nuchter</h3>
+              <p className="mt-1 text-[var(--color-text)]/70">Advies zonder hype — met korte uitleg waarom iets werkt.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* FAQ TEASER */}
+      <section className="ff-section pb-20">
+        <div className="ff-container">
+          <article className="ff-card">
+            <div className="ff-card-body">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold">Vragen over FitFi?</h2>
+                  <p className="mt-1 text-[var(--color-text)]/70">We hebben de belangrijkste antwoorden voor je op een rij.</p>
+                </div>
+                <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary" data-event="cta_faq_home">
+                  Naar FAQ
+                </NavLink>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
     </main>
