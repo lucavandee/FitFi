@@ -71,9 +71,32 @@
   background:var(--color-surface);
   border-radius:var(--radius-2xl);
   box-shadow:var(--shadow-soft);
-  overflow:hidden; position:relative;
+  overflow:hidden; 
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:400px;
 }
-.ff-media-frame img{ width:100%; height:auto; display:block; }
+@media (min-width:768px){ 
+  .ff-media-frame{ min-height:500px; } 
+}
+@media (min-width:1024px){ 
+  .ff-media-frame{ min-height:600px; } 
+}
+.ff-media-frame img{ 
+  width:100%; 
+  height:auto; 
+  display:block;
+  transition: opacity 0.3s ease;
+}
+.ff-media-frame img[loading="eager"] {
+  opacity: 0;
+  animation: fadeInImage 0.6s ease forwards;
+}
+@keyframes fadeInImage {
+  to { opacity: 1; }
+}
 
 .ff-hero-cards{
   position:absolute; right:6%; bottom:6%; display:grid; gap:.6rem; width:min(85%, 320px);

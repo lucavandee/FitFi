@@ -92,10 +92,18 @@ export default function LandingPage() {
           <div className="hidden lg:block" />
           <figure className="ff-media-frame" aria-describedby="hero-preview-caption">
             <img
-              src="/hero/style-report copy.webp"
+              src="/hero/style-report%20copy.webp"
               alt="Voorbeeld van het FitFi Style Report op mobiel"
-              loading="lazy" decoding="async"
-              sizes="(max-width: 1024px) 90vw, 560px"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              sizes="(max-width: 480px) 95vw, (max-width: 768px) 90vw, (max-width: 1024px) 85vw, 560px"
+              style={{
+                aspectRatio: '375/812',
+                objectFit: 'contain',
+                maxWidth: '100%',
+                height: 'auto'
+              }}
             />
             <figcaption id="hero-preview-caption" className="sr-only">
               Voorbeeldrapport met archetype, kleuren en outfits.
