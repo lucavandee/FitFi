@@ -26,7 +26,6 @@
   max-width: 24ch;
 }
 .ff-hero-sub{ color: var(--color-muted); font-size: clamp(.98rem, .6vw + .82rem, 1.1rem); max-width: 60ch; }
-.ff-lede{ font-size: clamp(1rem, .5vw + .95rem, 1.125rem); color: var(--color-text); opacity:.9; }
 
 /* ===== CTA'S ===== */
 .ff-btn{
@@ -54,7 +53,7 @@
 @media (min-width:768px){ .ff-card-body{ padding:1.25rem; } }
 
 /* =========================================================
-   BLOCK SYSTEM — gelabelde secties zoals 'Prijzen'
+   BLOCK SYSTEM — gelabelde secties à la Prijzen
    ========================================================= */
 .ff-block{
   background: var(--color-surface);
@@ -84,9 +83,12 @@
 }
 .ff-block-body{ padding:1rem; }
 
-/* --- Split-variant: editorial (kop links, content rechts) --- */
+/* --- Split variant: editorial (kop links, content rechts) --- */
 .ff-block--split .ff-block-inner{ display:grid; gap:.75rem; }
-.ff-block--split .ff-block-aside{ padding:1rem; border-bottom:1px solid var(--color-border); background: color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%); }
+.ff-block--split .ff-block-aside{
+  padding:1rem; border-bottom:1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%);
+}
 @media (min-width:1024px){
   .ff-block--split .ff-block-inner{
     grid-template-columns: 300px minmax(0,1fr);
@@ -100,10 +102,11 @@
 }
 
 /* =========================================================
-   EDITORIAL LISTS — rijen binnen blokken
+   EDITORIAL LISTS
    ========================================================= */
 .ff-list{ display:grid; gap:.65rem; list-style:none; padding:0; margin:0; }
 .ff-list.ff-tight{ gap:.5rem; }
+
 .ff-row{
   position: relative;
   display:grid; gap:.25rem;
@@ -115,10 +118,20 @@
 .ff-row-title{ font-weight:600; color:var(--color-text); }
 .ff-row-sub{ color:var(--color-text); opacity:.75; line-height:1.38; font-size:.97rem; }
 
-/* Plain (voordelen/waarden) */
+/* PLAIN (voordelen/waarden) – geen bullets */
 .ff-list--plain .ff-row::before{ display:none; }
 
-/* Spine (stappen) */
+/* NEW: HAIRLINE – ultra-editorial, geen tegels (mobiel magazine-look) */
+.ff-list--hairline .ff-row{
+  background: transparent;
+  border:0; border-radius:0;
+  padding:.8rem 0;
+}
+.ff-list--hairline .ff-row + .ff-row{
+  border-top:1px solid color-mix(in oklab, var(--color-border) 80%, transparent);
+}
+
+/* SPINE (stappen) – premium timeline */
 .ff-list--spine{ position:relative; }
 .ff-list--spine::before{
   content:""; position:absolute; left:1.15rem; top:.25rem; bottom:.25rem; width:2px;
@@ -149,13 +162,16 @@
 @media (min-width:768px){
   .ff-list--grid-md-3{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
   .ff-list--grid-md-2{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+
   .ff-list--md-cards .ff-row{
     background: var(--color-surface);
     border:1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
   }
   .ff-list--md-cards.ff-list--spine::before{ display:none; }
   .ff-list--md-cards.ff-list--spine .ff-row::before{ display:none; }
+
   @media (prefers-reduced-motion:no-preference){
     .ff-list--md-cards .ff-row{ transition: transform .18s ease, box-shadow .18s ease; }
     .ff-list--md-cards .ff-row:hover{
@@ -165,7 +181,7 @@
   }
 }
 
-/* ===== MEDIA FRAME (afbeeldingen) ===== */
+/* ===== MEDIA FRAME ===== */
 .ff-media-frame{
   border:1px solid var(--color-border);
   background: var(--color-surface);
@@ -175,7 +191,7 @@
 }
 .ff-media-frame img{ width:100%; height:auto; display:block; }
 
-/* ===== BLOG / FAQ (bestonden al) ===== */
+/* ===== BLOG / FAQ (bestaand) ===== */
 .ff-blog-grid{ display:grid; gap:1rem; }
 @media (min-width:768px){ .ff-blog-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
 .ff-blog-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow: var(--shadow-soft); overflow:hidden; display:flex; flex-direction:column; }
@@ -185,7 +201,7 @@
 .ff-blog-excerpt{ padding:0 1rem 1rem 1rem; color:var(--color-text); opacity:.95; }
 .ff-blog-actions{ margin-top:auto; padding:0 1rem 1rem 1rem; }
 
-.ff-accordion{ border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow: var(--shadow-soft); background:var(--color-surface); }
+.ff-accordion{ border:1px solid var(--color-border); border-radius:var(--radius-lg); box-shadow: var(--shadow-soft); background: var(--color-surface); }
 .ff-accordion summary{ cursor:pointer; padding:1rem; display:flex; align-items:center; justify-content:space-between; color:var(--color-text); }
 .ff-accordion .content{ padding:0 1rem 1rem 1rem; color:var(--color-text); }
 details.ff-accordion summary{ list-style:none; }

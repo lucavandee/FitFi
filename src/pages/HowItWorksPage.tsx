@@ -34,7 +34,6 @@ export default function HowItWorksPage() {
                 <div>
                   <span className="ff-block-kicker">Stappen</span>
                   <h2 className="ff-block-title mt-2">Van scan naar outfits</h2>
-                  <p className="ff-lede mt-2">Kort, nuchter en uitlegbaar — elke stap voegt waarde toe.</p>
                 </div>
                 <div className="mt-4 hidden lg:block">
                   <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
@@ -64,7 +63,7 @@ export default function HowItWorksPage() {
               <h2 className="ff-block-title">Wat je ervan mag verwachten</h2>
             </header>
             <div className="ff-block-body">
-              <ul className="ff-list ff-list--plain ff-list--grid-md-3 ff-list--md-cards">
+              <ul className="ff-list ff-list--hairline ff-list--grid-md-3 ff-list--md-cards">
                 <li className="ff-row"><div className="ff-row-title">Premium UI</div><div className="ff-row-sub">Rustige, premium UI — dezelfde stijl als de homepage.</div></li>
                 <li className="ff-row"><div className="ff-row-title">Uitleg per outfit</div><div className="ff-row-sub">Zodat je snapt waarom iets bij je past.</div></li>
                 <li className="ff-row"><div className="ff-row-title">Privacy-first</div><div className="ff-row-sub">Alleen wat nodig is om je te adviseren.</div></li>
