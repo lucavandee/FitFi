@@ -85,31 +85,23 @@ export default function LandingPage() {
         ]}
       />
 
-      {/* HERO VISUAL — voorbeeldrapport boven de vouw + mini-previewcards */}
+      {/* === HERO VISUAL — NAADLOOS === */}
       <section aria-label="Style Report voorbeeld" className="ff-hero-visual-wrap">
         <div className="ff-container--home ff-hero-visual">
-          {/* Lege kolom houdt beeld in hero-ritme op desktop */}
           <div className="hidden lg:block" />
-          <figure className="ff-media-frame" aria-describedby="hero-preview-caption">
+          <figure className="ff-media-frame ff-hero-media" aria-describedby="hero-preview-caption">
             <img
-              src="/hero/style-report%20copy.webp"
+              src="/hero/style-report.webp"
               alt="Voorbeeld van het FitFi Style Report op mobiel"
-              loading="eager"
+              loading="lazy"
               decoding="async"
-              fetchPriority="high"
-              sizes="(max-width: 480px) 95vw, (max-width: 768px) 90vw, (max-width: 1024px) 85vw, 560px"
-              style={{
-                aspectRatio: '375/812',
-                objectFit: 'contain',
-                maxWidth: '100%',
-                height: 'auto'
-              }}
+              sizes="(max-width: 1024px) 90vw, 560px"
             />
             <figcaption id="hero-preview-caption" className="sr-only">
               Voorbeeldrapport met archetype, kleuren en outfits.
             </figcaption>
 
-            {/* Preview cards (archetype · kleur/fit · outfits) */}
+            {/* Overlay preview mini-cards (archetype · kleur/fit · outfits) */}
             <div className="ff-hero-cards" aria-hidden="true">
               <div className="ff-hero-card">
                 <h4>Archetype</h4>
@@ -119,6 +111,14 @@ export default function LandingPage() {
                 <h4>Kleur & fit</h4>
                 <p>Neutraal palet · relaxed tapered</p>
               </div>
+              <div className="ff-hero-card">
+                <h4>Resultaat</h4>
+                <p>6–12 outfits + shoplinks</p>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>
               <div className="ff-hero-card">
                 <h4>Resultaat</h4>
                 <p>6–12 outfits + shoplinks</p>

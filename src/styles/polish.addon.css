@@ -1,5 +1,5 @@
 /* =========================================================
-   FitFi · Polish v13 — Clarity + Proof + Sticky CTA (tokens-only)
+   FitFi · Polish v14 — Hero media integration (tokens-only)
    Scope: HOME (herbruikbaar)
    ========================================================= */
 
@@ -27,7 +27,7 @@
 .ff-hero-sub{ color:var(--color-muted); font-size:clamp(1rem,.6vw + .84rem,1.12rem); max-width:60ch; }
 .ff-lede{ color:var(--color-text); opacity:.9; font-size:clamp(1rem,.45vw + .95rem,1.125rem); }
 
-/* ===== CTA's ===== */
+/* ===== CTA ===== */
 .ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.75rem; border-radius:var(--radius-xl); padding:0 1rem; font-weight:600; }
 .ff-btn-primary{ background:var(--ff-color-primary-700); color:#fff; }
 .ff-btn-primary:hover{ background:var(--ff-color-primary-600); }
@@ -54,216 +54,133 @@
 @media (min-width:768px){ .ff-card-body{ padding:1.25rem; } }
 
 /* =========================================================
-   HERO VISUAL + PREVIEW CARDS
+   HERO VISUAL — PERFECTE INTEGRATIE
    ========================================================= */
 .ff-hero-visual-wrap{
   background:
     radial-gradient(1200px 220px at 50% -80px, var(--overlay-surface-12), transparent 70%),
     var(--color-bg);
-  padding-block:.4rem .4rem;
+  /* laat het beeld subtiel in de hero-band 'bleeden' */
+  padding-block:.25rem .75rem;
 }
-.ff-hero-visual{ display:grid; gap:1rem; align-items:end; grid-template-columns:1fr; }
+.ff-hero-visual{
+  display:grid; gap:1rem; align-items:end;
+  grid-template-columns:1fr;
+}
 @media (min-width:1024px){
   .ff-hero-visual{ grid-template-columns: 1fr minmax(520px, 560px); }
 }
+
+/* Het frame heeft nu een vaste ratio en object-fit zodat er NOOIT lege ruimte boven/onder ontstaat */
 .ff-media-frame{
+  position:relative; overflow:hidden;
   border:1px solid var(--color-border);
   background:var(--color-surface);
   border-radius:var(--radius-2xl);
   box-shadow:var(--shadow-soft);
-  overflow:hidden; 
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:400px;
 }
-@media (min-width:768px){ 
-  .ff-media-frame{ min-height:500px; } 
+.ff-hero-media{
+  width:100%;
+  aspect-ratio: 10 / 19;           /* premium phone-achtige verhouding */
+  max-width:560px;                 /* desktop cap */
+  margin-inline:auto;
+  translate:0 .25rem;              /* subtiel uitlijnen met hero-band */
 }
-@media (min-width:1024px){ 
-  .ff-media-frame{ min-height:600px; } 
+@media (min-width:1024px){
+  .ff-hero-media{ justify-self:end; translate:0 .35rem; }
 }
-.ff-media-frame img{ 
-  width:100%; 
-  height:auto; 
+.ff-hero-media > img{
+  width:100%; height:100%;
   display:block;
-  transition: opacity 0.3s ease;
-}
-.ff-media-frame img[loading="eager"] {
-  opacity: 0;
-  animation: fadeInImage 0.6s ease forwards;
-}
-@keyframes fadeInImage {
-  to { opacity: 1; }
+  object-fit:cover;                /* vult het frame perfect */
+  object-position:center;
 }
 
+/* Overlay preview-cards */
 .ff-hero-cards{
-  position:absolute; right:6%; bottom:6%; display:grid; gap:.6rem; width:min(85%, 320px);
+  position:absolute; right:6%; bottom:6%;
+  display:grid; gap:.6rem; width:min(85%, 320px);
 }
 .ff-hero-card{
   display:grid; gap:.2rem; padding:.6rem .7rem;
   border:1px solid var(--color-border);
   border-radius:var(--radius-xl);
-  background: color-mix(in oklab, var(--color-surface) 75%, transparent);
-  backdrop-filter: blur(6px) saturate(1.1);
-  box-shadow: var(--shadow-soft);
+  background:color-mix(in oklab, var(--color-surface) 78%, transparent);
+  backdrop-filter: blur(6px) saturate(1.05);
+  box-shadow:var(--shadow-soft);
 }
 .ff-hero-card h4{ font-weight:700; font-size:.92rem; color:var(--color-text); }
 .ff-hero-card p{ font-size:.86rem; color:color-mix(in oklab, var(--color-text) 88%, transparent); }
 
 /* =========================================================
-   STICKY CTA BAR (desktop) — kalme, consistente call-to-action
+   STICKY CTA BAR (desktop)
    ========================================================= */
-.ff-sticky-bar{
-  position:sticky; top:0; z-index:5;
-  background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%);
-  border-bottom:1px solid var(--color-border);
-  display:none;
-}
-@media (min-width:1024px){
-  .ff-sticky-bar{ display:block; }
-}
-.ff-sticky-inner{
-  max-width:1120px; margin-inline:auto; padding:.55rem 1rem;
-  display:flex; align-items:center; justify-content:space-between; gap:1rem;
-}
-.ff-sticky-copy{
-  display:flex; align-items:center; gap:.75rem; color:var(--color-text);
-  font-size:.96rem;
-}
-.ff-chip{
-  display:inline-flex; align-items:center; gap:.4ch;
-  border:1px solid var(--color-border); background:var(--color-bg);
-  color:var(--color-muted); padding:.2rem .55rem; border-radius:var(--radius-xl); font-size:.78rem;
-}
+.ff-sticky-bar{ position:sticky; top:0; z-index:5; background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%); border-bottom:1px solid var(--color-border); display:none; }
+@media (min-width:1024px){ .ff-sticky-bar{ display:block; } }
+.ff-sticky-inner{ max-width:1120px; margin-inline:auto; padding:.55rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.ff-sticky-copy{ display:flex; align-items:center; gap:.75rem; color:var(--color-text); font-size:.96rem; }
+.ff-chip{ display:inline-flex; align-items:center; gap:.4ch; border:1px solid var(--color-border); background:var(--color-bg); color:var(--color-muted); padding:.2rem .55rem; border-radius:var(--radius-xl); font-size:.78rem; }
 
 /* =========================================================
-   SECTION CARD — gelijk aan /prijzen
+   SECTION CARD / GRID / LIST (zoals eerder)
    ========================================================= */
-.ff-section-card{
-  background:var(--color-surface); border:1px solid var(--color-border);
-  border-radius:var(--radius-2xl); box-shadow:var(--shadow-soft); overflow:hidden;
-}
-.ff-section-card-head{
-  display:flex; align-items:center; gap:.8rem; padding:1rem;
-  background:color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%);
-  border-bottom:1px solid var(--color-border);
-}
-.ff-kicker{
-  display:inline-flex; align-items:center; gap:.4ch; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase;
-  color:var(--color-muted); border:1px solid var(--color-border); background:var(--color-bg);
-  padding:.15rem .5rem; border-radius:var(--radius-xl);
-}
+.ff-section-card{ background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-2xl); box-shadow:var(--shadow-soft); overflow:hidden; }
+.ff-section-card-head{ display:flex; align-items:center; gap:.8rem; padding:1rem; background:color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%); border-bottom:1px solid var(--color-border); }
+.ff-kicker{ display:inline-flex; align-items:center; gap:.4ch; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; color:var(--color-muted); border:1px solid var(--color-border); background:var(--color-bg); padding:.15rem .5rem; border-radius:var(--radius-xl); }
 .ff-section-title{ font-weight:700; color:var(--color-text); font-size:clamp(1.05rem,.45vw + 1rem,1.35rem); }
 .ff-section-card-body{ padding:1rem; }
 
-/* Split (aside + main) */
 .ff-split{ display:grid; gap:.9rem; }
 @media (min-width:1024px){
   .ff-split{ grid-template-columns: 360px minmax(0,1fr); gap:1.2rem; }
-  .ff-split-aside{
-    padding:1rem; background:color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%); border-right:1px solid var(--color-border);
-  }
+  .ff-split-aside{ padding:1rem; background:color-mix(in oklab, var(--color-surface) 92%, var(--color-bg) 8%); border-right:1px solid var(--color-border); }
   .ff-split-main{ padding:1.1rem; }
 }
 
-/* =========================================================
-   ULTRA-SCAN TILES (1 zin + Meer)
-   ========================================================= */
 .ff-grid{ display:grid; gap:1rem; }
 @media (min-width:1024px){ .ff-grid.cols-2{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-.ff-tile{
-  background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%);
-  border:1px solid var(--color-border); border-radius:var(--radius-xl);
-  box-shadow:var(--shadow-soft); padding:1rem 1rem 1.05rem;
-}
+
+.ff-tile{ background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%); border:1px solid var(--color-border); border-radius:var(--radius-xl); box-shadow:var(--shadow-soft); padding:1rem 1rem 1.05rem; }
 .ff-tile--slim{ padding:.9rem 1rem; display:grid; gap:.35rem; }
 .ff-tile h3{ font-weight:600; color:var(--color-text); }
-.ff-oneliner{
-  color:var(--color-text); opacity:.78; line-height:1.35;
-  display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;
-}
+
+.ff-oneliner{ color:var(--color-text); opacity:.78; line-height:1.35; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
 .ff-more{ margin-top:.15rem; }
-.ff-more summary{
-  list-style:none; cursor:pointer; font-weight:600;
-  color:var(--ff-color-primary-700); text-decoration:underline; text-underline-offset:3px;
-}
+.ff-more summary{ list-style:none; cursor:pointer; font-weight:600; color:var(--ff-color-primary-700); text-decoration:underline; text-underline-offset:3px; }
 .ff-more summary::-webkit-details-marker{ display:none; }
 .ff-more .ff-more-body{ margin-top:.35rem; color:var(--color-text); opacity:.85; line-height:1.45; }
 .ff-more[open] + .ff-oneliner{ -webkit-line-clamp:unset; opacity:.9; }
 
-/* =========================================================
-   LISTS / TIMELINE (mobiel) → CARDS (desktop)
-   ========================================================= */
+/* LIST / TIMELINE */
 .ff-list{ display:grid; gap:.65rem; list-style:none; padding:0; margin:0; }
-/* mobiel timeline */
 .ff-list--spine{ position:relative; --spine-x:1.2rem; --badge-x:2.55rem; --content-pad:3.9rem; }
-.ff-list--spine::before{
-  content:""; position:absolute; left:var(--spine-x); top:.25rem; bottom:.25rem; width:2px;
-  background:color-mix(in oklab, var(--color-border) 72%, transparent); border-radius:2px;
-}
-.ff-list--spine .ff-row{
-  position:relative; padding:1rem 1rem 1rem var(--content-pad); background:var(--color-bg);
-  border:1px solid color-mix(in oklab, var(--color-border) 70%, transparent); border-radius:var(--radius-xl);
-}
-.ff-list--spine .ff-row::before{
-  content:""; position:absolute; left:calc(var(--spine-x) - .2rem); top:1.15rem;
-  width:.44rem; height:.44rem; border-radius:9999px; background:var(--ff-color-primary-600);
-  box-shadow:0 0 0 2px color-mix(in oklab, var(--ff-color-primary-600) 22%, transparent);
-}
+.ff-list--spine::before{ content:""; position:absolute; left:var(--spine-x); top:.25rem; bottom:.25rem; width:2px; background:color-mix(in oklab, var(--color-border) 72%, transparent); border-radius:2px; }
+.ff-list--spine .ff-row{ position:relative; padding:1rem 1rem 1rem var(--content-pad); background:var(--color-bg); border:1px solid color-mix(in oklab, var(--color-border) 70%, transparent); border-radius:var(--radius-xl); }
+.ff-list--spine .ff-row::before{ content:""; position:absolute; left:calc(var(--spine-x) - .2rem); top:1.15rem; width:.44rem; height:.44rem; border-radius:9999px; background:var(--ff-color-primary-600); box-shadow:0 0 0 2px color-mix(in oklab, var(--ff-color-primary-600) 22%, transparent); }
 .ff-row-title{ font-weight:600; color:var(--color-text); }
 .ff-row-sub{ color:var(--color-text); opacity:.78; line-height:1.45; }
-.ff-row-title[data-nr]::after{
-  content:attr(data-nr); position:absolute; left:var(--badge-x); top:.95rem;
-  display:inline-grid; place-items:center; min-width:1.2rem; height:1.2rem; border-radius:9999px;
-  font-size:.8rem; font-weight:700; color:var(--color-text);
-  background:var(--color-surface); border:1px solid var(--color-border);
-}
+.ff-row-title[data-nr]::after{ content:attr(data-nr); position:absolute; left:var(--badge-x); top:.95rem; display:inline-grid; place-items:center; min-width:1.2rem; height:1.2rem; border-radius:9999px; font-size:.8rem; font-weight:700; color:var(--color-text); background:var(--color-surface); border:1px solid var(--color-border); }
 @media (max-width:420px){ .ff-list--spine{ --badge-x:2.7rem; --content-pad:4.1rem; } }
-/* desktop: cards, max 2 kolommen */
 @media (min-width:1024px){
-  .ff-list--md-cards .ff-row{
-    background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%);
-    border:1px solid var(--color-border); border-radius:var(--radius-xl);
-    box-shadow:var(--shadow-soft); padding:1rem 1rem 1.05rem;
-  }
+  .ff-list--md-cards .ff-row{ background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%); border:1px solid var(--color-border); border-radius:var(--radius-xl); box-shadow:var(--shadow-soft); padding:1rem 1rem 1.05rem; }
   .ff-list--md-cards::before, .ff-list--md-cards .ff-row::before{ display:none; }
   .ff-list--md-cards .ff-row-title[data-nr]::after{ position:static; margin-right:.5rem; }
   .ff-list.cols-2{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
 }
 
-/* ===== CHIPS / BADGES ===== */
-.ff-eyebrow, .ff-badge{
-  display:inline-flex; align-items:center; gap:.5ch; border:1px solid var(--color-border);
-  background:var(--color-surface); color:var(--color-muted);
-  padding:.25rem .6rem; border-radius:var(--radius-2xl); font-size:.82rem; letter-spacing:.02em;
-}
+/* CHIPS / BADGES / TRUST / FAQ (ongewijzigd) */
+.ff-eyebrow, .ff-badge{ display:inline-flex; align-items:center; gap:.5ch; border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-muted); padding:.25rem .6rem; border-radius:var(--radius-2xl); font-size:.82rem; letter-spacing:.02em; }
 .ff-badges{ display:flex; flex-wrap:wrap; gap:.5rem; }
-
-/* ===== TRUST STRIP ===== */
-.ff-trust{ display:grid; gap:1rem; }
-@media (min-width:1024px){
-  .ff-trust{ grid-template-columns: 1.2fr .8fr; align-items:start; }
-}
-.ff-testimonial{
-  display:flex; gap:.8rem; align-items:flex-start;
-  background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%);
-  border:1px solid var(--color-border); border-radius:var(--radius-xl); padding:.8rem .9rem;
-}
-.ff-avatar{
-  width:36px; height:36px; border-radius:9999px; display:grid; place-items:center;
-  border:1px solid var(--color-border); background:var(--color-bg); font-weight:700; color:var(--color-text);
-}
-
-/* ===== FAQ PREVIEW ===== */
+.ff-trust{ display:grid; gap:1rem; } @media (min-width:1024px){ .ff-trust{ grid-template-columns:1.2fr .8fr; align-items:start; } }
+.ff-testimonial{ display:flex; gap:.8rem; align-items:flex-start; background:color-mix(in oklab, var(--color-surface) 94%, var(--color-bg) 6%); border:1px solid var(--color-border); border-radius:var(--radius-xl); padding:.8rem .9rem; }
+.ff-avatar{ width:36px; height:36px; border-radius:9999px; display:grid; place-items:center; border:1px solid var(--color-border); background:var(--color-bg); font-weight:700; color:var(--color-text); }
 .ff-faq details{ border-top:1px solid var(--color-border); padding:.7rem 0; }
 .ff-faq details:first-of-type{ border-top:0; }
 .ff-faq summary{ cursor:pointer; font-weight:600; color:var(--color-text); list-style:none; }
 .ff-faq summary::-webkit-details-marker{ display:none; }
 .ff-faq p{ color:var(--color-text); opacity:.85; margin-top:.5rem; }
 
-/* ===== MICRO ===== */
+/* MICRO */
 @media (max-width:480px){
   .ff-section{ padding-block:1.4rem; }
   .ff-container, .ff-container--home{ padding-inline:.9rem; }
