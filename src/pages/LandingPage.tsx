@@ -119,14 +119,6 @@ export default function LandingPage() {
           </figure>
         </div>
       </section>
-              <div className="ff-hero-card">
-                <h4>Resultaat</h4>
-                <p>6–12 outfits + shoplinks</p>
-              </div>
-            </div>
-          </figure>
-        </div>
-      </section>
 
       {/* STICKY CTA BAR (desktop) — kalme microcopy + primaire CTA */}
       <div className="ff-sticky-bar" role="region" aria-label="Snelle start">
