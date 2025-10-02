@@ -77,8 +77,9 @@ export default function LandingPage() {
                   <NavLink to="/onboarding" className="ff-btn ff-btn-primary">Start gratis</NavLink>
                 </div>
               </aside>
+
               <div className="ff-block-body">
-                {/* Mobiel: hairline, Desktop (editorial): hairline in plaats van cards */}
+                {/* Mobiel = hairline; Desktop (editorial) blijft hairline i.p.v. kaarten */}
                 <ul className="ff-list ff-list--hairline ff-list--grid-lg-2 ff-list--grid-xl-3">
                   <li className="ff-row">
                     <div className="ff-row-title">Snel & moeiteloos</div>
@@ -99,7 +100,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* BLOK — Zo werkt het */}
+      {/* BLOK — Zo werkt het (horizontale rail op desktop) */}
       <section className="ff-section" aria-label="Zo werkt het">
         <div className="ff-container--home">
           <article className="ff-block ff-block--split">
@@ -114,8 +115,9 @@ export default function LandingPage() {
                   <NavLink to="/veelgestelde-vragen" className="ff-btn ff-btn-secondary">Veelgestelde vragen</NavLink>
                 </div>
               </aside>
+
               <div className="ff-block-body">
-                <ul className="ff-list ff-list--spine ff-tight ff-list--grid-lg-2 ff-list--grid-xl-3">
+                <ul className="ff-list ff-list--spine ff-tight ff-steps ff-list--grid-lg-2 ff-list--grid-xl-3">
                   <li className="ff-row ff-row--numbered">
                     <div className="ff-row-title" data-nr="1">Quick scan</div>
                     <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
@@ -150,11 +152,12 @@ export default function LandingPage() {
                   <NavLink to="/results" className="ff-btn ff-btn-secondary">Bekijk voorbeeld</NavLink>
                 </div>
               </aside>
+
               <div className="ff-block-body grid gap-4 lg:grid-cols-2">
                 <figure className="ff-media-frame">
                   <img
                     src="/media/home/style-report.webp"
-                    alt="Voorbeeld van het Style Report op mobiel"
+                    alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="lazy"
                     decoding="async"
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -191,6 +194,7 @@ export default function LandingPage() {
                   <p className="ff-lede mt-2">Alleen wat nodig is. Eerlijk advies zonder hype.</p>
                 </div>
               </aside>
+
               <div className="ff-block-body">
                 <ul className="ff-list ff-list--hairline ff-list--grid-lg-2">
                   <li className="ff-row">
