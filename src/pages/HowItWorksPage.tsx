@@ -25,7 +25,7 @@ export default function HowItWorksPage() {
         ]}
       />
 
-      {/* 6 stappen — spine (timeline) op mobiel; cards op desktop */}
+      {/* 6 stappen — spine op mobiel; elevated cards op md+ */}
       <section className="ff-section" aria-label="Stappen">
         <div className="ff-container">
           <ul className="ff-list ff-list--spine ff-list--grid-md-3 ff-list--md-cards ff-tight">
