@@ -62,10 +62,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* KERNVOORDELEN — Editorial list-rows */}
+      {/* KERNVOORDELEN — plain rows (geen bullets) op mobiel; elevated cards op md+ */}
       <section className="ff-section" aria-label="Kernvoordelen">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-3 ff-list--md-cards">
+          <ul className="ff-list ff-list--plain ff-list--grid-md-3 ff-list--md-cards">
             <li className="ff-row">
               <div className="ff-row-title">Snel & moeiteloos</div>
               <div className="ff-row-sub">6 korte vragen. Geen account of upload. Direct resultaat met heldere uitleg.</div>
@@ -82,10 +82,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* MINI FLOW — Editorial numbered list-rows */}
+      {/* MINI FLOW — spine (timeline) op mobiel; cards op md+ */}
       <section className="ff-section" aria-label="Hoe het werkt (kort)">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-3 ff-list--md-cards">
+          <ul className="ff-list ff-list--spine ff-list--grid-md-3 ff-list--md-cards">
             <li className="ff-row ff-row--numbered">
               <div className="ff-row-title" data-nr="1">Quick scan</div>
               <div className="ff-row-sub">Kies voorkeuren en doelen. Klaar in 2 minuten.</div>
@@ -102,7 +102,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* VOORBEELD-CALLOUT — card blijft bewust voor ritmevariatie */}
+      {/* VOORBEELD-CALLOUT (card) */}
       <section className="ff-section">
         <div className="ff-container">
           <article className="ff-card">
@@ -120,10 +120,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* VERTROUWEN / PRIVACY — editorial rows op mobiel, cards op desktop */}
+      {/* VERTROUWEN/PRIVACY — plain rows mobiel; cards md+ */}
       <section className="ff-section" aria-label="Vertrouwen en privacy">
         <div className="ff-container">
-          <ul className="ff-list ff-list--grid-md-2 ff-list--md-cards">
+          <ul className="ff-list ff-list--plain ff-list--grid-md-2 ff-list--md-cards">
             <li className="ff-row">
               <div className="ff-row-title">Privacy-first</div>
               <div className="ff-row-sub">Alleen wat nodig is voor goed advies. Geen spam, geen gedoe.</div>
@@ -136,7 +136,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ TEASER — card */}
+      {/* FAQ TEASER (card) */}
       <section className="ff-section pb-20">
         <div className="ff-container">
           <article className="ff-card">
