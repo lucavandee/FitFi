@@ -1,10 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Helmet } from 'react-helmet-async';
-import { Check, Star, Zap, Crown, Sparkles } from "lucide-react";
+import { Check, Star, Zap, Crown, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from '@/components/ui/Button';
-import { Check, ArrowRight, Star, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function PricingPage() {
