@@ -29,9 +29,8 @@ export function Hero() {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--ff-color-text)] leading-tight">
                 Ontdek wat jouw{' '}
                 <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-secondary-600)] bg-clip-text text-transparent">
-                  perfecte stijl
-                </span>{' '}
-                is
+                  perfecte stijl is
+                </span>
               </h1>
               
               <p className="text-lg sm:text-xl text-[var(--ff-color-text-secondary)] max-w-2xl">

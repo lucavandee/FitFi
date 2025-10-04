@@ -17,17 +17,17 @@ export function ClosingCTA() {
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full mb-8">
           <Sparkles className="w-4 h-4 text-white" />
           <span className="text-sm font-medium text-white">
-            GRATIS STIJLANALYSE
+        <div className="text-center max-w-4xl mx-auto">
           </span>
         </div>
 
         {/* Headline - Properly centered */}
         <div className="space-y-6 mb-12">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Klaar om je stijl te ontdekken?
           </h2>
           
-          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+          <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
             Begin vandaag nog met je persoonlijke stijlreis. Binnen 2 minuten weet je precies welke kleding bij jou past.
           </p>
         </div>
