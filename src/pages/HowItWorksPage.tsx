@@ -1,10 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Helmet } from 'react-helmet-async';
-import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
+import { CircleCheck as CheckCircle, Clock, Shield } from "lucide-react";
 import { Button } from '@/components/ui/Button';
-import { ArrowRight, Sparkles, Target, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function HowItWorksPage() {
