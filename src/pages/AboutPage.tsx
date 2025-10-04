@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { Target, Heart, Users, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
+import { Target, Heart, Users, Sparkles, ArrowRight, CircleCheck as CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AboutPage = () => {
