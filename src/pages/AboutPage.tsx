@@ -1,7 +1,10 @@
 import React from 'react';
 import { Sparkles, Target, Heart, Users, CheckCircle } from 'lucide-react';
 
-export defauimport { Users, Target, Heart, Sparkles, CircleCheck as CheckCircle, ArrowRight } from "lucide-react" {/* Hero Section */}
+export default function AboutPage() {
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
       <section className="about-hero relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-blue-50 py-20">
         {/* Floating Orbs */}
         <div className="about-orb about-orb-1"></div>
