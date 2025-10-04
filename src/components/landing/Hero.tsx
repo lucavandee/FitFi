@@ -1,117 +1,89 @@
-import { useState, useEffect } from 'react';
-import { ArrowRight, Sparkles, Users, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Container from '@/components/layout/Container';
-import SmartImage from '@/components/media/SmartImage';
-import { track } from '@/utils/analytics';
+// src/components/landing/Hero.tsx
+import React from "react";
+import { NavLink } from "react-router-dom";
+import SmartImage from "@/components/ui/SmartImage";
 
+/**
+ * Hero sectie — opt-in polish via ff-utilities.
+ * Geen gradients/overrides; we raken alleen markup/classes aan.
+ */
 export default function Hero() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  const handleCTAClick = () => {
-    track('cta_click', { location: 'hero', action: 'start_quiz' });
-  };
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* Floating orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-emerald-200/30 to-teal-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 rounded-full blur-3xl animate-float-delayed" />
-        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-gradient-to-r from-purple-200/25 to-pink-200/25 rounded-full blur-3xl animate-float-slow" />
-      </div>
-
-      <Container className="relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Content */}
-          <div className={`space-y-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full text-sm font-medium text-gray-700 shadow-sm">
-              <Sparkles className="w-4 h-4 text-emerald-500" />
-              AI-Powered Styling
+    <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-canvas)] py-12 md:py-20">
+      <div className="ff-container">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Content */}
+          <div className="text-center lg:text-left">
+            <div className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-[var(--color-muted)] text-sm mb-6">
+              ✨ AI-gedreven stijladvies
             </div>
-
-            {/* Main Headline */}
-            <div className="space-y-4">
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                Ontdek je
-                <span className="block bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
-                  perfecte stijl
-                </span>
-                met AI
-              </h1>
-              
-              <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
-                Persoonlijke styling-adviezen op basis van je voorkeuren, lichaamsbouw en lifestyle. 
-                Geen dure stylisten meer nodig.
-              </p>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="flex items-center gap-6 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span>10.000+ tevreden gebruikers</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4" />
-                <span>Nederlandse startup</span>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/quiz"
-                onClick={handleCTAClick}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight mb-6">
+              Jouw persoonlijke
+              <span className="block text-[var(--ff-color-primary-600)]">Style Report</span>
+            </h1>
+            
+            <p className="text-lg text-[var(--color-muted)] mb-8 max-w-xl mx-auto lg:mx-0">
+              Beantwoord 6 korte vragen en krijg direct een persoonlijk stijlprofiel met concrete outfits en shoplinks.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <NavLink 
+                to="/quiz" 
+                className="ff-btn ff-btn-primary px-8 py-3 text-lg font-medium"
               >
-                Start gratis stijltest
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              
-              <Link
-                to="/hoe-het-werkt"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
+                Start gratis
+              </NavLink>
+              <NavLink 
+                to="/hoe-het-werkt" 
+                className="ff-btn ff-btn-ghost px-8 py-3 text-lg font-medium"
               >
                 Hoe het werkt
-              </Link>
+              </NavLink>
             </div>
+            
+            <p className="text-sm text-[var(--color-muted)] mt-4">
+              Geen account nodig • Privacy-first • Direct resultaat
+            </p>
           </div>
-
-          {/* Right Column - Hero Image */}
-          <div className={`relative transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="relative">
-              {/* Glow effect behind image */}
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-3xl blur-2xl transform scale-105" />
+          
+          {/* Hero Image */}
+          <div className="relative">
+            <div className="relative mx-auto max-w-sm lg:max-w-md">
+              src="/images/hero-highres copy.png"
+                src="/images/hero-highres copy.png"
+                alt="FitFi Style Report interface op iPhone met aardse tinten outfit aanbevelingen"
+                className="w-full h-auto rounded-2xl shadow-2xl"
+                loading="eager"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+              />
               
-              {/* Main hero image */}
-              <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
-                <SmartImage
-                  src="/hero/style-report.webp"
-                  alt="FitFi AI Style Report - Persoonlijke styling adviezen"
-                  className="w-full h-auto"
-                  loading="eager"
-                  priority
-                />
-              </div>
-
-              {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl shadow-lg animate-bounce-slow flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              
-              <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg animate-pulse flex items-center justify-center">
-                <Award className="w-10 h-10 text-white" />
-              </div>
+              {/* Subtle glow effect */}
+              <div 
+                className="absolute inset-0 rounded-2xl opacity-20 blur-xl"
+                style={{
+                  background: "radial-gradient(circle at center, var(--ff-color-primary-400), transparent 70%)"
+                }}
+                aria-hidden="true"
+              />
             </div>
           </div>
         </div>
-      </Container>
+        
+        {/* Trust indicators */}
+        <div className="mt-16 pt-8 border-t border-[var(--color-border)]">
+          <div className="text-center">
+            <p className="text-sm text-[var(--color-muted)] mb-4">Vertrouwd door stijlbewuste mensen</p>
+            <div className="flex items-center justify-center gap-8 opacity-60">
+              <div className="text-xs font-medium text-[var(--color-text)]">Premium kwaliteit</div>
+              <div className="w-px h-4 bg-[var(--color-border)]" />
+              <div className="text-xs font-medium text-[var(--color-text)]">Privacy-first</div>
+              <div className="w-px h-4 bg-[var(--color-border)]" />
+              <div className="text-xs font-medium text-[var(--color-text)]">Direct resultaat</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
