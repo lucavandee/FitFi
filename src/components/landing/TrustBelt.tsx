@@ -1,63 +1,55 @@
-import React from "react";
-import { ShieldCheck, LockKeyhole, CircleCheck as CheckCircle2 } from "lucide-react";
-
-/**
- * A horizontal belt of trust and privacy badges. Each badge combines
- * a simple icon with a short label to reassure visitors that FitFi
- * respects their data and complies with relevant regulations. The
- * component is lightweight and token‑driven: all colours come from
- * CSS variables defined in the design system, so the belt adapts
- * automatically in dark mode and across themes. Icons inherit a
- * consistent stroke width to align with the rest of the UI.
- */
-const TRUST_ITEMS = [
-  {
-    icon: ShieldCheck,
-    label: "Privacy‑first",
-  },
-  {
-    icon: LockKeyhole,
-    label: "AVG‑compliant",
-  },
-  {
-    icon: CheckCircle2,
-    label: "Geverifieerde partners",
-  },
-];
-import Container from '../layout/Container';
+import React from 'react';
+import { Shield, Lock, Award, Users, Clock, Heart } from 'lucide-react';
 
 const TrustBelt: React.FC = () => {
+  const trustItems = [
+    {
+      icon: Shield,
+      text: '100% Privacy-first'
+    },
+    {
+      icon: Lock,
+      text: 'Veilige gegevensverwerking'
+    },
+    {
+      icon: Award,
+      text: 'AI-gedreven technologie'
+    },
+    {
+      icon: Users,
+      text: '25.000+ tevreden gebruikers'
+    },
+    {
+      icon: Clock,
+      text: 'Binnen 2 minuten klaar'
+    },
+    {
+      icon: Heart,
+      text: 'Volledig gratis'
+    }
+  ];
+
   return (
-    <div
-      aria-label="Vertrouwen badges"
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "0.5rem 0.75rem",
-        marginTop: "0.75rem",
-      }}
-    >
-      {TRUST_ITEMS.map(({ icon: Icon, label }, index) => (
-        <span
-          key={index}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            padding: "0.35rem 0.6rem",
-            borderRadius: "9999px",
-            background: "color-mix(in oklab, var(--ff-color-accent) 8%, var(--ff-color-surface))",
-            border: "1px solid var(--ff-color-border)",
-            fontSize: "0.8rem",
-            fontWeight: 500,
-            color: "var(--ff-color-text)",
-          }}
-        >
-          <Icon size={16} strokeWidth={1.8} aria-hidden style={{ color: "var(--ff-color-primary)" }} />
-          <span>{label}</span>
-        </span>
-      ))}
-    </div>
+    <section className="py-16 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          {trustItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={index}
+                className="flex items-center gap-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-300 group"
+              >
+                <Icon className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-sm font-medium whitespace-nowrap">
+                  {item.text}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { ArrowRight, CircleCheck as CheckCircle, Shield, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Sparkles, ArrowRight, CheckCircle, Shield, Clock } from 'lucide-react';
 import SmartImage from '../media/SmartImage';
 
 const Hero: React.FC = () => {
@@ -10,28 +10,32 @@ const Hero: React.FC = () => {
     navigate('/quiz');
   };
 
+  const handleViewExample = () => {
+    navigate('/results');
+  };
+
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-[var(--color-bg)] via-[var(--color-surface)] to-[var(--color-bg)] overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-200/20 to-teal-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-blue-200/20 to-emerald-200/20 rounded-full blur-3xl"></div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--color-bg)] via-[var(--color-bg-soft)] to-[var(--color-surface)]">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-teal-400/20 to-blue-400/20 rounded-full blur-3xl animate-float-delayed"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-emerald-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[80vh]">
-          
-          {/* Left Content */}
-          <div className="space-y-8 lg:pr-8">
+      <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left content */}
+          <div className="text-center lg:text-left space-y-8">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/50 rounded-full text-sm font-medium text-emerald-700">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--color-text-muted)] shadow-sm">
+              <Sparkles className="w-4 h-4 text-emerald-500" />
               GRATIS AI STYLE REPORT
             </div>
 
-            {/* Main Heading */}
+            {/* Main headline */}
             <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight">
                 Ontdek wat jouw{' '}
                 <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
                   perfecte stijl
@@ -39,100 +43,83 @@ const Hero: React.FC = () => {
                 is
               </h1>
               
-              <p className="text-lg sm:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-xl">
+              <p className="text-lg md:text-xl text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, 
-                kleuren en 6–12 outfits. <strong className="text-[var(--color-text)]">Rustig, duidelijk en zonder gedoe.</strong>
+                kleuren en 6–12 outfits. <strong>Rustig, duidelijk en zonder gedoe.</strong>
               </p>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button
                 onClick={handleStartQuiz}
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25"
               >
                 Start gratis
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </button>
               
-              <button className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] text-[var(--color-text)] font-semibold rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300">
+              <button
+                onClick={handleViewExample}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent hover:bg-[var(--color-surface)] text-[var(--color-text)] font-semibold rounded-xl border border-[var(--color-border)] transition-all duration-300 hover:scale-105 hover:border-[var(--color-primary)]"
+              >
                 Bekijk voorbeeldrapport
               </button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-6 pt-4">
+            {/* Trust indicators */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4">
               <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                <CheckCircle className="w-4 h-4 text-emerald-500" />
                 100% Gratis
               </div>
               <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                <Shield className="w-5 h-5 text-blue-500" />
+                <Shield className="w-4 h-4 text-blue-500" />
                 Privacy-first
               </div>
               <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                <Clock className="w-5 h-5 text-purple-500" />
+                <Clock className="w-4 h-4 text-purple-500" />
                 2 min setup
               </div>
             </div>
           </div>
 
-          {/* Right Visual */}
-          <div className="relative lg:pl-8">
-            {/* Main Phone Container */}
-            <div className="relative mx-auto max-w-sm">
-              {/* Phone Shadow/Glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-200/30 to-blue-200/30 rounded-[3rem] blur-2xl scale-110"></div>
+          {/* Right content - Phone mockup with floating elements */}
+          <div className="relative flex justify-center lg:justify-end">
+            {/* Phone container with glow effect */}
+            <div className="relative">
+              {/* Glow effect behind phone */}
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/30 via-teal-400/30 to-blue-400/30 rounded-[3rem] blur-2xl scale-110 animate-pulse-slow"></div>
               
-              {/* Phone Frame */}
-              <div className="relative bg-gradient-to-br from-[var(--color-surface)] to-white rounded-[3rem] p-2 shadow-2xl border border-white/50">
-                <div className="bg-[#F7F3EC] rounded-[2.5rem] overflow-hidden">
-                  <SmartImage
-                    src="/hero/style-report.webp"
-                    alt="FitFi AI Style Report voorbeeld"
-                    className="w-full h-auto"
-                    priority
-                  />
-                </div>
+              {/* Phone mockup */}
+              <div className="relative bg-[var(--color-surface)] rounded-[3rem] p-2 shadow-2xl backdrop-blur-sm border border-[var(--color-border)]/50">
+                <SmartImage
+                  src="/hero/style-report.webp"
+                  alt="FitFi Style Report voorbeeld"
+                  className="w-full max-w-sm rounded-[2.5rem] shadow-lg"
+                  priority
+                />
               </div>
             </div>
 
-            {/* Floating Feature Cards - Positioned OUTSIDE phone */}
+            {/* Floating elements positioned around phone */}
             <div className="absolute inset-0 pointer-events-none">
-              {/* Archetype Card - Top Left */}
-              <div className="absolute -top-4 -left-8 lg:-left-16 animate-float-slow">
-                <div className="bg-white/90 backdrop-blur-sm border border-white/50 rounded-2xl px-4 py-3 shadow-lg">
-                  <div className="text-xs font-medium text-[var(--color-text-muted)] mb-1">Archetype</div>
-                  <div className="text-sm font-semibold text-[var(--color-text)]">Modern Minimalist</div>
-                </div>
+              {/* Archetype card - top left */}
+              <div className="absolute top-8 -left-4 lg:left-8 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/20 animate-float max-w-[160px]">
+                <div className="text-xs font-medium text-gray-600 mb-1">Archetype</div>
+                <div className="text-sm font-bold text-gray-900">Modern Minimal</div>
               </div>
 
-              {/* Outfits Card - Top Right */}
-              <div className="absolute -top-8 -right-4 lg:-right-12 animate-float-medium">
-                <div className="bg-white/90 backdrop-blur-sm border border-white/50 rounded-2xl px-4 py-3 shadow-lg">
-                  <div className="text-xs font-medium text-[var(--color-text-muted)] mb-1">Outfits</div>
-                  <div className="text-sm font-semibold text-[var(--color-text)]">6-12 looks</div>
-                </div>
+              {/* Outfits card - top right */}
+              <div className="absolute top-16 -right-4 lg:right-8 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/20 animate-float-delayed max-w-[140px]">
+                <div className="text-xs font-medium text-gray-600 mb-1">Outfits</div>
+                <div className="text-sm font-bold text-gray-900">6-12 looks</div>
               </div>
 
-              {/* AI Powered Card - Bottom Left */}
-              <div className="absolute -bottom-4 -left-4 lg:-left-12 animate-float-fast">
-                <div className="bg-white/90 backdrop-blur-sm border border-white/50 rounded-2xl px-4 py-3 shadow-lg">
-                  <div className="text-xs font-medium text-[var(--color-text-muted)] mb-1">AI Powered</div>
-                  <div className="text-sm font-semibold text-[var(--color-text)]">Smart matching</div>
-                </div>
-              </div>
-
-              {/* Color Palette Card - Bottom Right */}
-              <div className="absolute -bottom-8 -right-8 lg:-right-16 animate-float-slow">
-                <div className="bg-white/90 backdrop-blur-sm border border-white/50 rounded-2xl px-4 py-3 shadow-lg">
-                  <div className="text-xs font-medium text-[var(--color-text-muted)] mb-1">Kleuren</div>
-                  <div className="flex gap-1 mt-1">
-                    <div className="w-4 h-4 bg-amber-200 rounded-full border border-white"></div>
-                    <div className="w-4 h-4 bg-amber-600 rounded-full border border-white"></div>
-                    <div className="w-4 h-4 bg-amber-800 rounded-full border border-white"></div>
-                  </div>
-                </div>
+              {/* AI Powered card - bottom left */}
+              <div className="absolute bottom-16 -left-4 lg:left-8 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/20 animate-float-reverse max-w-[160px]">
+                <div className="text-xs font-medium text-gray-600 mb-1">AI Powered</div>
+                <div className="text-sm font-bold text-gray-900">Smart matching</div>
               </div>
             </div>
           </div>
