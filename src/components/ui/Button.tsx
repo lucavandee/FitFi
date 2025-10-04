@@ -22,7 +22,7 @@ function classes(variant: Variant, size: Size, extra?: string) {
   return [base, v, s, extra].filter(Boolean).join(" ");
 }
 
-export default function Button({
+function Button({
   variant = "secondary",
   size = "md",
   as = "button",
@@ -35,3 +35,6 @@ export default function Button({
   if (as === "a") return <a href={href} className={cls} {...(rest as any)}>{children}</a>;
   return <button type="button" className={cls} {...rest}>{children}</button>;
 }
+
+export default Button;
+export { Button };
