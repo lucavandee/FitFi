@@ -10,7 +10,7 @@ export type BlogPost = {
 
 // UIT (18) – samengevoegd en ongewijzigd qua inhoudelijke tekst.
 // Voeg hier gerust meer posts toe in hetzelfde formaat.
-const posts: BlogPost[] = [
+export const posts: BlogPost[] = [
   {
     id: "kleurtemperatuur-warm-koel-neutraal",
     title: "Kleurtemperatuur: warm, koel of neutraal?",
