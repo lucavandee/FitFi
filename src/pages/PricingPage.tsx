@@ -15,7 +15,6 @@ export default function PricingPage() {
           content="Kies het plan dat bij jou past. Altijd transparant, geen verborgen kosten. Start gratis of upgrade naar Premium voor meer functies."
         />
       </Helmet>
-    <>
 
       <div className="min-h-screen bg-[var(--color-bg)]">
         {/* Hero Section */}
@@ -452,7 +451,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-    </>
+    </main>
   );
-  )
 }
