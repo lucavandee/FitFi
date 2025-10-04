@@ -1,53 +1,54 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Container } from '@/components/layout/Container';
-import { Users, Target, Award, Heart, Sparkles, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Heart, TrendingUp, Sparkles } from 'lucide-react';
 
 export default function AboutPage() {
   return (
     <>
       <Helmet>
-        <title>Over FitFi - Jouw perfecte stijl begint hier</title>
-        <meta name="description" content="Ontdek het verhaal achter FitFi en hoe wij AI-technologie gebruiken om jouw perfecte stijl te vinden." />
+        <title>Over Ons - FitFi</title>
+        <meta name="description" content="Ontdek het verhaal achter FitFi en hoe wij jouw perfecte stijl helpen ontdekken met AI-technologie." />
       </Helmet>
 
       <div className="min-h-screen bg-[var(--color-bg)]">
         {/* Hero Section */}
-        <section className="relative py-20">
+        <section className="pt-24 pb-16">
           <Container>
             <div className="text-center max-w-4xl mx-auto">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm text-[var(--color-text-muted)] mb-8">
-                <span className="text-[var(--color-primary)]">✨</span>
-                Over FitFi
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-[var(--color-border)] mb-8">
+                <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
+                <span className="text-sm font-medium text-[var(--color-text)]">Over FitFi</span>
               </div>
 
-              {/* Main heading */}
-              <h1 className="text-4xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
+              {/* Title */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
                 Jouw perfecte stijl
                 <br />
-                <span className="text-[var(--color-primary)]">begint hier</span>
+                <span className="text-[var(--color-text-muted)]">begint hier</span>
               </h1>
 
               {/* Subtitle */}
-              <p className="text-xl text-[var(--color-text-secondary)] mb-12 max-w-3xl mx-auto leading-relaxed">
-                Wij geloven dat iedereen een unieke stijl heeft. Met AI-technologie en 
-                persoonlijke begeleiding helpen wij je jouw perfecte look te ontdekken.
+              <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+                Wij geloven dat iedereen een unieke stijl heeft. Met AI-technologie en persoonlijke 
+                begeleiding helpen wij je jouw perfecte look te ontdekken.
               </p>
 
               {/* Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">10K+</div>
-                  <div className="text-sm text-[var(--color-text-secondary)]">Tevreden gebruikers</div>
+                  <div className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] mb-2">10K+</div>
+                  <div className="text-sm text-[var(--color-text-muted)]">Tevreden gebruikers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">50K+</div>
-                  <div className="text-sm text-[var(--color-text-secondary)]">Outfits gecreëerd</div>
+                  <div className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] mb-2">50K+</div>
+                  <div className="text-sm text-[var(--color-text-muted)]">Outfits gecreëerd</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">98%</div>
-                  <div className="text-sm text-[var(--color-text-secondary)]">Tevredenheid</div>
+                  <div className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] mb-2">98%</div>
+                  <div className="text-sm text-[var(--color-text-muted)]">Tevredenheid</div>
                 </div>
               </div>
             </div>
@@ -55,73 +56,16 @@ export default function AboutPage() {
         </section>
 
         {/* Mission Section */}
-        <section className="py-16">
+        <section className="py-16 bg-white">
           <Container>
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-6">
+            <div className="text-center max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-6">
                 Onze missie
               </h2>
-              <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-                Wij maken stijladvies toegankelijk voor iedereen door de kracht van AI te combineren 
-                met menselijke expertise en persoonlijke aandacht.
+              <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
+                Wij maken stijladvies toegankelijk voor iedereen door de kracht van AI te combineren met 
+                menselijke expertise en persoonlijke aandacht.
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[var(--color-primary)]/10 rounded-xl flex items-center justify-center">
-                    <Target className="w-6 h-6 text-[var(--color-primary)]" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[var(--color-text)] mb-2">
-                      Persoonlijk & Precies
-                    </h3>
-                    <p className="text-[var(--color-text-secondary)]">
-                      Elke stijlanalyse is uniek en gebaseerd op jouw persoonlijke voorkeuren, 
-                      lichaamsbouw en levensstijl.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[var(--color-primary)]/10 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-[var(--color-primary)]" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[var(--color-text)] mb-2">
-                      Altijd Up-to-date
-                    </h3>
-                    <p className="text-[var(--color-text-secondary)]">
-                      Onze AI leert continu van de nieuwste trends en past zich aan 
-                      aan jouw evoluerende smaak.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[var(--color-primary)]/10 rounded-xl flex items-center justify-center">
-                    <Heart className="w-6 h-6 text-[var(--color-primary)]" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[var(--color-text)] mb-2">
-                      Met Liefde Gemaakt
-                    </h3>
-                    <p className="text-[var(--color-text-secondary)]">
-                      Elk detail is zorgvuldig ontworpen om jou te helpen je 
-                      zelfverzekerder en mooier te voelen.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="aspect-square bg-gradient-to-br from-[var(--color-primary)]/10 to-[var(--color-accent)]/10 rounded-3xl flex items-center justify-center">
-                  <div className="w-32 h-32 bg-[var(--color-primary)]/20 rounded-full flex items-center justify-center">
-                    <Sparkles className="w-16 h-16 text-[var(--color-primary)]" />
-                  </div>
-                </div>
-              </div>
             </div>
           </Container>
         </section>
@@ -129,101 +73,116 @@ export default function AboutPage() {
         {/* Values Section */}
         <section className="py-16">
           <Container>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
-                Onze waarden
-              </h2>
-              <p className="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto">
-                Deze principes staan centraal in alles wat wij doen
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-[var(--color-primary)]/10 rounded-2xl flex items-center justify-center mb-6">
-                  <Users className="w-8 h-8 text-[var(--color-primary)]" />
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Value 1 */}
+                <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] text-center hover:shadow-lg transition-shadow duration-300">
+                  <div className="w-12 h-12 bg-[var(--color-primary-50)] rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Heart className="w-6 h-6 text-[var(--color-primary)]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+                    Persoonlijk & Precies
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    Elke stijlanalyse is uniek en gebaseerd op jouw persoonlijke voorkeuren, 
+                    lichaamsbouw en levensstijl.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4">
-                  Inclusiviteit
-                </h3>
-                <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Stijl is voor iedereen. Wij omarmen alle lichaamstypes, budgetten 
-                  en persoonlijke voorkeuren zonder oordeel.
-                </p>
-              </div>
 
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-[var(--color-primary)]/10 rounded-2xl flex items-center justify-center mb-6">
-                  <Award className="w-8 h-8 text-[var(--color-primary)]" />
+                {/* Value 2 */}
+                <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] text-center hover:shadow-lg transition-shadow duration-300">
+                  <div className="w-12 h-12 bg-[var(--color-primary-50)] rounded-full flex items-center justify-center mx-auto mb-6">
+                    <TrendingUp className="w-6 h-6 text-[var(--color-primary)]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+                    Altijd Up-to-date
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    Onze AI leert continu van de nieuwste trends en past zich aan aan jouw 
+                    evoluerende smaak.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4">
-                  Kwaliteit
-                </h3>
-                <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Wij streven naar excellentie in elke aanbeveling en zorgen ervoor 
-                  dat je altijd de beste stijladvies krijgt.
-                </p>
-              </div>
 
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-[var(--color-primary)]/10 rounded-2xl flex items-center justify-center mb-6">
-                  <Sparkles className="w-8 h-8 text-[var(--color-primary)]" />
+                {/* Value 3 */}
+                <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] text-center hover:shadow-lg transition-shadow duration-300">
+                  <div className="w-12 h-12 bg-[var(--color-primary-50)] rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Sparkles className="w-6 h-6 text-[var(--color-primary)]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+                    Met Liefde Gemaakt
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    Elk detail is zorgvuldig ontworpen om jou te helpen je zelfverzekerder en 
+                    mooier te voelen.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4">
-                  Innovatie
-                </h3>
-                <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Wij blijven vooroplopen met de nieuwste technologieën om jouw 
-                  stijlervaring steeds beter te maken.
-                </p>
               </div>
             </div>
           </Container>
         </section>
 
         {/* Story Section */}
-        <section className="py-16">
+        <section className="py-16 bg-white">
           <Container>
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-[var(--color-text)] mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-6">
                   Ons verhaal
                 </h2>
-                <div className="prose prose-lg max-w-none text-[var(--color-text-secondary)] leading-relaxed space-y-6">
-                  <p>
-                    FitFi ontstond uit een simpele observatie: iedereen verdient het om zich 
-                    goed te voelen in hun kleding, maar niet iedereen heeft toegang tot 
-                    persoonlijk stijladvies.
-                  </p>
-                  <p>
-                    Door de kracht van kunstmatige intelligentie te combineren met jarenlange 
-                    expertise in mode en styling, hebben wij een platform gecreëerd dat 
-                    persoonlijke stijladvies democratiseert.
-                  </p>
-                  <p>
-                    Vandaag helpen wij duizenden mensen dagelijks om hun perfecte stijl te 
-                    ontdekken en zich zelfverzekerder te voelen. En dit is nog maar het begin.
-                  </p>
-                </div>
+                <div className="w-16 h-1 bg-[var(--color-primary)] mx-auto mb-8 rounded-full"></div>
+              </div>
+              
+              <div className="prose prose-lg max-w-none text-[var(--color-text-muted)] leading-relaxed space-y-6">
+                <p className="text-lg">
+                  FitFi ontstond uit een simpele observatie: iedereen verdient het om zich goed te voelen 
+                  in hun kleding, maar niet iedereen heeft toegang tot persoonlijk stijladvies.
+                </p>
+                
+                <p>
+                  We zagen hoe technologie de mode-industrie transformeerde, maar merkten dat de focus 
+                  vaak lag op trends in plaats van op wat echt bij jou past. Daarom besloten we een 
+                  platform te bouwen dat de kracht van AI combineert met echte menselijke expertise.
+                </p>
+                
+                <p>
+                  Vandaag helpen we duizenden mensen dagelijks om hun perfecte stijl te ontdekken. 
+                  Van casual weekend looks tot professionele outfits - wij zorgen ervoor dat je altijd 
+                  met vertrouwen de deur uit gaat.
+                </p>
+                
+                <p className="text-lg font-medium text-[var(--color-text)]">
+                  Want stijl is niet alleen wat je draagt, het is hoe je je voelt.
+                </p>
               </div>
             </div>
           </Container>
         </section>
 
         {/* CTA Section */}
-        <section className="py-20">
+        <section className="py-16">
           <Container>
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
-                Klaar om jouw perfecte stijl te ontdekken?
+            <div className="bg-gradient-to-br from-[var(--color-primary-50)] to-white rounded-3xl p-12 text-center border border-[var(--color-border)]">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-6">
+                Klaar om jouw stijl te ontdekken?
               </h2>
-              <p className="text-lg text-[var(--color-text-secondary)] mb-8 leading-relaxed">
-                Begin vandaag nog met onze gratis stijlanalyse en ontdek wat FitFi voor jou kan betekenen.
+              <p className="text-lg text-[var(--color-text-muted)] mb-8 max-w-2xl mx-auto">
+                Begin vandaag nog met onze gratis stijlquiz en ontdek welke looks perfect bij jou passen.
               </p>
-              <button className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-semibold rounded-xl hover:bg-[var(--color-primary-hover)] transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-                <Sparkles className="w-5 h-5" />
-                Start gratis
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                >
+                  Start gratis quiz
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="lg"
+                  className="border border-[var(--color-border)] hover:border-[var(--color-primary)] px-8 py-4 rounded-xl font-semibold transition-all duration-300"
+                >
+                  Bekijk voorbeelden
+                </Button>
+              </div>
             </div>
           </Container>
         </section>
