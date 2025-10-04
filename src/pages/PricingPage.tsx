@@ -12,11 +12,10 @@ export default function PricingPage() {
         <title>Prijzen – FitFi AI Style Reports</title>
         <meta
           name="description"
-    <>
-      <Helmet>
-        <title>Prijzen - FitFi.ai</title>
-        <meta name="description" content="Kies het plan dat bij jou past. Altijd transparant, geen verborgen kosten. Start gratis of upgrade naar Premium voor meer functies." />
+          content="Kies het plan dat bij jou past. Altijd transparant, geen verborgen kosten. Start gratis of upgrade naar Premium voor meer functies."
+        />
       </Helmet>
+    <>
 
       <div className="min-h-screen bg-[var(--color-bg)]">
         {/* Hero Section */}
