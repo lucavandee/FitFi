@@ -10,6 +10,8 @@ import SocialProof from '../components/landing/SocialProof';
 import TrustBelt from '../components/landing/TrustBelt';
 import ClosingCTA from '../components/landing/ClosingCTA';
 
+const FEATURES: Feature[] = [];
+
 export default function HomePage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
@@ -54,12 +56,12 @@ export default function HomePage() {
             <p className="mt-3 text-[var(--color-text)]/80">
               Je ontvangt een helder overzicht met kleuren die je staan, vormen die kloppen en outfits die je direct kunt dragen.
               Alles rustig uitgelegd, zonder poeha.
-        <meta property="og:description" content="Ontdek je perfecte stijl met FitFi's AI Style Report. Krijg binnen 3 minuten gepersonaliseerde outfit-adviezen." />
+            </p>
             <div className="mt-6 flex gap-3">
               <NavLink to="/results" className="ff-btn ff-btn-primary">Maak mijn rapport</NavLink>
               <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
             </div>
-        <meta name="twitter:description" content="Ontdek je perfecte stijl met FitFi's AI Style Report." />
+          </div>
 
           <figure
             aria-label="Voorbeeld van stijlrapport"
