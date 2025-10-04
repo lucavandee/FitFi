@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
+import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
 
 export default function HowItWorksPage() {
   return (
