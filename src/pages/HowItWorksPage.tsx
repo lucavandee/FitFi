@@ -1,12 +1,13 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { CircleCheck as CheckCircle, Clock, Shield } from "lucide-react";
+import { CircleCheck as CheckCircle, Clock, Shield, Target, Sparkles, Zap, ArrowRight } from "lucide-react";
 import { Button } from '@/components/ui/Button';
 import { Link } from 'react-router-dom';
 
 export default function HowItWorksPage() {
   return (
+    <>
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
       <Helmet>
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
@@ -22,7 +23,7 @@ export default function HowItWorksPage() {
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[var(--ff-color-accent-200)] to-[var(--ff-color-accent-300)] rounded-full opacity-20 blur-3xl"></div>
           </div>
 
-          <Container>
+          <div className="max-w-7xl mx-auto px-6">
             <div className="relative py-24 text-center">
               <div className="max-w-4xl mx-auto">
                 <h1 className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
@@ -51,11 +52,11 @@ export default function HowItWorksPage() {
                 </div>
               </div>
             </div>
-          </Container>
+          </div>
         </div>
 
         {/* Steps Section */}
-        <Container>
+        <div className="max-w-7xl mx-auto px-6">
           <div className="py-16">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
@@ -115,7 +116,7 @@ export default function HowItWorksPage() {
               </Button>
             </div>
           </div>
-        </Container>
+        </div>
       </div>
 
       {/* Hero Section */}
@@ -378,5 +379,6 @@ export default function HowItWorksPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
