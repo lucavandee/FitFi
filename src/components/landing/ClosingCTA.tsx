@@ -1,64 +1,64 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
-const ClosingCTA: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleStartQuiz = () => {
-    navigate('/quiz');
-  };
-
+export function ClosingCTA() {
   return (
-    <section className="py-24 bg-gradient-to-br from-emerald-600 via-teal-600 to-blue-600 relative overflow-hidden">
+    <section className="relative py-24 bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-secondary-600)] overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float-delayed"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse-slow"></div>
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-10 left-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-4xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-sm font-medium text-white/90 shadow-sm mb-8">
-            <Sparkles className="w-4 h-4" />
-            KLAAR OM TE BEGINNEN?
-          </div>
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full mb-8">
+          <Sparkles className="w-4 h-4 text-white" />
+          <span className="text-sm font-medium text-white">
+            GRATIS STIJLANALYSE
+          </span>
+        </div>
 
-          {/* Main headline */}
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-            Ontdek jouw perfecte stijl
-            <br />
-            <span className="text-white/80">binnen 2 minuten</span>
+        {/* Headline - Properly centered */}
+        <div className="space-y-6 mb-12">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+            Klaar om je stijl te ontdekken?
           </h2>
-
-          {/* Description */}
-          <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl mx-auto">
-            Krijg je persoonlijke stijlrapport met kleuren, archetype en 6-12 complete outfits. 
-            Helemaal gratis en zonder gedoe.
+          
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            Begin vandaag nog met je persoonlijke stijlreis. Binnen 2 minuten weet je precies welke kleding bij jou past.
           </p>
+        </div>
 
-          {/* CTA Button */}
-          <button
-            onClick={handleStartQuiz}
-            className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
+        {/* CTA Buttons - Centered */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Button 
+            size="lg" 
+            className="bg-white text-[var(--ff-color-primary-700)] hover:bg-white/90 px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            Start gratis stijlquiz
-            <ArrowRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
-          </button>
+            Start gratis stijltest
+            <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            size="lg"
+            className="border border-white/30 hover:border-white/50 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+          >
+            Bekijk voorbeelden
+          </Button>
+        </div>
 
-          {/* Trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-8 mt-10 text-white/70 text-sm">
-            <div>✓ 100% Gratis</div>
-            <div>✓ Geen account nodig</div>
-            <div>✓ Privacy-first</div>
-            <div>✓ Direct resultaat</div>
-          </div>
+        {/* Trust indicators */}
+        <div className="flex flex-wrap justify-center gap-8 mt-12 text-white/80">
+          <div className="text-sm">✓ 100% gratis</div>
+          <div className="text-sm">✓ Geen account vereist</div>
+          <div className="text-sm">✓ Privacy gegarandeerd</div>
+          <div className="text-sm">✓ Direct resultaat</div>
         </div>
       </div>
     </section>
   );
-};
-
-export default ClosingCTA;
+}
