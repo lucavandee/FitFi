@@ -2,7 +2,7 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import PostHeader from "@/components/blog/PostHeader";
-import posts from "@/data/blogPosts";
+import { blogPosts } from "@/data/blogPosts";
 
 /**
  * Heel lichte, veilige markdown→HTML conversie voor onze eigen contentstrings.
@@ -48,7 +48,7 @@ function mdToHtml(input: string): string {
 
 export default function BlogPostPage() {
   const { slug = "" } = useParams<{ slug: string }>();
-  const post = posts.find((p) => p.id === slug);
+  const post = blogPosts.find((p) => p.id === slug);
 
   if (!post) {
     return (
@@ -90,7 +90,7 @@ export default function BlogPostPage() {
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
             <h2 className="font-heading text-xl">Verder lezen</h2>
             <div className="mt-4 flex flex-wrap gap-3">
-              {posts.filter(p => p.id !== post.id).slice(0, 2).map((p) => (
+              {blogPosts.filter(p => p.id !== post.id).slice(0, 2).map((p) => (
                 <Link key={p.id} to={`/blog/${p.id}`} className="ff-btn ff-btn-secondary">
                   {p.title}
                 </Link>
