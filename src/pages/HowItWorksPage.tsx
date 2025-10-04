@@ -10,11 +10,6 @@ export default function HowItWorksPage() {
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
       <Helmet>
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
-        <meta
-          name="description"
-    <>
-      <Helmet>
-        <title>Hoe het werkt - FitFi.ai</title>
         <meta name="description" content="Ontdek hoe FitFi.ai jouw perfecte stijl vindt in slechts een paar stappen. Van quiz tot gepersonaliseerde outfit aanbevelingen." />
       </Helmet>
 
