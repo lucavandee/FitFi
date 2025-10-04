@@ -1,14 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Mail, ArrowRight } from 'lucide-react';
+import { Search, Filter, Calendar, User, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { blogPosts, categories, type BlogPost } from '@/data/blogPosts';
 
 const BlogPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -17,7 +17,7 @@ const BlogPage: React.FC = () => {
     return blogPosts.filter(post => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = !selectedCategory || post.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
   }, [searchTerm, selectedCategory]);
@@ -39,267 +39,215 @@ const BlogPage: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
         <title>Blog - FitFi.ai</title>
-        <meta name="description" content="Ontdek de laatste trends in mode, stijltips en persoonlijke styling. Lees onze expertartikelen over kleding, accessoires en stijladvies." />
-        <meta name="keywords" content="mode blog, stijltips, kleding advies, personal styling, fashion trends" />
+        <meta name="description" content="Ontdek de nieuwste trends, tips en inzichten over stijl en mode op de FitFi blog." />
       </Helmet>
 
-      <main className="min-h-screen bg-[var(--color-bg)]">
-        {/* Hero Section */}
-        <section className="bg-white border-b border-[var(--color-border)]">
-          <div className="ff-container py-16">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-6">
-                FitFi Blog
-              </h1>
-              <p className="text-xl text-[var(--color-text-muted)] mb-8 max-w-2xl mx-auto">
-                Ontdek de laatste trends, stijltips en expertadvies om jouw perfecte look te vinden
-              </p>
-
-              {/* Zoekbalk */}
-              <div className="relative max-w-md mx-auto mb-8">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Zoek artikelen..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
-                />
-              </div>
-
-              {/* Categorie filters */}
-              <div className="flex flex-wrap justify-center gap-3">
-                <button
-                  onClick={() => setSelectedCategory('')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    !selectedCategory
-                      ? 'bg-[var(--color-primary)] text-white'
-                      : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]'
-                  }`}
-                >
-                  Alle artikelen
-                </button>
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedCategory === category
-                        ? 'bg-[var(--color-primary)] text-white'
-                        : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+        
+        <div className="ff-container relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+              Stijl & Mode
+              <span className="block text-[var(--ff-color-primary-600)]">Inzichten</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+              Ontdek de nieuwste trends, stijltips en mode-inzichten van onze experts. 
+              Van seizoenstrends tot tijdloze stijladvies.
+            </p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Featured Article */}
+      {/* Search & Filter Section */}
+      <section className="ff-container py-12">
+        <div className="max-w-4xl mx-auto">
+          {/* Search Bar */}
+          <div className="relative max-w-2xl mx-auto mb-8">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Zoek artikelen..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-6 py-4 rounded-xl border border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-transparent text-lg shadow-sm"
+            />
+          </div>
+
+          {/* Filter chips */}
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === 'all'
+                  ? 'bg-[var(--ff-color-primary-600)] text-white'
+                  : 'bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)]'
+              }`}
+            >
+              Alle artikelen
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === category
+                    ? 'bg-[var(--ff-color-primary-600)] text-white'
+                    : 'bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)]'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Posts Grid */}
+      <section className="ff-container pb-16">
+        {/* Featured Post */}
         {featuredPost && (
-          <section className="bg-white border-b border-[var(--color-border)]">
-            <div className="ff-container py-16">
-              <div className="max-w-6xl mx-auto">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  <div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="bg-[var(--color-primary)] text-white px-3 py-1 rounded-full text-sm font-medium">
-                        Uitgelicht
-                      </span>
-                      <span className="text-[var(--color-text-muted)] text-sm">
-                        {featuredPost.category}
-                      </span>
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-4">
-                      {featuredPost.title}
-                    </h2>
-                    <p className="text-lg text-[var(--color-text-muted)] mb-6">
-                      {featuredPost.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={featuredPost.author.avatar}
-                          alt={featuredPost.author.name}
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div>
-                          <p className="font-medium text-[var(--color-text)]">
-                            {featuredPost.author.name}
-                          </p>
-                          <p className="text-sm text-[var(--color-text-muted)]">
-                            {featuredPost.date}
-                          </p>
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-[var(--color-text)] mb-8 text-center">Uitgelicht artikel</h2>
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+              <div className="md:flex">
+                <div className="md:w-1/2">
+                  <img
+                    src={featuredPost.image}
+                    alt={featuredPost.title}
+                    className="w-full h-64 md:h-80 object-cover"
+                  />
+                </div>
+                <div className="md:w-1/2 p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-sm font-medium">
+                      {featuredPost.category}
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-bold text-[var(--color-text)] mb-4 leading-tight">
+                    {featuredPost.title}
+                  </h3>
+                  <p className="text-lg text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                    {featuredPost.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={featuredPost.author.avatar}
+                        alt={featuredPost.author.name}
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div>
+                        <p className="font-medium text-[var(--color-text)]">{featuredPost.author.name}</p>
+                        <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                          <Calendar className="w-4 h-4" />
+                          <span>{featuredPost.date}</span>
                         </div>
                       </div>
-                      <span className="text-sm text-[var(--color-text-muted)]">
-                        {featuredPost.readTime}
-                      </span>
                     </div>
                     <Button
-                      onClick={() => handleReadMore(featuredPost.slug)}
-                      className="bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-600)] px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                      variant="primary"
+                      onClick={() => navigate(`/blog/${featuredPost.slug}`)}
                     >
                       Lees artikel
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
-                  </div>
-                  <div className="relative group">
-                    <img
-                      src={featuredPost.image}
-                      alt={featuredPost.title}
-                      className="w-full h-80 object-cover rounded-xl shadow-lg group-hover:shadow-xl transition-shadow"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
-        )}
-
-        {/* Blog Grid */}
-        <section className="ff-container py-16">
-          {regularPosts.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {regularPosts.map((post) => (
-                <article
-                  key={post.id}
-                  className="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden hover:shadow-lg transition-all duration-300 group"
-                >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-white/90 backdrop-blur-sm text-[var(--color-text)] px-3 py-1 rounded-full text-sm font-medium">
-                        {post.category}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-[var(--color-text)] mb-3 group-hover:text-[var(--color-primary)] transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-[var(--color-text-muted)] mb-4 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={post.author.avatar}
-                          alt={post.author.name}
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <div>
-                          <p className="text-sm font-medium text-[var(--color-text)]">
-                            {post.author.name}
-                          </p>
-                          <p className="text-xs text-[var(--color-text-muted)]">
-                            {post.date}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-xs text-[var(--color-text-muted)]">
-                        {post.readTime}
-                      </span>
-                    </div>
-                    <Button
-                      onClick={() => handleReadMore(post.slug)}
-                      className="w-full bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-border)] py-2 rounded-lg font-medium transition-colors"
-                    >
-                      Lees meer
-                    </Button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <div className="max-w-md mx-auto">
-                <Filter className="w-16 h-16 text-[var(--color-text-muted)] mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
-                  Geen artikelen gevonden
-                </h3>
-                <p className="text-[var(--color-text-muted)] mb-6">
-                  Probeer een andere zoekterm of selecteer een andere categorie.
-                </p>
-                <Button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('');
-                  }}
-                  className="bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-600)] px-6 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Toon alle artikelen
-                </Button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Newsletter Section */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-600)] to-[var(--color-primary-700)]" />
-          <div className="absolute inset-0 bg-black/10" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          
-          <div className="relative ff-container py-20">
-            <div className="max-w-2xl mx-auto text-center">
-              <Mail className="w-16 h-16 text-white mx-auto mb-6" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Blijf op de hoogte
-              </h2>
-              <p className="text-xl text-white/90 mb-8">
-                Ontvang wekelijks de nieuwste stijltips en modetrends direct in je inbox
-              </p>
-              
-              {isSubscribed ? (
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-                  <div className="flex items-center justify-center gap-3 text-white">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="font-medium">Bedankt voor je aanmelding!</span>
-                  </div>
-                </div>
-              ) : (
-                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Jouw e-mailadres"
-                    required
-                    className="flex-1 px-4 py-3 rounded-lg border-0 bg-white/10 backdrop-blur-sm text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30"
-                  />
-                  <Button
-                    type="submit"
-                    className="bg-white text-[var(--color-primary)] hover:bg-white/90 px-6 py-3 rounded-lg font-medium transition-colors whitespace-nowrap"
-                  >
-                    Aanmelden
-                  </Button>
-                </form>
-              )}
-              
-              <p className="text-sm text-white/70 mt-4">
-                Geen spam, alleen waardevolle content. Je kunt je altijd afmelden.
-              </p>
             </div>
           </div>
-        </section>
-      </main>
-    </>
+        )}
+
+        {/* Blog Posts Grid */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-[var(--color-text)] mb-8 text-center">Alle artikelen</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredPosts.map((post) => (
+              <article key={post.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-sm font-medium">
+                      {post.category}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-[var(--color-text)] mb-3 leading-tight">
+                    {post.title}
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] mb-4">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                      <User className="w-4 h-4" />
+                      <span>{post.author.name}</span>
+                      <span>•</span>
+                      <span>{post.date}</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate(`/blog/${post.slug}`)} 
+                    >
+                      Lees meer
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-800)] rounded-2xl p-12 text-center overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+          </div>
+          
+          <div className="relative">
+            <Mail className="w-12 h-12 text-white/80 mx-auto mb-6" />
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Blijf op de hoogte</h2>
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              Ontvang de nieuwste stijltips, seizoenstrends en mode-inzichten direct in je inbox
+            </p>
+            <div className="max-w-lg mx-auto flex flex-col sm:flex-row gap-4">
+              <input
+                type="email"
+                placeholder="Je e-mailadres"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 px-6 py-4 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-white/50 text-lg"
+                required
+              />
+              <Button
+                variant="secondary"
+                onClick={handleNewsletterSubmit}
+                disabled={!email}
+                className="px-6 py-4"
+              >
+                Aanmelden
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };
 
