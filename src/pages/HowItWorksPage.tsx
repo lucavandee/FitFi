@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, Target, Zap, CheckCircle } from 'lucide-react';
+import { ArrowRight, Sparkles, Target, Zap, CircleCheck as CheckCircle } from 'lucide-react';
 
 export default function HowItWorksPage() {
   return (

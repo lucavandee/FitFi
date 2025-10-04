@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Target, Heart, Users, CheckCircle, ArrowRight, Crown } from 'lucide-react';
+import { Sparkles, Target, Heart, Users, CircleCheck as CheckCircle, ArrowRight, Crown } from 'lucide-react';
 
 export default function AboutPage() {
   return (
