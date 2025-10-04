@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, CheckCircle, Shield, Clock } from 'lucide-react';
+import { Sparkles, ArrowRight, CircleCheck as CheckCircle, Shield, Clock } from 'lucide-react';
 import SmartImage from '../media/SmartImage';
 
 const Hero: React.FC = () => {
