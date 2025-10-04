@@ -1,12 +1,14 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { CircleCheck as CheckCircle, Clock, Shield } from "lucide-react";
+import { CircleCheck as CheckCircle, Clock, Shield, Target, Sparkles, Zap, ArrowRight } from "lucide-react";
 import { Button } from '@/components/ui/Button';
 import { Link } from 'react-router-dom';
+import { Container } from '@/components/ui/Container';
 
 export default function HowItWorksPage() {
   return (
+    <>
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
       <Helmet>
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
@@ -377,8 +379,7 @@ export default function HowItWorksPage() {
           </div>
         </div>
       </section>
+    </main>
     </>
-  )
-  )
   );
 }
