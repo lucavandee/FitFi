@@ -1,101 +1,156 @@
-/* src/styles/tokens.css */
-/* FitFi vNext — Light/Neutral Beige — CANONIEK */
+/* FitFi Design Tokens */
+
 :root {
-  /* Palet */
-  --color-bg: #F7F3EC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E2333;
-  --color-muted: #6B7280;
+  /* Colors - Primary Palette */
+  --color-primary: #10b981; /* emerald-500 */
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
 
-  --color-primary: #A6886A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #8F7459;   /* hover */
-  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+  /* Colors - Secondary Palette (Teal) */
+  --color-secondary: #14b8a6; /* teal-500 */
+  --color-secondary-50: #f0fdfa;
+  --color-secondary-100: #ccfbf1;
+  --color-secondary-200: #99f6e4;
+  --color-secondary-300: #5eead4;
+  --color-secondary-400: #2dd4bf;
+  --color-secondary-500: #14b8a6;
+  --color-secondary-600: #0d9488;
+  --color-secondary-700: #0f766e;
+  --color-secondary-800: #115e59;
+  --color-secondary-900: #134e4a;
 
-  --color-accent: #D8CABA;
-  --color-border: rgba(30, 35, 51, 0.08);
+  /* Colors - Accent Palette (Blue) */
+  --color-accent: #3b82f6; /* blue-500 */
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeafe;
+  --color-accent-200: #bfdbfe;
+  --color-accent-300: #93c5fd;
+  --color-accent-400: #60a5fa;
+  --color-accent-500: #3b82f6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d4ed8;
+  --color-accent-800: #1e40af;
+  --color-accent-900: #1e3a8a;
 
-  /* Status */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger:  #DC2626;
+  /* Colors - Neutral Palette */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
 
-  /* Overlays */
-  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
-  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
+  /* Semantic Colors */
+  --color-success: var(--color-primary);
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: var(--color-accent);
 
-  /* ============ TOKENS: CTA (Start gratis) ============ */
-  /* Basis warm bruin; tint/tonen voor states & surfaces */
-  --ff-cta-50:  #F6EFE9;
-  --ff-cta-100: #EEE2D7;
-  --ff-cta-200: #E2D0BF;
-  --ff-cta-300: #CEB39A;
-  --ff-cta-400: #B98F71;
-  --ff-cta-500: #9D6E52;   /* ≈ huidige Start gratis */
-  --ff-cta-600: #8A6048;   /* hover */
-  --ff-cta-700: #724E3B;   /* active/focus ring donker */
-  --ff-cta-800: #5C3E2E;
-  --ff-cta-900: #493123;
+  /* Surface Colors */
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-secondary: var(--color-gray-50);
+  --color-border: var(--color-gray-200);
+  --color-border-light: var(--color-gray-100);
 
-  /* Tekst op CTA-vlakken */
-  --ff-cta-contrast: #FFFFFF;
+  /* Text Colors */
+  --color-text: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-muted: var(--color-gray-500);
+  --color-text-inverse: #ffffff;
 
-  /* Neutrale inkt & border die mooi samengaan met CTA */
-  --ff-ink-600: #1D2430;
-  --ff-ink-500: #2B3342;
-  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
-
-  /* Accent color - matches "Start gratis" button */
-  --ff-color-accent: #9C745E;
-  --ff-color-accent-contrast: #fff;
-
-  /* Links consistent with accent */
-  --ff-link: var(--ff-color-accent);
-  --ff-link-hover: color-mix(
-    in oklab,
-    var(--ff-color-accent) 84%,
-    black 16%
-  );
-  --ff-focus: color-mix(
-    in oklab,
-    var(--ff-color-accent) 20%,
-    white 80%
-  );
-
-  /* Radii */
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-secondary-600) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--color-accent-600) 0%, var(--color-primary-600) 100%);
+  --gradient-surface: linear-gradient(135deg, var(--color-gray-50) 0%, #ffffff 100%);
 
   /* Shadows */
-  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
-  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-ring: 0 0 0 3px var(--color-primary-200);
 
-  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
-  font-synthesis-weight: none;
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Spacing Scale (8px base) */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
+
+  /* Typography */
+  --font-family-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-family-body: 'Lato', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
+
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
 }
 
-/* Basiselementen */
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Dark mode overrides (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--color-gray-900);
+    --color-surface: var(--color-gray-800);
+    --color-surface-secondary: var(--color-gray-700);
+    --color-border: var(--color-gray-700);
+    --color-border-light: var(--color-gray-600);
+    --color-text: var(--color-gray-100);
+    --color-text-secondary: var(--color-gray-300);
+    --color-text-muted: var(--color-gray-400);
+  }
 }
-
-/* Cards */
-.ff-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-}
-
-/* CTA – solid (AA) */
-.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
-.ff-cta:hover { background: var(--ff-color-primary-600); }
-
-/* Focus-ring tokenized */
-.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
-
-/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
