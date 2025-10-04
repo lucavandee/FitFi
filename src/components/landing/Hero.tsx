@@ -1,13 +1,19 @@
 // src/components/landing/Hero.tsx
-import React from "react";
-import { NavLink } from "react-router-dom";
-import SmartImage from "@/components/ui/SmartImage";
+import { Link, useNavigate } from 'react-router-dom';
+import Container from '../layout/Container';
+import SmartImage from '../media/SmartImage';
 
 /**
  * Hero sectie — opt-in polish via ff-utilities.
  * Geen gradients/overrides; we raken alleen markup/classes aan.
  */
 export default function Hero() {
+  const navigate = useNavigate();
+
+  const handleStartQuiz = () => {
+    navigate('/quiz');
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-canvas)] py-12 md:py-20">
       <div className="ff-container">
@@ -54,13 +60,13 @@ export default function Hero() {
                 src="/images/hero-highres copy.png"
                 alt="FitFi Style Report interface op iPhone met aardse tinten outfit aanbevelingen"
                 className="w-full h-auto rounded-2xl shadow-2xl"
-                loading="eager"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+            <button
+              onClick={handleStartQuiz}
               />
               
               {/* Subtle glow effect */}
               <div 
-                className="absolute inset-0 rounded-2xl opacity-20 blur-xl"
+            </button>
                 style={{
                   background: "radial-gradient(circle at center, var(--ff-color-primary-400), transparent 70%)"
                 }}

@@ -10,7 +10,7 @@ interface Testimonial {
   rating: number;
 }
 
-interface SocialProofProps {
+import Container from '../layout/Container';
   className?: string;
 }
 

@@ -23,7 +23,7 @@ const TRUST_ITEMS = [
     icon: CheckCircle2,
     label: "Geverifieerde partners",
   },
-];
+import Container from '../layout/Container';
 
 const TrustBelt: React.FC = () => {
   return (

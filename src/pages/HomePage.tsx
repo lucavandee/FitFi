@@ -3,12 +3,12 @@ import { NavLink } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 
 type Feature = { title: string; body: string };
-const FEATURES: Feature[] = [
-  { title: "AI-advies dat klopt", body: "Op basis van jouw voorkeuren geven we heldere richtlijnen voor silhouet, kleur en materiaal." },
-  { title: "Outfits zonder ruis", body: "Per situatie – werk, weekend, diner – zodat je sneller kiest en minder twijfelt." },
-  { title: "Wishlist & prijsalerts", body: "Bewaar favorieten en ontvang prijsdalingen van items die je echt wilt." },
-  { title: "Privacy eerst", body: "We vragen weinig en verkopen niets door. Je data blijft van jou." },
-];
+import Hero from '../components/landing/Hero';
+import Features from '../components/landing/Features';
+import HowItWorks from '../components/landing/HowItWorks';
+import SocialProof from '../components/landing/SocialProof';
+import TrustBelt from '../components/landing/TrustBelt';
+import ClosingCTA from '../components/landing/ClosingCTA';
 
 export default function HomePage() {
   return (
@@ -54,12 +54,12 @@ export default function HomePage() {
             <p className="mt-3 text-[var(--color-text)]/80">
               Je ontvangt een helder overzicht met kleuren die je staan, vormen die kloppen en outfits die je direct kunt dragen.
               Alles rustig uitgelegd, zonder poeha.
-            </p>
+        <meta property="og:description" content="Ontdek je perfecte stijl met FitFi's AI Style Report. Krijg binnen 3 minuten gepersonaliseerde outfit-adviezen." />
             <div className="mt-6 flex gap-3">
               <NavLink to="/results" className="ff-btn ff-btn-primary">Maak mijn rapport</NavLink>
               <NavLink to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Hoe het werkt</NavLink>
             </div>
-          </div>
+        <meta name="twitter:description" content="Ontdek je perfecte stijl met FitFi's AI Style Report." />
 
           <figure
             aria-label="Voorbeeld van stijlrapport"

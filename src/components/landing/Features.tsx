@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Target, Sparkles, Heart } from 'lucide-react';
-
+import Container from '../layout/Container';
 interface Feature {
   id: string;
   title: string;

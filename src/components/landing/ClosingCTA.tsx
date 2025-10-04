@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Clock, Shield } from 'lucide-react';
-import Button from '../ui/Button';
-
+import { useNavigate } from 'react-router-dom';
+import Container from '../layout/Container';
 interface ClosingCTAProps {
   onCTAClick?: () => void;
   className?: string;
@@ -24,6 +24,12 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
         page_location: window.location.href
       });
     }
+  };
+
+  const navigate = useNavigate();
+
+  const handleStartQuiz = () => {
+    navigate('/quiz');
   };
 
   return (
@@ -87,13 +93,13 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-lg">Privacy First</div>
-                  <div className="text-white/80 text-sm">Jouw data is veilig</div>
-                </div>
+          <button
+            onClick={handleStartQuiz}
               </div>
             </div>
             
             {/* Social Proof */}
-            <div className="mt-12 pt-8 border-t border-white/20">
+          </button>
               <div className="flex flex-wrap justify-center items-center space-x-8 text-white/80">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-white rounded-full"></div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageSquare, Brain, FileText } from 'lucide-react';
-
+import Container from '../layout/Container';
 interface Step {
   id: number;
   title: string;
