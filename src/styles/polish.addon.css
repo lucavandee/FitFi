@@ -550,6 +550,109 @@
   line-height: 1.6;
 }
 
+/* About page specific styles */
+.floating-orb-1 {
+  top: 10%;
+  right: 10%;
+  animation: float 20s ease-in-out infinite;
+}
+
+.floating-orb-2 {
+  top: 60%;
+  left: 5%;
+  animation: float 25s ease-in-out infinite reverse;
+}
+
+.floating-orb-3 {
+  bottom: 20%;
+  right: 20%;
+  animation: float 15s ease-in-out infinite;
+}
+
+.mission-card:hover .w-12 {
+  transform: scale(1.1) rotate(5deg);
+  transition: transform 0.3s ease;
+}
+
+.timeline-line {
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6, #10b981);
+}
+
+.timeline-marker {
+  position: relative;
+  z-index: 10;
+}
+
+.timeline-card {
+  background: white;
+}
+
+.stats-card:hover .text-3xl {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.cta-orb {
+  animation: rotate 30s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Pricing page enhancements */
+.pricing-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-card.featured {
+  border: 2px solid var(--color-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.pricing-card.featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.popular-badge {
+  position: absolute;
+  top: -1px;
+  right: 2rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 0.75rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.pricing-icon {
+  transition: all 0.3s ease;
+}
+
+.pricing-card:hover .pricing-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px){
   .ff-pricing-card{
@@ -1006,124 +1109,5 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-float {
     animation: none !important;
-  }
-}
-
-/* Pricing page enhancements */
-.pricing-card {
-}
-
-/* About page styling */
-.about-hero {
-  position: relative;
-  overflow: hidden;
-}
-
-.about-orb {
-  position: absolute;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(137, 207, 240, 0.3), rgba(137, 207, 240, 0.1));
-  filter: blur(40px);
-  animation: float 20s ease-in-out infinite;
-}
-
-.about-orb-1 {
-  width: 300px;
-  height: 300px;
-  top: -150px;
-  left: -150px;
-  animation-delay: 0s;
-}
-
-.about-orb-2 {
-  width: 200px;
-  height: 200px;
-  top: 50%;
-  right: -100px;
-  animation-delay: -10s;
-}
-
-.about-orb-3 {
-  width: 250px;
-  height: 250px;
-  bottom: -125px;
-  left: 20%;
-  animation-delay: -5s;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-20px) rotate(120deg);
-  }
-  66% {
-    transform: translateY(10px) rotate(240deg);
-  }
-}
-
-.mission-card {
-  transition: all 0.3s ease;
-}
-
-.mission-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.mission-card:hover .mission-icon {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.mission-icon {
-  transition: transform 0.3s ease;
-}
-
-.timeline-line {
-  background: linear-gradient(to bottom, #89CFF0, #0D1B2A);
-}
-
-.timeline-marker {
-  background: linear-gradient(135deg, #89CFF0, #0D1B2A);
-}
-
-.timeline-card {
-  transition: all 0.3s ease;
-}
-
-.timeline-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.stats-card {
-  transition: all 0.3s ease;
-}
-
-.stats-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.cta-orb {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: linear-gradient(135deg, rgba(137, 207, 240, 0.2), rgba(13, 27, 42, 0.1));
-  border-radius: 50%;
-  filter: blur(60px);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: rotate 30s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
