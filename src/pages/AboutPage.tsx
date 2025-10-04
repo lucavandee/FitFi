@@ -309,5 +309,6 @@ export default function AboutPage() {
         </Container>
       </div>
     </>
+  )
   );
 }
