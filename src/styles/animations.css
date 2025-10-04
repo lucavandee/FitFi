@@ -274,6 +274,14 @@ body {
     transform: scale(0);
     opacity: 1;
   }
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
   100% {
     transform: scale(4);
     opacity: 0;
