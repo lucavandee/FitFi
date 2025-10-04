@@ -1,12 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { Search, Calendar, User, ArrowRight, Filter } from 'lucide-react';
 import { blogPosts } from '@/data/blogPosts';
 import { Button } from '@/components/ui/Button';
 
 const BlogPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [email, setEmail] = useState('');
 
   // Get unique categories
   const categories = useMemo(() => {
@@ -24,6 +27,17 @@ const BlogPage: React.FC = () => {
     });
   }, [searchTerm, selectedCategory]);
 
+  const handleReadMore = (slug: string) => {
+    navigate(`/blog/${slug}`);
+  };
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement newsletter signup
+    console.log('Newsletter signup:', email);
+    setEmail('');
+    // Show success message
+  };
   const featuredPost = filteredPosts[0];
   const regularPosts = filteredPosts.slice(1);
 
@@ -160,7 +174,11 @@ const BlogPage: React.FC = () => {
                         className="group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all"
                       >
                         Lees meer
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <Button 
+                    variant="outline" 
+                    className="group"
+                    onClick={() => handleReadMore(featuredPost.slug)}
+                  >
                       </Button>
                     </div>
                   </div>
@@ -202,7 +220,12 @@ const BlogPage: React.FC = () => {
                       <p className="text-[var(--color-text-muted)] text-sm mb-4 line-clamp-3">
                         {post.excerpt}
                       </p>
-                      
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="group"
+                        onClick={() => handleReadMore(post.slug)}
+                      >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
                           <User className="w-3 h-3" />
@@ -227,26 +250,40 @@ const BlogPage: React.FC = () => {
         )}
       </section>
 
-      {/* Newsletter CTA */}
+        <section className="py-20 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] relative overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+          
       <section className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] py-16">
         <div className="ff-container">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-4">
+              <h2 className="text-3xl font-bold text-white mb-4">
               Blijf op de hoogte
             </h2>
-            <p className="text-white/90 mb-8">
+              <p className="text-lg text-white/90 mb-8">
               Ontvang wekelijks de nieuwste styling tips, trends en artikelen direct in je inbox.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Je e-mailadres"
-                className="flex-1 px-4 py-3 rounded-xl border-0 text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <Button className="bg-white text-[var(--color-primary)] hover:bg-white/90 font-medium px-8">
-                Aanmelden
-              </Button>
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Je e-mailadres"
+                  required
+                  className="flex-1 px-4 py-3 rounded-lg border-0 bg-white/95 backdrop-blur-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-white focus:bg-white transition-all"
+                />
+                <Button 
+                  type="submit"
+                  className="whitespace-nowrap bg-white text-[var(--ff-color-primary-700)] hover:bg-white/90 border-0 font-semibold px-6"
+                >
+                  Aanmelden
+                </Button>
+              </form>
+              <p className="text-sm text-white/70 mt-4">
+                Geen spam, alleen waardevolle content. Uitschrijven kan altijd.
+              </p>
             </div>
             
             <p className="text-white/70 text-sm mt-4">
