@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 
 export default function HowItWorksPage() {
   return (
-    <>
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
       <Helmet>
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
@@ -23,7 +22,7 @@ export default function HowItWorksPage() {
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[var(--ff-color-accent-200)] to-[var(--ff-color-accent-300)] rounded-full opacity-20 blur-3xl"></div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
             <div className="relative py-24 text-center">
               <div className="max-w-4xl mx-auto">
                 <h1 className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
@@ -56,7 +55,7 @@ export default function HowItWorksPage() {
         </div>
 
         {/* Steps Section */}
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto">
           <div className="py-16">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
@@ -379,6 +378,5 @@ export default function HowItWorksPage() {
         </div>
       </section>
     </main>
-    </>
   );
 }
