@@ -11,6 +11,8 @@ interface Testimonial {
 }
 
 import Container from '../layout/Container';
+
+interface SocialProofProps {
   className?: string;
 }
 
