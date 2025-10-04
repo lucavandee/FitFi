@@ -11,61 +11,54 @@ export default function AboutPage() {
         <meta name="description" content="Ontdek het verhaal achter FitFi en hoe wij AI-technologie gebruiken om jouw perfecte stijl te vinden." />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="relative min-h-[60vh] bg-gradient-to-br from-[var(--color-bg)] via-[var(--color-surface)] to-[var(--color-bg)] overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--color-primary)] opacity-5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-40 h-40 bg-[var(--color-accent)] opacity-5 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] opacity-3 rounded-full blur-3xl"></div>
-        </div>
-
-        <Container className="relative z-10 flex items-center min-h-[60vh]">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--color-text-secondary)] mb-8 shadow-sm">
-              <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
-              Over FitFi
-            </div>
-
-            {/* Main heading */}
-            <h1 className="text-4xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
-              Jouw perfecte stijl
-              <br />
-              <span className="text-[var(--color-primary)]">begint hier</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl text-[var(--color-text-secondary)] mb-12 max-w-3xl mx-auto leading-relaxed">
-              Wij geloven dat iedereen een unieke stijl heeft. Met AI-technologie en 
-              persoonlijke begeleiding helpen wij je jouw perfecte look te ontdekken.
-            </p>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">10K+</div>
-                <div className="text-sm text-[var(--color-text-secondary)]">Tevreden gebruikers</div>
+      <div className="min-h-screen bg-[var(--color-bg)]">
+        {/* Hero Section */}
+        <section className="relative py-20">
+          <Container>
+            <div className="text-center max-w-4xl mx-auto">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm text-[var(--color-text-muted)] mb-8">
+                <span className="text-[var(--color-primary)]">✨</span>
+                Over FitFi
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">50K+</div>
-                <div className="text-sm text-[var(--color-text-secondary)]">Outfits gecreëerd</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">98%</div>
-                <div className="text-sm text-[var(--color-text-secondary)]">Tevredenheid</div>
+
+              {/* Main heading */}
+              <h1 className="text-4xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
+                Jouw perfecte stijl
+                <br />
+                <span className="text-[var(--color-primary)]">begint hier</span>
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-xl text-[var(--color-text-secondary)] mb-12 max-w-3xl mx-auto leading-relaxed">
+                Wij geloven dat iedereen een unieke stijl heeft. Met AI-technologie en 
+                persoonlijke begeleiding helpen wij je jouw perfecte look te ontdekken.
+              </p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">10K+</div>
+                  <div className="text-sm text-[var(--color-text-secondary)]">Tevreden gebruikers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">50K+</div>
+                  <div className="text-sm text-[var(--color-text-secondary)]">Outfits gecreëerd</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[var(--color-primary)] mb-2">98%</div>
+                  <div className="text-sm text-[var(--color-text-secondary)]">Tevredenheid</div>
+                </div>
               </div>
             </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
 
-      {/* Mission Section */}
-      <section className="py-20 bg-white">
-        <Container>
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-6">
+        {/* Mission Section */}
+        <section className="py-16">
+          <Container>
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-6">
                 Onze missie
               </h2>
               <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
@@ -130,16 +123,14 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
 
-      {/* Values Section */}
-      <section className="py-20 bg-[var(--color-bg)]">
-        <Container>
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-6">
+        {/* Values Section */}
+        <section className="py-16">
+          <Container>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
                 Onze waarden
               </h2>
               <p className="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto">
@@ -187,60 +178,56 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
 
-      {/* Story Section */}
-      <section className="py-20 bg-white">
-        <Container>
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-8">
-              Ons verhaal
-            </h2>
-            <div className="prose prose-lg max-w-none text-[var(--color-text-secondary)] leading-relaxed space-y-6">
-              <p>
-                FitFi ontstond uit een simpele observatie: iedereen verdient het om zich 
-                goed te voelen in hun kleding, maar niet iedereen heeft toegang tot 
-                persoonlijk stijladvies.
-              </p>
-              <p>
-                Door de kracht van kunstmatige intelligentie te combineren met jarenlange 
-                expertise in mode en styling, hebben wij een platform gecreëerd dat 
-                persoonlijke stijladvies democratiseert.
-              </p>
-              <p>
-                Vandaag helpen wij duizenden mensen dagelijks om hun perfecte stijl te 
-                ontdekken en zich zelfverzekerder te voelen. En dit is nog maar het begin.
-              </p>
+        {/* Story Section */}
+        <section className="py-16">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-[var(--color-text)] mb-8">
+                  Ons verhaal
+                </h2>
+                <div className="prose prose-lg max-w-none text-[var(--color-text-secondary)] leading-relaxed space-y-6">
+                  <p>
+                    FitFi ontstond uit een simpele observatie: iedereen verdient het om zich 
+                    goed te voelen in hun kleding, maar niet iedereen heeft toegang tot 
+                    persoonlijk stijladvies.
+                  </p>
+                  <p>
+                    Door de kracht van kunstmatige intelligentie te combineren met jarenlange 
+                    expertise in mode en styling, hebben wij een platform gecreëerd dat 
+                    persoonlijke stijladvies democratiseert.
+                  </p>
+                  <p>
+                    Vandaag helpen wij duizenden mensen dagelijks om hun perfecte stijl te 
+                    ontdekken en zich zelfverzekerder te voelen. En dit is nog maar het begin.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
 
-      {/* CTA Section */}
-      <section className="relative py-20 bg-gradient-to-br from-[var(--color-primary)]/5 via-[var(--color-surface)] to-[var(--color-accent)]/5 overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-[var(--color-primary)] opacity-10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-[var(--color-accent)] opacity-10 rounded-full blur-3xl"></div>
-        </div>
-
-        <Container className="relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-6">
-              Klaar om jouw perfecte stijl te ontdekken?
-            </h2>
-            <p className="text-lg text-[var(--color-text-secondary)] mb-8 leading-relaxed">
-              Begin vandaag nog met onze gratis stijlanalyse en ontdek wat FitFi voor jou kan betekenen.
-            </p>
-            <button className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-semibold rounded-xl hover:bg-[var(--color-primary-hover)] transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-              <Sparkles className="w-5 h-5" />
-              Start gratis
-            </button>
-          </div>
-        </Container>
-      </section>
+        {/* CTA Section */}
+        <section className="py-20">
+          <Container>
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
+                Klaar om jouw perfecte stijl te ontdekken?
+              </h2>
+              <p className="text-lg text-[var(--color-text-secondary)] mb-8 leading-relaxed">
+                Begin vandaag nog met onze gratis stijlanalyse en ontdek wat FitFi voor jou kan betekenen.
+              </p>
+              <button className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-semibold rounded-xl hover:bg-[var(--color-primary-hover)] transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                <Sparkles className="w-5 h-5" />
+                Start gratis
+              </button>
+            </div>
+          </Container>
+        </section>
+      </div>
     </>
   );
 }
