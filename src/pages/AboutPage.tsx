@@ -1,263 +1,240 @@
 import React from 'react';
-import { Users, Target, Heart, Sparkles, CircleCheck as CheckCircle, ArrowRight } from 'lucide-react';
+import { Sparkles, Target, Heart, Users, CheckCircle, ArrowRight, Crown } from 'lucide-react';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Over FitFi: Jouw persoonlijke 
-            <span className="block">stijladviseur</span>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Exact same styling as Pricing/HowItWorks */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-blue-50 py-20">
+        {/* Floating Orbs - Same as other pages */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-pink-400/20 to-orange-400/20 rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute bottom-20 left-1/3 w-20 h-20 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-lg animate-pulse"></div>
+
+        <div className="container mx-auto px-4 text-center relative z-10">
+          {/* Premium Badge - Same styling */}
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 mb-6 shadow-sm">
+            <Heart className="w-4 h-4 text-red-500" />
+            <span className="text-sm font-medium text-gray-700">Ons Verhaal</span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-montserrat">
+            Wij maken stijl{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              toegankelijk
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Wij helpen je de perfecte outfits te vinden die bij jouw unieke stijl passen. 
-            Geen verborgen kosten, geen verrassingen.
+          
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto font-lato">
+            FitFi ontstond uit de overtuiging dat iedereen recht heeft op een stijl die bij hen past, 
+            ongeacht budget of ervaring.
           </p>
-          
-          {/* Trust indicators */}
-          <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
+
+          {/* Trust Indicators - Same styling */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mb-12">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Geen verborgen kosten</span>
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span>AI-powered styling</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Cancel anytime</span>
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span>Voor iedereen toegankelijk</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>30 dagen geld terug</span>
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span>Persoonlijk & uniek</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mission Cards */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Onze missie</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We geloven dat iedereen toegang moet hebben tot persoonlijk stijladvies
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Mission Card 1 */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
-                <Target className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Persoonlijk</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Elke stijladvies is uniek en afgestemd op jouw persoonlijke voorkeuren, 
-                lichaamsbouw en lifestyle.
-              </p>
-            </div>
-
-            {/* Mission Card 2 */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-6">
-                <Heart className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Toegankelijk</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Professioneel stijladvies hoeft niet duur te zijn. We maken het voor 
-                iedereen bereikbaar.
-              </p>
-            </div>
-
-            {/* Mission Card 3 */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Innovatief</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Door AI en machine learning te combineren met menselijke expertise 
-                leveren we de beste resultaten.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Ons verhaal</h2>
-            <p className="text-lg text-gray-600">
-              Van idee tot de toonaangevende stijlplatform van Nederland
+      {/* Mission Section - Same card styling as pricing */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 font-montserrat">
+              Onze Missie
+            </h2>
+            <p className="text-xl text-gray-600 font-lato">
+              We geloven dat de juiste kleding je zelfvertrouwen kan transformeren. 
+              Daarom hebben we FitFi gebouwd: om stijladvies democratisch te maken.
             </p>
           </div>
 
-          <div className="space-y-8">
-            {/* Timeline Item 1 */}
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-blue-600">Q1</span>
-                </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Mission Card 1 - Same styling as pricing cards */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Target className="w-6 h-6 text-white" />
               </div>
-              <div className="bg-gray-50 rounded-xl p-6 flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">2024 - De start</h3>
-                <p className="text-gray-600">
-                  FitFi werd opgericht met de missie om persoonlijk stijladvies toegankelijk 
-                  te maken voor iedereen in Nederland.
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 font-montserrat text-center">
+                Toegankelijkheid
+              </h3>
+              <p className="text-gray-600 text-center">
+                Stijladvies moet voor iedereen bereikbaar zijn, niet alleen voor mensen met een groot budget of fashionkennis.
+              </p>
             </div>
 
-            {/* Timeline Item 2 */}
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-green-600">Q2</span>
-                </div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <div className="bg-gray-50 rounded-xl p-6 flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">AI-ontwikkeling</h3>
-                <p className="text-gray-600">
-                  Ontwikkeling van onze geavanceerde AI-algoritmes voor persoonlijke 
-                  stijlanalyse en outfit-aanbevelingen.
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 font-montserrat text-center">
+                Personalisatie
+              </h3>
+              <p className="text-gray-600 text-center">
+                Elke persoon is uniek. Onze AI zorgt ervoor dat elk stijladvies perfect aansluit bij jouw persoonlijkheid en lifestyle.
+              </p>
             </div>
 
-            {/* Timeline Item 3 */}
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-purple-600">Q3</span>
-                </div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Heart className="w-6 h-6 text-white" />
               </div>
-              <div className="bg-gray-50 rounded-xl p-6 flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Platform launch</h3>
-                <p className="text-gray-600">
-                  Officiële lancering van het FitFi platform met duizenden tevreden gebruikers 
-                  in de eerste maand.
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 font-montserrat text-center">
+                Zelfvertrouwen
+              </h3>
+              <p className="text-gray-600 text-center">
+                De juiste kleding geeft je kracht. We helpen je ontdekken welke stijl jouw beste zelf naar boven brengt.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Story Timeline - Same styling approach */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 font-montserrat">
+                Ons Verhaal
+              </h2>
+              <p className="text-xl text-gray-600 font-lato">
+                Van idee tot AI-powered styling platform
+              </p>
             </div>
 
-            {/* Timeline Item 4 */}
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-orange-600">Q4</span>
+            <div className="space-y-12">
+              {/* Timeline Item 1 */}
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-1">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                      2023 Q1
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 font-montserrat">
+                      Het Begin
+                    </h3>
+                    <p className="text-gray-600">
+                      Gefrustreerd door dure personal stylists en generieke mode-apps, 
+                      besloten we een democratische oplossing te bouwen die AI gebruikt 
+                      om persoonlijk stijladvies toegankelijk te maken.
+                    </p>
+                  </div>
+                </div>
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold">1</span>
                 </div>
               </div>
-              <div className="bg-gray-50 rounded-xl p-6 flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Groei & innovatie</h3>
-                <p className="text-gray-600">
-                  Uitbreiding van ons team en doorontwikkeling van nieuwe features 
-                  gebaseerd op gebruikersfeedback.
-                </p>
+
+              {/* Timeline Item 2 */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-8">
+                <div className="flex-1">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                      2023 Q3
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 font-montserrat">
+                      AI Ontwikkeling
+                    </h3>
+                    <p className="text-gray-600">
+                      Maanden van onderzoek naar stijlarchetypen, kleurtheorie en pasvorm 
+                      resulteerden in ons eerste AI-model dat persoonlijke stijlprofielen 
+                      kon genereren.
+                    </p>
+                  </div>
+                </div>
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold">2</span>
+                </div>
+              </div>
+
+              {/* Timeline Item 3 */}
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-1">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                      2024 Q1
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 font-montserrat">
+                      Platform Launch
+                    </h3>
+                    <p className="text-gray-600">
+                      FitFi ging live met onze eerste versie. Duizenden gebruikers 
+                      ontdekten hun persoonlijke stijl en gaven ons waardevolle feedback 
+                      om het platform te verbeteren.
+                    </p>
+                  </div>
+                </div>
+                <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold">3</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
+      {/* Stats Section - Same styling as other pages */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 font-montserrat">
+              FitFi in Cijfers
+            </h2>
+            <p className="text-xl text-gray-600 font-lato">
+              Samen maken we stijl toegankelijk voor iedereen
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-4 gap-8">
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="text-3xl font-bold text-gray-900 mb-2">10K+</div>
-              <div className="text-gray-600">Tevreden gebruikers</div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 text-center">
+              <div className="text-4xl font-bold text-gray-900 mb-2 font-montserrat">10K+</div>
+              <div className="text-gray-600">Gebruikers</div>
             </div>
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="text-3xl font-bold text-gray-900 mb-2">50K+</div>
-              <div className="text-gray-600">Outfits gecreëerd</div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 text-center">
+              <div className="text-4xl font-bold text-gray-900 mb-2 font-montserrat">50K+</div>
+              <div className="text-gray-600">Outfits Gegenereerd</div>
             </div>
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="text-3xl font-bold text-gray-900 mb-2">98%</div>
-              <div className="text-gray-600">Tevredenheidscore</div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 text-center">
+              <div className="text-4xl font-bold text-gray-900 mb-2 font-montserrat">95%</div>
+              <div className="text-gray-600">Tevredenheid</div>
             </div>
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="text-3xl font-bold text-gray-900 mb-2">24/7</div>
-              <div className="text-gray-600">AI-ondersteuning</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Values */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Onze waarden</h2>
-            <p className="text-lg text-gray-600">
-              De principes die ons dagelijks werk sturen
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-gray-50 rounded-xl p-8">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Klantgericht</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Alles wat we doen, doen we met onze klanten in gedachten. Hun succes is ons succes.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-8">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-6">
-                <Target className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Kwaliteit</h3>
-              <p className="text-gray-600 leading-relaxed">
-                We streven naar perfectie in alles wat we leveren, van onze AI-algoritmes tot onze klantenservice.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-8">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Innovatie</h3>
-              <p className="text-gray-600 leading-relaxed">
-                We blijven vooroplopen door constant te innoveren en nieuwe technologieën te omarmen.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-8">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-6">
-                <Heart className="w-6 h-6 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Transparantie</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Eerlijkheid en openheid staan centraal in onze communicatie met klanten en partners.
-              </p>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 text-center">
+              <div className="text-4xl font-bold text-gray-900 mb-2 font-montserrat">24/7</div>
+              <div className="text-gray-600">Beschikbaar</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+      {/* CTA Section - Same styling as HowItWorks */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 font-montserrat">
             Klaar om je stijl te ontdekken?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Begin vandaag nog met je persoonlijke stijlreis. Gratis te proberen, 
-            geen verplichtingen.
+            Sluit je aan bij duizenden anderen die hun perfecte stijl hebben gevonden met FitFi.
           </p>
-          
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center gap-2">
-              Start je stijlquiz
+            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-8 rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all inline-flex items-center gap-2">
+              Start Gratis Quiz
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="border border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">
-              Bekijk prijzen
+            <button className="bg-white border border-gray-200 text-gray-900 py-3 px-8 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+              Lees Meer
             </button>
           </div>
         </div>

@@ -1,285 +1,206 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
-import { NavLink } from "react-router-dom";
-import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
+import React from 'react';
+import { ArrowRight, Sparkles, Target, Zap, CheckCircle } from 'lucide-react';
 
 export default function HowItWorksPage() {
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
-      <Helmet>
-        <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
-        <meta
-          name="description"
-          content="Ontdek hoe FitFi in 3 eenvoudige stappen jouw persoonlijke AI Style Report maakt. Van quiz tot outfits in 2 minuten."
-        />
-      </Helmet>
-
-      {/* Background Orbs */}
-      <div className="ff-bg-orbs" aria-hidden="true">
-        <div className="ff-orb ff-orb-1"></div>
-        <div className="ff-orb ff-orb-2"></div>
-        <div className="ff-orb ff-orb-3"></div>
-      </div>
-
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="ff-hero-section">
-        <div className="ff-container--home">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="ff-premium-badge">
-              <Sparkles className="w-4 h-4" />
-              <span>AI-POWERED STYLING</span>
-            </div>
-            
-            <h1 className="ff-hero-title mt-6">
-              Zo werkt jouw{" "}
-              <span className="ff-gradient-text">AI Style Report</span>
-            </h1>
-            
-            <p className="ff-hero-sub mt-6 max-w-2xl mx-auto">
-              In 3 eenvoudige stappen van persoonlijkheidsquiz naar gepersonaliseerde outfits. 
-              Geen gedoe, wel resultaat.
-            </p>
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-blue-50 py-20">
+        {/* Floating Orbs */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-pink-400/20 to-orange-400/20 rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute bottom-20 left-1/3 w-20 h-20 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-lg animate-pulse"></div>
 
-            <div className="ff-trust-indicators mt-8">
-              <div className="ff-trust-item">
-                <Clock className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>2 minuten</span>
-              </div>
-              <div className="ff-trust-item">
-                <Shield className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>100% Privacy</span>
-              </div>
-              <div className="ff-trust-item">
-                <Target className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>Persoonlijk</span>
-              </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          {/* Premium Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 mb-6 shadow-sm">
+            <Sparkles className="w-4 h-4 text-blue-500" />
+            <span className="text-sm font-medium text-gray-700">AI-Powered Styling</span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-montserrat">
+            Zo werkt jouw{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              persoonlijke stylist
+            </span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto font-lato">
+            In slechts 3 stappen naar outfits die perfect bij jou passen. Geen gedoe, wel resultaat.
+          </p>
+
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mb-12">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span>2 minuten quiz</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span>AI-powered matching</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span>Instant resultaten</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Steps Section */}
-      <section className="ff-section py-20">
-        <div className="ff-container--home">
-          <div className="ff-steps-grid">
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
             
             {/* Step 1 */}
-            <div className="ff-step-card" data-step="1">
-              <div className="ff-step-visual">
-                <div className="ff-step-icon">
-                  <Target className="w-8 h-8" />
+            <div className="flex flex-col md:flex-row items-center gap-12 mb-20">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                  <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                  Stap 1
                 </div>
-                <div className="ff-step-number">01</div>
-              </div>
-              
-              <div className="ff-step-content">
-                <h3 className="ff-step-title">Persoonlijkheidsquiz</h3>
-                <p className="ff-step-description">
-                  Beantwoord 8-12 vragen over je lifestyle, voorkeuren en persoonlijkheid. 
+                <h2 className="text-3xl font-bold text-gray-900 mb-4 font-montserrat">
+                  Vertel ons over jezelf
+                </h2>
+                <p className="text-gray-600 mb-6 text-lg">
+                  Beantwoord onze slimme quiz over je stijlvoorkeuren, lichaamsbouw en lifestyle. 
                   Onze AI analyseert je antwoorden om je unieke stijlprofiel te bepalen.
                 </p>
-                
-                <div className="ff-step-features">
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Geen foto's nodig</span>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Persoonlijke stijlvoorkeuren</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Lichaamsbouw analyse</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Lifestyle matching</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex-1">
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 shadow-sm">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Target className="w-8 h-8 text-white" />
                   </div>
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Privacy-vriendelijk</span>
-                  </div>
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>90 seconden</span>
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Quiz Interface</h3>
+                    <p className="text-gray-600">Intuïtieve vragen die je stijl ontrafelen</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="ff-step-card" data-step="2">
-              <div className="ff-step-visual">
-                <div className="ff-step-icon">
-                  <Zap className="w-8 h-8" />
+            <div className="flex flex-col md:flex-row-reverse items-center gap-12 mb-20">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                  <span className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                  Stap 2
                 </div>
-                <div className="ff-step-number">02</div>
-              </div>
-              
-              <div className="ff-step-content">
-                <h3 className="ff-step-title">AI Analyse</h3>
-                <p className="ff-step-description">
-                  Onze geavanceerde AI combineert je antwoorden met stijldata van duizenden outfits 
-                  om jouw perfecte stijlarchetype en kleurenpalet te bepalen.
+                <h2 className="text-3xl font-bold text-gray-900 mb-4 font-montserrat">
+                  AI analyseert je profiel
+                </h2>
+                <p className="text-gray-600 mb-6 text-lg">
+                  Onze geavanceerde AI verwerkt je antwoorden en matcht deze met duizenden 
+                  stijlcombinaties om jouw perfecte archetype te vinden.
                 </p>
-                
-                <div className="ff-step-features">
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Geavanceerde algoritmes</span>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Machine learning algoritmes</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Stijl archetype bepaling</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Kleur- en pasvorm analyse</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex-1">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 shadow-sm">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Zap className="w-8 h-8 text-white" />
                   </div>
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Realtime processing</span>
-                  </div>
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>30 seconden</span>
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">AI Processing</h3>
+                    <p className="text-gray-600">Geavanceerde algoritmes aan het werk</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="ff-step-card" data-step="3">
-              <div className="ff-step-visual">
-                <div className="ff-step-icon">
-                  <Sparkles className="w-8 h-8" />
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                  <span className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                  Stap 3
                 </div>
-                <div className="ff-step-number">03</div>
-              </div>
-              
-              <div className="ff-step-content">
-                <h3 className="ff-step-title">Jouw Style Report</h3>
-                <p className="ff-step-description">
-                  Ontvang direct je persoonlijke rapport met stijlarchetype, kleurenpalet, 
-                  6-12 complete outfits en uitleg waarom elk item bij je past.
+                <h2 className="text-3xl font-bold text-gray-900 mb-4 font-montserrat">
+                  Ontvang je outfits
+                </h2>
+                <p className="text-gray-600 mb-6 text-lg">
+                  Krijg direct toegang tot gepersonaliseerde outfit suggesties die perfect 
+                  bij jouw stijl, budget en gelegenheden passen.
                 </p>
-                
-                <div className="ff-step-features">
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>6-12 complete outfits</span>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Gepersonaliseerde outfits</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Directe shopping links</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700">Styling tips & uitleg</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex-1">
+                <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 shadow-sm">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Sparkles className="w-8 h-8 text-white" />
                   </div>
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Directe shoplinks</span>
-                  </div>
-                  <div className="ff-feature-item">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Uitleg per item</span>
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Outfit Results</h3>
+                    <p className="text-gray-600">Jouw perfecte stijl, klaar om te shoppen</p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What You Get Section */}
-      <section className="ff-section py-20 bg-gradient-to-b from-transparent to-[var(--color-surface)]/30">
-        <div className="ff-container--home">
-          <div className="text-center mb-16">
-            <h2 className="ff-section-title">
-              Wat krijg je in je{" "}
-              <span className="ff-gradient-text">Style Report</span>?
-            </h2>
-            <p className="ff-section-subtitle mt-4">
-              Een compleet overzicht van jouw unieke stijl en hoe je die kunt toepassen
-            </p>
-          </div>
-
-          <div className="ff-benefits-grid">
-            <div className="ff-benefit-card">
-              <div className="ff-benefit-icon">
-                <Target className="w-6 h-6" />
-              </div>
-              <h3>Stijlarchetype</h3>
-              <p>Je unieke stijlpersoonlijkheid met uitgebreide uitleg over wat dit betekent voor je kledingkeuzes.</p>
-            </div>
-
-            <div className="ff-benefit-card">
-              <div className="ff-benefit-icon">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)]"></div>
-              </div>
-              <h3>Kleurenpalet</h3>
-              <p>Jouw perfecte kleuren die je huid laten stralen en je persoonlijkheid versterken.</p>
-            </div>
-
-            <div className="ff-benefit-card">
-              <div className="ff-benefit-icon">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <h3>Complete Outfits</h3>
-              <p>6-12 volledige looks voor verschillende gelegenheden, van casual tot formeel.</p>
-            </div>
-
-            <div className="ff-benefit-card">
-              <div className="ff-benefit-icon">
-                <CheckCircle className="w-6 h-6" />
-              </div>
-              <h3>Shoplinks</h3>
-              <p>Directe links naar alle items zodat je meteen kunt shoppen wat bij je past.</p>
-            </div>
-
-            <div className="ff-benefit-card">
-              <div className="ff-benefit-icon">
-                <Zap className="w-6 h-6" />
-              </div>
-              <h3>Styling Tips</h3>
-              <p>Praktische tips over hoe je items combineert en je stijl verder ontwikkelt.</p>
-            </div>
-
-            <div className="ff-benefit-card">
-              <div className="ff-benefit-icon">
-                <Shield className="w-6 h-6" />
-              </div>
-              <h3>Privacy-First</h3>
-              <p>Geen foto's nodig, geen persoonlijke data opgeslagen. Jouw privacy staat voorop.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="ff-section py-20">
-        <div className="ff-container--home">
-          <div className="ff-final-cta">
-            <div className="ff-cta-content">
-              <h2 className="ff-cta-title">
-                Klaar voor jouw{" "}
-                <span className="ff-gradient-text">Style Report</span>?
-              </h2>
-              <p className="ff-cta-subtitle">
-                Start nu en ontdek binnen 2 minuten welke stijl perfect bij je past.
-              </p>
-              
-              <div className="ff-cta-buttons">
-                <NavLink 
-                  to="/onboarding" 
-                  className="ff-btn ff-btn-primary ff-btn-shimmer"
-                  data-event="cta_start_free_how_it_works"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Start gratis Style Report
-                </NavLink>
-                
-                <NavLink 
-                  to="/results" 
-                  className="ff-btn ff-btn-secondary"
-                  data-event="cta_view_example_how_it_works"
-                >
-                  Bekijk voorbeeldrapport
-                </NavLink>
-              </div>
-
-              <div className="ff-cta-trust mt-8">
-                <div className="ff-trust-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>100% Gratis</span>
-                </div>
-                <div className="ff-trust-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Geen account nodig</span>
-                </div>
-                <div className="ff-trust-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Direct resultaat</span>
-                </div>
-              </div>
-            </div>
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 font-montserrat">
+            Klaar om je stijl te ontdekken?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Start vandaag nog met onze gratis quiz en ontdek outfits die perfect bij jou passen.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-8 rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all inline-flex items-center gap-2">
+              Start Gratis Quiz
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <button className="bg-white border border-gray-200 text-gray-900 py-3 px-8 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+              Bekijk Voorbeelden
+            </button>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

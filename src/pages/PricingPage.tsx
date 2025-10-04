@@ -1,296 +1,180 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
-import { NavLink } from "react-router-dom";
-import { Check, Star, Zap, Crown, Sparkles } from "lucide-react";
+import React from 'react';
+import { Check, Crown, Sparkles, Star } from 'lucide-react';
 
 export default function PricingPage() {
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
-      <Helmet>
-        <title>Prijzen – FitFi AI Style Reports</title>
-        <meta
-          name="description"
-          content="Kies het plan dat bij je past. Gratis AI Style Report of Premium met uitgebreide features. Transparante prijzen, geen verborgen kosten."
-        />
-      </Helmet>
-
-      {/* Background Orbs */}
-      <div className="ff-bg-orbs" aria-hidden="true">
-        <div className="ff-orb ff-orb-1"></div>
-        <div className="ff-orb ff-orb-2"></div>
-        <div className="ff-orb ff-orb-3"></div>
-      </div>
-
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="ff-pricing-hero">
-        <div className="ff-container--home">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="ff-premium-badge mb-6">
-              <Sparkles className="w-4 h-4" />
-              <span>TRANSPARANTE PRIJZEN</span>
-            </div>
-            
-            <h1 className="ff-pricing-title mb-6">
-              Kies het plan dat bij <span className="ff-gradient-text">jouw stijl</span> past
-            </h1>
-            
-            <p className="ff-pricing-subtitle mb-8">
-              Begin gratis en upgrade wanneer je meer wilt. Geen verborgen kosten, geen verrassingen.
-            </p>
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-blue-50 py-20">
+        {/* Floating Orbs */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-pink-400/20 to-orange-400/20 rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute bottom-20 left-1/3 w-20 h-20 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-lg animate-pulse"></div>
 
-            {/* Trust Indicators */}
-            <div className="ff-trust-indicators">
-              <div className="ff-trust-item">
-                <Check className="w-4 h-4 text-green-500" />
-                <span>Geen verborgen kosten</span>
-              </div>
-              <div className="ff-trust-item">
-                <Check className="w-4 h-4 text-green-500" />
-                <span>Cancel anytime</span>
-              </div>
-              <div className="ff-trust-item">
-                <Check className="w-4 h-4 text-green-500" />
-                <span>30 dagen geld terug</span>
-              </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          {/* Premium Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 mb-6 shadow-sm">
+            <Crown className="w-4 h-4 text-yellow-500" />
+            <span className="text-sm font-medium text-gray-700">Premium AI Styling</span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-montserrat">
+            Kies het plan dat bij jouw{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              stijl past
+            </span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto font-lato">
+            Begin gratis en upgrade wanneer je meer wilt. Geen verborgen kosten, geen verrassingen.
+          </p>
+
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mb-12">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" />
+              <span>Geen verborgen kosten</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" />
+              <span>Cancel anytime</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" />
+              <span>30 dagen geld terug</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Pricing Cards */}
-      <section className="ff-section py-16">
-        <div className="ff-container--home">
-          <div className="ff-pricing-grid">
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             
-            {/* Free Plan */}
-            <div className="ff-pricing-card">
-              <div className="ff-pricing-card-header">
-                <div className="ff-pricing-icon">
-                  <Star className="w-6 h-6" />
+            {/* Gratis Plan */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="text-center mb-8">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="w-6 h-6 text-gray-600" />
                 </div>
-                <h3 className="ff-pricing-plan-name">Gratis</h3>
-                <p className="ff-pricing-plan-desc">Perfect om te beginnen</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-montserrat">Gratis</h3>
+                <p className="text-gray-600 mb-6">Perfect om te beginnen</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-gray-900">€0</span>
+                  <span className="text-gray-600">/maand</span>
+                </div>
               </div>
-              
-              <div className="ff-pricing-price">
-                <span className="ff-price-amount">€0</span>
-                <span className="ff-price-period">/maand</span>
-              </div>
-              
-              <ul className="ff-pricing-features">
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>1 AI Style Report</span>
+
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">1 AI Style Report</span>
                 </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Basis archetype analyse</span>
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Basis archetype analyse</span>
                 </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>6 outfit suggesties</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Kleur aanbevelingen</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Email support</span>
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">6 outfit suggesties</span>
                 </li>
               </ul>
-              
-              <NavLink 
-                to="/onboarding" 
-                className="ff-btn ff-btn-secondary w-full"
-                data-event="cta_start_free_pricing"
-              >
-                Start gratis
-              </NavLink>
+
+              <button className="w-full bg-gray-900 text-white py-3 px-6 rounded-xl font-medium hover:bg-gray-800 transition-colors">
+                Start Gratis
+              </button>
             </div>
 
             {/* Premium Plan */}
-            <div className="ff-pricing-card ff-pricing-card-featured">
-              <div className="ff-popular-badge">
-                <Crown className="w-4 h-4" />
-                <span>POPULAIR</span>
-              </div>
-              
-              <div className="ff-pricing-card-header">
-                <div className="ff-pricing-icon ff-pricing-icon-premium">
-                  <Zap className="w-6 h-6" />
+            <div className="bg-white border-2 border-blue-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative">
+              {/* Popular Badge */}
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  <Crown className="w-4 h-4 inline mr-1" />
+                  POPULAIR
                 </div>
-                <h3 className="ff-pricing-plan-name">Premium</h3>
-                <p className="ff-pricing-plan-desc">Voor de stijlbewuste</p>
               </div>
-              
-              <div className="ff-pricing-price">
-                <span className="ff-price-amount">€9,99</span>
-                <span className="ff-price-period">/maand</span>
+
+              <div className="text-center mb-8">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-montserrat">Premium</h3>
+                <p className="text-gray-600 mb-6">Voor de stijlbewuste</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-gray-900">€9,99</span>
+                  <span className="text-gray-600">/maand</span>
+                </div>
               </div>
-              
-              <ul className="ff-pricing-features">
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Onbeperkte AI Style Reports</span>
+
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Onbeperkte AI Style Reports</span>
                 </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Uitgebreide archetype analyse</span>
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Uitgebreide archetype analyse</span>
                 </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>12+ outfit suggesties</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Seizoen specifieke looks</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Nova AI Chat assistent</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Outfit opslaan & delen</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Priority support</span>
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">12+ outfit suggesties</span>
                 </li>
               </ul>
-              
-              <NavLink 
-                to="/register" 
-                className="ff-btn ff-btn-primary w-full ff-shimmer-btn"
-                data-event="cta_upgrade_premium_pricing"
-              >
+
+              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all">
                 Upgrade naar Premium
-              </NavLink>
+              </button>
             </div>
 
             {/* Founder Plan */}
-            <div className="ff-pricing-card">
-              <div className="ff-pricing-card-header">
-                <div className="ff-pricing-icon ff-pricing-icon-founder">
-                  <Crown className="w-6 h-6" />
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="text-center mb-8">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Crown className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="ff-pricing-plan-name">Founder</h3>
-                <p className="ff-pricing-plan-desc">Lifetime access</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-montserrat">Founder</h3>
+                <p className="text-gray-600 mb-6">Lifetime access</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-gray-900">€199</span>
+                  <span className="text-gray-600">eenmalig</span>
+                </div>
               </div>
-              
-              <div className="ff-pricing-price">
-                <span className="ff-price-amount">€199</span>
-                <span className="ff-price-period">eenmalig</span>
-              </div>
-              
-              <ul className="ff-pricing-features">
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Alles van Premium</span>
+
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Alles van Premium</span>
                 </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Lifetime toegang</span>
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Lifetime toegang</span>
                 </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Exclusieve features</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Founder badge</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Direct line support</span>
-                </li>
-                <li>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Early access nieuwe features</span>
+                <li className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Exclusieve features</span>
                 </li>
               </ul>
-              
-              <NavLink 
-                to="/register?plan=founder" 
-                className="ff-btn ff-btn-secondary w-full"
-                data-event="cta_founder_pricing"
-              >
+
+              <button className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 px-6 rounded-xl font-medium hover:from-yellow-600 hover:to-orange-600 transition-all">
                 Word Founder
-              </NavLink>
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="ff-section py-16">
-        <div className="ff-container--home">
-          <div className="ff-pricing-faq">
-            <div className="text-center mb-12">
-              <h2 className="ff-section-title mb-4">Veelgestelde vragen</h2>
-              <p className="ff-section-subtitle">
-                Alles wat je wilt weten over onze prijzen en plannen.
-              </p>
-            </div>
-            
-            <div className="ff-faq-grid">
-              <details className="ff-faq-item">
-                <summary>Kan ik altijd cancellen?</summary>
-                <p>Ja, je kunt altijd je abonnement cancellen. Er zijn geen verborgen kosten of cancellation fees.</p>
-              </details>
-              
-              <details className="ff-faq-item">
-                <summary>Wat gebeurt er na de gratis trial?</summary>
-                <p>Na je gratis Style Report kun je kiezen om te upgraden naar Premium voor meer features, of gewoon gratis blijven gebruiken.</p>
-              </details>
-              
-              <details className="ff-faq-item">
-                <summary>Is er een geld-terug-garantie?</summary>
-                <p>Ja, we bieden een 30-dagen geld-terug-garantie op alle betaalde plannen. Niet tevreden? Geld terug.</p>
-              </details>
-              
-              <details className="ff-faq-item">
-                <summary>Wat is het verschil tussen Premium en Founder?</summary>
-                <p>Founder is een eenmalige betaling voor lifetime toegang tot alle Premium features, plus exclusieve founder benefits.</p>
-              </details>
-            </div>
-          </div>
+      {/* FAQ Teaser */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 font-montserrat">Nog vragen?</h2>
+          <p className="text-gray-600 mb-8">We helpen je graag verder</p>
+          <button className="bg-white border border-gray-200 text-gray-900 py-3 px-6 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+            Bekijk FAQ
+          </button>
         </div>
       </section>
-
-      {/* Final CTA */}
-      <section className="ff-section py-20">
-        <div className="ff-container--home">
-          <div className="ff-final-cta">
-            <div className="ff-cta-orb" aria-hidden="true"></div>
-            <div className="text-center relative z-10">
-              <h2 className="ff-cta-title mb-4">
-                Klaar om je <span className="ff-gradient-text">perfecte stijl</span> te ontdekken?
-              </h2>
-              <p className="ff-cta-subtitle mb-8">
-                Begin vandaag nog met je gratis AI Style Report. Geen creditcard vereist.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <NavLink 
-                  to="/onboarding" 
-                  className="ff-btn ff-btn-primary ff-shimmer-btn"
-                  data-event="cta_start_free_pricing_final"
-                >
-                  Start gratis Style Report
-                </NavLink>
-                <NavLink 
-                  to="/hoe-het-werkt" 
-                  className="ff-btn ff-btn-secondary"
-                  data-event="cta_how_it_works_pricing"
-                >
-                  Hoe het werkt
-                </NavLink>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    </div>
   );
 }
