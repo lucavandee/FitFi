@@ -1,121 +1,24 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { CircleCheck as CheckCircle, Clock, Shield, Target, Sparkles, Zap, ArrowRight } from "lucide-react";
-import { Button } from '@/components/ui/Button';
-import { Link } from 'react-router-dom';
+import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
 
 export default function HowItWorksPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
       <Helmet>
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
-        <meta name="description" content="Ontdek hoe FitFi.ai jouw perfecte stijl vindt in slechts een paar stappen. Van quiz tot gepersonaliseerde outfit aanbevelingen." />
+        <meta
+          name="description"
+          content="Ontdek hoe FitFi in 3 eenvoudige stappen jouw persoonlijke AI Style Report maakt. Van quiz tot outfits in 2 minuten."
+        />
       </Helmet>
 
-      <div className="min-h-screen bg-[var(--color-bg)]">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[var(--color-bg)] via-[var(--color-surface)] to-[var(--color-bg)]">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[var(--ff-color-primary-200)] to-[var(--ff-color-primary-300)] rounded-full opacity-20 blur-3xl"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[var(--ff-color-accent-200)] to-[var(--ff-color-accent-300)] rounded-full opacity-20 blur-3xl"></div>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="relative py-24 text-center">
-              <div className="max-w-4xl mx-auto">
-                <h1 className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
-                  Hoe het <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">werkt</span>
-                </h1>
-                <p className="text-xl text-[var(--color-text-muted)] mb-8 leading-relaxed max-w-2xl mx-auto">
-                  Ontdek hoe FitFi.ai jouw perfecte stijl vindt in slechts een paar stappen.
-                  Van quiz tot gepersonaliseerde outfit aanbevelingen.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    as={Link} 
-                    to="/quiz" 
-                    className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
-                  >
-                    Start gratis <ArrowRight className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    as={Link} 
-                    to="/results" 
-                    variant="ghost"
-                    className="border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:bg-[var(--color-surface)]"
-                  >
-                    Bekijk voorbeelden
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Steps Section */}
-        <div className="max-w-6xl mx-auto">
-          <div className="py-16">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
-                In 3 eenvoudige stappen naar jouw perfecte stijl
-              </h2>
-              <p className="text-lg text-[var(--color-text-muted)] max-w-2xl mx-auto">
-                Ons AI-systeem analyseert jouw voorkeuren en creëert gepersonaliseerde outfit aanbevelingen
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Target className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-[var(--color-text)] mb-3">1. Stijlquiz</h3>
-                <p className="text-[var(--color-text-muted)] leading-relaxed">
-                  Beantwoord vragen over jouw stijlvoorkeuren, lichaamsbouw en lifestyle om jouw unieke profiel te creëren.
-                </p>
-              </div>
-
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-600)] rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Sparkles className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-[var(--color-text)] mb-3">2. AI Analyse</h3>
-                <p className="text-[var(--color-text-muted)] leading-relaxed">
-                  Onze geavanceerde AI analyseert jouw antwoorden en matcht deze met duizenden stijlcombinaties.
-                </p>
-              </div>
-
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-[var(--color-text)] mb-3">3. Gepersonaliseerde Outfits</h3>
-                <p className="text-[var(--color-text-muted)] leading-relaxed">
-                  Ontvang direct jouw gepersonaliseerde outfit aanbevelingen met shoppable links naar jouw favoriete winkels.
-                </p>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="text-center bg-gradient-to-r from-[var(--color-surface)] to-[var(--color-bg)] rounded-2xl p-12 border border-[var(--color-border)]">
-              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-4">
-                Klaar om jouw perfecte stijl te ontdekken?
-              </h3>
-              <p className="text-[var(--color-text-muted)] mb-8 max-w-xl mx-auto">
-                Start vandaag nog met onze gratis stijlquiz en ontvang binnen enkele minuten jouw gepersonaliseerde outfit aanbevelingen.
-              </p>
-              <Button 
-                as={Link} 
-                to="/quiz" 
-                className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg inline-flex items-center gap-2"
-              >
-                Start gratis quiz <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Background Orbs */}
+      <div className="ff-bg-orbs" aria-hidden="true">
+        <div className="ff-orb ff-orb-1"></div>
+        <div className="ff-orb ff-orb-2"></div>
+        <div className="ff-orb ff-orb-3"></div>
       </div>
 
       {/* Hero Section */}
