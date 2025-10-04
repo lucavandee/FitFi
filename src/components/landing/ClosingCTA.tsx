@@ -119,6 +119,7 @@ const ClosingCTA: React.FC<ClosingCTAProps> = ({ onCTAClick, className = '' }) =
         </div>
       </div>
     </section>
+  )
   );
 };
 
