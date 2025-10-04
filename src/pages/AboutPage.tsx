@@ -1,12 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Helmet } from 'react-helmet-async';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, Heart, Users, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
-import { Heart, TrendingUp, Sparkles } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -312,7 +309,5 @@ export default function AboutPage() {
         </Container>
       </div>
     </>
-    </main>
-  )
   );
 }
