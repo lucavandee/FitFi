@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle, Shield, Clock } from 'lucide-react';
+import { ArrowRight, Sparkles, CircleCheck as CheckCircle, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export function Hero() {
