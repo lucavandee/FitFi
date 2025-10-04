@@ -1,9 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Check, Star, Zap, Crown, Sparkles, ArrowRight } from "lucide-react";
-import { Button } from '@/components/ui/Button';
-import { Link } from 'react-router-dom';
+import { Check, Star, Zap, Crown, Sparkles } from "lucide-react";
 
 export default function PricingPage() {
   return (
@@ -12,174 +10,15 @@ export default function PricingPage() {
         <title>Prijzen – FitFi AI Style Reports</title>
         <meta
           name="description"
-          content="Kies het plan dat bij jou past. Altijd transparant, geen verborgen kosten. Start gratis of upgrade naar Premium voor meer functies."
+          content="Kies het plan dat bij je past. Gratis AI Style Report of Premium met uitgebreide features. Transparante prijzen, geen verborgen kosten."
         />
       </Helmet>
-    <>
 
-      <div className="min-h-screen bg-[var(--color-bg)]">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[var(--color-bg)] via-[var(--color-surface)] to-[var(--color-bg)]">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[var(--ff-color-primary-200)] to-[var(--ff-color-primary-300)] rounded-full opacity-20 blur-3xl"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[var(--ff-color-accent-200)] to-[var(--ff-color-accent-300)] rounded-full opacity-20 blur-3xl"></div>
-          </div>
-
-          <Container>
-            <div className="relative py-24 text-center">
-              <div className="max-w-4xl mx-auto">
-                <h1 className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight">
-                  Eenvoudige <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Prijzen</span>
-                </h1>
-                <p className="text-xl text-[var(--color-text-muted)] mb-8 leading-relaxed max-w-2xl mx-auto">
-                  Kies het plan dat bij jou past. Altijd transparant, geen verborgen kosten.
-                  Start gratis of upgrade naar Premium voor meer functies.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    as={Link} 
-                    to="/quiz" 
-                    className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
-                  >
-                    Start gratis <ArrowRight className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    as={Link} 
-                    to="/results" 
-                    variant="ghost"
-                    className="border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:bg-[var(--color-surface)]"
-                  >
-                    Bekijk voorbeelden
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </div>
-
-        {/* Pricing Cards */}
-        <Container>
-          <div className="py-16">
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Free Plan */}
-              <div className="bg-[var(--color-surface)] rounded-2xl p-8 border border-[var(--color-border)] hover:shadow-lg transition-all duration-300">
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-[var(--color-text)] mb-2">Gratis</h3>
-                  <div className="text-4xl font-bold text-[var(--color-text)] mb-2">€0</div>
-                  <p className="text-[var(--color-text-muted)]">Voor altijd gratis</p>
-                </div>
-                
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Basis stijlquiz</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">3 outfit aanbevelingen</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Basis stijladvies</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Shoppable links</span>
-                  </li>
-                </ul>
-                
-                <Button 
-                  as={Link} 
-                  to="/quiz" 
-                  variant="ghost"
-                  className="w-full border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] py-3 rounded-xl font-medium transition-all duration-300 hover:bg-[var(--color-bg)]"
-                >
-                  Start gratis
-                </Button>
-              </div>
-
-              {/* Premium Plan */}
-              <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl p-8 border-2 border-[var(--ff-color-primary-200)] hover:shadow-xl transition-all duration-300 relative">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                    <Star className="w-4 h-4" />
-                    Populair
-                  </div>
-                </div>
-                
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-[var(--color-text)] mb-2">Premium</h3>
-                  <div className="text-4xl font-bold text-[var(--color-text)] mb-2">€9,99</div>
-                  <p className="text-[var(--color-text-muted)]">per maand</p>
-                </div>
-                
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Uitgebreide stijlquiz</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Onbeperkte outfit aanbevelingen</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">AI-powered stijladvies</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Seizoensgebonden updates</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Prioriteit ondersteuning</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-[var(--color-text)]">Exclusieve kortingen</span>
-                  </li>
-                </ul>
-                
-                <Button 
-                  as={Link} 
-                  to="/register" 
-                  className="w-full bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center justify-center gap-2"
-                >
-                  Upgrade naar Premium <Zap className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* FAQ Section */}
-            <div className="mt-20 text-center">
-              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-4">
-                Veelgestelde vragen
-              </h3>
-              <p className="text-[var(--color-text-muted)] mb-8">
-                Heb je nog vragen? Bekijk onze uitgebreide FAQ of neem contact met ons op.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  as={Link} 
-                  to="/faq" 
-                  variant="ghost"
-                  className="border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] px-6 py-2 rounded-xl font-medium transition-all duration-300 hover:bg-[var(--color-surface)]"
-                >
-                  Bekijk FAQ
-                </Button>
-                <Button 
-                  as={Link} 
-                  to="/contact" 
-                  variant="ghost"
-                  className="border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] px-6 py-2 rounded-xl font-medium transition-all duration-300 hover:bg-[var(--color-surface)]"
-                >
-                  Contact opnemen
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Container>
+      {/* Background Orbs */}
+      <div className="ff-bg-orbs" aria-hidden="true">
+        <div className="ff-orb ff-orb-1"></div>
+        <div className="ff-orb ff-orb-2"></div>
+        <div className="ff-orb ff-orb-3"></div>
       </div>
 
       {/* Hero Section */}
@@ -452,7 +291,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-    </>
+    </main>
   );
-  )
 }
