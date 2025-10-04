@@ -342,6 +342,208 @@
   transform: rotate(45deg);
 }
 
+/* About Page Styles */
+.about-hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(13, 27, 42, 0.95) 0%, 
+    rgba(137, 207, 240, 0.1) 50%, 
+    rgba(13, 27, 42, 0.95) 100%);
+  z-index: 1;
+}
+
+.about-hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.about-floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(45deg, rgba(137, 207, 240, 0.3), rgba(137, 207, 240, 0.1));
+  filter: blur(40px);
+  animation: float 20s ease-in-out infinite;
+}
+
+.about-floating-orb:nth-child(1) {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.about-floating-orb:nth-child(2) {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  right: 15%;
+  animation-delay: -10s;
+}
+
+.about-floating-orb:nth-child(3) {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 60%;
+  animation-delay: -5s;
+}
+
+.about-mission-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-mission-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.about-mission-card.primary {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-primary) 10%, transparent),
+    color-mix(in srgb, var(--color-primary) 5%, transparent));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.about-mission-icon {
+  background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 80%, white));
+  transition: all 0.3s ease;
+}
+
+.about-mission-card:hover .about-mission-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.about-timeline {
+  position: relative;
+}
+
+.about-timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    var(--color-primary), 
+    color-mix(in srgb, var(--color-primary) 50%, transparent));
+  transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+  .about-timeline::before {
+    left: 1rem;
+  }
+}
+
+.about-timeline-item {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.about-timeline-item:hover {
+  transform: translateY(-2px);
+}
+
+.about-timeline-marker {
+  position: absolute;
+  left: 50%;
+  top: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 80%, white));
+  border-radius: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 0.875rem;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .about-timeline-marker {
+    left: 1rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
+  }
+}
+
+.about-timeline-content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+}
+
+.about-timeline-content:hover {
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+}
+
+.about-stats-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.about-stats-number {
+  background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 80%, white));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.about-cta-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-cta-orb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(45deg, 
+    color-mix(in srgb, var(--color-primary) 20%, transparent),
+    color-mix(in srgb, var(--color-primary) 5%, transparent));
+  border-radius: 50%;
+  filter: blur(60px);
+  transform: translate(-50%, -50%);
+  animation: rotate 30s linear infinite;
+  z-index: 0;
+}
+
+.about-cta-section > * {
+  position: relative;
+  z-index: 1;
+}
+
 .ff-faq-item p{
   margin-top: 1rem;
   color: var(--color-muted);
