@@ -16,9 +16,7 @@ export function ClosingCTA() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full mb-8">
           <Sparkles className="w-4 h-4 text-white" />
-          <span className="text-sm font-medium text-white">
-        <div className="text-center max-w-4xl mx-auto">
-          </span>
+          <span className="text-sm font-medium text-white">Begin vandaag</span>
         </div>
 
         {/* Headline - Properly centered */}
@@ -61,6 +59,4 @@ export function ClosingCTA() {
       </div>
     </section>
   );
-}
-  )
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
-import SmartImage from "@/components/ui/SmartImage";
 import ComposedLook from "./ComposedLook";
 
 type Outfit = {
@@ -8,7 +7,7 @@ type Outfit = {
   title: string;
   tags?: string[];
   bullets: string[];
-  img?: string;              // optioneel; valt terug op gradient
+  img?: string;
   alt?: string;
 };
 
@@ -48,7 +47,6 @@ const outfits: Outfit[] = [
 ];
 
 const ResultsPremium: React.FC = () => {
-  // Mock data voor composed looks wanneer outfit images ontbreken
   const composedLookItems = [
     { img: "/images/fallbacks/top.jpg", alt: "Premium shirt" },
     { img: "/images/fallbacks/bottom.jpg", alt: "Tailored broek" },
@@ -58,10 +56,11 @@ const ResultsPremium: React.FC = () => {
 
   return (
     <main className="ff-results ff-container">
-      {/* 1) Header / intro */}
       <section className="res-hero">
         <p className="eyebrow">Onze aanbeveling</p>
-        <h1 className="res-hero__title">Dit past bij jouw stijl — <span>clean, smart-casual</span></h1>
+        <h1 className="res-hero__title">
+          Dit past bij jouw stijl — <span>clean, smart-casual</span>
+        </h1>
         <p className="res-hero__sub">
           We kozen voor een cleane, smart-casual look: netter denim, witte sneaker en licht overshirt —
           minimalistisch en comfortabel.
@@ -78,55 +77,37 @@ const ResultsPremium: React.FC = () => {
           <li className="chip">Outfits + shoplinks</li>
           <li className="chip">Privacy-first</li>
         </ul>
-          Dit past bij jouw stijl — clean, smart-casual
-        </h1>
-        <p className="results__intro">
-          We kozen voor een cleane, smart-casual look: netter denim, witte sneaker
-          en licht overshirt — minimalistisch en comfortabel.
-        </p>
-        <div className="results__actions">
-          <button className="btn btn--primary">Shop deze look</button>
-          <button className="btn btn--ghost">Nieuwe analyse</button>
-        </div>
-
-        <ul className="results__chips">
-          <li className="chip">100% gratis</li>
-          <li className="chip">Klaar in 2 min</li>
-          <li className="chip">Outfits + shoplinks</li>
-          <li className="chip">Privacy-first</li>
-        </ul>
       </section>
 
-      {/* 2) Grid met kaarten (géén nested sections openen binnen een andere section) */}
       <section aria-labelledby="outfits-heading">
         <h2 id="outfits-heading" className="sr-only">Outfits</h2>
         <div className="results__grid">
           <article className="res-card">
             <div className="res-card__mosaic">
-              <SmartImage 
-                src="/images/fallbacks/top.jpg" 
-                alt="" 
-                aspectRatio={1} 
+              <SmartImage
+                src="/images/fallbacks/top.jpg"
+                alt=""
+                aspectRatio={1}
                 className="res-card__tile"
                 fetchPriority="high"
               />
-              <SmartImage 
-                src="/images/fallbacks/bottom.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/bottom.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/footwear.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/footwear.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/accessory.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/accessory.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
             </div>
 
@@ -143,29 +124,29 @@ const ResultsPremium: React.FC = () => {
 
           <article className="res-card">
             <div className="res-card__mosaic">
-              <SmartImage 
-                src="/images/fallbacks/top.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/top.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/bottom.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/bottom.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/footwear.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/footwear.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/accessory.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/accessory.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
             </div>
 
@@ -182,29 +163,29 @@ const ResultsPremium: React.FC = () => {
 
           <article className="res-card">
             <div className="res-card__mosaic">
-              <SmartImage 
-                src="/images/fallbacks/top.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/top.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/bottom.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/bottom.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/footwear.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/footwear.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
-              <SmartImage 
-                src="/images/fallbacks/accessory.jpg" 
-                alt="" 
-                aspectRatio={1} 
-                className="res-card__tile" 
+              <SmartImage
+                src="/images/fallbacks/accessory.jpg"
+                alt=""
+                aspectRatio={1}
+                className="res-card__tile"
               />
             </div>
 
@@ -218,63 +199,15 @@ const ResultsPremium: React.FC = () => {
               <a href="#" className="link-cta">Shop vergelijkbare items</a>
             </div>
           </article>
-            <div className="result-card__media">
-              <ComposedLook items={composedLookItems} />
-            </div>
-            <div className="result-card__body">
-              <h2 className="result-card__title">Smart casual (dagelijks)</h2>
-              <ul className="result-card__list">
-                <li>Netter denim — rechte pijp</li>
-                <li>Witte sneaker — minimal</li>
-                <li>Licht overshirt — koele tint</li>
-              </ul>
-              <a className="result-card__cta" href="#">Shop vergelijkbare items</a>
-            </div>
-          </article>
-
-          {/* Card 2 */}
-          <article className="result-card">
-            <div className="result-card__media">
-              <ComposedLook items={composedLookItems} />
-            </div>
-            <div className="result-card__body">
-              <h2 className="result-card__title">Monochrome workday</h2>
-              <ul className="result-card__list">
-                <li>Fijngebreide crew — off-white</li>
-                <li>Wolmix pantalon — rechte pijp</li>
-                <li>Leren loafer — clean buckle</li>
-              </ul>
-              <a className="result-card__cta" href="#">Shop vergelijkbare items</a>
-            </div>
-          </article>
-
-          {/* Card 3 */}
-          <article className="result-card">
-            <div className="result-card__media">
-              <ComposedLook items={composedLookItems} />
-            </div>
-            <div className="result-card__body">
-              <h2 className="result-card__title">Athflow weekend</h2>
-              <ul className="result-card__list">
-                <li>Merino zip hoodie</li>
-                <li>Tech jogger</li>
-                <li>Minimal runner</li>
-              </ul>
-              <a className="result-card__cta" href="#">Shop vergelijkbare items</a>
-            </div>
-          </article>
         </div>
       </section>
 
-      {/* 3) Footer callout */}
       <footer className="results__footer">
         <div className="results__footer-content">
           <h2>Meer stijladvies nodig?</h2>
           <p>Ontdek onze AI-stylist Nova voor persoonlijke styling tips en outfit inspiratie.</p>
           <button className="btn btn-primary">Probeer Nova gratis</button>
         </div>
-          Ontgrendel premium outfits
-        </a>
       </footer>
     </main>
   );

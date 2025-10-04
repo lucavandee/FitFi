@@ -100,6 +100,6 @@ export default function OutfitCardPro({ outfit }: Props) {
       <div ref={explainRef} className="explain">
         Waarom dit werkt: katoenmix valt luchtig, zodat het smart oogt zonder stijf te zijn; de sneakers houden het speels en modern.
       </div>
-    </Card>
+    </div>
   );
 }
