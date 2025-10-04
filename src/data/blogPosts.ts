@@ -1,93 +1,98 @@
-export type BlogPost = {
+export interface BlogPost {
   id: string;
   title: string;
-  date: string;      // ISO, bv. "2025-09-16"
   excerpt: string;
-  content: string;   // markdown-achtig, we renderen dit veilig (zie BlogPostPage)
+  content: string;
+  author: string;
+  date: string;
+  category: string;
   tags: string[];
-  imageId?: string;  // SmartImage id (optioneel)
-};
+  image: string;
+  readTime: number;
+  featured?: boolean;
+}
 
-// UIT (18) – samengevoegd en ongewijzigd qua inhoudelijke tekst.
-// Voeg hier gerust meer posts toe in hetzelfde formaat.
-export const posts: BlogPost[] = [
+export const blogPosts: BlogPost[] = [
   {
-    id: "kleurtemperatuur-warm-koel-neutraal",
-    title: "Kleurtemperatuur: warm, koel of neutraal?",
-    date: "2025-09-16",
-    excerpt:
-      "Herken je kleurtemperatuur en kies outfits die je huid laten stralen.",
-    content: `Kleurtemperatuur gaat niet over "mooie" of "foute" kleuren — het gaat over harmonie met je ondertoon. We onderscheiden grofweg warm, koel en neutraal. Deze gids helpt je in **2–3 minuten** de juiste richting te kiezen.
-
-## Zo test je het snel
-- Hou goud- en zilverkleur bij je gezicht; wat oogt frisser?
-- Kijk naar aders bij je pols: neigt het naar groen (warm) of blauw/paars (koel)?
-- Foto's buitenlicht: welke outfits maken je huid egaler?
-
-## Kleuren per categorie
-**Warm:** zand, camel, olijfgroen, terracotta.  
-**Koel:** marine, ijsblauw, bordeaux.  
-**Neutraal:** mix van beide, vermijd de extreme varianten.
-
-> "Kleur is richting: de juiste temperatuur brengt direct rust in je look."`,
-    tags: ["kleur", "gids"],
-    imageId: "blog-color",
+    id: '1',
+    title: 'De Perfecte Capsule Wardrobe: Minder is Meer',
+    excerpt: 'Ontdek hoe je met slechts 30 kledingstukken eindeloze outfit combinaties kunt maken.',
+    content: 'Een capsule wardrobe is de sleutel tot een stressvrije ochtend en een duurzame kledingkast...',
+    author: 'Emma van der Berg',
+    date: '2024-01-15',
+    category: 'Stijltips',
+    tags: ['capsule wardrobe', 'minimalisme', 'duurzaamheid'],
+    image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+    readTime: 5,
+    featured: true
   },
   {
-    id: "silhouet-outfits",
-    title: "Wat je silhouet écht zegt over je outfitkeuzes",
-    date: "2025-09-09",
-    excerpt:
-      "Waarom proporties, lengte en snit het verschil maken.",
-    content: `Silhouet bepaalt waar je nadruk legt: schouders, taille, benen. Kies vormen die balanceren in plaats van verbergen.
-
-## Praktische richtlijnen
-- **Lengte:** bij cropped jacks hoort een hogere rise; bij langere jassen kan de broek iets langer.
-- **Proportie:** combineer oversized boven met gestroomlijnd onder — of andersom.
-- **Volume:** 1 volumepunt tegelijk voorkomt dat de outfit "zwaar" oogt.`,
-    tags: ["silhouet", "basics"],
-    imageId: "blog-silhouet",
+    id: '2',
+    title: 'Kleurencombinaties die Altijd Werken',
+    excerpt: 'Leer welke kleuren perfect bij elkaar passen en hoe je ze kunt combineren.',
+    content: 'Kleur is een van de krachtigste tools in mode. Met de juiste combinaties...',
+    author: 'Lisa Janssen',
+    date: '2024-01-12',
+    category: 'Kleuradvies',
+    tags: ['kleuren', 'combinaties', 'stijl'],
+    image: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg',
+    readTime: 4
   },
   {
-    id: "capsule-wardrobe-10-stuks",
-    title: "Capsule wardrobe: 10 stuks, eindeloze combinaties",
-    date: "2025-08-31",
-    excerpt:
-      "De premium manier om rust en consistentie in je kast te krijgen.",
-    content: `Met een capsule bouw je op basisstukken die alles met elkaar mixen. Minder twijfel, meer consistentie.
-
-## De 3 stappen
-1. **Bepaal je temperatuur** (warm/koel/neutraal) en kies 2–3 basiskleuren.
-2. **Selecteer 8–12 tijdloze items** (goede materialen) die jouw silhouet versterken.
-3. **Voeg 1–2 accenten per seizoen toe** voor variatie zonder ruis.
-
-### Checklist
-- Neutrale basis + 1 accentkleur dicht bij het gezicht.
-- Silhouet-aanpassingen: lengte mouwen/zooms, plaats van volume.
-- Materialen die bij je huid en klimaat passen.
-
-> "Een kleine, doordachte garderobe verslaat altijd een volle, chaotische kast."`,
-    tags: ["gids", "capsule", "stijl"],
-    imageId: "blog-capsule",
+    id: '3',
+    title: 'Seizoenstrends 2024: Wat is Hot?',
+    excerpt: 'De belangrijkste trends voor dit seizoen en hoe je ze draagt.',
+    content: 'Dit seizoen draait alles om comfort en expressie. Van oversized blazers...',
+    author: 'Sophie de Wit',
+    date: '2024-01-10',
+    category: 'Trends',
+    tags: ['trends', '2024', 'seizoen'],
+    image: 'https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg',
+    readTime: 6
   },
   {
-    id: "ai-style-report-uitleg",
-    title: "AI Style Report: zo vertaalt FitFi jouw smaak naar outfits",
-    date: "2025-08-28",
-    excerpt:
-      "Van 6 antwoorden naar concrete looks met context — privacy-first.",
-    content: `We starten met zes korte vragen. Daaruit bepalen we je stijlprofiel (archetypen, kleuraccenten, pasvormrichting) en genereren outfits met uitleg.
-
-## Wat je krijgt
-- Meerdere looks met combinatietips
-- Uitleg per item: waarom dit werkt voor jou
-- Shoplinks zonder ruis
-
-## Waarom het werkt
-We combineren je voorkeuren met beproefde principes (silhouet, kleur, proportie) en houden het nuchter: geen black box, wel duidelijke keuzes.`,
-    tags: ["uitleg", "report"],
-    imageId: "blog-report",
+    id: '4',
+    title: 'Duurzame Mode: Bewuste Keuzes Maken',
+    excerpt: 'Hoe je stijlvol kunt zijn terwijl je de planeet beschermt.',
+    content: 'Duurzame mode gaat verder dan alleen biologische materialen...',
+    author: 'Anna Bakker',
+    date: '2024-01-08',
+    category: 'Duurzaamheid',
+    tags: ['duurzaamheid', 'ethisch', 'bewust'],
+    image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+    readTime: 7
   },
+  {
+    id: '5',
+    title: 'Van Dag naar Avond: Transitie Outfits',
+    excerpt: 'Simpele trucs om je dag-outfit om te toveren tot een avondlook.',
+    content: 'Met een paar slimme aanpassingen transformeer je elke dag-outfit...',
+    author: 'Mara Visser',
+    date: '2024-01-05',
+    category: 'Stijltips',
+    tags: ['transitie', 'dag naar avond', 'praktisch'],
+    image: 'https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg',
+    readTime: 5
+  },
+  {
+    id: '6',
+    title: 'Accessoires: De Finishing Touch',
+    excerpt: 'Hoe accessoires je outfit naar een hoger niveau tillen.',
+    content: 'Accessoires zijn de geheime wapens van elke stijlvolle vrouw...',
+    author: 'Julia Smit',
+    date: '2024-01-03',
+    category: 'Accessoires',
+    tags: ['accessoires', 'sieraden', 'tassen'],
+    image: 'https://images.pexels.com/photos/1927259/pexels-photo-1927259.jpeg',
+    readTime: 4
+  }
 ];
 
-export default posts;
+export const categories = [
+  'Alle',
+  'Stijltips',
+  'Kleuradvies', 
+  'Trends',
+  'Duurzaamheid',
+  'Accessoires'
+];
