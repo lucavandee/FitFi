@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldCheck, LockKeyhole, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, LockKeyhole, CircleCheck as CheckCircle2 } from "lucide-react";
 
 /**
  * A horizontal belt of trust and privacy badges. Each badge combines
@@ -23,6 +23,7 @@ const TRUST_ITEMS = [
     icon: CheckCircle2,
     label: "Geverifieerde partners",
   },
+];
 import Container from '../layout/Container';
 
 const TrustBelt: React.FC = () => {
