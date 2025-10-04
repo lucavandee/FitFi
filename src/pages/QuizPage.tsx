@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CircleCheck as CheckCircle, CircleAlert as AlertCircle } from 'lucide-react';
 import Seo from '@/components/Seo';
 import SectionHeader from '@/components/marketing/SectionHeader';
 import share from '@/utils/share';
