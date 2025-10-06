@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "lucide-react";
 import { quizSteps } from "@/data/quizSteps";
+import { supabase } from "@/lib/supabaseClient";
+import { computeResult } from "@/lib/quiz/logic";
+import { LS_KEYS } from "@/lib/quiz/types";
 
 type QuizAnswers = {
   stylePreferences?: string[];
@@ -62,8 +65,39 @@ export default function OnboardingFlowPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      localStorage.setItem('ff_quiz_answers', JSON.stringify(answers));
-      localStorage.setItem('ff_quiz_completed', Date.now().toString());
+      // Compute style profile from answers
+      const result = computeResult(answers as any);
+
+      // Save to localStorage for immediate access
+      localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
+      localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.color));
+      localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(result.archetype));
+      localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
+      localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
+
+      // Save to Supabase (async, don't block navigation)
+      const client = supabase();
+      if (client) {
+        const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
+        localStorage.setItem('ff_session_id', sessionId);
+
+        // Try to get current user
+        const { data: { user } } = await client.auth.getUser();
+
+        client
+          .from('style_profiles')
+          .insert({
+            user_id: user?.id || null,
+            session_id: !user ? sessionId : null,
+            archetype: result.archetype,
+            color_profile: result.color,
+            quiz_answers: answers,
+            completed_at: new Date().toISOString(),
+          })
+          .then(({ error }) => {
+            if (error) console.error('Error saving to Supabase:', error);
+          });
+      }
 
       setTimeout(() => {
         navigate('/results');
