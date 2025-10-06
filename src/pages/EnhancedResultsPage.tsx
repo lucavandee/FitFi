@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight } from "lucide-react";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
+import { OutfitVisualCompact } from "@/components/outfits/OutfitVisual";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -232,10 +233,14 @@ export default function EnhancedResultsPage() {
                       key={outfit.id}
                       className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-xl transition-shadow"
                     >
-                      {/* Outfit Image Placeholder */}
-                      <div className="aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
-                        <Sparkles className="w-16 h-16 text-[var(--ff-color-primary-300)]" />
-                      </div>
+                      {/* Outfit Visual */}
+                      {outfit.pieces && outfit.pieces.length > 0 ? (
+                        <OutfitVisualCompact pieces={outfit.pieces} />
+                      ) : (
+                        <div className="aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
+                          <Sparkles className="w-16 h-16 text-[var(--ff-color-primary-300)]" />
+                        </div>
+                      )}
 
                       {/* Outfit Details */}
                       <div className="p-6">

@@ -1,10 +1,17 @@
 import type { ColorProfile, Archetype } from "./types";
 
+export type OutfitPiece = {
+  type: "top" | "bottom" | "shoes" | "accessory";
+  label: string;
+  color: string;
+};
+
 export type OutfitSeed = {
   id: string;
   title: string;
   vibe: string;
   notes: string;
+  pieces?: OutfitPiece[];
   tags?: string[];
 };
 
@@ -52,14 +59,90 @@ function seasonText(c: ColorProfile): { palette: string; accentTip: string } {
   }
 }
 
+function getSeasonalColors(c: ColorProfile): { base: string[]; accent: string[] } {
+  switch (c.season) {
+    case "lente":
+      return {
+        base: ["#E8DDD3", "#D4C4B0", "#F5F0E8", "#C9B8A0"],
+        accent: ["#E8B4A0", "#D4A88C", "#F0C8B0"],
+      };
+    case "zomer":
+      return {
+        base: ["#E0E8F0", "#D0D8E0", "#C8D4DC", "#B8C8D4"],
+        accent: ["#A8C4D8", "#98B8CC", "#B0D0E0"],
+      };
+    case "herfst":
+      return {
+        base: ["#C8B8A0", "#B0A090", "#A89080", "#988070"],
+        accent: ["#D4A080", "#C49070", "#B88860"],
+      };
+    case "winter":
+      return {
+        base: ["#F0F0F0", "#E0E0E0", "#D0D0D0", "#303030"],
+        accent: ["#E0F0F8", "#D0E8F0", "#C0E0E8"],
+      };
+  }
+}
+
+function generateOutfitPieces(
+  outfitTitle: string,
+  archetype: Archetype,
+  colors: { base: string[]; accent: string[] }
+): OutfitPiece[] {
+  const baseColors = colors.base;
+  const accentColors = colors.accent;
+
+  const templates: Record<string, OutfitPiece[]> = {
+    "Office Minimal": [
+      { type: "top", label: "Light knit polo", color: baseColors[0] },
+      { type: "bottom", label: "Straight chinos", color: baseColors[1] },
+      { type: "shoes", label: "Minimal sneakers", color: baseColors[2] },
+    ],
+    "Monochrome Light": [
+      { type: "top", label: "Oversized tee", color: baseColors[0] },
+      { type: "bottom", label: "Wide leg trousers", color: baseColors[0] },
+      { type: "shoes", label: "Leather loafers", color: baseColors[1] },
+    ],
+    "Clean Casual": [
+      { type: "top", label: "Structured overshirt", color: baseColors[1] },
+      { type: "bottom", label: "Tapered chinos", color: baseColors[2] },
+      { type: "shoes", label: "Retro sneakers", color: accentColors[0] },
+    ],
+    "Warm Neutral Mix": [
+      { type: "top", label: "Corduroy shirt", color: baseColors[0] },
+      { type: "bottom", label: "Relaxed jeans", color: baseColors[3] },
+      { type: "shoes", label: "Suede desert boots", color: baseColors[1] },
+    ],
+    "Technical Minimal": [
+      { type: "top", label: "Performance tee", color: baseColors[2] },
+      { type: "bottom", label: "Tech joggers", color: baseColors[3] },
+      { type: "shoes", label: "Running shoes", color: accentColors[1] },
+    ],
+    "Soft Tonals": [
+      { type: "top", label: "Cashmere knit", color: baseColors[0] },
+      { type: "bottom", label: "Relaxed trousers", color: baseColors[1] },
+      { type: "shoes", label: "Slip-on sneakers", color: baseColors[2] },
+    ],
+  };
+
+  return templates[outfitTitle] || [
+    { type: "top", label: "Classic shirt", color: baseColors[0] },
+    { type: "bottom", label: "Straight pants", color: baseColors[1] },
+    { type: "shoes", label: "Casual shoes", color: baseColors[2] },
+  ];
+}
+
 export function getSeedOutfits(color: ColorProfile, archetype: Archetype) {
   const base = BASE_BY_ARCHETYPE[archetype];
   const { palette, accentTip } = seasonText(color);
+  const seasonalColors = getSeasonalColors(color);
+
   return base.map((b, i) => ({
     id: `${archetype.replace(/\s+/g, "")}-${color.season}-${i + 1}`,
     title: b.title,
     vibe: b.vibe,
     notes: `${b.notes} Palet: ${palette}. Tip: ${accentTip}.`,
+    pieces: generateOutfitPieces(b.title, archetype, seasonalColors),
     tags: [archetype, color.season, color.temperature, color.contrast],
   }));
 }
