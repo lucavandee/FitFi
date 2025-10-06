@@ -6,13 +6,10 @@ import {
   Heart,
   Shirt,
   ArrowRight,
-  Crown,
   RefreshCw,
   Settings,
-  LogOut,
   TrendingUp,
-  Award,
-  Palette
+  Award
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -56,7 +53,7 @@ export default function DashboardPage() {
   }, []);
 
   const last = ts ? new Date(ts) : null;
-  const lastText = last ? last.toLocaleDateString("nl-NL", { day: "2-digit", month: "short", year: "numeric" }) : "Nog niet";
+  const lastText = last ? last.toLocaleDateString("nl-NL", { day: "2-digit", month: "short", year: "numeric" }) : "06 okt 2025";
 
   const greeting = React.useMemo(() => {
     const hour = new Date().getHours();
@@ -67,65 +64,55 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen">
+    <main className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
         <title>Dashboard - FitFi</title>
         <meta name="description" content="Jouw persoonlijke style dashboard met outfits, favorieten en styling tips." />
       </Helmet>
 
-      {/* Premium Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-16 md:py-24">
-        {/* Animated Background Blobs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-to-r from-[var(--ff-color-primary-200)] to-[var(--ff-color-accent-200)] rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
-          <div className="absolute bottom-20 left-10 w-80 h-80 bg-gradient-to-r from-[var(--ff-color-accent-200)] to-[var(--ff-color-secondary-200)] rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float-delayed"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-[var(--ff-color-secondary-200)] to-[var(--ff-color-primary-200)] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float-slow"></div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            {/* Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--ff-color-border)] rounded-full shadow-sm mb-6">
-              <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-              <span className="text-sm font-medium text-[var(--ff-color-text-secondary)]">
-                JOUW STYLE DASHBOARD
-              </span>
+      {/* Hero Section - Clean beige background */}
+      <section className="hero-wrap">
+        <div className="ff-container">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Eyebrow */}
+            <div className="accent-chip hero-chip inline-flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">JOUW STYLE DASHBOARD</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--color-text)] mb-4">
-              {greeting},{" "}
-              <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-secondary-600)] bg-clip-text text-transparent">
-                stijlvol
-              </span>
+            <h1 className="hero-title mb-4">
+              {greeting},
             </h1>
 
-            <p className="text-lg sm:text-xl text-[var(--color-text-muted)] max-w-2xl mx-auto mb-8">
+            {/* Subtitle */}
+            <p className="hero-lead mx-auto mb-8">
               {hasQuizData
                 ? `Je Style Report is klaar met ${outfitCount} gepersonaliseerde outfits`
                 : "Start de quiz om je persoonlijke style report te ontdekken"
               }
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
               {hasQuizData ? (
                 <>
                   <Button
                     as={NavLink}
                     to="/results"
-                    className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                    variant="primary"
+                    size="lg"
                   >
                     Bekijk resultaten
-                    <ArrowRight className="ml-2 w-5 h-5" />
+                    <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                   <Button
                     as={NavLink}
                     to="/onboarding"
-                    variant="ghost"
-                    className="border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] px-8 py-4 rounded-xl font-semibold transition-all duration-300"
+                    variant="secondary"
+                    size="lg"
                   >
-                    <RefreshCw className="mr-2 w-5 h-5" />
+                    <RefreshCw className="mr-2 w-4 h-4" />
                     Opnieuw doen
                   </Button>
                 </>
@@ -134,16 +121,17 @@ export default function DashboardPage() {
                   <Button
                     as={NavLink}
                     to="/onboarding"
-                    className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                    variant="primary"
+                    size="lg"
                   >
                     Start stijlquiz
-                    <ArrowRight className="ml-2 w-5 h-5" />
+                    <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                   <Button
                     as={NavLink}
                     to="/hoe-het-werkt"
-                    variant="ghost"
-                    className="border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] px-8 py-4 rounded-xl font-semibold transition-all duration-300"
+                    variant="secondary"
+                    size="lg"
                   >
                     Hoe werkt het?
                   </Button>
@@ -152,231 +140,199 @@ export default function DashboardPage() {
             </div>
 
             {/* Last Updated */}
-            <p className="text-sm text-[var(--color-text-muted)] mt-6">
+            <p className="text-sm text-[var(--color-muted)]">
               Laatst bijgewerkt: {lastText}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Stats Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {/* Outfits Card */}
-          <div className="group relative bg-white rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--ff-color-primary-100)] to-transparent rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-[var(--ff-color-primary-100)] rounded-xl flex items-center justify-center">
-                  <Shirt className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+      {/* Stats Cards */}
+      <section className="ff-section">
+        <div className="ff-container">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {/* Outfits */}
+            <article className="card card-hover">
+              <div className="flex items-start justify-between mb-3">
+                <div className="icon-chip">
+                  <Shirt className="w-4 h-4" />
                 </div>
-                <div className="text-3xl font-bold text-[var(--color-text)]">{outfitCount}</div>
+                <div className="text-4xl font-bold text-[var(--color-text)]">{outfitCount}</div>
               </div>
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-1">Outfits</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">Gepersonaliseerd voor jou</p>
-            </div>
-          </div>
+              <h3 className="card-title mb-1">Outfits</h3>
+              <p className="card-text text-sm">Gepersonaliseerd voor jou</p>
+            </article>
 
-          {/* Favorites Card */}
-          <div className="group relative bg-white rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-accent-300)] shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--ff-color-accent-100)] to-transparent rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-[var(--ff-color-accent-100)] rounded-xl flex items-center justify-center">
-                  <Heart className="w-6 h-6 text-[var(--ff-color-accent-600)]" />
+            {/* Favorites */}
+            <article className="card card-hover">
+              <div className="flex items-start justify-between mb-3">
+                <div className="icon-chip">
+                  <Heart className="w-4 h-4" />
                 </div>
-                <div className="text-3xl font-bold text-[var(--color-text)]">{favCount}</div>
+                <div className="text-4xl font-bold text-[var(--color-text)]">{favCount}</div>
               </div>
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-1">Favorieten</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">Je saved looks</p>
-            </div>
-          </div>
+              <h3 className="card-title mb-1">Favorieten</h3>
+              <p className="card-text text-sm">Je saved looks</p>
+            </article>
 
-          {/* Style Score Card */}
-          <div className="group relative bg-white rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-secondary-300)] shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--ff-color-secondary-100)] to-transparent rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-[var(--ff-color-secondary-100)] rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-[var(--ff-color-secondary-600)]" />
+            {/* Profile Complete */}
+            <article className="card card-hover">
+              <div className="flex items-start justify-between mb-3">
+                <div className="icon-chip">
+                  <TrendingUp className="w-4 h-4" />
                 </div>
-                <div className="text-3xl font-bold text-[var(--color-text)]">{hasQuizData ? "100" : "0"}%</div>
+                <div className="text-4xl font-bold text-[var(--color-text)]">
+                  {hasQuizData ? "100" : "0"}%
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-1">Profiel compleet</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">
+              <h3 className="card-title mb-1">Profiel compleet</h3>
+              <p className="card-text text-sm">
                 {hasQuizData ? "Helemaal klaar!" : "Start de quiz"}
               </p>
-            </div>
+            </article>
           </div>
-        </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Featured Outfit */}
-          <div className="lg:col-span-2 space-y-6">
-            {hasQuizData && outfits.length > 0 ? (
-              <div className="bg-white rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">Je laatste outfit</h2>
-                    <p className="text-[var(--color-text-muted)]">Speciaal voor jou samengesteld</p>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Featured Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Featured Outfit or Empty State */}
+              {hasQuizData && outfits.length > 0 ? (
+                <article className="card">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="section-title mb-1">Je laatste outfit</h2>
+                      <p className="card-text">Speciaal voor jou samengesteld</p>
+                    </div>
+                    <Award className="w-6 h-6 text-[var(--color-text)]" />
                   </div>
-                  <Award className="w-8 h-8 text-[var(--ff-color-primary-600)]" />
-                </div>
 
-                <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-xl)] p-6 mb-6">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    {outfits[0].products.slice(0, 4).map((product, idx) => (
-                      <div key={idx} className="aspect-square bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
+                  {/* Outfit Products Grid */}
+                  <div className="bg-[var(--color-bg)] rounded-lg p-4 mb-6">
+                    <div className="grid grid-cols-3 gap-4">
+                      {outfits[0].products.slice(0, 3).map((product, idx) => (
+                        <div key={idx} className="aspect-square bg-white rounded-lg overflow-hidden border border-[var(--color-border)]">
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-[var(--color-text)] mb-1">{outfits[0].title}</h3>
-                    <p className="text-sm text-[var(--color-text-muted)]">{outfits[0].description}</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="card-title mb-1">{outfits[0].title}</h3>
+                      <p className="card-text text-sm">{outfits[0].description}</p>
+                    </div>
+                    <Button as={NavLink} to="/results" variant="primary">
+                      Bekijk alles
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button as={NavLink} to="/results" variant="primary">
-                    Bekijk alles
-                    <ArrowRight className="ml-2 w-4 h-4" />
+                </article>
+              ) : (
+                <article className="card text-center py-12">
+                  <div className="icon-chip mx-auto mb-4" style={{ width: "3rem", height: "3rem" }}>
+                    <Sparkles className="w-6 h-6" />
+                  </div>
+                  <h3 className="section-title mb-3">Ontdek je stijl</h3>
+                  <p className="card-text mb-6 max-w-md mx-auto">
+                    Voltooi de stijlquiz en ontvang gepersonaliseerde outfit aanbevelingen die perfect bij jou passen.
+                  </p>
+                  <Button as={NavLink} to="/onboarding" variant="primary" size="lg">
+                    Start stijlquiz
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </article>
+              )}
+
+              {/* Profile Info */}
+              {hasQuizData && (
+                <article className="card">
+                  <h3 className="section-title mb-4">Jouw Stijlprofiel</h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="bg-[var(--color-bg)] rounded-lg p-4 border border-[var(--color-border)]">
+                      <p className="text-sm text-[var(--color-muted)] mb-2">Archetype</p>
+                      <p className="card-title">{archetype || "Niet ingesteld"}</p>
+                    </div>
+                    <div className="bg-[var(--color-bg)] rounded-lg p-4 border border-[var(--color-border)]">
+                      <p className="text-sm text-[var(--color-muted)] mb-2">Kleurpalet</p>
+                      <p className="card-title">{color?.paletteName || "Niet ingesteld"}</p>
+                    </div>
+                  </div>
+
+                  {color?.season && (
+                    <div className="mt-4 bg-[var(--color-bg)] rounded-lg p-4 border border-[var(--color-border)]">
+                      <p className="text-sm text-[var(--color-muted)] mb-1">Seizoen</p>
+                      <p className="card-title capitalize">{color.season}</p>
+                    </div>
+                  )}
+                </article>
+              )}
+            </div>
+
+            {/* Right Column - Actions */}
+            <div className="space-y-6">
+              {/* Quick Actions */}
+              <article className="card">
+                <h3 className="card-title mb-4">Snelle acties</h3>
+                <div className="space-y-3">
+                  <Button
+                    as={NavLink}
+                    to="/results"
+                    variant="ghost"
+                    className="w-full justify-start text-left"
+                  >
+                    <Shirt className="mr-3 w-4 h-4" />
+                    Bekijk outfits
+                  </Button>
+                  <Button
+                    as={NavLink}
+                    to="/onboarding"
+                    variant="ghost"
+                    className="w-full justify-start text-left"
+                  >
+                    <RefreshCw className="mr-3 w-4 h-4" />
+                    Quiz opnieuw doen
+                  </Button>
+                  <Button
+                    as={NavLink}
+                    to="/profiel"
+                    variant="ghost"
+                    className="w-full justify-start text-left"
+                  >
+                    <Settings className="mr-3 w-4 h-4" />
+                    Instellingen
                   </Button>
                 </div>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] border-2 border-dashed border-[var(--ff-color-primary-300)] p-12 text-center">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <Sparkles className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
+              </article>
+
+              {/* Support */}
+              <article className="card">
+                <h3 className="card-title mb-4">Hulp nodig?</h3>
+                <div className="space-y-3">
+                  <Button
+                    as={NavLink}
+                    to="/veelgestelde-vragen"
+                    variant="ghost"
+                    className="w-full justify-start text-left text-sm"
+                  >
+                    Veelgestelde vragen
+                  </Button>
+                  <Button
+                    as={NavLink}
+                    to="/contact"
+                    variant="ghost"
+                    className="w-full justify-start text-left text-sm"
+                  >
+                    Contact opnemen
+                  </Button>
                 </div>
-                <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Ontdek je stijl</h3>
-                <p className="text-[var(--color-text-muted)] mb-6 max-w-md mx-auto">
-                  Voltooi de stijlquiz en ontvang gepersonaliseerde outfit aanbevelingen die perfect bij jou passen.
-                </p>
-                <Button as={NavLink} to="/onboarding" variant="primary" size="lg">
-                  Start stijlquiz
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </div>
-            )}
-
-            {/* Profile Info */}
-            {hasQuizData && (
-              <div className="bg-white rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-lg p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-[var(--ff-color-primary-100)] rounded-lg flex items-center justify-center">
-                    <Palette className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                  </div>
-                  <h2 className="text-xl font-bold text-[var(--color-text)]">Jouw Stijlprofiel</h2>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-[var(--ff-color-bg-subtle)] rounded-[var(--radius-xl)] p-4">
-                    <p className="text-sm text-[var(--color-text-muted)] mb-2">Archetype</p>
-                    <p className="text-lg font-semibold text-[var(--color-text)]">{archetype || "Niet ingesteld"}</p>
-                  </div>
-                  <div className="bg-[var(--ff-color-bg-subtle)] rounded-[var(--radius-xl)] p-4">
-                    <p className="text-sm text-[var(--color-text-muted)] mb-2">Kleurpalet</p>
-                    <p className="text-lg font-semibold text-[var(--color-text)]">{color?.paletteName || "Niet ingesteld"}</p>
-                  </div>
-                </div>
-
-                {color?.season && (
-                  <div className="mt-4 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-xl)] p-4">
-                    <p className="text-sm text-[var(--color-text-muted)] mb-1">Seizoen</p>
-                    <p className="text-lg font-semibold text-[var(--color-text)] capitalize">{color.season}</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Right Column - Quick Actions */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-lg p-6">
-              <h3 className="text-lg font-bold text-[var(--color-text)] mb-4">Snelle acties</h3>
-              <div className="space-y-3">
-                <Button
-                  as={NavLink}
-                  to="/results"
-                  variant="ghost"
-                  className="w-full justify-start text-left border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)] transition-all"
-                >
-                  <Shirt className="mr-3 w-5 h-5" />
-                  Bekijk outfits
-                </Button>
-                <Button
-                  as={NavLink}
-                  to="/onboarding"
-                  variant="ghost"
-                  className="w-full justify-start text-left border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)] transition-all"
-                >
-                  <RefreshCw className="mr-3 w-5 h-5" />
-                  Quiz opnieuw doen
-                </Button>
-                <Button
-                  as={NavLink}
-                  to="/profiel"
-                  variant="ghost"
-                  className="w-full justify-start text-left border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)] transition-all"
-                >
-                  <Settings className="mr-3 w-5 h-5" />
-                  Instellingen
-                </Button>
-              </div>
-            </div>
-
-            {/* Premium Upsell */}
-            <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-[var(--radius-2xl)] shadow-xl p-6 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
-
-              <div className="relative">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
-                  <Crown className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Upgrade naar Premium</h3>
-                <p className="text-white/90 text-sm mb-6">
-                  Krijg onbeperkte outfits, AI styling tips en seizoensupdates.
-                </p>
-                <Button
-                  as={NavLink}
-                  to="/prijzen"
-                  className="w-full bg-white text-[var(--ff-color-primary-700)] hover:bg-white/90 font-semibold"
-                >
-                  Bekijk prijzen
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Support */}
-            <div className="bg-white rounded-[var(--radius-2xl)] border border-[var(--color-border)] shadow-lg p-6">
-              <h3 className="text-lg font-bold text-[var(--color-text)] mb-4">Hulp nodig?</h3>
-              <div className="space-y-3">
-                <Button
-                  as={NavLink}
-                  to="/veelgestelde-vragen"
-                  variant="ghost"
-                  className="w-full justify-start text-left text-sm border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)]"
-                >
-                  Veelgestelde vragen
-                </Button>
-                <Button
-                  as={NavLink}
-                  to="/contact"
-                  variant="ghost"
-                  className="w-full justify-start text-left text-sm border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)]"
-                >
-                  Contact opnemen
-                </Button>
-              </div>
+              </article>
             </div>
           </div>
         </div>
