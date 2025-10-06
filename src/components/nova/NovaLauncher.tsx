@@ -3,14 +3,14 @@ import React from "react";
 import { useNovaChat } from "./NovaChatProvider";
 
 export default function NovaLauncher() {
-  const nova = useNovaChat();
-  const onClick = () => (nova.isOpen ? nova.hide() : nova.open());
+  const { isOpen, setOpen } = useNovaChat();
+  const onClick = () => setOpen(!isOpen);
 
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={nova.isOpen ? "Sluit Nova" : "Open Nova"}
+      aria-label={isOpen ? "Sluit Nova" : "Open Nova"}
       className="
         fixed z-[9999]
         right-4 md:right-6
@@ -30,7 +30,7 @@ export default function NovaLauncher() {
           fill="currentColor"
         />
       </svg>
-      <span className="text-sm font-medium">{nova.isOpen ? "Sluiten" : "Chatten"}</span>
+      <span className="text-sm font-medium">{isOpen ? "Sluiten" : "Chatten"}</span>
     </button>
   );
 }

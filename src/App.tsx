@@ -7,6 +7,9 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import Seo from "@/components/seo/Seo";
 import RequireAuth from "@/components/auth/RequireAuth";
+import NovaChatProvider from "@/components/nova/NovaChatProvider";
+import NovaLauncher from "@/components/nova/NovaLauncher";
+import ChatPanel from "@/components/nova/ChatPanel";
 
 // Lazy pages
 const LandingPage        = lazy(() => import("@/pages/LandingPage"));
@@ -51,53 +54,57 @@ const WithSeo = {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
-      <ErrorBoundary>
-        <Navbar />
-        <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
-          <main id="main">
-            <Routes>
-              {/* Marketing */}
-              <Route path="/" element={<WithSeo.Home />} />
-              <Route path="/hoe-het-werkt" element={<WithSeo.How />} />
-              <Route path="/prijzen" element={<WithSeo.Pricing />} />
-              <Route path="/over-ons" element={<WithSeo.About />} />
-              <Route path="/blog" element={<WithSeo.Blog />} />
-              <Route path="/blog/:slug" element={<WithSeo.BlogPost />} />
-              <Route path="/veelgestelde-vragen" element={<WithSeo.FAQ />} />
-              <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
-              <Route path="/contact" element={<WithSeo.Contact />} />
+    <NovaChatProvider>
+      <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+        <ErrorBoundary>
+          <Navbar />
+          <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
+            <main id="main">
+              <Routes>
+                {/* Marketing */}
+                <Route path="/" element={<WithSeo.Home />} />
+                <Route path="/hoe-het-werkt" element={<WithSeo.How />} />
+                <Route path="/prijzen" element={<WithSeo.Pricing />} />
+                <Route path="/over-ons" element={<WithSeo.About />} />
+                <Route path="/blog" element={<WithSeo.Blog />} />
+                <Route path="/blog/:slug" element={<WithSeo.BlogPost />} />
+                <Route path="/veelgestelde-vragen" element={<WithSeo.FAQ />} />
+                <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
+                <Route path="/contact" element={<WithSeo.Contact />} />
 
-              {/* Juridisch (NL canoniek) */}
-              <Route path="/algemene-voorwaarden" element={<WithSeo.Terms />} />
-              <Route path="/terms" element={<Navigate to="/algemene-voorwaarden" replace />} />
-              <Route path="/privacy" element={<WithSeo.Privacy />} />
-              <Route path="/cookies" element={<WithSeo.Cookies />} />
-              <Route path="/disclosure" element={<WithSeo.Disclosure />} />
+                {/* Juridisch (NL canoniek) */}
+                <Route path="/algemene-voorwaarden" element={<WithSeo.Terms />} />
+                <Route path="/terms" element={<Navigate to="/algemene-voorwaarden" replace />} />
+                <Route path="/privacy" element={<WithSeo.Privacy />} />
+                <Route path="/cookies" element={<WithSeo.Cookies />} />
+                <Route path="/disclosure" element={<WithSeo.Disclosure />} />
 
-              {/* Onboarding / Quiz */}
-              <Route path="/onboarding" element={<WithSeo.Onboarding />} />
-              <Route path="/quiz" element={<Navigate to="/onboarding" replace />} />
-              <Route path="/stijlquiz" element={<Navigate to="/onboarding" replace />} />
+                {/* Onboarding / Quiz */}
+                <Route path="/onboarding" element={<WithSeo.Onboarding />} />
+                <Route path="/quiz" element={<Navigate to="/onboarding" replace />} />
+                <Route path="/stijlquiz" element={<Navigate to="/onboarding" replace />} />
 
-              {/* Auth (NL canoniek) */}
-              <Route path="/inloggen" element={<WithSeo.Login />} />
-              <Route path="/login" element={<Navigate to="/inloggen" replace />} />
-              <Route path="/registreren" element={<WithSeo.Register />} />
-              <Route path="/register" element={<Navigate to="/registreren" replace />} />
+                {/* Auth (NL canoniek) */}
+                <Route path="/inloggen" element={<WithSeo.Login />} />
+                <Route path="/login" element={<Navigate to="/inloggen" replace />} />
+                <Route path="/registreren" element={<WithSeo.Register />} />
+                <Route path="/register" element={<Navigate to="/registreren" replace />} />
 
-              {/* App (afgeschermd) */}
-              <Route path="/dashboard" element={<RequireAuth><WithSeo.Dashboard /></RequireAuth>} />
-              <Route path="/results" element={<RequireAuth><WithSeo.Results /></RequireAuth>} />
+                {/* App (afgeschermd) */}
+                <Route path="/dashboard" element={<RequireAuth><WithSeo.Dashboard /></RequireAuth>} />
+                <Route path="/results" element={<RequireAuth><WithSeo.Results /></RequireAuth>} />
 
-              {/* 404 */}
-              <Route path="*" element={<WithSeo.NotFound />} />
-            </Routes>
-          </main>
-        </Suspense>
-        <Footer />
-        <AnalyticsLoader />
-      </ErrorBoundary>
-    </div>
+                {/* 404 */}
+                <Route path="*" element={<WithSeo.NotFound />} />
+              </Routes>
+            </main>
+          </Suspense>
+          <Footer />
+          <ChatPanel />
+          <NovaLauncher />
+          <AnalyticsLoader />
+        </ErrorBoundary>
+      </div>
+    </NovaChatProvider>
   );
 }
