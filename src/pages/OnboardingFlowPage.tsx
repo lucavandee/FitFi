@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, ArrowLeft, CheckCircle, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "lucide-react";
 import { quizSteps } from "@/data/quizSteps";
 
 type QuizAnswers = {
