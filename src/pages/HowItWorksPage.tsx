@@ -23,7 +23,11 @@ export default function HowItWorksPage() {
 
       {/* Hero Section */}
       <section className="ff-hero-section">
-        <div className="ff-container--home">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+        <div className="ff-container relative">
           <div className="text-center max-w-4xl mx-auto">
             <div className="ff-premium-badge">
               <Sparkles className="w-4 h-4" />
