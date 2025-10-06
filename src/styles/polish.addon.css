@@ -23,11 +23,13 @@
 .ff-hero-sub{ color:var(--color-muted); font-size:clamp(1rem,.6vw + .84rem,1.12rem); max-width:60ch; }
 .ff-lede{ color:var(--color-text); opacity:.9; font-size:clamp(1rem,.45vw + .95rem,1.125rem); }
 
-.ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.75rem; border-radius:var(--radius-xl); padding:0 1rem; font-weight:600; }
+.ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.75rem; border-radius:var(--radius-xl); padding:0 1rem; font-weight:600; transition: all 0.2s ease; }
 .ff-btn-primary{ background:var(--ff-color-primary-700); color:#fff; }
 .ff-btn-primary:hover{ background:var(--ff-color-primary-600); }
 .ff-btn-secondary{ background:transparent; color:var(--color-text); border:1px solid var(--color-border); }
 .ff-btn-secondary:hover{ border-color:var(--ff-color-primary-600); }
+.ff-btn-ghost{ background:transparent; color:var(--color-text); border:1px solid transparent; }
+.ff-btn-ghost:hover{ background:var(--color-bg); border-color:var(--color-border); }
 .ff-link{ color:var(--color-text); text-decoration:underline; text-underline-offset:3px; transition:color .15s ease; }
 .ff-link:hover{ color:var(--ff-color-primary-600); }
 
