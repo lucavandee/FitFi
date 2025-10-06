@@ -301,12 +301,12 @@ export default function DashboardPage() {
                   </Button>
                   <Button
                     as={NavLink}
-                    to="/profiel"
+                    to="/prijzen"
                     variant="ghost"
                     className="w-full justify-start text-left"
                   >
                     <Settings className="mr-3 w-4 h-4" />
-                    Instellingen
+                    Upgrade
                   </Button>
                 </div>
               </article>
