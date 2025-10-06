@@ -1,5 +1,6 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { streamChat, NovaEvent, NovaStreamOpts } from "@/services/ai/novaService";
+import { fetchUserContext, buildSystemPrompt, buildContextHeaders, type NovaUserContext } from "@/services/nova/userContext";
 
 export type ChatMessage = { id: string; role: "user" | "assistant" | "system"; content: string };
 type SendOpts = { prefaceSystem?: string };
@@ -16,20 +17,71 @@ type NovaChatContextValue = {
 
 const NovaChatContext = createContext<NovaChatContextValue | null>(null);
 
+function getUserId(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+
+  const userStr = localStorage.getItem("fitfi_user");
+  if (!userStr) return undefined;
+
+  try {
+    const user = JSON.parse(userStr);
+    return user?.id;
+  } catch {
+    return undefined;
+  }
+}
+
 export function NovaChatProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userContext, setUserContext] = useState<NovaUserContext | null>(null);
+  const [contextLoading, setContextLoading] = useState(true);
+
+  const getWelcomeMessage = useCallback(() => {
+    if (!userContext) {
+      return "Hi! Ik ben Nova, je style assistent. Hoe kan ik je helpen? 👋";
+    }
+
+    const { archetype, colorProfile } = userContext;
+    return `Hi! Ik zie dat je een ${archetype} stijl hebt met ${colorProfile.undertone} undertone. Zullen we je garderobe optimaliseren? 👋`;
+  }, [userContext]);
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome-1",
       role: "assistant",
-      content:
-        "Hi! Zullen we je stijl scherp zetten? 👋 Vertel: voor welke situatie zoeken we een outfit?",
+      content: getWelcomeMessage(),
     },
   ]);
 
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    async function loadContext() {
+      setContextLoading(true);
+      try {
+        const userId = getUserId();
+        const context = await fetchUserContext(userId);
+        setUserContext(context);
+
+        if (context) {
+          setMessages([
+            {
+              id: "welcome-1",
+              role: "assistant",
+              content: `Hi! Ik zie dat je een ${context.archetype} stijl hebt met ${context.colorProfile.undertone} undertone. Zullen we je garderobe optimaliseren? 👋`,
+            },
+          ]);
+        }
+      } catch (e) {
+        console.error("[NovaChatProvider] Failed to load context:", e);
+      } finally {
+        setContextLoading(false);
+      }
+    }
+    loadContext();
+  }, []);
 
   const reset = useCallback(() => {
     abortRef.current?.abort();
@@ -39,11 +91,10 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
       {
         id: "welcome-1",
         role: "assistant",
-        content:
-          "Hi! Zullen we je stijl scherp zetten? 👋 Vertel: voor welke situatie zoeken we een outfit?",
+        content: getWelcomeMessage(),
       },
     ]);
-  }, []);
+  }, [getWelcomeMessage]);
 
   const send = useCallback(
     async (text: string, opts?: SendOpts) => {
@@ -80,14 +131,21 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
         }
       };
 
-      // Bouw messages-array (optionele system-preface voor consistentie)
       const convo: ChatMessage[] = [];
-      if (opts?.prefaceSystem) {
-        convo.push({ id: "sys", role: "system", content: opts.prefaceSystem });
+
+      let systemPrompt = opts?.prefaceSystem || "";
+      if (!systemPrompt && userContext) {
+        systemPrompt = buildSystemPrompt(userContext);
       }
-      // Houd geschiedenis compact: laatste 8 regels + nieuw bericht
+
+      if (systemPrompt) {
+        convo.push({ id: "sys", role: "system", content: systemPrompt });
+      }
+
       const history = messages.slice(-8).map(({ role, content }) => ({ id: crypto.randomUUID(), role, content }));
       convo.push(...history, { id: userMsg.id, role: "user", content });
+
+      const contextHeaders = userContext ? buildContextHeaders(userContext) : {};
 
       try {
         const iter = streamChat({
@@ -95,6 +153,7 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
           messages: convo.map(({ role, content }) => ({ role, content })),
           signal: controller.signal,
           onEvent,
+          headers: contextHeaders,
         } as NovaStreamOpts);
 
         for await (const _chunk of iter) {
@@ -107,7 +166,7 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
         abortRef.current = null;
       }
     },
-    [messages]
+    [messages, userContext]
   );
 
   const value = useMemo<NovaChatContextValue>(

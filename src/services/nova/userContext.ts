@@ -1,0 +1,172 @@
+import { supabase } from "@/lib/supabase";
+
+export interface ColorProfile {
+  undertone: "warm" | "cool" | "neutral";
+  palette: string[];
+  avoid: string[];
+  complementary: [string, string][];
+  confidence: number;
+}
+
+export interface NovaUserContext {
+  userId?: string;
+  sessionId?: string;
+  archetype: string;
+  secondaryArchetype?: string;
+  colorProfile: ColorProfile;
+  preferences: {
+    occasions: string[];
+    budget: { min: number; max: number };
+    brands: string[];
+    sizes: {
+      tops: string;
+      bottoms: string;
+      shoes: string;
+    };
+  };
+  quizAnswers: Record<string, any>;
+  completedAt: string;
+}
+
+export async function fetchUserContext(
+  userId?: string
+): Promise<NovaUserContext | null> {
+  try {
+    if (!userId) {
+      const sessionId = getSessionId();
+      if (!sessionId) return null;
+
+      const { data, error } = await supabase
+        .from("style_profiles")
+        .select("*")
+        .eq("session_id", sessionId)
+        .order("created_at", { ascending: false })
+        .maybeSingle();
+
+      if (error) {
+        console.error("[UserContext] Error fetching by session:", error);
+        return null;
+      }
+
+      if (!data) return null;
+      return parseStyleProfile(data);
+    }
+
+    const { data, error } = await supabase
+      .from("style_profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .maybeSingle();
+
+    if (error) {
+      console.error("[UserContext] Error fetching by user_id:", error);
+      return null;
+    }
+
+    if (!data) return null;
+    return parseStyleProfile(data);
+  } catch (e) {
+    console.error("[UserContext] Fetch failed:", e);
+    return null;
+  }
+}
+
+function parseStyleProfile(data: any): NovaUserContext {
+  const colorProfile = parseColorProfile(data.color_advice || data.color_profile);
+  const quizAnswers = data.quiz_answers || {};
+
+  return {
+    userId: data.user_id,
+    sessionId: data.session_id,
+    archetype: data.archetype || "casual_chic",
+    secondaryArchetype: quizAnswers.secondary_archetype,
+    colorProfile,
+    preferences: {
+      occasions: data.preferred_occasions || quizAnswers.occasions || ["casual", "work"],
+      budget: data.budget_range || quizAnswers.budget || { min: 50, max: 150 },
+      brands: quizAnswers.preferred_brands || [],
+      sizes: data.sizes || {
+        tops: quizAnswers.size_top || "M",
+        bottoms: quizAnswers.size_bottom || "31",
+        shoes: quizAnswers.size_shoes || "42",
+      },
+    },
+    quizAnswers,
+    completedAt: data.completed_at || data.created_at,
+  };
+}
+
+function parseColorProfile(data: any): ColorProfile {
+  if (!data) {
+    return {
+      undertone: "neutral",
+      palette: ["black", "white", "grey", "navy", "camel"],
+      avoid: [],
+      complementary: [],
+      confidence: 0.5,
+    };
+  }
+
+  return {
+    undertone: data.undertone || "neutral",
+    palette: Array.isArray(data.palette) ? data.palette : [],
+    avoid: Array.isArray(data.avoid) ? data.avoid : [],
+    complementary: Array.isArray(data.complementary) ? data.complementary : [],
+    confidence: data.confidence || 0.5,
+  };
+}
+
+function getSessionId(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("fitfi_session_id") || sessionStorage.getItem("fitfi_session_id");
+}
+
+export function buildSystemPrompt(context: NovaUserContext): string {
+  const { archetype, colorProfile, preferences } = context;
+
+  const paletteDisplay = colorProfile.palette.slice(0, 6).join(", ");
+  const occasionsDisplay = preferences.occasions.slice(0, 3).join(", ");
+
+  let archetypeDesc = archetype;
+  if (context.secondaryArchetype) {
+    archetypeDesc += ` × ${context.secondaryArchetype}`;
+  }
+
+  return `Je bent Nova, de persoonlijke style assistent van FitFi. Je helpt gebruikers met kleuradvies, outfit samenstelling en stijl tips.
+
+USER PROFIEL:
+- Stijl archetype: ${archetypeDesc}
+- Kleurtoon: ${colorProfile.undertone} undertone
+- Kleurenpalet: ${paletteDisplay}
+- Voorkeur gelegenheden: ${occasionsDisplay}
+- Budget: €${preferences.budget.min}-${preferences.budget.max} per item
+- Maten: ${preferences.sizes.tops} (tops), ${preferences.sizes.bottoms} (broeken), ${preferences.sizes.shoes} (schoenen)
+
+JOUW TAKEN:
+1. Geef kleuradvies gebaseerd op undertone + archetype
+2. Stel outfits samen die passen bij het profiel
+3. Leg WAAROM items werken voor deze persoon uit
+4. Wees kort, helder en menselijk (max 3-4 zinnen)
+
+STIJL:
+- Gebruik Nederlandse taal, informeel maar professioneel
+- Begin nooit met "Natuurlijk!" of "Zeker!"
+- Wees specifiek: "Camel werkt door je warme undertone" ipv "Deze kleur past bij je"
+- Geef actionable adviezen
+
+Als je gevraagd wordt om outfits samen te stellen, beschrijf kort welke items je zou kiezen en waarom ze bij dit profiel passen.`;
+}
+
+export function buildContextHeaders(context: NovaUserContext | null): Record<string, string> {
+  if (!context) {
+    return {};
+  }
+
+  return {
+    "x-fitfi-archetype": context.archetype,
+    "x-fitfi-undertone": context.colorProfile.undertone,
+    "x-fitfi-sizes": JSON.stringify(context.preferences.sizes),
+    "x-fitfi-budget": JSON.stringify(context.preferences.budget),
+  };
+}

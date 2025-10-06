@@ -11,6 +11,7 @@ export type NovaStreamOpts = {
   messages: Message[];
   onEvent?: (e: NovaEvent) => void;
   signal?: AbortSignal;
+  headers?: Record<string, string>;
 };
 
 const START_JSON = "<<<FITFI_JSON>>>";
@@ -21,9 +22,8 @@ const END_JSON = "<<<END_FITFI_JSON>>>";
  * Verwacht text/event-stream; individuele regels kunnen 'data: {json}' bevatten.
  */
 export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, void, unknown> {
-  const { messages, onEvent, signal } = opts;
+  const { messages, onEvent, signal, headers: customHeaders = {} } = opts;
 
-  // Validatie: minimaal één non-empty user message.
   const hasUser = messages.some((m) => m.role === "user" && (m.content ?? "").trim().length > 0);
   if (!hasUser) {
     onEvent?.({ type: "error", message: "Lege gebruikersinvoer." });
@@ -36,6 +36,7 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
       "Content-Type": "application/json",
       "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
       "x-fitfi-uid": (import.meta as any).env?.VITE_FITFI_UID ?? "anon",
+      ...customHeaders,
     },
     body: JSON.stringify({
       mode: opts.mode,
