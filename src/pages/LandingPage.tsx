@@ -72,19 +72,19 @@ export default function LandingPage() {
 
               <div className="grid grid-cols-3 gap-4 pt-8">
                 <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-xl">
+                  <div className="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center shadow-xl">
                     <Check className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-sm font-semibold text-[var(--color-text)]">100% Gratis</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-xl">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-xl">
                     <Shield className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-sm font-semibold text-[var(--color-text)]">Privacy-first</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-xl">
+                  <div className="w-14 h-14 rounded-2xl bg-orange-600 flex items-center justify-center shadow-xl">
                     <Clock className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-sm font-semibold text-[var(--color-text)]">2 min setup</div>
@@ -98,17 +98,18 @@ export default function LandingPage() {
 
                 <figure className="relative bg-white rounded-3xl p-4 shadow-2xl border border-[var(--color-border)] group-hover:scale-[1.02] transition-transform duration-500">
                   <img
-                    src="/hero/style-report%20copy.webp"
+                    src="https://images.pexels.com/photos/7679459/pexels-photo-7679459.jpeg?auto=compress&cs=tinysrgb&w=400&h=800&fit=crop"
                     alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    className="w-full h-auto rounded-[1.5rem] shadow-xl"
-                    sizes="(max-width: 1024px) 90vw, 400px"
+                    className="w-full h-auto rounded-2xl shadow-lg"
+                    width="400"
+                    height="800"
                   />
 
                   <div className="absolute -left-6 top-1/4 hidden lg:block">
-                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/40 animate-float">
+                    <div className="bg-white rounded-2xl p-4 shadow-2xl border border-[var(--color-border)] animate-float">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center shadow-lg">
                           <Target className="w-6 h-6 text-white" />
@@ -122,7 +123,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="absolute -right-6 top-2/3 hidden lg:block">
-                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/40 animate-float animation-delay-2000">
+                    <div className="bg-white rounded-2xl p-4 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-2000">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-xl flex items-center justify-center shadow-lg">
                           <Zap className="w-6 h-6 text-white" />
@@ -136,9 +137,9 @@ export default function LandingPage() {
                   </div>
 
                   <div className="absolute -left-8 bottom-1/4 hidden lg:block">
-                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/40 animate-float animation-delay-4000">
+                    <div className="bg-white rounded-2xl p-4 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-4000">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center shadow-lg">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
                           <Sparkles className="w-6 h-6 text-white" />
                         </div>
                         <div>
@@ -184,18 +185,18 @@ export default function LandingPage() {
       <section className="ff-section py-24">
         <div className="ff-container">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6 shadow-md">
               <Sparkles className="w-4 h-4" />
               Waarom FitFi
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4">
-              Nuchter, helder en <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">zonder gedoe</span>
+              Nuchter, helder en <span className="text-[var(--ff-color-primary-600)]">zonder gedoe</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Clock className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">2 minuten, klaar</h3>
@@ -204,8 +205,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Target className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Uitleg erbij</h3>
@@ -214,8 +215,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <TrendingUp className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Direct shopbaar</h3>
@@ -224,8 +225,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Privacy-first (EU)</h3>
@@ -245,13 +246,13 @@ export default function LandingPage() {
               Wat anderen zeggen
             </h2>
             <div className="flex items-center justify-center gap-4 mt-6">
-              <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium">⭐ 4.8/5 gemiddeld</span>
-              <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium">🇳🇱 Nederlandse focus</span>
+              <span className="px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-medium shadow-md">⭐ 4.8/5 gemiddeld</span>
+              <span className="px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-medium shadow-md">🇳🇱 Nederlandse focus</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg">
+            <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl">
               <div className="flex items-start gap-4">
                 <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg flex-shrink-0">
                   M
@@ -265,7 +266,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg">
+            <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl">
               <div className="flex items-start gap-4">
                 <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg flex-shrink-0">
                   T
@@ -286,7 +287,7 @@ export default function LandingPage() {
       <section className="ff-section py-24">
         <div className="ff-container">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6 shadow-md">
               Proces
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)]">Hoe het werkt</h2>
@@ -294,7 +295,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
                 1
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Korte vragenlijst</h3>
@@ -304,7 +305,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
                 2
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">AI analyseert</h3>
@@ -314,7 +315,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
                 3
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Persoonlijk rapport</h3>
@@ -324,7 +325,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
                 4
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Shop & draag</h3>
@@ -340,26 +341,26 @@ export default function LandingPage() {
       <section className="ff-section py-24 bg-gradient-to-b from-transparent to-[var(--ff-color-primary-25)]">
         <div className="ff-container max-w-4xl">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6 shadow-md">
               Vragen
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)]">Veelgestelde vragen</h2>
           </div>
 
           <div className="space-y-4">
-            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Is het echt gratis?</summary>
               <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">Ja, het basisrapport is volledig gratis. Je krijgt je stijlarchetype, kleurpalet en 6-8 outfits zonder kosten.</p>
             </details>
-            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Hoe accuraat is de AI?</summary>
               <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">Onze AI is getraind op duizenden stijlcombinaties en houdt rekening met lichaamsbouw, kleurtype en persoonlijke voorkeuren. De meeste gebruikers zijn verrast door de accuratesse.</p>
             </details>
-            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Welke winkels worden gebruikt?</summary>
               <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">We werken samen met bekende Nederlandse webshops zoals Zalando, ASOS, H&M, en anderen. Alle items zijn beschikbaar en leverbaar in Nederland.</p>
             </details>
-            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Wat gebeurt er met mijn data?</summary>
               <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">We verzamelen alleen wat nodig is voor je stijladvies. Je data wordt niet doorverkocht en we houden ons aan alle EU privacy-regels. <NavLink to="/privacy" className="text-[var(--ff-color-primary-600)] hover:underline font-medium">Lees ons privacybeleid</NavLink>.</p>
             </details>
