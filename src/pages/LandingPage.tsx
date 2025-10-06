@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import PageHero from "@/components/marketing/PageHero";
+import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -23,151 +23,127 @@ export default function LandingPage() {
         </script>
       </Helmet>
 
-      {/* HERO SECTION — Fantastische integratie */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-bg)] via-[var(--overlay-surface-8)] to-[var(--color-bg)] opacity-60" />
-        
-        {/* Floating orbs for ambient effect */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-400)] rounded-full opacity-20 blur-xl animate-pulse" />
-        <div className="absolute bottom-32 right-16 w-24 h-24 bg-gradient-to-r from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-full opacity-15 blur-lg animate-pulse" style={{ animationDelay: '1s' }} />
-        
-        <div className="ff-container--home relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
-            
-            {/* Left: Hero Content */}
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--ff-color-primary-50)] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div className="ff-container relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+
             <div className="space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--ff-color-primary-700)] shadow-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] shadow-sm">
                 <span className="w-2 h-2 bg-[var(--ff-color-primary-600)] rounded-full animate-pulse" />
                 GRATIS AI STYLE REPORT
               </div>
-              
-              <h1 className="text-4xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight">
-                Ontdek wat jouw
-                <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">
-                  stijl over je zegt
-                </span>
+
+              <h1 className="text-5xl lg:text-7xl font-bold text-[var(--color-text)] leading-[1.1]">
+                Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> over je zegt
               </h1>
-              
-              <p className="text-lg lg:text-xl text-[var(--color-muted)] max-w-2xl leading-relaxed">
-                Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits. 
-                <strong className="text-[var(--color-text)]"> Rustig, duidelijk en zonder gedoe.</strong>
+
+              <p className="text-xl lg:text-2xl text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
+                Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
+                <strong className="text-[var(--color-text)] font-semibold"> Rustig, duidelijk en zonder gedoe.</strong>
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <NavLink
                   to="/onboarding"
                   data-event="cta_start_free_home_hero"
-                  className="group relative px-8 py-4 bg-[var(--ff-color-primary-700)] text-white font-semibold rounded-2xl shadow-lg hover:bg-[var(--ff-color-primary-600)] transition-all duration-300 hover:shadow-xl hover:scale-105 overflow-hidden"
+                  className="px-8 py-4 bg-[var(--ff-color-primary-700)] text-white font-bold rounded-2xl shadow-xl hover:bg-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-2xl hover:scale-105"
                 >
-                  <span className="relative z-10">Start gratis</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <span className="flex items-center justify-center gap-2">
+                    Start gratis
+                    <Sparkles className="w-5 h-5" />
+                  </span>
                 </NavLink>
-                
+
                 <NavLink
                   to="/results"
                   data-event="cta_view_example_hero"
-                  className="px-8 py-4 bg-transparent text-[var(--color-text)] font-semibold border-2 border-[var(--color-border)] rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-300 hover:shadow-lg"
+                  className="px-8 py-4 bg-white text-[var(--color-text)] font-bold border-2 border-[var(--color-border)] rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
                 >
-                  Bekijk voorbeeldrapport
+                  Bekijk voorbeeld
                 </NavLink>
               </div>
-              
-              {/* Trust indicators */}
-              <div className="flex items-center justify-center lg:justify-start gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+
+              <div className="grid grid-cols-3 gap-4 pt-8">
+                <div className="flex flex-col items-center lg:items-start gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-xl">
+                    <Check className="w-7 h-7 text-white" />
                   </div>
-                  100% Gratis
+                  <div className="text-sm font-semibold text-[var(--color-text)]">100% Gratis</div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
-                  <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                    </svg>
+                <div className="flex flex-col items-center lg:items-start gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-xl">
+                    <Shield className="w-7 h-7 text-white" />
                   </div>
-                  Privacy-first
+                  <div className="text-sm font-semibold text-[var(--color-text)]">Privacy-first</div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
-                  <div className="w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                <div className="flex flex-col items-center lg:items-start gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-xl">
+                    <Clock className="w-7 h-7 text-white" />
                   </div>
-                  2 min setup
+                  <div className="text-sm font-semibold text-[var(--color-text)]">2 min setup</div>
                 </div>
               </div>
             </div>
-            
-            {/* Right: Hero Image with fantastic integration */}
+
             <div className="relative flex justify-center lg:justify-end">
-              {/* Main device frame with premium styling */}
-              <div className="relative group">
-                {/* Ambient glow background */}
-                <div className="absolute -inset-8 bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-400)] rounded-3xl opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-700" />
-                
-                {/* Device shadow */}
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-3/4 h-8 bg-[var(--color-text)] opacity-10 rounded-full blur-xl" />
-                
-                {/* Device frame */}
-                <figure className="relative bg-[var(--color-surface)] rounded-3xl p-2 shadow-2xl border border-[var(--color-border)] group-hover:scale-105 transition-transform duration-500 max-w-sm mx-auto">
+              <div className="relative group w-full max-w-md mx-auto lg:mx-0">
+                <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
+
+                <figure className="relative bg-white rounded-3xl p-4 shadow-2xl border border-[var(--color-border)] group-hover:scale-[1.02] transition-transform duration-500">
                   <img
                     src="/hero/style-report%20copy.webp"
                     alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    className="w-full h-auto rounded-2xl shadow-lg"
+                    className="w-full h-auto rounded-[1.5rem] shadow-xl"
                     sizes="(max-width: 1024px) 90vw, 400px"
                   />
-                  
-                  {/* Floating feature cards */}
-                  <div className="absolute -left-4 top-1/4 transform -translate-y-1/2 hidden lg:block">
-                    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/20 animate-float">
+
+                  <div className="absolute -left-6 top-1/4 hidden lg:block">
+                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/40 animate-float">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center">
-                          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center shadow-lg">
+                          <Target className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-gray-800">Archetype</div>
-                          <div className="text-xs text-gray-600">Modern Minimal</div>
+                          <div className="font-semibold text-sm text-[var(--color-text)]">Archetype</div>
+                          <div className="text-xs text-[var(--color-text-muted)]">Modern Minimal</div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="absolute -right-4 top-2/3 transform -translate-y-1/2 hidden lg:block">
-                    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/20 animate-float" style={{ animationDelay: '1s' }}>
+
+                  <div className="absolute -right-6 top-2/3 hidden lg:block">
+                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/40 animate-float animation-delay-2000">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-xl flex items-center justify-center">
-                          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                          </svg>
+                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-xl flex items-center justify-center shadow-lg">
+                          <Zap className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-gray-800">Outfits</div>
-                          <div className="text-xs text-gray-600">6-12 looks</div>
+                          <div className="font-semibold text-sm text-[var(--color-text)]">Outfits</div>
+                          <div className="text-xs text-[var(--color-text-muted)]">6-12 looks</div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="absolute -left-8 bottom-1/4 transform translate-y-1/2 hidden lg:block">
-                    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/20 animate-float" style={{ animationDelay: '2s' }}>
+
+                  <div className="absolute -left-8 bottom-1/4 hidden lg:block">
+                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/40 animate-float animation-delay-4000">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-700)] rounded-xl flex items-center justify-center">
-                          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                          </svg>
+                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center shadow-lg">
+                          <Sparkles className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-gray-800">AI Powered</div>
-                          <div className="text-xs text-gray-600">Smart matching</div>
+                          <div className="font-semibold text-sm text-[var(--color-text)]">AI Powered</div>
+                          <div className="text-xs text-[var(--color-text-muted)]">Smart matching</div>
                         </div>
                       </div>
                     </div>
@@ -179,87 +155,126 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* === DIFFERENTIATIE === */}
-      <section className="ff-section">
-        <div className="ff-container--home">
-          <div className="ff-section-card">
-            <div className="ff-section-card-head">
-              <span className="ff-kicker">Waarom FitFi</span>
-              <h2 className="ff-section-title">Nuchter, helder en zonder gedoe</h2>
+      {/* STATS SECTION */}
+      <section className="py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--ff-color-primary-25)] to-transparent opacity-40" />
+        <div className="ff-container relative">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">10K+</div>
+              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Style Reports</div>
             </div>
-            <div className="ff-section-card-body">
-              <div className="ff-grid cols-2">
-                <div className="ff-tile">
-                  <h3>2 minuten, klaar</h3>
-                  <p className="ff-oneliner">Geen eindeloze vragenlijsten. Gewoon de basics en je krijgt direct resultaat.</p>
-                  <details className="ff-more">
-                    <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      We vragen alleen wat echt nodig is: lichaamsbouw, voorkeuren en gelegenheid. De AI doet de rest.
-                    </div>
-                  </details>
-                </div>
-                <div className="ff-tile">
-                  <h3>Uitleg erbij</h3>
-                  <p className="ff-oneliner">Elk outfit komt met reden waarom het bij je past. Leer over je eigen stijl.</p>
-                  <details className="ff-more">
-                    <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      Geen willekeurige suggesties. Je krijgt uitleg over kleuren, silhouetten en waarom iets werkt voor jouw lichaamsbouw.
-                    </div>
-                  </details>
-                </div>
-                <div className="ff-tile">
-                  <h3>Direct shopbaar</h3>
-                  <p className="ff-oneliner">Alle items zijn beschikbaar bij bekende Nederlandse webshops.</p>
-                  <details className="ff-more">
-                    <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      Links naar Zalando, ASOS, H&M en andere shops die je kent. Geen obscure merken of uitverkochte items.
-                    </div>
-                  </details>
-                </div>
-                <div className="ff-tile">
-                  <h3>Privacy-first (EU)</h3>
-                  <p className="ff-oneliner">Alleen wat nodig is, geen doorverkoop van data.</p>
-                  <details className="ff-more">
-                    <summary>Meer</summary>
-                    <div className="ff-more-body">
-                      We zijn helder over data: minimaal verzamelen, geen doorverkoop, EU-toon & beleid. <NavLink to="/privacy" className="ff-link">Privacy</NavLink>
-                    </div>
-                  </details>
-                </div>
-              </div>
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">2 min</div>
+              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Gemiddelde tijd</div>
+            </div>
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">95%</div>
+              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Tevreden</div>
+            </div>
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">100%</div>
+              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Privacy-first</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* === TRUST & TESTIMONIALS === */}
-      <section className="ff-section">
-        <div className="ff-container--home">
-          <div className="ff-trust">
-            <div>
-              <h2 className="ff-section-title">Wat anderen zeggen</h2>
-              <div className="ff-badges">
-                <span className="ff-badge">⭐ 4.8/5 gemiddeld</span>
-                <span className="ff-badge">🇳🇱 Nederlandse focus</span>
-                <span className="ff-badge">🔒 GDPR compliant</span>
-              </div>
+      {/* FEATURES BENTO GRID */}
+      <section className="ff-section py-24">
+        <div className="ff-container">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
+              <Sparkles className="w-4 h-4" />
+              Waarom FitFi
             </div>
-            <div className="space-y-4">
-              <div className="ff-testimonial">
-                <div className="ff-avatar">M</div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4">
+              Nuchter, helder en <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">zonder gedoe</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <Clock className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">2 minuten, klaar</h3>
+              <p className="text-[var(--color-text-muted)] leading-relaxed">
+                Geen eindeloze vragenlijsten. Gewoon de basics en je krijgt direct resultaat. We vragen alleen wat echt nodig is: lichaamsbouw, voorkeuren en gelegenheid.
+              </p>
+            </div>
+
+            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <Target className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Uitleg erbij</h3>
+              <p className="text-[var(--color-text-muted)] leading-relaxed">
+                Elk outfit komt met reden waarom het bij je past. Geen willekeurige suggesties, maar uitleg over kleuren, silhouetten en waarom iets werkt voor jouw lichaamsbouw.
+              </p>
+            </div>
+
+            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <TrendingUp className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Direct shopbaar</h3>
+              <p className="text-[var(--color-text-muted)] leading-relaxed">
+                Alle items zijn beschikbaar bij bekende Nederlandse webshops. Links naar Zalando, ASOS, H&M en andere shops die je kent.
+              </p>
+            </div>
+
+            <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <Shield className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Privacy-first (EU)</h3>
+              <p className="text-[var(--color-text-muted)] leading-relaxed">
+                Alleen wat nodig is, geen doorverkoop van data. We zijn helder over data: minimaal verzamelen, EU-toon & beleid.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="ff-section py-24 bg-gradient-to-b from-[var(--ff-color-primary-25)] to-transparent">
+        <div className="ff-container">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4">
+              Wat anderen zeggen
+            </h2>
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium">⭐ 4.8/5 gemiddeld</span>
+              <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium">🇳🇱 Nederlandse focus</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg flex-shrink-0">
+                  M
+                </div>
                 <div>
-                  <p>"Eindelijk stijladvies dat niet overdreven is. Praktisch en echt bruikbaar."</p>
-                  <small className="text-[var(--color-muted)]">— Marieke, 32</small>
+                  <p className="text-[var(--color-text)] leading-relaxed mb-3">
+                    "Eindelijk stijladvies dat niet overdreven is. Praktisch en echt bruikbaar."
+                  </p>
+                  <div className="text-sm text-[var(--color-text-muted)] font-medium">— Marieke, 32</div>
                 </div>
               </div>
-              <div className="ff-testimonial">
-                <div className="ff-avatar">T</div>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-3xl p-8 shadow-lg">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg flex-shrink-0">
+                  T
+                </div>
                 <div>
-                  <p>"De uitleg waarom iets bij me past was echt eye-opening. Geen giswerk meer."</p>
-                  <small className="text-[var(--color-muted)]">— Thomas, 28</small>
+                  <p className="text-[var(--color-text)] leading-relaxed mb-3">
+                    "De uitleg waarom iets bij me past was echt eye-opening. Geen giswerk meer."
+                  </p>
+                  <div className="text-sm text-[var(--color-text-muted)] font-medium">— Thomas, 28</div>
                 </div>
               </div>
             </div>
@@ -267,116 +282,132 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* === HOE HET WERKT === */}
-      <section className="ff-section">
-        <div className="ff-container--home">
-          <div className="ff-section-card">
-            <div className="ff-section-card-head">
-              <span className="ff-kicker">Proces</span>
-              <h2 className="ff-section-title">Hoe het werkt</h2>
+      {/* HOW IT WORKS */}
+      <section className="ff-section py-24">
+        <div className="ff-container">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
+              Proces
             </div>
-            <div className="ff-section-card-body">
-              <ol className="ff-list ff-list--spine cols-2">
-                <li className="ff-row">
-                  <h3 className="ff-row-title" data-nr="1">Korte vragenlijst</h3>
-                  <p className="ff-row-sub">Lichaamsbouw, voorkeuren en waar je de kleding draagt. 2 minuten max.</p>
-                </li>
-                <li className="ff-row">
-                  <h3 className="ff-row-title" data-nr="2">AI analyseert</h3>
-                  <p className="ff-row-sub">Onze AI bepaalt je stijlarchetype en matcht dit met beschikbare items.</p>
-                </li>
-                <li className="ff-row">
-                  <h3 className="ff-row-title" data-nr="3">Persoonlijk rapport</h3>
-                  <p className="ff-row-sub">Je krijgt 6-12 complete outfits met uitleg en directe shoplinks.</p>
-                </li>
-                <li className="ff-row">
-                  <h3 className="ff-row-title" data-nr="4">Shop & draag</h3>
-                  <p className="ff-row-sub">Klik door naar bekende webshops en bouw je garderobe stap voor stap op.</p>
-                </li>
-              </ol>
-            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)]">Hoe het werkt</h2>
           </div>
-        </div>
-      </section>
 
-      {/* === FAQ === */}
-      <section className="ff-section">
-        <div className="ff-container--home">
-          <div className="ff-section-card">
-            <div className="ff-section-card-head">
-              <span className="ff-kicker">Vragen</span>
-              <h2 className="ff-section-title">Veelgestelde vragen</h2>
-            </div>
-            <div className="ff-section-card-body">
-              <div className="ff-faq">
-                <details>
-                  <summary>Is het echt gratis?</summary>
-                  <p>Ja, het basisrapport is volledig gratis. Je krijgt je stijlarchetype, kleurpalet en 6-8 outfits zonder kosten.</p>
-                </details>
-                <details>
-                  <summary>Hoe accuraat is de AI?</summary>
-                  <p>Onze AI is getraind op duizenden stijlcombinaties en houdt rekening met lichaamsbouw, kleurtype en persoonlijke voorkeuren. De meeste gebruikers zijn verrast door de accuratesse.</p>
-                </details>
-                <details>
-                  <summary>Welke winkels worden gebruikt?</summary>
-                  <p>We werken samen met bekende Nederlandse webshops zoals Zalando, ASOS, H&M, en anderen. Alle items zijn beschikbaar en leverbaar in Nederland.</p>
-                </details>
-                <details>
-                  <summary>Wat gebeurt er met mijn data?</summary>
-                  <p>We verzamelen alleen wat nodig is voor je stijladvies. Je data wordt niet doorverkocht en we houden ons aan alle EU privacy-regels. <NavLink to="/privacy" className="ff-link">Lees ons privacybeleid</NavLink>.</p>
-                </details>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                1
               </div>
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Korte vragenlijst</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Lichaamsbouw, voorkeuren en waar je de kleding draagt. 2 minuten max.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                2
+              </div>
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">AI analyseert</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Onze AI bepaalt je stijlarchetype en matcht dit met beschikbare items.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                3
+              </div>
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Persoonlijk rapport</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Je krijgt 6-12 complete outfits met uitleg en directe shoplinks.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                4
+              </div>
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Shop & draag</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Klik door naar bekende webshops en bouw je garderobe stap voor stap op.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats section */}
-      <section className="py-16 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
-        <div className="ff-container--home">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-[var(--ff-color-primary-600)]">10K+</div>
-              <div className="text-sm text-[var(--color-muted)] mt-1">Style Reports</div>
+      {/* FAQ */}
+      <section className="ff-section py-24 bg-gradient-to-b from-transparent to-[var(--ff-color-primary-25)]">
+        <div className="ff-container max-w-4xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
+              Vragen
             </div>
-            <div>
-              <div className="text-3xl font-bold text-[var(--ff-color-primary-600)]">2 min</div>
-              <div className="text-sm text-[var(--color-muted)] mt-1">Gemiddelde tijd</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[var(--ff-color-primary-600)]">95%</div>
-              <div className="text-sm text-[var(--color-muted)] mt-1">Tevreden gebruikers</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[var(--ff-color-primary-600)]">100%</div>
-              <div className="text-sm text-[var(--color-muted)] mt-1">Privacy-first</div>
-            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)]">Veelgestelde vragen</h2>
+          </div>
+
+          <div className="space-y-4">
+            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Is het echt gratis?</summary>
+              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">Ja, het basisrapport is volledig gratis. Je krijgt je stijlarchetype, kleurpalet en 6-8 outfits zonder kosten.</p>
+            </details>
+            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Hoe accuraat is de AI?</summary>
+              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">Onze AI is getraind op duizenden stijlcombinaties en houdt rekening met lichaamsbouw, kleurtype en persoonlijke voorkeuren. De meeste gebruikers zijn verrast door de accuratesse.</p>
+            </details>
+            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Welke winkels worden gebruikt?</summary>
+              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">We werken samen met bekende Nederlandse webshops zoals Zalando, ASOS, H&M, en anderen. Alle items zijn beschikbaar en leverbaar in Nederland.</p>
+            </details>
+            <details className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Wat gebeurt er met mijn data?</summary>
+              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">We verzamelen alleen wat nodig is voor je stijladvies. Je data wordt niet doorverkocht en we houden ons aan alle EU privacy-regels. <NavLink to="/privacy" className="text-[var(--ff-color-primary-600)] hover:underline font-medium">Lees ons privacybeleid</NavLink>.</p>
+            </details>
           </div>
         </div>
       </section>
 
-      {/* === FOOTER CTA === */}
-      <section className="ff-section">
-        <div className="ff-container--home">
-          <div className="text-center space-y-6 py-8">
-            <h2 className="ff-hero-title">Klaar om je stijl te ontdekken?</h2>
-            <p className="ff-hero-sub">Start nu en krijg binnen 2 minuten je persoonlijke Style Report.</p>
+      {/* FINAL CTA */}
+      <section className="relative py-32 overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-700)] via-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)]">
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
+        </div>
+
+        <div className="ff-container relative z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Klaar om je stijl te ontdekken?
+            </h2>
+            <p className="text-xl text-white mb-12 leading-relaxed">
+              Start nu en krijg binnen 2 minuten je persoonlijke Style Report.
+            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <NavLink 
+              <NavLink
                 to="/onboarding"
-                className="ff-btn ff-btn-primary"
+                className="px-10 py-5 bg-white text-[var(--ff-color-primary-700)] font-bold rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-200 hover:scale-105 text-lg"
                 data-event="cta_start_free_footer"
               >
                 Start gratis Style Report
               </NavLink>
-              <NavLink 
-                to="/results" 
-                className="ff-btn ff-btn-secondary"
+              <NavLink
+                to="/results"
+                className="px-10 py-5 bg-transparent text-white font-bold border-2 border-white rounded-2xl hover:bg-white hover:text-[var(--ff-color-primary-700)] transition-all duration-200 text-lg"
                 data-event="cta_view_example_footer"
               >
-                Bekijk voorbeeldrapport
+                Bekijk voorbeeld
               </NavLink>
             </div>
+            <p className="text-white text-sm mt-10 flex items-center justify-center gap-6">
+              <span className="flex items-center gap-2">
+                <Check className="w-5 h-5" />
+                Geen creditcard nodig
+              </span>
+              <span className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                100% Privacy-first
+              </span>
+            </p>
           </div>
         </div>
       </section>
