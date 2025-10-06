@@ -162,21 +162,21 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--ff-color-primary-25)] to-transparent opacity-40" />
         <div className="ff-container relative">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">10K+</div>
-              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Style Reports</div>
+              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Style Reports</div>
             </div>
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">2 min</div>
-              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Gemiddelde tijd</div>
+              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Gemiddelde tijd</div>
             </div>
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">95%</div>
-              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Tevreden</div>
+              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Tevreden</div>
             </div>
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-lg">
+            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">100%</div>
-              <div className="text-sm text-[var(--color-text-muted)] mt-2 font-medium">Privacy-first</div>
+              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Privacy-first</div>
             </div>
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Privacy-first (EU)</h3>
@@ -306,7 +306,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4">
                 2
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">AI analyseert</h3>
@@ -378,10 +378,10 @@ export default function LandingPage() {
 
         <div className="ff-container relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
               Klaar om je stijl te ontdekken?
             </h2>
-            <p className="text-xl text-white mb-12 leading-relaxed">
+            <p className="text-xl text-white/95 mb-12 leading-relaxed drop-shadow-md">
               Start nu en krijg binnen 2 minuten je persoonlijke Style Report.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
