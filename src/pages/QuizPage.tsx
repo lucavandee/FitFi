@@ -55,7 +55,6 @@ export default function QuizPage() {
 
       <section className="ff-section pt-24 sm:pt-28">
         <div className="ff-container--home max-w-3xl mx-auto">
-          {/* Progress */}
           <div className="w-full h-2 bg-[var(--color-surface)] rounded-full overflow-hidden mb-6 border border-[var(--color-border)]">
             <div
               className="h-full bg-[var(--ff-color-primary-600)] transition-all"
@@ -79,7 +78,6 @@ export default function QuizPage() {
             <fieldset>
               <legend className="ff-h2 mb-4">{current.label}</legend>
 
-              {/* Options */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {current.options.map((opt) => {
                   const key = `${current.id}:${opt}`;
@@ -113,7 +111,6 @@ export default function QuizPage() {
               </div>
             </fieldset>
 
-            {/* Nav */}
             <div className="mt-6 flex items-center justify-between gap-3">
               <button
                 type="button"
