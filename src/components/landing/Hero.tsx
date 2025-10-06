@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { ArrowRight, Sparkles, CircleCheck as CheckCircle, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -41,16 +42,20 @@ export function Hero() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button 
-                size="lg" 
+              <Button
+                as={NavLink}
+                to="/onboarding"
+                size="lg"
                 className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 Start gratis
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
-              
-              <Button 
-                variant="ghost" 
+
+              <Button
+                as={NavLink}
+                to="/hoe-het-werkt"
+                variant="ghost"
                 size="lg"
                 className="border border-[var(--ff-color-border)] hover:border-[var(--ff-color-primary-300)] px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
               >

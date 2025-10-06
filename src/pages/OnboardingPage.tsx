@@ -136,19 +136,19 @@ const OnboardingPage: React.FC = () => {
         </div>
         
         <div className="text-center">
-          <p className="text-gray-500 mb-4">Wil je eerst rondkijken?</p>
+          <p className="text-gray-500 mb-4">Wil je eerst meer weten?</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button 
-              as={Link} 
-              to="/quiz" 
+            <Button
+              as={Link}
+              to="/hoe-het-werkt"
               variant="outline"
               className="border-[#bfae9f] text-[#bfae9f] hover:bg-[#bfae9f] hover:text-white"
             >
-              Start Quiz
+              Hoe het werkt
             </Button>
-            <Button 
-              as={Link} 
-              to="/" 
+            <Button
+              as={Link}
+              to="/"
               variant="ghost"
               className="text-gray-600 hover:bg-gray-50"
             >
