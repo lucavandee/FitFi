@@ -98,7 +98,7 @@ export default function LandingPage() {
 
                 <figure className="relative bg-white rounded-3xl p-4 shadow-2xl border border-[var(--color-border)] group-hover:scale-[1.02] transition-transform duration-500">
                   <img
-                    src="/hero/style-report-mockup.svg"
+                    src="https://images.pexels.com/photos/7679459/pexels-photo-7679459.jpeg?auto=compress&cs=tinysrgb&w=400&h=800&fit=crop"
                     alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="eager"
                     fetchPriority="high"
