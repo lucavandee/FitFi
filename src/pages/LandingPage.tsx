@@ -98,14 +98,19 @@ export default function LandingPage() {
 
                 <figure className="relative bg-white rounded-3xl p-4 shadow-2xl border border-[var(--color-border)] group-hover:scale-[1.02] transition-transform duration-500">
                   <img
-                    src="/hero/style-report-mockup.svg"
+                    src="/hero/style-report copy copy copy copy.webp"
                     alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
                     className="w-full h-auto rounded-2xl shadow-lg"
-                    width="400"
-                    height="800"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.dataset.fallbackAttempted) {
+                        target.dataset.fallbackAttempted = 'true';
+                        target.src = '/hero/style-report-mockup.svg';
+                      }
+                    }}
                   />
 
                   <div className="absolute -left-6 top-1/4 hidden lg:block">
