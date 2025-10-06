@@ -96,14 +96,14 @@ export default function LandingPage() {
               <div className="relative group w-full max-w-md mx-auto lg:mx-0">
                 <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
 
-                <figure className="relative bg-white rounded-3xl p-4 shadow-2xl border border-[var(--color-border)] group-hover:scale-[1.02] transition-transform duration-500">
+                <figure className="relative group-hover:scale-[1.02] transition-transform duration-500">
                   <img
                     src="/hero/style-report copy copy copy copy.webp"
                     alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    className="w-full h-auto rounded-2xl shadow-lg"
+                    className="w-full h-auto rounded-2xl shadow-2xl"
                     onError={(e) => {
                       const target = e.currentTarget;
                       if (!target.dataset.fallbackAttempted) {
@@ -113,43 +113,39 @@ export default function LandingPage() {
                     }}
                   />
 
-                  <div className="absolute -left-6 top-1/4 hidden lg:block">
-                    <div className="bg-white rounded-2xl p-4 shadow-2xl border border-[var(--color-border)] animate-float">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center shadow-lg">
-                          <Target className="w-6 h-6 text-white" />
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex gap-4 items-center">
+                    <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float">
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center shadow-lg">
+                          <Target className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-[var(--color-text)]">Archetype</div>
+                          <div className="font-semibold text-xs text-[var(--color-text)]">Archetype</div>
                           <div className="text-xs text-[var(--color-text-muted)]">Modern Minimal</div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="absolute -right-6 top-2/3 hidden lg:block">
-                    <div className="bg-white rounded-2xl p-4 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-2000">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-xl flex items-center justify-center shadow-lg">
-                          <Zap className="w-6 h-6 text-white" />
+                    <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-2000">
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-500)] rounded-xl flex items-center justify-center shadow-lg">
+                          <Sparkles className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-[var(--color-text)]">Outfits</div>
-                          <div className="text-xs text-[var(--color-text-muted)]">6-12 looks</div>
+                          <div className="font-semibold text-xs text-[var(--color-text)]">AI Powered</div>
+                          <div className="text-xs text-[var(--color-text-muted)]">Smart matching</div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="absolute -left-8 bottom-1/4 hidden lg:block">
-                    <div className="bg-white rounded-2xl p-4 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-4000">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                          <Sparkles className="w-6 h-6 text-white" />
+                    <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-4000">
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-xl flex items-center justify-center shadow-lg">
+                          <Zap className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-[var(--color-text)]">AI Powered</div>
-                          <div className="text-xs text-[var(--color-text-muted)]">Smart matching</div>
+                          <div className="font-semibold text-xs text-[var(--color-text)]">Outfits</div>
+                          <div className="text-xs text-[var(--color-text-muted)]">6-12 looks</div>
                         </div>
                       </div>
                     </div>
