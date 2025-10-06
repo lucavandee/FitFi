@@ -268,15 +268,15 @@ export default function HowItWorksPage() {
 
               <div className="ff-cta-trust mt-8">
                 <div className="ff-trust-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" />
                   <span>100% Gratis</span>
                 </div>
                 <div className="ff-trust-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" />
                   <span>Geen account nodig</span>
                 </div>
                 <div className="ff-trust-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" />
                   <span>Direct resultaat</span>
                 </div>
               </div>

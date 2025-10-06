@@ -113,7 +113,7 @@ export default function ContactPage() {
                 className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
                 value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, name: true }))}
                 aria-invalid={!!errors.name} aria-describedby={errors.name ? "err-name" : undefined} required />
-              {touched.name && errors.name && <p id="err-name" className="mt-1 text-sm text-red-600">{errors.name}</p>}
+              {touched.name && errors.name && <p id="err-name" className="mt-1 text-sm text-[var(--ff-color-error-600)]">{errors.name}</p>}
             </div>
 
             <div>
@@ -122,7 +122,7 @@ export default function ContactPage() {
                 className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
                 value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                 aria-invalid={!!errors.email} aria-describedby={errors.email ? "err-email" : undefined} required />
-              {touched.email && errors.email && <p id="err-email" className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              {touched.email && errors.email && <p id="err-email" className="mt-1 text-sm text-[var(--ff-color-error-600)]">{errors.email}</p>}
             </div>
 
             <div>
@@ -144,7 +144,7 @@ export default function ContactPage() {
                 className="mt-1 w-full rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2"
                 value={message} onChange={(e) => setMessage(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, message: true }))}
                 aria-invalid={!!errors.message} aria-describedby={errors.message ? "err-message" : undefined} required />
-              {touched.message && errors.message && <p id="err-message" className="mt-1 text-sm text-red-600">{errors.message}</p>}
+              {touched.message && errors.message && <p id="err-message" className="mt-1 text-sm text-[var(--ff-color-error-600)]">{errors.message}</p>}
             </div>
 
             <div className="flex flex-wrap gap-3">
