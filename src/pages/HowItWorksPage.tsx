@@ -14,50 +14,22 @@ export default function HowItWorksPage() {
         />
       </Helmet>
 
-      {/* Background Orbs */}
-      <div className="ff-bg-orbs" aria-hidden="true">
-        <div className="ff-orb ff-orb-1"></div>
-        <div className="ff-orb ff-orb-2"></div>
-        <div className="ff-orb ff-orb-3"></div>
-      </div>
-
       {/* Hero Section */}
-      <section className="ff-hero-section">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
         </div>
-        <div className="ff-container relative">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="ff-premium-badge">
-              <Sparkles className="w-4 h-4" />
-              <span>AI-POWERED STYLING</span>
-            </div>
-            
-            <h1 className="ff-hero-title mt-6">
-              Zo werkt jouw{" "}
-              <span className="ff-gradient-text">AI Style Report</span>
-            </h1>
-            
-            <p className="ff-hero-sub mt-6 max-w-2xl mx-auto">
-              In 3 eenvoudige stappen van persoonlijkheidsquiz naar gepersonaliseerde outfits. 
-              Geen gedoe, wel resultaat.
-            </p>
 
-            <div className="ff-trust-indicators mt-8">
-              <div className="ff-trust-item">
-                <Clock className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>2 minuten</span>
-              </div>
-              <div className="ff-trust-item">
-                <Shield className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>100% Privacy</span>
-              </div>
-              <div className="ff-trust-item">
-                <Target className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>Persoonlijk</span>
-              </div>
-            </div>
+        <div className="ff-container relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+              Zo werkt jouw
+              <span className="block text-[var(--ff-color-primary-600)]">AI Style Report</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+              In 3 eenvoudige stappen van persoonlijkheidsquiz naar gepersonaliseerde outfits. Geen gedoe, wel resultaat.
+            </p>
           </div>
         </div>
       </section>

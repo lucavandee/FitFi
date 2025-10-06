@@ -14,13 +14,23 @@ export default function AboutPage() {
         <link rel="canonical" href="https://fitfi.ai/over-ons" />
       </Helmet>
 
-      {/* Hero */}
-      <section className="ff-section pt-24 sm:pt-28">
-        <div className="ff-container--home">
-          <h1 className="ff-h1 mb-4">Over ons</h1>
-          <p className="text-[var(--color-text-muted)] max-w-2xl">
-            FitFi helpt je betere kledingkeuzes te maken met AI. Geen hype, wel helderheid en rust in je stijl.
-          </p>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div className="ff-container relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+              Over
+              <span className="block text-[var(--ff-color-primary-600)]">FitFi</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+              FitFi helpt je betere kledingkeuzes te maken met AI. Geen hype, wel helderheid en rust in je stijl.
+            </p>
+          </div>
         </div>
       </section>
 

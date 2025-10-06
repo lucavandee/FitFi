@@ -12,33 +12,29 @@ export default function PricingPage() {
         <link rel="canonical" href="https://fitfi.ai/prijzen" />
       </Helmet>
 
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div className="ff-container relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+              Kies het plan dat bij
+              <span className="block text-[var(--ff-color-primary-600)]">jouw stijl</span> past
+            </h1>
+            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+              Begin gratis. Upgrade wanneer je wilt. Geen verrassingen.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <div className="min-h-screen">
-        <section className="ff-section pt-24 sm:pt-28">
+        <section className="ff-section pt-12">
           <div className="ff-container--home">
-            <div className="text-center max-w-4xl mx-auto">
-              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] mb-6">
-                <Sparkles className="w-4 h-4" />
-                <span>Transparante prijzen</span>
-              </div>
-              <h1 className="ff-h1 mb-4">
-                Kies het plan dat bij <span className="ff-gradient-text">jouw stijl</span> past
-              </h1>
-              <p className="text-[var(--color-text-muted)] text-lg">Begin gratis. Upgrade wanneer je wilt. Geen verrassingen.</p>
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                <div className="flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-                  <span>Geen verborgen kosten</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-                  <span>Opzeggen kan altijd</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-                  <span>30 dagen geld terug</span>
-                </div>
-              </div>
-            </div>
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
               <article className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6">
                 <header className="text-center mb-6">
