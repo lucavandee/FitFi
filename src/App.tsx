@@ -21,6 +21,7 @@ const TermsPage          = lazy(() => import("@/pages/TermsPage"));
 const PrivacyPage        = lazy(() => import("@/pages/PrivacyPage"));
 const CookiesPage        = lazy(() => import("@/pages/CookiesPage"));
 const DisclosurePage     = lazy(() => import("@/pages/DisclosurePage"));
+const OnboardingFlow     = lazy(() => import("@/pages/OnboardingFlowPage"));
 const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 const LoginPage          = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));
@@ -40,6 +41,7 @@ const WithSeo = {
   Privacy:    () => (<><Seo title="Privacy — FitFi" description="Zo beschermen we jouw gegevens." path="/privacy" /><PrivacyPage /></>),
   Cookies:    () => (<><Seo title="Cookies — FitFi" description="Informatie over cookies en voorkeuren." path="/cookies" /><CookiesPage /></>),
   Disclosure: () => (<><Seo title="Disclosure — FitFi" description="Transparantieverklaring." path="/disclosure" /><DisclosurePage /></>),
+  Onboarding: () => (<><Seo title="Start je Style Report — FitFi" description="Beantwoord enkele vragen en ontdek je perfecte stijl." path="/onboarding" /><OnboardingFlow /></>),
   Results:    () => (<><Seo title="Jouw resultaten — FitFi" description="Outfits en uitleg waarom ze voor je werken." path="/results" /><EnhancedResults /></>),
   Login:      () => (<><Seo title="Inloggen — FitFi" description="Log in om je stijlresultaten te zien." path="/inloggen" /><LoginPage /></>),
   Register:   () => (<><Seo title="Registreren — FitFi" description="Maak je account aan en start gratis." path="/registreren" /><RegisterPage /></>),
@@ -72,6 +74,11 @@ export default function App() {
               <Route path="/privacy" element={<WithSeo.Privacy />} />
               <Route path="/cookies" element={<WithSeo.Cookies />} />
               <Route path="/disclosure" element={<WithSeo.Disclosure />} />
+
+              {/* Onboarding / Quiz */}
+              <Route path="/onboarding" element={<WithSeo.Onboarding />} />
+              <Route path="/quiz" element={<Navigate to="/onboarding" replace />} />
+              <Route path="/stijlquiz" element={<Navigate to="/onboarding" replace />} />
 
               {/* Auth (NL canoniek) */}
               <Route path="/inloggen" element={<WithSeo.Login />} />
