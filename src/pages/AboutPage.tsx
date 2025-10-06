@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
+import { Target, Shield, Sparkles, ArrowRight } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -34,53 +35,118 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Missie */}
-      <section className="ff-section py-12">
-        <div className="ff-container--home grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
-            <h2 className="ff-h2 mb-3">Onze missie</h2>
-            <p>
-              We maken stijl eenvoudig en persoonlijk. Met privacy-vriendelijke technologie en duidelijke keuzes,
-              zodat jij met minder moeite beter voor de dag komt.
-            </p>
-          </div>
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
-            <h2 className="ff-h2 mb-3">Onze principes</h2>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Rustig, precies en feitelijk.</li>
-              <li>WCAG AA-toegankelijk; mobile-first.</li>
-              <li>Geen dark patterns; transparante prijzen.</li>
-            </ul>
+      {/* Missie & Principes */}
+      <section className="py-20">
+        <div className="ff-container">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-soft)]">
+              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Target className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+              </div>
+              <h2 className="text-3xl font-bold mb-4">Onze missie</h2>
+              <p className="text-[var(--color-text-muted)] text-lg leading-relaxed">
+                We maken stijl eenvoudig en persoonlijk. Met privacy-vriendelijke technologie en duidelijke keuzes,
+                zodat jij met minder moeite beter voor de dag komt.
+              </p>
+            </div>
+
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-soft)]">
+              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+              </div>
+              <h2 className="text-3xl font-bold mb-4">Onze principes</h2>
+              <ul className="space-y-3 text-[var(--color-text-muted)] text-lg">
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
+                  <span>Rustig, precies en feitelijk</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
+                  <span>WCAG AA-toegankelijk; mobile-first</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
+                  <span>Geen dark patterns; transparante prijzen</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Proof */}
-      <section className="ff-section py-12">
-        <div className="ff-container--home grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
-            <h3 className="text-xl font-semibold mb-2">EU-privacy</h3>
-            <p className="text-[var(--color-text-muted)]">Data-minimalistisch en helder over wat we doen.</p>
+      {/* Wat ons onderscheidt */}
+      <section className="py-20 bg-[var(--color-surface)]/30">
+        <div className="ff-container">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Wat ons <span className="text-[var(--ff-color-primary-600)]">onderscheidt</span>
+            </h2>
+            <p className="text-xl text-[var(--color-text-muted)]">
+              Transparantie, privacy en focus op resultaat staan centraal in alles wat we doen
+            </p>
           </div>
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
-            <h3 className="text-xl font-semibold mb-2">Design-tokens</h3>
-            <p className="text-[var(--color-text-muted)]">Consistent, snel en toegankelijk in elke view.</p>
-          </div>
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
-            <h3 className="text-xl font-semibold mb-2">Focus op resultaat</h3>
-            <p className="text-[var(--color-text-muted)]">Direct bruikbare outfits en keuzes, geen ruis.</p>
+
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-soft)]">
+              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Shield className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">EU-privacy</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Data-minimalistisch en helder over wat we doen. Jouw privacy staat voorop.
+              </p>
+            </div>
+
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-soft)]">
+              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Design-tokens</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Consistent, snel en toegankelijk in elke view. Premium maar nooit overdone.
+              </p>
+            </div>
+
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-soft)]">
+              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Target className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Focus op resultaat</h3>
+              <p className="text-[var(--color-text-muted)]">
+                Direct bruikbare outfits en keuzes, geen ruis. Binnen 2 minuten bruikbaar advies.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="ff-section py-16">
-        <div className="ff-container--home text-center">
-          <h2 className="ff-h2 mb-4">Probeer FitFi vandaag</h2>
-          <p className="text-[var(--color-text-muted)] mb-8">Binnen 2 minuten een helder Style Report.</p>
-          <NavLink to="/onboarding" className="ff-btn ff-btn-primary" data-event="cta_start_free_about">
-            Start gratis
-          </NavLink>
+      <section className="py-20">
+        <div className="ff-container">
+          <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Probeer FitFi <span className="text-[var(--ff-color-primary-600)]">vandaag</span>
+            </h2>
+            <p className="text-xl text-[var(--color-text-muted)] mb-8">
+              Binnen 2 minuten een helder Style Report. Geen account nodig.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <NavLink
+                to="/onboarding"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                data-event="cta_start_free_about"
+              >
+                Start gratis
+                <ArrowRight className="w-5 h-5" />
+              </NavLink>
+              <NavLink
+                to="/hoe-het-werkt"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
+              >
+                Hoe het werkt
+              </NavLink>
+            </div>
+          </div>
         </div>
       </section>
     </main>
