@@ -9,15 +9,32 @@
 
 ---
 
-## ⚡ Quick Test (30 seconds)
+## ⚡ Quick Test (2 opties)
 
-### 1. Open in Browser
-Dev server auto-starts at: `http://localhost:5173`
+### Optie A: Met Database (Aanbevolen)
+```bash
+npm run dev:netlify
+```
+- Start op: `http://localhost:8888`
+- Nova function werkt met Supabase
+- Toont 50 echte products
 
-### 2. Open Nova Chat
+### Optie B: Zonder Database (Fallback)
+```bash
+npm run dev
+```
+- Start op: `http://localhost:5173`
+- Nova toont helper bericht
+- Geen database verbinding
+
+---
+
+### Test Stappen
+
+### 1. Open Nova Chat
 Look for the chat bubble in bottom-right corner
 
-### 3. Test Queries
+### 2. Test Queries
 
 **Query 1 (Basic Outfit):**
 ```

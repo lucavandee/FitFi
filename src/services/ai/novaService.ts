@@ -18,6 +18,33 @@ const START_JSON = "<<<FITFI_JSON>>>";
 const END_JSON = "<<<END_FITFI_JSON>>>";
 
 /**
+ * Lokale fallback wanneer Netlify function niet beschikbaar is
+ */
+async function* localNovaFallback(
+  messages: Message[],
+  onEvent?: (e: NovaEvent) => void
+): AsyncGenerator<string, void, unknown> {
+  const lastMessage = messages[messages.length - 1]?.content || "";
+
+  const response = `${START_JSON}
+{
+  "explanation": "Nova werkt momenteel in lokale modus. Start de dev server met 'npm run dev:netlify' voor volledige functionaliteit.",
+  "products": []
+}
+${END_JSON}`;
+
+  await new Promise(r => setTimeout(r, 500));
+
+  for (const char of response) {
+    yield char;
+    onEvent?.({ type: "delta", text: char });
+    await new Promise(r => setTimeout(r, 10));
+  }
+
+  onEvent?.({ type: "done" });
+}
+
+/**
  * Server-Sent Events streamer naar Netlify function.
  * Verwacht text/event-stream; individuele regels kunnen 'data: {json}' bevatten.
  */
@@ -30,23 +57,36 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     throw new Error("Empty user content not allowed");
   }
 
-  const res = await fetch("/.netlify/functions/nova", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
-      "x-fitfi-uid": (import.meta as any).env?.VITE_FITFI_UID ?? "anon",
-      ...customHeaders,
-    },
-    body: JSON.stringify({
-      mode: opts.mode,
-      messages,
-      expected_markers: { start: START_JSON, end: END_JSON },
-    }),
-    signal,
-  });
+  let res: Response;
+
+  try {
+    res = await fetch("/.netlify/functions/nova", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
+        "x-fitfi-uid": (import.meta as any).env?.VITE_FITFI_UID ?? "anon",
+        ...customHeaders,
+      },
+      body: JSON.stringify({
+        mode: opts.mode,
+        messages,
+        expected_markers: { start: START_JSON, end: END_JSON },
+      }),
+      signal,
+    });
+  } catch (fetchError) {
+    console.warn("Nova endpoint niet beschikbaar, gebruik lokale fallback:", fetchError);
+    yield* localNovaFallback(messages, onEvent);
+    return;
+  }
 
   if (!res.ok || !res.body) {
+    if (res.status === 404) {
+      console.warn("Nova function niet gevonden (404), gebruik lokale fallback");
+      yield* localNovaFallback(messages, onEvent);
+      return;
+    }
     onEvent?.({ type: "error", message: "SSE niet beschikbaar." });
     throw new Error(`SSE failed: ${res.status}`);
   }
