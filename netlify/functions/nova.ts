@@ -105,16 +105,18 @@ function buildLocalResponse(
 
   send({ type: "meta", model: "fitfi-nova-local", traceId });
 
-  const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
-  if (head) send({ type: "delta", text: head });
+  // Send explanation in chunks (simulates streaming)
+  const chunkSize = 50;
+  for (let i = 0; i < explanation.length; i += chunkSize) {
+    const chunk = explanation.slice(i, i + chunkSize);
+    send({ type: "delta", text: chunk });
+  }
 
+  // Send products as separate JSON payload
   if (includeProducts && products.length > 0) {
     const payload = { explanation, products };
     send({ type: "delta", text: `${START}${JSON.stringify(payload)}${END}` });
   }
-
-  const tail = explanation.slice(Math.ceil(explanation.length * 0.6));
-  if (tail) send({ type: "delta", text: tail });
 
   send({ type: "done" });
 

@@ -1,5 +1,74 @@
 # Changelog
 
+## [1.7.5] - 2025-10-07
+
+### Nova Text Chunking Fix
+
+**JSON markers zichtbaar in tekst - OPGELOST**
+
+#### Problem
+
+Response kwam WEL binnen maar JSON markers waren zichtbaar:
+```
+...comfortabel en dir<<<FITFI_JSON>>>...<<<END_FITFI_JSON>>>ect shoppable...
+```
+
+**Issues:**
+1. Tekst werd gesplitst midden in woorden ("dir-ect")
+2. JSON markers zichtbaar tussen tekst
+3. Slechte user experience
+
+#### Root Cause
+
+Function splitste explanation in 60/40:
+```typescript
+const head = explanation.slice(0, Math.ceil(length * 0.6));  // "...dir"
+// JSON markers here
+const tail = explanation.slice(Math.ceil(length * 0.6));     // "ect..."
+```
+
+#### Fix
+
+Changed naar proper chunking:
+```typescript
+// VOOR: Split at arbitrary position
+const head = explanation.slice(0, 0.6 * length);
+send({ type: "delta", text: head });
+send({ type: "delta", text: JSON_MARKERS });
+send({ type: "delta", text: tail });
+
+// NA: Send complete text in chunks, then JSON
+const chunkSize = 50;
+for (let i = 0; i < explanation.length; i += chunkSize) {
+  send({ type: "delta", text: explanation.slice(i, i + chunkSize) });
+}
+send({ type: "delta", text: JSON_MARKERS });  // Separate
+```
+
+#### Result
+
+**VOOR:**
+```
+delta: "...comfortabel en dir"
+delta: "<<<JSON>>>...<<<END>>>"
+delta: "ect shoppable..."
+```
+
+**NA:**
+```
+delta: "We kozen voor een cleane, smart-casual look: nette"
+delta: " jeans, frisse witte sneaker."
+delta: "<<<JSON>>>...<<<END>>>"
+```
+
+**Effect:**
+- ✅ Tekst blijft compleet (geen gesplitste woorden)
+- ✅ JSON markers apart van tekst
+- ✅ stripJSONMarkers() werkt correct
+- ✅ Smooth streaming experience
+
+---
+
 ## [1.7.4] - 2025-10-07
 
 ### Nova No Response Fix
