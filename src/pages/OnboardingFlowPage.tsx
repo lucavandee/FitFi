@@ -6,6 +6,7 @@ import { quizSteps } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
 import { LS_KEYS } from "@/lib/quiz/types";
+import PhotoUpload from "@/components/quiz/PhotoUpload";
 
 type QuizAnswers = {
   stylePreferences?: string[];
@@ -89,13 +90,21 @@ export default function OnboardingFlowPage() {
           .insert({
             user_id: user?.id || null,
             session_id: !user ? sessionId : null,
+            gender: answers.gender,
             archetype: result.archetype,
+            body_type: answers.bodyType,
             color_profile: result.color,
+            color_analysis: answers.colorAnalysis || null,
+            photo_url: answers.photoUrl || null,
             quiz_answers: answers,
+            sizes: answers.sizes || null,
+            budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
+            preferred_occasions: answers.occasions || [],
             completed_at: new Date().toISOString(),
           })
           .then(({ error }) => {
             if (error) console.error('Error saving to Supabase:', error);
+            else console.log('✅ Quiz saved to Supabase with gender, sizes, photo!');
           });
       }
 
@@ -251,6 +260,45 @@ export default function OnboardingFlowPage() {
                   <span>€{step.max || 100}+</span>
                 </div>
               </div>
+            )}
+
+            {/* Sizes */}
+            {step.type === 'sizes' && step.sizeFields && (
+              <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 space-y-6">
+                {step.sizeFields.map((field) => (
+                  <div key={field.name}>
+                    <label className="block text-sm font-medium mb-3">{field.label}</label>
+                    <select
+                      className="w-full px-4 py-3 rounded-[var(--radius-lg)] border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors"
+                      value={((answers.sizes as any) || {})[field.name] || ""}
+                      onChange={(e) => {
+                        const currentSizes = (answers.sizes as any) || {};
+                        handleAnswer('sizes', { ...currentSizes, [field.name]: e.target.value });
+                      }}
+                    >
+                      <option value="">Selecteer maat</option>
+                      {field.options.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+                <p className="text-sm text-[var(--color-text-muted)] italic">
+                  Je kunt deze stap overslaan als je wilt.
+                </p>
+              </div>
+            )}
+
+            {/* Photo Upload */}
+            {step.type === 'photo' && (
+              <PhotoUpload
+                value={answers.photoUrl as string}
+                onChange={(url) => handleAnswer('photoUrl', url)}
+                onAnalysisComplete={(analysis) => {
+                  console.log("AI Color Analysis:", analysis);
+                  handleAnswer('colorAnalysis', analysis);
+                }}
+              />
             )}
           </div>
 

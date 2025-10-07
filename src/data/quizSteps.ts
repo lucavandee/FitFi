@@ -3,6 +3,36 @@ import { QuizStep } from '../types/quiz';
 export const quizSteps: QuizStep[] = [
   {
     id: 1,
+    title: 'Voor wie is deze stijlanalyse?',
+    description: 'Dit helpt ons om passende kleding te adviseren',
+    field: 'gender',
+    type: 'radio',
+    required: true,
+    options: [
+      {
+        value: 'male',
+        label: 'Heren',
+        description: 'Mannelijke stijladvies'
+      },
+      {
+        value: 'female',
+        label: 'Dames',
+        description: 'Vrouwelijke stijladvies'
+      },
+      {
+        value: 'non-binary',
+        label: 'Non-binair',
+        description: 'Gender-neutrale stijladvies'
+      },
+      {
+        value: 'prefer-not-to-say',
+        label: 'Zeg ik liever niet',
+        description: 'We gebruiken algemene stijladvies'
+      }
+    ]
+  },
+  {
+    id: 2,
     title: 'Wat zijn jouw stijlvoorkeuren?',
     description: 'Selecteer alle stijlen die je aanspreken (meerdere keuzes mogelijk)',
     field: 'stylePreferences',
@@ -166,5 +196,38 @@ export const quizSteps: QuizStep[] = [
     min: 25,
     max: 500,
     step: 25
+  },
+  {
+    id: 6,
+    title: 'Wat zijn jouw maten?',
+    description: 'Dit helpt ons om producten in jouw maat te vinden',
+    field: 'sizes',
+    type: 'sizes',
+    required: false,
+    sizeFields: [
+      {
+        name: 'tops',
+        label: 'Tops (T-shirts, shirts)',
+        options: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+      },
+      {
+        name: 'bottoms',
+        label: 'Broeken (waist)',
+        options: ['28', '30', '31', '32', '33', '34', '36', '38', '40']
+      },
+      {
+        name: 'shoes',
+        label: 'Schoenen (EU)',
+        options: ['39', '40', '41', '42', '43', '44', '45', '46']
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: 'Upload een selfie voor kleurenanalyse',
+    description: 'Voor de beste analyse: natuurlijk licht, geen filters, frontaal gezicht',
+    field: 'photoUrl',
+    type: 'photo',
+    required: false
   }
 ];

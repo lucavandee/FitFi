@@ -1,9 +1,17 @@
 export interface QuizAnswers {
+  gender?: string;
   stylePreferences: string[];
   baseColors: string;
   bodyType: string;
   occasions: string[];
   budgetRange: number;
+  sizes?: {
+    tops?: string;
+    bottoms?: string;
+    shoes?: string;
+  };
+  photoUrl?: string;
+  colorAnalysis?: any;
 }
 
 export interface QuizStep {
@@ -11,7 +19,7 @@ export interface QuizStep {
   title: string;
   description: string;
   field: keyof QuizAnswers;
-  type: 'checkbox' | 'radio' | 'select' | 'multiselect' | 'slider';
+  type: 'checkbox' | 'radio' | 'select' | 'multiselect' | 'slider' | 'sizes' | 'photo';
   options?: Array<{
     value: string;
     label: string;
@@ -21,6 +29,11 @@ export interface QuizStep {
   max?: number;
   step?: number;
   required: boolean;
+  sizeFields?: Array<{
+    name: string;
+    label: string;
+    options: string[];
+  }>;
 }
 
 export interface QuizProgress {
