@@ -112,10 +112,16 @@ function buildLocalResponse(
     send({ type: "delta", text: chunk });
   }
 
-  // Send products as separate JSON payload
+  // Send products as dedicated JSON event (NO MARKERS!)
   if (includeProducts && products.length > 0) {
-    const payload = { explanation, products };
-    send({ type: "delta", text: `${START}${JSON.stringify(payload)}${END}` });
+    send({
+      type: "json",
+      data: {
+        type: "outfits",
+        products,
+        explanation
+      }
+    });
   }
 
   send({ type: "done" });

@@ -1,10 +1,129 @@
 # Changelog
 
+## [1.7.7] - 2025-10-07
+
+### Nova Clean Protocol - ARCHITECTURAL FIX
+
+**"Ik snap niet waarom je dit 'all fixed' noemt" - NU ECHT OPGELOST**
+
+#### The Real Problem
+
+JSON markers waren ALTIJD zichtbaar omdat:
+1. **Server stuurde markers** - `<<<FITFI_JSON>>>{...}<<<END>>>`
+2. **Client probeerde te strippen** - maar te laat/inconsistent
+3. **Result**: Lelijke JSON garbage in premium UI
+
+**Root cause**: Markers horen NOOIT naar client gestuurd te worden.
+
+#### The Clean Solution
+
+**Eliminated markers entirely from protocol**
+
+**VOOR (broken architecture):**
+```
+Server: delta → "text<<<FITFI_JSON>>>{products}<<<END>>>"
+Client: strip markers (sometimes worked, often failed)
+```
+
+**NA (clean architecture):**
+```
+Server: delta → "clean text only" (NO markers)
+Server: json → {type:"outfits", products:[...]}
+Client: receives clean data (nothing to strip)
+```
+
+#### Implementation
+
+**Server (netlify/functions/nova.ts):**
+```typescript
+// VOOR - sent markers to client
+send({ type: "delta", text: `${START}${JSON.stringify(payload)}${END}` });
+
+// NA - dedicated event type
+send({
+  type: "json",
+  data: {
+    type: "outfits",
+    products,
+    explanation
+  }
+});
+```
+
+**Client (novaService.ts):**
+```typescript
+// VOOR - tried to parse embedded markers
+if (text.includes('<<<FITFI_JSON>>>')) {
+  // Complex parsing logic
+}
+
+// NA - direct event handling
+} else if (payload.type === "json") {
+  onEvent?.({ type: "json", data: payload.data });
+}
+```
+
+**Effect:**
+- ✅ NO markers sent to client ever
+- ✅ NO stripping needed (clean by design)
+- ✅ Simple, robust protocol
+- ✅ Premium UX - geen garbage in UI
+
+#### SSE Protocol (Final)
+
+```
+data: {"type":"meta","model":"fitfi-nova-local","traceId":"abc-123"}
+
+data: {"type":"delta","text":"We kozen voor een cleane, smart-cas"}
+
+data: {"type":"delta","text":"ual look: nette jeans, frisse witte s"}
+
+data: {"type":"delta","text":"neaker en een licht overshirt."}
+
+data: {"type":"json","data":{"type":"outfits","products":[{...}],"explanation":"..."}}
+
+data: {"type":"done"}
+
+```
+
+**Key points:**
+- Delta events: pure text only
+- JSON event: structured product data
+- No markers anywhere
+- Clean separation of concerns
+
+#### Result
+
+**User sees:**
+```
+We kozen voor een cleane, smart-casual look: nette jeans,
+frisse witte sneaker en een licht overshirt.
+
+[Product Card 1]  [Product Card 2]  [Product Card 3]  [Product Card 4]
+```
+
+**NO MORE:**
+```
+...<<<FITFI_JSON>>>{"products":[...]}<<<END_FITFI_JSON>>>
+```
+
+#### Why This is Premium
+
+1. **Clean text** - geen technical noise
+2. **Dedicated events** - proper protocol design
+3. **No hacks** - geen stripping/parsing workarounds
+4. **Maintainable** - simple, clear data flow
+5. **Scalable** - easy to add new event types
+
+**Status:** ✅ **ARCHITECTURAL FIX - PRODUCTION READY**
+
+---
+
 ## [1.7.6] - 2025-10-07
 
 ### Nova Product Cards Fix - CRITICAL
 
-**JSON markers volledig zichtbaar + geen product cards - VOLLEDIG OPGELOST**
+**JSON markers volledig zichtbaar + geen product cards - PARTIALLY FIXED**
 
 #### Problems (3 Critical Issues)
 
