@@ -53,6 +53,7 @@ export default function StyleQuizPage() {
           body_type: answers.bodytype,
           quiz_answers: answers,
           color_advice: result.color,
+          color_analysis: answers.colorAnalysis || null,
           preferred_occasions: answers.goals || [],
           sizes: answers.sizes,
           budget_range: answers.budget,
@@ -341,8 +342,14 @@ export default function StyleQuizPage() {
         )}
 
         {current === "photo" && (
-          <PhotoUpload value={answers.photoDataUrl}
-                       onChange={(v) => setAnswers((s) => ({ ...s, photoDataUrl: v }))} />
+          <PhotoUpload
+            value={answers.photoDataUrl}
+            onChange={(v) => setAnswers((s) => ({ ...s, photoDataUrl: v }))}
+            onAnalysisComplete={(analysis) => {
+              console.log("AI Color Analysis:", analysis);
+              setAnswers((s) => ({ ...s, colorAnalysis: analysis }));
+            }}
+          />
         )}
 
         {current === "review" && (

@@ -42,6 +42,17 @@ export type AnswerMap = {
   occasions?: ("office" | "smartcasual" | "leisure")[];
   brands?: string[];
   photoDataUrl?: string | null;
+  colorAnalysis?: {
+    undertone: "warm" | "cool" | "neutral";
+    skin_tone: string;
+    hair_color: string;
+    eye_color: string;
+    seasonal_type: "spring" | "summer" | "autumn" | "winter";
+    best_colors: string[];
+    avoid_colors: string[];
+    confidence: number;
+    reasoning?: string;
+  };
 };
 
 export type ColorProfile = {
