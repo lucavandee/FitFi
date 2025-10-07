@@ -1,5 +1,90 @@
 # Changelog
 
+## [1.11.1] - 2025-10-07
+
+### Nova Auth Fix - Graceful Degradation
+
+**"De verbinding werd onderbroken" zelfs als ingelogd - FIXED!**
+
+#### The Problem - Auth Too Strict Broke Everything
+
+After adding authentication in v1.11.0, Nova stopped working entirely:
+
+```
+User (even logged in): hi
+Nova: "De verbinding werd onderbroken"  ❌ BROKEN!
+```
+
+**Root cause:**
+- Backend rejected ALL requests without valid Supabase user ID (401)
+- Frontend sent random UUID or "anon" instead of real user ID
+- Result: EVERYONE blocked!
+
+#### The Solution - Graceful Degradation
+
+**3-part fix:**
+
+**1. Backend - Allow Without Auth (Graceful):**
+```typescript
+// BEFORE (strict):
+if (!userId || userId === "anon") return 401;  // ❌ Blocked everyone!
+
+// AFTER (graceful):
+const isValidUserId = userId && userId !== "anon" && userId.includes("-");
+
+if (isValidUserId && supabase) {
+  try {
+    const check = await can_use_nova(userId);
+    if (!check.can_use) return 403;  // Only block if auth + over limit
+    await increment_usage();
+    console.log("✅ Nova access: tier (count/limit)");
+  } catch (e) {
+    console.warn("⚠️ Degraded mode");  // Continue anyway!
+  }
+} else {
+  console.warn("⚠️ No auth - Degraded mode");  // Continue anyway!
+}
+```
+
+**2. Frontend - Send Real User ID:**
+```typescript
+// novaService.ts + novaClient.ts
+let userId = "anon";
+try {
+  const user = JSON.parse(localStorage.getItem("fitfi_user"));
+  if (user?.id) userId = user.id;  // Real Supabase ID!
+} catch {}
+
+headers: { "x-fitfi-uid": userId }
+```
+
+**Result:**
+- ✅ Nova works for everyone (auth OR not)
+- ✅ Authenticated → rate limiting enforced
+- ✅ Non-auth → degraded mode (no tracking)
+- ✅ Supabase errors → graceful fallback
+
+#### Impact
+
+**Before:**
+- ❌ Nova completely broken
+- ❌ All users blocked
+
+**After:**
+- ✅ Nova works for everyone
+- ✅ Rate limiting for authenticated
+- ✅ Graceful for non-auth
+
+**Files:**
+- `netlify/functions/nova.ts` - Graceful check
+- `src/services/ai/novaService.ts` - Real user ID
+- `src/services/nova/novaClient.ts` - Real user ID
+- `NOVA_AUTH_GRACEFUL_FIX.md` - Fix docs
+
+**Never break core functionality when adding premium features.** 🎯
+
+---
+
 ## [1.11.0] - 2025-10-07
 
 ### Nova Premium - Authentication, Rate Limiting & Rich Context

@@ -27,7 +27,24 @@ export async function openNovaStream(
   const ctrl = new AbortController();
   const signal = fetchInit?.signal ?? ctrl.signal;
 
-  const uid = getOrCreateUid();
+  // Get real user ID if authenticated, otherwise use tracking UID
+  let uid = "anon";
+  try {
+    const userStr = localStorage.getItem("fitfi_user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user?.id) {
+        uid = user.id; // Real authenticated user ID
+      } else {
+        uid = getOrCreateUid(); // Fallback to tracking UID
+      }
+    } else {
+      uid = getOrCreateUid(); // Fallback to tracking UID
+    }
+  } catch (e) {
+    uid = getOrCreateUid(); // Fallback to tracking UID
+  }
+
   const tier = (import.meta.env.VITE_FITFI_TIER || "free").toString();
 
   handlers.onStart?.();

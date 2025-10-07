@@ -67,13 +67,27 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
 
   let res: Response;
 
+  // Get real user ID from localStorage if authenticated
+  let userId = "anon";
+  try {
+    const userStr = localStorage.getItem("fitfi_user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user?.id) {
+        userId = user.id;
+      }
+    }
+  } catch (e) {
+    console.warn("Could not get user ID:", e);
+  }
+
   try {
     res = await fetch("/.netlify/functions/nova", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
-        "x-fitfi-uid": (import.meta as any).env?.VITE_FITFI_UID ?? "anon",
+        "x-fitfi-uid": userId,
         ...customHeaders,
       },
       body: JSON.stringify({

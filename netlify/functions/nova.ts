@@ -416,36 +416,24 @@ export const handler: Handler = async (event) => {
     console.warn("Supabase client creation failed:", e);
   }
 
-  // AUTHENTICATION & RATE LIMITING CHECK
+  // AUTHENTICATION & RATE LIMITING CHECK (GRACEFUL DEGRADATION)
   const userId = event.headers["x-fitfi-uid"];
 
-  if (!userId || userId === "anon") {
-    return {
-      statusCode: 401,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-      },
-      body: JSON.stringify({
-        error: "authentication_required",
-        message: "Log in om Nova te gebruiken. Maak een gratis account aan!",
-        action: "login"
-      })
-    };
-  }
+  // Check if userId looks like a valid UUID (contains dashes, not "anon")
+  const isValidUserId = userId && userId !== "anon" && userId.includes("-");
 
-  // Check if user can use Nova (auth + quiz + rate limit)
-  if (supabase) {
+  // Only enforce rate limiting for valid authenticated users
+  if (isValidUserId && supabase) {
     try {
       const { data: accessCheck, error: accessError } = await supabase
         .rpc('can_use_nova', { p_user_id: userId });
 
-      if (accessError) {
-        console.error("Access check failed:", accessError);
-      } else if (accessCheck && accessCheck.length > 0) {
+      if (!accessError && accessCheck && accessCheck.length > 0) {
         const check = accessCheck[0];
 
+        // Only block if user is authenticated but over limit or no quiz
         if (!check.can_use) {
+          console.warn(`⛔ Access denied for ${userId}: ${check.reason}`);
           return {
             statusCode: 403,
             headers: {
@@ -465,14 +453,20 @@ export const handler: Handler = async (event) => {
           };
         }
 
-        // Increment usage counter
+        // Increment usage counter for authenticated users
         await supabase.rpc('increment_nova_usage', { p_user_id: userId });
-        console.log(`Nova access granted: ${check.tier} (${check.current_count + 1}/${check.tier_limit})`);
+        console.log(`✅ Nova access: ${check.tier} (${check.current_count + 1}/${check.tier_limit})`);
+      } else {
+        console.warn("⚠️ Access check returned no data or error:", accessError);
+        // Allow with degraded mode (no usage tracking)
       }
     } catch (checkError) {
-      console.warn("Could not validate Nova access:", checkError);
-      // Continue anyway (graceful degradation)
+      console.warn("⚠️ Could not validate Nova access:", checkError);
+      // Allow with degraded mode (graceful degradation)
     }
+  } else {
+    // No valid user ID or no Supabase - allow with warning
+    console.warn("⚠️ No valid auth user ID (got:", userId, ") - Allowing with degraded mode. Consider prompting user to log in.");
   }
 
   let body: { messages?: Msg[]; mode?: string } = {};
