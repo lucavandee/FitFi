@@ -17,6 +17,18 @@ const END = "<<<END_FITFI_JSON>>>";
 type Role = "system" | "user" | "assistant";
 type Msg = { role: Role; content: string };
 
+interface AIColorAnalysis {
+  undertone: "warm" | "cool" | "neutral";
+  skin_tone: string;
+  hair_color: string;
+  eye_color: string;
+  seasonal_type: "spring" | "summer" | "autumn" | "winter";
+  best_colors: string[];
+  avoid_colors: string[];
+  confidence: number;
+  reasoning?: string;
+}
+
 interface UserContext {
   gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
   archetype?: string;
@@ -29,6 +41,7 @@ interface UserContext {
   baseColors?: string;
   preferredBrands?: string[];
   allQuizAnswers?: Record<string, any>;
+  aiColorAnalysis?: AIColorAnalysis;
 }
 
 function okOrigin(o?: string) { return !!o && ORIGINS.includes(o); }
@@ -261,6 +274,13 @@ function parseUserContext(headers: Record<string, any>): UserContext {
     } catch {}
   }
 
+  // AI Color Analysis from photo
+  if (headers["x-fitfi-coloranalysis"]) {
+    try {
+      context.aiColorAnalysis = JSON.parse(headers["x-fitfi-coloranalysis"]);
+    } catch {}
+  }
+
   return context;
 }
 
@@ -283,6 +303,32 @@ ${userContext.preferredBrands && userContext.preferredBrands.length > 0 ? `- Fav
 ${userContext.undertone ? `- Huidsondertoon: ${userContext.undertone}` : ""}
 ${userContext.sizes ? `- Maten: ${userContext.sizes.tops} (tops), ${userContext.sizes.bottoms} (broeken), ${userContext.sizes.shoes} (schoenen)` : ""}
 ${userContext.budget ? `- Budget: €${userContext.budget.min}-${userContext.budget.max} per item` : ""}
+
+${userContext.aiColorAnalysis ? `
+🎨 AI KLEURENANALYSE (uit foto):
+✅ Persoonlijke kleurenanalyse beschikbaar!
+- Ondertoon: ${userContext.aiColorAnalysis.undertone}
+- Huidskleur: ${userContext.aiColorAnalysis.skin_tone}
+- Haarkleur: ${userContext.aiColorAnalysis.hair_color}
+- Oogkleur: ${userContext.aiColorAnalysis.eye_color}
+- Seizoenstype: ${userContext.aiColorAnalysis.seasonal_type}
+- Beste kleuren: ${userContext.aiColorAnalysis.best_colors.join(", ")}
+- Vermijd kleuren: ${userContext.aiColorAnalysis.avoid_colors.join(", ")}
+- Betrouwbaarheid: ${Math.round(userContext.aiColorAnalysis.confidence * 100)}%
+${userContext.aiColorAnalysis.reasoning ? `- Waarom: ${userContext.aiColorAnalysis.reasoning}` : ""}
+
+KRITIEKE REGEL - KLEUR MATCHING (gebruik dit ALTIJD als beschikbaar):
+✅ Raad ALLEEN kleuren aan uit de "beste kleuren" lijst
+✅ Leg uit WAAROM een kleur flatteert (undertone/seasonal match)
+✅ Vermijd ALTIJD de "vermijd kleuren" lijst
+✅ Gebruik specifieke kleurnamen (niet "blauw" maar "teal" of "navy")
+
+Voorbeeld outfit beschrijving:
+"Een camel chino (past perfect bij je warme undertone!)
+Olijfgroen overhemd (autumn palette - flatteert je ${userContext.aiColorAnalysis.hair_color} haar)
+Cream sneakers (complementeert je ${userContext.aiColorAnalysis.skin_tone} huidstint)"
+` : ""}
+
 ${userContext.allQuizAnswers ? `\nALLE QUIZ DATA: ${JSON.stringify(userContext.allQuizAnswers, null, 2)}` : ""}
 
 KRITIEKE REGEL - GENDER:
@@ -418,7 +464,7 @@ export const handler: Handler = async (event) => {
       statusCode: 204,
       headers: {
         "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-bodytype, x-fitfi-styleprefs, x-fitfi-occasions, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget, x-fitfi-basecolors, x-fitfi-brands, x-fitfi-quiz",
+        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-bodytype, x-fitfi-styleprefs, x-fitfi-occasions, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget, x-fitfi-basecolors, x-fitfi-brands, x-fitfi-quiz, x-fitfi-coloranalysis",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
       },
       body: ""

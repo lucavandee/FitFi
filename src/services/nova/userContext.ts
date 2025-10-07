@@ -8,6 +8,20 @@ export interface ColorProfile {
   confidence: number;
 }
 
+export interface AIColorAnalysis {
+  undertone: "warm" | "cool" | "neutral";
+  skin_tone: string;
+  hair_color: string;
+  eye_color: string;
+  seasonal_type: "spring" | "summer" | "autumn" | "winter";
+  best_colors: string[];
+  avoid_colors: string[];
+  confidence: number;
+  reasoning?: string;
+  analysis_date?: string;
+  analyzed_by?: string;
+}
+
 export interface NovaUserContext {
   userId?: string;
   sessionId?: string;
@@ -17,6 +31,7 @@ export interface NovaUserContext {
   bodyType?: string;
   stylePreferences?: string[];
   colorProfile: ColorProfile;
+  aiColorAnalysis?: AIColorAnalysis;
   preferences: {
     occasions: string[];
     budget: { min: number; max: number };
@@ -77,6 +92,7 @@ export async function fetchUserContext(
 
 function parseStyleProfile(data: any): NovaUserContext {
   const colorProfile = parseColorProfile(data.color_advice || data.color_profile);
+  const aiColorAnalysis = data.color_analysis ? parseAIColorAnalysis(data.color_analysis) : undefined;
   const quizAnswers = data.quiz_answers || {};
 
   // Parse gender from DB or quiz answers
@@ -96,6 +112,7 @@ function parseStyleProfile(data: any): NovaUserContext {
     bodyType: quizAnswers.bodyType,
     stylePreferences: quizAnswers.stylePreferences || [],
     colorProfile,
+    aiColorAnalysis,
     preferences: {
       occasions: data.preferred_occasions || quizAnswers.occasions || ["casual", "work"],
       budget: data.budget_range || quizAnswers.budget || { min: 50, max: 150 },
@@ -108,6 +125,24 @@ function parseStyleProfile(data: any): NovaUserContext {
     },
     quizAnswers,
     completedAt: data.completed_at || data.created_at,
+  };
+}
+
+function parseAIColorAnalysis(data: any): AIColorAnalysis | undefined {
+  if (!data || typeof data !== "object") return undefined;
+
+  return {
+    undertone: data.undertone || "neutral",
+    skin_tone: data.skin_tone || "",
+    hair_color: data.hair_color || "",
+    eye_color: data.eye_color || "",
+    seasonal_type: data.seasonal_type || "autumn",
+    best_colors: Array.isArray(data.best_colors) ? data.best_colors : [],
+    avoid_colors: Array.isArray(data.avoid_colors) ? data.avoid_colors : [],
+    confidence: data.confidence || 0.5,
+    reasoning: data.reasoning,
+    analysis_date: data.analysis_date,
+    analyzed_by: data.analyzed_by,
   };
 }
 
@@ -217,6 +252,11 @@ export function buildContextHeaders(context: NovaUserContext | null): Record<str
   // Add ALL quiz answers as fallback (for any data we might have missed)
   if (context.quizAnswers && Object.keys(context.quizAnswers).length > 0) {
     headers["x-fitfi-quiz"] = JSON.stringify(context.quizAnswers);
+  }
+
+  // Add AI color analysis from photo (if available)
+  if (context.aiColorAnalysis) {
+    headers["x-fitfi-coloranalysis"] = JSON.stringify(context.aiColorAnalysis);
   }
 
   return headers;
