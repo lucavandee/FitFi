@@ -1,7 +1,11 @@
 export type QuizStep =
   | "intro"
+  | "gender"
   | "goals"
   | "fit"
+  | "bodytype"
+  | "sizes"
+  | "budget"
   | "comfort"
   | "jewelry"
   | "neutrals"
@@ -10,12 +14,24 @@ export type QuizStep =
   | "prints"
   | "materials"
   | "occasions"
+  | "brands"
   | "photo"
   | "review";
 
 export type AnswerMap = {
+  gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
   goals?: ("werk" | "casual" | "avond" | "sport")[];
   fit?: "slim" | "straight" | "relaxed" | "oversizedTop_slimBottom";
+  bodytype?: "rectangle" | "triangle" | "inverted_triangle" | "oval" | "hourglass" | "pear" | "apple";
+  sizes?: {
+    tops?: string;
+    bottoms?: string;
+    shoes?: string;
+  };
+  budget?: {
+    min: number;
+    max: number;
+  };
   comfort?: "structured" | "balanced" | "relaxed";
   jewelry?: "goud" | "zilver" | "beide";
   neutrals?: "warm" | "koel" | "neutraal";
@@ -24,6 +40,7 @@ export type AnswerMap = {
   prints?: "effen" | "subtiel" | "statement" | "geen";
   materials?: "mat" | "textuur" | "glans";
   occasions?: ("office" | "smartcasual" | "leisure")[];
+  brands?: string[];
   photoDataUrl?: string | null;
 };
 

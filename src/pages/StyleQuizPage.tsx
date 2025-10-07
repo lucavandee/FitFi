@@ -12,7 +12,7 @@ import type { AnswerMap, QuizStep } from "@/lib/quiz/types";
 import { LS_KEYS } from "@/lib/quiz/types";
 
 const STEPS: QuizStep[] = [
-  "goals","fit","comfort","jewelry","neutrals","lightness","contrast","prints","materials","occasions","photo","review",
+  "gender","goals","fit","bodytype","sizes","budget","comfort","jewelry","neutrals","lightness","contrast","prints","materials","occasions","brands","photo","review",
 ];
 
 export default function StyleQuizPage() {
@@ -54,6 +54,20 @@ export default function StyleQuizPage() {
       />
 
       <section className="ff-container pt-10 pb-16 space-y-6">
+        {current === "gender" && (
+          <QuestionCard title="Voor wie is deze stijlanalyse?"
+            help="Dit helpt ons om passende kleding te adviseren."
+            name="gender" value={answers.gender}
+            choices={[
+              { value: "male", label: "Heren" },
+              { value: "female", label: "Dames" },
+              { value: "non-binary", label: "Non-binair" },
+              { value: "prefer-not-to-say", label: "Zeg ik liever niet" },
+            ]}
+            onChange={(v) => setAnswers((s) => ({ ...s, gender: v as any }))}
+          />
+        )}
+
         {current === "goals" && (
           <QuestionCard multiple title="Waar ga je je outfits vooral voor gebruiken?"
             help="Je kunt meer dan één optie kiezen."
@@ -78,6 +92,91 @@ export default function StyleQuizPage() {
               { value: "oversizedTop_slimBottom", label: "Ruime top + slanke broek" },
             ]}
             onChange={(v) => setAnswers((s) => ({ ...s, fit: v as any }))}
+          />
+        )}
+
+        {current === "bodytype" && (
+          <QuestionCard title="Welke lichaamsvorm past het beste bij jou?"
+            help="Dit helpt ons om kleding te adviseren die jouw vorm flatteert."
+            name="bodytype" value={answers.bodytype}
+            choices={
+              answers.gender === "female" ? [
+                { value: "hourglass", label: "Zandloper", help: "Schouders en heupen even breed, smalle taille" },
+                { value: "pear", label: "Peer", help: "Bredere heupen dan schouders" },
+                { value: "apple", label: "Appel", help: "Bredere schouders, gewicht rond middel" },
+                { value: "rectangle", label: "Rechthoek", help: "Rechte lijnen, weinig taille" },
+                { value: "inverted_triangle", label: "Omgekeerde driehoek", help: "Brede schouders" },
+              ] : [
+                { value: "rectangle", label: "Rechthoek", help: "Schouders en heupen ongeveer even breed" },
+                { value: "triangle", label: "Driehoek", help: "Bredere heupen dan schouders" },
+                { value: "inverted_triangle", label: "Omgekeerde driehoek", help: "Bredere schouders dan heupen" },
+                { value: "oval", label: "Ovaal", help: "Gewicht rond middel" },
+              ]
+            }
+            onChange={(v) => setAnswers((s) => ({ ...s, bodytype: v as any }))}
+          />
+        )}
+
+        {current === "sizes" && (
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] pt-7 pb-6 px-5 sm:px-6 space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold">Wat zijn je maten?</h2>
+              <p className="mt-1 text-sm text-[var(--color-text)]/70">
+                Dit helpt ons om producten in jouw maat te vinden.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium mb-2">Tops (T-shirts, shirts)</label>
+                <select
+                  className="w-full px-3 py-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  value={answers.sizes?.tops || ""}
+                  onChange={(e) => setAnswers((s) => ({ ...s, sizes: { ...s.sizes, tops: e.target.value } }))}
+                >
+                  <option value="">Kies maat</option>
+                  {["XS", "S", "M", "L", "XL", "XXL"].map(size => <option key={size} value={size}>{size}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Broeken (waist)</label>
+                <select
+                  className="w-full px-3 py-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  value={answers.sizes?.bottoms || ""}
+                  onChange={(e) => setAnswers((s) => ({ ...s, sizes: { ...s.sizes, bottoms: e.target.value } }))}
+                >
+                  <option value="">Kies maat</option>
+                  {["28", "30", "31", "32", "33", "34", "36", "38", "40"].map(size => <option key={size} value={size}>{size}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Schoenen (EU)</label>
+                <select
+                  className="w-full px-3 py-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  value={answers.sizes?.shoes || ""}
+                  onChange={(e) => setAnswers((s) => ({ ...s, sizes: { ...s.sizes, shoes: e.target.value } }))}
+                >
+                  <option value="">Kies maat</option>
+                  {["39", "40", "41", "42", "43", "44", "45", "46"].map(size => <option key={size} value={size}>{size}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {current === "budget" && (
+          <QuestionCard title="Wat is je budget per item?"
+            help="We filteren producten binnen jouw bereik."
+            name="budget" value={answers.budget ? `${answers.budget.min}-${answers.budget.max}` : undefined}
+            choices={[
+              { value: "0-50", label: "Budget (€0-50)" },
+              { value: "50-150", label: "Betaalbaar (€50-150)" },
+              { value: "150-300", label: "Premium (€150-300)" },
+              { value: "300-999", label: "Luxe (€300+)" },
+            ]}
+            onChange={(v) => {
+              const [min, max] = (v as string).split('-').map(Number);
+              setAnswers((s) => ({ ...s, budget: { min, max } }));
+            }}
           />
         )}
 
@@ -176,6 +275,26 @@ export default function StyleQuizPage() {
               { value: "leisure", label: "Leisure / Weekend" },
             ]}
             onChange={(v) => setAnswers((s) => ({ ...s, occasions: v as any }))}
+          />
+        )}
+
+        {current === "brands" && (
+          <QuestionCard multiple title="Heb je favoriete merken? (optioneel)"
+            help="We geven dit mee aan Nova voor gepersonaliseerde aanbevelingen."
+            name="brands" value={answers.brands}
+            choices={[
+              { value: "nike", label: "Nike" },
+              { value: "adidas", label: "Adidas" },
+              { value: "uniqlo", label: "Uniqlo" },
+              { value: "cos", label: "COS" },
+              { value: "zara", label: "Zara" },
+              { value: "hm", label: "H&M" },
+              { value: "arket", label: "Arket" },
+              { value: "weekday", label: "Weekday" },
+              { value: "mango", label: "Mango" },
+              { value: "other", label: "Andere" },
+            ]}
+            onChange={(v) => setAnswers((s) => ({ ...s, brands: v as any }))}
           />
         )}
 
