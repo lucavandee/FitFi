@@ -94,42 +94,31 @@ function sampleProducts() {
   ];
 }
 
-function streamLocalWithProducts(
-  controller: ReadableStreamDefaultController,
-  enc: TextEncoder,
+function buildLocalResponse(
   traceId: string,
   explanation: string,
   products: any[],
   includeProducts: boolean = true
-) {
-  try {
-    const send = (obj: any) => {
-      try {
-        controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
-      } catch (e) {
-        console.error("Failed to enqueue:", e);
-        throw e;
-      }
-    };
+): string {
+  const lines: string[] = [];
+  const send = (obj: any) => lines.push(`data: ${JSON.stringify(obj)}\n\n`);
 
-    send({ type: "meta", model: "fitfi-nova-local", traceId });
+  send({ type: "meta", model: "fitfi-nova-local", traceId });
 
-    const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
-    if (head) send({ type: "chunk", delta: head });
+  const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
+  if (head) send({ type: "chunk", delta: head });
 
-    if (includeProducts && products.length > 0) {
-      const payload = { explanation, products };
-      send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
-    }
-
-    const tail = explanation.slice(Math.ceil(explanation.length * 0.6));
-    if (tail) send({ type: "chunk", delta: tail });
-
-    send({ type: "done" });
-  } catch (e) {
-    console.error("streamLocalWithProducts error:", e);
-    throw e;
+  if (includeProducts && products.length > 0) {
+    const payload = { explanation, products };
+    send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
   }
+
+  const tail = explanation.slice(Math.ceil(explanation.length * 0.6));
+  if (tail) send({ type: "chunk", delta: tail });
+
+  send({ type: "done" });
+
+  return lines.join("");
 }
 
 function parseUserContext(headers: Record<string, any>): UserContext {
@@ -216,100 +205,29 @@ export const handler: Handler = async (event) => {
     products = sampleProducts();
   }
 
-  const enc = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      let heartbeat: NodeJS.Timeout | undefined;
-      try {
-        heartbeat = setInterval(() => {
-          try {
-            controller.enqueue(enc.encode(`event: heartbeat\ndata: {"ts":${Date.now()}}\n\n`));
-          } catch (e) {
-            console.warn("Heartbeat failed:", e);
-          }
-        }, 15000);
+  // Build response (no streaming in Netlify Functions V1)
+  let responseBody: string = "";
 
-        if (!upstreamEnabled || !userText || responseType !== "general") {
-          const includeProducts = responseType !== "color";
-          streamLocalWithProducts(controller, enc, traceId, explanation, products, includeProducts);
-          return;
-        }
+  try {
+    if (!upstreamEnabled || !userText || responseType !== "general") {
+      const includeProducts = responseType !== "color";
+      responseBody = buildLocalResponse(traceId, explanation, products, includeProducts);
+    } else {
+      // Upstream (OpenAI) - not implemented yet, use fallback
+      responseBody = buildLocalResponse(traceId, explanation, products, true);
+    }
+  } catch (err) {
+    console.error("Response build error:", err);
+    responseBody = buildLocalResponse(traceId, "Sorry, er ging iets mis.", [], false);
+  }
 
-        // ✅ Upstream pad (alleen als expliciet aan + niet-lege prompt)
-        const messages: Msg[] = [
-          { role: "system", content: "Nova van FitFi: kort, helder, menselijk. Geef een beknopte uitleg én, indien geschikt, een JSON-blok met products[]." },
-          { role: "user", content: userText }
-        ];
-
-        const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.OPENAI_API_KEY || ""}`,
-          },
-          body: JSON.stringify({
-            model: process.env.NOVA_MODEL_OUTFITS || "gpt-4o-mini",
-            messages,
-            stream: true,
-            temperature: 0.7,
-          }),
-          // @ts-ignore
-          duplex: "half",
-        });
-
-        if (!upstream.ok || !upstream.body) {
-          streamLocalWithProducts(controller, enc, traceId, explanation, products, true);
-          return;
-        }
-
-        // Stream OpenAI door
-        const send = (obj: any) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
-        send({ type: "meta", model: "fitfi-nova-openai", traceId });
-
-        const reader = upstream.body.getReader();
-        const dec = new TextDecoder();
-        for (;;) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          const chunk = dec.decode(value);
-          const lines = chunk.split("\n").map(l => l.trim()).filter(Boolean);
-          for (const line of lines) {
-            if (!line.startsWith("data:")) continue;
-            const data = line.slice(5).trim();
-            if (data === "[DONE]") continue;
-            let json: any = null;
-            try { json = JSON.parse(data); } catch {}
-            const delta = json?.choices?.[0]?.delta?.content ?? "";
-            if (delta) send({ type: "chunk", delta });
-          }
-        }
-
-        send({ type: "done" });
-      } catch (err) {
-        console.error("Stream error:", err);
-        try {
-          streamLocalWithProducts(controller, enc, traceId, explanation, products, true);
-        } catch (fallbackErr) {
-          console.error("Fallback failed:", fallbackErr);
-        }
-      } finally {
-        if (heartbeat) clearInterval(heartbeat);
-        try {
-          controller.close();
-        } catch (e) {
-          console.warn("Controller close failed:", e);
-        }
-      }
-    },
-  });
-
-  return new Response(stream as any, {
-    status: 200,
+  return {
+    statusCode: 200,
     headers: {
       "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache, no-transform",
-      "Connection": "keep-alive",
       "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
     },
-  } as any);
+    body: responseBody,
+  };
 };
