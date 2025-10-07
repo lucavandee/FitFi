@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.7.1] - 2025-10-07
+
+### Nova AI Stylist - Production Ready
+
+**Complete AI styling met Supabase integratie**
+
+#### Features
+- Database-driven outfit generation met 50 Zalando producten
+- User context awareness (archetype, undertone, sizes, budget)
+- Color intelligence matching (warm/cool/neutral)
+- Smart filtering op category, style tags, price range
+- Graceful fallback voor development zonder database
+
+#### Fixes
+1. **Supabase Client in Nova Function**
+   - Toegevoegd: `createClient()` in `netlify/functions/nova.ts`
+   - Nova function kan nu 50 producten ophalen uit database
+
+2. **Product Query Filtering**
+   - Filter toegevoegd: `eq("retailer", "Zalando")`
+   - Voorkomt ophalen van verkeerde producten
+
+3. **404 Error Handling**
+   - Automatische fallback bij `npm run dev` (Vite only)
+   - Friendly helper bericht in plaats van crash
+   - Console warning bij ontbrekende endpoint
+
+4. **JSON Markers in UI**
+   - `stripJSONMarkers()` functie toegevoegd
+   - `<<<FITFI_JSON>>>` markers niet meer zichtbaar
+   - Real-time filtering tijdens streaming
+
+#### Development Modes
+- **Netlify Dev** (`npm run dev:netlify`): Full functionality met database
+- **Vite Only** (`npm run dev`): Quick UI development met fallback
+
+#### Technical
+- Build time: 6.51s
+- Bundle size: 387.29 kB (119.55 kB gzipped)
+- Zero TypeScript errors
+- Production ready
+
 ## [1.7.0] - 2025-01-28
 
 ### Tribes Upgrade - Level 1000

@@ -13,6 +13,27 @@ import QuotaModal from './QuotaModal';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 import { generateNovaExplanation } from '@/engine/explainOutfit';
 
+// Helper: verwijder JSON markers tijdens streaming
+function stripJSONMarkers(text: string): string {
+  const START = '<<<FITFI_JSON>>>';
+  const END = '<<<END_FITFI_JSON>>>';
+  let result = text;
+
+  const si = result.indexOf(START);
+  if (si >= 0) {
+    const ei = result.indexOf(END, si + START.length);
+    if (ei > si) {
+      // Volledige JSON block aanwezig - verwijder het hele block
+      result = result.slice(0, si) + result.slice(ei + END.length);
+    } else {
+      // Nog niet compleet - verwijder alleen de start marker
+      result = result.slice(0, si) + result.slice(si + START.length);
+    }
+  }
+
+  return result;
+}
+
 // ADD bovenaan
 function mdLite(s:string){
   // \n\n -> paragrafen, *...* -> em, **...** -> strong, - lijstjes
@@ -267,7 +288,8 @@ const NovaChat: React.FC = () => {
           }
         })) {
           acc += delta;
-          setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: acc } : m));
+          const displayContent = stripJSONMarkers(acc);
+          setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: displayContent } : m));
           scrollToBottom();
         }
         

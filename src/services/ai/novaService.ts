@@ -26,19 +26,27 @@ async function* localNovaFallback(
 ): AsyncGenerator<string, void, unknown> {
   const lastMessage = messages[messages.length - 1]?.content || "";
 
-  const response = `${START_JSON}
-{
-  "explanation": "Nova werkt momenteel in lokale modus. Start de dev server met 'npm run dev:netlify' voor volledige functionaliteit.",
-  "products": []
-}
-${END_JSON}`;
+  const helpMessage = `Hoi! 👋
 
-  await new Promise(r => setTimeout(r, 500));
+Nova werkt momenteel in **lokale modus** zonder database verbinding.
 
-  for (const char of response) {
+**Om de volledige AI styling ervaring te krijgen:**
+1. Stop de huidige server (Ctrl+C)
+2. Start met: \`npm run dev:netlify\`
+3. Open: http://localhost:8888
+
+Dan kan ik je helpen met:
+- Persoonlijke outfit aanbevelingen
+- 50+ producten uit de database
+- Budget filtering
+- Kleur advies op basis van je huidondertoon`;
+
+  await new Promise(r => setTimeout(r, 300));
+
+  for (const char of helpMessage) {
     yield char;
     onEvent?.({ type: "delta", text: char });
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise(r => setTimeout(r, 15));
   }
 
   onEvent?.({ type: "done" });
