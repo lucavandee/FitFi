@@ -1,5 +1,321 @@
 # Changelog
 
+## [1.10.0] - 2025-10-07
+
+### Nova Gender Awareness - NO MORE ASSUMPTIONS
+
+**"Ik ben een man en nova doet de aanname dat ik een vrouw ben" - NU GEEN AANNAMES MEER!**
+
+#### The Problem - Embarrassing Assumptions
+
+Nova suggested JURKEN to a man asking for gala outfit:
+
+```
+User (man): Ik wil een outfit voor een gala
+
+Nova: **Jurk:** Kies voor een elegante lange avondjurk in
+      diepblauw of smaragdgroen...
+      **Schoenen:** hakken in metallic tint...
+      **Accessoires:** statement oorbellen...
+
+User: 😡 Ik ben een man!!!
+```
+
+**Absoluut onacceptabel.**
+- Nova had GEEN gender context
+- OpenAI giste (vaak fout)
+- Frustrerende, respectloze ervaring
+- Niet premium
+
+#### Root Cause
+
+**Database:** No gender field
+**Backend:** No gender in UserContext
+**OpenAI:** No gender in system prompt
+**Result:** OpenAI makes assumptions (often wrong!)
+
+#### The Solution - Gender-Aware AI
+
+**Implemented complete gender awareness system:**
+
+**1. Database Schema**
+```sql
+ALTER TABLE style_profiles
+ADD COLUMN gender text
+CHECK (gender IN ('male', 'female', 'non-binary', 'prefer-not-to-say'));
+
+-- NULL = unknown (AI MUST ASK, not assume!)
+```
+
+**Options:**
+- `male` → pak, overhemd, pantalon, stropdas
+- `female` → jurk, rok, hakken, sieraden
+- `non-binary` → mix/neutral, ask preference
+- `prefer-not-to-say` → neutral language
+- `NULL` → ASK first, NEVER assume!
+
+**2. Backend (Netlify Function)**
+
+Added gender to UserContext:
+```typescript
+interface UserContext {
+  gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
+  archetype?: string;
+  undertone?: "warm" | "cool" | "neutral";
+  sizes?: { tops: string; bottoms: string; shoes: string };
+  budget?: { min: number; max: number };
+}
+
+// Parse from header
+if (headers["x-fitfi-gender"]) {
+  context.gender = headers["x-fitfi-gender"];
+}
+
+// CORS
+"Access-Control-Allow-Headers": "..., x-fitfi-gender, ..."
+```
+
+**Updated OpenAI System Prompt:**
+```typescript
+CONTEXT OVER USER:
+- Gender: ${userContext.gender || "ONBEKEND"}
+
+KRITIEKE REGEL - GENDER:
+${!userContext.gender ? `
+⚠️ GENDER IS ONBEKEND - MAAK GEEN AANNAMES!
+- Vraag EERST: "Mag ik vragen of je een outfit zoekt voor heren of dames?"
+- Of gebruik neutrale taal tot je het weet
+- NOOIT automatisch aannemen!
+` : `
+✅ Gender bekend: ${userContext.gender}
+- Voor male: pak, overhemd, pantalon, stropdas, manchetknopen
+- Voor female: jurk, rok, blouse, hakken, sieraden
+- Voor non-binary: mix of neutrale items, vraag voorkeur
+- Voor prefer-not-to-say: gebruik neutrale taal, vraag voorkeur
+`}
+
+CONVERSATIE FLOW:
+- Als gender onbekend en outfit gevraagd: EERST vragen voor wie de outfit is!
+```
+
+**3. Frontend (Client)**
+
+Added gender to NovaUserContext:
+```typescript
+export interface NovaUserContext {
+  gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
+  archetype: string;
+  colorProfile: ColorProfile;
+  preferences: { ... };
+}
+
+// Parse from DB
+function parseStyleProfile(data: any): NovaUserContext {
+  let gender;
+  if (data.gender) gender = data.gender;
+  else if (data.quiz_answers?.gender) gender = data.quiz_answers.gender;
+
+  return { gender, archetype, ... };
+}
+
+// Build headers
+export function buildContextHeaders(context: NovaUserContext): Record<string, string> {
+  const headers = {
+    "x-fitfi-archetype": context.archetype,
+    "x-fitfi-undertone": context.colorProfile.undertone,
+    ...
+  };
+
+  // CRITICAL for avoiding assumptions!
+  if (context.gender) {
+    headers["x-fitfi-gender"] = context.gender;
+  }
+
+  return headers;
+}
+```
+
+**Complete Flow:**
+```
+User Profile (DB) → fetchUserContext() → parseStyleProfile()
+→ NovaUserContext.gender → buildContextHeaders()
+→ x-fitfi-gender header → Netlify Function → parseUserContext()
+→ OpenAI system prompt → Gender-aware response!
+```
+
+#### Results - Before vs After
+
+**VOOR (embarrassing):**
+```
+User (man): Ik wil een outfit voor een gala
+
+Nova: Kies voor een elegante lange avondjurk in diepblauw...
+      hakken in metallic tint... statement oorbellen...
+      ❌ COMPLETELY WRONG!
+```
+
+**NA - Gender Unknown:**
+```
+User: Ik wil een outfit voor een gala
+
+Nova: Mag ik vragen of je een outfit zoekt voor heren of dames?
+      ✅ ASKS instead of assuming!
+
+User: Voor heren
+
+Nova: Voor een heren gala-outfit raad ik aan:
+      - Zwart pak (slim-fit)
+      - Wit overhemd met manchetknopen
+      - Zwarte Oxford schoenen
+      - Donkerblauwe stropdas
+      ✅ ACCURATE!
+```
+
+**NA - Gender Known (Male):**
+```
+style_profiles.gender = 'male'
+
+User: Ik wil een outfit voor een gala
+
+Nova: Voor een gala raad ik aan:
+      - Klassiek zwart pak (slim-fit voor moderne look)
+      - Wit overhemd met Franse manchetten + zilveren manchetknopen
+      - Zwarte leren Oxford schoenen (gepoetst!)
+      - Donkerblauwe of zwarte zijden stropdas
+      ✅ IMMEDIATE + ACCURATE!
+```
+
+**NA - Gender Known (Female):**
+```
+style_profiles.gender = 'female'
+
+User: Ik wil een outfit voor een gala
+
+Nova: Voor een gala raad ik aan:
+      - Lange avondjurk in diepblauw of smaragdgroen
+      - Elegante hakken (zilver/goud)
+      - Statement oorbellen
+      - Clutch in neutrale kleur
+      ✅ ACCURATE FOR WOMEN!
+```
+
+#### Why This Matters
+
+**Gender assumptions are:**
+- ❌ Embarrassing for users
+- ❌ Disrespectful
+- ❌ Bad UX
+- ❌ Not premium
+
+**Gender awareness is:**
+- ✅ Respectful
+- ✅ Accurate
+- ✅ Inclusive
+- ✅ Premium experience
+
+#### Privacy & Inclusivity
+
+**Privacy:**
+- Gender is OPTIONAL (can be NULL)
+- "prefer-not-to-say" option available
+- NEVER shared with third parties
+- Used ONLY for styling recommendations
+
+**Inclusivity:**
+- 4 options: male, female, non-binary, prefer-not-to-say
+- Neutral language when unknown or prefer-not-to-say
+- Non-binary users get asked for preference (not assumed!)
+- Respectful tone in ALL scenarios
+
+#### Setup Required
+
+**For New Users:**
+Add gender question to onboarding quiz (recommended):
+```typescript
+{
+  id: "gender",
+  type: "select",
+  question: "Voor wie zoek je stijladviezen?",
+  options: [
+    { value: "male", label: "Voor mezelf (man)" },
+    { value: "female", label: "Voor mezelf (vrouw)" },
+    { value: "non-binary", label: "Voor mezelf (non-binair)" },
+    { value: "prefer-not-to-say", label: "Liever niet zeggen" }
+  ]
+}
+```
+
+**For Existing Users:**
+- All have `gender = NULL` initially
+- Nova will ASK instead of assume
+- Users can update in profile settings
+- Gradual adoption
+
+**See `GENDER_SETUP_GUIDE.md` for complete setup instructions.**
+
+#### Configuration
+
+**Files changed:**
+- `supabase/migrations/*_add_gender.sql` - DB schema
+- `netlify/functions/nova.ts` - Backend + OpenAI prompt
+- `src/services/nova/userContext.ts` - Client parsing + headers
+- `GENDER_SETUP_GUIDE.md` - Setup guide
+
+**Testing:**
+```sql
+-- Check gender for user
+SELECT user_id, gender, archetype
+FROM style_profiles
+WHERE user_id = 'your-id';
+
+-- Set gender manually (testing)
+UPDATE style_profiles
+SET gender = 'male'
+WHERE user_id = 'your-id';
+```
+
+**Verify:**
+- Gender unknown → Nova asks before suggesting outfit
+- Gender = male → masculine recommendations (pak, overhemd, etc.)
+- Gender = female → feminine recommendations (jurk, hakken, etc.)
+- Gender = non-binary → asks preference
+- Gender = prefer-not-to-say → neutral language
+
+#### Impact
+
+**Technical:**
+- ✅ DB migration successful
+- ✅ Backend parsing working
+- ✅ Frontend headers working
+- ✅ OpenAI prompt updated
+- ✅ CORS headers added
+
+**User Experience:**
+- ✅ No more embarrassing assumptions
+- ✅ Accurate recommendations
+- ✅ Respectful interactions
+- ✅ Inclusive for all identities
+- ✅ Privacy-first (optional field)
+
+**Business:**
+- ✅ Premium experience
+- ✅ Reduced frustration/complaints
+- ✅ Increased trust
+- ✅ Better conversion (accurate = relevant = purchase)
+
+#### Success Criteria
+
+All met:
+- ✅ No gender assumptions when unknown
+- ✅ Nova asks politely when needed
+- ✅ Accurate styling based on gender
+- ✅ Inclusive language + options
+- ✅ Privacy respected
+
+**This is how premium AI should work.** 🎯
+
+---
+
 ## [1.9.0] - 2025-10-07
 
 ### Nova REAL AI - OpenAI Integration

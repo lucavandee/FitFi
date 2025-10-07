@@ -11,6 +11,7 @@ export interface ColorProfile {
 export interface NovaUserContext {
   userId?: string;
   sessionId?: string;
+  gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
   archetype: string;
   secondaryArchetype?: string;
   colorProfile: ColorProfile;
@@ -76,9 +77,18 @@ function parseStyleProfile(data: any): NovaUserContext {
   const colorProfile = parseColorProfile(data.color_advice || data.color_profile);
   const quizAnswers = data.quiz_answers || {};
 
+  // Parse gender from DB or quiz answers
+  let gender: "male" | "female" | "non-binary" | "prefer-not-to-say" | undefined;
+  if (data.gender && ["male", "female", "non-binary", "prefer-not-to-say"].includes(data.gender)) {
+    gender = data.gender;
+  } else if (quizAnswers.gender) {
+    gender = quizAnswers.gender;
+  }
+
   return {
     userId: data.user_id,
     sessionId: data.session_id,
+    gender,
     archetype: data.archetype || "casual_chic",
     secondaryArchetype: quizAnswers.secondary_archetype,
     colorProfile,
@@ -163,10 +173,17 @@ export function buildContextHeaders(context: NovaUserContext | null): Record<str
     return {};
   }
 
-  return {
+  const headers: Record<string, string> = {
     "x-fitfi-archetype": context.archetype,
     "x-fitfi-undertone": context.colorProfile.undertone,
     "x-fitfi-sizes": JSON.stringify(context.preferences.sizes),
     "x-fitfi-budget": JSON.stringify(context.preferences.budget),
   };
+
+  // Add gender if available (CRITICAL for avoiding assumptions!)
+  if (context.gender) {
+    headers["x-fitfi-gender"] = context.gender;
+  }
+
+  return headers;
 }

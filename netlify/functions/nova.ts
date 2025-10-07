@@ -18,6 +18,7 @@ type Role = "system" | "user" | "assistant";
 type Msg = { role: Role; content: string };
 
 interface UserContext {
+  gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
   archetype?: string;
   undertone?: "warm" | "cool" | "neutral";
   sizes?: { tops: string; bottoms: string; shoes: string };
@@ -188,6 +189,14 @@ function buildLocalResponse(
 function parseUserContext(headers: Record<string, any>): UserContext {
   const context: UserContext = {};
 
+  // Gender - CRITICAL for avoiding assumptions
+  if (headers["x-fitfi-gender"]) {
+    const gender = headers["x-fitfi-gender"];
+    if (["male", "female", "non-binary", "prefer-not-to-say"].includes(gender)) {
+      context.gender = gender as "male" | "female" | "non-binary" | "prefer-not-to-say";
+    }
+  }
+
   if (headers["x-fitfi-archetype"]) {
     context.archetype = headers["x-fitfi-archetype"];
   }
@@ -220,10 +229,25 @@ async function callOpenAI(
   const systemPrompt = `Je bent Nova, een premium style assistent voor FitFi.ai.
 
 CONTEXT OVER USER:
+${userContext.gender ? `- Gender: ${userContext.gender}` : "- Gender: ONBEKEND"}
 ${userContext.archetype ? `- Archetype: ${userContext.archetype}` : ""}
 ${userContext.undertone ? `- Huidsondertoon: ${userContext.undertone}` : ""}
 ${userContext.sizes ? `- Maten: ${JSON.stringify(userContext.sizes)}` : ""}
 ${userContext.budget ? `- Budget: €${userContext.budget.min}-${userContext.budget.max}` : ""}
+
+KRITIEKE REGEL - GENDER:
+${!userContext.gender ? `
+⚠️ GENDER IS ONBEKEND - MAAK GEEN AANNAMES!
+- Vraag EERST: "Mag ik vragen of je een outfit zoekt voor heren of dames?"
+- Of gebruik neutrale taal tot je het weet
+- NOOIT automatisch aannemen!
+` : `
+✅ Gender bekend: ${userContext.gender}
+- Voor male: pak, overhemd, pantalon, stropdas, manchetknopen
+- Voor female: jurk, rok, blouse, hakken, sieraden
+- Voor non-binary: mix of neutrale items, vraag voorkeur
+- Voor prefer-not-to-say: gebruik neutrale taal, vraag voorkeur
+`}
 
 JE TAAK:
 1. Voer een natuurlijk gesprek over stijl en mode
@@ -235,15 +259,17 @@ CONVERSATIE FLOW:
 - Bij vage input ("uitgaan", "inspiratie"): Vraag door naar specifieke gelegenheid, gewenste stijl/vibe, kleurvoorkeuren
 - Bij context-rijke input: Geef concreet outfit advies met toelichting
 - Onthoud wat user al heeft gezegd en bouw daarop voort
+- Als gender onbekend en outfit gevraagd: EERST vragen voor wie de outfit is!
 
 TOON:
 - Nederlands, "je" vorm
 - Premium maar toegankelijk
 - Geen hyperbolen, wel enthousiast
 - Concrete voorbeelden gebruiken
+- Inclusief en respectvol
 
 Als user genoeg context heeft gegeven voor een outfit, geef dan:
-- Beschrijving van de complete look
+- Beschrijving van de complete look (passend bij gender!)
 - Waarom deze items bij elkaar passen
 - Hoe het bij de gelegenheid past
 
@@ -294,7 +320,7 @@ export const handler: Handler = async (event) => {
       statusCode: 204,
       headers: {
         "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget",
+        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
       },
       body: ""
