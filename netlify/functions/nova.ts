@@ -1,6 +1,7 @@
 // netlify/functions/nova.ts
 import type { Handler } from "@netlify/functions";
 import { randomUUID } from "crypto";
+import { createClient } from "@supabase/supabase-js";
 import { generateColorAdvice, detectColorIntent } from "./lib/colorAdvice";
 import { generateOutfit, detectOutfitIntent } from "./lib/outfitGenerator";
 
@@ -166,6 +167,17 @@ export const handler: Handler = async (event) => {
 
   const userContext = parseUserContext(event.headers);
 
+  let supabase;
+  try {
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+    if (supabaseUrl && supabaseKey) {
+      supabase = createClient(supabaseUrl, supabaseKey);
+    }
+  } catch (e) {
+    console.warn("Supabase client creation failed:", e);
+  }
+
   let body: { messages?: Msg[]; mode?: string } = {};
   try { body = JSON.parse(event.body || "{}"); } catch {}
   const userText = nonEmptyUser(body.messages);
@@ -183,7 +195,7 @@ export const handler: Handler = async (event) => {
     );
   } else if (userText && detectOutfitIntent(userText)) {
     responseType = "outfit";
-    const result = await generateOutfit(userText, userContext);
+    const result = await generateOutfit(userText, userContext, supabase);
     explanation = result.explanation;
     products = result.products;
   } else {
