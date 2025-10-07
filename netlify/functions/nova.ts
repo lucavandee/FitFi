@@ -5,6 +5,11 @@ import { createClient } from "@supabase/supabase-js";
 import { generateColorAdvice, detectColorIntent } from "./lib/colorAdvice";
 import { generateOutfit, detectOutfitIntent } from "./lib/outfitGenerator";
 
+interface OpenAIMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
 const ORIGINS = ["https://www.fitfi.ai", "https://fitfi.ai", "http://localhost:5173", "http://localhost:8888"];
 const START = "<<<FITFI_JSON>>>";
 const END = "<<<END_FITFI_JSON>>>";
@@ -206,6 +211,79 @@ function parseUserContext(headers: Record<string, any>): UserContext {
   return context;
 }
 
+async function callOpenAI(
+  messages: OpenAIMessage[],
+  userContext: UserContext,
+  apiKey: string,
+  traceId: string
+): Promise<string> {
+  const systemPrompt = `Je bent Nova, een premium style assistent voor FitFi.ai.
+
+CONTEXT OVER USER:
+${userContext.archetype ? `- Archetype: ${userContext.archetype}` : ""}
+${userContext.undertone ? `- Huidsondertoon: ${userContext.undertone}` : ""}
+${userContext.sizes ? `- Maten: ${JSON.stringify(userContext.sizes)}` : ""}
+${userContext.budget ? `- Budget: €${userContext.budget.min}-${userContext.budget.max}` : ""}
+
+JE TAAK:
+1. Voer een natuurlijk gesprek over stijl en mode
+2. Stel slimme vervolgvragen om context te verzamelen
+3. Als je genoeg info hebt over wat user wil (gelegenheid, stijl, kleuren), genereer dan een outfit advies
+4. Wees persoonlijk, warm en professioneel - denk Apple × Lululemon niveau
+
+CONVERSATIE FLOW:
+- Bij vage input ("uitgaan", "inspiratie"): Vraag door naar specifieke gelegenheid, gewenste stijl/vibe, kleurvoorkeuren
+- Bij context-rijke input: Geef concreet outfit advies met toelichting
+- Onthoud wat user al heeft gezegd en bouw daarop voort
+
+TOON:
+- Nederlands, "je" vorm
+- Premium maar toegankelijk
+- Geen hyperbolen, wel enthousiast
+- Concrete voorbeelden gebruiken
+
+Als user genoeg context heeft gegeven voor een outfit, geef dan:
+- Beschrijving van de complete look
+- Waarom deze items bij elkaar passen
+- Hoe het bij de gelegenheid past
+
+Wees GEEN papegaai - als user iets herhaalt of vastloopt, herken dat en help ze vooruit.`;
+
+  const openaiMessages: OpenAIMessage[] = [
+    { role: "system", content: systemPrompt },
+    ...messages
+  ];
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: openaiMessages,
+        temperature: 0.8,
+        max_tokens: 500,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("OpenAI API error:", error);
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0]?.message?.content || "Sorry, ik kon geen response genereren.";
+  } catch (error) {
+    console.error("OpenAI call failed:", error);
+    throw error;
+  }
+}
+
 export const handler: Handler = async (event) => {
   const origin = event.headers.origin || (event.headers as any).Origin;
   const traceId = randomUUID();
@@ -285,13 +363,32 @@ export const handler: Handler = async (event) => {
   let responseBody: string = "";
 
   try {
-    if (!upstreamEnabled || !userText || responseType !== "general") {
-      // Include products only for outfit responses (not for color, conversational, etc.)
+    // Check if we should use OpenAI for conversational responses
+    if (upstreamEnabled && userText && responseType === "conversational") {
+      // Use OpenAI for intelligent conversation
+      console.log("Using OpenAI for conversational response");
+
+      try {
+        const openaiResponse = await callOpenAI(
+          body.messages || [],
+          userContext,
+          process.env.OPENAI_API_KEY!,
+          traceId
+        );
+
+        explanation = openaiResponse;
+        products = []; // Conversational - no products
+        responseBody = buildLocalResponse(traceId, explanation, products, false);
+      } catch (openaiError) {
+        console.error("OpenAI failed, falling back to local:", openaiError);
+        // Fallback to local response
+        const includeProducts = responseType === "outfit" && products.length > 0;
+        responseBody = buildLocalResponse(traceId, explanation, products, includeProducts);
+      }
+    } else {
+      // Use local responses (color advice, outfit generation, or no OpenAI key)
       const includeProducts = responseType === "outfit" && products.length > 0;
       responseBody = buildLocalResponse(traceId, explanation, products, includeProducts);
-    } else {
-      // Upstream (OpenAI) - not implemented yet, use fallback
-      responseBody = buildLocalResponse(traceId, explanation, products, true);
     }
   } catch (err) {
     console.error("Response build error:", err);
