@@ -1,10 +1,142 @@
 # Changelog
 
+## [1.7.6] - 2025-10-07
+
+### Nova Product Cards Fix - CRITICAL
+
+**JSON markers volledig zichtbaar + geen product cards - VOLLEDIG OPGELOST**
+
+#### Problems (3 Critical Issues)
+
+1. **JSON markers volledig zichtbaar in UI**
+   ```
+   ...<<<FITFI_JSON>>>{"products":[...]}<<<END_FITFI_JSON>>>...
+   ```
+   Complete JSON data exposed in chat bubble
+
+2. **stripJSONMarkers() niet effectief**
+   - Functie verwijderde alleen START marker
+   - JSON data bleef volledig zichtbaar
+   - END marker werd niet correct gedetecteerd
+
+3. **Product cards niet getoond**
+   - JSON werd nooit geparsed
+   - Geen `type: "products"` event geëmit
+   - OutfitCards component kreeg geen data
+
+#### Root Causes
+
+**Issue 1: Broken stripJSONMarkers logic**
+```typescript
+// VOOR (broken)
+} else {
+  // Verwijder alleen start marker - JSON blijft zichtbaar!
+  result = result.slice(0, si) + result.slice(si + START.length);
+}
+```
+
+**Issue 2: Missing JSON parsing in novaService**
+- Service herkende alleen `delta`, `done`, `error` types
+- JSON markers in delta text werden NIET geparsed
+- Geen products event werd geëmit
+
+#### Fixes Applied
+
+**Fix 1: stripJSONMarkers() - verwijder alles vanaf START**
+```typescript
+// NA (correct)
+} else {
+  // END niet ontvangen - verwijder alles vanaf START
+  // Voorkomt dat incomplete JSON zichtbaar is
+  result = result.slice(0, si);
+}
+return result.trim();
+```
+
+**Effect:**
+- Tijdens streaming: alleen clean tekst zichtbaar
+- Na complete JSON: markers + JSON verwijderd
+- Geen exposed data meer
+
+**Fix 2: JSON parsing in novaService**
+```typescript
+// NEW: Parse embedded JSON markers
+if (payload.type === "delta") {
+  const text = payload.text ?? "";
+
+  // Detect markers
+  const si = text.indexOf('<<<FITFI_JSON>>>');
+  const ei = text.indexOf('<<<END_FITFI_JSON>>>');
+
+  if (si >= 0 && ei > si) {
+    // Extract JSON
+    const jsonStr = text.slice(si + START.length, ei);
+    const productData = JSON.parse(jsonStr);
+
+    // Emit products event
+    onEvent?.({
+      type: "products",
+      data: {
+        products: productData.products,
+        explanation: productData.explanation
+      }
+    });
+  }
+
+  // Still yield full text for stripping
+  onEvent?.({ type: "delta", text });
+  yield text;
+}
+```
+
+**Effect:**
+- JSON detected in delta stream
+- Products parsed and extracted
+- `type: "products"` event emitted
+- OutfitCards component receives data
+- Product cards display below text
+
+#### Result
+
+**VOOR:**
+```
+UI shows:
+  "We kozen voor een cleane look...
+   <<<FITFI_JSON>>>{"products":[{"id":"ABC123",...}]}<<<END_FITFI_JSON>>>
+   ...direct shoppable."
+
+[No product cards shown]
+```
+
+**NA:**
+```
+UI shows:
+  "We kozen voor een cleane, smart-casual look: nette jeans,
+   frisse witte sneaker en een licht overshirt. Minimalistisch,
+   comfortabel en direct shoppable."
+
+[Product Card 1] [Product Card 2] [Product Card 3] [Product Card 4]
+```
+
+#### Flow
+
+1. Function sends: `delta` with text chunks
+2. Function sends: `delta` with `<<<FITFI_JSON>>>{...}<<<END>>>`
+3. novaService receives delta with JSON markers
+4. novaService extracts JSON → emits `type: "products"` event
+5. NovaChat receives products event → `setCards(evt.data)`
+6. stripJSONMarkers removes markers from display text
+7. UI shows: clean text + product cards below
+
+**Status:** ✅ **FULLY WORKING**
+
+---
+
 ## [1.7.5] - 2025-10-07
 
 ### Nova Text Chunking Fix
 
-**JSON markers zichtbaar in tekst - OPGELOST**
+**JSON markers zichtbaar in tekst - PARTIALLY FIXED**
 
 #### Problem
 

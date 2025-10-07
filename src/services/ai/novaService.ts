@@ -142,8 +142,37 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
           try {
             const payload = JSON.parse(data) as { type: string; text?: string };
             if (payload.type === "delta") {
-              onEvent?.({ type: "delta", text: payload.text ?? "" });
-              yield payload.text ?? "";
+              const text = payload.text ?? "";
+
+              // Check for embedded JSON markers
+              const START = '<<<FITFI_JSON>>>';
+              const END = '<<<END_FITFI_JSON>>>';
+              const si = text.indexOf(START);
+              const ei = text.indexOf(END);
+
+              if (si >= 0 && ei > si) {
+                // Extract and parse product JSON
+                try {
+                  const jsonStr = text.slice(si + START.length, ei);
+                  const productData = JSON.parse(jsonStr);
+
+                  // Emit products event
+                  if (productData.products && Array.isArray(productData.products)) {
+                    onEvent?.({
+                      type: "products",
+                      data: {
+                        products: productData.products,
+                        explanation: productData.explanation
+                      }
+                    });
+                  }
+                } catch (jsonErr) {
+                  console.warn("Failed to parse embedded JSON:", jsonErr);
+                }
+              }
+
+              onEvent?.({ type: "delta", text });
+              yield text;
             } else if (payload.type === "done") {
               onEvent?.({ type: "done" });
               return;

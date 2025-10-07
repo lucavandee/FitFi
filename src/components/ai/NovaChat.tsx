@@ -23,15 +23,16 @@ function stripJSONMarkers(text: string): string {
   if (si >= 0) {
     const ei = result.indexOf(END, si + START.length);
     if (ei > si) {
-      // Volledige JSON block aanwezig - verwijder het hele block
+      // Volledige JSON block aanwezig - verwijder het hele block inclusief markers
       result = result.slice(0, si) + result.slice(ei + END.length);
     } else {
-      // Nog niet compleet - verwijder alleen de start marker
-      result = result.slice(0, si) + result.slice(si + START.length);
+      // END marker nog niet ontvangen - verwijder alles vanaf START
+      // Dit voorkomt dat incomplete JSON zichtbaar is tijdens streaming
+      result = result.slice(0, si);
     }
   }
 
-  return result;
+  return result.trim();
 }
 
 // ADD bovenaan
