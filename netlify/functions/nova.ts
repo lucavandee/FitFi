@@ -2,6 +2,7 @@
 import type { Handler } from "@netlify/functions";
 import { randomUUID } from "crypto";
 import { generateColorAdvice, detectColorIntent } from "./lib/colorAdvice";
+import { generateOutfit, detectOutfitIntent } from "./lib/outfitGenerator";
 
 const ORIGINS = ["https://www.fitfi.ai", "https://fitfi.ai", "http://localhost:5173"];
 const START = "<<<FITFI_JSON>>>";
@@ -92,11 +93,12 @@ function sampleProducts() {
   ];
 }
 
-function streamLocal(
+function streamLocalWithProducts(
   controller: ReadableStreamDefaultController,
   enc: TextEncoder,
   traceId: string,
   explanation: string,
+  products: any[],
   includeProducts: boolean = true
 ) {
   const send = (obj: any) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
@@ -105,8 +107,8 @@ function streamLocal(
   const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
   if (head) send({ type: "chunk", delta: head });
 
-  if (includeProducts) {
-    const payload = { explanation, products: sampleProducts() };
+  if (includeProducts && products.length > 0) {
+    const payload = { explanation, products };
     send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
   }
 
@@ -169,17 +171,24 @@ export const handler: Handler = async (event) => {
   const userText = nonEmptyUser(body.messages);
 
   let explanation = "";
-  let isColorAdvice = false;
+  let products: any[] = [];
+  let responseType: "color" | "outfit" | "general" = "general";
 
   if (userText && userContext.undertone && detectColorIntent(userText)) {
-    isColorAdvice = true;
+    responseType = "color";
     explanation = generateColorAdvice(
       userContext.undertone,
       userContext.archetype || "casual_chic",
       userText
     );
+  } else if (userText && detectOutfitIntent(userText)) {
+    responseType = "outfit";
+    const result = generateOutfit(userText, userContext);
+    explanation = result.explanation;
+    products = result.products;
   } else {
     explanation = craftExplanation(userText || undefined);
+    products = sampleProducts();
   }
 
   const enc = new TextEncoder();
@@ -187,8 +196,9 @@ export const handler: Handler = async (event) => {
     async start(controller) {
       const heartbeat = setInterval(() => controller.enqueue(enc.encode(`event: heartbeat\ndata: {"ts":${Date.now()}}\n\n`)), 15000);
       try {
-        if (!upstreamEnabled || !userText || isColorAdvice) {
-          streamLocal(controller, enc, traceId, explanation, !isColorAdvice);
+        if (!upstreamEnabled || !userText || responseType !== "general") {
+          const includeProducts = responseType !== "color";
+          streamLocalWithProducts(controller, enc, traceId, explanation, products, includeProducts);
           return;
         }
 
@@ -215,7 +225,7 @@ export const handler: Handler = async (event) => {
         });
 
         if (!upstream.ok || !upstream.body) {
-          streamLocal(controller, enc, traceId, explanation, true);
+          streamLocalWithProducts(controller, enc, traceId, explanation, products, true);
           return;
         }
 
@@ -243,7 +253,7 @@ export const handler: Handler = async (event) => {
 
         send({ type: "done" });
       } catch {
-        streamLocal(controller, enc, traceId, explanation, true);
+        streamLocalWithProducts(controller, enc, traceId, explanation, products, true);
       } finally {
         clearInterval(heartbeat);
         controller.close();
