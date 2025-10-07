@@ -20,6 +20,9 @@ type Msg = { role: Role; content: string };
 interface UserContext {
   gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
   archetype?: string;
+  bodyType?: string;
+  stylePreferences?: string[];
+  occasions?: string[];
   undertone?: "warm" | "cool" | "neutral";
   sizes?: { tops: string; bottoms: string; shoes: string };
   budget?: { min: number; max: number };
@@ -201,6 +204,25 @@ function parseUserContext(headers: Record<string, any>): UserContext {
     context.archetype = headers["x-fitfi-archetype"];
   }
 
+  // Body type - CRITICAL for fit recommendations
+  if (headers["x-fitfi-bodytype"]) {
+    context.bodyType = headers["x-fitfi-bodytype"];
+  }
+
+  // Style preferences - CRITICAL for avoiding generic advice
+  if (headers["x-fitfi-styleprefs"]) {
+    try {
+      context.stylePreferences = JSON.parse(headers["x-fitfi-styleprefs"]);
+    } catch {}
+  }
+
+  // Occasions - CRITICAL for context-appropriate recommendations
+  if (headers["x-fitfi-occasions"]) {
+    try {
+      context.occasions = JSON.parse(headers["x-fitfi-occasions"]);
+    } catch {}
+  }
+
   if (headers["x-fitfi-undertone"]) {
     context.undertone = headers["x-fitfi-undertone"] as "warm" | "cool" | "neutral";
   }
@@ -228,12 +250,15 @@ async function callOpenAI(
 ): Promise<string> {
   const systemPrompt = `Je bent Nova, een premium style assistent voor FitFi.ai.
 
-CONTEXT OVER USER:
+CONTEXT OVER USER (GEBRUIK ALTIJD):
 ${userContext.gender ? `- Gender: ${userContext.gender}` : "- Gender: ONBEKEND"}
-${userContext.archetype ? `- Archetype: ${userContext.archetype}` : ""}
+${userContext.bodyType ? `- Lichaamsvorm: ${userContext.bodyType}` : ""}
+${userContext.archetype ? `- Stijl archetype: ${userContext.archetype}` : ""}
+${userContext.stylePreferences && userContext.stylePreferences.length > 0 ? `- Stijl voorkeuren: ${userContext.stylePreferences.join(", ")}` : ""}
+${userContext.occasions && userContext.occasions.length > 0 ? `- Gelegenheden: ${userContext.occasions.join(", ")}` : ""}
 ${userContext.undertone ? `- Huidsondertoon: ${userContext.undertone}` : ""}
-${userContext.sizes ? `- Maten: ${JSON.stringify(userContext.sizes)}` : ""}
-${userContext.budget ? `- Budget: €${userContext.budget.min}-${userContext.budget.max}` : ""}
+${userContext.sizes ? `- Maten: ${userContext.sizes.tops} (tops), ${userContext.sizes.bottoms} (broeken), ${userContext.sizes.shoes} (schoenen)` : ""}
+${userContext.budget ? `- Budget: €${userContext.budget.min}-${userContext.budget.max} per item` : ""}
 
 KRITIEKE REGEL - GENDER:
 ${!userContext.gender ? `
@@ -247,6 +272,54 @@ ${!userContext.gender ? `
 - Voor female: jurk, rok, blouse, hakken, sieraden
 - Voor non-binary: mix of neutrale items, vraag voorkeur
 - Voor prefer-not-to-say: gebruik neutrale taal, vraag voorkeur
+`}
+
+KRITIEKE REGEL - LICHAAMSVORM (VOORKOM GENERIEK ADVIES):
+${userContext.bodyType ? `
+✅ Lichaamsvorm bekend: ${userContext.bodyType}
+
+PAS-RICHTLIJNEN PER LICHAAMSVORM:
+- **inverted_triangle**: Breed bovenlichaam, smalle heupen
+  → Vermijd: Te strakke tops, shoulder pads, horizontale strepen bovenlichaam
+  → Raad aan: V-hals, verticale lijnen, statement broeken/rokken, donkere tops
+
+- **athletic/rechthoekig**: Weinig taille definitie, rechte lijnen
+  → Raad aan: Riem op natuurlijke taille, peplum, wrap-jurken, gelaagde looks
+  → Vermijd: Te strakke rechte lijnen, shapeless oversized
+
+- **pear/driehoek**: Smalle schouders, bredere heupen
+  → Raad aan: Statement tops, boat necks, bright colors bovenlichaam, A-lijn rokken/broeken
+  → Vermijd: Skinny jeans zonder lange top, cargo broeken, horizontale strepen onderlichaam
+
+- **hourglass/zandloper**: Gedefinieerde taille, gebalanceerde schouders/heupen
+  → Raad aan: Tailored fits, wrap-dresses, hoge taille, bodycon waar gepast
+  → Vermijd: Shapeless oversized, drop-waist, te veel volume
+
+- **apple/rond**: Volume rond middel, slankere benen
+  → Raad aan: Empire waist, A-lijn, verticale lijnen, V-hals, monochrome looks
+  → Vermijd: Te strakke taille, crop tops, belts op natuurlijke taille
+
+GEBRUIK DIT BIJ ELKE OUTFIT AANBEVELING!
+` : `
+⚠️ LICHAAMSVORM ONBEKEND - Vraag eerst: "Wat voor pasvorm voel je je het prettigst in: slim-fit, regular-fit, of wat ruimer/oversized?"
+`}
+
+KRITIEKE REGEL - STIJLVOORKEUR (VOORKOM GENERIEK ADVIES):
+${userContext.stylePreferences && userContext.stylePreferences.length > 0 ? `
+✅ Stijlvoorkeuren bekend: ${userContext.stylePreferences.join(", ")}
+
+MATCH ALTIJD MET HUN STIJL:
+- **minimalist**: Clean lines, neutrale kleuren, tijdloze stukken, minder is meer
+- **classic**: Tijdloze elegantie, gestructureerd, neutrale kleuren met subtiele accenten
+- **bohemian**: Vrij, artistiek, lagen, prints, aardse tinten, flowy materialen
+- **streetwear**: Urban, sneakers, hoodies, oversized, statement stukken, logo's
+- **romantic**: Zachte stoffen, pastelkleuren, ruches, bloemenprints, vrouwelijke details
+- **edgy**: Leather, asymmetrisch, zwart, studs, rock-inspired
+- **preppy**: Gepolijst, collared shirts, blazers, loafers, traditional patterns
+
+PAS ELKE AANBEVELING AAN DEZE STIJL!
+` : `
+⚠️ STIJLVOORKEUR ONBEKEND - Vraag: "Wat voor stijl vind je mooi: klassiek en tijdloos, modern en minimalistisch, of iets anders?"
 `}
 
 JE TAAK:
@@ -320,7 +393,7 @@ export const handler: Handler = async (event) => {
       statusCode: 204,
       headers: {
         "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget",
+        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-bodytype, x-fitfi-styleprefs, x-fitfi-occasions, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
       },
       body: ""
@@ -341,6 +414,65 @@ export const handler: Handler = async (event) => {
     }
   } catch (e) {
     console.warn("Supabase client creation failed:", e);
+  }
+
+  // AUTHENTICATION & RATE LIMITING CHECK
+  const userId = event.headers["x-fitfi-uid"];
+
+  if (!userId || userId === "anon") {
+    return {
+      statusCode: 401,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+      },
+      body: JSON.stringify({
+        error: "authentication_required",
+        message: "Log in om Nova te gebruiken. Maak een gratis account aan!",
+        action: "login"
+      })
+    };
+  }
+
+  // Check if user can use Nova (auth + quiz + rate limit)
+  if (supabase) {
+    try {
+      const { data: accessCheck, error: accessError } = await supabase
+        .rpc('can_use_nova', { p_user_id: userId });
+
+      if (accessError) {
+        console.error("Access check failed:", accessError);
+      } else if (accessCheck && accessCheck.length > 0) {
+        const check = accessCheck[0];
+
+        if (!check.can_use) {
+          return {
+            statusCode: 403,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+            },
+            body: JSON.stringify({
+              error: "access_denied",
+              message: check.reason,
+              tier: check.tier,
+              usage: {
+                current: check.current_count,
+                limit: check.tier_limit
+              },
+              action: check.reason.includes("quiz") ? "complete_quiz" : "upgrade"
+            })
+          };
+        }
+
+        // Increment usage counter
+        await supabase.rpc('increment_nova_usage', { p_user_id: userId });
+        console.log(`Nova access granted: ${check.tier} (${check.current_count + 1}/${check.tier_limit})`);
+      }
+    } catch (checkError) {
+      console.warn("Could not validate Nova access:", checkError);
+      // Continue anyway (graceful degradation)
+    }
   }
 
   let body: { messages?: Msg[]; mode?: string } = {};

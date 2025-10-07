@@ -14,6 +14,8 @@ export interface NovaUserContext {
   gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
   archetype: string;
   secondaryArchetype?: string;
+  bodyType?: string;
+  stylePreferences?: string[];
   colorProfile: ColorProfile;
   preferences: {
     occasions: string[];
@@ -91,6 +93,8 @@ function parseStyleProfile(data: any): NovaUserContext {
     gender,
     archetype: data.archetype || "casual_chic",
     secondaryArchetype: quizAnswers.secondary_archetype,
+    bodyType: quizAnswers.bodyType,
+    stylePreferences: quizAnswers.stylePreferences || [],
     colorProfile,
     preferences: {
       occasions: data.preferred_occasions || quizAnswers.occasions || ["casual", "work"],
@@ -183,6 +187,21 @@ export function buildContextHeaders(context: NovaUserContext | null): Record<str
   // Add gender if available (CRITICAL for avoiding assumptions!)
   if (context.gender) {
     headers["x-fitfi-gender"] = context.gender;
+  }
+
+  // Add body type for fit recommendations
+  if (context.bodyType) {
+    headers["x-fitfi-bodytype"] = context.bodyType;
+  }
+
+  // Add style preferences
+  if (context.stylePreferences && context.stylePreferences.length > 0) {
+    headers["x-fitfi-styleprefs"] = JSON.stringify(context.stylePreferences);
+  }
+
+  // Add preferred occasions
+  if (context.preferences.occasions && context.preferences.occasions.length > 0) {
+    headers["x-fitfi-occasions"] = JSON.stringify(context.preferences.occasions);
   }
 
   return headers;
