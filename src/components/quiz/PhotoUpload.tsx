@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Camera, Upload, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Camera, Upload, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Loader as Loader2 } from "lucide-react";
 
 interface ColorAnalysis {
   undertone: "warm" | "cool" | "neutral";
