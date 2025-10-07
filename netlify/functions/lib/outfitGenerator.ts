@@ -236,10 +236,11 @@ function convertToOutfitProduct(product: Product, reason: string): OutfitProduct
   };
 }
 
-export function generateOutfit(
+export async function generateOutfit(
   userMessage: string,
-  context: UserContext
-): { explanation: string; products: OutfitProduct[] } {
+  context: UserContext,
+  supabase?: any
+): Promise<{ explanation: string; products: OutfitProduct[] }> {
   const lowerMsg = userMessage.toLowerCase();
   let occasion = "casual";
   let categories = ["top", "bottom", "footwear"];
@@ -258,11 +259,27 @@ export function generateOutfit(
     categories = ["outerwear", "top", "bottom", "footwear"];
   }
 
+  let productPool = PRODUCT_FEED;
+
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("in_stock", true);
+
+      if (!error && data && data.length > 0) {
+        productPool = data;
+      }
+    } catch (e) {
+      console.warn("Supabase query failed, using fallback feed:", e);
+    }
+  }
+
   const outfit: OutfitProduct[] = [];
-  const explanationParts: string[] = [];
 
   for (const category of categories) {
-    const ranked = filterAndRankProducts(PRODUCT_FEED, context, category);
+    const ranked = filterAndRankProducts(productPool, context, category);
     if (ranked.length > 0) {
       const product = ranked[0];
       const reason = buildReason(product, context, occasion);

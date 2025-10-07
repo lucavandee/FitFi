@@ -183,7 +183,7 @@ export const handler: Handler = async (event) => {
     );
   } else if (userText && detectOutfitIntent(userText)) {
     responseType = "outfit";
-    const result = generateOutfit(userText, userContext);
+    const result = await generateOutfit(userText, userContext);
     explanation = result.explanation;
     products = result.products;
   } else {
