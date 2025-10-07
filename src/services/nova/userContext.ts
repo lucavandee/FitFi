@@ -109,15 +109,15 @@ function parseStyleProfile(data: any): NovaUserContext {
     gender,
     archetype: data.archetype || "casual_chic",
     secondaryArchetype: quizAnswers.secondary_archetype,
-    bodyType: quizAnswers.bodyType,
-    stylePreferences: quizAnswers.stylePreferences || [],
+    bodyType: data.body_type || quizAnswers.bodytype,
+    stylePreferences: quizAnswers.stylePreferences || quizAnswers.goals || [],
     colorProfile,
     aiColorAnalysis,
     preferences: {
-      occasions: data.preferred_occasions || quizAnswers.occasions || ["casual", "work"],
+      occasions: data.preferred_occasions || quizAnswers.occasions || quizAnswers.goals || ["casual", "work"],
       budget: data.budget_range || quizAnswers.budget || { min: 50, max: 150 },
-      brands: quizAnswers.preferred_brands || [],
-      sizes: data.sizes || {
+      brands: quizAnswers.brands || quizAnswers.preferred_brands || [],
+      sizes: data.sizes || quizAnswers.sizes || {
         tops: quizAnswers.size_top || "M",
         bottoms: quizAnswers.size_bottom || "31",
         shoes: quizAnswers.size_shoes || "42",

@@ -10,6 +10,8 @@ import QuizStepper from "@/components/quiz/QuizStepper";
 import { computeResult } from "@/lib/quiz/logic";
 import type { AnswerMap, QuizStep } from "@/lib/quiz/types";
 import { LS_KEYS } from "@/lib/quiz/types";
+import { supabase } from "@/lib/supabase";
+import toast from "react-hot-toast";
 
 const STEPS: QuizStep[] = [
   "gender","goals","fit","bodytype","sizes","budget","comfort","jewelry","neutrals","lightness","contrast","prints","materials","occasions","brands","photo","review",
@@ -27,14 +29,54 @@ export default function StyleQuizPage() {
   function next() { setStepIdx((i) => Math.min(i + 1, STEPS.length - 1)); }
   function prev() { setStepIdx((i) => Math.max(i - 1, 0)); }
 
-  function finish() {
+  async function finish() {
     const result = computeResult(answers);
+
+    // Save to localStorage (for immediate access)
     try {
       localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.color));
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(result.archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
     } catch {}
+
+    // Save to Supabase (for Nova to use!)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        // Prepare data for Supabase
+        const profileData = {
+          user_id: user.id,
+          gender: answers.gender,
+          archetype: result.archetype,
+          body_type: answers.bodytype,
+          quiz_answers: answers,
+          color_advice: result.color,
+          preferred_occasions: answers.goals || [],
+          sizes: answers.sizes,
+          budget_range: answers.budget,
+          completed_at: new Date().toISOString(),
+        };
+
+        // Insert or update style_profiles
+        const { error } = await supabase
+          .from("style_profiles")
+          .upsert(profileData, { onConflict: "user_id" });
+
+        if (error) {
+          console.error("Failed to save quiz to Supabase:", error);
+          toast.error("Quiz opgeslagen lokaal, maar niet gesynced met Nova");
+        } else {
+          console.log("✅ Quiz saved to Supabase for Nova!");
+        }
+      } else {
+        console.warn("No user logged in - quiz only saved locally");
+      }
+    } catch (err) {
+      console.error("Error saving to Supabase:", err);
+    }
+
     nav("/results", { replace: true });
   }
 
