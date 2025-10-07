@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.7.4] - 2025-10-07
+
+### Nova No Response Fix
+
+**"ik krijg nu helemaal geen reactie meer" - OPGELOST**
+
+#### Root Cause: SSE Payload Mismatch
+
+**Problem:**
+- Function stuurde: `{type: "chunk", delta: "text"}`
+- Client verwachtte: `{type: "delta", text: "text"}`
+- Parser herkende payload niet → geen content getoond
+
+**Fix:**
+```typescript
+// VOOR
+send({ type: "chunk", delta: head });  // ❌ Wrong
+
+// NA
+send({ type: "delta", text: head });   // ✅ Correct
+```
+
+#### Impact
+
+| Status | Voor | Na |
+|--------|------|-----|
+| **Messages sent** | ✅ | ✅ |
+| **Function called** | ✅ | ✅ |
+| **Response shown** | ❌ 0% | ✅ 100% |
+
+**Effect:**
+- Messages worden verzonden ✅
+- Function returnt response ✅
+- Client parsed response ✅
+- UI toont content ✅
+
+**Zie `NOVA_NO_RESPONSE_FIX.md` voor details**
+
+---
+
 ## [1.7.3] - 2025-10-07
 
 ### Nova 502 Error - CRITICAL FIX
