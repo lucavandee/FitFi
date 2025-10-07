@@ -26,6 +26,9 @@ interface UserContext {
   undertone?: "warm" | "cool" | "neutral";
   sizes?: { tops: string; bottoms: string; shoes: string };
   budget?: { min: number; max: number };
+  baseColors?: string;
+  preferredBrands?: string[];
+  allQuizAnswers?: Record<string, any>;
 }
 
 function okOrigin(o?: string) { return !!o && ORIGINS.includes(o); }
@@ -239,6 +242,25 @@ function parseUserContext(headers: Record<string, any>): UserContext {
     } catch {}
   }
 
+  // Base colors preference from quiz
+  if (headers["x-fitfi-basecolors"]) {
+    context.baseColors = headers["x-fitfi-basecolors"];
+  }
+
+  // Preferred brands from quiz
+  if (headers["x-fitfi-brands"]) {
+    try {
+      context.preferredBrands = JSON.parse(headers["x-fitfi-brands"]);
+    } catch {}
+  }
+
+  // ALL quiz answers as fallback
+  if (headers["x-fitfi-quiz"]) {
+    try {
+      context.allQuizAnswers = JSON.parse(headers["x-fitfi-quiz"]);
+    } catch {}
+  }
+
   return context;
 }
 
@@ -256,9 +278,12 @@ ${userContext.bodyType ? `- Lichaamsvorm: ${userContext.bodyType}` : ""}
 ${userContext.archetype ? `- Stijl archetype: ${userContext.archetype}` : ""}
 ${userContext.stylePreferences && userContext.stylePreferences.length > 0 ? `- Stijl voorkeuren: ${userContext.stylePreferences.join(", ")}` : ""}
 ${userContext.occasions && userContext.occasions.length > 0 ? `- Gelegenheden: ${userContext.occasions.join(", ")}` : ""}
+${userContext.baseColors ? `- Basis kleurvoorkeur: ${userContext.baseColors}` : ""}
+${userContext.preferredBrands && userContext.preferredBrands.length > 0 ? `- Favoriete merken: ${userContext.preferredBrands.join(", ")}` : ""}
 ${userContext.undertone ? `- Huidsondertoon: ${userContext.undertone}` : ""}
 ${userContext.sizes ? `- Maten: ${userContext.sizes.tops} (tops), ${userContext.sizes.bottoms} (broeken), ${userContext.sizes.shoes} (schoenen)` : ""}
 ${userContext.budget ? `- Budget: €${userContext.budget.min}-${userContext.budget.max} per item` : ""}
+${userContext.allQuizAnswers ? `\nALLE QUIZ DATA: ${JSON.stringify(userContext.allQuizAnswers, null, 2)}` : ""}
 
 KRITIEKE REGEL - GENDER:
 ${!userContext.gender ? `
@@ -393,7 +418,7 @@ export const handler: Handler = async (event) => {
       statusCode: 204,
       headers: {
         "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-bodytype, x-fitfi-styleprefs, x-fitfi-occasions, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget",
+        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-gender, x-fitfi-bodytype, x-fitfi-styleprefs, x-fitfi-occasions, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget, x-fitfi-basecolors, x-fitfi-brands, x-fitfi-quiz",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
       },
       body: ""

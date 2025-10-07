@@ -204,5 +204,20 @@ export function buildContextHeaders(context: NovaUserContext | null): Record<str
     headers["x-fitfi-occasions"] = JSON.stringify(context.preferences.occasions);
   }
 
+  // Add base colors from quiz
+  if (context.quizAnswers?.baseColors) {
+    headers["x-fitfi-basecolors"] = context.quizAnswers.baseColors;
+  }
+
+  // Add preferred brands from quiz
+  if (context.preferences.brands && context.preferences.brands.length > 0) {
+    headers["x-fitfi-brands"] = JSON.stringify(context.preferences.brands);
+  }
+
+  // Add ALL quiz answers as fallback (for any data we might have missed)
+  if (context.quizAnswers && Object.keys(context.quizAnswers).length > 0) {
+    headers["x-fitfi-quiz"] = JSON.stringify(context.quizAnswers);
+  }
+
   return headers;
 }
