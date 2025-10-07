@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { generateColorAdvice, detectColorIntent } from "./lib/colorAdvice";
 import { generateOutfit, detectOutfitIntent } from "./lib/outfitGenerator";
 
-const ORIGINS = ["https://www.fitfi.ai", "https://fitfi.ai", "http://localhost:5173"];
+const ORIGINS = ["https://www.fitfi.ai", "https://fitfi.ai", "http://localhost:5173", "http://localhost:8888"];
 const START = "<<<FITFI_JSON>>>";
 const END = "<<<END_FITFI_JSON>>>";
 
@@ -102,21 +102,34 @@ function streamLocalWithProducts(
   products: any[],
   includeProducts: boolean = true
 ) {
-  const send = (obj: any) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
-  send({ type: "meta", model: "fitfi-nova-local", traceId });
+  try {
+    const send = (obj: any) => {
+      try {
+        controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
+      } catch (e) {
+        console.error("Failed to enqueue:", e);
+        throw e;
+      }
+    };
 
-  const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
-  if (head) send({ type: "chunk", delta: head });
+    send({ type: "meta", model: "fitfi-nova-local", traceId });
 
-  if (includeProducts && products.length > 0) {
-    const payload = { explanation, products };
-    send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
+    const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
+    if (head) send({ type: "chunk", delta: head });
+
+    if (includeProducts && products.length > 0) {
+      const payload = { explanation, products };
+      send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
+    }
+
+    const tail = explanation.slice(Math.ceil(explanation.length * 0.6));
+    if (tail) send({ type: "chunk", delta: tail });
+
+    send({ type: "done" });
+  } catch (e) {
+    console.error("streamLocalWithProducts error:", e);
+    throw e;
   }
-
-  const tail = explanation.slice(Math.ceil(explanation.length * 0.6));
-  if (tail) send({ type: "chunk", delta: tail });
-
-  send({ type: "done" });
 }
 
 function parseUserContext(headers: Record<string, any>): UserContext {
@@ -206,8 +219,16 @@ export const handler: Handler = async (event) => {
   const enc = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      const heartbeat = setInterval(() => controller.enqueue(enc.encode(`event: heartbeat\ndata: {"ts":${Date.now()}}\n\n`)), 15000);
+      let heartbeat: NodeJS.Timeout | undefined;
       try {
+        heartbeat = setInterval(() => {
+          try {
+            controller.enqueue(enc.encode(`event: heartbeat\ndata: {"ts":${Date.now()}}\n\n`));
+          } catch (e) {
+            console.warn("Heartbeat failed:", e);
+          }
+        }, 15000);
+
         if (!upstreamEnabled || !userText || responseType !== "general") {
           const includeProducts = responseType !== "color";
           streamLocalWithProducts(controller, enc, traceId, explanation, products, includeProducts);
@@ -264,11 +285,20 @@ export const handler: Handler = async (event) => {
         }
 
         send({ type: "done" });
-      } catch {
-        streamLocalWithProducts(controller, enc, traceId, explanation, products, true);
+      } catch (err) {
+        console.error("Stream error:", err);
+        try {
+          streamLocalWithProducts(controller, enc, traceId, explanation, products, true);
+        } catch (fallbackErr) {
+          console.error("Fallback failed:", fallbackErr);
+        }
       } finally {
-        clearInterval(heartbeat);
-        controller.close();
+        if (heartbeat) clearInterval(heartbeat);
+        try {
+          controller.close();
+        } catch (e) {
+          console.warn("Controller close failed:", e);
+        }
       }
     },
   });

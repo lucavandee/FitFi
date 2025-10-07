@@ -104,9 +104,23 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
   let buffer = "";
 
   try {
+    let lastActivity = Date.now();
+    const timeout = 30000; // 30 seconds timeout
+
     while (true) {
+      // Check timeout
+      if (Date.now() - lastActivity > timeout) {
+        console.warn("Stream timeout - geen data ontvangen voor 30s");
+        throw new Error("Stream timeout");
+      }
+
       const { value, done } = await reader.read();
-      if (done) break;
+      if (done) {
+        console.log("Stream completed normally");
+        break;
+      }
+
+      lastActivity = Date.now();
       buffer += decoder.decode(value, { stream: true });
 
       // Parse per lijn
@@ -114,6 +128,9 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
       while ((idx = buffer.indexOf("\n")) >= 0) {
         const line = buffer.slice(0, idx).trim();
         buffer = buffer.slice(idx + 1);
+
+        // Skip heartbeats
+        if (line.startsWith("event: heartbeat")) continue;
 
         if (line.startsWith("data:")) {
           const data = line.slice(5).trim();
@@ -127,12 +144,16 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
             if (payload.type === "delta") {
               onEvent?.({ type: "delta", text: payload.text ?? "" });
               yield payload.text ?? "";
+            } else if (payload.type === "done") {
+              onEvent?.({ type: "done" });
+              return;
             } else if (payload.type === "error") {
               onEvent?.({ type: "error", message: "Stream error" });
+              throw new Error("Stream error from server");
             }
-          } catch {
+          } catch (parseErr) {
             // Niet-JSON (kan plain text zijn)
-            if (data) {
+            if (data && !data.includes("heartbeat")) {
               onEvent?.({ type: "delta", text: data });
               yield data;
             }
@@ -141,11 +162,17 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
       }
     }
     onEvent?.({ type: "done" });
-  } catch (e) {
-    onEvent?.({ type: "error", message: "Stream interrupted" });
+  } catch (e: any) {
+    const msg = e?.message || "Stream interrupted";
+    console.error("SSE stream error:", msg);
+    onEvent?.({ type: "error", message: msg });
     throw e;
   } finally {
-    reader.releaseLock?.();
+    try {
+      reader.releaseLock?.();
+    } catch (releaseErr) {
+      console.warn("Failed to release reader lock:", releaseErr);
+    }
   }
 }
 

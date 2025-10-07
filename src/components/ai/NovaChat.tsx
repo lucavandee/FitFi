@@ -299,11 +299,15 @@ const NovaChat: React.FC = () => {
         conn.setStatus('error');
         const errorMsg = e?.message || String(e);
         let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
-        
+
         if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
           content = 'Nova is nog niet actief (SSE/OpenAI). Zet OPENAI_API_KEY in Netlify en deploy de function.';
+        } else if (errorMsg.includes('aborted') || errorMsg.includes('interrupted')) {
+          content = 'De verbinding werd onderbroken. De server kan overbelast zijn of de response was te groot. Probeer een kortere vraag.';
+        } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+          content = 'Netwerkfout: kan geen verbinding maken met Nova. Check je internetverbinding.';
         }
-        
+
         setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content } : m));
       } finally {
         setIsTyping(false);

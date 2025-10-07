@@ -263,11 +263,18 @@ export async function generateOutfit(
 
   if (supabase) {
     try {
-      const { data, error } = await supabase
+      // Timeout na 5 seconden
+      const queryPromise = supabase
         .from("products")
         .select("*")
         .eq("retailer", "Zalando")
         .eq("in_stock", true);
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Query timeout")), 5000)
+      );
+
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
       if (!error && data && data.length > 0) {
         productPool = data;
@@ -275,8 +282,8 @@ export async function generateOutfit(
       } else if (error) {
         console.warn("Supabase query error:", error.message);
       }
-    } catch (e) {
-      console.warn("Supabase query failed, using fallback feed:", e);
+    } catch (e: any) {
+      console.warn("Supabase query failed, using fallback feed:", e?.message || e);
     }
   }
 
