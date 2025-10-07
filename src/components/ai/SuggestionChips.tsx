@@ -8,12 +8,12 @@ type Props = {
 };
 
 const DEFAULTS = [
+  'Welke kleuren passen bij mij?',
+  'Toon kleurencombinaties voor mijn undertone',
   'Maak een casual vrijdag-outfit voor mij',
-  'Welke sneakers passen bij donkere jeans?',
-  'Welke kleuren werken bij mijn huidtint?',
+  'Welke kleuren moet ik vermijden?',
   'Geef 3 outfits voor een bruiloft (smart casual)',
   'Welke jas voor herfst 2025 met mijn stijlcode?',
-  'Maak 3 casual outfits voor vrijdagavond. Voeg JSON toe (cards).'
 ];
 
 export default function SuggestionChips({ suggestions = DEFAULTS, className, autoSubmit = true }: Props) {

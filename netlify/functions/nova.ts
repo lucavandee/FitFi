@@ -1,6 +1,7 @@
 // netlify/functions/nova.ts
 import type { Handler } from "@netlify/functions";
 import { randomUUID } from "crypto";
+import { generateColorAdvice, detectColorIntent } from "./lib/colorAdvice";
 
 const ORIGINS = ["https://www.fitfi.ai", "https://fitfi.ai", "http://localhost:5173"];
 const START = "<<<FITFI_JSON>>>";
@@ -8,6 +9,13 @@ const END = "<<<END_FITFI_JSON>>>";
 
 type Role = "system" | "user" | "assistant";
 type Msg = { role: Role; content: string };
+
+interface UserContext {
+  archetype?: string;
+  undertone?: "warm" | "cool" | "neutral";
+  sizes?: { tops: string; bottoms: string; shoes: string };
+  budget?: { min: number; max: number };
+}
 
 function okOrigin(o?: string) { return !!o && ORIGINS.includes(o); }
 function nonEmptyUser(messages?: Msg[]): string | null {
@@ -84,20 +92,54 @@ function sampleProducts() {
   ];
 }
 
-function streamLocal(controller: ReadableStreamDefaultController, enc: TextEncoder, traceId: string, explanation: string) {
+function streamLocal(
+  controller: ReadableStreamDefaultController,
+  enc: TextEncoder,
+  traceId: string,
+  explanation: string,
+  includeProducts: boolean = true
+) {
   const send = (obj: any) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
   send({ type: "meta", model: "fitfi-nova-local", traceId });
 
   const head = explanation.slice(0, Math.ceil(explanation.length * 0.6));
   if (head) send({ type: "chunk", delta: head });
 
-  const payload = { explanation, products: sampleProducts() };
-  send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
+  if (includeProducts) {
+    const payload = { explanation, products: sampleProducts() };
+    send({ type: "chunk", delta: `${START}${JSON.stringify(payload)}${END}` });
+  }
 
   const tail = explanation.slice(Math.ceil(explanation.length * 0.6));
   if (tail) send({ type: "chunk", delta: tail });
 
   send({ type: "done" });
+}
+
+function parseUserContext(headers: Record<string, any>): UserContext {
+  const context: UserContext = {};
+
+  if (headers["x-fitfi-archetype"]) {
+    context.archetype = headers["x-fitfi-archetype"];
+  }
+
+  if (headers["x-fitfi-undertone"]) {
+    context.undertone = headers["x-fitfi-undertone"] as "warm" | "cool" | "neutral";
+  }
+
+  if (headers["x-fitfi-sizes"]) {
+    try {
+      context.sizes = JSON.parse(headers["x-fitfi-sizes"]);
+    } catch {}
+  }
+
+  if (headers["x-fitfi-budget"]) {
+    try {
+      context.budget = JSON.parse(headers["x-fitfi-budget"]);
+    } catch {}
+  }
+
+  return context;
 }
 
 export const handler: Handler = async (event) => {
@@ -110,7 +152,7 @@ export const handler: Handler = async (event) => {
       statusCode: 204,
       headers: {
         "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid",
+        "Access-Control-Allow-Headers": "content-type, x-fitfi-tier, x-fitfi-uid, x-fitfi-archetype, x-fitfi-undertone, x-fitfi-sizes, x-fitfi-budget",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
       },
       body: ""
@@ -120,20 +162,33 @@ export const handler: Handler = async (event) => {
   if (event.httpMethod !== "POST") return { statusCode: 405, body: "Method Not Allowed" };
   if (!okOrigin(origin)) return { statusCode: 403, body: "Forbidden" };
 
-  // Input
+  const userContext = parseUserContext(event.headers);
+
   let body: { messages?: Msg[]; mode?: string } = {};
   try { body = JSON.parse(event.body || "{}"); } catch {}
   const userText = nonEmptyUser(body.messages);
-  const explanation = craftExplanation(userText || undefined);
+
+  let explanation = "";
+  let isColorAdvice = false;
+
+  if (userText && userContext.undertone && detectColorIntent(userText)) {
+    isColorAdvice = true;
+    explanation = generateColorAdvice(
+      userContext.undertone,
+      userContext.archetype || "casual_chic",
+      userText
+    );
+  } else {
+    explanation = craftExplanation(userText || undefined);
+  }
 
   const enc = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       const heartbeat = setInterval(() => controller.enqueue(enc.encode(`event: heartbeat\ndata: {"ts":${Date.now()}}\n\n`)), 15000);
       try {
-        // 🔒 Standaard: lokale stream (nooit OpenAI aanroepen als prompt leeg OF upstream disabled)
-        if (!upstreamEnabled || !userText) {
-          streamLocal(controller, enc, traceId, explanation);
+        if (!upstreamEnabled || !userText || isColorAdvice) {
+          streamLocal(controller, enc, traceId, explanation, !isColorAdvice);
           return;
         }
 
@@ -160,8 +215,7 @@ export const handler: Handler = async (event) => {
         });
 
         if (!upstream.ok || !upstream.body) {
-          // OpenAI weigerde (bv. "messages: text content blocks must be non-empty") → lokale fallback
-          streamLocal(controller, enc, traceId, explanation);
+          streamLocal(controller, enc, traceId, explanation, true);
           return;
         }
 
@@ -189,8 +243,7 @@ export const handler: Handler = async (event) => {
 
         send({ type: "done" });
       } catch {
-        // Onbekende fout → alsnog lokale fallback
-        streamLocal(controller, enc, traceId, explanation);
+        streamLocal(controller, enc, traceId, explanation, true);
       } finally {
         clearInterval(heartbeat);
         controller.close();
