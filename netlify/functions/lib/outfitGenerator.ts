@@ -266,10 +266,14 @@ export async function generateOutfit(
       const { data, error } = await supabase
         .from("products")
         .select("*")
+        .eq("retailer", "Zalando")
         .eq("in_stock", true);
 
       if (!error && data && data.length > 0) {
         productPool = data;
+        console.log(`✅ Loaded ${data.length} products from Supabase`);
+      } else if (error) {
+        console.warn("Supabase query error:", error.message);
       }
     } catch (e) {
       console.warn("Supabase query failed, using fallback feed:", e);
