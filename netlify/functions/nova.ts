@@ -27,10 +27,61 @@ function nonEmptyUser(messages?: Msg[]): string | null {
   return text.length ? text : null;
 }
 
-function craftExplanation(prompt?: string) {
-  const base = "We kozen voor een cleane, smart-casual look: nette jeans, frisse witte sneaker en een licht overshirt. Minimalistisch, comfortabel en direct shoppable.";
-  const twist = prompt ? ` Je vraag "${String(prompt).slice(0,120)}${String(prompt).length>120?"…":""}" vertalen we naar stille luxe met rustige tinten en structuur.` : "";
-  return base + twist;
+function detectIntentType(text: string): "greeting" | "question" | "complaint" | "style_request" | "unknown" {
+  const lower = text.toLowerCase().trim();
+
+  // Greetings
+  if (/^(hi|hoi|hey|hallo|hai|yo|sup|hello|goedemorgen|goedemiddag|goedenavond)[\s!.?]*$/i.test(lower)) {
+    return "greeting";
+  }
+
+  // Complaints / meta questions
+  if (/(waarom|snap niet|begrijp niet|klopt niet|fout|verkeerd|altijd hetzelfde|saai|slaat niet op|absurd)/i.test(lower)) {
+    return "complaint";
+  }
+
+  // Questions about Nova itself
+  if (/(wie ben je|wat kun je|wat doe je|hoe werk je|wat is dit|help|uitleg)/i.test(lower)) {
+    return "question";
+  }
+
+  // Style requests (keywords)
+  if (/(outfit|kleding|stijl|look|combineren|dragen|passen|match|kleuren)/i.test(lower)) {
+    return "style_request";
+  }
+
+  return "unknown";
+}
+
+function generateConversationalResponse(text: string, intentType: string, conversationHistory?: Msg[]): string {
+  // Check if we already gave outfit advice in this conversation
+  const hasGivenOutfit = conversationHistory?.some(m =>
+    m.role === "assistant" && (m.content.includes("outfit") || m.content.includes("kleding"))
+  );
+
+  switch (intentType) {
+    case "greeting":
+      return "Hey! Leuk dat je er bent. Ik help je graag met je stijl. Vertel me, waar zoek je kleding voor? Een specifieke gelegenheid, of gewoon dagelijkse looks?";
+
+    case "complaint":
+      if (hasGivenOutfit) {
+        return "Je hebt gelijk, laat me een andere richting opgaan. Wat voor stijl spreekt je meer aan? Denk aan: sportief, zakelijk, casual, elegant, alternatief... of vertel me gewoon wat je mooi vindt!";
+      }
+      return "Sorry! Laat me opnieuw beginnen. Om je goed te helpen: wat is je stijl? Meer casual, nett, sportief, elegant? En zijn er kleuren waar je van houdt of juist vermijdt?";
+
+    case "question":
+      return "Ik ben Nova, je persoonlijke style assistent. Ik help je outfits samenstellen die bij jou passen. Je kunt me vragen:\n\n• \"Wat past bij mij voor een date?\"\n• \"Casual outfit voor het weekend\"\n• \"Welke kleuren staan me goed?\"\n• \"Zakelijke look met karakter\"\n\nWaar kan ik je mee helpen?";
+
+    case "style_request":
+      return "Top! Laten we iets leuks voor je vinden. Geef me wat meer context: wat is de gelegenheid? Wat is je vibe (casual, nett, stoer)? En zijn er kleuren die je nu veel draagt?";
+
+    case "unknown":
+    default:
+      if (text.length < 10) {
+        return "Hmm, vertel me wat meer! Waar denk je aan? Een specifieke gelegenheid, een stijl die je wilt proberen, of wil je gewoon inspiratie?";
+      }
+      return "Interessant! Om je goed te adviseren: wat voor stijl past bij jou? En waar ga je deze kleding dragen?";
+  }
 }
 
 function sampleProducts() {
@@ -194,9 +245,13 @@ export const handler: Handler = async (event) => {
 
   let explanation = "";
   let products: any[] = [];
-  let responseType: "color" | "outfit" | "general" = "general";
+  let responseType: "color" | "outfit" | "conversational" | "general" = "general";
+
+  // First: detect conversational intent (greetings, complaints, questions)
+  const intentType = userText ? detectIntentType(userText) : "unknown";
 
   if (userText && userContext.undertone && detectColorIntent(userText)) {
+    // Color advice
     responseType = "color";
     explanation = generateColorAdvice(
       userContext.undertone,
@@ -204,13 +259,26 @@ export const handler: Handler = async (event) => {
       userText
     );
   } else if (userText && detectOutfitIntent(userText)) {
+    // Outfit generation
     responseType = "outfit";
     const result = await generateOutfit(userText, userContext, supabase);
     explanation = result.explanation;
     products = result.products;
+  } else if (["greeting", "complaint", "question"].includes(intentType)) {
+    // Conversational response (no products)
+    responseType = "conversational";
+    explanation = generateConversationalResponse(userText || "", intentType, body.messages);
+    products = [];
+  } else if (intentType === "style_request") {
+    // Style request but needs more context
+    responseType = "conversational";
+    explanation = generateConversationalResponse(userText || "", intentType, body.messages);
+    products = [];
   } else {
-    explanation = craftExplanation(userText || undefined);
-    products = sampleProducts();
+    // Unknown - ask for clarification
+    responseType = "conversational";
+    explanation = generateConversationalResponse(userText || "", "unknown", body.messages);
+    products = [];
   }
 
   // Build response (no streaming in Netlify Functions V1)
@@ -218,7 +286,8 @@ export const handler: Handler = async (event) => {
 
   try {
     if (!upstreamEnabled || !userText || responseType !== "general") {
-      const includeProducts = responseType !== "color";
+      // Include products only for outfit responses (not for color, conversational, etc.)
+      const includeProducts = responseType === "outfit" && products.length > 0;
       responseBody = buildLocalResponse(traceId, explanation, products, includeProducts);
     } else {
       // Upstream (OpenAI) - not implemented yet, use fallback
