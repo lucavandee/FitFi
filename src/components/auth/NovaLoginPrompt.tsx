@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, Users, CheckCircle, Lock } from 'lucide-react';
+import { Sparkles, ArrowRight, Users, CircleCheck as CheckCircle, Lock } from 'lucide-react';
 import Button from '../ui/Button';
 
 type NovaLoginPromptProps = {
