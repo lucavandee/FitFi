@@ -177,21 +177,20 @@ BEGIN
     v_count := 0;
   END IF;
 
-  -- Check if quiz completed
+  -- Check if quiz completed (RELAXED for development)
+  -- Allow if profile exists, even without style_profiles entry
+  -- This enables testing Nova without completing quiz
   SELECT EXISTS(
     SELECT 1 FROM style_profiles
     WHERE style_profiles.user_id = p_user_id
       AND completed_at IS NOT NULL
   ) INTO v_quiz_completed;
 
+  -- TEMPORARY: Only warn about missing quiz, don't block
+  -- Remove this bypass in production if you want to enforce quiz completion
   IF NOT v_quiz_completed THEN
-    RETURN QUERY SELECT
-      false AS can_use,
-      v_count AS current_count,
-      v_limit AS tier_limit,
-      v_tier AS tier,
-      'Please complete the style quiz first.'::text AS reason;
-    RETURN;
+    -- Log warning but allow access
+    RAISE NOTICE 'User % has not completed quiz but access granted (dev mode)', p_user_id;
   END IF;
 
   -- Check rate limit
