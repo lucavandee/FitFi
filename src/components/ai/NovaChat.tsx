@@ -143,9 +143,30 @@ const NovaChat: React.FC = () => {
   };
 
   const initializeNova = async () => {
-    // CHECK: Is user logged in?
+    // CHECK: Verify LIVE Supabase session
+    try {
+      const { supabase } = await import('@/lib/supabaseClient');
+      const sb = supabase();
+      const { data: { session } } = await sb.auth.getSession();
+
+      if (!session?.user) {
+        console.warn('⛔ [NovaChat] No Supabase session on init - showing login prompt');
+        setLoginPromptReason('auth');
+        setLoginPromptOpen(true);
+        setIsInitialized(true);
+        return;
+      }
+    } catch (authError) {
+      console.error('❌ [NovaChat] Session check failed on init:', authError);
+      setLoginPromptReason('auth');
+      setLoginPromptOpen(true);
+      setIsInitialized(true);
+      return;
+    }
+
+    // CHECK: Is user logged in? (backup check)
     if (!user || !user.id || user.id === 'anon') {
-      console.warn('⛔ [NovaChat] Not authenticated on init - showing login prompt');
+      console.warn('⛔ [NovaChat] Context user invalid on init - showing login prompt');
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
       setIsInitialized(true); // Mark as initialized to prevent retry loop
@@ -193,9 +214,33 @@ const NovaChat: React.FC = () => {
 
     if (!input.trim() || isLoading) return;
 
-    // PROACTIVE: Check auth BEFORE sending request
+    // CRITICAL: Check LIVE Supabase session (not stale user state)
+    try {
+      const { supabase } = await import('@/lib/supabaseClient');
+      const sb = supabase();
+      const { data: { session } } = await sb.auth.getSession();
+
+      if (!session?.user) {
+        console.warn('⛔ [NovaChat] No active Supabase session - showing login prompt');
+        setLoginPromptReason('auth');
+        setLoginPromptOpen(true);
+        return;
+      }
+
+      console.log('✅ [NovaChat] Active session confirmed:', {
+        userId: session.user.id.substring(0, 8) + '...',
+        hasSession: true
+      });
+    } catch (authError) {
+      console.error('❌ [NovaChat] Session check failed:', authError);
+      setLoginPromptReason('auth');
+      setLoginPromptOpen(true);
+      return;
+    }
+
+    // PROACTIVE: Check auth from context (backup check)
     if (!user || !user.id || user.id === 'anon') {
-      console.warn('⛔ [NovaChat] Not authenticated - showing login prompt');
+      console.warn('⛔ [NovaChat] Context user invalid - showing login prompt');
       console.log('📋 [NovaChat] User state:', user);
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
