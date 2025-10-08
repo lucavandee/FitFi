@@ -81,15 +81,95 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     console.warn("Could not get user ID:", e);
   }
 
+  // CRITICAL: Load quiz data from localStorage to send to Nova
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
+    "x-fitfi-uid": userId,
+    ...customHeaders,
+  };
+
+  try {
+    // Get quiz answers from localStorage (try both key formats)
+    const quizAnswersStr = localStorage.getItem("ff_quiz_answers") || localStorage.getItem("fitfi.quiz.answers");
+    if (quizAnswersStr) {
+      const quizAnswers = JSON.parse(quizAnswersStr);
+
+      // Send ALL critical fields to Nova
+      if (quizAnswers.gender) {
+        headers["x-fitfi-gender"] = quizAnswers.gender;
+      }
+
+      if (quizAnswers.bodyType) {
+        headers["x-fitfi-bodytype"] = quizAnswers.bodyType;
+      }
+
+      if (quizAnswers.stylePreferences) {
+        headers["x-fitfi-styleprefs"] = JSON.stringify(quizAnswers.stylePreferences);
+      }
+
+      if (quizAnswers.occasions) {
+        headers["x-fitfi-occasions"] = JSON.stringify(quizAnswers.occasions);
+      }
+
+      if (quizAnswers.baseColors) {
+        headers["x-fitfi-basecolors"] = quizAnswers.baseColors;
+      }
+
+      if (quizAnswers.sizes) {
+        headers["x-fitfi-sizes"] = JSON.stringify(quizAnswers.sizes);
+      }
+
+      if (quizAnswers.budgetRange) {
+        headers["x-fitfi-budget"] = JSON.stringify({ min: 0, max: quizAnswers.budgetRange });
+      }
+
+      if (quizAnswers.colorAnalysis) {
+        headers["x-fitfi-coloranalysis"] = JSON.stringify(quizAnswers.colorAnalysis);
+      }
+
+      // Send ALL quiz data as fallback
+      headers["x-fitfi-quiz"] = quizAnswersStr;
+
+      console.log("📤 [novaService] Sending quiz data to Nova:", {
+        gender: quizAnswers.gender,
+        bodyType: quizAnswers.bodyType,
+        stylePrefs: quizAnswers.stylePreferences,
+        occasions: quizAnswers.occasions,
+        sizes: quizAnswers.sizes,
+        hasColorAnalysis: !!quizAnswers.colorAnalysis
+      });
+    } else {
+      console.warn("⚠️ [novaService] No quiz data found in localStorage - Nova will have limited context");
+    }
+
+    // Get archetype from localStorage (try both key formats)
+    const archetypeStr = localStorage.getItem("ff_style_archetype") || localStorage.getItem("fitfi.archetype");
+    if (archetypeStr) {
+      try {
+        const archetype = JSON.parse(archetypeStr);
+        headers["x-fitfi-archetype"] = archetype;
+      } catch {}
+    }
+
+    // Get color profile undertone (try both key formats)
+    const colorProfileStr = localStorage.getItem("ff_color_profile") || localStorage.getItem("fitfi.color_profile");
+    if (colorProfileStr) {
+      try {
+        const colorProfile = JSON.parse(colorProfileStr);
+        if (colorProfile.temperature) {
+          headers["x-fitfi-undertone"] = colorProfile.temperature;
+        }
+      } catch {}
+    }
+  } catch (e) {
+    console.error("[novaService] Error loading quiz data:", e);
+  }
+
   try {
     res = await fetch("/.netlify/functions/nova", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
-        "x-fitfi-uid": userId,
-        ...customHeaders,
-      },
+      headers,
       body: JSON.stringify({
         mode: opts.mode,
         messages,
