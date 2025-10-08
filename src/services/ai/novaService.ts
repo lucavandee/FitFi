@@ -172,14 +172,26 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
   }
 
   // DEBUG: Log what we're sending
-  console.log('📤 [novaService] Sending request to Nova:', {
+  const debugInfo = {
     userId: headers['x-fitfi-uid'],
+    userIdType: typeof headers['x-fitfi-uid'],
+    isAnon: headers['x-fitfi-uid'] === 'anon',
+    hasDashes: headers['x-fitfi-uid']?.includes('-'),
     tier: headers['x-fitfi-tier'],
     hasGender: !!headers['x-fitfi-gender'],
     hasBodyType: !!headers['x-fitfi-bodytype'],
     hasQuizData: !!headers['x-fitfi-coloranalysis'],
     messageCount: messages.length
-  });
+  };
+  console.log('📤 [novaService] Sending request to Nova:', debugInfo);
+
+  // Also check localStorage directly
+  try {
+    const storedUser = localStorage.getItem('fitfi_user');
+    console.log('📦 [novaService] localStorage fitfi_user:', storedUser ? JSON.parse(storedUser) : 'NULL');
+  } catch (e) {
+    console.error('❌ [novaService] Failed to read localStorage:', e);
+  }
 
   try {
     res = await fetch("/.netlify/functions/nova", {
