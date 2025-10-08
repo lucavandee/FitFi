@@ -187,6 +187,7 @@ const NovaChat: React.FC = () => {
     // PROACTIVE: Check auth BEFORE sending request
     if (!user || !user.id) {
       console.warn('⛔ [NovaChat] Not authenticated - showing login prompt');
+      console.log('📋 [NovaChat] User state:', user);
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
       return;
@@ -196,10 +197,13 @@ const NovaChat: React.FC = () => {
     const quizAnswersStr = localStorage.getItem('ff_quiz_answers');
     if (!quizAnswersStr) {
       console.warn('⛔ [NovaChat] Quiz not completed - showing quiz prompt');
+      console.log('📋 [NovaChat] localStorage keys:', Object.keys(localStorage));
       setLoginPromptReason('quiz');
       setLoginPromptOpen(true);
       return;
     }
+
+    console.log('✅ [NovaChat] Proactive checks passed - sending to backend');
 
     // Check quota before making request
     const tier = getUserTier();
@@ -322,6 +326,15 @@ const NovaChat: React.FC = () => {
         const errorMsg = e?.message || String(e);
         let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
         let showPrompt = false;
+
+        // DEBUG: Log complete error for troubleshooting
+        console.error('🔴 [NovaChat] Error caught:', {
+          message: errorMsg,
+          error: e,
+          response: e?.response,
+          data: e?.data,
+          stack: e?.stack
+        });
 
         // Check if this is an auth/access error from the backend
         if (e?.response || e?.data) {

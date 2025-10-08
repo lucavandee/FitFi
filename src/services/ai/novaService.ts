@@ -171,6 +171,16 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     console.error("[novaService] Error loading quiz data:", e);
   }
 
+  // DEBUG: Log what we're sending
+  console.log('📤 [novaService] Sending request to Nova:', {
+    userId: headers['x-fitfi-uid'],
+    tier: headers['x-fitfi-tier'],
+    hasGender: !!headers['x-fitfi-gender'],
+    hasBodyType: !!headers['x-fitfi-bodytype'],
+    hasQuizData: !!headers['x-fitfi-coloranalysis'],
+    messageCount: messages.length
+  });
+
   try {
     res = await fetch("/.netlify/functions/nova", {
       method: "POST",
@@ -182,8 +192,16 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
       }),
       signal,
     });
+
+    // DEBUG: Log response status
+    console.log('📥 [novaService] Response received:', {
+      status: res.status,
+      ok: res.ok,
+      hasBody: !!res.body
+    });
   } catch (fetchError) {
-    console.warn("Nova endpoint niet beschikbaar, gebruik lokale fallback:", fetchError);
+    console.error("🔴 [novaService] Fetch error:", fetchError);
+    console.warn("Nova endpoint niet beschikbaar, gebruik lokale fallback");
     yield* localNovaFallback(messages, onEvent);
     return;
   }
