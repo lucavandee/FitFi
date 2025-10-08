@@ -487,18 +487,39 @@ export const handler: Handler = async (event) => {
 
   const userContext = parseUserContext(event.headers);
 
-  // DEBUG: Log what context Nova receives
-  console.log("[Nova Debug] User Context:", JSON.stringify({
-    gender: userContext.gender,
-    archetype: userContext.archetype,
-    bodyType: userContext.bodyType,
-    stylePrefs: userContext.stylePreferences,
-    occasions: userContext.occasions,
-    baseColors: userContext.baseColors,
-    brands: userContext.preferredBrands,
+  // ENHANCED DEBUG: Log what context Nova receives
+  const contextSummary = {
+    gender: userContext.gender || "❌ missing",
+    archetype: userContext.archetype || "❌ missing",
+    bodyType: userContext.bodyType || "❌ missing",
+    stylePrefs: userContext.stylePreferences?.length ? userContext.stylePreferences.join(", ") : "❌ missing",
+    occasions: userContext.occasions?.length ? userContext.occasions.join(", ") : "❌ missing",
+    baseColors: userContext.baseColors || "❌ missing",
+    sizes: userContext.sizes ? `${userContext.sizes.tops}/${userContext.sizes.bottoms}/${userContext.sizes.shoes}` : "❌ missing",
+    budget: userContext.budget ? `€${userContext.budget.min}-${userContext.budget.max}` : "❌ missing",
     hasAIAnalysis: !!userContext.aiColorAnalysis,
-    aiColors: userContext.aiColorAnalysis?.best_colors?.slice(0, 3)
-  }, null, 2));
+    aiColors: userContext.aiColorAnalysis?.best_colors?.slice(0, 3).join(", "),
+    hasQuizData: !!userContext.allQuizAnswers
+  };
+
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("📥 NOVA RECEIVED CONTEXT");
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log(JSON.stringify(contextSummary, null, 2));
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+  // Alert if critical fields are missing
+  const missingFields = [];
+  if (!userContext.gender) missingFields.push("gender");
+  if (!userContext.bodyType) missingFields.push("bodyType");
+  if (!userContext.stylePreferences?.length) missingFields.push("stylePreferences");
+
+  if (missingFields.length > 0) {
+    console.warn(`⚠️ MISSING CRITICAL FIELDS: ${missingFields.join(", ")}`);
+    console.warn(`   → Nova will ask user for this info or give generic advice`);
+  } else {
+    console.log("✅ All critical profile fields present!");
+  }
 
   let supabase;
   try {
@@ -610,10 +631,11 @@ export const handler: Handler = async (event) => {
   let responseBody: string = "";
 
   try {
-    // Check if we should use OpenAI for conversational responses
-    if (upstreamEnabled && userText && responseType === "conversational") {
-      // Use OpenAI for intelligent conversation
-      console.log("Using OpenAI for conversational response");
+    // ENHANCED: Use OpenAI for ALL responses when available (conversational, outfit, color)
+    if (upstreamEnabled && userText) {
+      // Log what we're using OpenAI for
+      console.log(`🤖 Using OpenAI (gpt-4o-mini) for ${responseType} response`);
+      console.log(`📊 Context available: gender=${!!userContext.gender}, body=${!!userContext.bodyType}, colors=${!!userContext.aiColorAnalysis}, sizes=${!!userContext.sizes}`);
 
       try {
         const openaiResponse = await callOpenAI(
@@ -624,21 +646,34 @@ export const handler: Handler = async (event) => {
         );
 
         explanation = openaiResponse;
-        products = []; // Conversational - no products
-        responseBody = buildLocalResponse(traceId, explanation, products, false);
+
+        // For outfit requests, keep the products we generated locally
+        // OpenAI provides the explanation, local code provides the products
+        if (responseType === "outfit" && products.length > 0) {
+          console.log(`✅ OpenAI response with ${products.length} products`);
+          responseBody = buildLocalResponse(traceId, explanation, products, true);
+        } else {
+          // Conversational, color, or general - no products
+          console.log(`✅ OpenAI response (${responseType}, no products)`);
+          responseBody = buildLocalResponse(traceId, explanation, [], false);
+        }
       } catch (openaiError) {
-        console.error("OpenAI failed, falling back to local:", openaiError);
+        console.error("❌ OpenAI failed, falling back to local:", openaiError);
         // Fallback to local response
         const includeProducts = responseType === "outfit" && products.length > 0;
         responseBody = buildLocalResponse(traceId, explanation, products, includeProducts);
       }
     } else {
-      // Use local responses (color advice, outfit generation, or no OpenAI key)
+      // Use local responses (no OpenAI key or no user text)
+      if (!upstreamEnabled) {
+        console.log("⚠️ OpenAI disabled (NOVA_UPSTREAM not 'on' or no API key)");
+      }
+      console.log(`📦 Using local ${responseType} response`);
       const includeProducts = responseType === "outfit" && products.length > 0;
       responseBody = buildLocalResponse(traceId, explanation, products, includeProducts);
     }
   } catch (err) {
-    console.error("Response build error:", err);
+    console.error("❌ Response build error:", err);
     responseBody = buildLocalResponse(traceId, "Sorry, er ging iets mis.", [], false);
   }
 
