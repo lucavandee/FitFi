@@ -105,7 +105,7 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     console.error('❌ [novaService] Auth check failed:', authError);
   }
 
-  // CRITICAL: Load quiz data from localStorage to send to Nova
+  // CRITICAL: Load quiz data from DATABASE first, fallback to localStorage
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "x-fitfi-tier": userTier,
@@ -113,11 +113,63 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     ...customHeaders,
   };
 
+  let quizAnswers: any = null;
+
   try {
-    // Get quiz answers from localStorage (try both key formats)
-    const quizAnswersStr = localStorage.getItem("ff_quiz_answers") || localStorage.getItem("fitfi.quiz.answers");
-    if (quizAnswersStr) {
-      const quizAnswers = JSON.parse(quizAnswersStr);
+    // FIRST: Try to get quiz data from DATABASE (if user is logged in)
+    if (userId !== "anon") {
+      const { supabase } = await import('@/lib/supabaseClient');
+      const sb = supabase();
+
+      if (sb) {
+        const { data: profile, error } = await sb
+          .from('style_profiles')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (profile && !error) {
+          console.log('✅ [novaService] Loaded quiz data from DATABASE:', {
+            gender: profile.gender,
+            archetype: profile.archetype,
+            bodyType: profile.body_type,
+            hasQuizAnswers: !!profile.quiz_answers
+          });
+
+          // Use database data
+          quizAnswers = {
+            gender: profile.gender,
+            bodyType: profile.body_type,
+            archetype: profile.archetype,
+            stylePreferences: profile.quiz_answers?.stylePreferences,
+            occasions: profile.preferred_occasions,
+            sizes: profile.sizes,
+            budgetRange: profile.budget_range,
+            baseColors: profile.quiz_answers?.baseColors,
+            colorAnalysis: profile.color_analysis,
+            ...(profile.quiz_answers || {}) // Include all other quiz answers
+          };
+        } else if (error) {
+          console.warn('⚠️ [novaService] Could not load profile from database:', error.message);
+        } else {
+          console.warn('⚠️ [novaService] No profile found in database for user');
+        }
+      }
+    }
+
+    // FALLBACK: If no database data, try localStorage
+    if (!quizAnswers) {
+      const quizAnswersStr = localStorage.getItem("ff_quiz_answers") || localStorage.getItem("fitfi.quiz.answers");
+      if (quizAnswersStr) {
+        quizAnswers = JSON.parse(quizAnswersStr);
+        console.log('📦 [novaService] Using quiz data from localStorage (fallback)');
+      } else {
+        console.warn('⚠️ [novaService] No quiz data found in database OR localStorage');
+      }
+    }
+
+    // Send quiz data to Nova (if we have any)
+    if (quizAnswers) {
 
       // Send ALL critical fields to Nova
       if (quizAnswers.gender) {
@@ -152,11 +204,18 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
         headers["x-fitfi-coloranalysis"] = JSON.stringify(quizAnswers.colorAnalysis);
       }
 
-      // Send ALL quiz data as fallback
-      headers["x-fitfi-quiz"] = quizAnswersStr;
+      // Also send archetype if available
+      if (quizAnswers.archetype) {
+        headers["x-fitfi-archetype"] = quizAnswers.archetype;
+      }
+
+      // Send ALL quiz data as JSON fallback
+      headers["x-fitfi-quiz"] = JSON.stringify(quizAnswers);
 
       console.log("📤 [novaService] Sending quiz data to Nova:", {
+        source: userId !== "anon" ? "DATABASE" : "localStorage",
         gender: quizAnswers.gender,
+        archetype: quizAnswers.archetype,
         bodyType: quizAnswers.bodyType,
         stylePrefs: quizAnswers.stylePreferences,
         occasions: quizAnswers.occasions,
@@ -164,30 +223,10 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
         hasColorAnalysis: !!quizAnswers.colorAnalysis
       });
     } else {
-      console.warn("⚠️ [novaService] No quiz data found in localStorage - Nova will have limited context");
-    }
-
-    // Get archetype from localStorage (try both key formats)
-    const archetypeStr = localStorage.getItem("ff_style_archetype") || localStorage.getItem("fitfi.archetype");
-    if (archetypeStr) {
-      try {
-        const archetype = JSON.parse(archetypeStr);
-        headers["x-fitfi-archetype"] = archetype;
-      } catch {}
-    }
-
-    // Get color profile undertone (try both key formats)
-    const colorProfileStr = localStorage.getItem("ff_color_profile") || localStorage.getItem("fitfi.color_profile");
-    if (colorProfileStr) {
-      try {
-        const colorProfile = JSON.parse(colorProfileStr);
-        if (colorProfile.temperature) {
-          headers["x-fitfi-undertone"] = colorProfile.temperature;
-        }
-      } catch {}
+      console.warn("⚠️ [novaService] No quiz data found in database OR localStorage - Nova will have limited context");
     }
   } catch (e) {
-    console.error("[novaService] Error loading quiz data:", e);
+    console.error("[novaService] Error loading quiz data from database:", e);
   }
 
   // DEBUG: Log what we're sending
