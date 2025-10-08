@@ -532,57 +532,157 @@ export const handler: Handler = async (event) => {
     console.warn("Supabase client creation failed:", e);
   }
 
-  // AUTHENTICATION & RATE LIMITING CHECK (GRACEFUL DEGRADATION)
+  // AUTHENTICATION & RATE LIMITING CHECK (STRICT - NO GRACEFUL DEGRADATION)
   const userId = event.headers["x-fitfi-uid"];
+  const userTier = event.headers["x-fitfi-tier"] || "free";
 
   // Check if userId looks like a valid UUID (contains dashes, not "anon")
   const isValidUserId = userId && userId !== "anon" && userId.includes("-");
 
-  // Only enforce rate limiting for valid authenticated users
-  if (isValidUserId && supabase) {
-    try {
-      const { data: accessCheck, error: accessError } = await supabase
-        .rpc('can_use_nova', { p_user_id: userId });
+  // CRITICAL: Block all non-authenticated requests (no more graceful degradation!)
+  if (!isValidUserId) {
+    console.warn("⛔ BLOCKED: No valid user ID (got:", userId, ")");
+    return {
+      statusCode: 401,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+      },
+      body: JSON.stringify({
+        error: "authentication_required",
+        message: "Log in om Nova te gebruiken",
+        action: "login",
+        code: "AUTH_REQUIRED"
+      })
+    };
+  }
 
-      if (!accessError && accessCheck && accessCheck.length > 0) {
-        const check = accessCheck[0];
+  // CRITICAL: Supabase must be available (no database = no service)
+  if (!supabase) {
+    console.error("⛔ BLOCKED: Supabase client not available");
+    return {
+      statusCode: 503,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+      },
+      body: JSON.stringify({
+        error: "service_unavailable",
+        message: "Nova is tijdelijk niet beschikbaar. Probeer het later opnieuw.",
+        code: "SERVICE_UNAVAILABLE"
+      })
+    };
+  }
 
-        // Only block if user is authenticated but over limit or no quiz
-        if (!check.can_use) {
-          console.warn(`⛔ Access denied for ${userId}: ${check.reason}`);
-          return {
-            statusCode: 403,
-            headers: {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
-            },
-            body: JSON.stringify({
-              error: "access_denied",
-              message: check.reason,
-              tier: check.tier,
-              usage: {
-                current: check.current_count,
-                limit: check.tier_limit
-              },
-              action: check.reason.includes("quiz") ? "complete_quiz" : "upgrade"
-            })
-          };
-        }
+  // Check access: auth, quiz completion, rate limits
+  let tierInfo: { tier: string; current_count: number; tier_limit: number } = {
+    tier: userTier,
+    current_count: 0,
+    tier_limit: 10
+  };
 
-        // Increment usage counter for authenticated users
-        await supabase.rpc('increment_nova_usage', { p_user_id: userId });
-        console.log(`✅ Nova access: ${check.tier} (${check.current_count + 1}/${check.tier_limit})`);
-      } else {
-        console.warn("⚠️ Access check returned no data or error:", accessError);
-        // Allow with degraded mode (no usage tracking)
-      }
-    } catch (checkError) {
-      console.warn("⚠️ Could not validate Nova access:", checkError);
-      // Allow with degraded mode (graceful degradation)
+  try {
+    const { data: accessCheck, error: accessError } = await supabase
+      .rpc('can_use_nova', { p_user_id: userId });
+
+    if (accessError) {
+      console.error("⛔ Database error checking Nova access:", accessError);
+      return {
+        statusCode: 500,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+        },
+        body: JSON.stringify({
+          error: "database_error",
+          message: "Er ging iets mis bij het controleren van toegang. Probeer het opnieuw.",
+          code: "DB_ERROR"
+        })
+      };
     }
-  } else {
-    // No valid user ID or no Supabase - allow with warning
-    console.warn("⚠️ No valid auth user ID (got:", userId, ") - Allowing with degraded mode. Consider prompting user to log in.");
+
+    if (!accessCheck || accessCheck.length === 0) {
+      console.warn("⚠️ No access data returned for user:", userId);
+      return {
+        statusCode: 403,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+        },
+        body: JSON.stringify({
+          error: "no_profile",
+          message: "Account niet gevonden. Maak eerst een profiel aan.",
+          action: "create_profile",
+          code: "NO_PROFILE"
+        })
+      };
+    }
+
+    const check = accessCheck[0];
+    tierInfo = {
+      tier: check.tier,
+      current_count: check.current_count,
+      tier_limit: check.tier_limit
+    };
+
+    // BLOCK if user cannot use Nova (rate limit, no quiz, etc.)
+    if (!check.can_use) {
+      console.warn(`⛔ Access denied for ${userId}: ${check.reason}`);
+
+      // Determine action based on reason
+      let action = "unknown";
+      let code = "ACCESS_DENIED";
+
+      if (check.reason.includes("quiz")) {
+        action = "complete_quiz";
+        code = "QUIZ_REQUIRED";
+      } else if (check.reason.includes("limit")) {
+        action = "upgrade";
+        code = "RATE_LIMIT_REACHED";
+      } else if (check.reason.includes("profile")) {
+        action = "create_profile";
+        code = "NO_PROFILE";
+      }
+
+      return {
+        statusCode: 403,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+        },
+        body: JSON.stringify({
+          error: "access_denied",
+          message: check.reason,
+          tier: check.tier,
+          usage: {
+            current: check.current_count,
+            limit: check.tier_limit,
+            remaining: Math.max(0, check.tier_limit - check.current_count)
+          },
+          action,
+          code
+        })
+      };
+    }
+
+    // SUCCESS: Increment usage counter
+    await supabase.rpc('increment_nova_usage', { p_user_id: userId });
+    console.log(`✅ Nova access granted: ${check.tier} tier (${check.current_count + 1}/${check.tier_limit})`);
+
+  } catch (checkError) {
+    console.error("⛔ Unexpected error during access check:", checkError);
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": okOrigin(origin) ? origin! : ORIGINS[0],
+      },
+      body: JSON.stringify({
+        error: "internal_error",
+        message: "Er ging iets mis. Probeer het later opnieuw.",
+        code: "INTERNAL_ERROR"
+      })
+    };
   }
 
   let body: { messages?: Msg[]; mode?: string } = {};

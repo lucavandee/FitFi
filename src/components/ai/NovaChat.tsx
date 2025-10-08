@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import OutfitCards from '@/components/ai/OutfitCards';
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
 import QuotaModal from './QuotaModal';
+import NovaLoginPrompt from '@/components/auth/NovaLoginPrompt';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 import { generateNovaExplanation } from '@/engine/explainOutfit';
 
@@ -85,6 +86,9 @@ const NovaChat: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const [quotaOpen, setQuotaOpen] = useState(false);
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const [loginPromptReason, setLoginPromptReason] = useState<'auth' | 'quiz' | 'rate_limit'>('auth');
+  const [usageInfo, setUsageInfo] = useState<{ current: number; limit: number; remaining: number } | undefined>();
   const userTier = getUserTier();
 
   // Initialize Nova with greeting
@@ -300,13 +304,53 @@ const NovaChat: React.FC = () => {
         conn.setStatus('error');
         const errorMsg = e?.message || String(e);
         let content = 'Sorry, er ging iets mis. Probeer het opnieuw.';
+        let showPrompt = false;
 
-        if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
-          content = 'Nova is nog niet actief (SSE/OpenAI). Zet OPENAI_API_KEY in Netlify en deploy de function.';
-        } else if (errorMsg.includes('aborted') || errorMsg.includes('interrupted')) {
-          content = 'De verbinding werd onderbroken. De server kan overbelast zijn of de response was te groot. Probeer een kortere vraag.';
-        } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
-          content = 'Netwerkfout: kan geen verbinding maken met Nova. Check je internetverbinding.';
+        // Check if this is an auth/access error from the backend
+        if (e?.response || e?.data) {
+          const errorData = e?.response?.data || e?.data || {};
+          const errorCode = errorData.code || errorData.error;
+
+          if (errorCode === 'AUTH_REQUIRED' || errorCode === 'authentication_required') {
+            setLoginPromptReason('auth');
+            setLoginPromptOpen(true);
+            showPrompt = true;
+            content = 'Log in om Nova te gebruiken.';
+          } else if (errorCode === 'QUIZ_REQUIRED') {
+            setLoginPromptReason('quiz');
+            setLoginPromptOpen(true);
+            showPrompt = true;
+            content = 'Voltooi eerst je stijlquiz om Nova te gebruiken.';
+          } else if (errorCode === 'RATE_LIMIT_REACHED') {
+            setLoginPromptReason('rate_limit');
+            if (errorData.usage) {
+              setUsageInfo(errorData.usage);
+            }
+            setLoginPromptOpen(true);
+            showPrompt = true;
+            content = errorData.message || 'Dagelijkse limiet bereikt.';
+          } else if (errorCode === 'NO_PROFILE') {
+            content = 'Account niet gevonden. Maak eerst een profiel aan.';
+          }
+        }
+
+        // Fallback error messages
+        if (!showPrompt) {
+          if (errorMsg.includes('NOVA_SSE_INACTIVE')) {
+            content = 'Nova is nog niet actief (SSE/OpenAI). Zet OPENAI_API_KEY in Netlify en deploy de function.';
+          } else if (errorMsg.includes('aborted') || errorMsg.includes('interrupted')) {
+            content = 'De verbinding werd onderbroken. De server kan overbelast zijn of de response was te groot. Probeer een kortere vraag.';
+          } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+            content = 'Netwerkfout: kan geen verbinding maken met Nova. Check je internetverbinding.';
+          } else if (errorMsg.includes('401') || errorMsg.includes('Unauthorized')) {
+            setLoginPromptReason('auth');
+            setLoginPromptOpen(true);
+            content = 'Log in om Nova te gebruiken.';
+          } else if (errorMsg.includes('403') || errorMsg.includes('Forbidden')) {
+            setLoginPromptReason('rate_limit');
+            setLoginPromptOpen(true);
+            content = 'Toegang geweigerd. Check je account status.';
+          }
         }
 
         setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content } : m));
@@ -533,9 +577,18 @@ const NovaChat: React.FC = () => {
       </div>
 
       {/* Quota Modal */}
-      <QuotaModal 
-        isOpen={quotaOpen} 
-        onClose={() => setQuotaOpen(false)} 
+      <QuotaModal
+        isOpen={quotaOpen}
+        onClose={() => setQuotaOpen(false)}
+        tier={userTier}
+      />
+
+      {/* Login/Access Prompt Modal */}
+      <NovaLoginPrompt
+        open={loginPromptOpen}
+        onClose={() => setLoginPromptOpen(false)}
+        reason={loginPromptReason}
+        usage={usageInfo}
         tier={userTier}
       />
     </div>

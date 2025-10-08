@@ -184,11 +184,56 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
   }
 
   if (!res.ok || !res.body) {
+    // Handle specific error codes
+    if (res.status === 401) {
+      console.warn("⛔ Nova: Authentication required (401)");
+      let errorData;
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = { error: "authentication_required", code: "AUTH_REQUIRED", message: "Log in om Nova te gebruiken" };
+      }
+      onEvent?.({ type: "error", message: errorData.message, code: errorData.code, data: errorData });
+      const error = new Error(errorData.message || "Authentication required");
+      (error as any).response = { data: errorData, status: 401 };
+      (error as any).data = errorData;
+      throw error;
+    }
+
+    if (res.status === 403) {
+      console.warn("⛔ Nova: Access denied (403)");
+      let errorData;
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = { error: "access_denied", code: "ACCESS_DENIED", message: "Toegang geweigerd" };
+      }
+      onEvent?.({ type: "error", message: errorData.message, code: errorData.code, data: errorData });
+      const error = new Error(errorData.message || "Access denied");
+      (error as any).response = { data: errorData, status: 403 };
+      (error as any).data = errorData;
+      throw error;
+    }
+
     if (res.status === 404) {
       console.warn("Nova function niet gevonden (404), gebruik lokale fallback");
       yield* localNovaFallback(messages, onEvent);
       return;
     }
+
+    if (res.status === 503) {
+      console.error("⛔ Nova: Service unavailable (503)");
+      let errorData;
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = { error: "service_unavailable", code: "SERVICE_UNAVAILABLE", message: "Nova is tijdelijk niet beschikbaar" };
+      }
+      onEvent?.({ type: "error", message: errorData.message, code: errorData.code });
+      throw new Error(errorData.message || "Service unavailable");
+    }
+
+    // Generic error
     onEvent?.({ type: "error", message: "SSE niet beschikbaar." });
     throw new Error(`SSE failed: ${res.status}`);
   }
