@@ -58,7 +58,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Get initial session
-    sb.auth.getSession().then(async ({ data: { session } }) => {
+    sb.auth.getSession().then(async ({ data: { session }, error }) => {
+      console.log('🔍 [UserContext] getSession result:', {
+        hasSession: !!session,
+        hasUser: !!session?.user,
+        userId: session?.user?.id?.substring(0, 8) + '...' || 'none',
+        error: error?.message || 'none'
+      });
+
       if (session?.user) {
         // Fetch tier from profiles table
         let userTier: 'free' | 'premium' | 'founder' = 'free';

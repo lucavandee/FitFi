@@ -1,9 +1,10 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
 import Seo from "@/components/seo/Seo";
 import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, Mail, Link as LinkIcon, X, ShieldCheck } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 /** Basale e-mailvalidatie (client-side) */
 function isEmail(v: string) {
@@ -34,11 +35,15 @@ type Mode = "password" | "magic";
 
 export default function LoginPage() {
   const nav = useNavigate();
+  const location = useLocation();
+  const { login } = useUser();
+  const fromPath = (location.state as any)?.from;
 
   // Gedeelde state
   const [email, setEmail] = React.useState("");
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   // Wachtwoord-mode
   const [password, setPassword] = React.useState("");
@@ -73,20 +78,26 @@ export default function LoginPage() {
   const pwStrength = passwordStrength(password);
 
   /** Submit */
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitted(true);
     setTouched({ email: true, password: true });
     if (hasErrors) return;
 
     if (mode === "password") {
-      // Demo-auth: markeer als ingelogd en ga door
-      try {
-        window.localStorage.setItem("ff_auth", "1");
-        const init = (email[0] || "U").toUpperCase();
-        window.localStorage.setItem("ff_user_initial", init);
-      } catch {}
-      nav("/dashboard");
+      // Real Supabase auth
+      setLoading(true);
+      const success = await login(email, password);
+      setLoading(false);
+
+      if (success) {
+        console.log('✅ [LoginPage] Login successful');
+        nav(fromPath || "/dashboard");
+      } else {
+        console.error('❌ [LoginPage] Login failed');
+        // Show error (you can add a state for this)
+        alert('Login mislukt. Controleer je gegevens.');
+      }
     } else {
       // Magic-link demo: toon succes en disable primair
       setMagicSent(true);

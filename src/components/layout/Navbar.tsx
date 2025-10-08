@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 /**
  * Eén premium Navbar:
@@ -8,7 +9,7 @@ import { Menu, X } from "lucide-react";
  * - Desktop: links + (Login/Start gratis) of (Dashboard/Uitloggen) bij auth
  * - Mobiel: sheet met dezelfde opties
  * - A11Y: skiplink, aria-expanded, ESC sluit, focus-ring via tokens
- * - Auth: client-only mock via localStorage.ff_auth === "1"
+ * - Auth: Supabase via UserContext
  */
 
 function useLockBody(lock: boolean) {
@@ -19,28 +20,6 @@ function useLockBody(lock: boolean) {
       document.body.style.overflow = original;
     };
   }, [lock]);
-}
-
-function readAuth(): boolean {
-  try {
-    return typeof window !== "undefined" && window.localStorage.getItem("ff_auth") === "1";
-  } catch {
-    return false;
-  }
-}
-
-function useAuthState() {
-  const [isAuthed, setIsAuthed] = React.useState<boolean>(() => readAuth());
-
-  React.useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "ff_auth") setIsAuthed(readAuth());
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
-
-  return { isAuthed, setIsAuthed };
 }
 
 const links: Array<{ to: string; label: string }> = [
@@ -54,7 +33,8 @@ const links: Array<{ to: string; label: string }> = [
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const { pathname } = useLocation();
-  const { isAuthed, setIsAuthed } = useAuthState();
+  const { user, logout } = useUser();
+  const isAuthed = !!user;
   useLockBody(open);
 
   // Sluit menu bij routewissel of ESC
@@ -65,17 +45,11 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  const handleLogout = () => {
-    try {
-      window.localStorage.removeItem("ff_auth");
-      window.localStorage.removeItem("ff_user_name");
-      window.localStorage.removeItem("ff_user_initial");
-    } catch {}
-    setIsAuthed(false);
+  const handleLogout = async () => {
+    await logout();
   };
 
-  const userInitial =
-    (typeof window !== "undefined" && window.localStorage.getItem("ff_user_initial")) || "U";
+  const userInitial = user?.name?.[0]?.toUpperCase() || "U";
 
   return (
     <header
