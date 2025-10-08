@@ -44,6 +44,7 @@ export default function LoginPage() {
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [loginError, setLoginError] = React.useState<string | null>(null);
 
   // Wachtwoord-mode
   const [password, setPassword] = React.useState("");
@@ -87,16 +88,23 @@ export default function LoginPage() {
     if (mode === "password") {
       // Real Supabase auth
       setLoading(true);
-      const success = await login(email, password);
-      setLoading(false);
+      setLoginError(null);
 
-      if (success) {
-        console.log('✅ [LoginPage] Login successful');
-        nav(fromPath || "/dashboard");
-      } else {
-        console.error('❌ [LoginPage] Login failed');
-        // Show error (you can add a state for this)
-        alert('Login mislukt. Controleer je gegevens.');
+      try {
+        const success = await login(email, password);
+
+        if (success) {
+          console.log('✅ [LoginPage] Login successful');
+          nav(fromPath || "/dashboard");
+        } else {
+          console.error('❌ [LoginPage] Login failed');
+          setLoginError('Login mislukt. Controleer je e-mail en wachtwoord.');
+        }
+      } catch (err) {
+        console.error('❌ [LoginPage] Login exception:', err);
+        setLoginError('Er ging iets mis. Probeer het later opnieuw.');
+      } finally {
+        setLoading(false);
       }
     } else {
       // Magic-link demo: toon succes en disable primair
@@ -311,8 +319,8 @@ export default function LoginPage() {
 
             {/* Acties */}
             <div className="mt-2 flex flex-wrap gap-3">
-              <Button type="submit" variant="primary" size="lg" disabled={!canSubmit} aria-disabled={!canSubmit}>
-                {mode === "password" ? "Inloggen" : magicSent ? "Verzonden" : "Stuur magic-link"}
+              <Button type="submit" variant="primary" size="lg" disabled={!canSubmit || loading} aria-disabled={!canSubmit || loading}>
+                {loading ? "Bezig met inloggen..." : mode === "password" ? "Inloggen" : magicSent ? "Verzonden" : "Stuur magic-link"}
               </Button>
 
               {mode === "password" ? (
@@ -323,6 +331,13 @@ export default function LoginPage() {
                 </Button>
               )}
             </div>
+
+            {/* Login error */}
+            {loginError && (
+              <div className="mt-3 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
+                {loginError}
+              </div>
+            )}
 
             {submitted && hasErrors ? (
               <p className="text-[12px] text-[var(--color-text)]/70">

@@ -159,13 +159,33 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    if (!sb) return false;
-    
+    if (!sb) {
+      console.error('❌ [UserContext] Supabase client not initialized');
+      return false;
+    }
+
     try {
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      return !error;
+      console.log('🔐 [UserContext] Attempting login for:', email);
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        console.error('❌ [UserContext] Login failed:', {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        });
+        return false;
+      }
+
+      if (data?.session) {
+        console.log('✅ [UserContext] Login successful, session created');
+        return true;
+      }
+
+      console.warn('⚠️ [UserContext] Login succeeded but no session returned');
+      return false;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ [UserContext] Login exception:', error);
       return false;
     }
   };

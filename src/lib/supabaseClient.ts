@@ -7,7 +7,20 @@ let _client: SupabaseClient | null = null;
 
 export function supabase(): SupabaseClient | null {
   if (_client) return _client;
-  if (!url || !anonKey) return null;
+
+  if (!url || !anonKey) {
+    console.error('❌ [Supabase] Missing credentials:', {
+      hasUrl: !!url,
+      hasKey: !!anonKey,
+      url: url ? `${url.substring(0, 30)}...` : 'undefined'
+    });
+    return null;
+  }
+
+  console.log('🔧 [Supabase] Initializing client:', {
+    url: `${url.substring(0, 30)}...`,
+    hasKey: !!anonKey
+  });
 
   _client = createClient(url, anonKey, {
     auth: {
