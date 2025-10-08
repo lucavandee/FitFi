@@ -94,7 +94,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           hasEmail: !!userData.email
         });
       } else {
+        setUser(null);
         setStatus('unauthenticated');
+        console.log('🔓 [UserContext] No session - user logged out');
       }
     });
 

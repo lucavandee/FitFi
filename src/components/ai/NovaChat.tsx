@@ -144,7 +144,7 @@ const NovaChat: React.FC = () => {
 
   const initializeNova = async () => {
     // CHECK: Is user logged in?
-    if (!user || !user.id) {
+    if (!user || !user.id || user.id === 'anon') {
       console.warn('⛔ [NovaChat] Not authenticated on init - showing login prompt');
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
@@ -194,7 +194,7 @@ const NovaChat: React.FC = () => {
     if (!input.trim() || isLoading) return;
 
     // PROACTIVE: Check auth BEFORE sending request
-    if (!user || !user.id) {
+    if (!user || !user.id || user.id === 'anon') {
       console.warn('⛔ [NovaChat] Not authenticated - showing login prompt');
       console.log('📋 [NovaChat] User state:', user);
       setLoginPromptReason('auth');
