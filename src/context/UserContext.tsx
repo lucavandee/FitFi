@@ -11,6 +11,7 @@ export interface FitFiUser {
   gender?: 'male' | 'female';
   role?: string;
   isPremium?: boolean;
+  tier?: 'free' | 'premium' | 'founder';
   stylePreferences?: {
     casual: number;
     formal: number;
@@ -57,35 +58,93 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Get initial session
-    sb.auth.getSession().then(({ data: { session } }) => {
+    sb.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        setUser({
+        // Fetch tier from profiles table
+        let userTier: 'free' | 'premium' | 'founder' = 'free';
+        try {
+          const { data: profile } = await sb
+            .from('profiles')
+            .select('tier')
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (profile?.tier) {
+            userTier = profile.tier as 'free' | 'premium' | 'founder';
+          }
+        } catch (e) {
+          console.warn('[UserContext] Could not fetch tier:', e);
+        }
+
+        const userData = {
           id: session.user.id,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
           email: session.user.email || '',
           gender: session.user.user_metadata?.gender,
-          role: session.user.user_metadata?.role || 'user'
-        });
+          role: session.user.user_metadata?.role || 'user',
+          tier: userTier
+        };
+
+        setUser(userData);
         setStatus('authenticated');
+
+        // Also save to localStorage for novaService
+        try {
+          localStorage.setItem('fitfi_user', JSON.stringify(userData));
+        } catch (e) {
+          console.warn('[UserContext] Could not save user to localStorage:', e);
+        }
       } else {
         setStatus('unauthenticated');
       }
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = sb.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        setUser({
+        // Fetch tier from profiles table
+        let userTier: 'free' | 'premium' | 'founder' = 'free';
+        try {
+          const { data: profile } = await sb
+            .from('profiles')
+            .select('tier')
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (profile?.tier) {
+            userTier = profile.tier as 'free' | 'premium' | 'founder';
+          }
+        } catch (e) {
+          console.warn('[UserContext] Could not fetch tier:', e);
+        }
+
+        const userData = {
           id: session.user.id,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
           email: session.user.email || '',
           gender: session.user.user_metadata?.gender,
-          role: session.user.user_metadata?.role || 'user'
-        });
+          role: session.user.user_metadata?.role || 'user',
+          tier: userTier
+        };
+
+        setUser(userData);
         setStatus('authenticated');
+
+        // Also save to localStorage for novaService
+        try {
+          localStorage.setItem('fitfi_user', JSON.stringify(userData));
+        } catch (e) {
+          console.warn('[UserContext] Could not save user to localStorage:', e);
+        }
       } else {
         setUser(null);
         setStatus('unauthenticated');
+        // Clear localStorage
+        try {
+          localStorage.removeItem('fitfi_user');
+        } catch (e) {
+          console.warn('[UserContext] Could not clear user from localStorage:', e);
+        }
       }
     });
 

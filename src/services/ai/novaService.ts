@@ -67,8 +67,9 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
 
   let res: Response;
 
-  // Get real user ID from localStorage if authenticated
+  // Get real user ID and tier from localStorage if authenticated
   let userId = "anon";
+  let userTier = "free";
   try {
     const userStr = localStorage.getItem("fitfi_user");
     if (userStr) {
@@ -76,15 +77,19 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
       if (user?.id) {
         userId = user.id;
       }
+      // Get tier from user object (set during login/profile fetch)
+      if (user?.tier) {
+        userTier = user.tier;
+      }
     }
   } catch (e) {
-    console.warn("Could not get user ID:", e);
+    console.warn("Could not get user ID/tier:", e);
   }
 
   // CRITICAL: Load quiz data from localStorage to send to Nova
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "x-fitfi-tier": (import.meta as any).env?.VITE_FITFI_TIER ?? "free",
+    "x-fitfi-tier": userTier,
     "x-fitfi-uid": userId,
     ...customHeaders,
   };
