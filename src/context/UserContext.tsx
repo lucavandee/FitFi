@@ -91,8 +91,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Also save to localStorage for novaService
         try {
           localStorage.setItem('fitfi_user', JSON.stringify(userData));
+          console.log('✅ [UserContext] User saved to localStorage:', {
+            id: userData.id.substring(0, 8) + '...',
+            tier: userData.tier,
+            hasEmail: !!userData.email
+          });
         } catch (e) {
-          console.warn('[UserContext] Could not save user to localStorage:', e);
+          console.error('❌ [UserContext] Could not save user to localStorage:', e);
         }
       } else {
         setStatus('unauthenticated');
@@ -133,8 +138,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Also save to localStorage for novaService
         try {
           localStorage.setItem('fitfi_user', JSON.stringify(userData));
+          console.log('✅ [UserContext] User saved to localStorage:', {
+            id: userData.id.substring(0, 8) + '...',
+            tier: userData.tier,
+            hasEmail: !!userData.email
+          });
         } catch (e) {
-          console.warn('[UserContext] Could not save user to localStorage:', e);
+          console.error('❌ [UserContext] Could not save user to localStorage:', e);
         }
       } else {
         setUser(null);
