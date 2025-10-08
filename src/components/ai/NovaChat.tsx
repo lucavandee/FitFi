@@ -181,13 +181,30 @@ const NovaChat: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!input.trim() || isLoading) return;
+
+    // PROACTIVE: Check auth BEFORE sending request
+    if (!user || !user.id) {
+      console.warn('⛔ [NovaChat] Not authenticated - showing login prompt');
+      setLoginPromptReason('auth');
+      setLoginPromptOpen(true);
+      return;
+    }
+
+    // PROACTIVE: Check quiz completion BEFORE sending request
+    const quizAnswersStr = localStorage.getItem('ff_quiz_answers');
+    if (!quizAnswersStr) {
+      console.warn('⛔ [NovaChat] Quiz not completed - showing quiz prompt');
+      setLoginPromptReason('quiz');
+      setLoginPromptOpen(true);
+      return;
+    }
 
     // Check quota before making request
     const tier = getUserTier();
     const userId = user?.id || 'anon';
-    
+
     if (!checkQuotaLimit(tier, userId)) {
       setQuotaOpen(true);
       return;

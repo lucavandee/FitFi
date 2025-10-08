@@ -5,6 +5,7 @@ import ContextSwitcher from '@/components/ai/ContextSwitcher';
 import SuggestionChips from '@/components/ai/SuggestionChips';
 import { NovaConnectionProvider, useNovaConn } from '@/components/ai/NovaConnection';
 import NovaHealthChip from '@/components/ai/NovaHealthChip';
+import NovaTierBadge from '@/components/ai/NovaTierBadge';
 
 const NovaChat = lazy(() => import('./NovaChat'));
 
@@ -77,7 +78,10 @@ export default function NovaBubble() {
     >
       <div className="flex flex-col h-full">
         <header className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 id="nova-title" className="font-semibold text-ink">Nova AI</h2>
+          <div className="flex items-center gap-3">
+            <h2 id="nova-title" className="font-semibold text-ink">Nova AI</h2>
+            <NovaTierBadge />
+          </div>
           <div className="flex items-center gap-3">
             <NovaHeaderChipBridge />
             <button
