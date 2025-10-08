@@ -67,23 +67,42 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
 
   let res: Response;
 
-  // Get real user ID and tier from localStorage if authenticated
+  // Get real user ID and tier from Supabase session (SINGLE SOURCE OF TRUTH)
   let userId = "anon";
   let userTier = "free";
   try {
-    const userStr = localStorage.getItem("fitfi_user");
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      if (user?.id) {
-        userId = user.id;
+    // Dynamic import to avoid circular dependency
+    const { supabase } = await import('@/lib/supabaseClient');
+    const sb = supabase();
+    const { data: { session } } = await sb.auth.getSession();
+
+    if (session?.user) {
+      userId = session.user.id;
+      console.log('✅ [novaService] Got userId from Supabase session:', {
+        userId: userId.substring(0, 8) + '...',
+        hasSession: true
+      });
+
+      // Get tier from profiles table
+      try {
+        const { data: profile } = await sb
+          .from('profiles')
+          .select('tier')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (profile?.tier) {
+          userTier = profile.tier as string;
+          console.log('✅ [novaService] Got tier from profiles:', userTier);
+        }
+      } catch (tierError) {
+        console.warn('⚠️ [novaService] Could not fetch tier:', tierError);
       }
-      // Get tier from user object (set during login/profile fetch)
-      if (user?.tier) {
-        userTier = user.tier;
-      }
+    } else {
+      console.warn('⚠️ [novaService] No active Supabase session - user is NOT authenticated');
     }
-  } catch (e) {
-    console.warn("Could not get user ID/tier:", e);
+  } catch (authError) {
+    console.error('❌ [novaService] Auth check failed:', authError);
   }
 
   // CRITICAL: Load quiz data from localStorage to send to Nova
@@ -184,14 +203,6 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     messageCount: messages.length
   };
   console.log('📤 [novaService] Sending request to Nova:', debugInfo);
-
-  // Also check localStorage directly
-  try {
-    const storedUser = localStorage.getItem('fitfi_user');
-    console.log('📦 [novaService] localStorage fitfi_user:', storedUser ? JSON.parse(storedUser) : 'NULL');
-  } catch (e) {
-    console.error('❌ [novaService] Failed to read localStorage:', e);
-  }
 
   try {
     res = await fetch("/.netlify/functions/nova", {

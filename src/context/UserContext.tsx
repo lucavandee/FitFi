@@ -4,50 +4,6 @@ import { supabase } from '../lib/supabaseClient';
 // Get singleton client
 const sb = supabase();
 
-// DEBUG: Global helper to force refresh user state
-if (typeof window !== 'undefined') {
-  (window as any).refreshFitFiUser = async () => {
-    console.log('🔄 [DEBUG] Force refreshing user state...');
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session?.user) {
-      console.log('❌ No active session - please login first');
-      localStorage.removeItem('fitfi_user');
-      return;
-    }
-
-    let userTier: 'free' | 'premium' | 'founder' = 'free';
-    try {
-      const { data: profile } = await sb
-        .from('profiles')
-        .select('tier')
-        .eq('id', session.user.id)
-        .maybeSingle();
-      if (profile?.tier) userTier = profile.tier as any;
-    } catch (e) {
-      console.warn('⚠️ Could not fetch tier:', e);
-    }
-
-    const userData = {
-      id: session.user.id,
-      name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
-      email: session.user.email || '',
-      gender: session.user.user_metadata?.gender,
-      role: session.user.user_metadata?.role || 'user',
-      tier: userTier
-    };
-
-    localStorage.setItem('fitfi_user', JSON.stringify(userData));
-    console.log('✅ User refreshed and saved to localStorage:', {
-      id: userData.id.substring(0, 8) + '...',
-      tier: userData.tier,
-      email: userData.email
-    });
-    console.log('🔍 Verify: localStorage.getItem("fitfi_user")');
-    return userData;
-  };
-  console.log('💡 TIP: Type refreshFitFiUser() in console to fix Nova auth');
-}
-
 export interface FitFiUser {
   id: string;
   name: string;
@@ -132,17 +88,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userData);
         setStatus('authenticated');
 
-        // Also save to localStorage for novaService
-        try {
-          localStorage.setItem('fitfi_user', JSON.stringify(userData));
-          console.log('✅ [UserContext] User saved to localStorage:', {
-            id: userData.id.substring(0, 8) + '...',
-            tier: userData.tier,
-            hasEmail: !!userData.email
-          });
-        } catch (e) {
-          console.error('❌ [UserContext] Could not save user to localStorage:', e);
-        }
+        console.log('✅ [UserContext] User authenticated:', {
+          id: userData.id.substring(0, 8) + '...',
+          tier: userData.tier,
+          hasEmail: !!userData.email
+        });
       } else {
         setStatus('unauthenticated');
       }
@@ -179,17 +129,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userData);
         setStatus('authenticated');
 
-        // Also save to localStorage for novaService
-        try {
-          localStorage.setItem('fitfi_user', JSON.stringify(userData));
-          console.log('✅ [UserContext] User saved to localStorage:', {
-            id: userData.id.substring(0, 8) + '...',
-            tier: userData.tier,
-            hasEmail: !!userData.email
-          });
-        } catch (e) {
-          console.error('❌ [UserContext] Could not save user to localStorage:', e);
-        }
+        console.log('✅ [UserContext] User authenticated:', {
+          id: userData.id.substring(0, 8) + '...',
+          tier: userData.tier,
+          hasEmail: !!userData.email
+        });
       } else {
         setUser(null);
         setStatus('unauthenticated');
