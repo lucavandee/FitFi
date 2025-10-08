@@ -103,6 +103,29 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
         // Geen lege berichten naar de SSE-backend sturen.
         return;
       }
+
+      // CRITICAL: Check LIVE Supabase session before sending
+      try {
+        const { supabase } = await import('@/lib/supabaseClient');
+        const sb = supabase();
+        const { data: { session } } = await sb.auth.getSession();
+
+        if (!session?.user) {
+          console.error('⛔ [NovaChatProvider] No active Supabase session - cannot send message');
+          setError('Je moet ingelogd zijn om Nova te gebruiken. Log opnieuw in.');
+          return;
+        }
+
+        console.log('✅ [NovaChatProvider] Active session confirmed:', {
+          userId: session.user.id.substring(0, 8) + '...',
+          hasSession: true
+        });
+      } catch (authError) {
+        console.error('❌ [NovaChatProvider] Session check failed:', authError);
+        setError('Authenticatie mislukt. Log opnieuw in.');
+        return;
+      }
+
       setError(null);
       setSending(true);
 
