@@ -143,10 +143,19 @@ const NovaChat: React.FC = () => {
   };
 
   const initializeNova = async () => {
+    // CHECK: Is user logged in?
+    if (!user || !user.id) {
+      console.warn('⛔ [NovaChat] Not authenticated on init - showing login prompt');
+      setLoginPromptReason('auth');
+      setLoginPromptOpen(true);
+      setIsInitialized(true); // Mark as initialized to prevent retry loop
+      return;
+    }
+
     try {
       const agent = await loadNovaAgent();
       const greeting = await agent.greet(user?.name || 'daar');
-      
+
       setMessages([{
         id: 'greeting',
         role: 'assistant',
@@ -154,9 +163,9 @@ const NovaChat: React.FC = () => {
         timestamp: Date.now(),
         type: 'text'
       }]);
-      
+
       setIsInitialized(true);
-      
+
       // Track Nova initialization
       if (typeof track === 'function') track('nova_chat_initialized', {
         event_category: 'ai_interaction',
@@ -165,7 +174,7 @@ const NovaChat: React.FC = () => {
       });
     } catch (error) {
       console.warn('[NovaChat] Initialization failed:', error);
-      
+
       // Fallback greeting
       setMessages([{
         id: 'fallback-greeting',
@@ -174,7 +183,7 @@ const NovaChat: React.FC = () => {
         timestamp: Date.now(),
         type: 'text'
       }]);
-      
+
       setIsInitialized(true);
     }
   };
