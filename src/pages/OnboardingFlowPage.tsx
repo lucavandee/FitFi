@@ -9,11 +9,15 @@ import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
 
 type QuizAnswers = {
+  gender?: string;
   stylePreferences?: string[];
   baseColors?: string;
   bodyType?: string;
   occasions?: string[];
   budgetRange?: number;
+  sizes?: any;
+  colorAnalysis?: any;
+  photoUrl?: string;
 };
 
 export default function OnboardingFlowPage() {
@@ -92,19 +96,28 @@ export default function OnboardingFlowPage() {
             session_id: !user ? sessionId : null,
             gender: answers.gender,
             archetype: result.archetype,
-            body_type: answers.bodyType,
             color_profile: result.color,
             color_analysis: answers.colorAnalysis || null,
             photo_url: answers.photoUrl || null,
-            quiz_answers: answers,
+            quiz_answers: answers, // bodyType is inside quiz_answers
             sizes: answers.sizes || null,
             budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
             preferred_occasions: answers.occasions || [],
             completed_at: new Date().toISOString(),
           })
           .then(({ error }) => {
-            if (error) console.error('Error saving to Supabase:', error);
-            else console.log('✅ Quiz saved to Supabase with gender, sizes, photo!');
+            if (error) {
+              console.error('❌ [OnboardingFlow] Error saving to Supabase:', error);
+              console.error('   Error details:', error.message);
+            } else {
+              console.log('✅ [OnboardingFlow] Quiz saved to Supabase successfully!');
+              console.log('   Data saved:', {
+                gender: answers.gender,
+                archetype: result.archetype,
+                bodyType: answers.bodyType,
+                occasions: answers.occasions
+              });
+            }
           });
       }
 

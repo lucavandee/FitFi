@@ -10,6 +10,9 @@ import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import "./index.css";               // Tailwind + tokens
 import "@/styles/polish.addon.css"; // opt-in polish
 
+// Make migration utility available in console
+import "@/utils/migrateQuizToDatabase";
+
 // Context providers
 import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@/context/UserContext";

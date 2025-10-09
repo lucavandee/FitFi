@@ -142,7 +142,7 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
           // Use database data - merge database columns with quiz_answers JSON
           quizAnswers = {
             gender: profile.gender,
-            bodyType: profile.body_type || profile.quiz_answers?.bodyType || profile.quiz_answers?.bodytype,
+            bodyType: profile.quiz_answers?.bodyType || profile.quiz_answers?.bodytype,
             archetype: profile.archetype,
             stylePreferences: profile.quiz_answers?.stylePreferences || profile.quiz_answers?.stylepreferences,
             occasions: profile.preferred_occasions || profile.quiz_answers?.occasions || profile.quiz_answers?.goals,
