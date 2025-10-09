@@ -485,6 +485,20 @@ export const handler: Handler = async (event) => {
   if (event.httpMethod !== "POST") return { statusCode: 405, body: "Method Not Allowed" };
   if (!okOrigin(origin)) return { statusCode: 403, body: "Forbidden" };
 
+  // DEBUG: Log ALL fitfi headers that were sent
+  const fitfiHeaders: Record<string, any> = {};
+  Object.keys(event.headers).forEach(key => {
+    if (key.toLowerCase().startsWith('x-fitfi-')) {
+      fitfiHeaders[key] = event.headers[key];
+    }
+  });
+
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("📨 RAW HEADERS RECEIVED FROM FRONTEND");
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log(JSON.stringify(fitfiHeaders, null, 2));
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
   const userContext = parseUserContext(event.headers);
 
   // ENHANCED DEBUG: Log what context Nova receives
