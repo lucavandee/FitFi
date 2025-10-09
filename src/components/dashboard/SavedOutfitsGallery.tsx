@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Heart, ExternalLink } from 'lucide-react';
+import { Heart, ShoppingBag } from 'lucide-react';
 import { savedOutfitsService } from '@/services/outfits/savedOutfitsService';
 import type { SavedOutfit } from '@/services/outfits/savedOutfitsService';
 import SmartImage from '@/components/ui/SmartImage';
 import Button from '@/components/ui/Button';
+import ProductDetailModal from '@/components/outfits/ProductDetailModal';
 
 interface SavedOutfitsGalleryProps {
   userId: string;
@@ -13,6 +14,7 @@ interface SavedOutfitsGalleryProps {
 export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps) {
   const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   useEffect(() => {
     loadSavedOutfits();
@@ -105,25 +107,29 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
                   {outfit.description || outfit.explanation || ''}
                 </p>
 
-                <div className="flex gap-2">
+                <div className="space-y-2">
+                  {outfit.products && outfit.products.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      {outfit.products.slice(0, 2).map((product: any, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedProduct(product)}
+                          className="flex items-center gap-1 px-2 py-1.5 bg-[var(--color-bg)] hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] rounded text-xs transition-all"
+                        >
+                          <ShoppingBag className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">{product.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <Button
                     onClick={() => handleUnsave(saved.outfit_id)}
                     variant="ghost"
                     size="sm"
-                    className="flex-1"
+                    className="w-full"
                   >
                     <Heart className="w-4 h-4 mr-2" fill="currentColor" />
-                    Verwijderen
-                  </Button>
-                  <Button
-                    as="a"
-                    href="#"
-                    variant="secondary"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Shop
+                    Verwijder uit favorieten
                   </Button>
                 </div>
               </div>
@@ -131,6 +137,13 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
           );
         })}
       </div>
+
+      {selectedProduct && (
+        <ProductDetailModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </div>
   );
 }
