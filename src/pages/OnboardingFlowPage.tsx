@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
 import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
+import toast from "react-hot-toast";
 
 type QuizAnswers = {
   gender?: string;
@@ -67,65 +68,92 @@ export default function OnboardingFlowPage() {
     }
   };
 
+  const saveToSupabase = async (
+    client: any,
+    user: any,
+    sessionId: string,
+    result: any,
+    retryCount = 0
+  ): Promise<boolean> => {
+    try {
+      const { error } = await client
+        .from('style_profiles')
+        .insert({
+          user_id: user?.id || null,
+          session_id: !user ? sessionId : null,
+          gender: answers.gender,
+          archetype: result.archetype,
+          color_profile: result.color,
+          color_analysis: answers.colorAnalysis || null,
+          photo_url: answers.photoUrl || null,
+          quiz_answers: answers,
+          sizes: answers.sizes || null,
+          budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
+          preferred_occasions: answers.occasions || [],
+          completed_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        if (retryCount < 2) {
+          console.warn(`⚠️ [OnboardingFlow] Save failed (attempt ${retryCount + 1}/3), retrying...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+          return saveToSupabase(client, user, sessionId, result, retryCount + 1);
+        }
+        console.error('❌ [OnboardingFlow] Error saving to Supabase after 3 attempts:', error);
+        return false;
+      }
+
+      console.log('✅ [OnboardingFlow] Quiz saved to Supabase successfully!');
+      return true;
+    } catch (error) {
+      console.error('❌ [OnboardingFlow] Exception during save:', error);
+      return false;
+    }
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Compute style profile from answers
       const result = computeResult(answers as any);
 
-      // Save to localStorage for immediate access
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
       localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.color));
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(result.archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
 
-      // Save to Supabase (async, don't block navigation)
       const client = supabase();
+      let syncSuccess = false;
+
       if (client) {
         const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
         localStorage.setItem('ff_session_id', sessionId);
 
-        // Try to get current user
         const { data: { user } } = await client.auth.getUser();
 
-        client
-          .from('style_profiles')
-          .insert({
-            user_id: user?.id || null,
-            session_id: !user ? sessionId : null,
-            gender: answers.gender,
-            archetype: result.archetype,
-            color_profile: result.color,
-            color_analysis: answers.colorAnalysis || null,
-            photo_url: answers.photoUrl || null,
-            quiz_answers: answers, // bodyType is inside quiz_answers
-            sizes: answers.sizes || null,
-            budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
-            preferred_occasions: answers.occasions || [],
-            completed_at: new Date().toISOString(),
-          })
-          .then(({ error }) => {
-            if (error) {
-              console.error('❌ [OnboardingFlow] Error saving to Supabase:', error);
-              console.error('   Error details:', error.message);
-            } else {
-              console.log('✅ [OnboardingFlow] Quiz saved to Supabase successfully!');
-              console.log('   Data saved:', {
-                gender: answers.gender,
-                archetype: result.archetype,
-                bodyType: answers.bodyType,
-                occasions: answers.occasions
-              });
-            }
-          });
+        const savePromise = saveToSupabase(client, user, sessionId, result);
+
+        toast.promise(
+          savePromise,
+          {
+            loading: 'Je profiel wordt opgeslagen...',
+            success: 'Profiel succesvol opgeslagen!',
+            error: 'Let op: je resultaten zijn lokaal opgeslagen maar nog niet gesynchroniseerd. We proberen het later automatisch opnieuw.',
+          }
+        );
+
+        syncSuccess = await savePromise;
       }
+
+      localStorage.setItem('ff_sync_status', syncSuccess ? 'synced' : 'pending');
 
       setTimeout(() => {
         navigate('/results');
       }, 500);
     } catch (error) {
-      console.error('Error saving quiz:', error);
+      console.error('❌ [OnboardingFlow] Error in handleSubmit:', error);
+      toast.error('Er ging iets mis. Je resultaten zijn wel lokaal opgeslagen.');
+      localStorage.setItem('ff_sync_status', 'pending');
       setIsSubmitting(false);
     }
   };

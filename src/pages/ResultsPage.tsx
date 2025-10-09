@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
@@ -6,9 +6,11 @@ import OutfitCard from "@/components/results/OutfitCard";
 import { generateMockOutfits, SimpleOutfit } from "@/utils/mockOutfits";
 import { LS_KEYS } from "@/lib/quiz/types";
 import Button from "@/components/ui/Button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, CloudOff, CheckCircle2 } from "lucide-react";
 
 export default function ResultsPage() {
+  const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'unknown'>('unknown');
+
   const hasQuizData = useMemo(() => {
     try {
       const archetype = localStorage.getItem(LS_KEYS.ARCHETYPE);
@@ -23,6 +25,11 @@ export default function ResultsPage() {
     if (!hasQuizData) return [];
     return generateMockOutfits(6);
   }, [hasQuizData]);
+
+  useEffect(() => {
+    const status = localStorage.getItem('ff_sync_status') as 'synced' | 'pending' | null;
+    setSyncStatus(status || 'unknown');
+  }, []);
 
   if (!hasQuizData) {
     return (
@@ -77,6 +84,30 @@ export default function ResultsPage() {
               </Button>
             </div>
           </div>
+
+          {syncStatus === 'pending' && (
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 flex items-start gap-3">
+              <CloudOff className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-medium text-amber-900 dark:text-amber-100 mb-1">
+                  Nog niet gesynchroniseerd
+                </p>
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  Je resultaten zijn lokaal opgeslagen. We proberen het later automatisch te synchroniseren.
+                  Je kunt je resultaten wel gewoon gebruiken.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {syncStatus === 'synced' && (
+            <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-500 flex-shrink-0" />
+              <p className="text-sm text-green-800 dark:text-green-200">
+                Je profiel is veilig opgeslagen en gesynchroniseerd
+              </p>
+            </div>
+          )}
         </header>
 
         <PremiumUpsellStrip />
