@@ -1,6 +1,8 @@
 import React from "react";
 import SmartImage from "@/components/ui/SmartImage";
 import { useInView } from "@/hooks/useInView";
+import SaveButton from "@/components/outfits/SaveButton";
+import type { Outfit } from "@/engine/types";
 
 interface OutfitCardProps {
   title: string;
@@ -8,6 +10,8 @@ interface OutfitCardProps {
   images: string[];
   shopLink?: string;
   className?: string;
+  outfit?: Outfit;
+  userId?: string;
 }
 
 const OutfitCard: React.FC<OutfitCardProps> = ({
@@ -15,7 +19,9 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   description,
   images,
   shopLink = "#shop",
-  className = ""
+  className = "",
+  outfit,
+  userId
 }) => {
   const { ref, inView } = useInView<HTMLDivElement>();
 
@@ -32,14 +38,19 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
     >
       <div className="res-img-grid">
         <div style={{ position: 'relative' }}>
-          <SmartImage 
-            className="res-img" 
-            src={gridImages[0]} 
-            alt="" 
+          <SmartImage
+            className="res-img"
+            src={gridImages[0]}
+            alt=""
             loading="lazy"
             decoding="async"
           />
           <span className="res-overlay" aria-hidden="true"></span>
+          {outfit && (
+            <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 10 }}>
+              <SaveButton outfit={outfit} userId={userId} />
+            </div>
+          )}
         </div>
         <SmartImage 
           className="res-img" 

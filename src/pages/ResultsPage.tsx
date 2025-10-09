@@ -9,11 +9,22 @@ import { Sparkles, CloudOff, CheckCircle2, RefreshCw, Loader } from "lucide-reac
 import { useProfileSync } from "@/hooks/useProfileSync";
 import { outfitService } from "@/services/outfits/outfitService";
 import type { GeneratedOutfit } from "@/services/outfits/outfitService";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function ResultsPage() {
   const { syncStatus, isLoading: isSyncing, manualSync } = useProfileSync(true);
   const [outfits, setOutfits] = useState<GeneratedOutfit[]>([]);
   const [isLoadingOutfits, setIsLoadingOutfits] = useState(true);
+  const [userId, setUserId] = useState<string | undefined>();
+
+  useEffect(() => {
+    const client = supabase();
+    if (client) {
+      client.auth.getUser().then(({ data }) => {
+        setUserId(data?.user?.id);
+      });
+    }
+  }, []);
 
   const hasQuizData = useMemo(() => {
     try {
@@ -178,6 +189,8 @@ export default function ResultsPage() {
                   ]}
                   images={images}
                   shopLink="#"
+                  outfit={outfit}
+                  userId={userId}
                 />
               );
             })}

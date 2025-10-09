@@ -14,6 +14,8 @@ import {
 import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { generateMockOutfits } from "@/utils/mockOutfits";
+import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
+import { supabase } from "@/lib/supabaseClient";
 
 function readJson<T>(key: string): T | null {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : null; } catch { return null; }
@@ -21,6 +23,16 @@ function readJson<T>(key: string): T | null {
 
 export default function DashboardPage() {
   const [favCount, setFavCount] = React.useState(0);
+  const [userId, setUserId] = React.useState<string | undefined>();
+
+  React.useEffect(() => {
+    const client = supabase();
+    if (client) {
+      client.auth.getUser().then(({ data }) => {
+        setUserId(data?.user?.id);
+      });
+    }
+  }, []);
 
   const ts = React.useMemo(() => {
     try { const raw = localStorage.getItem(LS_KEYS.RESULTS_TS); return raw ? parseInt(raw, 10) : null; } catch { return null; }
@@ -191,6 +203,13 @@ export default function DashboardPage() {
               </p>
             </article>
           </div>
+
+          {/* Saved Outfits Gallery */}
+          {userId && (
+            <div className="mb-12">
+              <SavedOutfitsGallery userId={userId} />
+            </div>
+          )}
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
