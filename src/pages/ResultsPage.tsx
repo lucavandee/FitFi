@@ -1,16 +1,19 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import OutfitCard from "@/components/results/OutfitCard";
-import { generateMockOutfits, SimpleOutfit } from "@/utils/mockOutfits";
 import { LS_KEYS } from "@/lib/quiz/types";
 import Button from "@/components/ui/Button";
-import { Sparkles, CloudOff, CheckCircle2, RefreshCw } from "lucide-react";
+import { Sparkles, CloudOff, CheckCircle2, RefreshCw, Loader } from "lucide-react";
 import { useProfileSync } from "@/hooks/useProfileSync";
+import { outfitService } from "@/services/outfits/outfitService";
+import type { GeneratedOutfit } from "@/services/outfits/outfitService";
 
 export default function ResultsPage() {
-  const { syncStatus, isLoading, manualSync } = useProfileSync(true);
+  const { syncStatus, isLoading: isSyncing, manualSync } = useProfileSync(true);
+  const [outfits, setOutfits] = useState<GeneratedOutfit[]>([]);
+  const [isLoadingOutfits, setIsLoadingOutfits] = useState(true);
 
   const hasQuizData = useMemo(() => {
     try {
@@ -22,10 +25,39 @@ export default function ResultsPage() {
     }
   }, []);
 
-  const outfits = useMemo(() => {
-    if (!hasQuizData) return [];
-    return generateMockOutfits(6);
+  useEffect(() => {
+    if (hasQuizData) {
+      loadOutfits();
+    } else {
+      setIsLoadingOutfits(false);
+    }
   }, [hasQuizData]);
+
+  const loadOutfits = async () => {
+    setIsLoadingOutfits(true);
+    try {
+      const quizAnswersStr = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+      const archetypeStr = localStorage.getItem(LS_KEYS.ARCHETYPE);
+      const colorProfileStr = localStorage.getItem(LS_KEYS.COLOR_PROFILE);
+
+      const quizAnswers = quizAnswersStr ? JSON.parse(quizAnswersStr) : {};
+      const archetype = archetypeStr ? JSON.parse(archetypeStr) : null;
+      const colorProfile = colorProfileStr ? JSON.parse(colorProfileStr) : null;
+
+      const fullProfile = {
+        ...quizAnswers,
+        archetype,
+        colorProfile,
+      };
+
+      const generatedOutfits = await outfitService.generateOutfits(fullProfile, 6);
+      setOutfits(generatedOutfits);
+    } catch (error) {
+      console.error('[ResultsPage] Error loading outfits:', error);
+    } finally {
+      setIsLoadingOutfits(false);
+    }
+  };
 
   const handleRetrySync = async () => {
     await manualSync();
@@ -98,11 +130,11 @@ export default function ResultsPage() {
                 </p>
                 <button
                   onClick={handleRetrySync}
-                  disabled={isLoading}
+                  disabled={isSyncing}
                   className="inline-flex items-center gap-2 text-sm font-medium text-amber-900 dark:text-amber-100 hover:text-amber-700 dark:hover:text-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                  {isLoading ? 'Synchroniseren...' : 'Probeer opnieuw'}
+                  <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                  {isSyncing ? 'Synchroniseren...' : 'Probeer opnieuw'}
                 </button>
               </div>
             </div>
@@ -120,25 +152,37 @@ export default function ResultsPage() {
 
         <PremiumUpsellStrip />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {outfits.map((outfit: SimpleOutfit) => {
-            const images = outfit.products.map(p => p.imageUrl).slice(0, 4);
+        {isLoadingOutfits ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader className="w-12 h-12 text-[var(--ff-color-primary-600)] animate-spin mb-4" />
+            <p className="text-lg text-[var(--color-text)]/70">Je persoonlijke outfits worden samengesteld...</p>
+          </div>
+        ) : outfits.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Sparkles className="w-12 h-12 text-[var(--ff-color-primary-600)] mb-4" />
+            <p className="text-lg text-[var(--color-text)]/70 mb-4">We konden geen outfits genereren.</p>
+            <Button onClick={loadOutfits} variant="primary">Probeer opnieuw</Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            {outfits.map((outfit) => {
+              const images = outfit.products?.map(p => p.imageUrl).slice(0, 4) || [];
 
-            return (
-              <OutfitCard
-                key={outfit.id}
-                title={outfit.title}
-                description={[
-                  outfit.description,
-                  `Archetype: ${outfit.archetype}`,
-                  `${outfit.products.length} items`
-                ]}
-                images={images}
-                shopLink="#"
-              />
-            );
-          })}
-        </div>
+              return (
+                <OutfitCard
+                  key={outfit.id}
+                  title={outfit.name || 'Outfit'}
+                  description={[
+                    outfit.explanation || outfit.description || '',
+                    `${outfit.products?.length || 0} items`
+                  ]}
+                  images={images}
+                  shopLink="#"
+                />
+              );
+            })}
+          </div>
+        )}
 
         <div className="mt-12 text-center">
           <div className="inline-flex flex-col items-center gap-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8">
