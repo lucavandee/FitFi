@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
-import { generateMockOutfits } from "@/utils/mockOutfits";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import { supabase } from "@/lib/supabaseClient";
+import { useOutfits } from "@/hooks/useOutfits";
 
 function readJson<T>(key: string): T | null {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : null; } catch { return null; }
@@ -24,6 +24,18 @@ function readJson<T>(key: string): T | null {
 export default function DashboardPage() {
   const [favCount, setFavCount] = React.useState(0);
   const [userId, setUserId] = React.useState<string | undefined>();
+
+  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
+  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
+
+  const hasQuizData = !!(archetype || color);
+
+  // Fetch real outfits based on user's archetype
+  const { data: outfitsData, loading: outfitsLoading } = useOutfits({
+    archetype: archetype?.name,
+    limit: 6,
+    enabled: hasQuizData
+  });
 
   React.useEffect(() => {
     const client = supabase();
@@ -38,22 +50,9 @@ export default function DashboardPage() {
     try { const raw = localStorage.getItem(LS_KEYS.RESULTS_TS); return raw ? parseInt(raw, 10) : null; } catch { return null; }
   }, []);
 
-  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
-  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
-
-  const hasQuizData = React.useMemo(() => {
-    return !!(archetype || color);
-  }, [archetype, color]);
-
-  const outfitCount = React.useMemo(() => {
-    if (!hasQuizData) return 0;
-    return generateMockOutfits(6).length;
-  }, [hasQuizData]);
-
-  const outfits = React.useMemo(() => {
-    if (!hasQuizData) return [];
-    return generateMockOutfits(6).slice(0, 1);
-  }, [hasQuizData]);
+  // Get outfit stats from real data
+  const outfitCount = outfitsData?.length || 0;
+  const featuredOutfit = outfitsData?.[0] || null;
 
   React.useEffect(() => {
     try {
@@ -216,7 +215,13 @@ export default function DashboardPage() {
             {/* Left Column - Featured Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Featured Outfit or Empty State */}
-              {hasQuizData && outfits.length > 0 ? (
+              {outfitsLoading ? (
+                <article className="card">
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--ff-color-primary-600)]"></div>
+                  </div>
+                </article>
+              ) : hasQuizData && featuredOutfit ? (
                 <article className="card">
                   <div className="flex items-center justify-between mb-6">
                     <div>
@@ -229,7 +234,7 @@ export default function DashboardPage() {
                   {/* Outfit Products Grid */}
                   <div className="bg-[var(--color-bg)] rounded-lg p-4 mb-6">
                     <div className="grid grid-cols-3 gap-4">
-                      {outfits[0].products.slice(0, 3).map((product, idx) => (
+                      {featuredOutfit.products?.slice(0, 3).map((product, idx) => (
                         <div key={idx} className="aspect-square bg-white rounded-lg overflow-hidden border border-[var(--color-border)]">
                           <img
                             src={product.imageUrl}
@@ -243,10 +248,10 @@ export default function DashboardPage() {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="card-title mb-1">{outfits[0].title}</h3>
-                      <p className="card-text text-sm">{outfits[0].description}</p>
+                      <h3 className="card-title mb-1">{featuredOutfit.name || 'Stijlvolle look'}</h3>
+                      <p className="card-text text-sm">{featuredOutfit.description || featuredOutfit.explanation || ''}</p>
                     </div>
-                    <Button as={NavLink} to="/results" variant="primary">
+                    <Button as={NavLink} to="/resultaten" variant="primary">
                       Bekijk alles
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
