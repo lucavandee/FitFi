@@ -20,11 +20,18 @@ export default defineConfig(({ mode }) => {
     },
     // Overige projectinstellingen blijven ongewijzigd
     server: { port: 5173 },
-    build: { 
+    build: {
       sourcemap: false,
       target: 'es2022',
       rollupOptions: {
         external: [],
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-ui': ['lucide-react', 'react-hot-toast', 'react-helmet-async'],
+            'vendor-data': ['@tanstack/react-query', '@supabase/supabase-js'],
+          },
+        },
       },
     },
     define: {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
@@ -6,10 +6,11 @@ import OutfitCard from "@/components/results/OutfitCard";
 import { generateMockOutfits, SimpleOutfit } from "@/utils/mockOutfits";
 import { LS_KEYS } from "@/lib/quiz/types";
 import Button from "@/components/ui/Button";
-import { Sparkles, CloudOff, CheckCircle2 } from "lucide-react";
+import { Sparkles, CloudOff, CheckCircle2, RefreshCw } from "lucide-react";
+import { useProfileSync } from "@/hooks/useProfileSync";
 
 export default function ResultsPage() {
-  const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'unknown'>('unknown');
+  const { syncStatus, isLoading, manualSync } = useProfileSync(true);
 
   const hasQuizData = useMemo(() => {
     try {
@@ -26,10 +27,9 @@ export default function ResultsPage() {
     return generateMockOutfits(6);
   }, [hasQuizData]);
 
-  useEffect(() => {
-    const status = localStorage.getItem('ff_sync_status') as 'synced' | 'pending' | null;
-    setSyncStatus(status || 'unknown');
-  }, []);
+  const handleRetrySync = async () => {
+    await manualSync();
+  };
 
   if (!hasQuizData) {
     return (
@@ -85,17 +85,25 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          {syncStatus === 'pending' && (
+          {(syncStatus === 'pending' || syncStatus === 'error') && (
             <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 flex items-start gap-3">
               <CloudOff className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="font-medium text-amber-900 dark:text-amber-100 mb-1">
                   Nog niet gesynchroniseerd
                 </p>
-                <p className="text-sm text-amber-800 dark:text-amber-200">
+                <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
                   Je resultaten zijn lokaal opgeslagen. We proberen het later automatisch te synchroniseren.
                   Je kunt je resultaten wel gewoon gebruiken.
                 </p>
+                <button
+                  onClick={handleRetrySync}
+                  disabled={isLoading}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-amber-900 dark:text-amber-100 hover:text-amber-700 dark:hover:text-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  {isLoading ? 'Synchroniseren...' : 'Probeer opnieuw'}
+                </button>
               </div>
             </div>
           )}

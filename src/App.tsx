@@ -10,6 +10,7 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import NovaLauncher from "@/components/nova/NovaLauncher";
 import ChatPanel from "@/components/nova/ChatPanel";
+import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
 
 // Lazy pages
 const LandingPage        = lazy(() => import("@/pages/LandingPage"));
@@ -57,6 +58,7 @@ export default function App() {
     <NovaChatProvider>
       <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
         <ErrorBoundary>
+          <ProfileSyncInitializer />
           <Navbar />
           <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
             <main id="main">
