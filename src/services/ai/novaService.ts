@@ -164,12 +164,21 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
 
     // FALLBACK: If no database data, try localStorage
     if (!quizAnswers) {
+      console.log('🔄 [novaService] No database data found, trying localStorage fallback...');
       const quizAnswersStr = localStorage.getItem("ff_quiz_answers") || localStorage.getItem("fitfi.quiz.answers");
       if (quizAnswersStr) {
         quizAnswers = JSON.parse(quizAnswersStr);
-        console.log('📦 [novaService] Using quiz data from localStorage (fallback)');
+        console.log('✅ [novaService] SUCCESS: Using quiz data from localStorage (fallback)');
+        console.log('📦 [novaService] localStorage quiz data:', {
+          gender: quizAnswers.gender,
+          bodyType: quizAnswers.bodyType,
+          archetype: quizAnswers.archetype,
+          stylePreferences: quizAnswers.stylePreferences,
+          occasions: quizAnswers.occasions
+        });
       } else {
-        console.warn('⚠️ [novaService] No quiz data found in database OR localStorage');
+        console.error('❌ [novaService] CRITICAL: No quiz data found in database OR localStorage');
+        console.error('   This means Nova has NO context about the user!');
       }
     }
 
@@ -235,18 +244,21 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
   }
 
   // DEBUG: Log what we're sending
-  const debugInfo = {
-    userId: headers['x-fitfi-uid'],
-    userIdType: typeof headers['x-fitfi-uid'],
-    isAnon: headers['x-fitfi-uid'] === 'anon',
-    hasDashes: headers['x-fitfi-uid']?.includes('-'),
-    tier: headers['x-fitfi-tier'],
-    hasGender: !!headers['x-fitfi-gender'],
-    hasBodyType: !!headers['x-fitfi-bodytype'],
-    hasQuizData: !!headers['x-fitfi-coloranalysis'],
-    messageCount: messages.length
-  };
-  console.log('📤 [novaService] Sending request to Nova:', debugInfo);
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('📤 [novaService] FINAL HEADERS BEING SENT TO NOVA');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('User ID:', headers['x-fitfi-uid']);
+  console.log('Tier:', headers['x-fitfi-tier']);
+  console.log('Gender:', headers['x-fitfi-gender'] || '❌ MISSING');
+  console.log('Body Type:', headers['x-fitfi-bodytype'] || '❌ MISSING');
+  console.log('Archetype:', headers['x-fitfi-archetype'] || '❌ MISSING');
+  console.log('Style Prefs:', headers['x-fitfi-styleprefs'] || '❌ MISSING');
+  console.log('Occasions:', headers['x-fitfi-occasions'] || '❌ MISSING');
+  console.log('Sizes:', headers['x-fitfi-sizes'] || '❌ MISSING');
+  console.log('Budget:', headers['x-fitfi-budget'] || '❌ MISSING');
+  console.log('Has Quiz Data:', !!headers['x-fitfi-quiz']);
+  console.log('Has Color Analysis:', !!headers['x-fitfi-coloranalysis']);
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   try {
     res = await fetch("/.netlify/functions/nova", {
