@@ -28,27 +28,6 @@ export function supabase(): SupabaseClient | null {
       autoRefreshToken: true,
       storageKey: "fitfi.supabase.auth",
     },
-    global: {
-      fetch: (input, init) => {
-        console.log('🌐 [Supabase] Fetch request:', {
-          url: typeof input === 'string' ? input.substring(0, 80) : 'Request object',
-          method: init?.method || 'GET'
-        });
-
-        return fetch(input, { ...init, cache: "no-store" })
-          .then(response => {
-            console.log('📥 [Supabase] Fetch response:', {
-              status: response.status,
-              ok: response.ok
-            });
-            return response;
-          })
-          .catch(error => {
-            console.error('❌ [Supabase] Fetch error:', error);
-            throw error;
-          });
-      }
-    },
   });
 
   return _client;
