@@ -59,7 +59,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Get initial session
-    sb.auth.getSession().then(async ({ data: { session }, error }) => {
+    sb.auth.getSession().then(({ data: { session }, error }) => {
       console.log('🔍 [UserContext] getSession result:', {
         hasSession: !!session,
         hasUser: !!session?.user,
@@ -68,29 +68,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (session?.user) {
-        // Fetch tier from profiles table
-        let userTier: 'free' | 'premium' | 'founder' = 'free';
-        try {
-          const { data: profile } = await sb
-            .from('profiles')
-            .select('tier')
-            .eq('id', session.user.id)
-            .maybeSingle();
-
-          if (profile?.tier) {
-            userTier = profile.tier as 'free' | 'premium' | 'founder';
-          }
-        } catch (e) {
-          console.warn('[UserContext] Could not fetch tier:', e);
-        }
-
+        // Set user immediately with default tier
         const userData = {
           id: session.user.id,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
           email: session.user.email || '',
           gender: session.user.user_metadata?.gender,
           role: session.user.user_metadata?.role || 'user',
-          tier: userTier
+          tier: 'free' as const
         };
 
         setUser(userData);
@@ -98,9 +83,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log('✅ [UserContext] User authenticated:', {
           id: userData.id.substring(0, 8) + '...',
-          tier: userData.tier,
-          hasEmail: !!userData.email
+          email: userData.email
         });
+
+        // Fetch tier asynchronously (non-blocking)
+        sb.from('profiles')
+          .select('tier')
+          .eq('id', session.user.id)
+          .maybeSingle()
+          .then(({ data: profile }) => {
+            if (profile?.tier) {
+              setUser(prev => prev ? { ...prev, tier: profile.tier as 'free' | 'premium' | 'founder' } : null);
+              console.log('🎫 [UserContext] Tier updated:', profile.tier);
+            }
+          })
+          .catch(e => {
+            console.warn('[UserContext] Could not fetch tier:', e);
+          });
       } else {
         setUser(null);
         setStatus('unauthenticated');
@@ -108,32 +107,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = sb.auth.onAuthStateChange(async (event, session) => {
+    // Listen for auth changes (non-blocking)
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        // Fetch tier from profiles table
-        let userTier: 'free' | 'premium' | 'founder' = 'free';
-        try {
-          const { data: profile } = await sb
-            .from('profiles')
-            .select('tier')
-            .eq('id', session.user.id)
-            .maybeSingle();
-
-          if (profile?.tier) {
-            userTier = profile.tier as 'free' | 'premium' | 'founder';
-          }
-        } catch (e) {
-          console.warn('[UserContext] Could not fetch tier:', e);
-        }
-
+        // Set user immediately with default tier
         const userData = {
           id: session.user.id,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
           email: session.user.email || '',
           gender: session.user.user_metadata?.gender,
           role: session.user.user_metadata?.role || 'user',
-          tier: userTier
+          tier: 'free' as const
         };
 
         setUser(userData);
@@ -141,9 +125,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log('✅ [UserContext] User authenticated:', {
           id: userData.id.substring(0, 8) + '...',
-          tier: userData.tier,
-          hasEmail: !!userData.email
+          email: userData.email
         });
+
+        // Fetch tier asynchronously (non-blocking)
+        sb.from('profiles')
+          .select('tier')
+          .eq('id', session.user.id)
+          .maybeSingle()
+          .then(({ data: profile }) => {
+            if (profile?.tier) {
+              setUser(prev => prev ? { ...prev, tier: profile.tier as 'free' | 'premium' | 'founder' } : null);
+              console.log('🎫 [UserContext] Tier updated:', profile.tier);
+            }
+          })
+          .catch(e => {
+            console.warn('[UserContext] Could not fetch tier:', e);
+          });
       } else {
         setUser(null);
         setStatus('unauthenticated');
@@ -167,19 +165,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       console.log('🔐 [UserContext] Attempting login for:', email);
-
-      // Create timeout promise (30 seconds - generous for slow connections)
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('LOGIN_TIMEOUT')), 30000);
-      });
-
-      // Race login against timeout
-      const result = await Promise.race([
-        sb.auth.signInWithPassword({ email, password }),
-        timeoutPromise
-      ]);
-
-      const { data, error } = result;
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
       if (error) {
         console.error('❌ [UserContext] Login failed:', error.message);
@@ -194,9 +180,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     } catch (error) {
       console.error('❌ [UserContext] Login exception:', error);
-      if (error instanceof Error && error.message === 'LOGIN_TIMEOUT') {
-        console.error('⏰ [UserContext] Login timed out - possible network/Supabase issue');
-      }
       return false;
     }
   };
