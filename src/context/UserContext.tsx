@@ -40,6 +40,7 @@ interface UserCtx {
   register: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<FitFiUser>) => Promise<void>;
+  resetPassword: (email: string) => Promise<boolean>;
 }
 
 const UserContext = createContext<UserCtx | undefined>(undefined);
@@ -169,11 +170,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
       if (error) {
-        console.error('❌ [UserContext] Login failed:', {
-          message: error.message,
-          status: error.status,
-          name: error.name
-        });
+        console.error('❌ [UserContext] Login failed:');
+        console.error('   Message:', error.message);
+        console.error('   Status:', error.status);
+        console.error('   Name:', error.name);
+        console.error('   Full error:', error);
         return false;
       }
 
@@ -220,17 +221,44 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateProfile = async (updates: Partial<FitFiUser>): Promise<void> => {
     if (!sb || !user) return;
-    
+
     try {
       const { error } = await sb.auth.updateUser({
         data: updates
       });
-      
+
       if (!error) {
         setUser(prev => prev ? { ...prev, ...updates } : null);
       }
     } catch (error) {
       console.error('Update profile error:', error);
+    }
+  };
+
+  const resetPassword = async (email: string): Promise<boolean> => {
+    if (!sb) {
+      console.error('❌ [UserContext] Supabase client not initialized');
+      return false;
+    }
+
+    try {
+      console.log('🔐 [UserContext] Sending password reset email to:', email);
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        console.error('❌ [UserContext] Password reset failed:');
+        console.error('   Message:', error.message);
+        console.error('   Status:', error.status);
+        return false;
+      }
+
+      console.log('✅ [UserContext] Password reset email sent successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ [UserContext] Password reset exception:', error);
+      return false;
     }
   };
 
@@ -242,7 +270,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     register,
     logout,
-    updateProfile
+    updateProfile,
+    resetPassword
   };
 
   return (

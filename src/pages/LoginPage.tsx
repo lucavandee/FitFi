@@ -36,7 +36,7 @@ type Mode = "password" | "magic";
 export default function LoginPage() {
   const nav = useNavigate();
   const location = useLocation();
-  const { login } = useUser();
+  const { login, resetPassword } = useUser();
   const fromPath = (location.state as any)?.from;
 
   // Gedeelde state
@@ -362,7 +362,16 @@ export default function LoginPage() {
         <ResetPasswordModal
           initialEmail={forgotEmail}
           onClose={() => setForgotOpen(false)}
-          onSend={(mail) => { setForgotEmail(mail); setForgotSent(true); setTimeout(() => setForgotOpen(false), 1200); }}
+          onSend={async (mail) => {
+            const success = await resetPassword(mail);
+            if (success) {
+              setForgotEmail(mail);
+              setForgotSent(true);
+              setTimeout(() => setForgotOpen(false), 2000);
+            } else {
+              alert('Er ging iets mis. Probeer het later opnieuw.');
+            }
+          }}
           sent={forgotSent}
         />
       )}
@@ -379,10 +388,11 @@ function ResetPasswordModal({
 }: {
   initialEmail: string;
   onClose: () => void;
-  onSend: (email: string) => void;
+  onSend: (email: string) => Promise<void> | void;
   sent: boolean;
 }) {
   const [mail, setMail] = React.useState(initialEmail || "");
+  const [loading, setLoading] = React.useState(false);
   const valid = isEmail(mail);
   const dialogRef = React.useRef<HTMLDivElement>(null);
 
@@ -425,7 +435,18 @@ function ResetPasswordModal({
           ) : null}
           <div className="mt-5 flex justify-end gap-2">
             <Button variant="secondary" size="lg" onClick={onClose}>Annuleren</Button>
-            <Button variant="primary" size="lg" disabled={!valid} onClick={() => onSend(mail)}>Stuur resetlink</Button>
+            <Button
+              variant="primary"
+              size="lg"
+              disabled={!valid || loading}
+              onClick={async () => {
+                setLoading(true);
+                await onSend(mail);
+                setLoading(false);
+              }}
+            >
+              {loading ? 'Bezig...' : 'Stuur resetlink'}
+            </Button>
           </div>
         </div>
       </div>
