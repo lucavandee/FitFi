@@ -167,7 +167,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       console.log('🔐 [UserContext] Attempting login for:', email);
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      console.log('⏳ [UserContext] Waiting for Supabase response...');
+
+      // Add timeout to prevent hanging forever
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Login timeout after 10 seconds')), 10000);
+      });
+
+      const loginPromise = sb.auth.signInWithPassword({ email, password });
+
+      const { data, error } = await Promise.race([loginPromise, timeoutPromise]);
+
+      console.log('📥 [UserContext] Received response from Supabase');
 
       if (error) {
         console.error('❌ [UserContext] Login failed:');
@@ -187,6 +198,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     } catch (error) {
       console.error('❌ [UserContext] Login exception:', error);
+      if (error instanceof Error && error.message.includes('timeout')) {
+        console.error('⏰ [UserContext] Login request timed out - Supabase may be unreachable');
+      }
       return false;
     }
   };
