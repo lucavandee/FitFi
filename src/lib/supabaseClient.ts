@@ -22,11 +22,29 @@ export function supabase(): SupabaseClient | null {
     hasKey: !!anonKey
   });
 
+  // Clear any corrupted auth state
+  try {
+    const authKey = "fitfi.supabase.auth";
+    const stored = localStorage.getItem(authKey);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // If auth state is invalid, clear it
+      if (!parsed || typeof parsed !== 'object') {
+        console.warn('⚠️ [Supabase] Clearing corrupted auth state');
+        localStorage.removeItem(authKey);
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ [Supabase] Error checking auth state:', e);
+    localStorage.removeItem("fitfi.supabase.auth");
+  }
+
   _client = createClient(url, anonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       storageKey: "fitfi.supabase.auth",
+      detectSessionInUrl: false, // Prevent hanging on URL-based session recovery
     },
   });
 

@@ -167,7 +167,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       console.log('🔐 [UserContext] Attempting login for:', email);
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      // Create timeout promise (30 seconds - generous for slow connections)
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('LOGIN_TIMEOUT')), 30000);
+      });
+
+      // Race login against timeout
+      const result = await Promise.race([
+        sb.auth.signInWithPassword({ email, password }),
+        timeoutPromise
+      ]);
+
+      const { data, error } = result;
 
       if (error) {
         console.error('❌ [UserContext] Login failed:', error.message);
@@ -182,6 +194,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     } catch (error) {
       console.error('❌ [UserContext] Login exception:', error);
+      if (error instanceof Error && error.message === 'LOGIN_TIMEOUT') {
+        console.error('⏰ [UserContext] Login timed out - possible network/Supabase issue');
+      }
       return false;
     }
   };
