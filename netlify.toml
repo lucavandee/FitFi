@@ -1,11 +1,12 @@
 [build]
-  publish = "dist"
-  functions = "netlify/functions"
+publish = "dist"
+functions = "netlify/functions"
+command = "npx vite build"
 
 [functions]
-  node_bundler = "esbuild"
+node_bundler = "esbuild"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
