@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users } from "lucide-react";
+import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users, FileText, Heart } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -163,18 +163,30 @@ export default function LandingPage() {
         <div className="ff-container relative">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">10K+</div>
               <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Style Reports</div>
             </div>
             <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">2 min</div>
               <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Gemiddelde tijd</div>
             </div>
             <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">95%</div>
               <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Tevreden</div>
             </div>
             <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
               <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">100%</div>
               <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Privacy-first</div>
             </div>
