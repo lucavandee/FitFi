@@ -5,27 +5,27 @@ const TrustBelt: React.FC = () => {
   const trustItems = [
     {
       icon: Shield,
-      text: '100% Privacy-first'
+      text: '100% Privacy'
     },
     {
       icon: Lock,
-      text: 'Veilige gegevensverwerking'
-    },
-    {
-      icon: Award,
-      text: 'AI-gedreven technologie'
-    },
-    {
-      icon: Users,
-      text: '25.000+ tevreden gebruikers'
+      text: 'Geen tracking'
     },
     {
       icon: Clock,
-      text: 'Binnen 2 minuten klaar'
+      text: '2 minuten klaar'
     },
     {
       icon: Heart,
-      text: 'Volledig gratis'
+      text: 'Echt gratis'
+    },
+    {
+      icon: Award,
+      text: 'Direct toepasbaar'
+    },
+    {
+      icon: Users,
+      text: 'Voor iedereen'
     }
   ];
 

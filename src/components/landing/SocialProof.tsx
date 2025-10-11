@@ -1,26 +1,26 @@
 import React from 'react';
-import { Star, Users, Heart, Sparkles } from 'lucide-react';
+import { Star, Clock, Heart, Sparkles, ShoppingBag } from 'lucide-react';
 
 const SocialProof: React.FC = () => {
   const testimonials = [
     {
       name: 'Emma van der Berg',
       role: 'Marketing Manager',
-      content: 'Eindelijk weet ik welke kleuren me echt goed staan! Het rapport was zo duidelijk en de outfits zijn perfect voor mijn werk.',
+      content: 'Ik wist niet dat groen me zo goed zou staan. Het rapport was helder en de outfit-voorbeelden waren precies mijn stijl.',
       rating: 5,
       avatar: '👩🏼‍💼'
     },
     {
       name: 'Lars Janssen',
       role: 'Student',
-      content: 'Als man had ik geen idee waar ik moest beginnen met stijl. FitFi heeft me echt geholpen om mijn eigen stijl te vinden.',
+      content: 'Had geen idee waar te beginnen. Nu weet ik welke kleuren en stijlen bij me passen. Scheelt enorm bij het shoppen.',
       rating: 5,
       avatar: '👨🏻‍🎓'
     },
     {
       name: 'Sophie Bakker',
       role: 'Ondernemer',
-      content: 'De AI-analyse was verrassend accuraat. Ik herken mezelf helemaal in het stijlarchetype en de outfit-suggesties zijn spot-on.',
+      content: 'Het archetype klopte meteen. De outfit-combinaties waren precies wat ik zelf zou kiezen, maar dan beter.',
       rating: 5,
       avatar: '👩🏽‍💻'
     }
@@ -28,18 +28,18 @@ const SocialProof: React.FC = () => {
 
   const stats = [
     {
-      number: '25.000+',
-      label: 'Tevreden gebruikers',
-      icon: Users
+      number: '2 min',
+      label: 'Van start tot rapport',
+      icon: Clock
     },
     {
-      number: '4.9/5',
-      label: 'Gemiddelde beoordeling',
-      icon: Star
+      number: '6-12',
+      label: 'Complete outfits',
+      icon: ShoppingBag
     },
     {
-      number: '98%',
-      label: 'Zou FitFi aanbevelen',
+      number: '100%',
+      label: 'Gratis te gebruiken',
       icon: Heart
     }
   ];
@@ -55,14 +55,14 @@ const SocialProof: React.FC = () => {
           </div>
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-6">
-            Duizenden mensen vonden{' '}
+            Zie wat anderen{' '}
             <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
-              hun perfecte stijl
+              over FitFi zeggen
             </span>
           </h2>
           
           <p className="text-lg text-[var(--color-text-muted)] max-w-3xl mx-auto leading-relaxed">
-            Ontdek waarom zoveel mensen FitFi vertrouwen voor hun stijladvies.
+            Echte ervaringen van mensen die FitFi hebben gebruikt.
           </p>
         </div>
 

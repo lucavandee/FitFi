@@ -22,11 +22,11 @@ export function ClosingCTA() {
         {/* Headline - Properly centered */}
         <div className="space-y-6 mb-12">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Klaar om je stijl te ontdekken?
+            Ontdek wat jouw stijl is
           </h2>
           
           <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-            Begin vandaag nog met je persoonlijke stijlreis. Binnen 2 minuten weet je precies welke kleding bij jou past.
+            8 vragen, 2 minuten. Direct je rapport met kleuren, stijl en concrete outfits die je kunt samenstellen.
           </p>
         </div>
 
@@ -36,7 +36,7 @@ export function ClosingCTA() {
             size="lg" 
             className="bg-white text-[var(--ff-color-primary-700)] hover:bg-white/90 px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            Start gratis stijltest
+            Start nu
             <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
           </Button>
           
@@ -45,15 +45,14 @@ export function ClosingCTA() {
             size="lg"
             className="border border-white/30 hover:border-white/50 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
           >
-            Bekijk voorbeelden
+            Zie voorbeeldrapport
           </Button>
         </div>
 
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-8 mt-12 text-white/80">
-          <div className="text-sm">✓ 100% gratis</div>
-          <div className="text-sm">✓ Geen account vereist</div>
-          <div className="text-sm">✓ Privacy gegarandeerd</div>
+          <div className="text-sm">✓ Gratis</div>
+          <div className="text-sm">✓ Geen account nodig</div>
           <div className="text-sm">✓ Direct resultaat</div>
         </div>
       </div>
