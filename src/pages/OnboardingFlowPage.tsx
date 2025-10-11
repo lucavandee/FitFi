@@ -7,6 +7,9 @@ import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
 import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
+import { VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStep";
+import { CalibrationStep } from "@/components/quiz/CalibrationStep";
+import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -19,17 +22,31 @@ type QuizAnswers = {
   sizes?: any;
   colorAnalysis?: any;
   photoUrl?: string;
+  visualPreferencesCompleted?: boolean;
+  calibrationCompleted?: boolean;
 };
+
+type QuizPhase = 'questions' | 'swipes' | 'calibration';
 
 export default function OnboardingFlowPage() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phase, setPhase] = useState<QuizPhase>('questions');
+  const [sessionId] = useState(() => localStorage.getItem('ff_session_id') || crypto.randomUUID());
 
-  const totalSteps = quizSteps.length;
+  const totalSteps = quizSteps.length + 2;
   const step = quizSteps[currentStep];
-  const progress = ((currentStep + 1) / totalSteps) * 100;
+
+  const getProgress = () => {
+    if (phase === 'questions') return ((currentStep + 1) / totalSteps) * 100;
+    if (phase === 'swipes') return ((quizSteps.length + 0.5) / totalSteps) * 100;
+    if (phase === 'calibration') return ((quizSteps.length + 1.5) / totalSteps) * 100;
+    return 100;
+  };
+
+  const progress = getProgress();
 
   const handleAnswer = (field: string, value: any) => {
     setAnswers(prev => ({ ...prev, [field]: value }));
@@ -55,15 +72,34 @@ export default function OnboardingFlowPage() {
   };
 
   const handleNext = () => {
-    if (currentStep < totalSteps - 1) {
+    if (currentStep < quizSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
+    } else if (phase === 'questions') {
+      setPhase('swipes');
+    } else if (phase === 'swipes') {
+      setPhase('calibration');
     } else {
       handleSubmit();
     }
   };
 
+  const handleSwipesComplete = () => {
+    setAnswers(prev => ({ ...prev, visualPreferencesCompleted: true }));
+    setPhase('calibration');
+  };
+
+  const handleCalibrationComplete = () => {
+    setAnswers(prev => ({ ...prev, calibrationCompleted: true }));
+    handleSubmit();
+  };
+
   const handleBack = () => {
-    if (currentStep > 0) {
+    if (phase === 'swipes') {
+      setPhase('questions');
+      setCurrentStep(quizSteps.length - 1);
+    } else if (phase === 'calibration') {
+      setPhase('swipes');
+    } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
   };
@@ -121,15 +157,15 @@ export default function OnboardingFlowPage() {
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(result.archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
+      localStorage.setItem('ff_session_id', sessionId);
 
       const client = supabase();
       let syncSuccess = false;
+      let userId: string | null = null;
 
       if (client) {
-        const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
-        localStorage.setItem('ff_session_id', sessionId);
-
         const { data: { user } } = await client.auth.getUser();
+        userId = user?.id || null;
 
         const savePromise = saveToSupabase(client, user, sessionId, result);
 
@@ -143,6 +179,15 @@ export default function OnboardingFlowPage() {
         );
 
         syncSuccess = await savePromise;
+
+        if (syncSuccess && answers.visualPreferencesCompleted && answers.calibrationCompleted) {
+          try {
+            await EmbeddingService.lockEmbedding(userId, sessionId);
+            console.log('✅ [OnboardingFlow] Embedding locked successfully!');
+          } catch (lockError) {
+            console.error('⚠️ [OnboardingFlow] Failed to lock embedding:', lockError);
+          }
+        }
       }
 
       localStorage.setItem('ff_sync_status', syncSuccess ? 'synced' : 'pending');
@@ -158,6 +203,70 @@ export default function OnboardingFlowPage() {
     }
   };
 
+  if (phase === 'swipes') {
+    return (
+      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+        <Helmet>
+          <title>Jouw Visuele Voorkeuren – FitFi</title>
+          <meta name="description" content="Swipe door outfits om je stijl te verfijnen" />
+        </Helmet>
+
+        <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
+          <div className="ff-container py-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Visuele Voorkeuren</span>
+              <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
+            </div>
+            <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <VisualPreferenceStep
+          sessionId={sessionId}
+          onComplete={handleSwipesComplete}
+          onBack={handleBack}
+        />
+      </main>
+    );
+  }
+
+  if (phase === 'calibration') {
+    return (
+      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+        <Helmet>
+          <title>Verfijn Je Profiel – FitFi</title>
+          <meta name="description" content="Rate outfits om je aanbevelingen te perfectioneren" />
+        </Helmet>
+
+        <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
+          <div className="ff-container py-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Outfit Calibratie</span>
+              <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
+            </div>
+            <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <CalibrationStep
+          sessionId={sessionId}
+          onComplete={handleCalibrationComplete}
+          onBack={handleBack}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
@@ -169,7 +278,7 @@ export default function OnboardingFlowPage() {
       <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
         <div className="ff-container py-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Stap {currentStep + 1} van {totalSteps}</span>
+            <span className="text-sm font-medium">Stap {currentStep + 1} van {quizSteps.length}</span>
             <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
           </div>
           <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
 import { Sparkles, ArrowRight } from 'lucide-react';
-import { useAuth } from '@/context/UserContext';
+import { useUser } from '@/context/UserContext';
 import { CalibrationService } from '@/services/visualPreferences/calibrationService';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
@@ -16,7 +16,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
-  const { user } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     loadCalibrationOutfits();

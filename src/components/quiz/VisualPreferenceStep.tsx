@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
 import { Sparkles } from 'lucide-react';
-import { useAuth } from '@/context/UserContext';
+import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
 
@@ -17,7 +17,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
   const [novaInsight, setNovaInsight] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
   useEffect(() => {
