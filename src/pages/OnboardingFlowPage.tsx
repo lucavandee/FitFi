@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "lucide-react";
 import { quizSteps } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
@@ -205,33 +206,54 @@ export default function OnboardingFlowPage() {
 
   if (phase === 'swipes') {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+      <motion.main
+        key="swipes-phase"
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -50 }}
+        transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+        className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]"
+      >
         <Helmet>
           <title>Jouw Visuele Voorkeuren – FitFi</title>
           <meta name="description" content="Swipe door outfits om je stijl te verfijnen" />
         </Helmet>
 
-        <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)] backdrop-blur-sm"
+        >
           <div className="ff-container py-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Visuele Voorkeuren</span>
-              <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
+              <motion.span
+                key={progress}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-sm text-gray-600"
+              >
+                {Math.round(progress)}% compleet
+              </motion.span>
             </div>
             <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
+              <motion.div
+                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <VisualPreferenceStep
           sessionId={sessionId}
           onComplete={handleSwipesComplete}
           onBack={handleBack}
         />
-      </main>
+      </motion.main>
     );
   }
 

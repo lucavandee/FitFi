@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
@@ -105,12 +106,30 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[600px]">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="flex items-center justify-center min-h-[600px]"
+      >
         <div className="text-center">
-          <div className="inline-block w-12 h-12 border-4 border-[var(--color-border)] border-t-[var(--ff-color-primary-700)] rounded-full animate-spin" />
-          <p className="mt-4 text-[var(--color-muted)]">Beelden laden...</p>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            className="inline-block"
+          >
+            <Loader2 className="w-12 h-12 text-[var(--ff-color-primary-700)]" />
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-4 text-[var(--color-muted)]"
+          >
+            Beelden laden...
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -132,22 +151,45 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
   const progress = ((swipeCount) / moodPhotos.length) * 100;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-8">
-      {novaInsight && (
-        <NovaBubble
-          message={novaInsight}
-          onDismiss={() => setNovaInsight(null)}
-          autoHideDuration={5000}
-        />
-      )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-lg mx-auto px-4 py-8"
+    >
+      <AnimatePresence>
+        {novaInsight && (
+          <NovaBubble
+            message={novaInsight}
+            onDismiss={() => setNovaInsight(null)}
+            autoHideDuration={5000}
+          />
+        )}
+      </AnimatePresence>
 
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-4">
-          <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-center mb-8"
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-4"
+        >
+          <motion.div
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+          >
+            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+          </motion.div>
           <span className="text-sm font-medium text-[var(--color-text)]">
             Visuele Voorkeuren
           </span>
-        </div>
+        </motion.div>
 
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2">
           Welke stijl spreekt je aan?
@@ -158,30 +200,44 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
         <div className="mt-6 max-w-xs mx-auto">
           <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[var(--ff-color-primary-700)] transition-all duration-300"
-              style={{ width: `${progress}%` }}
+            <motion.div
+              className="h-full bg-[var(--ff-color-primary-700)]"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
             />
           </div>
-          <p className="text-xs text-[var(--color-muted)] mt-2">
+          <motion.p
+            key={swipeCount}
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-xs text-[var(--color-muted)] mt-2"
+          >
             {swipeCount} van {moodPhotos.length}
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="relative h-[620px]">
-        {currentPhoto && (
-          <SwipeCard
-            key={currentPhoto.id}
-            imageUrl={currentPhoto.image_url}
-            onSwipe={handleSwipe}
-            index={currentIndex}
-            total={moodPhotos.length}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {currentPhoto && (
+            <SwipeCard
+              key={currentPhoto.id}
+              imageUrl={currentPhoto.image_url}
+              onSwipe={handleSwipe}
+              index={currentIndex}
+              total={moodPhotos.length}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
-      <div className="text-center mt-8 space-y-3">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="text-center mt-8 space-y-3"
+      >
         <div className="flex items-center justify-center gap-6 text-sm text-[var(--color-muted)]">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full border-2 border-red-400 flex items-center justify-center">
@@ -199,7 +255,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
         <p className="text-xs text-[var(--color-muted)]">
           Of gebruik de knoppen onderaan
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

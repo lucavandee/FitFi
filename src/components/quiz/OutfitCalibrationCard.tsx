@@ -27,8 +27,10 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+      whileHover={{ y: -4, boxShadow: 'var(--shadow-lg)' }}
       className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] overflow-hidden shadow-[var(--shadow-soft)]"
     >
       <div className="grid md:grid-cols-2 gap-6 p-6">
@@ -116,44 +118,73 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
           </div>
 
           <div className="space-y-3">
-            <button
+            <motion.button
               onClick={() => handleFeedback('spot_on')}
               disabled={disabled || selectedFeedback !== null}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              animate={
+                selectedFeedback === 'spot_on'
+                  ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                  : {}
+              }
               className={`w-full py-3 px-4 rounded-[var(--radius-xl)] font-semibold transition-all flex items-center justify-center gap-2 ${
                 selectedFeedback === 'spot_on'
-                  ? 'bg-green-500 text-white'
+                  ? 'bg-green-500 text-white shadow-lg'
                   : 'bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-green-500 hover:text-green-600'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              <Check className="w-5 h-5" />
+              <motion.div
+                animate={
+                  selectedFeedback === 'spot_on'
+                    ? { rotate: [0, 360], transition: { duration: 0.5 } }
+                    : {}
+                }
+              >
+                <Check className="w-5 h-5" />
+              </motion.div>
               Spot on!
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               onClick={() => handleFeedback('maybe')}
               disabled={disabled || selectedFeedback !== null}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              animate={
+                selectedFeedback === 'maybe'
+                  ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                  : {}
+              }
               className={`w-full py-2 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
-                  ? 'bg-[var(--ff-color-primary-600)] text-white'
+                  ? 'bg-[var(--ff-color-primary-600)] text-white shadow-lg'
                   : 'bg-transparent text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" />
               Misschien
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               onClick={() => handleFeedback('not_for_me')}
               disabled={disabled || selectedFeedback !== null}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              animate={
+                selectedFeedback === 'not_for_me'
+                  ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                  : {}
+              }
               className={`w-full py-2 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'not_for_me'
-                  ? 'bg-red-500 text-white'
+                  ? 'bg-red-500 text-white shadow-lg'
                   : 'bg-transparent text-[var(--color-muted)] border border-[var(--color-border)] hover:border-red-500 hover:text-red-600'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <X className="w-4 h-4" />
               Lijkt me niks
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
@@ -163,12 +194,17 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
 
 function OutfitItem({ name, brand, price }: { name: string; brand: string; price: number }) {
   return (
-    <div className="flex items-start justify-between text-sm">
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-start justify-between text-sm"
+    >
       <div className="flex-1">
         <div className="font-medium text-[var(--color-text)]">{name}</div>
         <div className="text-[var(--color-muted)] text-xs mt-0.5">{brand}</div>
       </div>
       <div className="text-[var(--color-text)] font-medium">€{price}</div>
-    </div>
+    </motion.div>
   );
 }
