@@ -34,19 +34,19 @@ export default function LandingPage() {
         <div className="ff-container relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-            <div className="space-y-8 text-center lg:text-left">
+            <div className="space-y-8 text-center lg:text-left p-8 bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] shadow-sm">
                 <span className="w-2 h-2 bg-[var(--ff-color-primary-600)] rounded-full animate-pulse" />
                 GRATIS AI STYLE REPORT
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold text-[#1E2333] leading-[1.1]">
-                Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> over je zegt
+              <h1 className="text-5xl lg:text-7xl font-bold text-[#111827] leading-[1.1]" style={{color: '#111827'}}>
+                Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]" style={{color: '#8F7459'}}>stijl</span> over je zegt
               </h1>
 
-              <p className="text-xl lg:text-2xl text-[#374151] max-w-2xl leading-relaxed">
+              <p className="text-xl lg:text-2xl text-[#374151] max-w-2xl leading-relaxed" style={{color: '#374151'}}>
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
-                <strong className="text-[#1E2333] font-semibold"> Direct toepasbaar.</strong>
+                <strong className="text-[#111827] font-semibold" style={{color: '#111827'}}> Direct toepasbaar.</strong>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
