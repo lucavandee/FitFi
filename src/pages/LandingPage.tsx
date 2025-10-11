@@ -40,13 +40,13 @@ export default function LandingPage() {
                 GRATIS AI STYLE REPORT
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold text-[var(--color-text)] leading-[1.1]">
+              <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-[1.1]">
                 Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> over je zegt
               </h1>
 
-              <p className="text-xl lg:text-2xl text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
+              <p className="text-xl lg:text-2xl text-gray-700 max-w-2xl leading-relaxed">
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
-                <strong className="text-[var(--color-text)] font-semibold"> Direct toepasbaar.</strong>
+                <strong className="text-gray-900 font-semibold"> Direct toepasbaar.</strong>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -64,7 +64,7 @@ export default function LandingPage() {
                 <NavLink
                   to="/results"
                   data-event="cta_view_example_hero"
-                  className="px-8 py-4 bg-white text-[var(--color-text)] font-bold border-2 border-[var(--color-border)] rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
+                  className="px-8 py-4 bg-white text-gray-900 font-bold border-2 border-gray-300 rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
                 >
                   Bekijk voorbeeld
                 </NavLink>
@@ -75,19 +75,19 @@ export default function LandingPage() {
                   <div className="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center shadow-xl">
                     <Check className="w-7 h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-[var(--color-text)]">100% Gratis</div>
+                  <div className="text-sm font-semibold text-gray-900">100% Gratis</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
                   <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-xl">
                     <Shield className="w-7 h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-[var(--color-text)]">Privacy-first</div>
+                  <div className="text-sm font-semibold text-gray-900">Privacy-first</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
                   <div className="w-14 h-14 rounded-2xl bg-orange-600 flex items-center justify-center shadow-xl">
                     <Clock className="w-7 h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-[var(--color-text)]">2 min setup</div>
+                  <div className="text-sm font-semibold text-gray-900">2 min setup</div>
                 </div>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function LandingPage() {
                         </div>
                         <div>
                           <div className="font-semibold text-xs text-[var(--color-text)]">Archetype</div>
-                          <div className="text-xs text-[var(--color-text-muted)]">Modern Minimal</div>
+                          <div className="text-xs text-gray-600">Modern Minimal</div>
                         </div>
                       </div>
                     </div>
@@ -133,7 +133,7 @@ export default function LandingPage() {
                         </div>
                         <div>
                           <div className="font-semibold text-xs text-[var(--color-text)]">AI Powered</div>
-                          <div className="text-xs text-[var(--color-text-muted)]">Smart matching</div>
+                          <div className="text-xs text-gray-600">Smart matching</div>
                         </div>
                       </div>
                     </div>
@@ -145,7 +145,7 @@ export default function LandingPage() {
                         </div>
                         <div>
                           <div className="font-semibold text-xs text-[var(--color-text)]">Outfits</div>
-                          <div className="text-xs text-[var(--color-text-muted)]">6-12 looks</div>
+                          <div className="text-xs text-gray-600">6-12 looks</div>
                         </div>
                       </div>
                     </div>
@@ -213,7 +213,7 @@ export default function LandingPage() {
                 <Clock className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">2 minuten, klaar</h3>
-              <p className="text-[var(--color-text-muted)] leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Geen eindeloze vragenlijsten. Gewoon de basics en je krijgt direct resultaat. We vragen alleen wat echt nodig is: lichaamsbouw, voorkeuren en gelegenheid.
               </p>
             </div>
@@ -223,7 +223,7 @@ export default function LandingPage() {
                 <Target className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Uitleg erbij</h3>
-              <p className="text-[var(--color-text-muted)] leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Elk outfit komt met reden waarom het bij je past. Geen willekeurige suggesties, maar uitleg over kleuren, silhouetten en waarom iets werkt voor jouw lichaamsbouw.
               </p>
             </div>
@@ -233,7 +233,7 @@ export default function LandingPage() {
                 <TrendingUp className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Direct shopbaar</h3>
-              <p className="text-[var(--color-text-muted)] leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Alle items zijn beschikbaar bij bekende Nederlandse webshops. Links naar Zalando, ASOS, H&M en andere shops die je kent.
               </p>
             </div>
@@ -243,7 +243,7 @@ export default function LandingPage() {
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Privacy-first (EU)</h3>
-              <p className="text-[var(--color-text-muted)] leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Alleen wat nodig is, geen doorverkoop van data. We zijn helder over data: minimaal verzamelen, EU-toon & beleid.
               </p>
             </div>
@@ -274,7 +274,7 @@ export default function LandingPage() {
                   <p className="text-[var(--color-text)] leading-relaxed mb-3">
                     "Eindelijk stijladvies dat niet overdreven is. Praktisch en echt bruikbaar."
                   </p>
-                  <div className="text-sm text-[var(--color-text-muted)] font-medium">— Marieke, 32</div>
+                  <div className="text-sm text-gray-600 font-medium">— Marieke, 32</div>
                 </div>
               </div>
             </div>
@@ -288,7 +288,7 @@ export default function LandingPage() {
                   <p className="text-[var(--color-text)] leading-relaxed mb-3">
                     "De uitleg waarom iets bij me past was echt eye-opening. Geen giswerk meer."
                   </p>
-                  <div className="text-sm text-[var(--color-text-muted)] font-medium">— Thomas, 28</div>
+                  <div className="text-sm text-gray-600 font-medium">— Thomas, 28</div>
                 </div>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function LandingPage() {
                 1
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Korte vragenlijst</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Lichaamsbouw, voorkeuren en waar je de kleding draagt. 2 minuten max.
               </p>
             </div>
@@ -322,7 +322,7 @@ export default function LandingPage() {
                 2
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">AI analyseert</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Onze AI bepaalt je stijlarchetype en matcht dit met beschikbare items.
               </p>
             </div>
@@ -332,7 +332,7 @@ export default function LandingPage() {
                 3
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Persoonlijk rapport</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Je krijgt 6-12 complete outfits met uitleg en directe shoplinks.
               </p>
             </div>
@@ -342,7 +342,7 @@ export default function LandingPage() {
                 4
               </div>
               <h3 className="text-xl font-bold text-[var(--color-text)] mb-3">Shop & draag</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Klik door naar bekende webshops en bouw je garderobe stap voor stap op.
               </p>
             </div>
@@ -363,19 +363,19 @@ export default function LandingPage() {
           <div className="space-y-4">
             <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Is het echt gratis?</summary>
-              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">Ja, het basisrapport is volledig gratis. Je krijgt je stijlarchetype, kleurpalet en 6-8 outfits zonder kosten.</p>
+              <p className="mt-4 text-gray-600 leading-relaxed">Ja, het basisrapport is volledig gratis. Je krijgt je stijlarchetype, kleurpalet en 6-8 outfits zonder kosten.</p>
             </details>
             <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Hoe accuraat is de AI?</summary>
-              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">Onze AI is getraind op duizenden stijlcombinaties en houdt rekening met lichaamsbouw, kleurtype en persoonlijke voorkeuren. De meeste gebruikers zijn verrast door de accuratesse.</p>
+              <p className="mt-4 text-gray-600 leading-relaxed">Onze AI is getraind op duizenden stijlcombinaties en houdt rekening met lichaamsbouw, kleurtype en persoonlijke voorkeuren. De meeste gebruikers zijn verrast door de accuratesse.</p>
             </details>
             <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Welke winkels worden gebruikt?</summary>
-              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">We werken samen met bekende Nederlandse webshops zoals Zalando, ASOS, H&M, en anderen. Alle items zijn beschikbaar en leverbaar in Nederland.</p>
+              <p className="mt-4 text-gray-600 leading-relaxed">We werken samen met bekende Nederlandse webshops zoals Zalando, ASOS, H&M, en anderen. Alle items zijn beschikbaar en leverbaar in Nederland.</p>
             </details>
             <details className="bg-white border border-[var(--color-border)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
               <summary className="font-semibold text-lg text-[var(--color-text)] cursor-pointer">Wat gebeurt er met mijn data?</summary>
-              <p className="mt-4 text-[var(--color-text-muted)] leading-relaxed">We verzamelen alleen wat nodig is voor je stijladvies. Je data wordt niet doorverkocht en we houden ons aan alle EU privacy-regels. <NavLink to="/privacy" className="text-[var(--ff-color-primary-600)] hover:underline font-medium">Lees ons privacybeleid</NavLink>.</p>
+              <p className="mt-4 text-gray-600 leading-relaxed">We verzamelen alleen wat nodig is voor je stijladvies. Je data wordt niet doorverkocht en we houden ons aan alle EU privacy-regels. <NavLink to="/privacy" className="text-[var(--ff-color-primary-600)] hover:underline font-medium">Lees ons privacybeleid</NavLink>.</p>
             </details>
           </div>
         </div>

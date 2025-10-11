@@ -152,7 +152,7 @@ export default function FAQPage() {
               Veelgestelde
               <span className="block text-[var(--ff-color-primary-600)]">Vragen</span>
             </h1>
-            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               Kort, duidelijk en premium — zonder ruis. Staat je vraag er niet tussen? Laat het ons weten.
             </p>
           </div>

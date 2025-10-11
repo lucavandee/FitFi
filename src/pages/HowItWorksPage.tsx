@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
               Zo werkt jouw
               <span className="block text-[var(--ff-color-primary-600)]">AI Style Report</span>
             </h1>
-            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               In 3 eenvoudige stappen van persoonlijkheidsquiz naar gepersonaliseerde outfits. Geen gedoe, wel resultaat.
             </p>
           </div>
@@ -45,11 +45,11 @@ export default function HowItWorksPage() {
                 <div className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
                   <Target className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
                 </div>
-                <div className="text-4xl font-bold text-[var(--color-text-muted)]">01</div>
+                <div className="text-4xl font-bold text-gray-600">01</div>
               </div>
 
               <h3 className="text-2xl font-bold mb-3">Persoonlijkheidsquiz</h3>
-              <p className="text-[var(--color-text-muted)] mb-6">
+              <p className="text-gray-600 mb-6">
                 Beantwoord 8-12 vragen over je lifestyle, voorkeuren en persoonlijkheid.
                 Onze AI analyseert je antwoorden om je unieke stijlprofiel te bepalen.
               </p>
@@ -76,11 +76,11 @@ export default function HowItWorksPage() {
                 <div className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
                   <Zap className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
                 </div>
-                <div className="text-4xl font-bold text-[var(--color-text-muted)]">02</div>
+                <div className="text-4xl font-bold text-gray-600">02</div>
               </div>
 
               <h3 className="text-2xl font-bold mb-3">AI Analyse</h3>
-              <p className="text-[var(--color-text-muted)] mb-6">
+              <p className="text-gray-600 mb-6">
                 Onze geavanceerde AI combineert je antwoorden met stijldata van duizenden outfits
                 om jouw perfecte stijlarchetype en kleurenpalet te bepalen.
               </p>
@@ -107,11 +107,11 @@ export default function HowItWorksPage() {
                 <div className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
                   <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
                 </div>
-                <div className="text-4xl font-bold text-[var(--color-text-muted)]">03</div>
+                <div className="text-4xl font-bold text-gray-600">03</div>
               </div>
 
               <h3 className="text-2xl font-bold mb-3">Jouw Style Report</h3>
-              <p className="text-[var(--color-text-muted)] mb-6">
+              <p className="text-gray-600 mb-6">
                 Ontvang direct je persoonlijke rapport met stijlarchetype, kleurenpalet,
                 6-12 complete outfits en uitleg waarom elk item bij je past.
               </p>
@@ -142,7 +142,7 @@ export default function HowItWorksPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Wat krijg je in je <span className="text-[var(--ff-color-primary-600)]">Style Report</span>?
             </h2>
-            <p className="text-xl text-[var(--color-text-muted)]">
+            <p className="text-xl text-gray-600">
               Een compleet overzicht van jouw unieke stijl en hoe je die kunt toepassen
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function HowItWorksPage() {
                 <Target className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-2">Stijlarchetype</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Je unieke stijlpersoonlijkheid met uitgebreide uitleg over wat dit betekent voor je kledingkeuzes.
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function HowItWorksPage() {
             <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] mb-4"></div>
               <h3 className="text-xl font-bold mb-2">Kleurenpalet</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Jouw perfecte kleuren die je huid laten stralen en je persoonlijkheid versterken.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function HowItWorksPage() {
                 <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-2">Complete Outfits</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 6-12 volledige looks voor verschillende gelegenheden, van casual tot formeel.
               </p>
             </div>
@@ -181,7 +181,7 @@ export default function HowItWorksPage() {
                 <CheckCircle className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-2">Shoplinks</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Directe links naar alle items zodat je meteen kunt shoppen wat bij je past.
               </p>
             </div>
@@ -191,7 +191,7 @@ export default function HowItWorksPage() {
                 <Zap className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-2">Styling Tips</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Praktische tips over hoe je items combineert en je stijl verder ontwikkelt.
               </p>
             </div>
@@ -201,7 +201,7 @@ export default function HowItWorksPage() {
                 <Shield className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-2">Privacy-First</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Geen foto's nodig, geen persoonlijke data opgeslagen. Jouw privacy staat voorop.
               </p>
             </div>
@@ -216,7 +216,7 @@ export default function HowItWorksPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Klaar voor jouw <span className="text-[var(--ff-color-primary-600)]">Style Report</span>?
             </h2>
-            <p className="text-xl text-[var(--color-text-muted)] mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Start nu en ontdek binnen 2 minuten welke stijl perfect bij je past.
             </p>
 

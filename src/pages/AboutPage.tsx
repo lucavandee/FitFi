@@ -28,7 +28,7 @@ export default function AboutPage() {
               Over
               <span className="block text-[var(--ff-color-primary-600)]">FitFi</span>
             </h1>
-            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               FitFi helpt je betere kledingkeuzes te maken met AI. Geen hype, wel helderheid en rust in je stijl.
             </p>
           </div>
@@ -44,7 +44,7 @@ export default function AboutPage() {
                 <Target className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h2 className="text-3xl font-bold mb-4">Onze missie</h2>
-              <p className="text-[var(--color-text-muted)] text-lg leading-relaxed">
+              <p className="text-gray-600 text-lg leading-relaxed">
                 We maken stijl eenvoudig en persoonlijk. Met privacy-vriendelijke technologie en duidelijke keuzes,
                 zodat jij met minder moeite beter voor de dag komt.
               </p>
@@ -55,7 +55,7 @@ export default function AboutPage() {
                 <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h2 className="text-3xl font-bold mb-4">Onze principes</h2>
-              <ul className="space-y-3 text-[var(--color-text-muted)] text-lg">
+              <ul className="space-y-3 text-gray-600 text-lg">
                 <li className="flex items-start gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
                   <span>Rustig, precies en feitelijk</span>
@@ -81,7 +81,7 @@ export default function AboutPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Wat ons <span className="text-[var(--ff-color-primary-600)]">onderscheidt</span>
             </h2>
-            <p className="text-xl text-[var(--color-text-muted)]">
+            <p className="text-xl text-gray-600">
               Transparantie, privacy en focus op resultaat staan centraal in alles wat we doen
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 <Shield className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-3">EU-privacy</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Data-minimalistisch en helder over wat we doen. Jouw privacy staat voorop.
               </p>
             </div>
@@ -102,7 +102,7 @@ export default function AboutPage() {
                 <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-3">Design-tokens</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Consistent, snel en toegankelijk in elke view. Premium maar nooit overdone.
               </p>
             </div>
@@ -112,7 +112,7 @@ export default function AboutPage() {
                 <Target className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
               </div>
               <h3 className="text-xl font-bold mb-3">Focus op resultaat</h3>
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-gray-600">
                 Direct bruikbare outfits en keuzes, geen ruis. Binnen 2 minuten bruikbaar advies.
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function AboutPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Probeer FitFi <span className="text-[var(--ff-color-primary-600)]">vandaag</span>
             </h2>
-            <p className="text-xl text-[var(--color-text-muted)] mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Binnen 2 minuten een helder Style Report. Geen account nodig.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
