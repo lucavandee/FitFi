@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SwipeCard } from './SwipeCard';
+import { NovaBubble } from './NovaBubble';
 import { Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/UserContext';
-
-interface MoodPhoto {
-  id: string;
-  image_url: string;
-  style_tags: string[];
-  archetype_weights: Record<string, number>;
-}
+import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
+import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
 
 interface VisualPreferenceStepProps {
   onComplete: () => void;
@@ -20,7 +16,9 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
+  const [novaInsight, setNovaInsight] = useState<string | null>(null);
   const { user } = useAuth();
+  const analyzerRef = useRef(new SwipeAnalyzer());
 
   useEffect(() => {
     loadMoodPhotos();
@@ -50,7 +48,20 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
 
-    setSwipeCount(prev => prev + 1);
+    const newSwipeCount = swipeCount + 1;
+    setSwipeCount(newSwipeCount);
+
+    // Create swipe record
+    const swipeRecord: StyleSwipe = {
+      user_id: user?.id,
+      session_id: !user ? (sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID()) : undefined,
+      mood_photo_id: currentPhoto.id,
+      swipe_direction: direction,
+      response_time_ms: responseTimeMs
+    };
+
+    // Add to analyzer
+    analyzerRef.current.addSwipe(currentPhoto, swipeRecord);
 
     try {
       const { supabase } = await import('@/lib/supabase');
@@ -71,6 +82,14 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
       onSwipe?.(currentPhoto.id, direction);
     } catch (err) {
       console.error('Failed to save swipe:', err);
+    }
+
+    // Generate Nova insight
+    const insight = analyzerRef.current.generateInsight(newSwipeCount);
+    if (insight && insight.shouldShow) {
+      setTimeout(() => {
+        setNovaInsight(insight.message);
+      }, 600);
     }
 
     if (currentIndex < moodPhotos.length - 1) {
@@ -114,6 +133,14 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
   return (
     <div className="max-w-lg mx-auto px-4 py-8">
+      {novaInsight && (
+        <NovaBubble
+          message={novaInsight}
+          onDismiss={() => setNovaInsight(null)}
+          autoHideDuration={5000}
+        />
+      )}
+
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-4">
           <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />

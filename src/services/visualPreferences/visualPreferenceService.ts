@@ -26,6 +26,19 @@ export interface VisualPreferenceEmbedding {
   [archetype: string]: number;
 }
 
+export interface NovaSwipeInsight {
+  id?: string;
+  user_id?: string;
+  session_id?: string;
+  insight_message: string;
+  insight_trigger: 'color' | 'style' | 'speed' | 'pattern';
+  confidence: number;
+  shown_at_swipe_count: number;
+  dismissed_at?: string;
+  auto_hidden?: boolean;
+  created_at?: string;
+}
+
 export class VisualPreferenceService {
   static async getMoodPhotos(limit = 10): Promise<MoodPhoto[]> {
     const { data, error } = await supabase
@@ -200,5 +213,66 @@ export class VisualPreferenceService {
       rejects,
       avgResponseTime: Math.round(avgResponseTime)
     };
+  }
+
+  static async recordInsight(
+    insight: Omit<NovaSwipeInsight, 'id' | 'created_at'>
+  ): Promise<void> {
+    const { error } = await supabase
+      .from('nova_swipe_insights')
+      .insert(insight);
+
+    if (error) {
+      console.error('Failed to record insight:', error);
+      throw error;
+    }
+  }
+
+  static async dismissInsight(insightId: string): Promise<void> {
+    const { error } = await supabase
+      .from('nova_swipe_insights')
+      .update({
+        dismissed_at: new Date().toISOString()
+      })
+      .eq('id', insightId);
+
+    if (error) {
+      console.error('Failed to dismiss insight:', error);
+      throw error;
+    }
+  }
+
+  static async getInsightHistory(
+    userId?: string,
+    sessionId?: string
+  ): Promise<NovaSwipeInsight[]> {
+    const { data, error } = await supabase.rpc('get_user_insight_history', {
+      p_user_id: userId || null,
+      p_session_id: sessionId || null
+    });
+
+    if (error) {
+      console.error('Failed to fetch insight history:', error);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  static async getInsightEffectiveness(): Promise<Array<{
+    trigger_type: string;
+    total_shown: number;
+    manually_dismissed: number;
+    avg_confidence: number;
+    dismissal_rate: number;
+  }>> {
+    const { data, error } = await supabase.rpc('get_insight_effectiveness');
+
+    if (error) {
+      console.error('Failed to fetch insight effectiveness:', error);
+      return [];
+    }
+
+    return data || [];
   }
 }
