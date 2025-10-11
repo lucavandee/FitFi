@@ -22,6 +22,10 @@ export interface AIColorAnalysis {
   analyzed_by?: string;
 }
 
+export interface VisualPreferenceEmbedding {
+  [archetype: string]: number;
+}
+
 export interface NovaUserContext {
   userId?: string;
   sessionId?: string;
@@ -32,6 +36,8 @@ export interface NovaUserContext {
   stylePreferences?: string[];
   colorProfile: ColorProfile;
   aiColorAnalysis?: AIColorAnalysis;
+  visualPreferenceEmbedding?: VisualPreferenceEmbedding;
+  swipeSessionCompleted?: boolean;
   preferences: {
     occasions: string[];
     budget: { min: number; max: number };
@@ -113,6 +119,8 @@ function parseStyleProfile(data: any): NovaUserContext {
     stylePreferences: quizAnswers.stylePreferences || quizAnswers.goals || [],
     colorProfile,
     aiColorAnalysis,
+    visualPreferenceEmbedding: data.visual_preference_embedding || undefined,
+    swipeSessionCompleted: data.swipe_session_completed || false,
     preferences: {
       occasions: data.preferred_occasions || quizAnswers.occasions || quizAnswers.goals || ["casual", "work"],
       budget: data.budget_range || quizAnswers.budget || { min: 50, max: 150 },
@@ -172,7 +180,7 @@ function getSessionId(): string | null {
 }
 
 export function buildSystemPrompt(context: NovaUserContext): string {
-  const { archetype, colorProfile, preferences } = context;
+  const { archetype, colorProfile, preferences, visualPreferenceEmbedding } = context;
 
   const paletteDisplay = colorProfile.palette.slice(0, 6).join(", ");
   const occasionsDisplay = preferences.occasions.slice(0, 3).join(", ");
@@ -182,19 +190,29 @@ export function buildSystemPrompt(context: NovaUserContext): string {
     archetypeDesc += ` × ${context.secondaryArchetype}`;
   }
 
+  let visualPrefs = "";
+  if (visualPreferenceEmbedding && Object.keys(visualPreferenceEmbedding).length > 0) {
+    const topArchetypes = Object.entries(visualPreferenceEmbedding)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([arch, score]) => `${arch} (${Math.round(score)}%)`)
+      .join(", ");
+    visualPrefs = `\n- Visuele voorkeuren: ${topArchetypes}`;
+  }
+
   return `Je bent Nova, de persoonlijke style assistent van FitFi. Je helpt gebruikers met kleuradvies, outfit samenstelling en stijl tips.
 
 USER PROFIEL:
 - Stijl archetype: ${archetypeDesc}
 - Kleurtoon: ${colorProfile.undertone} undertone
-- Kleurenpalet: ${paletteDisplay}
+- Kleurenpalet: ${paletteDisplay}${visualPrefs}
 - Voorkeur gelegenheden: ${occasionsDisplay}
 - Budget: €${preferences.budget.min}-${preferences.budget.max} per item
 - Maten: ${preferences.sizes.tops} (tops), ${preferences.sizes.bottoms} (broeken), ${preferences.sizes.shoes} (schoenen)
 
 JOUW TAKEN:
 1. Geef kleuradvies gebaseerd op undertone + archetype
-2. Stel outfits samen die passen bij het profiel
+2. Stel outfits samen die passen bij het profiel EN visuele voorkeuren
 3. Leg WAAROM items werken voor deze persoon uit
 4. Wees kort, helder en menselijk (max 3-4 zinnen)
 
@@ -257,6 +275,11 @@ export function buildContextHeaders(context: NovaUserContext | null): Record<str
   // Add AI color analysis from photo (if available)
   if (context.aiColorAnalysis) {
     headers["x-fitfi-coloranalysis"] = JSON.stringify(context.aiColorAnalysis);
+  }
+
+  // Add visual preference embedding (from swipe data)
+  if (context.visualPreferenceEmbedding && Object.keys(context.visualPreferenceEmbedding).length > 0) {
+    headers["x-fitfi-visualprefs"] = JSON.stringify(context.visualPreferenceEmbedding);
   }
 
   return headers;

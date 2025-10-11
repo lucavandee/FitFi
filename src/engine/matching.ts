@@ -2,8 +2,13 @@ import { fusionScore } from '@/engine/archetypeFusion';
 import type { ArchetypeWeights, ProductLike } from '@/types/style';
 import { DEFAULT_ARCHETYPE_MIX } from '@/config/archetypes';
 
+export interface VisualPreferenceEmbedding {
+  [archetype: string]: number;
+}
+
 type MatchOptions = {
   archetypeMix?: ArchetypeWeights;
+  visualPreferenceEmbedding?: VisualPreferenceEmbedding;
   limit?: number;
   gender?: 'male' | 'female' | 'unisex';
   season?: string;
@@ -14,7 +19,12 @@ export function scoreAndFilterProducts(
   products: ProductLike[],
   opts: MatchOptions = {}
 ) {
-  const mix = Object.keys(opts.archetypeMix ?? {}).length ? (opts.archetypeMix as ArchetypeWeights) : DEFAULT_ARCHETYPE_MIX;
+  let mix = Object.keys(opts.archetypeMix ?? {}).length ? (opts.archetypeMix as ArchetypeWeights) : DEFAULT_ARCHETYPE_MIX;
+
+  // Apply visual preference embedding if available
+  if (opts.visualPreferenceEmbedding && Object.keys(opts.visualPreferenceEmbedding).length > 0) {
+    mix = blendArchetypesWithVisualPreferences(mix, opts.visualPreferenceEmbedding);
+  }
 
   const scored = products.map(p => {
     const detail = fusionScore(p, mix);
@@ -25,6 +35,28 @@ export function scoreAndFilterProducts(
   scored.sort((a, b) => (b.score - a.score) || ((a.product.price ?? 0) - (b.product.price ?? 0)));
 
   return scored;
+}
+
+function blendArchetypesWithVisualPreferences(
+  baseMix: ArchetypeWeights,
+  visualPrefs: VisualPreferenceEmbedding,
+  blendWeight = 0.4
+): ArchetypeWeights {
+  const blended: ArchetypeWeights = { ...baseMix };
+
+  // Normalize visual preferences to 0-1 scale
+  const maxVisualScore = Math.max(...Object.values(visualPrefs));
+  if (maxVisualScore === 0) return blended;
+
+  for (const [archetype, visualScore] of Object.entries(visualPrefs)) {
+    const normalizedVisual = visualScore / maxVisualScore;
+    const baseScore = blended[archetype] || 0;
+
+    // Blend: 60% base + 40% visual preference
+    blended[archetype] = baseScore * (1 - blendWeight) + normalizedVisual * blendWeight;
+  }
+
+  return blended;
 }
 
 export function buildOutfits(products: ProductLike[], opts: MatchOptions = {}) {
@@ -66,9 +98,11 @@ export function buildOutfits(products: ProductLike[], opts: MatchOptions = {}) {
 
 export function matchProducts(products: ProductLike[], userProfile: any) {
   const archetypeMix = userProfile?.archetypeMix ?? DEFAULT_ARCHETYPE_MIX;
-  
+  const visualPreferenceEmbedding = userProfile?.visualPreferenceEmbedding;
+
   return scoreAndFilterProducts(products, {
     archetypeMix,
+    visualPreferenceEmbedding,
     gender: userProfile?.gender,
     limit: 50
   });
