@@ -14,7 +14,7 @@ const HowItWorks: React.FC = () => {
       number: '02',
       icon: Sparkles,
       title: 'AI analyseert jouw stijl',
-      description: 'Onze geavanceerde AI verwerkt jouw antwoorden en creëert een uniek stijlprofiel voor jou.',
+      description: 'Onze AI verwerkt jouw antwoorden en creëert een uniek stijlprofiel voor jou.',
       gradient: 'from-teal-500 to-blue-500'
     },
     {
@@ -22,7 +22,7 @@ const HowItWorks: React.FC = () => {
       icon: ShoppingBag,
       title: 'Ontvang jouw rapport',
       description: 'Krijg direct je persoonlijke stijlrapport met kleuren, archetype en 6-12 complete outfits.',
-      gradient: 'from-blue-500 to-purple-500'
+      gradient: 'from-blue-500 to-cyan-500'
     }
   ];
 

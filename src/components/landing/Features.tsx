@@ -6,7 +6,7 @@ const Features: React.FC = () => {
     {
       icon: Sparkles,
       title: 'AI-gedreven stijlanalyse',
-      description: 'Onze geavanceerde AI analyseert jouw voorkeuren en creëert een uniek stijlprofiel dat perfect bij je past.',
+      description: 'Onze AI analyseert jouw voorkeuren en creëert een uniek stijlprofiel dat perfect bij je past.',
       gradient: 'from-emerald-500 to-teal-500'
     },
     {
@@ -19,25 +19,25 @@ const Features: React.FC = () => {
       icon: ShoppingBag,
       title: '6-12 complete outfits',
       description: 'Krijg direct draagbare outfit-combinaties die perfect aansluiten bij jouw stijl en levensstijl.',
-      gradient: 'from-blue-500 to-purple-500'
+      gradient: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Clock,
       title: 'Binnen 2 minuten klaar',
       description: 'Geen lange vragenlijsten. Onze slimme quiz geeft je snel en accuraat jouw stijlrapport.',
-      gradient: 'from-purple-500 to-pink-500'
+      gradient: 'from-cyan-500 to-emerald-500'
     },
     {
       icon: Shield,
       title: '100% privacy-first',
       description: 'Jouw gegevens blijven privé. Wij verkopen niets door en respecteren jouw privacy volledig.',
-      gradient: 'from-pink-500 to-rose-500'
+      gradient: 'from-emerald-500 to-teal-500'
     },
     {
       icon: Heart,
       title: 'Volledig gratis',
       description: 'Geen verborgen kosten, geen abonnementen. Krijg je complete stijlrapport helemaal gratis.',
-      gradient: 'from-rose-500 to-emerald-500'
+      gradient: 'from-teal-500 to-blue-500'
     }
   ];
 

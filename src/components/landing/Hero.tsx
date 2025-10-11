@@ -36,7 +36,7 @@ export function Hero() {
               
               <p className="text-lg sm:text-xl text-[var(--ff-color-text-secondary)] max-w-2xl">
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, 
-                kleuren en 6–12 outfits. <strong>Rustig, duidelijk en zonder gedoe.</strong>
+                kleuren en 6–12 outfits. <strong>Helder uitgelegd, direct toepasbaar.</strong>
               </p>
             </div>
 
@@ -130,9 +130,9 @@ export function Hero() {
                 <div className="bg-[var(--ff-color-surface)]/90 backdrop-blur-md border border-[var(--ff-color-border)] rounded-xl px-4 py-3 shadow-lg hover:scale-105 transition-transform duration-300">
                   <div className="text-xs text-[var(--ff-color-text-secondary)] font-medium">Kleuren</div>
                   <div className="flex gap-1 mt-1">
-                    <div className="w-3 h-3 rounded-full bg-[#8B7355]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#A0956B]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#6B5B73]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[var(--ff-color-primary-400)]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[var(--ff-color-accent-400)]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[var(--ff-color-secondary-400)]"></div>
                   </div>
                 </div>
               </div>

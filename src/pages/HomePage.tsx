@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
         <title>FitFi - Ontdek jouw perfecte stijl met AI</title>
         <meta 
           name="description" 
-          content="Krijg binnen 2 minuten een persoonlijk stijlrapport met uitleg, kleuren en 6-12 outfits. Rustig, duidelijk en zonder gedoe." 
+          content="Krijg binnen 2 minuten een persoonlijk stijlrapport met uitleg, kleuren en 6-12 outfits. Direct toepasbaar in je garderobe." 
         />
         <meta name="keywords" content="stijladvies, AI styling, persoonlijke stijl, outfit aanbevelingen, kleuradvies" />
         <meta property="og:title" content="FitFi - Ontdek jouw perfecte stijl met AI" />
