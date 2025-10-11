@@ -11,18 +11,18 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>FitFi - Ontdek jouw perfecte stijl met AI</title>
+        <title>FitFi - Ontdek jouw stijl</title>
         <meta 
           name="description" 
           content="Krijg binnen 2 minuten een persoonlijk stijlrapport met uitleg, kleuren en 6-12 outfits. Direct toepasbaar in je garderobe." 
         />
         <meta name="keywords" content="stijladvies, AI styling, persoonlijke stijl, outfit aanbevelingen, kleuradvies" />
-        <meta property="og:title" content="FitFi - Ontdek jouw perfecte stijl met AI" />
+        <meta property="og:title" content="FitFi - Ontdek jouw stijl" />
         <meta property="og:description" content="Krijg binnen 2 minuten een persoonlijk stijlrapport met uitleg, kleuren en 6-12 outfits." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fitfi.ai" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="FitFi - Ontdek jouw perfecte stijl met AI" />
+        <meta name="twitter:title" content="FitFi - Ontdek jouw stijl" />
         <meta name="twitter:description" content="Krijg binnen 2 minuten een persoonlijk stijlrapport met uitleg, kleuren en 6-12 outfits." />
         <link rel="canonical" href="https://fitfi.ai" />
       </Helmet>

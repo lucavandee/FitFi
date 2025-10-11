@@ -45,13 +45,13 @@ const HowItWorks: React.FC = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-6">
             Van vraag tot{' '}
             <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
-              perfecte stijl
+              jouw stijlrapport
             </span>
           </h2>
           
           <p className="text-lg text-[var(--color-text-muted)] max-w-3xl mx-auto leading-relaxed">
-            In drie simpele stappen krijg je een compleet stijlrapport dat perfect bij jou past. 
-            Geen gedoe, gewoon resultaat.
+            In drie simpele stappen krijg je een compleet stijlrapport.
+            Helder, direct en toepasbaar.
           </p>
         </div>
 
@@ -104,7 +104,7 @@ const HowItWorks: React.FC = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <p className="text-lg text-[var(--color-text-muted)] mb-6">
-            Klaar om jouw perfecte stijl te ontdekken?
+            Klaar om te beginnen?
           </p>
           <button className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25">
             Start nu gratis

@@ -35,7 +35,7 @@ export default function TermsPage() {
         id="page-terms"
         eyebrow="VOORWAARDEN"
         title="Gebruiksvoorwaarden"
-        subtitle="Rustig, duidelijk en eerlijk. Dit document beschrijft hoe je FitFi gebruikt en wat je van ons mag verwachten."
+        subtitle="Helder en eerlijk. Dit document beschrijft hoe je FitFi gebruikt en wat je van ons mag verwachten."
         align="left"
         as="h1"
         size="sm"

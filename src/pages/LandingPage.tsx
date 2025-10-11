@@ -46,7 +46,7 @@ export default function LandingPage() {
 
               <p className="text-xl lg:text-2xl text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
-                <strong className="text-[var(--color-text)] font-semibold"> Rustig, duidelijk en zonder gedoe.</strong>
+                <strong className="text-[var(--color-text)] font-semibold"> Direct toepasbaar.</strong>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -191,7 +191,7 @@ export default function LandingPage() {
               Waarom FitFi
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4">
-              Nuchter, helder en <span className="text-[var(--ff-color-primary-600)]">zonder gedoe</span>
+              Helder en <span className="text-[var(--ff-color-primary-600)]">direct toepasbaar</span>
             </h2>
           </div>
 
