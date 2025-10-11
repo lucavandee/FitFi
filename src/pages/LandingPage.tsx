@@ -219,7 +219,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Target className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Uitleg erbij</h3>
@@ -239,7 +239,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-white border border-[var(--color-border)] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-500)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-teal-600 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">Privacy-first (EU)</h3>
