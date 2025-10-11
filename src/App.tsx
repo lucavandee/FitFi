@@ -30,6 +30,8 @@ const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 const LoginPage          = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));
 const DashboardPage      = lazy(() => import("@/pages/DashboardPage"));
+const ProfilePage        = lazy(() => import("@/pages/ProfilePage"));
+const EmbeddingAnalytics = lazy(() => import("@/components/admin/EmbeddingAnalytics"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 const WithSeo = {
@@ -50,6 +52,8 @@ const WithSeo = {
   Login:      () => (<><Seo title="Inloggen — FitFi" description="Log in om je stijlresultaten te zien." path="/inloggen" /><LoginPage /></>),
   Register:   () => (<><Seo title="Registreren — FitFi" description="Maak je account aan en start gratis." path="/registreren" /><RegisterPage /></>),
   Dashboard:  () => (<><Seo title="Dashboard — FitFi" description="Snel overzicht en acties." path="/dashboard" /><DashboardPage /></>),
+  Profile:    () => (<><Seo title="Profiel — FitFi" description="Jouw stijlprofiel en embedding insights." path="/profile" /><ProfilePage /></>),
+  Analytics:  () => (<><Seo title="Analytics — FitFi" description="Embedding analytics dashboard." path="/admin/analytics" noindex /><EmbeddingAnalytics /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
@@ -94,7 +98,11 @@ export default function App() {
 
                 {/* App (afgeschermd) */}
                 <Route path="/dashboard" element={<RequireAuth><WithSeo.Dashboard /></RequireAuth>} />
+                <Route path="/profile" element={<RequireAuth><WithSeo.Profile /></RequireAuth>} />
                 <Route path="/results" element={<RequireAuth><WithSeo.Results /></RequireAuth>} />
+
+                {/* Admin */}
+                <Route path="/admin/analytics" element={<RequireAuth><WithSeo.Analytics /></RequireAuth>} />
 
                 {/* 404 */}
                 <Route path="*" element={<WithSeo.NotFound />} />
