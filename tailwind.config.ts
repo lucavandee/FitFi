@@ -6,6 +6,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        // FitFi brand colors (extend default Tailwind palette)
         bg: "var(--color-bg)",
         surface: "var(--color-surface)",
         text: "var(--color-text)",
@@ -18,6 +19,7 @@ export default {
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         danger: "var(--color-danger)",
+        // Keep default Tailwind grays available
       },
       fontFamily: {
         heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],

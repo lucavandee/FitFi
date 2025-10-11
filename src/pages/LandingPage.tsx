@@ -26,9 +26,9 @@ export default function LandingPage() {
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--ff-color-primary-50)] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
         <div className="ff-container relative z-10">
@@ -40,13 +40,13 @@ export default function LandingPage() {
                 GRATIS AI STYLE REPORT
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-[1.1]">
+              <h1 className="text-5xl lg:text-7xl font-bold text-[#1E2333] leading-[1.1]">
                 Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> over je zegt
               </h1>
 
-              <p className="text-xl lg:text-2xl text-gray-700 max-w-2xl leading-relaxed">
+              <p className="text-xl lg:text-2xl text-[#374151] max-w-2xl leading-relaxed">
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
-                <strong className="text-gray-900 font-semibold"> Direct toepasbaar.</strong>
+                <strong className="text-[#1E2333] font-semibold"> Direct toepasbaar.</strong>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -64,7 +64,7 @@ export default function LandingPage() {
                 <NavLink
                   to="/results"
                   data-event="cta_view_example_hero"
-                  className="px-8 py-4 bg-white text-gray-900 font-bold border-2 border-gray-300 rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
+                  className="px-8 py-4 bg-white text-[#1E2333] font-bold border-2 border-[#D1D5DB] rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
                 >
                   Bekijk voorbeeld
                 </NavLink>
@@ -75,19 +75,19 @@ export default function LandingPage() {
                   <div className="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center shadow-xl">
                     <Check className="w-7 h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">100% Gratis</div>
+                  <div className="text-sm font-semibold text-[#1E2333]">100% Gratis</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
                   <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-xl">
                     <Shield className="w-7 h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">Privacy-first</div>
+                  <div className="text-sm font-semibold text-[#1E2333]">Privacy-first</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
                   <div className="w-14 h-14 rounded-2xl bg-orange-600 flex items-center justify-center shadow-xl">
                     <Clock className="w-7 h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">2 min setup</div>
+                  <div className="text-sm font-semibold text-[#1E2333]">2 min setup</div>
                 </div>
               </div>
             </div>
