@@ -44,7 +44,7 @@ export const FoundersBlock: React.FC = () => {
       <div className="flex items-center justify-between gap-4">
         <div>
           <h3 className="font-montserrat text-xl text-[var(--color-text)]">Founders</h3>
-          <p className="text-sm text-[var(--color-text-muted)]">Nodig vrienden uit en ontgrendel voordelen</p>
+          <p className="text-sm text-gray-600">Nodig vrienden uit en ontgrendel voordelen</p>
         </div>
         <FoundersTierBadge tier={tier} />
       </div>

@@ -49,7 +49,7 @@ const SocialProof: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--color-text-muted)] shadow-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-gray-600 shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-emerald-500" />
             WAT ANDEREN ZEGGEN
           </div>
@@ -61,7 +61,7 @@ const SocialProof: React.FC = () => {
             </span>
           </h2>
           
-          <p className="text-lg text-[var(--color-text-muted)] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Echte ervaringen van mensen die FitFi hebben gebruikt.
           </p>
         </div>
@@ -81,7 +81,7 @@ const SocialProof: React.FC = () => {
                 <div className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2 group-hover:text-emerald-600 transition-colors">
                   {stat.number}
                 </div>
-                <div className="text-[var(--color-text-muted)] font-medium">
+                <div className="text-gray-600 font-medium">
                   {stat.label}
                 </div>
               </div>
@@ -117,7 +117,7 @@ const SocialProof: React.FC = () => {
                   <div className="font-semibold text-[var(--color-text)] group-hover:text-emerald-600 transition-colors">
                     {testimonial.name}
                   </div>
-                  <div className="text-sm text-[var(--color-text-muted)]">
+                  <div className="text-sm text-gray-600">
                     {testimonial.role}
                   </div>
                 </div>

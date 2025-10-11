@@ -37,7 +37,7 @@ const HowItWorks: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Section header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--color-text-muted)] shadow-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-gray-600 shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-emerald-500" />
             HOE HET WERKT
           </div>
@@ -49,7 +49,7 @@ const HowItWorks: React.FC = () => {
             </span>
           </h2>
           
-          <p className="text-lg text-[var(--color-text-muted)] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             In drie simpele stappen krijg je een compleet stijlrapport.
             Helder, direct en toepasbaar.
           </p>
@@ -81,7 +81,7 @@ const HowItWorks: React.FC = () => {
                       {step.title}
                     </h3>
                     
-                    <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed">
                       {step.description}
                     </p>
 
@@ -92,7 +92,7 @@ const HowItWorks: React.FC = () => {
                   {/* Arrow connector (desktop only) */}
                   {!isLast && (
                     <div className="hidden lg:block absolute top-1/2 -right-6 transform -translate-y-1/2 z-10">
-                      <ArrowRight className="w-6 h-6 text-[var(--color-text-muted)]" />
+                      <ArrowRight className="w-6 h-6 text-gray-600" />
                     </div>
                   )}
                 </div>
@@ -103,7 +103,7 @@ const HowItWorks: React.FC = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="text-lg text-[var(--color-text-muted)] mb-6">
+          <p className="text-lg text-gray-600 mb-6">
             Klaar om te beginnen?
           </p>
           <button className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25">

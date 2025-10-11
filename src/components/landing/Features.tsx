@@ -46,7 +46,7 @@ const Features: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--color-text-muted)] shadow-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-gray-600 shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-emerald-500" />
             WAAROM FITFI
           </div>
@@ -58,7 +58,7 @@ const Features: React.FC = () => {
             </span>
           </h2>
           
-          <p className="text-lg text-[var(--color-text-muted)] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Helder, persoonlijk en direct toepasbaar.
             Zo werkt FitFi.
           </p>
@@ -83,7 +83,7 @@ const Features: React.FC = () => {
                   {feature.title}
                 </h3>
                 
-                <p className="text-[var(--color-text-muted)] leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   {feature.description}
                 </p>
 

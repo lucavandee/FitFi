@@ -105,11 +105,11 @@ export default function EnhancedResultsPage() {
               )}
             </h1>
             {hasCompletedQuiz ? (
-              <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Op basis van jouw antwoorden hebben we {seeds.length} outfits samengesteld die perfect bij je passen.
               </p>
             ) : (
-              <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Voltooi eerst de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen.
               </p>
             )}
@@ -155,7 +155,7 @@ export default function EnhancedResultsPage() {
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
                   Jouw <span className="text-[var(--ff-color-primary-600)]">Stijlprofiel</span>
                 </h2>
-                <p className="text-xl text-[var(--color-text-muted)]">
+                <p className="text-xl text-gray-600">
                   {color.paletteName}
                 </p>
               </div>
@@ -173,7 +173,7 @@ export default function EnhancedResultsPage() {
                   <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] mb-4"></div>
                   <h3 className="text-lg font-bold mb-2">Seizoen</h3>
                   <p className="text-xl font-semibold capitalize">{color.season}</p>
-                  <p className="text-sm text-[var(--color-text-muted)] mt-1">{color.temperature}</p>
+                  <p className="text-sm text-gray-600 mt-1">{color.temperature}</p>
                 </div>
 
                 <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
@@ -182,7 +182,7 @@ export default function EnhancedResultsPage() {
                   </div>
                   <h3 className="text-lg font-bold mb-2">Contrast</h3>
                   <p className="text-xl font-semibold capitalize">{color.contrast}</p>
-                  <p className="text-sm text-[var(--color-text-muted)] mt-1">Lichtheid: {color.value}</p>
+                  <p className="text-sm text-gray-600 mt-1">Lichtheid: {color.value}</p>
                 </div>
 
                 <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
@@ -201,7 +201,7 @@ export default function EnhancedResultsPage() {
                   {color.notes.map((note, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
-                      <p className="text-[var(--color-text-muted)]">{note}</p>
+                      <p className="text-gray-600">{note}</p>
                     </li>
                   ))}
                 </ul>
@@ -220,7 +220,7 @@ export default function EnhancedResultsPage() {
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
                   Jouw <span className="text-[var(--ff-color-primary-600)]">Outfits</span>
                 </h2>
-                <p className="text-xl text-[var(--color-text-muted)]">
+                <p className="text-xl text-gray-600">
                   {seeds.length} looks speciaal voor jou samengesteld
                 </p>
               </div>
@@ -254,14 +254,14 @@ export default function EnhancedResultsPage() {
                             className={`p-2 rounded-full transition-colors ${
                               isFavorite
                                 ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-600)]'
-                                : 'bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--ff-color-primary-50)]'
+                                : 'bg-[var(--color-bg)] text-gray-600 hover:bg-[var(--ff-color-primary-50)]'
                             }`}
                             aria-label={isFavorite ? 'Verwijder favoriet' : 'Voeg toe aan favorieten'}
                           >
                             {isFavorite ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
                           </button>
                         </div>
-                        <p className="text-sm text-[var(--color-text-muted)] mb-4">{outfit.notes}</p>
+                        <p className="text-sm text-gray-600 mb-4">{outfit.notes}</p>
                       </div>
                     </article>
                   );
@@ -316,7 +316,7 @@ export default function EnhancedResultsPage() {
                 </>
               )}
             </h2>
-            <p className="text-xl text-[var(--color-text-muted)] mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               {hasCompletedQuiz
                 ? 'Ontdek meer personalized features en save je favoriete looks.'
                 : 'Beantwoord enkele vragen en ontvang direct je persoonlijke style report.'}

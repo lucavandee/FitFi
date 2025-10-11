@@ -68,7 +68,7 @@ export default function QuizPage() {
 
           <header className="mb-6">
             <h1 className="ff-h1">Vertel ons je voorkeuren</h1>
-            <p className="text-[var(--color-text-muted)]">Stap {step + 1} van {STEPS.length}</p>
+            <p className="text-gray-600">Stap {step + 1} van {STEPS.length}</p>
           </header>
 
           <form
@@ -146,7 +146,7 @@ export default function QuizPage() {
             </div>
           </form>
 
-          <p className="text-[var(--color-text-muted)] text-xs mt-4">
+          <p className="text-gray-600 text-xs mt-4">
             Je gegevens worden minimalistisch verwerkt. Geen spam, geen dark patterns.
           </p>
         </div>

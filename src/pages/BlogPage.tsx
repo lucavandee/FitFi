@@ -59,7 +59,7 @@ const BlogPage: React.FC = () => {
               Stijl & Mode
               <span className="block text-[var(--ff-color-primary-600)]">Inzichten</span>
             </h1>
-            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               Ontdek de nieuwste trends, stijltips en mode-inzichten van onze experts. 
               Van seizoenstrends tot tijdloze stijladvies.
             </p>
@@ -72,7 +72,7 @@ const BlogPage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto mb-8">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
             <input
               type="text"
               placeholder="Zoek artikelen..."
@@ -135,7 +135,7 @@ const BlogPage: React.FC = () => {
                   <h3 className="text-3xl font-bold text-[var(--color-text)] mb-4 leading-tight">
                     {featuredPost.title}
                   </h3>
-                  <p className="text-lg text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                     {featuredPost.excerpt}
                   </p>
                   <div className="flex items-center justify-between">
@@ -147,7 +147,7 @@ const BlogPage: React.FC = () => {
                       />
                       <div>
                         <p className="font-medium text-[var(--color-text)]">{featuredPost.author.name}</p>
-                        <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Calendar className="w-4 h-4" />
                           <span>{featuredPost.date}</span>
                         </div>
@@ -187,11 +187,11 @@ const BlogPage: React.FC = () => {
                   <h3 className="text-xl font-bold text-[var(--color-text)] mb-3 leading-tight">
                     {post.title}
                   </h3>
-                  <p className="text-[var(--color-text-muted)] mb-4">
+                  <p className="text-gray-600 mb-4">
                     {post.excerpt}
                   </p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
                       <User className="w-4 h-4" />
                       <span>{post.author.name}</span>
                       <span>•</span>

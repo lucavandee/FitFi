@@ -38,7 +38,7 @@ const TrustBelt: React.FC = () => {
             return (
               <div
                 key={index}
-                className="flex items-center gap-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-300 group"
+                className="flex items-center gap-3 text-gray-600 hover:text-[var(--color-text)] transition-colors duration-300 group"
               >
                 <Icon className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform duration-300" />
                 <span className="text-sm font-medium whitespace-nowrap">

@@ -170,7 +170,7 @@ export default function OnboardingFlowPage() {
         <div className="ff-container py-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Stap {currentStep + 1} van {totalSteps}</span>
-            <span className="text-sm text-[var(--color-text-muted)]">{Math.round(progress)}% compleet</span>
+            <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
           </div>
           <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
             <div
@@ -195,7 +195,7 @@ export default function OnboardingFlowPage() {
               {step.title}
             </h1>
             {step.description && (
-              <p className="text-lg text-[var(--color-text-muted)] max-w-2xl mx-auto">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 {step.description}
               </p>
             )}
@@ -229,7 +229,7 @@ export default function OnboardingFlowPage() {
                         <div className="flex-1">
                           <div className="font-semibold mb-1">{option.label}</div>
                           {option.description && (
-                            <div className="text-sm text-[var(--color-text-muted)]">{option.description}</div>
+                            <div className="text-sm text-gray-600">{option.description}</div>
                           )}
                         </div>
                       </div>
@@ -265,7 +265,7 @@ export default function OnboardingFlowPage() {
                         <div className="flex-1">
                           <div className="font-semibold mb-1">{option.label}</div>
                           {option.description && (
-                            <div className="text-sm text-[var(--color-text-muted)]">{option.description}</div>
+                            <div className="text-sm text-gray-600">{option.description}</div>
                           )}
                         </div>
                       </div>
@@ -282,7 +282,7 @@ export default function OnboardingFlowPage() {
                   <div className="text-5xl font-bold text-[var(--ff-color-primary-600)] mb-2">
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
-                  <div className="text-sm text-[var(--color-text-muted)]">Per kledingstuk</div>
+                  <div className="text-sm text-gray-600">Per kledingstuk</div>
                 </div>
                 <input
                   type="range"
@@ -296,7 +296,7 @@ export default function OnboardingFlowPage() {
                     background: `linear-gradient(to right, var(--ff-color-primary-600) 0%, var(--ff-color-primary-600) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) 100%)`
                   }}
                 />
-                <div className="flex justify-between mt-4 text-sm text-[var(--color-text-muted)]">
+                <div className="flex justify-between mt-4 text-sm text-gray-600">
                   <span>€{step.min || 0}</span>
                   <span>€{step.max || 100}+</span>
                 </div>
@@ -324,7 +324,7 @@ export default function OnboardingFlowPage() {
                     </select>
                   </div>
                 ))}
-                <p className="text-sm text-[var(--color-text-muted)] italic">
+                <p className="text-sm text-gray-600 italic">
                   Je kunt deze stap overslaan als je wilt.
                 </p>
               </div>
@@ -377,7 +377,7 @@ export default function OnboardingFlowPage() {
 
           {/* Help Text */}
           {step.required && (
-            <p className="text-center text-sm text-[var(--color-text-muted)] mt-6">
+            <p className="text-center text-sm text-gray-600 mt-6">
               * Deze vraag is verplicht
             </p>
           )}

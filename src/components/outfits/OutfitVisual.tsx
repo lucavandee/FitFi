@@ -102,7 +102,7 @@ export default function OutfitVisual({ pieces, className = "" }: OutfitVisualPro
                     style={{ backgroundColor: piece.color }}
                     aria-label={`Color: ${piece.color}`}
                   />
-                  <span className="text-xs uppercase tracking-wider font-semibold text-[var(--color-text-muted)]">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-gray-600">
                     {piece.type}
                   </span>
                 </div>

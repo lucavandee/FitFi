@@ -25,7 +25,7 @@ export default function PricingPage() {
               Kies het plan dat bij
               <span className="block text-[var(--ff-color-primary-600)]">jouw stijl</span> past
             </h1>
-            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               Begin gratis. Upgrade wanneer je wilt. Geen verrassingen.
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function PricingPage() {
               <header className="text-center mb-8">
                 <h2 className="text-2xl font-bold mb-2">Gratis</h2>
                 <div className="text-5xl font-bold mb-2">€0</div>
-                <p className="text-[var(--color-text-muted)]">Voor altijd</p>
+                <p className="text-gray-600">Voor altijd</p>
               </header>
               <ul className="space-y-4 mb-8">
                 <li className="flex items-start gap-3">
@@ -85,7 +85,7 @@ export default function PricingPage() {
                 <div className="text-5xl font-bold mb-2">
                   €9<span className="text-2xl">,99</span>
                 </div>
-                <p className="text-[var(--color-text-muted)]">Per maand</p>
+                <p className="text-gray-600">Per maand</p>
               </header>
               <ul className="space-y-4 mb-8">
                 <li className="flex items-start gap-3">
@@ -113,7 +113,7 @@ export default function PricingPage() {
                 >
                   Upgrade naar Premium
                 </NavLink>
-                <p className="text-center text-[var(--color-text-muted)] text-sm">30 dagen geld-terug-garantie</p>
+                <p className="text-center text-gray-600 text-sm">30 dagen geld-terug-garantie</p>
               </div>
             </article>
 
@@ -122,7 +122,7 @@ export default function PricingPage() {
               <header className="text-center mb-8">
                 <h2 className="text-2xl font-bold mb-2">Founder</h2>
                 <div className="text-5xl font-bold mb-2">€149</div>
-                <p className="text-[var(--color-text-muted)]">Eenmalig – lifetime</p>
+                <p className="text-gray-600">Eenmalig – lifetime</p>
               </header>
               <ul className="space-y-4 mb-8">
                 <li className="flex items-start gap-3">
@@ -146,7 +146,7 @@ export default function PricingPage() {
                 >
                   Word Founder
                 </NavLink>
-                <p className="text-center text-[var(--color-text-muted)] text-sm">Beperkte plaatsen</p>
+                <p className="text-center text-gray-600 text-sm">Beperkte plaatsen</p>
               </div>
             </article>
           </div>
@@ -161,25 +161,25 @@ export default function PricingPage() {
             <div className="space-y-4">
               <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <summary className="font-semibold cursor-pointer">Hoe werkt de gratis versie?</summary>
-                <p className="mt-4 text-[var(--color-text-muted)]">
+                <p className="mt-4 text-gray-600">
                   Je ontvangt een gratis Style Report met 3 outfits. Upgraden kan altijd, maar hoeft niet.
                 </p>
               </details>
               <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <summary className="font-semibold cursor-pointer">Is er een geld-terug-garantie?</summary>
-                <p className="mt-4 text-[var(--color-text-muted)]">
+                <p className="mt-4 text-gray-600">
                   Ja, 30 dagen voor alle betaalde plannen. Geen vragen gesteld.
                 </p>
               </details>
               <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <summary className="font-semibold cursor-pointer">Wat is het verschil tussen Premium en Founder?</summary>
-                <p className="mt-4 text-[var(--color-text-muted)]">
+                <p className="mt-4 text-gray-600">
                   Founder is een eenmalige betaling voor lifetime Premium toegang plus extra voordelen zoals vroege toegang tot nieuwe features en een exclusieve badge.
                 </p>
               </details>
               <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <summary className="font-semibold cursor-pointer">Kan ik maandelijks opzeggen?</summary>
-                <p className="mt-4 text-[var(--color-text-muted)]">
+                <p className="mt-4 text-gray-600">
                   Ja, je kunt Premium maandelijks opzeggen. Geen verborgen kosten of kleine lettertjes.
                 </p>
               </details>
@@ -195,7 +195,7 @@ export default function PricingPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Klaar om je <span className="text-[var(--ff-color-primary-600)]">perfecte stijl</span> te ontdekken?
             </h2>
-            <p className="text-xl text-[var(--color-text-muted)] mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Start nu gratis. Geen creditcard vereist.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -159,7 +159,7 @@ const PageHero: React.FC<Props> = ({
             <p
               id={noteId}
               className={[
-                "mt-3 text-sm text-[var(--color-text-muted)]",
+                "mt-3 text-sm text-gray-600",
                 align === "center" ? "mx-auto" : "mx-0",
               ].join(" ")}
             >

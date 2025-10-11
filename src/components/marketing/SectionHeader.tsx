@@ -52,7 +52,7 @@ const SectionHeader: React.FC<Props> = ({
     >
       {eyebrow && (
         <div
-          className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 backdrop-blur px-3 py-1 text-xs font-medium tracking-widest uppercase text-[var(--color-text-muted)]"
+          className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 backdrop-blur px-3 py-1 text-xs font-medium tracking-widest uppercase text-gray-600"
           aria-label={eyebrow}
         >
           {eyebrow}
@@ -79,7 +79,7 @@ const SectionHeader: React.FC<Props> = ({
       {subtitle && (
         <p
           className={
-            "mt-5 max-w-2xl text-[var(--color-text-muted)] " +
+            "mt-5 max-w-2xl text-gray-600 " +
             (align === "center" ? "mx-auto" : "mx-0")
           }
         >
