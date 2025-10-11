@@ -5,8 +5,8 @@
   --color-bg: #F7F3EC;
   --color-surface: #FFFFFF;
   --color-text: #1E2333;
-  --color-text-muted: #6B7280;  /* Muted text (gray-600 equivalent) */
-  --color-muted: #6B7280;
+  --color-text-muted: #4A5568;  /* Darker for better contrast (AA compliant) */
+  --color-muted: #4A5568;
 
   --color-primary: #A6886A;          /* brand taupe (semantisch) */
   --ff-color-primary-600: #8F7459;   /* hover */

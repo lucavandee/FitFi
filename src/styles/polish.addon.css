@@ -24,7 +24,7 @@
 .ff-lede{ color:var(--color-text); opacity:.9; font-size:clamp(1rem,.45vw + .95rem,1.125rem); }
 
 .ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.75rem; border-radius:var(--radius-xl); padding:0 1rem; font-weight:600; transition: all 0.2s ease; }
-.ff-btn-primary{ background:var(--ff-color-primary-700); color:#fff; }
+.ff-btn-primary{ background:var(--ff-color-primary-700); color: var(--ff-cta-contrast); }
 .ff-btn-primary:hover{ background:var(--ff-color-primary-600); }
 .ff-btn-secondary{ background:transparent; color:var(--color-text); border:1px solid var(--color-border); }
 .ff-btn-secondary:hover{ border-color:var(--ff-color-primary-600); }
@@ -233,9 +233,9 @@
 }
 
 .ff-pricing-icon-founder{
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, var(--color-warning), color-mix(in oklab, var(--color-warning) 85%, black));
   color: white;
-  border-color: #f59e0b;
+  border-color: var(--color-warning);
 }
 
 .ff-pricing-card:hover .ff-pricing-icon{
