@@ -382,43 +382,44 @@ export default function LandingPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="relative py-32 overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-700)] via-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)]">
+      <section className="relative py-32 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-blob" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute top-20 left-20 w-96 h-96 bg-[var(--ff-color-primary-500)]/20 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-[var(--ff-color-turquoise)]/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--ff-color-primary-900)]/30 via-transparent to-transparent" />
         </div>
 
         <div className="ff-container relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+            <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Klaar om je stijl te ontdekken?
             </h2>
-            <p className="text-xl text-white/95 mb-12 leading-relaxed drop-shadow-md">
+            <p className="text-xl text-gray-200 mb-12 leading-relaxed">
               Start nu en krijg binnen 2 minuten je persoonlijke Style Report.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <NavLink
                 to="/onboarding"
-                className="px-10 py-5 bg-white text-[var(--ff-color-primary-700)] font-bold rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-200 hover:scale-105 text-lg"
+                className="px-10 py-5 bg-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-700)] text-white font-bold rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-200 hover:scale-105 text-lg"
                 data-event="cta_start_free_footer"
               >
                 Start gratis Style Report
               </NavLink>
               <NavLink
                 to="/results"
-                className="px-10 py-5 bg-transparent text-white font-bold border-2 border-white rounded-2xl hover:bg-white hover:text-[var(--ff-color-primary-700)] transition-all duration-200 text-lg"
+                className="px-10 py-5 bg-white/10 backdrop-blur-sm text-white font-bold border-2 border-white/30 rounded-2xl hover:bg-white hover:text-gray-900 hover:border-white transition-all duration-200 text-lg"
                 data-event="cta_view_example_footer"
               >
                 Bekijk voorbeeld
               </NavLink>
             </div>
-            <p className="text-white text-sm mt-10 flex items-center justify-center gap-6">
+            <p className="text-gray-300 text-sm mt-10 flex flex-wrap items-center justify-center gap-6">
               <span className="flex items-center gap-2">
-                <Check className="w-5 h-5" />
+                <Check className="w-5 h-5 text-green-400" />
                 Geen creditcard nodig
               </span>
               <span className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
+                <Shield className="w-5 h-5 text-blue-400" />
                 100% Privacy-first
               </span>
             </p>
