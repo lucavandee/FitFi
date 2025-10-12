@@ -37,13 +37,30 @@ export interface LockedProfile {
 
 export class EmbeddingService {
   /**
+   * Get Supabase client or return null
+   */
+  private static getClient() {
+    const client = supabase();
+    if (!client) {
+      console.warn('⚠️ [EmbeddingService] Supabase client not available');
+    }
+    return client;
+  }
+
+  /**
    * Compute final embedding (doesn't lock yet)
    */
   static async computeFinalEmbedding(
     userId?: string,
     sessionId?: string
   ): Promise<StyleEmbedding> {
-    const { data, error } = await supabase.rpc('compute_final_embedding', {
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ [EmbeddingService] Cannot compute embedding - no client');
+      return {};
+    }
+
+    const { data, error } = await client.rpc('compute_final_embedding', {
       p_user_id: userId || null,
       p_session_id: sessionId || null
     });
@@ -63,7 +80,13 @@ export class EmbeddingService {
     userId?: string,
     sessionId?: string
   ): Promise<StyleEmbedding> {
-    const { data, error } = await supabase.rpc('lock_style_embedding', {
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ [EmbeddingService] Cannot lock embedding - no client');
+      return {};
+    }
+
+    const { data, error } = await client.rpc('lock_style_embedding', {
       p_user_id: userId || null,
       p_session_id: sessionId || null
     });
@@ -83,7 +106,12 @@ export class EmbeddingService {
     userId?: string,
     sessionId?: string
   ): Promise<StyleEmbedding | null> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      return null;
+    }
+
+    let query = client
       .from('style_profiles')
       .select('locked_embedding')
       .not('embedding_locked_at', 'is', null)
@@ -116,7 +144,12 @@ export class EmbeddingService {
     userId?: string,
     sessionId?: string
   ): Promise<LockedProfile | null> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      return null;
+    }
+
+    let query = client
       .from('style_profiles')
       .select('id, user_id, session_id, archetype, locked_embedding, embedding_locked_at, embedding_version, embedding_sources')
       .not('embedding_locked_at', 'is', null)
@@ -149,7 +182,12 @@ export class EmbeddingService {
     userId?: string,
     sessionId?: string
   ): Promise<boolean> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      return false;
+    }
+
+    let query = client
       .from('style_profiles')
       .select('embedding_locked_at')
       .not('embedding_locked_at', 'is', null)
@@ -180,7 +218,12 @@ export class EmbeddingService {
     userId?: string,
     sessionId?: string
   ): Promise<EmbeddingSnapshot[]> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    let query = client
       .from('style_embedding_snapshots')
       .select('*')
       .order('version', { ascending: true });
@@ -212,7 +255,12 @@ export class EmbeddingService {
     embedding: StyleEmbedding;
     stability_score: number;
   }>> {
-    const { data, error } = await supabase.rpc('get_embedding_stability', {
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    const { data, error } = await client.rpc('get_embedding_stability', {
       p_user_id: userId
     });
 

@@ -28,7 +28,14 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
   const loadMoodPhotos = async () => {
     try {
       const { supabase } = await import('@/lib/supabase');
-      const { data, error } = await supabase
+      const client = supabase();
+
+      if (!client) {
+        console.warn('⚠️ Supabase client not available, using placeholders');
+        throw new Error('Supabase not available');
+      }
+
+      const { data, error } = await client
         .from('mood_photos')
         .select('*')
         .eq('active', true)
@@ -99,13 +106,21 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
     try {
       const { supabase } = await import('@/lib/supabase');
+      const client = supabase();
+
+      if (!client) {
+        console.warn('⚠️ Swipe not saved - Supabase unavailable (will work locally)');
+        onSwipe?.(currentPhoto.id, direction);
+        return;
+      }
+
       const sessionId = sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID();
 
       if (!sessionStorage.getItem('fitfi_session_id')) {
         sessionStorage.setItem('fitfi_session_id', sessionId);
       }
 
-      await supabase.from('style_swipes').insert({
+      await client.from('style_swipes').insert({
         user_id: user?.id || null,
         session_id: !user ? sessionId : null,
         mood_photo_id: currentPhoto.id,
@@ -115,7 +130,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
       onSwipe?.(currentPhoto.id, direction);
     } catch (err) {
-      console.error('Failed to save swipe:', err);
+      console.warn('⚠️ Failed to save swipe to database (continuing locally):', err);
     }
 
     // Generate Nova insight
