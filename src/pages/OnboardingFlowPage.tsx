@@ -306,19 +306,46 @@ export default function OnboardingFlowPage() {
         <meta name="description" content="Beantwoord enkele vragen en ontdek welke stijl perfect bij je past." />
       </Helmet>
 
-      {/* Progress Bar */}
+      {/* Progress Bar with Milestones */}
       <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
         <div className="ff-container py-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Stap {currentStep + 1} van {quizSteps.length}</span>
             <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
           </div>
-          <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+
+          {/* Progress bar with milestone markers */}
+          <div className="relative h-2 bg-[var(--color-bg)] rounded-full overflow-visible mb-3">
             <div
-              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out"
+              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out rounded-full"
               style={{ width: `${progress}%` }}
             />
+
+            {/* Milestone markers */}
+            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2">
+              <div className={`w-3 h-3 rounded-full border-2 border-white transition-colors ${progress >= 25 ? 'bg-[var(--ff-color-primary-600)]' : 'bg-gray-300'}`} />
+            </div>
+            <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+              <div className={`w-3 h-3 rounded-full border-2 border-white transition-colors ${progress >= 50 ? 'bg-[var(--ff-color-primary-600)]' : 'bg-gray-300'}`} />
+            </div>
+            <div className="absolute top-1/2 left-3/4 -translate-y-1/2 -translate-x-1/2">
+              <div className={`w-3 h-3 rounded-full border-2 border-white transition-colors ${progress >= 75 ? 'bg-[var(--ff-color-primary-600)]' : 'bg-gray-300'}`} />
+            </div>
           </div>
+
+          {/* Motivational messaging */}
+          {progress < 30 && (
+            <p className="text-xs text-center text-gray-600">Nog ongeveer 90 seconden...</p>
+          )}
+          {progress >= 30 && progress < 50 && (
+            <p className="text-xs text-center text-gray-600">Je doet het geweldig! Nog {quizSteps.length - currentStep} vragen.</p>
+          )}
+          {progress >= 50 && progress < 70 && (
+            <p className="text-xs text-center font-semibold text-[var(--ff-color-primary-600)]">🎉 Halverwege! Je resultaten komen eraan.</p>
+          )}
+          {progress >= 70 && progress < 100 && (
+            <p className="text-xs text-center font-semibold text-[var(--ff-color-primary-600)]">⚡ Bijna klaar — laatste vragen!</p>
+          )}
         </div>
       </div>
 

@@ -56,7 +56,7 @@ export default function LandingPage() {
                   className="px-8 py-4 bg-[var(--ff-color-primary-700)] text-white font-bold rounded-2xl shadow-xl hover:bg-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-2xl hover:scale-105"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    Start gratis
+                    Start 2-min quiz
                     <Sparkles className="w-5 h-5" />
                   </span>
                 </NavLink>
@@ -66,7 +66,7 @@ export default function LandingPage() {
                   data-event="cta_view_example_hero"
                   className="px-8 py-4 bg-white text-gray-900 font-bold border-2 border-gray-300 rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
                 >
-                  Bekijk voorbeeld
+                  Zie voorbeeldrapport
                 </NavLink>
               </div>
 

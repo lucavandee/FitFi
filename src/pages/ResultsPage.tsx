@@ -5,7 +5,7 @@ import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import OutfitCard from "@/components/results/OutfitCard";
 import { LS_KEYS } from "@/lib/quiz/types";
 import Button from "@/components/ui/Button";
-import { Sparkles, CloudOff, CheckCircle2, RefreshCw, Loader } from "lucide-react";
+import { Sparkles, CloudOff, CheckCircle2, RefreshCw, Loader, ShoppingBag } from "lucide-react";
 import { useProfileSync } from "@/hooks/useProfileSync";
 import { outfitService } from "@/services/outfits/outfitService";
 import type { GeneratedOutfit } from "@/services/outfits/outfitService";
@@ -175,8 +175,80 @@ export default function ResultsPage() {
             <Button onClick={loadOutfits} variant="primary">Probeer opnieuw</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {outfits.map((outfit) => {
+          <>
+            {/* Hero Outfit (#1 Match) */}
+            {outfits.length > 0 && (
+              <div className="mb-12">
+                <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl p-6 md:p-8 border-2 border-[var(--ff-color-primary-600)]">
+                  <span className="absolute -top-3 left-6 bg-[var(--ff-color-primary-700)] text-white px-4 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
+                    <Sparkles className="w-4 h-4" />
+                    Jouw #1 match
+                  </span>
+
+                  <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center mt-4">
+                    {/* Outfit visual */}
+                    <div>
+                      <OutfitCard
+                        title={outfits[0].title}
+                        description={Array.isArray(outfits[0].description) ? outfits[0].description : [outfits[0].description]}
+                        images={outfits[0].products?.map((p) => p.imageUrl || '/images/outfit-fallback.jpg') || []}
+                        shopLink={outfits[0].products?.[0]?.affiliateUrl}
+                        outfit={outfits[0]}
+                        userId={userId}
+                      />
+                    </div>
+
+                    {/* Why this is #1 */}
+                    <div>
+                      <h2 className="text-2xl md:text-3xl font-bold mb-4 text-[var(--ff-color-text)]">
+                        Perfect voor jou
+                      </h2>
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <p className="text-[var(--color-text)]">
+                            <strong>{outfits[0].matchPercentage || 95}% match:</strong> Past perfect bij jouw stijlprofiel
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <p className="text-[var(--color-text)]">
+                            <strong>Jouw archetype:</strong> Speciaal geselecteerd voor {outfits[0].archetype}
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <p className="text-[var(--color-text)]">
+                            <strong>Perfecte gelegenheid:</strong> {outfits[0].occasion || 'Veelzijdig'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button
+                        as="a"
+                        href={outfits[0].products?.[0]?.affiliateUrl || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        size="lg"
+                        className="w-full"
+                      >
+                        <ShoppingBag className="w-5 h-5" />
+                        Bekijk deze outfit
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Other outfits grid */}
+            {outfits.length > 1 && (
+              <div>
+                <h2 className="text-2xl font-bold mb-6 text-[var(--ff-color-text)]">
+                  Meer outfits voor jou
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {outfits.slice(1).map((outfit) => {
               const images = outfit.products?.map(p => p.imageUrl).slice(0, 4) || [];
 
               return (
@@ -194,7 +266,10 @@ export default function ResultsPage() {
                 />
               );
             })}
-          </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <div className="mt-12 text-center">

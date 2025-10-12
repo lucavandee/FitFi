@@ -3,7 +3,7 @@ import SmartImage from "@/components/ui/SmartImage";
 import { useInView } from "@/hooks/useInView";
 import SaveButton from "@/components/outfits/SaveButton";
 import ProductDetailModal from "@/components/outfits/ProductDetailModal";
-import { ShoppingBag, ExternalLink } from "lucide-react";
+import { ShoppingBag, ExternalLink, Sparkles } from "lucide-react";
 import type { Outfit } from "@/engine/types";
 import { track } from "@/utils/telemetry";
 
@@ -50,6 +50,17 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             decoding="async"
           />
           <span className="res-overlay" aria-hidden="true"></span>
+
+          {/* Match score badge */}
+          {outfit && outfit.matchScore && (
+            <div style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10 }}>
+              <div className="inline-flex items-center gap-1 px-2 py-1 bg-green-600 text-white rounded-full text-xs font-semibold shadow-lg">
+                <Sparkles className="w-3 h-3" />
+                <span>{Math.round(outfit.matchScore)}% match</span>
+              </div>
+            </div>
+          )}
+
           {outfit && (
             <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 10 }}>
               <SaveButton outfit={outfit} userId={userId} />

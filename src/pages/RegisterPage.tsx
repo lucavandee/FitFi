@@ -18,6 +18,25 @@ const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Password strength calculation
+  const getPasswordStrength = (password: string): 'weak' | 'medium' | 'strong' => {
+    if (password.length < 6) return 'weak';
+    if (password.length < 10) return 'weak';
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const strength = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar].filter(Boolean).length;
+
+    if (password.length >= 12 && strength >= 3) return 'strong';
+    if (password.length >= 10 && strength >= 2) return 'medium';
+    return 'weak';
+  };
+
+  const passwordStrength = pw.length > 0 ? getPasswordStrength(pw) : null;
+
   const canSubmit = email.trim().length > 3 && pw.length >= 6 && accepted && !loading;
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -156,6 +175,41 @@ const RegisterPage: React.FC = () => {
                   {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+
+              {/* Password strength indicator */}
+              {passwordStrength && (
+                <div className="mt-2">
+                  <div className="flex gap-1 mb-1.5">
+                    <div className={`h-1 flex-1 rounded transition-colors ${
+                      passwordStrength === 'weak' ? 'bg-red-500' :
+                      passwordStrength === 'medium' ? 'bg-yellow-500' :
+                      'bg-green-500'
+                    }`} />
+                    <div className={`h-1 flex-1 rounded transition-colors ${
+                      passwordStrength === 'medium' || passwordStrength === 'strong' ?
+                      (passwordStrength === 'medium' ? 'bg-yellow-500' : 'bg-green-500') :
+                      'bg-gray-300'
+                    }`} />
+                    <div className={`h-1 flex-1 rounded transition-colors ${
+                      passwordStrength === 'strong' ? 'bg-green-500' : 'bg-gray-300'
+                    }`} />
+                  </div>
+                  <p className="text-xs">
+                    {passwordStrength === 'weak' && (
+                      <span className="text-red-600">Zwak wachtwoord — voeg hoofdletters, cijfers en symbolen toe</span>
+                    )}
+                    {passwordStrength === 'medium' && (
+                      <span className="text-yellow-600">Redelijk wachtwoord — maak het langer voor extra veiligheid</span>
+                    )}
+                    {passwordStrength === 'strong' && (
+                      <span className="text-green-600 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Sterk wachtwoord!
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
             </label>
 
             <label className="flex items-start gap-3">

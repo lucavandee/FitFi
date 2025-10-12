@@ -45,6 +45,7 @@ export interface Outfit {
   imageUrl?: string;
   tags: string[];
   matchPercentage: number;
+  matchScore?: number; // Match score 0-100 for UX display
   explanation: string;
   season?: Season; // Season property (now using the Season type)
   structure?: string[]; // Added structure property to track outfit composition
