@@ -40,8 +40,21 @@ export interface NovaSwipeInsight {
 }
 
 export class VisualPreferenceService {
+  private static getClient() {
+    const client = supabase();
+    if (!client) {
+      console.warn('⚠️ [VisualPreferenceService] Supabase client not available');
+    }
+    return client;
+  }
+
   static async getMoodPhotos(limit = 10): Promise<MoodPhoto[]> {
-    const { data, error } = await supabase
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    const { data, error } = await client
       .from('mood_photos')
       .select('*')
       .eq('active', true)
@@ -57,7 +70,13 @@ export class VisualPreferenceService {
   }
 
   static async recordSwipe(swipe: Omit<StyleSwipe, 'id' | 'created_at'>): Promise<void> {
-    const { error } = await supabase
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ Swipe not saved - client unavailable');
+      return;
+    }
+
+    const { error } = await client
       .from('style_swipes')
       .insert(swipe);
 
@@ -68,7 +87,12 @@ export class VisualPreferenceService {
   }
 
   static async getUserSwipes(userId: string): Promise<StyleSwipe[]> {
-    const { data, error } = await supabase
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    const { data, error } = await client
       .from('style_swipes')
       .select('*')
       .eq('user_id', userId)
@@ -83,7 +107,12 @@ export class VisualPreferenceService {
   }
 
   static async getSessionSwipes(sessionId: string): Promise<StyleSwipe[]> {
-    const { data, error } = await supabase
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    const { data, error } = await client
       .from('style_swipes')
       .select('*')
       .eq('session_id', sessionId)
@@ -101,7 +130,13 @@ export class VisualPreferenceService {
     userId?: string,
     sessionId?: string
   ): Promise<VisualPreferenceEmbedding> {
-    const { data, error } = await supabase.rpc('compute_visual_preference_embedding', {
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ Cannot compute visual embedding - no client');
+      return {};
+    }
+
+    const { data, error } = await client.rpc('compute_visual_preference_embedding', {
       p_user_id: userId || null,
       p_session_id: sessionId || null
     });
@@ -118,7 +153,12 @@ export class VisualPreferenceService {
     userId?: string,
     sessionId?: string
   ): Promise<VisualPreferenceEmbedding | null> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      return null;
+    }
+
+    let query = client
       .from('style_profiles')
       .select('visual_preference_embedding')
       .single();
@@ -145,7 +185,13 @@ export class VisualPreferenceService {
     userId?: string,
     sessionId?: string
   ): Promise<void> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ Cannot mark session complete - no client');
+      return;
+    }
+
+    let query = client
       .from('style_profiles')
       .update({ swipe_session_completed: true });
 
@@ -184,7 +230,12 @@ export class VisualPreferenceService {
     rejects: number;
     avgResponseTime: number;
   }> {
-    let query = supabase
+    const client = this.getClient();
+    if (!client) {
+      return { total: 0, likes: 0, rejects: 0, avgResponseTime: 0 };
+    }
+
+    let query = client
       .from('style_swipes')
       .select('swipe_direction, response_time_ms');
 
