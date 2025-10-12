@@ -27,8 +27,8 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
   const loadMoodPhotos = async () => {
     try {
-      const { supabase } = await import('@/lib/supabase');
-      const client = supabase();
+      const { getSupabase } = await import('@/lib/supabase');
+      const client = getSupabase();
 
       if (!client) {
         console.warn('⚠️ Supabase client not available, using placeholders');
@@ -105,8 +105,8 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
     analyzerRef.current.addSwipe(currentPhoto, swipeRecord);
 
     try {
-      const { supabase } = await import('@/lib/supabase');
-      const client = supabase();
+      const { getSupabase } = await import('@/lib/supabase');
+      const client = getSupabase();
 
       if (!client) {
         console.warn('⚠️ Swipe not saved - Supabase unavailable (will work locally)');

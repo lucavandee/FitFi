@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 
 export interface StyleEmbedding {
@@ -40,7 +40,7 @@ export class EmbeddingService {
    * Get Supabase client or return null
    */
   private static getClient() {
-    const client = supabase();
+    const client = getSupabase();
     if (!client) {
       console.warn('⚠️ [EmbeddingService] Supabase client not available');
     }

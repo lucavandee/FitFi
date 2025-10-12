@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export interface MoodPhoto {
   id: string;
@@ -41,7 +41,7 @@ export interface NovaSwipeInsight {
 
 export class VisualPreferenceService {
   private static getClient() {
-    const client = supabase();
+    const client = getSupabase();
     if (!client) {
       console.warn('⚠️ [VisualPreferenceService] Supabase client not available');
     }
