@@ -89,6 +89,12 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
 
+    // Prevent swipes beyond 10
+    if (swipeCount >= 10) {
+      onComplete();
+      return;
+    }
+
     const newSwipeCount = swipeCount + 1;
     setSwipeCount(newSwipeCount);
 
@@ -141,11 +147,21 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
       }, 600);
     }
 
+    // Complete after 10 swipes
+    if (newSwipeCount >= 10) {
+      setTimeout(() => {
+        onComplete();
+      }, 500);
+      return;
+    }
+
+    // Move to next photo
     if (currentIndex < moodPhotos.length - 1) {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
       }, 100);
     } else {
+      // Out of photos before 10 swipes - still complete
       setTimeout(() => {
         onComplete();
       }, 500);
