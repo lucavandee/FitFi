@@ -37,9 +37,42 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
       if (error) throw error;
 
-      setMoodPhotos(data || []);
+      // If no photos in database, use placeholder data
+      if (!data || data.length === 0) {
+        console.warn('⚠️ No mood photos in database, using placeholders');
+        const placeholderPhotos: MoodPhoto[] = [
+          { id: 'placeholder-1', image_url: '/images/fallbacks/default.jpg', tags: ['casual'], mood: 'relaxed', style_archetype: 'casual', active: true, display_order: 1 },
+          { id: 'placeholder-2', image_url: '/images/fallbacks/default.jpg', tags: ['formal'], mood: 'confident', style_archetype: 'classic', active: true, display_order: 2 },
+          { id: 'placeholder-3', image_url: '/images/fallbacks/default.jpg', tags: ['sporty'], mood: 'energetic', style_archetype: 'sporty', active: true, display_order: 3 },
+          { id: 'placeholder-4', image_url: '/images/fallbacks/default.jpg', tags: ['minimal'], mood: 'calm', style_archetype: 'minimalist', active: true, display_order: 4 },
+          { id: 'placeholder-5', image_url: '/images/fallbacks/default.jpg', tags: ['vintage'], mood: 'nostalgic', style_archetype: 'vintage', active: true, display_order: 5 },
+          { id: 'placeholder-6', image_url: '/images/fallbacks/default.jpg', tags: ['edgy'], mood: 'bold', style_archetype: 'edgy', active: true, display_order: 6 },
+          { id: 'placeholder-7', image_url: '/images/fallbacks/default.jpg', tags: ['bohemian'], mood: 'free', style_archetype: 'bohemian', active: true, display_order: 7 },
+          { id: 'placeholder-8', image_url: '/images/fallbacks/default.jpg', tags: ['preppy'], mood: 'polished', style_archetype: 'preppy', active: true, display_order: 8 },
+          { id: 'placeholder-9', image_url: '/images/fallbacks/default.jpg', tags: ['romantic'], mood: 'soft', style_archetype: 'romantic', active: true, display_order: 9 },
+          { id: 'placeholder-10', image_url: '/images/fallbacks/default.jpg', tags: ['urban'], mood: 'street', style_archetype: 'urban', active: true, display_order: 10 },
+        ];
+        setMoodPhotos(placeholderPhotos);
+      } else {
+        setMoodPhotos(data);
+      }
     } catch (err) {
       console.error('Failed to load mood photos:', err);
+      // Even on error, provide placeholder data so user can continue
+      console.warn('⚠️ Error loading mood photos, using placeholders');
+      const placeholderPhotos: MoodPhoto[] = [
+        { id: 'placeholder-1', image_url: '/images/fallbacks/default.jpg', tags: ['casual'], mood: 'relaxed', style_archetype: 'casual', active: true, display_order: 1 },
+        { id: 'placeholder-2', image_url: '/images/fallbacks/default.jpg', tags: ['formal'], mood: 'confident', style_archetype: 'classic', active: true, display_order: 2 },
+        { id: 'placeholder-3', image_url: '/images/fallbacks/default.jpg', tags: ['sporty'], mood: 'energetic', style_archetype: 'sporty', active: true, display_order: 3 },
+        { id: 'placeholder-4', image_url: '/images/fallbacks/default.jpg', tags: ['minimal'], mood: 'calm', style_archetype: 'minimalist', active: true, display_order: 4 },
+        { id: 'placeholder-5', image_url: '/images/fallbacks/default.jpg', tags: ['vintage'], mood: 'nostalgic', style_archetype: 'vintage', active: true, display_order: 5 },
+        { id: 'placeholder-6', image_url: '/images/fallbacks/default.jpg', tags: ['edgy'], mood: 'bold', style_archetype: 'edgy', active: true, display_order: 6 },
+        { id: 'placeholder-7', image_url: '/images/fallbacks/default.jpg', tags: ['bohemian'], mood: 'free', style_archetype: 'bohemian', active: true, display_order: 7 },
+        { id: 'placeholder-8', image_url: '/images/fallbacks/default.jpg', tags: ['preppy'], mood: 'polished', style_archetype: 'preppy', active: true, display_order: 8 },
+        { id: 'placeholder-9', image_url: '/images/fallbacks/default.jpg', tags: ['romantic'], mood: 'soft', style_archetype: 'romantic', active: true, display_order: 9 },
+        { id: 'placeholder-10', image_url: '/images/fallbacks/default.jpg', tags: ['urban'], mood: 'street', style_archetype: 'urban', active: true, display_order: 10 },
+      ];
+      setMoodPhotos(placeholderPhotos);
     } finally {
       setLoading(false);
     }

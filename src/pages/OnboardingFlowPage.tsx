@@ -163,11 +163,21 @@ export default function OnboardingFlowPage() {
       const client = supabase();
       let syncSuccess = false;
       let userId: string | null = null;
+      let user: any = null;
 
       if (client) {
-        const { data: { user } } = await client.auth.getUser();
-        userId = user?.id || null;
+        try {
+          const { data } = await client.auth.getUser();
+          user = data?.user || null;
+          userId = user?.id || null;
+        } catch (authError) {
+          console.warn('⚠️ [OnboardingFlow] Could not get user, continuing with local save only:', authError);
+        }
+      } else {
+        console.warn('⚠️ [OnboardingFlow] Supabase client not available, using local storage only');
+      }
 
+      if (client && userId) {
         const savePromise = saveToSupabase(client, user, sessionId, result);
 
         toast.promise(
