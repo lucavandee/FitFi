@@ -9,16 +9,56 @@
   --color-muted: #4A5568;
 
   --color-primary: #A6886A;          /* brand taupe (semantisch) */
-  --ff-color-primary-600: #8F7459;   /* hover */
+  --ff-color-primary-25: #FAF8F5;    /* ultra light tint */
+  --ff-color-primary-50: #F6EFE9;    /* light background/card tints */
+  --ff-color-primary-100: #EDD9C8;   /* lighter backgrounds */
+  --ff-color-primary-200: #E0C9B3;   /* subtle borders */
+  --ff-color-primary-300: #CEB39A;   /* muted accents */
+  --ff-color-primary-400: #B89B82;   /* soft highlights */
+  --ff-color-primary-500: #A6886A;   /* base brand color */
+  --ff-color-primary-600: #8F7459;   /* hover states */
   --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+  --ff-color-primary-800: #5C4937;   /* dark accents */
+  --ff-color-primary-900: #3E3125;   /* darkest */
 
   --color-accent: #D8CABA;
+  --ff-color-accent-50: #F5F1EC;     /* light accent tints */
+  --ff-color-accent-100: #EBE4DC;    /* subtle backgrounds */
+  --ff-color-accent-200: #DFD4C8;    /* soft borders */
+  --ff-color-accent-300: #D8CABA;    /* base accent */
+  --ff-color-accent-400: #C9B8A6;    /* accent variations */
+  --ff-color-accent-500: #B8A898;    /* medium accent */
+  --ff-color-accent-600: #A89682;    /* darker accent */
+  --ff-color-accent-700: #8A7A6A;    /* deep accent */
+  --ff-color-accent-800: #6D6053;    /* very dark */
+  --ff-color-accent-900: #4F463C;    /* darkest accent */
+
   --color-border: rgba(30, 35, 51, 0.08);
 
-  /* Status */
+  /* Status colors with full scales */
   --color-success: #16A34A;
+  --ff-color-success-50: #F0FDF4;
+  --ff-color-success-100: #DCFCE7;
+  --ff-color-success-200: #BBF7D0;
+  --ff-color-success-300: #86EFAC;
+  --ff-color-success-400: #4ADE80;
+  --ff-color-success-500: #22C55E;
+  --ff-color-success-600: #16A34A;   /* main success */
+  --ff-color-success-700: #15803D;
+  --ff-color-success-800: #166534;
+  --ff-color-success-900: #14532D;
+
   --color-warning: #D97706;
-  --color-danger:  #DC2626;
+  --ff-color-warning-50: #FFFBEB;
+  --ff-color-warning-600: #D97706;   /* main warning */
+
+  --color-danger: #DC2626;
+  --ff-color-danger-50: #FEF2F2;
+  --ff-color-danger-600: #DC2626;    /* main danger */
+
+  /* Additional utility colors */
+  --ff-color-turquoise: #40E0D0;     /* accent color for special elements */
+  --ff-color-secondary-600: #6B7280; /* neutral secondary */
 
   /* Overlays */
   --overlay-primary-12a: rgba(166, 136, 106, 0.12);

@@ -9,7 +9,7 @@ export default function LandingPage() {
       <Helmet>
         <title>AI Style Report in 2 minuten – Persoonlijk stijladvies | FitFi</title>
         <meta name="description" content="Krijg in 2:00 een persoonlijk AI Style Report met uitleg, kleuren en 6–12 outfits. Privacy-first, EU-gericht en nuchter. Start gratis." />
-        <meta property="og:image" content="/hero/style-report%20copy.webp" />
+        <meta property="og:image" content="/hero/hero-style-report-lg.webp" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -40,54 +40,53 @@ export default function LandingPage() {
                 GRATIS AI STYLE REPORT
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-[1.1]">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-[var(--color-text)] leading-[1.1]">
                 Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> over je zegt
               </h1>
 
-              <p className="text-xl lg:text-2xl text-gray-700 max-w-2xl leading-relaxed">
+              <p className="text-lg sm:text-xl lg:text-2xl text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
                 Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
-                <strong className="text-gray-900 font-semibold"> Direct toepasbaar.</strong>
+                <strong className="text-[var(--color-text)] font-semibold"> Direct toepasbaar.</strong>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <NavLink
                   to="/onboarding"
                   data-event="cta_start_free_home_hero"
-                  className="px-8 py-4 bg-[var(--ff-color-primary-700)] text-white font-bold rounded-2xl shadow-xl hover:bg-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-2xl hover:scale-105"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white font-semibold rounded-[var(--radius-xl)] hover:bg-[var(--ff-color-primary-700)] transition-colors shadow-lg"
                 >
-                  <span className="flex items-center justify-center gap-2">
-                    Start 2-min quiz
-                    <Sparkles className="w-5 h-5" />
-                  </span>
+                  <Sparkles className="w-5 h-5" />
+                  Start 2-min quiz
                 </NavLink>
 
                 <NavLink
                   to="/results"
                   data-event="cta_view_example_hero"
-                  className="px-8 py-4 bg-white text-gray-900 font-bold border-2 border-gray-300 rounded-2xl hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] transition-all duration-200 hover:shadow-lg"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-surface)] text-[var(--color-text)] font-semibold border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] hover:bg-[var(--color-bg)] transition-colors"
                 >
                   Zie voorbeeldrapport
+                  <ArrowRight className="w-5 h-5" />
                 </NavLink>
               </div>
 
               <div className="grid grid-cols-3 gap-4 pt-8">
                 <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center shadow-xl">
-                    <Check className="w-7 h-7 text-white" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[var(--ff-color-success-600)] flex items-center justify-center shadow-xl">
+                    <Check className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">100% Gratis</div>
+                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">100% Gratis</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-xl">
-                    <Shield className="w-7 h-7 text-white" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[var(--ff-color-primary-600)] flex items-center justify-center shadow-xl">
+                    <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">Privacy-first</div>
+                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">Privacy-first</div>
                 </div>
                 <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-orange-600 flex items-center justify-center shadow-xl">
-                    <Clock className="w-7 h-7 text-white" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl">
+                    <Clock className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">2 min setup</div>
+                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">2 min setup</div>
                 </div>
               </div>
             </div>
@@ -98,17 +97,21 @@ export default function LandingPage() {
 
                 <figure className="relative group-hover:scale-[1.02] transition-transform duration-500">
                   <img
-                    src="/hero/style-report copy copy copy copy.webp"
+                    src="/hero/style-report.webp"
+                    srcSet="/hero/hero-style-report-xs.webp 320w, /hero/hero-style-report-sm.webp 640w, /hero/hero-style-report-md.webp 768w, /hero/hero-style-report-lg.webp 1024w"
+                    sizes="(max-width: 640px) 320px, (max-width: 768px) 640px, (max-width: 1024px) 768px, 1024px"
                     alt="Voorbeeld van het FitFi Style Report op mobiel"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
+                    width="1024"
+                    height="768"
                     className="w-full h-auto rounded-2xl shadow-2xl"
                     onError={(e) => {
                       const target = e.currentTarget;
                       if (!target.dataset.fallbackAttempted) {
                         target.dataset.fallbackAttempted = 'true';
-                        target.src = '/hero/style-report-mockup.svg';
+                        target.src = '/placeholder.png';
                       }
                     }}
                   />
