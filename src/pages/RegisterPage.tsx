@@ -1,21 +1,26 @@
 // /src/pages/RegisterPage.tsx
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, ShieldCheck, BookmarkCheck } from "lucide-react";
+import { Eye, EyeOff, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, ShieldCheck, BookmarkCheck, Loader2 } from "lucide-react";
 import PageHero from "@/components/marketing/PageHero";
 import Button from "@/components/ui/Button";
+import { useUser } from "@/context/UserContext";
+import toast from "react-hot-toast";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const { register } = useUser();
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
+  const [name, setName] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [accepted, setAccepted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canSubmit = email.trim().length > 3 && pw.length >= 6 && accepted;
+  const canSubmit = email.trim().length > 3 && pw.length >= 6 && accepted && !loading;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -23,8 +28,33 @@ const RegisterPage: React.FC = () => {
       setError("Vul je gegevens correct in en accepteer de voorwaarden.");
       return;
     }
-    // Demo: direct door naar resultaten
-    navigate("/results");
+
+    setLoading(true);
+
+    try {
+      console.log('📝 [RegisterPage] Attempting registration for:', email);
+      const success = await register(email, pw, name || email.split('@')[0]);
+
+      if (success) {
+        console.log('✅ [RegisterPage] Registration successful');
+        toast.success('Account aangemaakt! Je bent nu ingelogd.');
+
+        // Wait a bit for auth state to update
+        setTimeout(() => {
+          navigate('/onboarding');
+        }, 500);
+      } else {
+        console.error('❌ [RegisterPage] Registration failed');
+        setError('Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.');
+        toast.error('Account aanmaken mislukt');
+      }
+    } catch (err) {
+      console.error('❌ [RegisterPage] Registration exception:', err);
+      setError('Er is een fout opgetreden. Controleer je internetverbinding en probeer het opnieuw.');
+      toast.error('Onverwachte fout opgetreden');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,6 +103,20 @@ const RegisterPage: React.FC = () => {
         <form onSubmit={onSubmit} className="max-w-xl mx-auto rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 md:p-8 shadow-[var(--shadow-soft)]">
           <div className="space-y-4">
             <label className="block">
+              <span className="block text-sm text-[var(--color-text)]/80 mb-1">Naam (optioneel)</span>
+              <input
+                type="text"
+                autoComplete="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                placeholder="Jouw naam"
+                aria-label="Naam"
+                disabled={loading}
+              />
+            </label>
+
+            <label className="block">
               <span className="block text-sm text-[var(--color-text)]/80 mb-1">E-mail</span>
               <input
                 type="email"
@@ -84,6 +128,7 @@ const RegisterPage: React.FC = () => {
                 className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                 placeholder="jij@voorbeeld.nl"
                 aria-label="E-mail"
+                disabled={loading}
               />
             </label>
 
@@ -100,6 +145,7 @@ const RegisterPage: React.FC = () => {
                   className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                   placeholder="Minimaal 6 tekens"
                   aria-label="Wachtwoord"
+                  disabled={loading}
                 />
                 <button
                   type="button"
@@ -141,7 +187,14 @@ const RegisterPage: React.FC = () => {
               className="w-full"
               disabled={!canSubmit}
             >
-              Maak account aan
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Bezig met aanmaken...
+                </span>
+              ) : (
+                'Maak account aan'
+              )}
             </Button>
 
             <p className="text-center text-sm text-[var(--color-text)]/70">
