@@ -14,10 +14,20 @@ export const isSupabaseEnabled =
 
 /** Maak/haal de client op. Retourneert null wanneer disabled. Gooit NIET bij import. */
 export function getSupabase(): SupabaseClient | null {
-  if (!isSupabaseEnabled) return null;
+  if (!isSupabaseEnabled) {
+    console.warn('⚠️ [Supabase] Client disabled - check VITE_USE_SUPABASE and env vars');
+    return null;
+  }
   if (client) return client;
   // url/key zijn truthy als isSupabaseEnabled true is
-  client = createClient(url!, key!, { auth: { persistSession: false } });
+  console.log('🔧 [Supabase] Initializing client:', url);
+  client = createClient(url!, key!, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
   return client;
 }
 
