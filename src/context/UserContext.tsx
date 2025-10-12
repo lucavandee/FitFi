@@ -186,18 +186,66 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (email: string, password: string, name: string): Promise<boolean> => {
     if (!sb) return false;
-    
+
     try {
-      const { error } = await sb.auth.signUp({
+      console.log('🔐 [UserContext] Starting registration for:', email);
+
+      const { data, error } = await sb.auth.signUp({
         email,
         password,
         options: {
           data: { name }
         }
       });
-      return !error;
+
+      if (error) {
+        console.error('❌ [UserContext] SignUp error:', error.message);
+        console.error('Full error:', error);
+        return false;
+      }
+
+      if (data?.user) {
+        console.log('✅ [UserContext] User created:', data.user.id.substring(0, 8) + '...');
+
+        // Give trigger a moment to run
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Check if profile was created by trigger
+        const { data: profile, error: profileError } = await sb
+          .from('profiles')
+          .select('id')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (!profile && !profileError) {
+          console.warn('⚠️ [UserContext] Trigger did not create profile, creating manually...');
+
+          // Manually create profile as fallback
+          const referralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+          const { error: insertError } = await sb
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              full_name: name || email.split('@')[0],
+              referral_code: referralCode,
+              tier: 'free'
+            });
+
+          if (insertError) {
+            console.error('❌ [UserContext] Manual profile creation failed:', insertError);
+          } else {
+            console.log('✅ [UserContext] Profile created manually');
+          }
+        } else if (profile) {
+          console.log('✅ [UserContext] Profile exists (trigger worked)');
+        }
+
+        return true;
+      }
+
+      return false;
     } catch (error) {
-      console.error('Register error:', error);
+      console.error('❌ [UserContext] Register exception:', error);
       return false;
     }
   };
