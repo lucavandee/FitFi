@@ -1,5 +1,33 @@
 import { QuizStep } from '../types/quiz';
 
+// Dynamic size options based on gender
+export const getSizeFieldsForGender = (gender?: string) => {
+  const isFemale = gender === 'female';
+  const isMale = gender === 'male';
+
+  return [
+    {
+      name: 'tops',
+      label: isFemale ? 'Tops (T-shirts, blouses)' : 'Tops (T-shirts, shirts)',
+      options: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+    },
+    {
+      name: 'bottoms',
+      label: isFemale ? 'Broeken/Rokken' : 'Broeken (waist)',
+      options: isFemale
+        ? ['32', '34', '36', '38', '40', '42', '44', '46'] // Vrouwenmaten
+        : ['28', '30', '31', '32', '33', '34', '36', '38', '40'] // Mannenmaten (waist)
+    },
+    {
+      name: 'shoes',
+      label: 'Schoenen (EU)',
+      options: isFemale
+        ? ['35', '36', '37', '38', '39', '40', '41', '42'] // Vrouwenmaten
+        : ['39', '40', '41', '42', '43', '44', '45', '46'] // Mannenmaten
+    }
+  ];
+};
+
 export const quizSteps: QuizStep[] = [
   {
     id: 1,
@@ -203,24 +231,8 @@ export const quizSteps: QuizStep[] = [
     description: 'Dit helpt ons om producten in jouw maat te vinden',
     field: 'sizes',
     type: 'sizes',
-    required: false,
-    sizeFields: [
-      {
-        name: 'tops',
-        label: 'Tops (T-shirts, shirts)',
-        options: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-      },
-      {
-        name: 'bottoms',
-        label: 'Broeken (waist)',
-        options: ['28', '30', '31', '32', '33', '34', '36', '38', '40']
-      },
-      {
-        name: 'shoes',
-        label: 'Schoenen (EU)',
-        options: ['39', '40', '41', '42', '43', '44', '45', '46']
-      }
-    ]
+    required: false
+    // sizeFields worden dynamisch gegenereerd op basis van gender
   },
   {
     id: 7,

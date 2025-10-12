@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "lucide-react";
-import { quizSteps } from "@/data/quizSteps";
+import { quizSteps, getSizeFieldsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
 import { LS_KEYS } from "@/lib/quiz/types";
@@ -445,9 +445,9 @@ export default function OnboardingFlowPage() {
             )}
 
             {/* Sizes */}
-            {step.type === 'sizes' && step.sizeFields && (
+            {step.type === 'sizes' && (
               <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 space-y-6">
-                {step.sizeFields.map((field) => (
+                {getSizeFieldsForGender(answers.gender).map((field) => (
                   <div key={field.name}>
                     <label className="block text-sm font-medium mb-3">{field.label}</label>
                     <select
