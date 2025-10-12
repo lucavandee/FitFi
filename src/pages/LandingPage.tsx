@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users, FileText, Heart } from "lucide-react";
+import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users, FileText, Heart, ArrowRight } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -382,47 +382,47 @@ export default function LandingPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="relative py-32 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-[var(--ff-color-primary-500)]/20 rounded-full blur-3xl animate-blob" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-[var(--ff-color-turquoise)]/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--ff-color-primary-900)]/30 via-transparent to-transparent" />
-        </div>
-
-        <div className="ff-container relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Klaar om je stijl te ontdekken?
+      <section className="py-20">
+        <div className="ff-container">
+          <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Klaar om je <span className="text-[var(--ff-color-primary-600)]">stijl</span> te ontdekken?
             </h2>
-            <p className="text-xl text-gray-200 mb-12 leading-relaxed">
+            <p className="text-xl text-gray-600 mb-8">
               Start nu en krijg binnen 2 minuten je persoonlijke Style Report.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <NavLink
                 to="/onboarding"
-                className="px-10 py-5 bg-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-700)] text-white font-bold rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-200 hover:scale-105 text-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
                 data-event="cta_start_free_footer"
               >
+                <Sparkles className="w-5 h-5" />
                 Start gratis Style Report
               </NavLink>
               <NavLink
                 to="/results"
-                className="px-10 py-5 bg-white/10 backdrop-blur-sm text-white font-bold border-2 border-white/30 rounded-2xl hover:bg-white hover:text-gray-900 hover:border-white transition-all duration-200 text-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
                 data-event="cta_view_example_footer"
               >
-                Bekijk voorbeeld
+                Bekijk voorbeeldrapport
+                <ArrowRight className="w-5 h-5" />
               </NavLink>
             </div>
-            <p className="text-gray-300 text-sm mt-10 flex flex-wrap items-center justify-center gap-6">
-              <span className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-green-400" />
-                Geen creditcard nodig
-              </span>
-              <span className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-400" />
-                100% Privacy-first
-              </span>
-            </p>
+            <div className="flex flex-wrap justify-center gap-6 text-sm mt-8">
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-[var(--ff-color-success-600)]" />
+                <span>Geen creditcard nodig</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-[var(--ff-color-success-600)]" />
+                <span>100% Privacy-first</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-[var(--ff-color-success-600)]" />
+                <span>Direct resultaat</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
