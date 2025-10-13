@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabaseClient";
 import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngine";
 import { generateNovaExplanation } from "@/engine/explainOutfit";
+import { filterByGender, getUserGender } from "@/services/products/genderFilter";
+import { curatedMaleProducts } from "@/data/curatedProducts";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
@@ -61,10 +63,16 @@ class OutfitService {
     count: number = 6
   ): Promise<GeneratedOutfit[]> {
     try {
-      const products = await this.getProducts();
+      let products = await this.getProducts();
+
+      const userGender = quizAnswers.gender || getUserGender();
+      if (userGender && userGender !== 'unisex') {
+        products = filterByGender(products, userGender);
+        console.log(`[OutfitService] Filtered to ${products.length} ${userGender} products`);
+      }
 
       if (products.length < 10) {
-        console.error('[OutfitService] Not enough products to generate outfits');
+        console.warn('[OutfitService] Not enough products, using fallback');
         return [];
       }
 
@@ -141,44 +149,28 @@ class OutfitService {
   }
 
   private async getFallbackProducts(): Promise<Product[]> {
-    try {
-      const response = await fetch('/data/products/product_feed.json');
-      if (!response.ok) {
-        console.error('[OutfitService] Failed to load fallback products');
-        return [];
-      }
+    console.log('[OutfitService] Using curated male products as fallback');
 
-      const data = await response.json();
-
-      if (!Array.isArray(data)) {
-        console.error('[OutfitService] Invalid fallback product data');
-        return [];
-      }
-
-      return data.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        brand: item.brand,
-        price: item.price,
-        imageUrl: item.image_url,
-        category: item.category,
-        type: item.type,
-        gender: item.gender,
-        colors: item.colors || [],
-        sizes: item.sizes || [],
-        tags: item.tags || [],
-        retailer: item.retailer,
-        affiliateUrl: item.affiliate_url,
-        productUrl: item.product_url,
-        description: item.description,
-        inStock: item.in_stock ?? true,
-        rating: item.rating,
-        reviewCount: item.review_count,
-      }));
-    } catch (error) {
-      console.error('[OutfitService] Error loading fallback products:', error);
-      return [];
-    }
+    return curatedMaleProducts.map((product) => ({
+      id: product.id,
+      name: product.title,
+      brand: product.retailer,
+      price: product.price.current,
+      imageUrl: product.image,
+      category: product.category || 'general',
+      type: product.category || 'clothing',
+      gender: product.gender,
+      colors: product.color ? [product.color] : [],
+      sizes: product.sizes || [],
+      tags: [],
+      retailer: product.retailer,
+      affiliateUrl: product.url,
+      productUrl: product.url,
+      description: product.reason || '',
+      inStock: product.availability === 'in_stock',
+      rating: 4.5,
+      reviewCount: 0,
+    }));
   }
 
   clearCache(): void {

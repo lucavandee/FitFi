@@ -1,8 +1,10 @@
 import React from 'react';
-import { X, ExternalLink, ShoppingBag } from 'lucide-react';
+import { X, ExternalLink, ShoppingBag, Info } from 'lucide-react';
 import SmartImage from '@/components/ui/SmartImage';
 import Button from '@/components/ui/Button';
 import { track } from '@/utils/telemetry';
+import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl } from '@/utils/affiliate';
+import { useUser } from '@/context/UserContext';
 
 interface Product {
   id: string;
@@ -24,16 +26,34 @@ interface ProductDetailModalProps {
 }
 
 export default function ProductDetailModal({ product, onClose }: ProductDetailModalProps) {
-  const handleShopClick = () => {
-    const url = product.affiliateUrl || product.productUrl;
-    if (url && url !== '#') {
-      track('product_click', {
-        product_id: product.id,
-        product_name: product.name,
-        retailer: product.retailer,
-        price: product.price,
+  const { user } = useUser();
+
+  const handleShopClick = async () => {
+    const baseUrl = product.affiliateUrl || product.productUrl;
+    if (!baseUrl || baseUrl === '#') return;
+
+    track('product_click', {
+      product_id: product.id,
+      product_name: product.name,
+      retailer: product.retailer,
+      price: product.price,
+    });
+
+    if (isAffiliateConsentGiven()) {
+      const clickRef = buildClickRef({ outfitId: product.id, slot: 1, userId: user?.id });
+      const affiliateUrl = buildAwinUrl(baseUrl, clickRef);
+
+      await logAffiliateClick({
+        clickRef,
+        outfitId: product.id,
+        productUrl: affiliateUrl,
+        userId: user?.id,
+        merchantName: product.retailer,
       });
-      window.open(url, '_blank', 'noopener,noreferrer');
+
+      window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      window.open(baseUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -124,9 +144,20 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                   </div>
                 )}
 
-                <p className="text-xs text-[var(--color-text)]/60 text-center">
-                  Je wordt doorgestuurd naar de website van de retailer
-                </p>
+                <div className="space-y-2">
+                  <p className="text-xs text-[var(--color-text)]/60 text-center">
+                    Je wordt doorgestuurd naar de website van de retailer
+                  </p>
+                  <p className="flex items-center justify-center gap-1 text-xs text-[var(--color-text)]/60">
+                    <Info size={12} className="flex-shrink-0" />
+                    <span>
+                      Affiliate link.{' '}
+                      <a href="/disclosure" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+                        Meer info
+                      </a>
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

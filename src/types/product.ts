@@ -7,18 +7,22 @@ export type ProductPrice = {
   original?: number;
 };
 
+export type Gender = 'male' | 'female' | 'unisex';
+
 export type Product = {
-  id: string;                         // stable id per retailer
-  retailer: string;                   // 'zalando' | 'bijenkorf' | ...
+  id: string;
+  retailer: string;
   retailer_sku?: string;
   title: string;
-  image: string;                      // absolute URL
-  url: string;                        // outbound deeplink (we redirect via function)
+  image: string;
+  url: string;
   price: ProductPrice;
   currency: Currency;
   availability: Availability;
+  gender: Gender;
+  category?: string;
   sizes?: string[];
   color?: string;
-  badges?: string[];                  // bijv. ['Aanrader', 'Nieuw']
-  reason?: string;                    // menselijke "waarom past dit"
+  badges?: string[];
+  reason?: string;
 };
