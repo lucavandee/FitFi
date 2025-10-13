@@ -8,7 +8,7 @@ const SAMPLE_OUTFIT = {
 
 export function StyleReportPreview() {
   return (
-    <div className="relative w-full max-w-sm mx-auto aspect-[3/4] bg-white rounded-3xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
+    <div className="relative w-full max-w-md mx-auto aspect-[3/4] bg-white rounded-3xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
       <div className="absolute inset-0 flex flex-col">
         {/* Header: Clean white met subtiele border */}
         <div className="relative bg-white px-8 pt-10 pb-8 border-b border-[var(--color-border)]">

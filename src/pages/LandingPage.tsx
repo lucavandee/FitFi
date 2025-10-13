@@ -88,7 +88,7 @@ export default function LandingPage() {
             </div>
 
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative group w-full max-w-md mx-auto lg:mx-0">
+              <div className="relative group w-full max-w-lg mx-auto lg:mx-0">
                 <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
 
                 <figure className="relative group-hover:scale-[1.02] transition-transform duration-500 mb-24 lg:mb-28">
