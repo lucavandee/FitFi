@@ -1,76 +1,144 @@
-import { Sparkles, Target, Palette, TrendingUp } from 'lucide-react';
+import { Sparkles, Check } from 'lucide-react';
+
+const SAMPLE_OUTFITS = [
+  {
+    items: [
+      { url: 'https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'Beige Coat' },
+      { url: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'Dark Jeans' },
+      { url: 'https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'White Blouse' }
+    ],
+    matchScore: 94
+  },
+  {
+    items: [
+      { url: 'https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'Camel Sweater' },
+      { url: 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'Beige Trousers' }
+    ],
+    matchScore: 92
+  },
+  {
+    items: [
+      { url: 'https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'Knit Top' },
+      { url: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2', name: 'Classic Jeans' }
+    ],
+    matchScore: 90
+  }
+];
 
 export function StyleReportPreview() {
   return (
-    <div className="relative w-full aspect-[3/4] bg-white rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
-      <div className="absolute inset-0 flex flex-col">
-        <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] p-4 sm:p-6 text-white">
-          <div className="flex items-center gap-2 mb-1 sm:mb-2">
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="text-xs sm:text-sm font-semibold uppercase tracking-wide">Jouw Style Report</span>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-bold mb-0.5 sm:mb-1">Modern Minimal</h3>
-          <p className="text-white/90 text-xs sm:text-sm">Strak, eigentijds & zelfverzekerd</p>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3">
-          <div className="bg-[var(--ff-color-primary-50)] rounded-xl p-3 border border-[var(--ff-color-primary-100)]">
-            <div className="flex items-center gap-2 mb-2">
-              <Target className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-              <span className="text-xs font-semibold text-[var(--color-text)]">Archetype Match</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 bg-[var(--ff-color-primary-200)] rounded-full h-2">
-                <div className="bg-[var(--ff-color-primary-600)] rounded-full h-2 w-[92%]"></div>
+    <div className="relative w-full aspect-[9/16] sm:aspect-[3/4] bg-[var(--color-bg)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
+      <div className="absolute inset-0 flex flex-col overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-700)] via-[var(--ff-color-primary-600)] to-[var(--ff-cta-500)] p-6 text-white">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-5 h-5" />
+                <span className="text-xs font-semibold uppercase tracking-wide opacity-90">Jouw Style Report</span>
               </div>
-              <span className="text-sm font-bold text-[var(--ff-color-primary-600)]">92%</span>
+              <h3 className="text-2xl sm:text-3xl font-bold mb-1 leading-tight">Modern Minimal</h3>
+              <p className="text-white/80 text-sm">Strak, eigentijds & zelfverzekerd</p>
             </div>
           </div>
 
-          <div className="bg-[var(--color-surface)] rounded-xl p-2.5 sm:p-3 border border-[var(--color-border)]">
-            <div className="flex items-center gap-2 mb-2">
-              <Palette className="w-4 h-4 text-[var(--ff-color-accent-600)]" />
-              <span className="text-xs font-semibold text-[var(--color-text)]">Jouw Kleuren</span>
+          <div className="flex gap-2 mt-4">
+            <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+              <div className="text-[10px] uppercase tracking-wide opacity-70 mb-0.5">Match</div>
+              <div className="text-xl font-bold">94%</div>
             </div>
-            <div className="flex gap-1.5 sm:gap-2">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#2C3E50] shadow-sm"></div>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#E8E8E8] shadow-sm"></div>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#A67C52] shadow-sm"></div>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#5D7B8C] shadow-sm"></div>
+            <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+              <div className="text-[10px] uppercase tracking-wide opacity-70 mb-0.5">Outfits</div>
+              <div className="text-xl font-bold">12</div>
             </div>
-          </div>
-
-          <div className="bg-[var(--color-surface)] rounded-xl p-3 border border-[var(--color-border)]">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-[var(--ff-color-turquoise)]" />
-              <span className="text-xs font-semibold text-[var(--color-text)]">Outfits</span>
+            <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+              <div className="text-[10px] uppercase tracking-wide opacity-70 mb-0.5">Items</div>
+              <div className="text-xl font-bold">36+</div>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-primary-50)] rounded-lg"></div>
-              <div className="aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-accent-100)] to-[var(--ff-color-accent-50)] rounded-lg"></div>
-              <div className="aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-turquoise-light)] to-[var(--ff-color-turquoise-lighter)] rounded-lg"></div>
-            </div>
-            <div className="mt-2 text-center">
-              <span className="text-xs text-[var(--color-text-muted)]">+ 9 meer outfits</span>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-[var(--ff-color-accent-50)] to-[var(--ff-color-accent-25)] rounded-xl p-3 border border-[var(--ff-color-accent-100)]">
-            <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
-              "Jouw stijl combineert minimalistische lijnen met hoogwaardige basics. Perfect voor een moderne..."
-            </p>
           </div>
         </div>
 
-        <div className="p-3 sm:p-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
-          <button className="w-full py-2 sm:py-2.5 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-xs sm:text-sm hover:bg-[var(--ff-color-primary-700)] transition-colors">
+        <div className="flex-1 bg-white overflow-y-auto">
+          <div className="p-4 space-y-4">
+            <div className="bg-[var(--ff-color-primary-50)] rounded-xl p-4 border border-[var(--ff-color-primary-200)]">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-600)] flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-xs font-semibold text-[var(--color-text)] uppercase tracking-wide">Perfect voor jou</div>
+                </div>
+              </div>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                Jouw stijl combineert minimalistische lijnen met hoogwaardige basics. Tijdloze elegantie in neutrale tinten.
+              </p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-semibold text-[var(--color-text)]">Jouw Outfits</h4>
+                <span className="text-xs text-[var(--color-text-muted)]">Scroll voor meer</span>
+              </div>
+
+              <div className="space-y-3">
+                {SAMPLE_OUTFITS.map((outfit, idx) => (
+                  <div key={idx} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="flex gap-2 p-2">
+                      {outfit.items.map((item, itemIdx) => (
+                        <div key={itemIdx} className="flex-1 aspect-[3/4] relative rounded-lg overflow-hidden bg-[var(--ff-color-primary-50)]">
+                          <img
+                            src={item.url}
+                            alt={item.name}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="px-3 py-2 bg-[var(--color-bg)] flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[var(--color-text)]">Outfit {idx + 1}</span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--ff-color-primary-600)]"></div>
+                        <span className="text-xs font-bold text-[var(--ff-color-primary-600)]">{outfit.matchScore}% match</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 text-center">
+                <div className="inline-block bg-[var(--ff-color-primary-50)] rounded-full px-4 py-2 border border-[var(--ff-color-primary-200)]">
+                  <span className="text-xs font-semibold text-[var(--ff-color-primary-700)]">+ 9 meer gepersonaliseerde outfits</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-[var(--ff-color-accent-50)] to-[var(--ff-color-accent-100)] rounded-xl p-4 border border-[var(--ff-color-accent-200)]">
+              <div className="text-xs font-semibold text-[var(--color-text)] mb-2 uppercase tracking-wide">Jouw Kleuren</div>
+              <div className="flex gap-2 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-[#2C3E50] shadow-md border-2 border-white"></div>
+                <div className="w-10 h-10 rounded-lg bg-[#F5F0E8] shadow-md border-2 border-white"></div>
+                <div className="w-10 h-10 rounded-lg bg-[#A6886A] shadow-md border-2 border-white"></div>
+                <div className="w-10 h-10 rounded-lg bg-[#8A7459] shadow-md border-2 border-white"></div>
+              </div>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Warme neutrale tinten die jouw natuurlijke uitstraling versterken
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 bg-white border-t border-[var(--color-border)] space-y-2">
+          <button className="w-full py-3 bg-[var(--ff-cta-500)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-cta-600)] transition-all shadow-lg hover:shadow-xl active:scale-[0.98]">
             Start Gratis Quiz
           </button>
+          <p className="text-center text-xs text-[var(--color-text-muted)]">
+            2 minuten · Geen account nodig
+          </p>
         </div>
       </div>
 
-      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-lg border border-[var(--color-border)]">
-        <span className="text-[10px] sm:text-xs font-bold text-[var(--ff-color-primary-600)]">100% Gratis</span>
+      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg border border-[var(--color-border)]">
+        <span className="text-xs font-bold text-[var(--ff-color-primary-700)]">100% Gratis</span>
       </div>
     </div>
   );
