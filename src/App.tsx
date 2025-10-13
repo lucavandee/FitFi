@@ -11,6 +11,7 @@ import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import NovaLauncher from "@/components/nova/NovaLauncher";
 import ChatPanel from "@/components/nova/ChatPanel";
 import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
+import AwinMasterTag from "@/components/affiliate/AwinMasterTag";
 
 // Lazy pages
 const LandingPage        = lazy(() => import("@/pages/LandingPage"));
@@ -63,6 +64,7 @@ export default function App() {
       <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
         <ErrorBoundary>
           <ProfileSyncInitializer />
+          <AwinMasterTag />
           <Navbar />
           <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
             <main id="main">

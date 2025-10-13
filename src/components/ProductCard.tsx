@@ -1,11 +1,13 @@
 import React from 'react';
-import { ExternalLink, Heart } from 'lucide-react';
+import { ExternalLink, Heart, Info } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
 import SmartImage from '@/components/media/SmartImage';
 import Button from './ui/Button';
 import { trackProductClick, trackShopCta, trackImpression } from '@/services/engagement';
 import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
+import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven } from '@/utils/affiliate';
 import toast from 'react-hot-toast';
+import { useUser } from '@/context/UserContext';
 
 interface ProductCardProps {
   id: string;
@@ -27,6 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   className = ''
 }) => {
   const { saveOutfit } = useGamification();
+  const { user } = useUser();
 
   const handleSave = async () => {
     try {
@@ -34,15 +37,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
       toast.success('Product bewaard!');
     } catch (error) {
       console.warn('Save failed, using local fallback:', error);
-      // Fallback to local storage
       const { toggleSave } = await import('@/services/engagement');
       const saved = toggleSave(id);
       toast.success(saved ? 'Product bewaard!' : 'Product verwijderd uit favorieten');
     }
   };
 
-  const handleClick = () => {
-    // Track product click with enhanced data
+  const handleClick = async () => {
     trackProductClick({
       id: id,
       title: title,
@@ -50,20 +51,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
       price: price,
       source: 'ProductCard'
     });
-    
-    // Build affiliate URL with UTM tracking
+
     const partner = detectPartner(deeplink || '');
     const affiliateUrl = buildAffiliateUrl(deeplink || '#', partner || undefined);
-    
-    // Track shop CTA
+
     trackShopCta({
       id: id,
       partner: partner || 'unknown',
       url: affiliateUrl,
       source: 'ProductCard'
     });
-    
-    // Open affiliate link
+
+    if (isAffiliateConsentGiven()) {
+      const clickRef = buildClickRef({ outfitId: id, slot: 1, userId: user?.id });
+      await logAffiliateClick({
+        clickRef,
+        outfitId: id,
+        productUrl: affiliateUrl,
+        userId: user?.id,
+        merchantName: partner || undefined,
+      });
+    }
+
     window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
   };
 
@@ -121,6 +130,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </Button>
           </div>
         </div>
+
+        <p className="mt-2 flex items-center gap-1 text-xs text-[var(--color-text)]/60">
+          <Info size={12} className="flex-shrink-0" />
+          <span>
+            Affiliate link.{' '}
+            <a href="/disclosure" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+              Meer info
+            </a>
+          </span>
+        </p>
       </div>
     </div>
   );

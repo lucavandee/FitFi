@@ -5,7 +5,7 @@ import PremiumUpsellStrip from "@/components/results/PremiumUpsellStrip";
 import OutfitCard from "@/components/results/OutfitCard";
 import { LS_KEYS } from "@/lib/quiz/types";
 import Button from "@/components/ui/Button";
-import { Sparkles, CloudOff, CheckCircle2, RefreshCw, Loader, ShoppingBag } from "lucide-react";
+import { Sparkles, CloudOff, CheckCircle2, RefreshCw, Loader, ShoppingBag, Info } from "lucide-react";
 import { useProfileSync } from "@/hooks/useProfileSync";
 import { outfitService } from "@/services/outfits/outfitService";
 import type { GeneratedOutfit } from "@/services/outfits/outfitService";
@@ -271,6 +271,16 @@ export default function ResultsPage() {
             )}
           </>
         )}
+
+        <div className="mt-8 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)]">
+          <p className="flex items-center gap-2 text-sm text-[var(--color-text)]/70">
+            <Info size={16} className="flex-shrink-0 text-[var(--ff-color-primary-600)]" />
+            <span>
+              <strong>Transparantie:</strong> Sommige product-links kunnen affiliate links zijn. Wij kunnen een commissie ontvangen via deze links, zonder extra kosten voor jou.{' '}
+              <a href="/disclosure" className="underline hover:no-underline">Meer info</a>
+            </span>
+          </p>
+        </div>
 
         <div className="mt-12 text-center">
           <div className="inline-flex flex-col items-center gap-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8">
