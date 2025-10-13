@@ -91,10 +91,10 @@ export default function LandingPage() {
               <div className="relative group w-full max-w-md mx-auto lg:mx-0">
                 <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
 
-                <figure className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                <figure className="relative group-hover:scale-[1.02] transition-transform duration-500 mb-24 lg:mb-28">
                   <StyleReportPreview />
 
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex gap-4 items-center">
+                  <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 hidden lg:flex gap-4 items-center">
                     <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float">
                       <div className="flex items-center gap-2">
                         <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center shadow-lg">
