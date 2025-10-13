@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users, FileText, Heart, ArrowRight } from "lucide-react";
+import { StyleReportPreview } from "@/components/landing/StyleReportPreview";
 
 export default function LandingPage() {
   return (
@@ -91,24 +92,7 @@ export default function LandingPage() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
 
                 <figure className="relative group-hover:scale-[1.02] transition-transform duration-500">
-                  <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                      <div className="w-20 h-20 bg-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <Sparkles className="w-10 h-10 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
-                        Jouw Style Report
-                      </h3>
-                      <p className="text-[var(--color-text-muted)] mb-6 text-sm">
-                        Persoonlijk stijladvies met uitleg, kleuren en 6-12 outfits
-                      </p>
-                      <div className="space-y-3 w-full">
-                        <div className="h-3 bg-[var(--ff-color-primary-200)] rounded-full w-3/4 mx-auto"></div>
-                        <div className="h-3 bg-[var(--ff-color-primary-200)] rounded-full w-full"></div>
-                        <div className="h-3 bg-[var(--ff-color-primary-200)] rounded-full w-2/3 mx-auto"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <StyleReportPreview />
 
                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex gap-4 items-center">
                     <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float">
