@@ -25,11 +25,6 @@ export default function LandingPage() {
 
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-[var(--ff-color-primary-100)] rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[var(--ff-color-accent-100)] rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--ff-color-primary-50)] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
-        </div>
 
         <div className="ff-container relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -96,25 +91,24 @@ export default function LandingPage() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
 
                 <figure className="relative group-hover:scale-[1.02] transition-transform duration-500">
-                  <img
-                    src="/hero/style-report.webp"
-                    srcSet="/hero/hero-style-report-xs.webp 320w, /hero/hero-style-report-sm.webp 640w, /hero/hero-style-report-md.webp 768w, /hero/hero-style-report-lg.webp 1024w"
-                    sizes="(max-width: 640px) 320px, (max-width: 768px) 640px, (max-width: 1024px) 768px, 1024px"
-                    alt="Voorbeeld van het FitFi Style Report op mobiel"
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                    width="1024"
-                    height="768"
-                    className="w-full h-auto rounded-2xl shadow-2xl"
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      if (!target.dataset.fallbackAttempted) {
-                        target.dataset.fallbackAttempted = 'true';
-                        target.src = '/placeholder.png';
-                      }
-                    }}
-                  />
+                  <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                      <div className="w-20 h-20 bg-[var(--ff-color-primary-600)] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                        <Sparkles className="w-10 h-10 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
+                        Jouw Style Report
+                      </h3>
+                      <p className="text-[var(--color-text-muted)] mb-6 text-sm">
+                        Persoonlijk stijladvies met uitleg, kleuren en 6-12 outfits
+                      </p>
+                      <div className="space-y-3 w-full">
+                        <div className="h-3 bg-[var(--ff-color-primary-200)] rounded-full w-3/4 mx-auto"></div>
+                        <div className="h-3 bg-[var(--ff-color-primary-200)] rounded-full w-full"></div>
+                        <div className="h-3 bg-[var(--ff-color-primary-200)] rounded-full w-2/3 mx-auto"></div>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex gap-4 items-center">
                     <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float">
