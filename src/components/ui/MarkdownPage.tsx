@@ -5,9 +5,10 @@ import Button from './Button';
 import LoadingFallback from './LoadingFallback';
 
 interface MarkdownPageProps {
-  title: string;
-  description: string;
-  markdownPath: string;
+  title?: string;
+  description?: string;
+  markdownPath?: string;
+  content?: string;
   downloadUrl?: string;
   backLink?: string;
   backLabel?: string;
@@ -17,22 +18,34 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
   title,
   description,
   markdownPath,
+  content: inlineContent,
   downloadUrl,
   backLink = '/',
   backLabel = 'Terug naar home'
 }) => {
-  const [content, setContent] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [content, setContent] = useState<string>(inlineContent || '');
+  const [isLoading, setIsLoading] = useState(!inlineContent);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (inlineContent) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (!markdownPath) {
+      setError('Geen content beschikbaar');
+      setIsLoading(false);
+      return;
+    }
+
     const loadContent = async () => {
       try {
         const response = await fetch(markdownPath);
         if (!response.ok) {
           throw new Error('Content niet gevonden');
         }
-        
+
         const text = await response.text();
         setContent(text);
       } catch (error) {
@@ -44,7 +57,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
     };
 
     loadContent();
-  }, [markdownPath]);
+  }, [markdownPath, inlineContent]);
 
   const renderMarkdown = (markdown: string) => {
     // Simple markdown to HTML conversion
@@ -83,35 +96,41 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
     <div className="min-h-screen bg-[#F6F6F6]">
       <div className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Header */}
-        <div className="mb-8">
-          <Link 
-            to={backLink} 
-            className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
-          >
-            <ArrowLeft size={20} className="mr-2" />
-            {backLabel}
-          </Link>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-light text-gray-900 mb-2">{title}</h1>
-              <p className="text-gray-600">{description}</p>
-            </div>
-            
-            {downloadUrl && (
-              <Button
-                as="a"
-                href={downloadUrl}
-                variant="outline"
-                icon={<Download size={16} />}
-                iconPosition="left"
-                className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+        {(title || description || backLink) && (
+          <div className="mb-8">
+            {backLink && (
+              <Link
+                to={backLink}
+                className="inline-flex items-center text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors mb-6"
               >
-                Download PDF
-              </Button>
+                <ArrowLeft size={20} className="mr-2" />
+                {backLabel}
+              </Link>
+            )}
+
+            {(title || description) && (
+              <div className="flex items-center justify-between">
+                <div>
+                  {title && <h1 className="text-3xl font-light text-gray-900 mb-2">{title}</h1>}
+                  {description && <p className="text-gray-600">{description}</p>}
+                </div>
+
+                {downloadUrl && (
+                  <Button
+                    as="a"
+                    href={downloadUrl}
+                    variant="outline"
+                    icon={<Download size={16} />}
+                    iconPosition="left"
+                    className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                  >
+                    Download PDF
+                  </Button>
+                )}
+              </div>
             )}
           </div>
-        </div>
+        )}
 
         {/* Content */}
         <div className="bg-white rounded-3xl shadow-sm p-8 md:p-12">
