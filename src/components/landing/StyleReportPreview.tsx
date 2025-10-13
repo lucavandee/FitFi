@@ -82,13 +82,6 @@ export function StyleReportPreview() {
             </p>
           </div>
         </div>
-
-        {/* Footer: Clean white CTA */}
-        <div className="px-8 pb-8 pt-6 bg-white border-t border-[var(--color-border)]">
-          <button className="w-full py-3.5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-semibold text-sm transition-colors duration-200 shadow-lg">
-            Start Gratis Quiz
-          </button>
-        </div>
       </div>
     </div>
   );
