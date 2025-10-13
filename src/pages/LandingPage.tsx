@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap, Users, FileText, Heart, ArrowRight } from "lucide-react";
+import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap } from "lucide-react";
 import { StyleReportPreview } from "@/components/landing/StyleReportPreview";
 
 export default function LandingPage() {
@@ -53,15 +53,6 @@ export default function LandingPage() {
                 >
                   <Sparkles className="w-5 h-5" />
                   Start 2-min quiz
-                </NavLink>
-
-                <NavLink
-                  to="/results"
-                  data-event="cta_view_example_hero"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-surface)] text-[var(--color-text)] font-semibold border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] hover:bg-[var(--color-bg)] transition-colors"
-                >
-                  Zie voorbeeldrapport
-                  <ArrowRight className="w-5 h-5" />
                 </NavLink>
               </div>
 
@@ -138,43 +129,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* STATS SECTION */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--ff-color-primary-25)] to-transparent opacity-40" />
-        <div className="ff-container relative">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">10K+</div>
-              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Style Reports</div>
-            </div>
-            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">2 min</div>
-              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Gemiddelde tijd</div>
-            </div>
-            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">95%</div>
-              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Tevreden</div>
-            </div>
-            <div className="text-center p-6 bg-white backdrop-blur-sm rounded-2xl border border-[var(--color-border)] shadow-xl">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] bg-clip-text text-transparent">100%</div>
-              <div className="text-sm text-[var(--color-text)] mt-2 font-semibold">Privacy-first</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* FEATURES BENTO GRID */}
       <section className="ff-section py-24">
         <div className="ff-container">
@@ -239,10 +193,6 @@ export default function LandingPage() {
             <h2 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4">
               Wat anderen zeggen
             </h2>
-            <div className="flex items-center justify-center gap-4 mt-6">
-              <span className="px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-medium shadow-md">⭐ 4.8/5 gemiddeld</span>
-              <span className="px-4 py-2 bg-white border border-[var(--color-border)] rounded-full text-sm font-medium shadow-md">🇳🇱 Nederlandse focus</span>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
@@ -375,19 +325,11 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <NavLink
                 to="/onboarding"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors shadow-lg"
                 data-event="cta_start_free_footer"
               >
                 <Sparkles className="w-5 h-5" />
                 Start gratis Style Report
-              </NavLink>
-              <NavLink
-                to="/results"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
-                data-event="cta_view_example_footer"
-              >
-                Bekijk voorbeeldrapport
-                <ArrowRight className="w-5 h-5" />
               </NavLink>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-sm mt-8">
