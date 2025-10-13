@@ -165,7 +165,7 @@ export default function OnboardingFlowPage() {
       let userId: string | null = null;
       let user: any = null;
 
-      if (client) {
+      if (client?.auth) {
         try {
           const { data } = await client.auth.getUser();
           user = data?.user || null;

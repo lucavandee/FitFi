@@ -2,14 +2,21 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const url = import.meta.env.VITE_SUPABASE_URL ?? "";
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
+const useFlag = (import.meta.env.VITE_USE_SUPABASE ?? 'false').toString().toLowerCase() === 'true';
 
 let _client: SupabaseClient | null = null;
 
 export function supabase(): SupabaseClient | null {
   if (_client) return _client;
 
+  // Check if Supabase is enabled via flag
+  if (!useFlag) {
+    console.warn('⚠️ [SupabaseClient] Supabase disabled via VITE_USE_SUPABASE flag');
+    return null;
+  }
+
   if (!url || !anonKey) {
-    console.error('❌ [Supabase] Missing credentials:', {
+    console.error('❌ [SupabaseClient] Missing credentials:', {
       hasUrl: !!url,
       hasKey: !!anonKey,
       url: url ? `${url.substring(0, 30)}...` : 'undefined'
