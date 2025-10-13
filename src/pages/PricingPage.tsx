@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Check, Star, Zap, Crown, Sparkles, ArrowRight } from "lucide-react";
+import { Check, Star, Zap, Crown, Sparkles } from "lucide-react";
 
 export default function PricingPage() {
   return (
@@ -53,27 +53,19 @@ export default function PricingPage() {
                   <span>AI-stijlprofiel</span>
                 </li>
               </ul>
-              <div className="space-y-3">
-                <NavLink
-                  to="/onboarding"
-                  className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-                  data-event="cta_start_free_pricing"
-                >
-                  Start gratis
-                </NavLink>
-                <NavLink
-                  to="/hoe-het-werkt"
-                  className="block text-center px-6 py-3 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
-                >
-                  Bekijk voorbeeld
-                </NavLink>
-              </div>
+              <NavLink
+                to="/onboarding"
+                className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+                data-event="cta_start_free_pricing"
+              >
+                Start gratis
+              </NavLink>
             </article>
 
             {/* Premium Plan */}
             <article className="relative bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--ff-color-primary-500)] p-8 shadow-xl">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-bold bg-[var(--ff-color-primary-600)] text-white">
-                Meest gekozen
+                Populair
               </div>
               <header className="text-center mb-8 pt-2">
                 <h2 className="text-2xl font-bold mb-2">Premium</h2>
@@ -100,16 +92,13 @@ export default function PricingPage() {
                   <span>Wishlist & stylesets</span>
                 </li>
               </ul>
-              <div className="space-y-3">
-                <NavLink
-                  to="/onboarding"
-                  className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-                  data-event="cta_start_premium_pricing"
-                >
-                  Upgrade naar Premium
-                </NavLink>
-                <p className="text-center text-gray-600 text-sm">30 dagen geld-terug-garantie</p>
-              </div>
+              <NavLink
+                to="/onboarding"
+                className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+                data-event="cta_start_premium_pricing"
+              >
+                Upgrade naar Premium
+              </NavLink>
             </article>
 
             {/* Founder Plan */}
@@ -133,16 +122,13 @@ export default function PricingPage() {
                   <span>Founder community</span>
                 </li>
               </ul>
-              <div className="space-y-3">
-                <NavLink
-                  to="/onboarding"
-                  className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-                  data-event="cta_start_founder_pricing"
-                >
-                  Word Founder
-                </NavLink>
-                <p className="text-center text-gray-600 text-sm">Beperkte plaatsen</p>
-              </div>
+              <NavLink
+                to="/onboarding"
+                className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+                data-event="cta_start_founder_pricing"
+              >
+                Word Founder
+              </NavLink>
             </article>
           </div>
         </div>
@@ -169,7 +155,7 @@ export default function PricingPage() {
               <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <summary className="font-semibold cursor-pointer">Wat is het verschil tussen Premium en Founder?</summary>
                 <p className="mt-4 text-gray-600">
-                  Founder is een eenmalige betaling voor lifetime Premium toegang plus extra voordelen zoals vroege toegang tot nieuwe features en een exclusieve badge.
+                  Founder is een eenmalige betaling voor lifetime Premium toegang plus extra voordelen zoals vroege toegang tot nieuwe features.
                 </p>
               </details>
               <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
@@ -193,22 +179,14 @@ export default function PricingPage() {
             <p className="text-xl text-gray-600 mb-8">
               Start nu gratis. Geen creditcard vereist.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <NavLink
-                to="/onboarding"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-                data-event="cta_start_free_pricing_final"
-              >
-                Start gratis Style Report
-                <ArrowRight className="w-5 h-5" />
-              </NavLink>
-              <NavLink
-                to="/hoe-het-werkt"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
-              >
-                Hoe het werkt
-              </NavLink>
-            </div>
+            <NavLink
+              to="/onboarding"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              data-event="cta_start_free_pricing_final"
+            >
+              <Sparkles className="w-5 h-5" />
+              Start gratis Style Report
+            </NavLink>
           </div>
         </div>
       </section>

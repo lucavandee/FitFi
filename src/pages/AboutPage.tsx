@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { Target, Shield, Sparkles, ArrowRight } from "lucide-react";
+import { Target, Shield, Sparkles } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -125,22 +125,14 @@ export default function AboutPage() {
             <p className="text-xl text-gray-600 mb-8">
               Binnen 2 minuten een helder Style Report. Geen account nodig.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <NavLink
-                to="/onboarding"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-                data-event="cta_start_free_about"
-              >
-                Start gratis
-                <ArrowRight className="w-5 h-5" />
-              </NavLink>
-              <NavLink
-                to="/hoe-het-werkt"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
-              >
-                Hoe het werkt
-              </NavLink>
-            </div>
+            <NavLink
+              to="/onboarding"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              data-event="cta_start_free_about"
+            >
+              <Sparkles className="w-5 h-5" />
+              Start gratis
+            </NavLink>
           </div>
         </div>
       </section>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
-import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield, ArrowRight } from "lucide-react";
+import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
 
 export default function HowItWorksPage() {
   return (
@@ -60,7 +60,7 @@ export default function HowItWorksPage() {
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                  <span>90 seconden</span>
+                  <span>Binnen 2 min</span>
                 </div>
               </div>
             </div>
@@ -76,22 +76,22 @@ export default function HowItWorksPage() {
 
               <h3 className="text-2xl font-bold mb-3">AI Analyse</h3>
               <p className="text-gray-600 mb-6">
-                Onze geavanceerde AI combineert je antwoorden met stijldata van duizenden outfits
-                om jouw perfecte stijlarchetype en kleurenpalet te bepalen.
+                Onze AI combineert je antwoorden met stijldata
+                om jouw stijlarchetype en kleurenpalet te bepalen.
               </p>
 
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm">
                   <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                  <span>Geavanceerde algoritmes</span>
+                  <span>Smart matching</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                  <span>Realtime processing</span>
+                  <span>Direct verwerkt</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                  <span>30 seconden</span>
+                  <span>Helder resultaat</span>
                 </div>
               </div>
             </div>
@@ -215,34 +215,19 @@ export default function HowItWorksPage() {
               Start nu en ontdek binnen 2 minuten welke stijl perfect bij je past.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <NavLink
-                to="/onboarding"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-                data-event="cta_start_free_how_it_works"
-              >
-                <Sparkles className="w-5 h-5" />
-                Start gratis Style Report
-              </NavLink>
+            <NavLink
+              to="/onboarding"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 mb-8"
+              data-event="cta_start_free_how_it_works"
+            >
+              <Sparkles className="w-5 h-5" />
+              Start gratis Style Report
+            </NavLink>
 
-              <NavLink
-                to="/results"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors"
-                data-event="cta_view_example_how_it_works"
-              >
-                Bekijk voorbeeldrapport
-                <ArrowRight className="w-5 h-5" />
-              </NavLink>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
                 <span>100% Gratis</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                <span>Geen account nodig</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />

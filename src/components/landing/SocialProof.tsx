@@ -1,28 +1,22 @@
 import React from 'react';
-import { Star, Clock, Heart, Sparkles, ShoppingBag } from 'lucide-react';
+import { Clock, Heart, Sparkles, ShoppingBag, Check } from 'lucide-react';
 
 const SocialProof: React.FC = () => {
-  const testimonials = [
+  const benefits = [
     {
-      name: 'Emma van der Berg',
-      role: 'Marketing Manager',
-      content: 'Ik wist niet dat groen me zo goed zou staan. Het rapport was helder en de outfit-voorbeelden waren precies mijn stijl.',
-      rating: 5,
-      avatar: '👩🏼‍💼'
+      title: 'Direct inzicht',
+      description: 'Binnen 2 minuten weet je welke kleuren en stijlen bij je passen.',
+      icon: Sparkles
     },
     {
-      name: 'Lars Janssen',
-      role: 'Student',
-      content: 'Had geen idee waar te beginnen. Nu weet ik welke kleuren en stijlen bij me passen. Scheelt enorm bij het shoppen.',
-      rating: 5,
-      avatar: '👨🏻‍🎓'
+      title: 'Complete outfits',
+      description: 'Geen losse items, maar complete looks die je direct kunt shoppen.',
+      icon: ShoppingBag
     },
     {
-      name: 'Sophie Bakker',
-      role: 'Ondernemer',
-      content: 'Het archetype klopte meteen. De outfit-combinaties waren precies wat ik zelf zou kiezen, maar dan beter.',
-      rating: 5,
-      avatar: '👩🏽‍💻'
+      title: 'Uitleg erbij',
+      description: 'Begrijp waarom iets bij je past. Geen giswerk, wel inzicht.',
+      icon: Check
     }
   ];
 
@@ -55,14 +49,14 @@ const SocialProof: React.FC = () => {
           </div>
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-6">
-            Zie wat anderen{' '}
-            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
-              over FitFi zeggen
+            Wat je krijgt met{' '}
+            <span className="text-[var(--ff-color-primary-600)]">
+              FitFi
             </span>
           </h2>
-          
+
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Echte ervaringen van mensen die FitFi hebben gebruikt.
+            Direct toepasbaar stijladvies, geen gedoe.
           </p>
         </div>
 
@@ -75,10 +69,10 @@ const SocialProof: React.FC = () => {
                 key={index}
                 className="text-center group hover:scale-105 transition-all duration-300"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 mb-4 shadow-lg">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] mb-4 shadow-lg">
                   <Icon className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2 group-hover:text-emerald-600 transition-colors">
+                <div className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--ff-color-primary-600)] transition-colors">
                   {stat.number}
                 </div>
                 <div className="text-gray-600 font-medium">
@@ -89,44 +83,29 @@ const SocialProof: React.FC = () => {
           })}
         </div>
 
-        {/* Testimonials */}
+        {/* Benefits */}
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="group relative bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-2xl p-8 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10"
-            >
-              {/* Rating stars */}
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-
-              {/* Content */}
-              <p className="text-[var(--color-text)] mb-6 leading-relaxed">
-                "{testimonial.content}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center text-2xl">
-                  {testimonial.avatar}
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
+            return (
+              <div
+                key={index}
+                className="group relative bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-2xl p-8 hover:scale-105 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                  <Icon className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
                 </div>
-                <div>
-                  <div className="font-semibold text-[var(--color-text)] group-hover:text-emerald-600 transition-colors">
-                    {testimonial.name}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {testimonial.role}
-                  </div>
-                </div>
-              </div>
 
-              {/* Hover effect overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            </div>
-          ))}
+                <h3 className="text-xl font-bold text-[var(--color-text)] mb-3 group-hover:text-[var(--ff-color-primary-600)] transition-colors">
+                  {benefit.title}
+                </h3>
+
+                <p className="text-gray-600 leading-relaxed">
+                  {benefit.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
