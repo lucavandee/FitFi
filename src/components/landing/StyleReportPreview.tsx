@@ -8,21 +8,25 @@ const SAMPLE_OUTFIT = {
 
 export function StyleReportPreview() {
   return (
-    <div className="relative w-full max-w-sm mx-auto aspect-[3/4] bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="relative w-full max-w-sm mx-auto aspect-[3/4] bg-white rounded-3xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
       <div className="absolute inset-0 flex flex-col">
-        <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-200)] to-[var(--ff-color-primary-300)] px-8 pt-10 pb-8">
+        {/* Header: Clean white met subtiele border */}
+        <div className="relative bg-white px-8 pt-10 pb-8 border-b border-[var(--color-border)]">
           <div className="mb-1.5">
-            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/80">Style Report</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--color-text-muted)]">Style Report</span>
           </div>
-          <h3 className="text-4xl font-bold text-white mb-1 leading-[1.1] tracking-tight">Modern Minimal</h3>
-          <p className="text-white/75 text-sm font-light leading-relaxed">Strak, eigentijds & zelfverzekerd</p>
+          <h3 className="text-4xl font-bold text-[var(--color-text)] mb-1 leading-[1.1] tracking-tight">Modern Minimal</h3>
+          <p className="text-[var(--color-text-muted)] text-sm font-light leading-relaxed">Strak, eigentijds & zelfverzekerd</p>
 
-          <div className="absolute top-6 right-6 bg-white/20 backdrop-blur-md rounded-full px-3 py-1.5 border border-white/30">
-            <span className="text-[10px] font-bold text-white uppercase tracking-wider">Gratis</span>
+          {/* Badge: subtle accent color */}
+          <div className="absolute top-6 right-6 bg-[var(--ff-color-primary-50)] rounded-full px-3 py-1.5 border border-[var(--ff-color-primary-200)]">
+            <span className="text-[10px] font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wider">Gratis</span>
           </div>
         </div>
 
+        {/* Content: Light background */}
         <div className="flex-1 overflow-y-auto px-8 py-8 bg-[var(--color-bg)] space-y-7">
+          {/* Style Description */}
           <div>
             <div className="mb-4">
               <div className="text-xs font-semibold text-[var(--color-text)] uppercase tracking-wider mb-1">Perfect voor jou</div>
@@ -31,7 +35,8 @@ export function StyleReportPreview() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-3 shadow-sm">
+            {/* Outfit Card: Clean white */}
+            <div className="bg-white rounded-2xl p-3 shadow-sm border border-[var(--color-border)]">
               <div className="grid grid-cols-3 gap-2.5">
                 {SAMPLE_OUTFIT.items.map((item, idx) => (
                   <div key={idx} className="aspect-[3/4] relative rounded-xl overflow-hidden bg-[var(--color-bg)]">
@@ -50,9 +55,10 @@ export function StyleReportPreview() {
             </div>
           </div>
 
+          {/* Color Palette */}
           <div>
             <div className="text-xs font-semibold text-[var(--color-text)] uppercase tracking-wider mb-3">Jouw Kleurenpalet</div>
-            <div className="bg-white rounded-2xl p-4 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-[var(--color-border)]">
               <div className="grid grid-cols-4 gap-3 mb-3">
                 <div className="aspect-square rounded-lg bg-[#2C3E50] shadow-sm"></div>
                 <div className="aspect-square rounded-lg bg-[#F5F0E8] shadow-sm border border-[var(--color-border)]"></div>
@@ -65,7 +71,8 @@ export function StyleReportPreview() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white rounded-2xl p-5 border border-[var(--ff-color-primary-200)] shadow-sm">
+          {/* Value Prop: Subtle accent background */}
+          <div className="bg-white rounded-2xl p-5 border border-[var(--ff-color-primary-200)] shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-[var(--ff-color-primary-700)]">94% Match</span>
               <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">AI-Powered</span>
@@ -76,8 +83,9 @@ export function StyleReportPreview() {
           </div>
         </div>
 
-        <div className="px-8 pb-8 pt-6 bg-[var(--color-bg)] border-t border-[var(--color-border)]">
-          <button className="w-full py-3.5 bg-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-400)] text-white rounded-2xl font-semibold text-sm transition-colors duration-200 shadow-lg">
+        {/* Footer: Clean white CTA */}
+        <div className="px-8 pb-8 pt-6 bg-white border-t border-[var(--color-border)]">
+          <button className="w-full py-3.5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-semibold text-sm transition-colors duration-200 shadow-lg">
             Start Gratis Quiz
           </button>
         </div>
