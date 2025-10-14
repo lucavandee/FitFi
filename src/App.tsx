@@ -34,6 +34,7 @@ const DashboardPage      = lazy(() => import("@/pages/DashboardPage"));
 const ProfilePage        = lazy(() => import("@/pages/ProfilePage"));
 const EmbeddingAnalytics = lazy(() => import("@/components/admin/EmbeddingAnalytics"));
 const AdminProductsPage  = lazy(() => import("@/pages/AdminProductsPage"));
+const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 const WithSeo = {
@@ -57,6 +58,7 @@ const WithSeo = {
   Profile:    () => (<><Seo title="Profiel — FitFi" description="Jouw stijlprofiel en embedding insights." path="/profile" /><ProfilePage /></>),
   Analytics:  () => (<><Seo title="Analytics — FitFi" description="Embedding analytics dashboard." path="/admin/analytics" noindex /><EmbeddingAnalytics /></>),
   AdminProducts: () => (<><Seo title="Product Management — FitFi" description="Stripe products management." path="/admin/products" noindex /><AdminProductsPage /></>),
+  AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
@@ -108,6 +110,7 @@ export default function App() {
                 {/* Admin */}
                 <Route path="/admin/analytics" element={<RequireAuth><WithSeo.Analytics /></RequireAuth>} />
                 <Route path="/admin/products" element={<RequireAuth><WithSeo.AdminProducts /></RequireAuth>} />
+                <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
 
                 {/* 404 */}
                 <Route path="*" element={<WithSeo.NotFound />} />
