@@ -39,6 +39,7 @@ export function useCreateCheckout() {
 
       if (!response.ok) {
         const error = await response.json();
+        console.error('Checkout error response:', error);
         throw new Error(error.error || 'Checkout sessie aanmaken mislukt');
       }
 

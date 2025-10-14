@@ -19,7 +19,8 @@ Deno.serve(async (req: Request) => {
   try {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
-      throw new Error("STRIPE_SECRET_KEY not configured");
+      console.error("STRIPE_SECRET_KEY environment variable is not set");
+      throw new Error("Payment system not configured. Please contact support.");
     }
 
     const stripe = new Stripe(stripeKey, {
