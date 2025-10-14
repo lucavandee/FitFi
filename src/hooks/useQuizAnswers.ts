@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
 import { useUser } from '../context/UserContext';
 import { QuizAnswers, QuizSubmission } from '../types/quiz';
 import { quizService } from '../services/quizService';
