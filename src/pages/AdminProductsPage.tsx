@@ -10,6 +10,8 @@ import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 interface ProductForm {
   name: string;
   description: string;
+  stripe_product_id: string;
+  stripe_price_id: string;
   price: string;
   currency: string;
   interval: string;
@@ -26,6 +28,8 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState<ProductForm>({
     name: '',
     description: '',
+    stripe_product_id: '',
+    stripe_price_id: '',
     price: '',
     currency: 'EUR',
     interval: 'month',
@@ -51,6 +55,8 @@ export default function AdminProductsPage() {
     setFormData({
       name: product.name,
       description: product.description,
+      stripe_product_id: product.stripe_product_id || '',
+      stripe_price_id: product.stripe_price_id || '',
       price: product.price.toString(),
       currency: product.currency,
       interval: product.interval,
@@ -67,6 +73,8 @@ export default function AdminProductsPage() {
     setFormData({
       name: '',
       description: '',
+      stripe_product_id: '',
+      stripe_price_id: '',
       price: '',
       currency: 'EUR',
       interval: 'month',
@@ -85,6 +93,8 @@ export default function AdminProductsPage() {
       const data = {
         name: formData.name,
         description: formData.description,
+        stripe_product_id: formData.stripe_product_id || null,
+        stripe_price_id: formData.stripe_price_id || null,
         price: parseFloat(formData.price),
         currency: formData.currency,
         interval: formData.interval,
@@ -185,6 +195,28 @@ export default function AdminProductsPage() {
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">Stripe Product ID</label>
+                <input
+                  type="text"
+                  value={formData.stripe_product_id}
+                  onChange={(e) => setFormData({ ...formData, stripe_product_id: e.target.value })}
+                  placeholder="prod_xxxxx"
+                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] font-mono text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">Stripe Price ID</label>
+                <input
+                  type="text"
+                  value={formData.stripe_price_id}
+                  onChange={(e) => setFormData({ ...formData, stripe_price_id: e.target.value })}
+                  placeholder="price_xxxxx"
+                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] font-mono text-sm"
                 />
               </div>
 
