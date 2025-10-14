@@ -1,4 +1,4 @@
-import { getSupabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 import type { ArchetypeWeights } from '@/types/style';
 
@@ -192,13 +192,13 @@ export class CalibrationService {
    * Record user feedback on calibration outfit
    */
   static async recordFeedback(feedback: Omit<CalibrationFeedback, 'id' | 'created_at'>): Promise<void> {
-    const supabase = getSupabase();
-    if (!supabase) {
+    const client = supabase();
+    if (!client) {
       console.warn('⚠️ Supabase unavailable, feedback not recorded');
       return;
     }
 
-    const { error } = await supabase
+    const { error } = await client
       .from('outfit_calibration_feedback')
       .insert(feedback);
 
@@ -215,13 +215,13 @@ export class CalibrationService {
     userId?: string,
     sessionId?: string
   ): Promise<void> {
-    const supabase = getSupabase();
-    if (!supabase) {
+    const client = supabase();
+    if (!client) {
       console.warn('⚠️ Supabase unavailable, calibration not applied');
       return;
     }
 
-    const { error } = await supabase.rpc('apply_calibration_to_profile', {
+    const { error } = await client.rpc('apply_calibration_to_profile', {
       p_user_id: userId || null,
       p_session_id: sessionId || null
     });
@@ -239,12 +239,12 @@ export class CalibrationService {
     userId?: string,
     sessionId?: string
   ): Promise<CalibrationFeedback[]> {
-    const supabase = getSupabase();
-    if (!supabase) {
+    const client = supabase();
+    if (!client) {
       return [];
     }
 
-    let query = supabase
+    let query = client
       .from('outfit_calibration_feedback')
       .select('*')
       .order('created_at', { ascending: false });
@@ -274,12 +274,12 @@ export class CalibrationService {
     userId?: string,
     sessionId?: string
   ): Promise<Record<string, number>> {
-    const supabase = getSupabase();
-    if (!supabase) {
+    const client = supabase();
+    if (!client) {
       return {};
     }
 
-    const { data, error } = await supabase.rpc('compute_calibration_adjustments', {
+    const { data, error } = await client.rpc('compute_calibration_adjustments', {
       p_user_id: userId || null,
       p_session_id: sessionId || null
     });
@@ -301,12 +301,12 @@ export class CalibrationService {
     avg_response_time: number;
     most_common_archetype: string;
   }>> {
-    const supabase = getSupabase();
-    if (!supabase) {
+    const client = supabase();
+    if (!client) {
       return [];
     }
 
-    const { data, error } = await supabase.rpc('get_calibration_effectiveness');
+    const { data, error } = await client.rpc('get_calibration_effectiveness');
 
     if (error) {
       console.error('Failed to fetch calibration effectiveness:', error);

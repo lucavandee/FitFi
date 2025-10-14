@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 
 export interface ColorProfile {
   undertone: "warm" | "cool" | "neutral";
@@ -56,11 +56,17 @@ export async function fetchUserContext(
   userId?: string
 ): Promise<NovaUserContext | null> {
   try {
+    const client = supabase();
+    if (!client) {
+      console.warn('Supabase client not available');
+      return null;
+    }
+
     if (!userId) {
       const sessionId = getSessionId();
       if (!sessionId) return null;
 
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("style_profiles")
         .select("*")
         .eq("session_id", sessionId)
@@ -76,7 +82,7 @@ export async function fetchUserContext(
       return parseStyleProfile(data);
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("style_profiles")
       .select("*")
       .eq("user_id", userId)
