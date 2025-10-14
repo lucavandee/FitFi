@@ -1,14 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { NavLink } from "react-router-dom";
-import { Check, Star, Zap, Crown, Sparkles } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Check, Star, Zap, Crown, Sparkles, Loader2 } from "lucide-react";
 import { useStripeProducts } from "@/hooks/useStripeProducts";
+import { useCreateCheckout } from "@/hooks/useCreateCheckout";
+import { supabase } from "@/lib/supabaseClient";
+import toast from "react-hot-toast";
 
 export default function PricingPage() {
+  const navigate = useNavigate();
   const { data: products, isLoading } = useStripeProducts();
+  const createCheckout = useCreateCheckout();
+  const [checkingAuth, setCheckingAuth] = useState(false);
 
   const founderProduct = products?.find(p => p.interval === 'one_time');
   const premiumProduct = products?.find(p => p.interval === 'month');
+
+  const handleCheckout = async (productId: string, planName: string) => {
+    setCheckingAuth(true);
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      setCheckingAuth(false);
+      toast.error('Log eerst in om te kunnen upgraden');
+      navigate('/login?redirect=/prijzen');
+      return;
+    }
+
+    setCheckingAuth(false);
+
+    try {
+      const result = await createCheckout.mutateAsync({ productId });
+
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Er ging iets mis. Probeer het opnieuw.');
+    }
+  };
 
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
@@ -107,13 +138,21 @@ export default function PricingPage() {
                   ))
                 )}
               </ul>
-              <NavLink
-                to="/onboarding"
-                className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              <button
+                onClick={() => premiumProduct && handleCheckout(premiumProduct.id, 'Premium')}
+                disabled={!premiumProduct || createCheckout.isPending || checkingAuth}
+                className="w-full px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 data-event="cta_start_premium_pricing"
               >
-                Upgrade naar Premium
-              </NavLink>
+                {createCheckout.isPending || checkingAuth ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Bezig...
+                  </>
+                ) : (
+                  'Upgrade naar Premium'
+                )}
+              </button>
             </article>
 
             {/* Founder Plan */}
@@ -152,13 +191,21 @@ export default function PricingPage() {
                   ))
                 )}
               </ul>
-              <NavLink
-                to="/onboarding"
-                className="block text-center px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              <button
+                onClick={() => founderProduct && handleCheckout(founderProduct.id, 'Founder')}
+                disabled={!founderProduct || createCheckout.isPending || checkingAuth}
+                className="w-full px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 data-event="cta_start_founder_pricing"
               >
-                Word Founder
-              </NavLink>
+                {createCheckout.isPending || checkingAuth ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Bezig...
+                  </>
+                ) : (
+                  'Word Founder'
+                )}
+              </button>
             </article>
           </div>
         </div>
