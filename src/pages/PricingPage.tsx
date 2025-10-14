@@ -66,7 +66,13 @@ export default function PricingPage() {
         window.location.href = result.url;
       }
     } catch (error: any) {
-      toast.error(error.message || 'Er ging iets mis. Probeer het opnieuw.');
+      const errorMsg = error.message || 'Er ging iets mis. Probeer het opnieuw.';
+
+      if (errorMsg.includes('not configured') || errorMsg.includes('STRIPE_SECRET_KEY')) {
+        toast.error('Betalingen zijn momenteel niet beschikbaar. Neem contact op met support.');
+      } else {
+        toast.error(errorMsg);
+      }
     }
   };
 

@@ -38,9 +38,15 @@ export function useCreateCheckout() {
       );
 
       if (!response.ok) {
-        const error = await response.json();
-        console.error('Checkout error response:', error);
-        throw new Error(error.error || 'Checkout sessie aanmaken mislukt');
+        let errorMessage = 'Checkout sessie aanmaken mislukt';
+        try {
+          const error = await response.json();
+          console.error('Checkout error response:', error);
+          errorMessage = error.error || errorMessage;
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
