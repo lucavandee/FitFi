@@ -40,7 +40,15 @@ export default function PricingPage() {
   const handleCheckout = async (productId: string, planName: string) => {
     setCheckingAuth(true);
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const client = supabase();
+
+    if (!client) {
+      setCheckingAuth(false);
+      toast.error('Verbinding niet beschikbaar. Probeer het later opnieuw.');
+      return;
+    }
+
+    const { data: { session } } = await client.auth.getSession();
 
     if (!session) {
       setCheckingAuth(false);

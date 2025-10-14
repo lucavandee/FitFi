@@ -16,7 +16,13 @@ export default function SubscriptionManager() {
     setProcessingPortal(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const client = supabase();
+
+      if (!client) {
+        throw new Error('Verbinding niet beschikbaar');
+      }
+
+      const { data: { session } } = await client.auth.getSession();
 
       if (!session) {
         throw new Error('Je moet ingelogd zijn');
