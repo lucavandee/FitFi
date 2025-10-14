@@ -31,16 +31,22 @@ export function EmbeddingAnalytics() {
 
   const loadAnalytics = async () => {
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/supabaseClient');
+      const client = supabase();
+
+      if (!client) {
+        console.warn('Supabase client not available');
+        return;
+      }
 
       // Get archetype distribution
-      const { data: archetypeData } = await supabase.rpc('get_archetype_distribution');
+      const { data: archetypeData } = await client.rpc('get_archetype_distribution');
       if (archetypeData) {
         setArchetypes(archetypeData.slice(0, 10));
       }
 
       // Get stability distribution
-      const { data: stabilityData } = await supabase.rpc('get_stability_distribution');
+      const { data: stabilityData } = await client.rpc('get_stability_distribution');
       if (stabilityData) {
         const total = stabilityData.reduce((sum: number, s: any) => sum + s.user_count, 0);
         setStability(
@@ -52,7 +58,7 @@ export function EmbeddingAnalytics() {
       }
 
       // Get general stats
-      const { data: statsData } = await supabase.rpc('get_embedding_stats');
+      const { data: statsData } = await client.rpc('get_embedding_stats');
       if (statsData && statsData.length > 0) {
         setStats(statsData[0]);
       }

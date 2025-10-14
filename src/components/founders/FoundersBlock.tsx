@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { supabase as getSupabaseClient } from "@/lib/supabaseClient";
+import { supabase as supabaseClient } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
 import FoundersTierBadge from '@/components/founders/FoundersTierBadge';

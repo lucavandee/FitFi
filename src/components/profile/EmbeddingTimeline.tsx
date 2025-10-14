@@ -37,9 +37,15 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
 
   const loadTimeline = async () => {
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/supabaseClient');
+      const client = supabase();
 
-      const { data, error } = await supabase.rpc('get_user_embedding_timeline', {
+      if (!client) {
+        console.warn('Supabase client not available');
+        return;
+      }
+
+      const { data, error } = await client.rpc('get_user_embedding_timeline', {
         p_user_id: userId
       });
 
@@ -60,9 +66,15 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
     if (selectedVersion === null || compareVersion === null) return;
 
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/supabaseClient');
+      const client = supabase();
 
-      const { data, error } = await supabase.rpc('compare_embedding_versions', {
+      if (!client) {
+        console.warn('Supabase client not available');
+        return;
+      }
+
+      const { data, error } = await client.rpc('compare_embedding_versions', {
         p_user_id: userId,
         p_version_1: compareVersion,
         p_version_2: selectedVersion
