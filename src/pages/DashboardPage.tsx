@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useSearchParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   Sparkles,
@@ -9,7 +9,9 @@ import {
   RefreshCw,
   Settings,
   TrendingUp,
-  Award
+  Award,
+  CheckCircle,
+  X
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -17,14 +19,18 @@ import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
+import toast from "react-hot-toast";
 
 function readJson<T>(key: string): T | null {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : null; } catch { return null; }
 }
 
 export default function DashboardPage() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [favCount, setFavCount] = React.useState(0);
   const [userId, setUserId] = React.useState<string | undefined>();
+  const [showSuccessBanner, setShowSuccessBanner] = React.useState(false);
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
@@ -75,12 +81,58 @@ export default function DashboardPage() {
     return "Goedenavond";
   }, []);
 
+  React.useEffect(() => {
+    const checkoutStatus = searchParams.get('checkout');
+
+    if (checkoutStatus === 'success') {
+      setShowSuccessBanner(true);
+      toast.success('Betaling succesvol! Welkom bij FitFi Premium.');
+
+      const timer = setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, navigate]);
+
+  const handleCloseBanner = () => {
+    setShowSuccessBanner(false);
+    navigate('/dashboard', { replace: true });
+  };
+
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
         <title>Dashboard - FitFi</title>
         <meta name="description" content="Jouw persoonlijke style dashboard met outfits, favorieten en styling tips." />
       </Helmet>
+
+      {/* Success Banner */}
+      {showSuccessBanner && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200">
+          <div className="ff-container py-4">
+            <div className="flex items-center justify-between max-w-4xl mx-auto">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-green-900">Betaling succesvol!</h3>
+                  <p className="text-sm text-green-700">Welkom bij FitFi Premium. Je hebt nu toegang tot alle premium features.</p>
+                </div>
+              </div>
+              <button
+                onClick={handleCloseBanner}
+                className="flex-shrink-0 p-2 text-green-600 hover:text-green-800 transition-colors"
+                aria-label="Sluit melding"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section - Clean beige background */}
       <section className="hero-wrap">

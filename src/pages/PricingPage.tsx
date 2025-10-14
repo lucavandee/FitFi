@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Check, Star, Zap, Crown, Sparkles, Loader2 } from "lucide-react";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import { Check, Star, Zap, Crown, Sparkles, Loader2, AlertCircle, X } from "lucide-react";
 import { useStripeProducts } from "@/hooks/useStripeProducts";
 import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
@@ -9,12 +9,33 @@ import toast from "react-hot-toast";
 
 export default function PricingPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: products, isLoading } = useStripeProducts();
   const createCheckout = useCreateCheckout();
   const [checkingAuth, setCheckingAuth] = useState(false);
+  const [showCancelBanner, setShowCancelBanner] = useState(false);
 
   const founderProduct = products?.find(p => p.interval === 'one_time');
   const premiumProduct = products?.find(p => p.interval === 'month');
+
+  useEffect(() => {
+    const checkoutStatus = searchParams.get('checkout');
+
+    if (checkoutStatus === 'cancelled') {
+      setShowCancelBanner(true);
+
+      const timer = setTimeout(() => {
+        navigate('/prijzen', { replace: true });
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, navigate]);
+
+  const handleCloseCancelBanner = () => {
+    setShowCancelBanner(false);
+    navigate('/prijzen', { replace: true });
+  };
 
   const handleCheckout = async (productId: string, planName: string) => {
     setCheckingAuth(true);
@@ -48,6 +69,32 @@ export default function PricingPage() {
         <meta name="description" content="Kies het plan dat bij jou past. Start gratis of kies Premium of Founder voor meer features. Transparant en zonder verborgen kosten." />
         <link rel="canonical" href="https://fitfi.ai/prijzen" />
       </Helmet>
+
+      {/* Cancel Banner */}
+      {showCancelBanner && (
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-200">
+          <div className="ff-container py-4">
+            <div className="flex items-center justify-between max-w-4xl mx-auto">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-amber-900">Checkout geannuleerd</h3>
+                  <p className="text-sm text-amber-700">Geen zorgen, je kunt altijd later upgraden wanneer je klaar bent.</p>
+                </div>
+              </div>
+              <button
+                onClick={handleCloseCancelBanner}
+                className="flex-shrink-0 p-2 text-amber-600 hover:text-amber-800 transition-colors"
+                aria-label="Sluit melding"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
