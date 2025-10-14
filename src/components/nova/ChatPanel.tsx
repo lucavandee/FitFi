@@ -30,28 +30,28 @@ export default function ChatPanel() {
 
   return (
     <div
-      className="fixed inset-0 z-[9998] flex items-end justify-end p-4 md:p-6 pointer-events-none"
+      className="fixed inset-0 z-[9998] flex items-end justify-end p-2 sm:p-4 md:p-6 pointer-events-none"
       role="dialog"
       aria-label="Nova Chat"
     >
       <div
         className="
           pointer-events-auto
-          w-full max-w-md
-          h-[600px] max-h-[80vh]
+          w-full max-w-[95vw] sm:max-w-md
+          h-[90vh] sm:h-[600px] sm:max-h-[80vh]
           bg-[var(--color-surface)]
           border border-[var(--color-border)]
-          rounded-[var(--radius-2xl)]
+          rounded-2xl sm:rounded-[var(--radius-2xl)]
           shadow-[var(--shadow-soft)]
           flex flex-col
           overflow-hidden
         "
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#2B6AF3] flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" className="text-white">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-[var(--color-border)]">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#2B6AF3] flex items-center justify-center">
+              <svg width="16" height="16" viewBox="0 0 24 24" className="text-white sm:w-5 sm:h-5">
                 <path
                   d="M12 3a9 9 0 00-9 9c0 1.98.64 3.8 1.73 5.27L3 21l3.86-1.67A8.96 8.96 0 0012 21a9 9 0 100-18z"
                   fill="currentColor"
@@ -59,8 +59,8 @@ export default function ChatPanel() {
               </svg>
             </div>
             <div>
-              <h2 className="font-semibold text-[var(--color-text)]">Nova</h2>
-              <p className="text-xs text-[var(--color-muted)]">
+              <h2 className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Nova</h2>
+              <p className="text-xs text-[var(--color-muted)] hidden sm:block">
                 {sending ? "Aan het typen..." : "Je persoonlijke style assistent"}
               </p>
             </div>
@@ -89,7 +89,7 @@ export default function ChatPanel() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -97,7 +97,7 @@ export default function ChatPanel() {
             >
               <div
                 className={`
-                  max-w-[85%] rounded-2xl px-4 py-3
+                  max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3
                   ${
                     msg.role === "user"
                       ? "bg-[#2B6AF3] text-white"
@@ -111,8 +111,8 @@ export default function ChatPanel() {
           ))}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl px-3 sm:px-4 py-2 sm:py-3">
+              <p className="text-xs sm:text-sm text-red-700">{error}</p>
             </div>
           )}
 
@@ -120,8 +120,8 @@ export default function ChatPanel() {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSubmit} className="p-4 border-t border-[var(--color-border)]">
-          <div className="flex items-end gap-2">
+        <form onSubmit={handleSubmit} className="p-3 sm:p-4 border-t border-[var(--color-border)]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
             <div className="flex-1">
               <textarea
                 value={input}
@@ -140,8 +140,8 @@ export default function ChatPanel() {
                   bg-[var(--color-bg)]
                   border border-[var(--color-border)]
                   rounded-xl
-                  px-4 py-3
-                  text-sm
+                  px-3 sm:px-4 py-2 sm:py-3
+                  text-xs sm:text-sm
                   text-[var(--color-text)]
                   placeholder:text-[var(--color-muted)]
                   focus:outline-none
@@ -150,7 +150,7 @@ export default function ChatPanel() {
                   disabled:opacity-50
                   disabled:cursor-not-allowed
                 "
-                style={{ maxHeight: "120px" }}
+                style={{ maxHeight: "100px" }}
               />
             </div>
             <Button
@@ -158,7 +158,7 @@ export default function ChatPanel() {
               disabled={!input.trim() || sending}
               variant="primary"
               size="sm"
-              className="h-11 px-4"
+              className="h-10 sm:h-11 px-4 w-full sm:w-auto"
             >
               {sending ? (
                 <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -167,7 +167,7 @@ export default function ChatPanel() {
               )}
             </Button>
           </div>
-          <p className="text-xs text-[var(--color-muted)] mt-2">
+          <p className="text-xs text-[var(--color-muted)] mt-2 hidden sm:block">
             Tip: Gebruik Enter om te versturen, Shift+Enter voor een nieuwe regel
           </p>
         </form>
