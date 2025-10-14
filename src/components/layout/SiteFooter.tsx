@@ -25,7 +25,10 @@ export default function SiteFooter() {
         </div>
       </Container>
       <Container className="py-6 border-t border-white/10 text-xs text-[var(--fitfi-muted)]">
-        © {new Date().getFullYear()} FitFi · Alle rechten voorbehouden.
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+          <p>© {new Date().getFullYear()} FitFi · Alle rechten voorbehouden.</p>
+          <p>Keizersgracht 520 H · 1017 EK Amsterdam</p>
+        </div>
       </Container>
     </footer>
   );

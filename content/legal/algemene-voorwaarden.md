@@ -5,7 +5,7 @@
 ## 1. Definities
 
 In deze algemene voorwaarden wordt verstaan onder:
-- **FitFi:** FitFi B.V., gevestigd te Amsterdam, KvK-nummer 12345678
+- **FitFi:** FitFi, gevestigd te Keizersgracht 520 H, 1017 EK Amsterdam
 - **Gebruiker:** Iedere natuurlijke persoon die gebruik maakt van de Diensten
 - **Diensten:** Alle diensten aangeboden door FitFi, inclusief de website, app en stijladvies
 - **Account:** Het persoonlijke account van de Gebruiker bij FitFi
@@ -162,14 +162,12 @@ FitFi mag rechten en verplichtingen uit deze overeenkomst overdragen. Gebruikers
 
 ## 14. Contact
 
-**FitFi B.V.**  
-Marktstraat 15D 
-7551DR Hengelo 
+**FitFi**
+Keizersgracht 520 H
+1017 EK Amsterdam
 Nederland
 
-**E-mail:** info@fitfi.ai  
+**E-mail:** info@fitfi.ai
 **Telefoon:** +31 6 203 709 68
-**KvK-nummer:** 12345678  
-**BTW-nummer:** NL123456789B01
 
 Voor vragen over deze voorwaarden kun je contact opnemen via bovenstaande gegevens.

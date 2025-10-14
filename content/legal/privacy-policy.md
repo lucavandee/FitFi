@@ -110,13 +110,13 @@ We kunnen dit privacybeleid van tijd tot tijd bijwerken. Belangrijke wijzigingen
 
 Voor vragen over dit privacybeleid kun je contact opnemen met:
 
-**FitFi B.V.**  
-E-mail: info@fitfi.ai 
-Adres: Marktstraat 15D, 7551 DR Hengelo  
+**FitFi**
+E-mail: info@fitfi.ai
+Adres: Keizersgracht 520 H, 1017 EK Amsterdam
 Telefoon: +31 6 203 709 68
 
-**Data Protection Officer:**  
+**Data Protection Officer:**
 E-mail: info@fitfi.ai
 
-**Autoriteit Persoonsgegevens:**  
+**Autoriteit Persoonsgegevens:**
 Als je niet tevreden bent met hoe we omgaan met je gegevens, kun je een klacht indienen bij de Autoriteit Persoonsgegevens via autoriteitpersoonsgegevens.nl.
