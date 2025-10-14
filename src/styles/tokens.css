@@ -1,0 +1,67 @@
+/* Design Tokens - FitFi */
+
+:root {
+  /* Colors - Primary (Beige/Warm) */
+  --ff-color-primary-50: #FAF8F6;
+  --ff-color-primary-100: #F5F1ED;
+  --ff-color-primary-200: #EBE3DA;
+  --ff-color-primary-300: #DED2C4;
+  --ff-color-primary-400: #C9B89E;
+  --ff-color-primary-500: #B39F7F;
+  --ff-color-primary-600: #9D8A6B;
+  --ff-color-primary-700: #7D6E56;
+  --ff-color-primary-800: #5E5441;
+  --ff-color-primary-900: #3F3A2D;
+
+  /* Colors - Neutral */
+  --color-bg: #FAF8F6;
+  --color-surface: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-text: #1F2937;
+  --color-muted: #6B7280;
+  --color-accent: #B39F7F;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-ring: 0 0 0 3px rgba(179, 159, 127, 0.3);
+
+  /* Typography */
+  --font-sans: 'Lato', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1F2937;
+    --color-surface: #374151;
+    --color-border: #4B5563;
+    --color-text: #F9FAFB;
+    --color-muted: #9CA3AF;
+  }
+}

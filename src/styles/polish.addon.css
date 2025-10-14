@@ -1,0 +1,37 @@
+/* Polish Add-on - Extra Visual Refinements */
+
+.hero-band {
+  background: linear-gradient(135deg, var(--ff-color-primary-50) 0%, var(--ff-color-primary-100) 100%);
+}
+
+@media (max-width: 768px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .mobile-spacing {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    to right,
+    var(--color-bg) 4%,
+    var(--color-surface) 25%,
+    var(--color-bg) 36%
+  );
+  background-size: 1000px 100%;
+}
