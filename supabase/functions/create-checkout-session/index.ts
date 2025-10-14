@@ -55,37 +55,57 @@ Deno.serve(async (req: Request) => {
     if (!finalPriceId && productId) {
       const { data: product, error: productError } = await supabase
         .from("stripe_products")
-        .select("stripe_price_id, interval")
+        .select("stripe_price_id, interval, name")
         .eq("id", productId)
         .single();
 
-      if (productError || !product?.stripe_price_id) {
+      if (productError) {
         console.error("Product fetch error:", productError);
-        throw new Error("Product not found or missing Stripe price ID");
+        throw new Error(`Database error: ${productError.message}`);
       }
 
+      if (!product) {
+        throw new Error(`Product with ID ${productId} not found in database`);
+      }
+
+      if (!product.stripe_price_id) {
+        throw new Error(`Product "${product.name}" is missing Stripe Price ID. Please configure this in the admin panel or database.`);
+      }
+
+      console.log(`Using product: ${product.name}, price_id: ${product.stripe_price_id}`);
       finalPriceId = product.stripe_price_id;
       checkoutMode = product.interval === "one_time" ? "payment" : "subscription";
     }
 
     const origin = req.headers.get("origin") || "https://fitfi.ai";
 
-    const session = await stripe.checkout.sessions.create({
-      customer_email: user.email,
-      line_items: [
-        {
-          price: finalPriceId,
-          quantity: 1,
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        customer_email: user.email,
+        line_items: [
+          {
+            price: finalPriceId,
+            quantity: 1,
+          },
+        ],
+        mode: checkoutMode,
+        success_url: `${origin}/dashboard?checkout=success`,
+        cancel_url: `${origin}/prijzen?checkout=cancelled`,
+        metadata: {
+          user_id: user.id,
+          product_id: productId || "",
         },
-      ],
-      mode: checkoutMode,
-      success_url: `${origin}/dashboard?checkout=success`,
-      cancel_url: `${origin}/prijzen?checkout=cancelled`,
-      metadata: {
-        user_id: user.id,
-        product_id: productId || "",
-      },
-    });
+      });
+    } catch (stripeError: any) {
+      console.error("Stripe API error:", stripeError);
+
+      if (stripeError.code === 'resource_missing') {
+        throw new Error(`Stripe Price ID "${finalPriceId}" does not exist. Please create this price in your Stripe dashboard.`);
+      }
+
+      throw new Error(`Stripe error: ${stripeError.message}`);
+    }
 
     return new Response(
       JSON.stringify({ url: session.url }),
