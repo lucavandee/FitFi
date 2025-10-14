@@ -2,8 +2,14 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import { Check, Star, Zap, Crown, Sparkles } from "lucide-react";
+import { useStripeProducts } from "@/hooks/useStripeProducts";
 
 export default function PricingPage() {
+  const { data: products, isLoading } = useStripeProducts();
+
+  const founderProduct = products?.find(p => p.interval === 'one_time');
+  const premiumProduct = products?.find(p => p.interval === 'month');
+
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
@@ -68,29 +74,38 @@ export default function PricingPage() {
                 Populair
               </div>
               <header className="text-center mb-8 pt-2">
-                <h2 className="text-2xl font-bold mb-2">Premium</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                  {isLoading ? 'Premium' : premiumProduct?.name || 'Premium'}
+                </h2>
                 <div className="text-5xl font-bold mb-2">
-                  €9<span className="text-2xl">,99</span>
+                  €{isLoading ? '9,99' : premiumProduct?.price || '9.99'}
                 </div>
                 <p className="text-gray-600">Per maand</p>
               </header>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <Star className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>10+ outfit-aanbevelingen</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>Seizoens-updates</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>AI-uitleg per outfit</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>Wishlist & stylesets</span>
-                </li>
+                {isLoading || !premiumProduct ? (
+                  <>
+                    <li className="flex items-start gap-3">
+                      <Star className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>Onbeperkte outfit aanbevelingen</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Zap className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>Toegang tot Nova AI</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>Geavanceerde stijlanalyse</span>
+                    </li>
+                  </>
+                ) : (
+                  premiumProduct.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))
+                )}
               </ul>
               <NavLink
                 to="/onboarding"
@@ -104,23 +119,38 @@ export default function PricingPage() {
             {/* Founder Plan */}
             <article className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)]">
               <header className="text-center mb-8">
-                <h2 className="text-2xl font-bold mb-2">Founder</h2>
-                <div className="text-5xl font-bold mb-2">€149</div>
+                <h2 className="text-2xl font-bold mb-2">
+                  {isLoading ? 'Founder' : founderProduct?.name.replace('FitFi Subscription - ', '') || 'Founder'}
+                </h2>
+                <div className="text-5xl font-bold mb-2">
+                  €{isLoading ? '149' : founderProduct?.price || '149'}
+                </div>
                 <p className="text-gray-600">Eenmalig – lifetime</p>
               </header>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <Crown className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>Lifetime Premium</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>Vroege toegang & badges</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
-                  <span>Founder community</span>
-                </li>
+                {isLoading || !founderProduct ? (
+                  <>
+                    <li className="flex items-start gap-3">
+                      <Crown className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>Lifetime toegang</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>Founders badge</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>Prioritaire support</span>
+                    </li>
+                  </>
+                ) : (
+                  founderProduct.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-1 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))
+                )}
               </ul>
               <NavLink
                 to="/onboarding"
