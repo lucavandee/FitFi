@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SmartImage from "@/components/ui/SmartImage";
+import SmartImage from "@/components/media/SmartImage";
 import { useInView } from "@/hooks/useInView";
 import SaveButton from "@/components/outfits/SaveButton";
 import ProductDetailModal from "@/components/outfits/ProductDetailModal";

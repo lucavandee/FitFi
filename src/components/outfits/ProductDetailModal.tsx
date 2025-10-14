@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, ExternalLink, ShoppingBag, Info } from 'lucide-react';
-import SmartImage from '@/components/ui/SmartImage';
+import SmartImage from '@/components/media/SmartImage';
 import Button from '@/components/ui/Button';
 import { track } from '@/utils/telemetry';
 import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl } from '@/utils/affiliate';

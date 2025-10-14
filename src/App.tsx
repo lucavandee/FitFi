@@ -5,7 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
-import Seo from "@/components/seo/Seo";
+import Seo from "@/components/Seo";
 import RequireAuth from "@/components/auth/RequireAuth";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import NovaLauncher from "@/components/nova/NovaLauncher";

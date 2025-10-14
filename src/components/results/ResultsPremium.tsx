@@ -1,5 +1,5 @@
 import React from "react";
-import SmartImage from "@/components/ui/SmartImage";
+import SmartImage from "@/components/media/SmartImage";
 import ComposedLook from "./ComposedLook";
 
 type Outfit = {

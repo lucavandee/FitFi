@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '../components/ui/Button';
 import { useUser } from '../context/UserContext';
 import { EmbeddingInsights } from '@/components/profile/EmbeddingInsights';
 import { EmbeddingTimeline } from '@/components/profile/EmbeddingTimeline';
@@ -15,9 +14,12 @@ const ProfilePage: React.FC = () => {
         <div className="text-center max-w-md mx-auto p-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Profiel</h1>
           <p className="text-gray-600 mb-6">Je moet ingelogd zijn om je profiel te bekijken</p>
-          <Button as={Link} to="/inloggen" variant="primary" fullWidth>
+          <Link
+            to="/inloggen"
+            className="block w-full px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors text-center"
+          >
             Inloggen
-          </Button>
+          </Link>
         </div>
       </div>
     );
@@ -32,12 +34,18 @@ const ProfilePage: React.FC = () => {
             <p className="text-[var(--color-muted)]">Welkom terug, {user.name}!</p>
           </div>
           <div className="flex gap-3">
-            <Button as={Link} to="/dashboard" variant="outline">
+            <Link
+              to="/dashboard"
+              className="px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-lg)] text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors"
+            >
               Dashboard
-            </Button>
-            <Button onClick={logout} variant="ghost">
+            </Link>
+            <button
+              onClick={logout}
+              className="px-4 py-2 text-[var(--color-text)] hover:bg-[var(--color-surface)] rounded-[var(--radius-lg)] transition-colors"
+            >
               Uitloggen
-            </Button>
+            </button>
           </div>
         </div>
 

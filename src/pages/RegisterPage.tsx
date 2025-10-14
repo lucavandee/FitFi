@@ -6,7 +6,7 @@ import {
   ArrowRight, Loader2, Zap, Heart, TrendingUp
 } from "lucide-react";
 import Button from "@/components/ui/Button";
-import Seo from "@/components/seo/Seo";
+import Seo from "@/components/Seo";
 import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
 
