@@ -49,19 +49,22 @@ Deno.serve(async (req: Request) => {
     }
 
     let finalPriceId = priceId;
+    let checkoutMode: "payment" | "subscription" = "subscription";
 
     if (!finalPriceId && productId) {
-      const { data: product } = await supabase
+      const { data: product, error: productError } = await supabase
         .from("stripe_products")
-        .select("stripe_price_id")
+        .select("stripe_price_id, interval")
         .eq("id", productId)
         .single();
 
-      if (!product?.stripe_price_id) {
+      if (productError || !product?.stripe_price_id) {
+        console.error("Product fetch error:", productError);
         throw new Error("Product not found or missing Stripe price ID");
       }
 
       finalPriceId = product.stripe_price_id;
+      checkoutMode = product.interval === "one_time" ? "payment" : "subscription";
     }
 
     const origin = req.headers.get("origin") || "https://fitfi.ai";
@@ -74,7 +77,7 @@ Deno.serve(async (req: Request) => {
           quantity: 1,
         },
       ],
-      mode: finalPriceId.includes("_one_time") ? "payment" : "subscription",
+      mode: checkoutMode,
       success_url: `${origin}/dashboard?checkout=success`,
       cancel_url: `${origin}/prijzen?checkout=cancelled`,
       metadata: {
