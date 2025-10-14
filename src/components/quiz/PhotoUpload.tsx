@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase";
 import { Camera, Upload, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Loader as Loader2 } from "lucide-react";
 
 interface ColorAnalysis {
@@ -50,15 +50,9 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
     reader.readAsDataURL(file);
 
     // Get current user
-    const client = supabase();
-    if (!client) {
-      setError("Verbinding niet beschikbaar");
-      return;
-    }
-
     const {
       data: { user },
-    } = await client.auth.getUser();
+    } = await supabase.auth.getUser();
     if (!user) {
       setError("Je moet ingelogd zijn om een foto te uploaden");
       return;
@@ -70,7 +64,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}/selfie-${Date.now()}.${fileExt}`;
 
-      const { data: uploadData, error: uploadError } = await client.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from("user-photos")
         .upload(fileName, file, {
           cacheControl: "3600",
@@ -82,7 +76,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       // Get public URL
       const {
         data: { publicUrl },
-      } = client.storage.from("user-photos").getPublicUrl(fileName);
+      } = supabase.storage.from("user-photos").getPublicUrl(fileName);
 
       // Save photo URL to style_profiles
       const { error: updateError } = await supabase

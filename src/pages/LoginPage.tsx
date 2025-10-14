@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import Button from "@/components/ui/Button";
-import Seo from "@/components/Seo";
+import Seo from "@/components/seo/Seo";
 import { Eye, EyeOff, AlertCircle, CheckCircle2, Mail, Sparkles, Shield, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 

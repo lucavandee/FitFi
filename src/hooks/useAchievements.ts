@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 import { useUser } from '../context/UserContext';
 import { Achievement, UserAchievement } from '../types/achievements';
 import { achievements, getEarnedAchievements } from '../data/achievements';

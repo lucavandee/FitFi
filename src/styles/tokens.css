@@ -1,67 +1,142 @@
-/* Design Tokens - FitFi */
-
+/* src/styles/tokens.css */
+/* FitFi vNext — Light/Neutral Beige — CANONIEK */
 :root {
-  /* Colors - Primary (Beige/Warm) */
-  --ff-color-primary-50: #FAF8F6;
-  --ff-color-primary-100: #F5F1ED;
-  --ff-color-primary-200: #EBE3DA;
-  --ff-color-primary-300: #DED2C4;
-  --ff-color-primary-400: #C9B89E;
-  --ff-color-primary-500: #B39F7F;
-  --ff-color-primary-600: #9D8A6B;
-  --ff-color-primary-700: #7D6E56;
-  --ff-color-primary-800: #5E5441;
-  --ff-color-primary-900: #3F3A2D;
-
-  /* Colors - Neutral */
-  --color-bg: #FAF8F6;
+  /* Palet */
+  --color-bg: #F7F3EC;
   --color-surface: #FFFFFF;
-  --color-border: #E5E7EB;
-  --color-text: #1F2937;
-  --color-muted: #6B7280;
-  --color-accent: #B39F7F;
+  --color-text: #1E2333;
+  --color-text-muted: #4A5568;  /* Darker for better contrast (AA compliant) */
+  --color-muted: #4A5568;
 
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
-  --spacing-3xl: 4rem;
+  --color-primary: #A6886A;          /* brand taupe (semantisch) */
+  --ff-color-primary-25: #FAF8F5;    /* ultra light tint */
+  --ff-color-primary-50: #F6EFE9;    /* light background/card tints */
+  --ff-color-primary-100: #EDD9C8;   /* lighter backgrounds */
+  --ff-color-primary-200: #E0C9B3;   /* subtle borders */
+  --ff-color-primary-300: #CEB39A;   /* muted accents */
+  --ff-color-primary-400: #B89B82;   /* soft highlights */
+  --ff-color-primary-500: #A6886A;   /* base brand color */
+  --ff-color-primary-600: #8F7459;   /* hover states */
+  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+  --ff-color-primary-800: #5C4937;   /* dark accents */
+  --ff-color-primary-900: #3E3125;   /* darkest */
 
-  /* Border Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --color-accent: #D8CABA;
+  --ff-color-accent-50: #F5F1EC;     /* light accent tints */
+  --ff-color-accent-100: #EBE4DC;    /* subtle backgrounds */
+  --ff-color-accent-200: #DFD4C8;    /* soft borders */
+  --ff-color-accent-300: #D8CABA;    /* base accent */
+  --ff-color-accent-400: #C9B8A6;    /* accent variations */
+  --ff-color-accent-500: #B8A898;    /* medium accent */
+  --ff-color-accent-600: #A89682;    /* darker accent */
+  --ff-color-accent-700: #8A7A6A;    /* deep accent */
+  --ff-color-accent-800: #6D6053;    /* very dark */
+  --ff-color-accent-900: #4F463C;    /* darkest accent */
+
+  --color-border: rgba(30, 35, 51, 0.08);
+
+  /* Status colors with full scales */
+  --color-success: #16A34A;
+  --ff-color-success-50: #F0FDF4;
+  --ff-color-success-100: #DCFCE7;
+  --ff-color-success-200: #BBF7D0;
+  --ff-color-success-300: #86EFAC;
+  --ff-color-success-400: #4ADE80;
+  --ff-color-success-500: #22C55E;
+  --ff-color-success-600: #16A34A;   /* main success */
+  --ff-color-success-700: #15803D;
+  --ff-color-success-800: #166534;
+  --ff-color-success-900: #14532D;
+
+  --color-warning: #D97706;
+  --ff-color-warning-50: #FFFBEB;
+  --ff-color-warning-600: #D97706;   /* main warning */
+
+  --color-danger: #DC2626;
+  --ff-color-danger-50: #FEF2F2;
+  --ff-color-danger-600: #DC2626;    /* main danger */
+
+  /* Additional utility colors */
+  --ff-color-turquoise: #40E0D0;     /* accent color for special elements */
+  --ff-color-secondary-600: #6B7280; /* neutral secondary */
+
+  /* Overlays */
+  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
+  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
+
+  /* ============ TOKENS: CTA (Start gratis) ============ */
+  /* Basis warm bruin; tint/tonen voor states & surfaces */
+  --ff-cta-50:  #F6EFE9;
+  --ff-cta-100: #EEE2D7;
+  --ff-cta-200: #E2D0BF;
+  --ff-cta-300: #CEB39A;
+  --ff-cta-400: #B98F71;
+  --ff-cta-500: #9D6E52;   /* ≈ huidige Start gratis */
+  --ff-cta-600: #8A6048;   /* hover */
+  --ff-cta-700: #724E3B;   /* active/focus ring donker */
+  --ff-cta-800: #5C3E2E;
+  --ff-cta-900: #493123;
+
+  /* Tekst op CTA-vlakken */
+  --ff-cta-contrast: #FFFFFF;
+
+  /* Neutrale inkt & border die mooi samengaan met CTA */
+  --ff-ink-600: #1D2430;
+  --ff-ink-500: #2B3342;
+  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
+
+  /* Accent color - matches "Start gratis" button */
+  --ff-color-accent: #9C745E;
+  --ff-color-accent-contrast: #fff;
+
+  /* Links consistent with accent */
+  --ff-link: var(--ff-color-accent);
+  --ff-link-hover: color-mix(
+    in oklab,
+    var(--ff-color-accent) 84%,
+    black 16%
+  );
+  --ff-focus: color-mix(
+    in oklab,
+    var(--ff-color-accent) 20%,
+    white 80%
+  );
+
+  /* Radii */
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-ring: 0 0 0 3px rgba(179, 159, 127, 0.3);
+  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
+  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
 
-  /* Typography */
-  --font-sans: 'Lato', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
-
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
+  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
+  font-synthesis-weight: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #1F2937;
-    --color-surface: #374151;
-    --color-border: #4B5563;
-    --color-text: #F9FAFB;
-    --color-muted: #9CA3AF;
-  }
+/* Basiselementen */
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Cards */
+.ff-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+/* CTA – solid (AA) */
+.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
+.ff-cta:hover { background: var(--ff-color-primary-600); }
+
+/* Focus-ring tokenized */
+.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
+
+/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */

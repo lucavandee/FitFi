@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { savedOutfitsService } from '@/services/outfits/savedOutfitsService';
 import type { SavedOutfit } from '@/services/outfits/savedOutfitsService';
-import SmartImage from '@/components/media/SmartImage';
+import SmartImage from '@/components/ui/SmartImage';
 import Button from '@/components/ui/Button';
 import ProductDetailModal from '@/components/outfits/ProductDetailModal';
 

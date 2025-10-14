@@ -1,0 +1,78 @@
+/* src/styles/polish.safe.css
+   Zero-risk micro-polish:
+   - Alleen opt-in classes (geen globale overrides)
+   - Uitsluitend tokens/vars (tokens.css)
+   - Geen @apply, geen color-mix, geen hex
+*/
+
+/* === Buttons (opt-in) === */
+.btn { transition: transform 200ms ease-out; transform: translateY(0); }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary,
+button[data-variant="primary"] {
+  background: var(--ff-color-primary-700);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-2xl);
+  padding: 0.625rem 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+.btn-primary:hover,
+button[data-variant="primary"]:hover {
+  background: var(--ff-color-primary-600);
+}
+
+.btn-secondary,
+button[data-variant="secondary"] {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 0.625rem 1.25rem;
+}
+.btn-secondary:hover,
+button[data-variant="secondary"]:hover {
+  border-color: var(--color-primary);
+}
+
+/* === Cards (opt-in) === */
+.ff-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: transform 200ms ease;
+  transform: translateZ(0);
+}
+.ff-card:hover { transform: translateY(-2px); }
+
+/* === Chips/Badges (opt-in) === */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* === Cluster & helpers (opt-in) === */
+.cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.ff-prose > * + * { margin-block-start: 0.75rem; }
+.ff-divider { border-top: 1px solid var(--color-border); }
+
+.ff-glass {
+  backdrop-filter: blur(10px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+}
+
+/* === Images (opt-in) === */
+.hero-image,
+.smart-image { overflow: hidden; border-radius: 1rem; }
