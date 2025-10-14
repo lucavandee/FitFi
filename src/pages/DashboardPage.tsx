@@ -14,6 +14,7 @@ import {
 import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
+import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 
@@ -201,6 +202,11 @@ export default function DashboardPage() {
                 {hasQuizData ? "Helemaal klaar!" : "Start de quiz"}
               </p>
             </article>
+          </div>
+
+          {/* Subscription Management */}
+          <div className="mb-12">
+            <SubscriptionManager />
           </div>
 
           {/* Saved Outfits Gallery */}
