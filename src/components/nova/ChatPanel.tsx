@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { X, Send, RotateCcw } from "lucide-react";
+import { X, Send, RotateCcw, ChevronDown } from "lucide-react";
 import { useNovaChat } from "./NovaChatProvider";
 import Button from "@/components/ui/Button";
+import { useSwipeToClose } from "@/hooks/useSwipeToClose";
 
 export default function ChatPanel() {
   const { isOpen, setOpen, sending, error, messages, send, reset } = useNovaChat();
@@ -28,6 +29,14 @@ export default function ChatPanel() {
 
   if (!isOpen) return null;
 
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+  const { elementRef, deltaY, opacity, isDragging } = useSwipeToClose({
+    onClose: () => setOpen(false),
+    threshold: 120,
+    enabled: isMobile && isOpen,
+  });
+
   return (
     <div
       className="fixed inset-0 z-[9998] flex items-end justify-end p-2 sm:p-4 md:p-6 pointer-events-none"
@@ -35,6 +44,7 @@ export default function ChatPanel() {
       aria-label="Nova Chat"
     >
       <div
+        ref={elementRef}
         className="
           pointer-events-auto
           w-full max-w-[95vw] sm:max-w-md
@@ -46,7 +56,22 @@ export default function ChatPanel() {
           flex flex-col
           overflow-hidden
         "
+        style={{
+          transform: isMobile ? `translateY(${deltaY}px)` : undefined,
+          opacity: isMobile ? opacity : 1,
+          transition: isDragging ? 'none' : 'transform 0.3s ease-out, opacity 0.3s ease-out',
+        }}
       >
+        {/* Swipe handle - only on mobile */}
+        {isMobile && (
+          <div className="flex justify-center py-2 border-b border-[var(--color-border)]">
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              <ChevronDown className="w-4 h-4 text-gray-400" />
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between p-3 sm:p-4 border-b border-[var(--color-border)]">
           <div className="flex items-center gap-2 sm:gap-3">

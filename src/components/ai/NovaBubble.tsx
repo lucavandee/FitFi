@@ -1,11 +1,12 @@
 import React, { lazy, Suspense, useEffect, useState, useRef } from 'react';
 import AppPortal from '@/components/layout/AppPortal';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
 import ContextSwitcher from '@/components/ai/ContextSwitcher';
 import SuggestionChips from '@/components/ai/SuggestionChips';
 import { NovaConnectionProvider, useNovaConn } from '@/components/ai/NovaConnection';
 import NovaHealthChip from '@/components/ai/NovaHealthChip';
 import NovaTierBadge from '@/components/ai/NovaTierBadge';
+import { useSwipeToClose } from '@/hooks/useSwipeToClose';
 
 const NovaChat = lazy(() => import('./NovaChat'));
 
@@ -60,8 +61,15 @@ export default function NovaBubble() {
 
   const mobile = isMobile();
 
+  const { elementRef, deltaY, opacity, isDragging } = useSwipeToClose({
+    onClose: () => setOpen(false),
+    threshold: 120,
+    enabled: mobile && open,
+  });
+
   const panel = (
     <div
+      ref={elementRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="nova-title"
@@ -70,13 +78,26 @@ export default function NovaBubble() {
           ? 'fixed left-0 right-0 bottom-0 z-[80] rounded-t-3xl bg-white shadow-2xl'
           : 'fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-[80] rounded-2xl bg-white shadow-2xl'
       }
-      style={
-        mobile
+      style={{
+        ...(mobile
           ? { height: 'min(72vh, 640px)' }
-          : { width: 'min(92vw, 420px)', height: 'min(78vh, 640px)' }
-      }
+          : { width: 'min(92vw, 420px)', height: 'min(78vh, 640px)' }),
+        transform: mobile ? `translateY(${deltaY}px)` : undefined,
+        opacity: mobile ? opacity : 1,
+        transition: isDragging ? 'none' : 'transform 0.3s ease-out, opacity 0.3s ease-out',
+      }}
     >
       <div className="flex flex-col h-full">
+        {/* Swipe handle - only on mobile */}
+        {mobile && (
+          <div className="flex justify-center py-2 border-b border-gray-100">
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              <ChevronDown className="w-4 h-4 text-gray-400" />
+            </div>
+          </div>
+        )}
+
         <header className="flex items-center justify-between px-4 py-3 border-b">
           <div className="flex items-center gap-3">
             <h2 id="nova-title" className="font-semibold text-ink">Nova AI</h2>
