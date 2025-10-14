@@ -187,11 +187,16 @@ export default function PricingPage() {
               </ul>
               <button
                 onClick={() => premiumProduct && handleCheckout(premiumProduct.id, 'Premium')}
-                disabled={!premiumProduct || createCheckout.isPending || checkingAuth}
+                disabled={isLoading || createCheckout.isPending || checkingAuth}
                 className="w-full px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 data-event="cta_start_premium_pricing"
               >
-                {createCheckout.isPending || checkingAuth ? (
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Laden...
+                  </>
+                ) : createCheckout.isPending || checkingAuth ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Bezig...
@@ -240,11 +245,16 @@ export default function PricingPage() {
               </ul>
               <button
                 onClick={() => founderProduct && handleCheckout(founderProduct.id, 'Founder')}
-                disabled={!founderProduct || createCheckout.isPending || checkingAuth}
+                disabled={isLoading || createCheckout.isPending || checkingAuth}
                 className="w-full px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 data-event="cta_start_founder_pricing"
               >
-                {createCheckout.isPending || checkingAuth ? (
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Laden...
+                  </>
+                ) : createCheckout.isPending || checkingAuth ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Bezig...

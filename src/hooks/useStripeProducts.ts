@@ -19,7 +19,13 @@ export function useStripeProducts() {
   return useQuery({
     queryKey: ['stripe-products'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = supabase();
+
+      if (!client) {
+        throw new Error('Supabase client not available');
+      }
+
+      const { data, error } = await client
         .from('stripe_products')
         .select('*')
         .eq('is_active', true)

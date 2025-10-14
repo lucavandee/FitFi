@@ -29,13 +29,19 @@ export function useSubscription() {
   return useQuery({
     queryKey: ['user-subscription'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const client = supabase();
+
+      if (!client) {
+        throw new Error('Supabase client not available');
+      }
+
+      const { data: { user } } = await client.auth.getUser();
 
       if (!user) {
         throw new Error('Not authenticated');
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('customer_subscriptions')
         .select(`
           *,
