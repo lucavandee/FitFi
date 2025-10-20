@@ -3,6 +3,7 @@ import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngin
 import { generateNovaExplanation } from "@/engine/explainOutfit";
 import { filterByGender, getUserGender } from "@/services/products/genderFilter";
 import { curatedMaleProducts } from "@/data/curatedProducts";
+import { getBramsFruitProductsForOutfitEngine } from "@/services/bramsFruit/productService";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
@@ -14,6 +15,7 @@ class OutfitService {
   private productsCache: Product[] | null = null;
   private cacheTimestamp: number = 0;
   private readonly CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
+  private includeBramsFruit: boolean = true;
 
   async getProducts(forceRefresh = false): Promise<Product[]> {
     if (
@@ -31,30 +33,51 @@ class OutfitService {
     }
 
     try {
-      const { data, error } = await client
-        .from('products')
-        .select('*')
-        .eq('in_stock', true);
+      const [regularProducts, bramsFruitProducts] = await Promise.all([
+        this.getRegularProducts(client),
+        this.includeBramsFruit ? this.getBramsFruitProducts() : Promise.resolve([])
+      ]);
 
-      if (error) {
-        console.error('[OutfitService] Error fetching products:', error);
-        return this.getFallbackProducts();
-      }
+      const allProducts = [...regularProducts, ...bramsFruitProducts];
 
-      if (!data || data.length === 0) {
-        console.warn('[OutfitService] No products in database');
-        return this.getFallbackProducts();
-      }
-
-      const products = data.map(this.mapDatabaseProduct);
-      this.productsCache = products;
+      this.productsCache = allProducts;
       this.cacheTimestamp = Date.now();
 
-      console.log(`[OutfitService] Loaded ${products.length} products from database`);
-      return products;
+      console.log(`[OutfitService] Loaded ${allProducts.length} products (Regular: ${regularProducts.length}, Brams Fruit: ${bramsFruitProducts.length})`);
+      return allProducts;
     } catch (error) {
       console.error('[OutfitService] Exception fetching products:', error);
       return this.getFallbackProducts();
+    }
+  }
+
+  private async getRegularProducts(client: any): Promise<Product[]> {
+    const { data, error } = await client
+      .from('products')
+      .select('*')
+      .eq('in_stock', true);
+
+    if (error) {
+      console.error('[OutfitService] Error fetching regular products:', error);
+      return [];
+    }
+
+    if (!data || data.length === 0) {
+      console.warn('[OutfitService] No regular products in database');
+      return [];
+    }
+
+    return data.map(this.mapDatabaseProduct);
+  }
+
+  private async getBramsFruitProducts(): Promise<Product[]> {
+    try {
+      const bramsFruit = await getBramsFruitProductsForOutfitEngine();
+      console.log(`[OutfitService] Loaded ${bramsFruit.length} Brams Fruit products`);
+      return bramsFruit;
+    } catch (error) {
+      console.error('[OutfitService] Error fetching Brams Fruit products:', error);
+      return [];
     }
   }
 
@@ -176,6 +199,17 @@ class OutfitService {
   clearCache(): void {
     this.productsCache = null;
     this.cacheTimestamp = 0;
+  }
+
+  setIncludeBramsFruit(include: boolean): void {
+    if (this.includeBramsFruit !== include) {
+      this.includeBramsFruit = include;
+      this.clearCache();
+    }
+  }
+
+  getIncludeBramsFruit(): boolean {
+    return this.includeBramsFruit;
   }
 }
 

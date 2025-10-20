@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { BramsFruitProduct, BramsFruitProductGroup } from './types';
+import { mapBramsFruitToFitFiProduct } from './categoryMapper';
+import { Product } from '@/engine/types';
 
 export async function getAllBramsFruitProducts(): Promise<BramsFruitProduct[]> {
   const { data, error } = await supabase
@@ -144,4 +146,29 @@ export async function getBramsFruitCategories(): Promise<{
   );
 
   return { categories, subCategories };
+}
+
+export async function getBramsFruitProductsForOutfitEngine(): Promise<Product[]> {
+  try {
+    const bramsFruitProducts = await getAllBramsFruitProducts();
+
+    const uniqueProducts = new Map<string, BramsFruitProduct>();
+
+    bramsFruitProducts.forEach(product => {
+      if (!uniqueProducts.has(product.style_code) || product.color.toLowerCase() === 'black' || product.color.toLowerCase() === 'navy') {
+        uniqueProducts.set(product.style_code, product);
+      }
+    });
+
+    const fitfiProducts = Array.from(uniqueProducts.values())
+      .map(mapBramsFruitToFitFiProduct)
+      .filter(product => product.imageUrl && product.imageUrl !== '/images/fallbacks/default.jpg');
+
+    console.log(`[BramsFruit] Loaded ${fitfiProducts.length} products for outfit engine`);
+
+    return fitfiProducts;
+  } catch (error) {
+    console.error('[BramsFruit] Error loading products for outfit engine:', error);
+    return [];
+  }
 }

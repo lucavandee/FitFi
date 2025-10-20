@@ -17,6 +17,7 @@ import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
+import BramsFruitToggle from "@/components/settings/BramsFruitToggle";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import toast from "react-hot-toast";
@@ -259,6 +260,11 @@ export default function DashboardPage() {
           {/* Subscription Management */}
           <div className="mb-12">
             <SubscriptionManager />
+          </div>
+
+          {/* Brams Fruit Toggle */}
+          <div className="mb-12">
+            <BramsFruitToggle />
           </div>
 
           {/* Saved Outfits Gallery */}
