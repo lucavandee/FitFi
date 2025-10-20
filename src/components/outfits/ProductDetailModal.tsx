@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, ExternalLink, ShoppingBag, Info } from 'lucide-react';
-import SmartImage from '@/components/ui/SmartImage';
+import { ProductImage } from '@/components/ui/ProductImage';
 import Button from '@/components/ui/Button';
 import { track } from '@/utils/telemetry';
 import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl } from '@/utils/affiliate';
@@ -82,13 +82,16 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="aspect-square rounded-lg overflow-hidden bg-[var(--color-bg)]">
-              <SmartImage
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <ProductImage
+              src={product.imageUrl}
+              alt={product.name}
+              productName={product.name}
+              brand={product.brand}
+              color={product.color}
+              category={product.category}
+              aspectRatio="1/1"
+              className="w-full"
+            />
 
             <div className="flex flex-col">
               {product.brand && (

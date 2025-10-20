@@ -2,6 +2,7 @@
 @import "./styles/polish.css";
 /* NIEUW: addon laadt de hero-band en mobile polish app-breed */
 @import "./styles/polish.addon.css";
+@import "./styles/components/smart-fallback.css";
 
 /* Tailwind layers — volgorde behouden */
 @tailwind base;
