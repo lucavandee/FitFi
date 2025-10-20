@@ -152,6 +152,11 @@ export async function getBramsFruitProductsForOutfitEngine(): Promise<Product[]>
   try {
     const bramsFruitProducts = await getAllBramsFruitProducts();
 
+    if (bramsFruitProducts.length === 0) {
+      console.warn('[BramsFruit] No products found in database');
+      return [];
+    }
+
     const uniqueProducts = new Map<string, BramsFruitProduct>();
 
     bramsFruitProducts.forEach(product => {
@@ -161,10 +166,13 @@ export async function getBramsFruitProductsForOutfitEngine(): Promise<Product[]>
     });
 
     const fitfiProducts = Array.from(uniqueProducts.values())
-      .map(mapBramsFruitToFitFiProduct)
-      .filter(product => product.imageUrl && product.imageUrl !== '/images/fallbacks/default.jpg');
+      .map(mapBramsFruitToFitFiProduct);
 
-    console.log(`[BramsFruit] Loaded ${fitfiProducts.length} products for outfit engine`);
+    console.log(`[BramsFruit] Loaded ${fitfiProducts.length} products for outfit engine (${bramsFruitProducts.length} total variants)`);
+    console.log('[BramsFruit] Products by category:', fitfiProducts.reduce((acc, p) => {
+      acc[p.category] = (acc[p.category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>));
 
     return fitfiProducts;
   } catch (error) {

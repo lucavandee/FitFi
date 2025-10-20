@@ -94,6 +94,20 @@ const SUB_CATEGORY_MAPPINGS: Record<string, Partial<CategoryMapping>> = {
   }
 };
 
+function getCategoryFallbackImage(category: string): string {
+  const fallbackMap: Record<string, string> = {
+    'Outerwear': '/images/fallbacks/top.jpg',
+    'Shirting': '/images/fallbacks/top.jpg',
+    'Trousers': '/images/fallbacks/bottom.jpg',
+    'Accessories': '/images/fallbacks/accessory.jpg',
+    'Knitwear': '/images/fallbacks/top.jpg',
+    'Sweatshirts': '/images/fallbacks/top.jpg',
+    "Polo's & T-shirts": '/images/fallbacks/top.jpg',
+  };
+
+  return fallbackMap[category] || '/images/fallbacks/default.jpg';
+}
+
 export function mapBramsFruitToFitFiProduct(bramsFruit: BramsFruitProduct): Product {
   const categoryMapping = CATEGORY_MAPPINGS[bramsFruit.category] || {
     fitfiType: 'other',
@@ -114,7 +128,7 @@ export function mapBramsFruitToFitFiProduct(bramsFruit: BramsFruitProduct): Prod
 
   const season = subCategoryMapping.season || categoryMapping.season;
 
-  const imageUrl = bramsFruit.image_url || '/images/fallbacks/default.jpg';
+  const imageUrl = bramsFruit.image_url || getCategoryFallbackImage(bramsFruit.category);
 
   return {
     id: `bf-${bramsFruit.sku}`,
