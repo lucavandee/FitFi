@@ -14,13 +14,9 @@ import {
   type UserSearchResult,
   type AuditLogEntry,
 } from '@/services/admin/adminService';
-import PremiumMetricCard from '@/components/admin/PremiumMetricCard';
-import PremiumUserTable from '@/components/admin/PremiumUserTable';
-import GrowthChart from '@/components/admin/GrowthChart';
-import TierDistributionChart from '@/components/admin/TierDistributionChart';
-import QuickActionsMenu from '@/components/admin/QuickActionsMenu';
 import SendNotificationModal from '@/components/admin/SendNotificationModal';
 import toast from 'react-hot-toast';
+import { Users, TrendingUp, Award, Activity, Download, Bell, Search as SearchIcon } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const { isAdmin, user } = useIsAdmin();
@@ -174,40 +170,9 @@ export default function AdminDashboardPage() {
 
   const uniqueActions = Array.from(new Set(auditLog.map((e) => e.action)));
 
-  const quickActions = [
-    {
-      id: 'send-notification',
-      label: 'Verstuur Notificatie',
-      icon: '📨',
-      gradient: 'var(--ff-color-primary-600), var(--ff-color-primary-800)',
-      onClick: () => setShowNotificationModal(true),
-    },
-    {
-      id: 'export-users',
-      label: 'Exporteer Users',
-      icon: '📥',
-      gradient: '#10b981, #059669',
-      onClick: handleExportCSV,
-    },
-    {
-      id: 'view-users',
-      label: 'Bekijk Gebruikers',
-      icon: '👥',
-      gradient: '#8b5cf6, #6366f1',
-      onClick: () => setActiveTab('users'),
-    },
-    {
-      id: 'audit-log',
-      label: 'Audit Log',
-      icon: '📋',
-      gradient: '#f59e0b, #ef4444',
-      onClick: () => setActiveTab('audit'),
-    },
-  ];
-
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4 bg-[var(--color-bg)]">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">Geen toegang</h1>
@@ -215,7 +180,7 @@ export default function AdminDashboardPage() {
             Je hebt admin rechten nodig om deze pagina te bekijken.
           </p>
           {user ? (
-            <div className="bg-[var(--color-surface)] p-6 rounded-xl border border-[var(--color-border)] mb-6">
+            <div className="bg-[var(--color-surface)] p-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] mb-6">
               <p className="text-sm text-[var(--color-text-secondary)] mb-1">Ingelogd als:</p>
               <p className="font-semibold text-[var(--color-text)]">{user.email}</p>
             </div>
@@ -227,13 +192,13 @@ export default function AdminDashboardPage() {
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => navigate('/inloggen')}
-              className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-all font-medium shadow-lg hover:shadow-xl"
+              className="px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] hover:bg-[var(--ff-color-primary-700)] transition-colors font-semibold"
             >
               Inloggen
             </button>
             <button
               onClick={() => navigate('/')}
-              className="px-6 py-3 border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-all font-medium"
+              className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-xl)] hover:border-[var(--ff-color-primary-600)] transition-colors font-semibold"
             >
               Terug naar home
             </button>
@@ -245,89 +210,132 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      <div className="bg-gradient-to-br from-[var(--ff-color-primary-700)] via-[var(--ff-color-primary-800)] to-[var(--ff-color-primary-900)] pt-8 pb-32">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)]">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-                <span className="text-5xl">⚡</span>
-                Admin Dashboard
-              </h1>
-              <p className="text-white/80 text-lg">
+              <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">Admin Dashboard</h1>
+              <p className="text-[var(--color-text-secondary)]">
                 Welkom terug, {user?.email?.split('@')[0]}
               </p>
             </div>
-            <button
-              onClick={loadData}
-              className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all font-medium border border-white/30"
-            >
-              🔄 Refresh
-            </button>
-          </div>
-
-          {realtimeMetrics && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <PremiumMetricCard
-                title="Total Users"
-                value={realtimeMetrics.total_users || 0}
-                subtitle={`${realtimeMetrics.admins || 0} admins`}
-                icon={<span className="text-2xl">👥</span>}
-                gradient="rgba(255,255,255,0.1), rgba(255,255,255,0.05)"
-              />
-              <PremiumMetricCard
-                title="Premium"
-                value={realtimeMetrics.premium_users || 0}
-                subtitle="Betalende gebruikers"
-                icon={<span className="text-2xl">💎</span>}
-                gradient="rgba(255,255,255,0.1), rgba(255,255,255,0.05)"
-                trend={{
-                  value: 12.5,
-                  label: 'vs vorige maand',
-                  isPositive: true,
-                }}
-              />
-              <PremiumMetricCard
-                title="Growth (7d)"
-                value={realtimeMetrics.growth_7d || 0}
-                subtitle="Nieuwe users"
-                icon={<span className="text-2xl">📈</span>}
-                gradient="rgba(255,255,255,0.1), rgba(255,255,255,0.05)"
-              />
-              <PremiumMetricCard
-                title="Engagement"
-                value={`${
-                  realtimeMetrics.total_users > 0
-                    ? Math.round(
-                        (realtimeMetrics.style_profiles / realtimeMetrics.total_users) * 100
-                      )
-                    : 0
-                }%`}
-                subtitle="Met style profile"
-                icon={<span className="text-2xl">✨</span>}
-                gradient="rgba(255,255,255,0.1), rgba(255,255,255,0.05)"
-              />
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowNotificationModal(true)}
+                className="px-4 py-2 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] hover:bg-[var(--ff-color-primary-700)] transition-colors font-medium text-sm flex items-center gap-2"
+              >
+                <Bell className="w-4 h-4" />
+                Notificatie
+              </button>
+              <button
+                onClick={handleExportCSV}
+                className="px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] transition-colors font-medium text-sm flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Export
+              </button>
+              <button
+                onClick={loadData}
+                className="px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] transition-colors font-medium text-sm"
+              >
+                🔄 Refresh
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 -mt-24">
-        <div className="bg-[var(--color-surface)] rounded-2xl shadow-2xl border border-[var(--color-border)] mb-8 overflow-hidden">
-          <div className="border-b border-[var(--color-border)] bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-surface)]">
-            <div className="flex gap-1 p-2">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Metrics Cards */}
+        {realtimeMetrics && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-[var(--radius-lg)] bg-[var(--ff-color-primary-600)]/10 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--color-text-secondary)]">Total Users</p>
+                  <p className="text-2xl font-bold text-[var(--color-text)]">
+                    {realtimeMetrics.total_users || 0}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-[var(--color-text-secondary)]">
+                {realtimeMetrics.admins || 0} admins
+              </p>
+            </div>
+
+            <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-[var(--radius-lg)] bg-[var(--ff-color-primary-600)]/10 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--color-text-secondary)]">Premium</p>
+                  <p className="text-2xl font-bold text-[var(--color-text)]">
+                    {realtimeMetrics.premium_users || 0}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-[var(--color-text-secondary)]">Betalende gebruikers</p>
+            </div>
+
+            <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-[var(--radius-lg)] bg-[var(--ff-color-primary-600)]/10 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--color-text-secondary)]">Growth (7d)</p>
+                  <p className="text-2xl font-bold text-[var(--color-text)]">
+                    {realtimeMetrics.growth_7d || 0}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-[var(--color-text-secondary)]">Nieuwe users</p>
+            </div>
+
+            <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-[var(--radius-lg)] bg-[var(--ff-color-primary-600)]/10 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--color-text-secondary)]">Engagement</p>
+                  <p className="text-2xl font-bold text-[var(--color-text)]">
+                    {realtimeMetrics.total_users > 0
+                      ? Math.round(
+                          (realtimeMetrics.style_profiles / realtimeMetrics.total_users) * 100
+                        )
+                      : 0}
+                    %
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-[var(--color-text-secondary)]">Met style profile</p>
+            </div>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] overflow-hidden mb-8">
+          <div className="border-b border-[var(--color-border)]">
+            <div className="flex">
               {[
-                { id: 'overview', label: '📊 Dashboard', icon: '📊' },
-                { id: 'users', label: '👥 Gebruikers', icon: '👥' },
-                { id: 'audit', label: '📋 Audit Log', icon: '📋' },
-                { id: 'notifications', label: '📨 Notificaties', icon: '📨' },
+                { id: 'overview', label: 'Dashboard' },
+                { id: 'users', label: 'Gebruikers' },
+                { id: 'audit', label: 'Audit Log' },
+                { id: 'notifications', label: 'Notificaties' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 px-6 py-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                  className={`flex-1 px-6 py-4 text-sm font-semibold transition-colors border-b-2 ${
                     activeTab === tab.id
-                      ? 'bg-[var(--ff-color-primary-700)] text-white shadow-lg'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]'
+                      ? 'border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-600)]'
+                      : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'
                   }`}
                 >
                   {tab.label}
@@ -339,48 +347,102 @@ export default function AdminDashboardPage() {
           <div className="p-8">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20">
-                <div className="relative">
-                  <div className="w-16 h-16 border-4 border-[var(--color-border)] rounded-full" />
-                  <div className="absolute top-0 left-0 w-16 h-16 border-4 border-[var(--ff-color-primary-700)] rounded-full border-t-transparent animate-spin" />
-                </div>
+                <div className="w-12 h-12 border-4 border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" />
                 <p className="mt-4 text-sm text-[var(--color-text-secondary)]">Laden...</p>
               </div>
             ) : (
               <>
                 {activeTab === 'overview' && metrics && (
                   <div className="space-y-6">
-                    <QuickActionsMenu actions={quickActions} />
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <GrowthChart data={metrics.growth} totalUsers={metrics.total_users} />
-                      <TierDistributionChart
-                        tiers={metrics.tier_breakdown}
-                        total={metrics.total_users}
-                      />
+                    {/* Growth Overview */}
+                    <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+                      <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6">
+                        Groei Overzicht
+                      </h3>
+                      <div className="space-y-4">
+                        {[
+                          { label: '7 dagen', value: metrics.growth.last_7d },
+                          { label: '30 dagen', value: metrics.growth.last_30d },
+                          { label: '90 dagen', value: metrics.growth.last_90d },
+                        ].map((item) => {
+                          const percentage =
+                            metrics.total_users > 0
+                              ? ((item.value / metrics.total_users) * 100).toFixed(1)
+                              : 0;
+                          return (
+                            <div key={item.label}>
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-[var(--color-text)]">
+                                  {item.label}
+                                </span>
+                                <span className="text-sm font-bold text-[var(--color-text)]">
+                                  {item.value} ({percentage}%)
+                                </span>
+                              </div>
+                              <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[var(--ff-color-primary-600)] transition-all duration-500"
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
 
+                    {/* Tier Distribution */}
+                    <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+                      <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6">
+                        Tier Verdeling
+                      </h3>
+                      <div className="grid grid-cols-3 gap-4">
+                        {[
+                          { label: 'Free', value: metrics.tier_breakdown.free },
+                          { label: 'Premium', value: metrics.tier_breakdown.premium },
+                          { label: 'Founder', value: metrics.tier_breakdown.founder },
+                        ].map((tier) => {
+                          const percentage =
+                            metrics.total_users > 0
+                              ? ((tier.value / metrics.total_users) * 100).toFixed(1)
+                              : 0;
+                          return (
+                            <div
+                              key={tier.label}
+                              className="bg-[var(--color-bg)] rounded-[var(--radius-lg)] p-4 text-center"
+                            >
+                              <p className="text-2xl font-bold text-[var(--color-text)] mb-1">
+                                {tier.value}
+                              </p>
+                              <p className="text-sm text-[var(--color-text-secondary)] mb-2">
+                                {tier.label}
+                              </p>
+                              <p className="text-xs font-semibold text-[var(--ff-color-primary-600)]">
+                                {percentage}%
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Engagement Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {[
                         {
                           title: 'Style Profiles',
                           value: metrics.engagement.with_style_profile,
                           total: metrics.total_users,
-                          icon: '✨',
-                          color: 'var(--ff-color-primary-600)',
                         },
                         {
                           title: 'Saved Outfits',
                           value: metrics.engagement.with_saved_outfits,
                           total: metrics.total_users,
-                          icon: '💾',
-                          color: 'var(--ff-color-accent-600)',
                         },
                         {
                           title: 'Quiz Completed',
                           value: metrics.engagement.with_quiz_completed,
                           total: metrics.total_users,
-                          icon: '✅',
-                          color: '#10b981',
                         },
                       ].map((item) => {
                         const percentage =
@@ -388,32 +450,17 @@ export default function AdminDashboardPage() {
                         return (
                           <div
                             key={item.title}
-                            className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 hover:shadow-lg transition-all"
+                            className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6"
                           >
-                            <div className="flex items-center gap-3 mb-4">
-                              <div
-                                className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                                style={{ backgroundColor: `${item.color}20` }}
-                              >
-                                {item.icon}
-                              </div>
-                              <div>
-                                <div className="text-sm font-medium text-[var(--color-text-secondary)]">
-                                  {item.title}
-                                </div>
-                                <div className="text-2xl font-bold text-[var(--color-text)]">
-                                  {item.value}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-baseline gap-2">
-                              <div className="text-lg font-semibold" style={{ color: item.color }}>
-                                {percentage}%
-                              </div>
-                              <div className="text-xs text-[var(--color-text-secondary)]">
-                                van totaal
-                              </div>
-                            </div>
+                            <p className="text-sm font-medium text-[var(--color-text-secondary)] mb-2">
+                              {item.title}
+                            </p>
+                            <p className="text-3xl font-bold text-[var(--color-text)] mb-1">
+                              {item.value}
+                            </p>
+                            <p className="text-sm text-[var(--ff-color-primary-600)] font-semibold">
+                              {percentage}% van totaal
+                            </p>
                           </div>
                         );
                       })}
@@ -423,20 +470,24 @@ export default function AdminDashboardPage() {
 
                 {activeTab === 'users' && (
                   <div className="space-y-6">
-                    <div className="bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <input
-                          type="text"
-                          placeholder="🔍 Zoek op naam of email..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                          className="px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent transition-all"
-                        />
+                    {/* Search Bar */}
+                    <div className="bg-[var(--color-bg)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div className="relative">
+                          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary)]" />
+                          <input
+                            type="text"
+                            placeholder="Zoek op naam of email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            className="w-full pl-10 pr-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent"
+                          />
+                        </div>
                         <select
                           value={filterTier}
                           onChange={(e) => setFilterTier(e.target.value as any)}
-                          className="px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent transition-all"
+                          className="px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
                         >
                           <option value="">Alle tiers</option>
                           <option value="free">Free</option>
@@ -448,7 +499,7 @@ export default function AdminDashboardPage() {
                           onChange={(e) =>
                             setFilterAdmin(e.target.value === '' ? '' : e.target.value === 'true')
                           }
-                          className="px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent transition-all"
+                          className="px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
                         >
                           <option value="">Alle users</option>
                           <option value="true">Alleen admins</option>
@@ -456,39 +507,132 @@ export default function AdminDashboardPage() {
                         </select>
                         <button
                           onClick={handleSearch}
-                          className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-all font-semibold shadow-lg hover:shadow-xl"
+                          className="px-6 py-2 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] hover:bg-[var(--ff-color-primary-700)] transition-colors font-semibold"
                         >
                           Zoeken
                         </button>
                       </div>
                     </div>
 
-                    <PremiumUserTable
-                      users={users}
-                      onManageUser={setSelectedUser}
-                      onSendNotification={(user) => {
-                        setNotificationTargetUser({ id: user.id, name: user.full_name });
-                        setShowNotificationModal(true);
-                      }}
-                    />
+                    {/* Users Table */}
+                    <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-[var(--color-bg)]">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--color-text)] uppercase">
+                                Gebruiker
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--color-text)] uppercase">
+                                Tier
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--color-text)] uppercase">
+                                Engagement
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--color-text)] uppercase">
+                                Sinds
+                              </th>
+                              <th className="px-6 py-3 text-right text-xs font-semibold text-[var(--color-text)] uppercase">
+                                Acties
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-[var(--color-border)]">
+                            {users.map((usr) => (
+                              <tr
+                                key={usr.id}
+                                className="hover:bg-[var(--color-bg)] transition-colors"
+                              >
+                                <td className="px-6 py-4">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-600)] text-white flex items-center justify-center font-semibold">
+                                      {usr.full_name?.charAt(0)?.toUpperCase() || '?'}
+                                    </div>
+                                    <div>
+                                      <div className="text-sm font-semibold text-[var(--color-text)]">
+                                        {usr.full_name || 'Onbekend'}
+                                      </div>
+                                      <div className="text-xs text-[var(--color-text-secondary)]">
+                                        {usr.email}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                  <span
+                                    className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                                      usr.tier === 'founder'
+                                        ? 'bg-amber-100 text-amber-800'
+                                        : usr.tier === 'premium'
+                                        ? 'bg-[var(--ff-color-primary-600)]/10 text-[var(--ff-color-primary-700)]'
+                                        : 'bg-[var(--color-bg)] text-[var(--color-text)]'
+                                    }`}
+                                  >
+                                    {usr.tier}
+                                  </span>
+                                  {usr.is_admin && (
+                                    <span className="ml-2 inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                      Admin
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-[var(--color-text-secondary)]">
+                                  <div className="space-y-1">
+                                    {usr.has_style_profile && <div>✓ Style profile</div>}
+                                    {usr.saved_outfits_count > 0 && (
+                                      <div>{usr.saved_outfits_count} saved outfits</div>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-[var(--color-text-secondary)]">
+                                  {new Date(usr.created_at).toLocaleDateString('nl-NL')}
+                                </td>
+                                <td className="px-6 py-4 text-right">
+                                  <div className="flex gap-2 justify-end">
+                                    <button
+                                      onClick={() => {
+                                        setNotificationTargetUser({
+                                          id: usr.id,
+                                          name: usr.full_name,
+                                        });
+                                        setShowNotificationModal(true);
+                                      }}
+                                      className="text-xs px-3 py-1.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] transition-colors font-medium"
+                                    >
+                                      Message
+                                    </button>
+                                    <button
+                                      onClick={() => setSelectedUser(usr)}
+                                      className="text-xs px-3 py-1.5 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] hover:bg-[var(--ff-color-primary-700)] transition-colors font-medium"
+                                    >
+                                      Beheer
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {activeTab === 'audit' && (
                   <div className="space-y-6">
-                    <div className="bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-[var(--color-bg)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <input
                           type="text"
-                          placeholder="🔍 Zoek in audit log..."
+                          placeholder="Zoek in audit log..."
                           value={auditSearch}
                           onChange={(e) => setAuditSearch(e.target.value)}
-                          className="md:col-span-2 px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent transition-all"
+                          className="md:col-span-2 px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
                         />
                         <select
                           value={auditActionFilter}
                           onChange={(e) => setAuditActionFilter(e.target.value)}
-                          className="px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent transition-all"
+                          className="px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
                         >
                           <option value="">Alle acties</option>
                           {uniqueActions.map((action) => (
@@ -500,15 +644,13 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
 
-                    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-hidden">
-                      <div className="p-6 border-b border-[var(--color-border)] bg-gradient-to-r from-[var(--color-bg)] to-transparent">
-                        <h2 className="text-lg font-semibold text-[var(--color-text)] flex items-center gap-2">
-                          <span>📋</span>
+                    <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] overflow-hidden">
+                      <div className="p-6 border-b border-[var(--color-border)]">
+                        <h2 className="text-lg font-semibold text-[var(--color-text)]">
                           Admin Audit Log
                         </h2>
                         <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-                          {filteredAuditLog.length} entries{' '}
-                          {auditSearch || auditActionFilter ? '(gefilterd)' : ''}
+                          {filteredAuditLog.length} entries
                         </p>
                       </div>
                       <div className="divide-y divide-[var(--color-border)] max-h-[600px] overflow-y-auto">
@@ -517,26 +659,19 @@ export default function AdminDashboardPage() {
                             key={entry.id}
                             className="p-6 hover:bg-[var(--color-bg)] transition-colors"
                           >
-                            <div className="flex items-start gap-4">
-                              <div className="w-10 h-10 rounded-lg bg-[var(--ff-color-primary-700)] text-white flex items-center justify-center font-bold shrink-0">
-                                📝
+                            <div className="flex items-start gap-3">
+                              <div className="text-sm font-semibold text-[var(--color-text)]">
+                                {entry.action.replace(/_/g, ' ').toUpperCase()}
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-sm font-semibold text-[var(--color-text)]">
-                                    {entry.action.replace(/_/g, ' ').toUpperCase()}
-                                  </span>
-                                  <span className="text-xs px-2 py-1 bg-[var(--color-bg)] rounded-full text-[var(--color-text-secondary)]">
-                                    {new Date(entry.created_at).toLocaleString('nl-NL')}
-                                  </span>
-                                </div>
-                                {entry.details && Object.keys(entry.details).length > 0 && (
-                                  <pre className="mt-3 text-xs text-[var(--color-text-secondary)] bg-[var(--color-bg)] p-3 rounded-lg border border-[var(--color-border)] overflow-x-auto">
-                                    {JSON.stringify(entry.details, null, 2)}
-                                  </pre>
-                                )}
+                              <div className="text-xs text-[var(--color-text-secondary)]">
+                                {new Date(entry.created_at).toLocaleString('nl-NL')}
                               </div>
                             </div>
+                            {entry.details && Object.keys(entry.details).length > 0 && (
+                              <pre className="mt-2 text-xs text-[var(--color-text-secondary)] bg-[var(--color-bg)] p-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] overflow-x-auto">
+                                {JSON.stringify(entry.details, null, 2)}
+                              </pre>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -545,71 +680,20 @@ export default function AdminDashboardPage() {
                 )}
 
                 {activeTab === 'notifications' && (
-                  <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-900)] rounded-xl p-12 text-center text-white">
-                      <div className="text-7xl mb-6">📨</div>
-                      <h2 className="text-3xl font-bold mb-3">Notificaties Versturen</h2>
-                      <p className="text-white/80 mb-8 max-w-2xl mx-auto">
-                        Verstuur gepersonaliseerde berichten naar individuele gebruikers of broadcast
-                        naar hele gebruikersgroepen
-                      </p>
-                      <button
-                        onClick={() => setShowNotificationModal(true)}
-                        className="px-8 py-4 bg-white text-[var(--ff-color-primary-700)] rounded-xl hover:shadow-2xl transition-all font-bold text-lg"
-                      >
-                        Nieuwe Notificatie Maken
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {[
-                        {
-                          title: 'Product Updates',
-                          description: 'Vertel gebruikers over nieuwe features',
-                          icon: '🚀',
-                          color: 'var(--ff-color-primary-600)',
-                        },
-                        {
-                          title: 'Promoties',
-                          description: 'Stuur tijdelijke aanbiedingen',
-                          icon: '🎁',
-                          color: '#f59e0b',
-                        },
-                        {
-                          title: 'Support',
-                          description: 'Bereik gebruikers met persoonlijke hulp',
-                          icon: '💬',
-                          color: '#10b981',
-                        },
-                        {
-                          title: 'Engagement',
-                          description: 'Herinner gebruikers aan onafgemaakte acties',
-                          icon: '⚡',
-                          color: '#8b5cf6',
-                        },
-                      ].map((item) => (
-                        <div
-                          key={item.title}
-                          className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 hover:shadow-lg transition-all"
-                        >
-                          <div
-                            className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl mb-4"
-                            style={{ backgroundColor: `${item.color}20` }}
-                          >
-                            {item.icon}
-                          </div>
-                          <h3
-                            className="text-lg font-semibold mb-2"
-                            style={{ color: item.color }}
-                          >
-                            {item.title}
-                          </h3>
-                          <p className="text-sm text-[var(--color-text-secondary)]">
-                            {item.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="text-center py-12">
+                    <Bell className="w-16 h-16 text-[var(--color-text-secondary)] mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+                      Notificaties Versturen
+                    </h2>
+                    <p className="text-[var(--color-text-secondary)] mb-6">
+                      Verstuur berichten naar specifieke gebruikers of hele groepen
+                    </p>
+                    <button
+                      onClick={() => setShowNotificationModal(true)}
+                      className="px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] hover:bg-[var(--ff-color-primary-700)] transition-colors font-semibold"
+                    >
+                      Nieuwe Notificatie Maken
+                    </button>
                   </div>
                 )}
               </>
@@ -618,14 +702,15 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* User Management Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-[var(--color-surface)] rounded-2xl max-w-md w-full p-8 border border-[var(--color-border)] shadow-2xl">
-            <h3 className="text-2xl font-bold text-[var(--color-text)] mb-6">⚙️ Beheer Gebruiker</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] max-w-md w-full p-8 border border-[var(--color-border)]">
+            <h3 className="text-2xl font-bold text-[var(--color-text)] mb-6">Beheer Gebruiker</h3>
 
-            <div className="mb-6 p-4 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+            <div className="mb-6 p-4 bg-[var(--color-bg)] rounded-[var(--radius-xl)] border border-[var(--color-border)]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-800)] flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-600)] text-white flex items-center justify-center font-bold">
                   {selectedUser.full_name?.charAt(0)?.toUpperCase() || '?'}
                 </div>
                 <div>
@@ -638,11 +723,11 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <span className="text-xs px-3 py-1.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full font-medium">
+                <span className="text-xs px-3 py-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full font-medium">
                   {selectedUser.tier}
                 </span>
                 {selectedUser.is_admin && (
-                  <span className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-full font-semibold border border-red-200">
+                  <span className="text-xs px-3 py-1 bg-red-100 text-red-700 rounded-full font-semibold">
                     Admin
                   </span>
                 )}
@@ -653,7 +738,7 @@ export default function AdminDashboardPage() {
               placeholder="Reden voor actie (verplicht)"
               value={actionReason}
               onChange={(e) => setActionReason(e.target.value)}
-              className="w-full px-4 py-3 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] mb-6 transition-all"
+              className="w-full px-4 py-3 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-xl)] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] mb-6"
               rows={3}
             />
 
@@ -664,23 +749,23 @@ export default function AdminDashboardPage() {
                   <button
                     onClick={handleGrantAdmin}
                     disabled={!actionReason.trim()}
-                    className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-semibold shadow-lg hover:shadow-xl"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-[var(--radius-lg)] hover:bg-green-700 disabled:opacity-50 transition-colors font-semibold"
                   >
-                    ✓ Grant Admin
+                    Grant Admin
                   </button>
                 )}
                 {selectedUser.is_admin && (
                   <button
                     onClick={handleRevokeAdmin}
                     disabled={!actionReason.trim()}
-                    className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-semibold shadow-lg hover:shadow-xl"
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-[var(--radius-lg)] hover:bg-red-700 disabled:opacity-50 transition-colors font-semibold"
                   >
-                    ✗ Revoke Admin
+                    Revoke Admin
                   </button>
                 )}
               </div>
 
-              <div className="text-sm font-semibold text-[var(--color-text)] mt-6">
+              <div className="text-sm font-semibold text-[var(--color-text)] mt-4">
                 Tier Wijzigen:
               </div>
               <div className="flex gap-2">
@@ -689,7 +774,7 @@ export default function AdminDashboardPage() {
                     key={tier}
                     onClick={() => handleChangeTier(tier)}
                     disabled={!actionReason.trim() || selectedUser.tier === tier}
-                    className="flex-1 px-4 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-semibold shadow-lg hover:shadow-xl"
+                    className="flex-1 px-4 py-2 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] hover:bg-[var(--ff-color-primary-700)] disabled:opacity-50 transition-colors font-semibold"
                   >
                     {tier}
                   </button>
@@ -702,7 +787,7 @@ export default function AdminDashboardPage() {
                 setSelectedUser(null);
                 setActionReason('');
               }}
-              className="w-full px-4 py-3 border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:border-[var(--ff-color-primary-700)] transition-all text-sm font-semibold"
+              className="w-full px-4 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] transition-colors font-semibold"
             >
               Sluiten
             </button>
