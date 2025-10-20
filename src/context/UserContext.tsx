@@ -12,6 +12,7 @@ export interface FitFiUser {
   role?: string;
   isPremium?: boolean;
   tier?: 'free' | 'premium' | 'founder';
+  isAdmin?: boolean;
   stylePreferences?: {
     casual: number;
     formal: number;
@@ -86,19 +87,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: userData.email
         });
 
-        // Fetch tier asynchronously (non-blocking)
+        // Fetch tier and admin status asynchronously (non-blocking)
         sb.from('profiles')
-          .select('tier')
+          .select('tier, is_admin')
           .eq('id', session.user.id)
           .maybeSingle()
           .then(({ data: profile }) => {
-            if (profile?.tier) {
-              setUser(prev => prev ? { ...prev, tier: profile.tier as 'free' | 'premium' | 'founder' } : null);
-              console.log('🎫 [UserContext] Tier updated:', profile.tier);
+            if (profile) {
+              setUser(prev => prev ? {
+                ...prev,
+                tier: profile.tier as 'free' | 'premium' | 'founder',
+                isAdmin: profile.is_admin || false
+              } : null);
+              console.log('🎫 [UserContext] Profile updated:', { tier: profile.tier, isAdmin: profile.is_admin });
             }
           })
           .catch(e => {
-            console.warn('[UserContext] Could not fetch tier:', e);
+            console.warn('[UserContext] Could not fetch profile:', e);
           });
       } else {
         setUser(null);
@@ -128,19 +133,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: userData.email
         });
 
-        // Fetch tier asynchronously (non-blocking)
+        // Fetch tier and admin status asynchronously (non-blocking)
         sb.from('profiles')
-          .select('tier')
+          .select('tier, is_admin')
           .eq('id', session.user.id)
           .maybeSingle()
           .then(({ data: profile }) => {
-            if (profile?.tier) {
-              setUser(prev => prev ? { ...prev, tier: profile.tier as 'free' | 'premium' | 'founder' } : null);
-              console.log('🎫 [UserContext] Tier updated:', profile.tier);
+            if (profile) {
+              setUser(prev => prev ? {
+                ...prev,
+                tier: profile.tier as 'free' | 'premium' | 'founder',
+                isAdmin: profile.is_admin || false
+              } : null);
+              console.log('🎫 [UserContext] Profile updated:', { tier: profile.tier, isAdmin: profile.is_admin });
             }
           })
           .catch(e => {
-            console.warn('[UserContext] Could not fetch tier:', e);
+            console.warn('[UserContext] Could not fetch profile:', e);
           });
       } else {
         setUser(null);
