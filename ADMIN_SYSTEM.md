@@ -92,10 +92,36 @@ De component zelf checkt `isAdmin` en toont een foutmelding als de user geen adm
 ## Admin Routes
 
 Huidige admin-only routes:
+- `/admin` - **Main Admin Dashboard** (NIEUW!) - Complete user management, metrics en audit log
 - `/admin/analytics` - Embedding analytics dashboard
 - `/admin/products` - Stripe products management
 - `/admin/stripe-setup` - Stripe configuratie
 - `/admin/brams-fruit` - Brams Fruit product management
+
+## Admin Dashboard Features
+
+### `/admin` - Main Dashboard
+
+**Overzicht Tab:**
+- Real-time KPI metrics (totaal users, premium users, groei, engagement)
+- Tier verdeling visualisatie met percentage bars
+- Engagement metrics (style profiles, saved outfits, quiz completion)
+- Referral statistics
+
+**Gebruikers Tab:**
+- Advanced search met filters (naam, email, tier, admin status)
+- Sorteerbare user table met alle relevante data
+- User management modal per gebruiker:
+  - Grant/revoke admin privileges (met verplichte reden)
+  - Change tier (free/premium/founder)
+  - View activity (style profile, saved outfits)
+- Real-time updates na elke actie
+
+**Audit Log Tab:**
+- Complete geschiedenis van alle admin acties
+- Gedetailleerde context per actie (before/after values, reason)
+- Timestamp en admin user tracking
+- JSON details voor debugging
 
 ## Testing
 
