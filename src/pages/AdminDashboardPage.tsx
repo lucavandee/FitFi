@@ -8,10 +8,13 @@ import {
   setUserTier,
   getAuditLog,
   logAdminAction,
+  exportUsersCSV,
+  getRealtimeMetrics,
   type DashboardMetrics,
   type UserSearchResult,
   type AuditLogEntry,
 } from '@/services/admin/adminService';
+import SendNotificationModal from '@/components/admin/SendNotificationModal';
 import toast from 'react-hot-toast';
 
 export default function AdminDashboardPage() {
@@ -19,38 +22,53 @@ export default function AdminDashboardPage() {
   const navigate = useNavigate();
 
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [realtimeMetrics, setRealtimeMetrics] = useState<any>(null);
   const [users, setUsers] = useState<UserSearchResult[]>([]);
   const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'audit'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'audit' | 'notifications'>('overview');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTier, setFilterTier] = useState<'free' | 'premium' | 'founder' | ''>('');
   const [filterAdmin, setFilterAdmin] = useState<boolean | ''>('');
+  const [auditSearch, setAuditSearch] = useState('');
+  const [auditActionFilter, setAuditActionFilter] = useState('');
 
   const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(null);
   const [actionReason, setActionReason] = useState('');
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationTargetUser, setNotificationTargetUser] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     if (!isAdmin) return;
 
     loadData();
     logAdminAction('view_dashboard');
+
+    const interval = setInterval(loadRealtimeMetrics, 30000);
+    return () => clearInterval(interval);
   }, [isAdmin]);
 
   const loadData = async () => {
     setLoading(true);
 
-    const [metricsData, usersData, auditData] = await Promise.all([
+    const [metricsData, usersData, auditData, realtimeData] = await Promise.all([
       getDashboardMetrics(),
       searchUsers({}),
-      getAuditLog(20),
+      getAuditLog(50),
+      getRealtimeMetrics(),
     ]);
 
     if (metricsData) setMetrics(metricsData);
     setUsers(usersData);
     setAuditLog(auditData);
+    if (realtimeData) setRealtimeMetrics(realtimeData);
     setLoading(false);
+  };
+
+  const loadRealtimeMetrics = async () => {
+    const data = await getRealtimeMetrics();
+    if (data) setRealtimeMetrics(data);
   };
 
   const handleSearch = async () => {
@@ -116,6 +134,36 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleExportCSV = async () => {
+    toast.loading('Exporteren...');
+    const csv = await exportUsersCSV();
+    toast.dismiss();
+
+    if (csv) {
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `fitfi-users-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      toast.success('Gebruikers geëxporteerd!');
+      logAdminAction('export_users_csv');
+    } else {
+      toast.error('Fout bij exporteren');
+    }
+  };
+
+  const filteredAuditLog = auditLog.filter((entry) => {
+    const matchesSearch = auditSearch
+      ? entry.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
+        JSON.stringify(entry.details).toLowerCase().includes(auditSearch.toLowerCase())
+      : true;
+    const matchesAction = auditActionFilter ? entry.action === auditActionFilter : true;
+    return matchesSearch && matchesAction;
+  });
+
+  const uniqueActions = Array.from(new Set(auditLog.map((e) => e.action)));
+
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
@@ -157,21 +205,42 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)] py-8">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">Admin Dashboard</h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">
-            Centraal beheer van gebruikers, metrics en acties
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-[var(--color-text)]">⚡ Admin Dashboard</h1>
+            <p className="mt-2 text-[var(--color-text-secondary)]">
+              Centraal beheer van gebruikers, metrics en acties
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowNotificationModal(true)}
+              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors font-medium text-sm"
+            >
+              📨 Notificatie versturen
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-colors font-medium text-sm"
+            >
+              📥 Export CSV
+            </button>
+            <button
+              onClick={loadData}
+              className="px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-colors font-medium text-sm"
+            >
+              🔄 Refresh
+            </button>
+          </div>
         </div>
 
-        {/* Tabs */}
         <div className="border-b border-[var(--color-border)] mb-8">
           <div className="flex gap-6">
             {[
-              { id: 'overview', label: 'Overzicht' },
-              { id: 'users', label: 'Gebruikers' },
-              { id: 'audit', label: 'Audit Log' },
+              { id: 'overview', label: '📊 Overzicht' },
+              { id: 'users', label: '👥 Gebruikers' },
+              { id: 'audit', label: '📋 Audit Log' },
+              { id: 'notifications', label: '📨 Notificaties' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -197,10 +266,35 @@ export default function AdminDashboardPage() {
           </div>
         ) : (
           <>
-            {/* Overview Tab */}
             {activeTab === 'overview' && metrics && (
               <div className="space-y-6">
-                {/* Key Metrics */}
+                {realtimeMetrics && (
+                  <div className="bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-900)] rounded-lg p-6 text-white">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold">⚡ Realtime Metrics</h2>
+                      <span className="text-xs bg-white/20 px-2 py-1 rounded">Live</span>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <div className="text-2xl font-bold">{realtimeMetrics.total_users || 0}</div>
+                        <div className="text-sm opacity-90">Total Users</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold">{realtimeMetrics.premium_users || 0}</div>
+                        <div className="text-sm opacity-90">Premium</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold">{realtimeMetrics.growth_7d || 0}</div>
+                        <div className="text-sm opacity-90">Growth (7d)</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold">{realtimeMetrics.active_sessions || 0}</div>
+                        <div className="text-sm opacity-90">Active Sessions</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <MetricCard
                     title="Totaal Gebruikers"
@@ -224,7 +318,6 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
-                {/* Tier Breakdown */}
                 <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
                   <h2 className="text-lg font-semibold text-[var(--color-text)] mb-4">
                     Tier Verdeling
@@ -251,7 +344,6 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Engagement Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <EngagementCard
                     title="Style Profiles"
@@ -272,10 +364,8 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* Users Tab */}
             {activeTab === 'users' && (
               <div className="space-y-6">
-                {/* Search and Filters */}
                 <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <input
@@ -316,7 +406,6 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Users Table */}
                 <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -391,12 +480,23 @@ export default function AdminDashboardPage() {
                               {new Date(usr.created_at).toLocaleDateString('nl-NL')}
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <button
-                                onClick={() => setSelectedUser(usr)}
-                                className="text-sm text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] font-medium"
-                              >
-                                Beheer
-                              </button>
+                              <div className="flex gap-2 justify-end">
+                                <button
+                                  onClick={() => setSelectedUser(usr)}
+                                  className="text-sm text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] font-medium"
+                                >
+                                  Beheer
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setNotificationTargetUser({ id: usr.id, name: usr.full_name });
+                                    setShowNotificationModal(true);
+                                  }}
+                                  className="text-sm text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] font-medium"
+                                >
+                                  📨
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -407,46 +507,120 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* Audit Log Tab */}
             {activeTab === 'audit' && (
-              <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] overflow-hidden">
-                <div className="p-6 border-b border-[var(--color-border)]">
-                  <h2 className="text-lg font-semibold text-[var(--color-text)]">
-                    Admin Audit Log
-                  </h2>
-                  <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-                    Alle admin acties worden gelogd voor compliance en debugging
-                  </p>
+              <div className="space-y-6">
+                <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Zoek in audit log..."
+                      value={auditSearch}
+                      onChange={(e) => setAuditSearch(e.target.value)}
+                      className="md:col-span-2 px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                    />
+                    <select
+                      value={auditActionFilter}
+                      onChange={(e) => setAuditActionFilter(e.target.value)}
+                      className="px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                    >
+                      <option value="">Alle acties</option>
+                      {uniqueActions.map((action) => (
+                        <option key={action} value={action}>
+                          {action}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div className="divide-y divide-[var(--color-border)]">
-                  {auditLog.map((entry) => (
-                    <div key={entry.id} className="p-6 hover:bg-[var(--color-bg)] transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-[var(--color-text)]">
-                              {entry.action.replace(/_/g, ' ').toUpperCase()}
-                            </span>
-                            <span className="text-xs text-[var(--color-text-secondary)]">
-                              {new Date(entry.created_at).toLocaleString('nl-NL')}
-                            </span>
+
+                <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] overflow-hidden">
+                  <div className="p-6 border-b border-[var(--color-border)]">
+                    <h2 className="text-lg font-semibold text-[var(--color-text)]">
+                      📋 Admin Audit Log
+                    </h2>
+                    <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+                      {filteredAuditLog.length} entries {auditSearch || auditActionFilter ? '(gefilterd)' : ''}
+                    </p>
+                  </div>
+                  <div className="divide-y divide-[var(--color-border)] max-h-[600px] overflow-y-auto">
+                    {filteredAuditLog.map((entry) => (
+                      <div key={entry.id} className="p-6 hover:bg-[var(--color-bg)] transition-colors">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-[var(--color-text)]">
+                                {entry.action.replace(/_/g, ' ').toUpperCase()}
+                              </span>
+                              <span className="text-xs text-[var(--color-text-secondary)]">
+                                {new Date(entry.created_at).toLocaleString('nl-NL')}
+                              </span>
+                            </div>
+                            {entry.details && Object.keys(entry.details).length > 0 && (
+                              <pre className="mt-2 text-xs text-[var(--color-text-secondary)] bg-[var(--color-bg)] p-3 rounded border border-[var(--color-border)] overflow-x-auto">
+                                {JSON.stringify(entry.details, null, 2)}
+                              </pre>
+                            )}
                           </div>
-                          {entry.details && Object.keys(entry.details).length > 0 && (
-                            <pre className="mt-2 text-xs text-[var(--color-text-secondary)] bg-[var(--color-bg)] p-3 rounded border border-[var(--color-border)] overflow-x-auto">
-                              {JSON.stringify(entry.details, null, 2)}
-                            </pre>
-                          )}
                         </div>
                       </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'notifications' && (
+              <div className="space-y-6">
+                <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-8 text-center">
+                  <div className="text-6xl mb-4">📨</div>
+                  <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+                    Notificaties Versturen
+                  </h2>
+                  <p className="text-[var(--color-text-secondary)] mb-6">
+                    Verstuur berichten naar specifieke gebruikers of broadcast naar hele groepen
+                  </p>
+                  <button
+                    onClick={() => setShowNotificationModal(true)}
+                    className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors font-medium"
+                  >
+                    Nieuwe Notificatie Maken
+                  </button>
+                </div>
+
+                <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
+                  <h3 className="font-semibold text-[var(--color-text)] mb-4">💡 Voorbeelden</h3>
+                  <div className="space-y-3 text-sm text-[var(--color-text-secondary)]">
+                    <div className="flex gap-2">
+                      <span className="shrink-0">•</span>
+                      <div>
+                        <strong className="text-[var(--color-text)]">Product updates:</strong> Vertel gebruikers over nieuwe features
+                      </div>
                     </div>
-                  ))}
+                    <div className="flex gap-2">
+                      <span className="shrink-0">•</span>
+                      <div>
+                        <strong className="text-[var(--color-text)]">Promoties:</strong> Stuur tijdelijke aanbiedingen naar free users
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="shrink-0">•</span>
+                      <div>
+                        <strong className="text-[var(--color-text)]">Support:</strong> Bereik specifieke gebruikers met persoonlijke hulp
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="shrink-0">•</span>
+                      <div>
+                        <strong className="text-[var(--color-text)]">Engagement:</strong> Herinner gebruikers aan onafgemaakte profielen
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </>
         )}
 
-        {/* User Management Modal */}
         {selectedUser && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--color-surface)] rounded-lg max-w-md w-full p-6 border border-[var(--color-border)]">
@@ -532,6 +706,17 @@ export default function AdminDashboardPage() {
               </button>
             </div>
           </div>
+        )}
+
+        {showNotificationModal && (
+          <SendNotificationModal
+            onClose={() => {
+              setShowNotificationModal(false);
+              setNotificationTargetUser(null);
+            }}
+            preselectedUserId={notificationTargetUser?.id}
+            preselectedUserName={notificationTargetUser?.name}
+          />
         )}
       </div>
     </div>

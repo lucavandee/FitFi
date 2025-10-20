@@ -188,3 +188,79 @@ export async function logAdminAction(
     return false;
   }
 }
+
+export interface NotificationInput {
+  targetUserId?: string;
+  targetTier?: 'free' | 'premium' | 'founder';
+  title: string;
+  message: string;
+  type?: 'info' | 'success' | 'warning' | 'promo';
+  actionUrl?: string;
+  actionLabel?: string;
+  expiresAt?: string;
+}
+
+export async function sendNotification(input: NotificationInput): Promise<boolean> {
+  try {
+    const { error } = await sb.rpc('send_admin_notification', {
+      p_target_user_id: input.targetUserId || null,
+      p_target_tier: input.targetTier || null,
+      p_title: input.title,
+      p_message: input.message,
+      p_type: input.type || 'info',
+      p_action_url: input.actionUrl || null,
+      p_action_label: input.actionLabel || null,
+      p_expires_at: input.expiresAt || null,
+    });
+
+    if (error) {
+      console.error('Failed to send notification:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Exception sending notification:', err);
+    return false;
+  }
+}
+
+export async function exportUsersCSV(): Promise<string | null> {
+  try {
+    const users = await searchUsers({ limit: 10000 });
+
+    const headers = ['Email', 'Name', 'Tier', 'Admin', 'Created', 'Style Profile', 'Saved Outfits', 'Referrals'];
+    const rows = users.map(u => [
+      u.email,
+      u.full_name,
+      u.tier,
+      u.is_admin ? 'Yes' : 'No',
+      new Date(u.created_at).toLocaleDateString(),
+      u.has_style_profile ? 'Yes' : 'No',
+      u.saved_outfits_count.toString(),
+      u.referral_count.toString(),
+    ]);
+
+    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    return csv;
+  } catch (err) {
+    console.error('Exception exporting users:', err);
+    return null;
+  }
+}
+
+export async function getRealtimeMetrics() {
+  try {
+    const { data, error } = await sb.rpc('get_admin_metrics');
+
+    if (error) {
+      console.error('Failed to fetch realtime metrics:', error);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Exception fetching realtime metrics:', err);
+    return null;
+  }
+}
