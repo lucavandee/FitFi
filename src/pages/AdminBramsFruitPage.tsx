@@ -5,7 +5,7 @@ import { importBramsFruitProducts, uploadProductImage, updateProductImages } fro
 import toast from 'react-hot-toast';
 
 export default function AdminBramsFruitPage() {
-  const { isAdmin } = useIsAdmin();
+  const { isAdmin, user } = useIsAdmin();
   const navigate = useNavigate();
   const [importing, setImporting] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -17,18 +17,39 @@ export default function AdminBramsFruitPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-[var(--color-text)]">Access Denied</h1>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <h1 className="text-2xl font-bold text-[var(--color-text)]">Geen toegang</h1>
           <p className="mt-2 text-[var(--color-text-secondary)]">
-            Admin privileges required
+            Je hebt admin rechten nodig om deze pagina te bekijken.
           </p>
-          <button
-            onClick={() => navigate('/')}
-            className="mt-4 px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
-          >
-            Go Home
-          </button>
+          {user ? (
+            <p className="mt-4 text-sm text-[var(--color-text-secondary)] bg-[var(--color-surface)] p-4 rounded-lg border border-[var(--color-border)]">
+              Ingelogd als: <strong className="text-[var(--color-text)]">{user.email}</strong>
+              <br />
+              <span className="text-xs">
+                Admin toegang vereist een @fitfi.ai email of admin in je email.
+              </span>
+            </p>
+          ) : (
+            <p className="mt-4 text-sm text-[var(--color-text-secondary)]">
+              Log eerst in om toegang te krijgen.
+            </p>
+          )}
+          <div className="flex gap-3 mt-6 justify-center">
+            <button
+              onClick={() => navigate('/inloggen')}
+              className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            >
+              Inloggen
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="px-6 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-colors"
+            >
+              Terug naar home
+            </button>
+          </div>
         </div>
       </div>
     );
