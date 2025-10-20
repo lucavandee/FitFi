@@ -92,18 +92,35 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .select('tier, is_admin')
           .eq('id', session.user.id)
           .maybeSingle()
-          .then(({ data: profile }) => {
+          .then(({ data: profile, error }) => {
+            if (error) {
+              console.error('❌ [UserContext] Profile fetch error:', error);
+            }
             if (profile) {
-              setUser(prev => prev ? {
-                ...prev,
-                tier: profile.tier as 'free' | 'premium' | 'founder',
-                isAdmin: profile.is_admin || false
-              } : null);
-              console.log('🎫 [UserContext] Profile updated:', { tier: profile.tier, isAdmin: profile.is_admin });
+              console.log('🎫 [UserContext] Profile fetched from DB:', {
+                tier: profile.tier,
+                is_admin: profile.is_admin,
+                type: typeof profile.is_admin
+              });
+              setUser(prev => {
+                const updated = prev ? {
+                  ...prev,
+                  tier: profile.tier as 'free' | 'premium' | 'founder',
+                  isAdmin: profile.is_admin === true
+                } : null;
+                console.log('✅ [UserContext] User state after update:', {
+                  hasUser: !!updated,
+                  isAdmin: updated?.isAdmin,
+                  email: updated?.email
+                });
+                return updated;
+              });
+            } else {
+              console.warn('⚠️ [UserContext] No profile found in database');
             }
           })
           .catch(e => {
-            console.warn('[UserContext] Could not fetch profile:', e);
+            console.error('❌ [UserContext] Profile fetch exception:', e);
           });
       } else {
         setUser(null);
@@ -138,18 +155,35 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .select('tier, is_admin')
           .eq('id', session.user.id)
           .maybeSingle()
-          .then(({ data: profile }) => {
+          .then(({ data: profile, error }) => {
+            if (error) {
+              console.error('❌ [UserContext] Profile fetch error (onAuthStateChange):', error);
+            }
             if (profile) {
-              setUser(prev => prev ? {
-                ...prev,
-                tier: profile.tier as 'free' | 'premium' | 'founder',
-                isAdmin: profile.is_admin || false
-              } : null);
-              console.log('🎫 [UserContext] Profile updated:', { tier: profile.tier, isAdmin: profile.is_admin });
+              console.log('🎫 [UserContext] Profile fetched from DB (onAuthStateChange):', {
+                tier: profile.tier,
+                is_admin: profile.is_admin,
+                type: typeof profile.is_admin
+              });
+              setUser(prev => {
+                const updated = prev ? {
+                  ...prev,
+                  tier: profile.tier as 'free' | 'premium' | 'founder',
+                  isAdmin: profile.is_admin === true
+                } : null;
+                console.log('✅ [UserContext] User state after update (onAuthStateChange):', {
+                  hasUser: !!updated,
+                  isAdmin: updated?.isAdmin,
+                  email: updated?.email
+                });
+                return updated;
+              });
+            } else {
+              console.warn('⚠️ [UserContext] No profile found in database (onAuthStateChange)');
             }
           })
           .catch(e => {
-            console.warn('[UserContext] Could not fetch profile:', e);
+            console.error('❌ [UserContext] Profile fetch exception (onAuthStateChange):', e);
           });
       } else {
         setUser(null);
