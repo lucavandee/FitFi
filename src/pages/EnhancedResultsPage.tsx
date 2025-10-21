@@ -1,10 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight } from "lucide-react";
+import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag } from "lucide-react";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
 import { OutfitVisualCompact } from "@/components/outfits/OutfitVisual";
+import { useOutfits } from "@/hooks/useOutfits";
+import SmartImage from "@/components/ui/SmartImage";
+import type { Outfit } from "@/services/data/types";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -26,8 +29,17 @@ export default function EnhancedResultsPage() {
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE) ?? "Smart Casual";
   const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
 
+  const hasCompletedQuiz = !!answers;
+
+  const { data: realOutfits, loading: outfitsLoading } = useOutfits({
+    archetype: typeof archetype === 'string' ? archetype : archetype?.name,
+    limit: 6,
+    enabled: hasCompletedQuiz
+  });
+
   const seeds: OutfitSeed[] = React.useMemo(() => {
-    if (color) return getSeedOutfits(color, archetype);
+    const archetypeName = typeof archetype === 'string' ? archetype : archetype?.name || 'Smart Casual';
+    if (color) return getSeedOutfits(color, archetypeName);
     return getSeedOutfits(
       {
         temperature: "neutraal",
@@ -41,6 +53,13 @@ export default function EnhancedResultsPage() {
       "Smart Casual"
     );
   }, [color, archetype]);
+
+  const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
+    if (realOutfits && realOutfits.length > 0) {
+      return realOutfits;
+    }
+    return seeds;
+  }, [realOutfits, seeds]);
 
   const [favs, setFavs] = React.useState<string[]>(() => {
     try {
@@ -69,7 +88,7 @@ export default function EnhancedResultsPage() {
     }
   }
 
-  const hasCompletedQuiz = !!answers;
+  const archetypeName = typeof archetype === 'string' ? archetype : archetype?.name || 'Smart Casual';
 
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
@@ -101,7 +120,7 @@ export default function EnhancedResultsPage() {
             </h1>
             {hasCompletedQuiz ? (
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Op basis van jouw antwoorden hebben we {seeds.length} outfits samengesteld die perfect bij je passen.
+                Op basis van jouw antwoorden hebben we {displayOutfits.length} outfits samengesteld die perfect bij je passen.
               </p>
             ) : (
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
@@ -161,7 +180,7 @@ export default function EnhancedResultsPage() {
                     <Award className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
                   </div>
                   <h3 className="text-lg font-bold mb-2">Archetype</h3>
-                  <p className="text-2xl font-bold text-[var(--ff-color-primary-600)]">{archetype}</p>
+                  <p className="text-2xl font-bold text-[var(--ff-color-primary-600)]">{archetypeName}</p>
                 </div>
 
                 <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
@@ -216,20 +235,49 @@ export default function EnhancedResultsPage() {
                   Jouw <span className="text-[var(--ff-color-primary-600)]">Outfits</span>
                 </h2>
                 <p className="text-xl text-gray-600">
-                  {seeds.length} looks speciaal voor jou samengesteld
+                  {outfitsLoading ? 'Laden...' : `${displayOutfits.length} looks speciaal voor jou samengesteld`}
                 </p>
               </div>
 
+              {outfitsLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--ff-color-primary-600)]"></div>
+                </div>
+              ) : (
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {seeds.map((outfit) => {
+                {displayOutfits.map((outfit) => {
+                  const isRealOutfit = 'products' in outfit && outfit.products;
                   const isFavorite = favs.includes(outfit.id);
+                  const outfitTitle = outfit.title || 'Outfit';
+                  const outfitVibe = 'vibe' in outfit ? outfit.vibe : '';
+                  const outfitNotes = 'notes' in outfit ? outfit.notes : '';
+
                   return (
                     <article
                       key={outfit.id}
                       className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-xl transition-shadow"
                     >
-                      {/* Outfit Visual */}
-                      {outfit.pieces && outfit.pieces.length > 0 ? (
+                      {/* Outfit Visual - Real Products or Mockup */}
+                      {isRealOutfit ? (
+                        <div className="aspect-[3/4] bg-[var(--color-bg)] p-2">
+                          <div className="grid grid-cols-2 gap-2 h-full">
+                            {outfit.products!.slice(0, 4).map((product, idx) => (
+                              <div key={idx} className="relative aspect-square overflow-hidden rounded-lg">
+                                <SmartImage
+                                  src={product.imageUrl || '/images/outfit-fallback.jpg'}
+                                  alt={product.name || ''}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ))}
+                            {outfit.products!.length < 4 && Array.from({ length: 4 - outfit.products!.length }).map((_, idx) => (
+                              <div key={`placeholder-${idx}`} className="relative aspect-square bg-[var(--color-surface)] rounded-lg flex items-center justify-center">
+                                <ShoppingBag className="w-8 h-8 text-[var(--color-text)]/20" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : 'pieces' in outfit && outfit.pieces && outfit.pieces.length > 0 ? (
                         <OutfitVisualCompact pieces={outfit.pieces} />
                       ) : (
                         <div className="aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
@@ -241,8 +289,10 @@ export default function EnhancedResultsPage() {
                       <div className="p-6">
                         <div className="flex items-start justify-between gap-4 mb-3">
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-1">{outfit.title}</h3>
-                            <p className="text-sm text-[var(--ff-color-primary-600)] font-semibold">{outfit.vibe}</p>
+                            <h3 className="text-xl font-bold mb-1">{outfitTitle}</h3>
+                            {outfitVibe && (
+                              <p className="text-sm text-[var(--ff-color-primary-600)] font-semibold">{outfitVibe}</p>
+                            )}
                           </div>
                           <button
                             onClick={() => toggleFav(outfit.id)}
@@ -256,12 +306,27 @@ export default function EnhancedResultsPage() {
                             {isFavorite ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
                           </button>
                         </div>
-                        <p className="text-sm text-gray-600 mb-4">{outfit.notes}</p>
+                        {outfitNotes && (
+                          <p className="text-sm text-gray-600 mb-4">{outfitNotes}</p>
+                        )}
+                        {isRealOutfit && outfit.products && outfit.products.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+                            <p className="text-xs text-[var(--color-text)]/60 mb-2">{outfit.products.length} items</p>
+                            <div className="flex flex-wrap gap-2">
+                              {outfit.products.slice(0, 3).map((product, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-[var(--color-bg)] rounded-full truncate max-w-[120px]" title={product.name}>
+                                  {product.name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </article>
                   );
                 })}
               </div>
+              )}
             </div>
           </div>
         </section>
@@ -278,7 +343,7 @@ export default function EnhancedResultsPage() {
                   <h2 className="text-2xl font-bold">Je favorieten ({favs.length})</h2>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  {seeds
+                  {displayOutfits
                     .filter((o) => favs.includes(o.id))
                     .map((outfit) => (
                       <div
