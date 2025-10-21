@@ -31,7 +31,7 @@ export function ProductImage({
   const effectiveColor = color || extractColorFromName(displayName);
 
   return (
-    <div className={`group cursor-pointer ${className}`} onClick={onClick}>
+    <div className={`group cursor-pointer relative ${className}`} onClick={onClick}>
       <SmartFallbackImage
         src={src}
         alt={alt}

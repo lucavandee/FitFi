@@ -17,14 +17,22 @@ export default function BramsFruitCatalogPage() {
   const loadData = async () => {
     setLoading(true);
 
-    const [productsData, categoriesData] = await Promise.all([
-      getBramsFruitProductGroups(),
-      getBramsFruitCategories(),
-    ]);
+    try {
+      const [productsData, categoriesData] = await Promise.all([
+        getBramsFruitProductGroups(),
+        getBramsFruitCategories(),
+      ]);
 
-    setGroups(productsData);
-    setCategories(['all', ...categoriesData.categories]);
-    setLoading(false);
+      console.log('[BramsFruit] Loaded products:', productsData.length);
+      console.log('[BramsFruit] Categories:', categoriesData.categories);
+
+      setGroups(productsData);
+      setCategories(['all', ...categoriesData.categories]);
+    } catch (err) {
+      console.error('[BramsFruit] Error loading data:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredGroups =
