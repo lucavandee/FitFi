@@ -64,7 +64,10 @@ const WithSeo = {
   AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
   AdminBramsFruit: () => (<><Seo title="Brams Fruit Admin — FitFi" description="Brams Fruit product management." path="/admin/brams-fruit" noindex /><AdminBramsFruitPage /></>),
   AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
-  BramsFruitCatalog: () => (<><Seo title="Brams Fruit Collectie — FitFi" description="Premium menswear met een rustige uitstraling." path="/collectie/brams-fruit" /><BramsFruitCatalogPage /></>),
+  BramsFruitCatalog: () => {
+    console.log('[App] Rendering BramsFruitCatalog route');
+    return (<><Seo title="Brams Fruit Collectie — FitFi" description="Premium menswear met een rustige uitstraling." path="/collectie/brams-fruit" /><BramsFruitCatalogPage /></>);
+  },
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
