@@ -64,10 +64,7 @@ const WithSeo = {
   AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
   AdminBramsFruit: () => (<><Seo title="Brams Fruit Admin — FitFi" description="Brams Fruit product management." path="/admin/brams-fruit" noindex /><AdminBramsFruitPage /></>),
   AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
-  BramsFruitCatalog: () => {
-    console.log('[App] Rendering BramsFruitCatalog route');
-    return (<><Seo title="Brams Fruit Collectie — FitFi" description="Premium menswear met een rustige uitstraling." path="/collectie/brams-fruit" /><BramsFruitCatalogPage /></>);
-  },
+  AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
@@ -116,15 +113,13 @@ export default function App() {
                 <Route path="/profile" element={<RequireAuth><WithSeo.Profile /></RequireAuth>} />
                 <Route path="/results" element={<RequireAuth><WithSeo.Results /></RequireAuth>} />
 
-                {/* Brams Fruit */}
-                <Route path="/collectie/brams-fruit" element={<WithSeo.BramsFruitCatalog />} />
-
                 {/* Admin */}
                 <Route path="/admin" element={<RequireAuth><WithSeo.AdminDashboard /></RequireAuth>} />
                 <Route path="/admin/analytics" element={<RequireAuth><WithSeo.Analytics /></RequireAuth>} />
                 <Route path="/admin/products" element={<RequireAuth><WithSeo.AdminProducts /></RequireAuth>} />
                 <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
                 <Route path="/admin/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruit /></RequireAuth>} />
+                <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
 
                 {/* 404 */}
                 <Route path="*" element={<WithSeo.NotFound />} />

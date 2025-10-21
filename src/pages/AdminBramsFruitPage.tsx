@@ -253,8 +253,20 @@ export default function AdminBramsFruitPage() {
               </div>
               <div>
                 <strong className="text-[var(--color-text)]">Step 3: Verify</strong>
-                <p>Check the products are displaying correctly on the main site.</p>
+                <p>Check the products are displaying correctly in the preview catalog.</p>
               </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
+              <button
+                onClick={() => navigate('/admin/preview/brams-fruit')}
+                className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors font-medium"
+              >
+                Preview Catalog
+              </button>
+              <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+                View all Brams Fruit products as they appear in the unified catalog
+              </p>
             </div>
           </div>
         </div>
