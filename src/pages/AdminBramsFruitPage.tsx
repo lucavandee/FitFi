@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { importBramsFruitProducts, uploadProductImage, updateProductImages } from '@/services/bramsFruit/importService';
+import { importBramsFruitXLSX } from '@/services/bramsFruit/xlsxParser';
 import toast from 'react-hot-toast';
 
 export default function AdminBramsFruitPage() {
@@ -55,7 +56,7 @@ export default function AdminBramsFruitPage() {
     );
   }
 
-  const handleCSVImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -63,18 +64,34 @@ export default function AdminBramsFruitPage() {
     setImportResult(null);
 
     try {
-      const csvData = await file.text();
-      const result = await importBramsFruitProducts(csvData);
+      const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+      let result;
+
+      if (isExcel) {
+        result = await importBramsFruitXLSX(file);
+
+        if (result.success) {
+          toast.success(
+            `Imported ${result.imported} products successfully!\n` +
+            `${result.imagesExtracted} images extracted from Excel.`
+          );
+        } else {
+          toast.error(`Import completed with ${result.failed} errors`);
+        }
+      } else {
+        const csvData = await file.text();
+        result = await importBramsFruitProducts(csvData);
+
+        if (result.success) {
+          toast.success(`Imported ${result.imported} products successfully!`);
+        } else {
+          toast.error(`Import completed with ${result.failed} errors`);
+        }
+      }
 
       setImportResult(result);
-
-      if (result.success) {
-        toast.success(`Imported ${result.imported} products successfully!`);
-      } else {
-        toast.error(`Import completed with ${result.failed} errors`);
-      }
     } catch (err) {
-      toast.error('Failed to import CSV');
+      toast.error('Failed to import file');
       console.error(err);
     } finally {
       setImporting(false);
@@ -135,20 +152,20 @@ export default function AdminBramsFruitPage() {
         </div>
 
         <div className="space-y-6">
-          {/* CSV Import */}
+          {/* File Import */}
           <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
-              Import Products from CSV
+              Import Products from Spreadsheet
             </h2>
             <p className="text-sm text-[var(--color-text-secondary)] mb-4">
-              Upload the Brams Fruit product spreadsheet (CSV format). Existing products will be updated.
+              Upload the Brams Fruit product spreadsheet (.XLSX or .CSV). Excel files will automatically extract embedded images!
             </p>
 
             <label className="block">
               <input
                 type="file"
-                accept=".csv"
-                onChange={handleCSVImport}
+                accept=".csv,.xlsx,.xls"
+                onChange={handleFileImport}
                 disabled={importing}
                 className="block w-full text-sm text-[var(--color-text)]
                   file:mr-4 file:py-2 file:px-4
@@ -244,12 +261,12 @@ export default function AdminBramsFruitPage() {
             </h2>
             <div className="space-y-3 text-sm text-[var(--color-text-secondary)]">
               <div>
-                <strong className="text-[var(--color-text)]">Step 1: Import CSV</strong>
-                <p>Upload the product spreadsheet to populate the database with all product variants.</p>
+                <strong className="text-[var(--color-text)]">Step 1: Import Spreadsheet</strong>
+                <p>Upload the product spreadsheet (.XLSX or .CSV). Excel files automatically extract embedded images!</p>
               </div>
               <div>
-                <strong className="text-[var(--color-text)]">Step 2: Upload Images</strong>
-                <p>Upload product images. Name them using the style code (e.g., "900.jpg", "919-Green.jpg").</p>
+                <strong className="text-[var(--color-text)]">Step 2: Upload Additional Images (Optional)</strong>
+                <p>If using CSV or need to update images, upload them separately. Name them using the style code (e.g., "900.jpg", "919-Green.jpg").</p>
               </div>
               <div>
                 <strong className="text-[var(--color-text)]">Step 3: Verify</strong>
