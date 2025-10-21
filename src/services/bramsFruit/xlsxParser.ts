@@ -49,68 +49,111 @@ export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult
     const errors: string[] = [];
     let imagesExtracted = 0;
 
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
+    const BATCH_SIZE = 10;
+    const batches: string[][][] = [];
+    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+      batches.push(rows.slice(i, i + BATCH_SIZE));
+    }
 
-      try {
-        const product = transformRowToProduct(headers, row);
+    console.log(`[Import] Processing ${rows.length} products in ${batches.length} batches of ${BATCH_SIZE}`);
 
-        const styleCode = product.style_code;
-        if (images[i] && styleCode) {
-          const uploadResult = await uploadImageBlob(styleCode, images[i]);
-          if (uploadResult.success && uploadResult.url) {
-            product.image_url = uploadResult.url;
-            imagesExtracted++;
+    for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+      const batch = batches[batchIndex];
+      const batchStartIndex = batchIndex * BATCH_SIZE;
+
+      console.log(`[Import] Processing batch ${batchIndex + 1}/${batches.length} (rows ${batchStartIndex + 2}-${batchStartIndex + batch.length + 1})`);
+
+      const batchPromises = batch.map(async (row, rowIndexInBatch) => {
+        const i = batchStartIndex + rowIndexInBatch;
+
+        try {
+          const product = transformRowToProduct(headers, row);
+
+          const styleCode = product.style_code;
+          if (images[i] && styleCode) {
+            const uploadResult = await uploadImageBlob(styleCode, images[i]);
+            if (uploadResult.success && uploadResult.url) {
+              product.image_url = uploadResult.url;
+              imagesExtracted++;
+              console.log(`[Import] Uploaded image for ${styleCode}`);
+            } else if (uploadResult.error) {
+              console.warn(`[Import] Failed to upload image for ${styleCode}: ${uploadResult.error}`);
+            }
           }
+
+          const productRecord = {
+            sku: product.sku || `BF-${product.product_id}`,
+            name: product.product_name || 'Unnamed Product',
+            description: product.material_composition
+              ? `${product.product_name} - ${product.material_composition}`
+              : product.product_name || 'Premium Quality Fashion Item',
+            image_url: product.image_url || null,
+            price: product.retail_price || 0,
+            original_price: product.wholesale_price || null,
+            retailer: 'Brams Fruit',
+            category: product.category || 'clothing',
+            brand: 'Brams Fruit',
+            gender: product.gender?.toLowerCase() === 'male' ? 'male' :
+                    product.gender?.toLowerCase() === 'female' ? 'female' : 'unisex',
+            type: product.sub_category || product.category || 'clothing',
+            colors: product.color ? [product.color] : [],
+            sizes: product.size ? [product.size] : [],
+            in_stock: true,
+            affiliate_url: product.affiliate_link || null,
+            product_url: product.affiliate_link || null,
+            tags: [product.department, product.color_family, product.category].filter(Boolean)
+          };
+
+          const { error } = await supabase
+            .from('products')
+            .upsert(productRecord, {
+              onConflict: 'sku',
+              ignoreDuplicates: false
+            });
+
+          if (error) {
+            console.error(`Import error for row ${i + 2}:`, {
+              error: error.message,
+              details: error.details,
+              hint: error.hint,
+              code: error.code,
+              productData: productRecord
+            });
+            return {
+              success: false,
+              rowNumber: i + 2,
+              sku: productRecord.sku,
+              error: error.message
+            };
+          } else {
+            return {
+              success: true,
+              rowNumber: i + 2,
+              sku: productRecord.sku
+            };
+          }
+        } catch (err) {
+          return {
+            success: false,
+            rowNumber: i + 2,
+            sku: 'unknown',
+            error: String(err)
+          };
         }
+      });
 
-        const productRecord = {
-          sku: product.sku || `BF-${product.product_id}`,
-          name: product.product_name || 'Unnamed Product',
-          description: product.material_composition
-            ? `${product.product_name} - ${product.material_composition}`
-            : product.product_name || 'Premium Quality Fashion Item',
-          image_url: product.image_url || null,
-          price: product.retail_price || 0,
-          original_price: product.wholesale_price || null,
-          retailer: 'Brams Fruit',
-          category: product.category || 'clothing',
-          brand: 'Brams Fruit',
-          gender: product.gender?.toLowerCase() === 'male' ? 'male' :
-                  product.gender?.toLowerCase() === 'female' ? 'female' : 'unisex',
-          type: product.sub_category || product.category || 'clothing',
-          colors: product.color ? [product.color] : [],
-          sizes: product.size ? [product.size] : [],
-          in_stock: true,
-          affiliate_url: product.affiliate_link || null,
-          product_url: product.affiliate_link || null,
-          tags: [product.department, product.color_family, product.category].filter(Boolean)
-        };
+      const batchResults = await Promise.all(batchPromises);
 
-        const { error } = await supabase
-          .from('products')
-          .upsert(productRecord, {
-            onConflict: 'sku',
-            ignoreDuplicates: false
-          });
-
-        if (error) {
-          failed++;
-          console.error(`Import error for row ${i + 2}:`, {
-            error: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code,
-            productData: productRecord
-          });
-          errors.push(`Row ${i + 2} (${productRecord.sku}): ${error.message}`);
-        } else {
+      for (const result of batchResults) {
+        if (result.success) {
           imported++;
+        } else {
+          failed++;
+          errors.push(`Row ${result.rowNumber} (${result.sku}): ${result.error}`);
         }
-      } catch (err) {
-        failed++;
-        errors.push(`Row ${i + 2}: ${String(err)}`);
       }
+
+      console.log(`[Import] Batch ${batchIndex + 1} complete: ${batchResults.filter(r => r.success).length} success, ${batchResults.filter(r => !r.success).length} failed`);
     }
 
     return {
@@ -138,33 +181,59 @@ async function extractImagesFromWorkbook(
   const images: Record<number, Blob> = {};
 
   try {
-    if (!workbook.Workbook?.Sheets?.[0]?.Drawing) {
+    if (!workbook.Workbook?.Sheets || workbook.Workbook.Sheets.length === 0) {
+      console.log('[XLSX] No sheets found in workbook');
       return images;
     }
 
-    const drawings = workbook.Workbook.Sheets[0].Drawing;
+    const firstSheet = workbook.Workbook.Sheets[0];
 
-    for (const drawing of drawings) {
-      if (drawing.from && drawing.image) {
-        const rowIndex = drawing.from.row;
-        const imageData = drawing.image;
+    if (!firstSheet.Drawing || !Array.isArray(firstSheet.Drawing)) {
+      console.log('[XLSX] No drawings found in first sheet');
+      return images;
+    }
 
-        const base64Data = imageData.data;
-        const mimeType = imageData.type || 'image/jpeg';
+    console.log(`[XLSX] Found ${firstSheet.Drawing.length} drawings in workbook`);
+    const drawings = firstSheet.Drawing;
 
+    for (let i = 0; i < drawings.length; i++) {
+      const drawing = drawings[i];
+
+      if (!drawing.from || !drawing.image) {
+        console.warn(`[XLSX] Drawing ${i} missing from or image data`);
+        continue;
+      }
+
+      const rowIndex = drawing.from.row;
+      const imageData = drawing.image;
+
+      if (!imageData.data) {
+        console.warn(`[XLSX] Drawing ${i} missing image data`);
+        continue;
+      }
+
+      const base64Data = imageData.data;
+      const mimeType = imageData.type || 'image/jpeg';
+
+      try {
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        for (let j = 0; j < byteCharacters.length; j++) {
+          byteNumbers[j] = byteCharacters.charCodeAt(j);
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: mimeType });
 
         images[rowIndex - 1] = blob;
+        console.log(`[XLSX] Extracted image for row ${rowIndex} (${blob.size} bytes, ${mimeType})`);
+      } catch (decodeErr) {
+        console.error(`[XLSX] Failed to decode image ${i}:`, decodeErr);
       }
     }
+
+    console.log(`[XLSX] Successfully extracted ${Object.keys(images).length} images`);
   } catch (err) {
-    console.warn('Could not extract images from Excel:', err);
+    console.error('[XLSX] Error extracting images:', err);
   }
 
   return images;
