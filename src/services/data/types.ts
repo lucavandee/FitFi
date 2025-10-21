@@ -31,6 +31,7 @@ export type BoltProduct = {
   description?: string;
   sizes?: string[];
   colors?: string[];
+  gender?: 'male' | 'female' | 'unisex';
   in_stock?: boolean;
   rating?: number;
   review_count?: number;

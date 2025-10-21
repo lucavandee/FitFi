@@ -30,8 +30,8 @@ export async function getRecommendedProducts(opts?: {
 /**
  * Outfitaanbevelingen (bouwt desnoods op producten als fallback).
  */
-export async function getOutfitRecommendations(_userId?: string): Promise<Outfit[]> {
-  const { data } = await fetchOutfits();
+export async function getOutfitRecommendations(_userId?: string, opts?: { limit?: number }): Promise<Outfit[]> {
+  const { data } = await fetchOutfits({ limit: opts?.limit });
   if (data && data.length) return data;
 
   // fallback: bouw 3 outfits uit products
@@ -51,7 +51,7 @@ export async function getOutfitRecommendations(_userId?: string): Promise<Outfit
  * - Simpel en robuust: gebruikt getOutfitRecommendations onder water.
  * - Optionele limit ondersteunt slicing voor UI.
  */
-export async function getFeed(opts?: { limit?: number; userId?: string }): Promise<Outfit[]> {
-  const outfits = await getOutfitRecommendations(opts?.userId);
+export async function getFeed(opts?: { limit?: number; userId?: string; count?: number; archetypes?: string[]; offset?: number }): Promise<Outfit[]> {
+  const outfits = await getOutfitRecommendations(opts?.userId, { limit: opts?.limit || opts?.count });
   return opts?.limit ? outfits.slice(0, opts.limit) : outfits;
 }
