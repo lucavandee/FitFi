@@ -354,6 +354,41 @@ export default function AdminDashboardPage() {
               <>
                 {activeTab === 'overview' && metrics && (
                   <div className="space-y-6">
+                    {/* Quick Actions */}
+                    <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
+                      <h3 className="text-lg font-semibold text-[var(--color-text)] mb-4">
+                        Quick Actions
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button
+                          onClick={() => navigate('/admin/zalando-import')}
+                          className="p-4 text-left border border-[var(--color-border)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-600)]/5 transition-all"
+                        >
+                          <div className="font-medium text-[var(--color-text)] mb-1">Zalando Import</div>
+                          <div className="text-sm text-[var(--color-text-secondary)]">
+                            Import products via CSV
+                          </div>
+                        </button>
+                        <button
+                          onClick={() => navigate('/admin/brams-fruit')}
+                          className="p-4 text-left border border-[var(--color-border)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-600)]/5 transition-all"
+                        >
+                          <div className="font-medium text-[var(--color-text)] mb-1">Brams Fruit</div>
+                          <div className="text-sm text-[var(--color-text-secondary)]">
+                            Manage product catalog
+                          </div>
+                        </button>
+                        <button
+                          onClick={() => navigate('/admin/products')}
+                          className="p-4 text-left border border-[var(--color-border)] rounded-[var(--radius-lg)] hover:border-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-600)]/5 transition-all"
+                        >
+                          <div className="font-medium text-[var(--color-text)] mb-1">Stripe Products</div>
+                          <div className="text-sm text-[var(--color-text-secondary)]">
+                            Manage subscriptions
+                          </div>
+                        </button>
+                      </div>
+                    </div>
                     {/* Growth Overview */}
                     <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                       <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6">
