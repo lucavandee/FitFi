@@ -38,6 +38,7 @@ const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const AdminBramsFruitPage = lazy(() => import("@/pages/AdminBramsFruitPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPage"));
+const BramsFruitDemoPage = lazy(() => import("@/pages/BramsFruitDemoPage"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 const WithSeo = {
@@ -65,6 +66,7 @@ const WithSeo = {
   AdminBramsFruit: () => (<><Seo title="Brams Fruit Admin — FitFi" description="Brams Fruit product management." path="/admin/brams-fruit" noindex /><AdminBramsFruitPage /></>),
   AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
   BramsFruitCatalog: () => (<><Seo title="Brams Fruit Collectie — FitFi" description="Premium menswear met een rustige uitstraling." path="/collectie/brams-fruit" /><BramsFruitCatalogPage /></>),
+  BramsFruitDemo: () => (<><Seo title="Smart Fallback Demo — FitFi" description="Demonstratie van het Smart Image Fallback systeem." path="/demo/smart-fallback" noindex /><BramsFruitDemoPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
@@ -122,6 +124,9 @@ export default function App() {
                 <Route path="/admin/products" element={<RequireAuth><WithSeo.AdminProducts /></RequireAuth>} />
                 <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
                 <Route path="/admin/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruit /></RequireAuth>} />
+
+                {/* Demo */}
+                <Route path="/demo/smart-fallback" element={<WithSeo.BramsFruitDemo />} />
 
                 {/* 404 */}
                 <Route path="*" element={<WithSeo.NotFound />} />
