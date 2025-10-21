@@ -25,7 +25,6 @@ function useLockBody(lock: boolean) {
 const links: Array<{ to: string; label: string }> = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
-  { to: "/collectie/brams-fruit", label: "Brams Fruit" },
   { to: "/over-ons", label: "Over ons" },
   { to: "/blog", label: "Blog" },
   { to: "/veelgestelde-vragen", label: "FAQ" },
