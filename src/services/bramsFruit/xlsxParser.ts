@@ -64,14 +64,28 @@ export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult
           }
         }
 
+        const productRecord = {
+          sku: product.sku,
+          name: product.product_name,
+          description: `${product.product_name} - ${product.material_composition || 'Premium Quality'}`,
+          image_url: product.image_url,
+          price: product.retail_price,
+          original_price: product.wholesale_price,
+          retailer: 'Brams Fruit',
+          category: product.category,
+          brand: 'Brams Fruit',
+          gender: product.gender === 'Male' ? 'men' : 'women',
+          type: product.sub_category || product.category,
+          colors: [product.color],
+          sizes: [product.size],
+          in_stock: true,
+          affiliate_url: product.affiliate_link,
+          tags: [product.department, product.color_family, product.category].filter(Boolean)
+        };
+
         const { error } = await supabase
           .from('products')
-          .upsert({
-            ...product,
-            retailer: 'Brams Fruit',
-            available_sizes: [product.size],
-            in_stock: true
-          }, {
+          .upsert(productRecord, {
             onConflict: 'sku',
             ignoreDuplicates: false
           });
