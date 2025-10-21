@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getBramsFruitProductGroups, getBramsFruitCategories } from '@/services/bramsFruit/productService';
 import { BramsFruitProductGroup } from '@/services/bramsFruit/types';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { ProductImage } from '@/components/ui/ProductImage';
 import { supabase } from '@/lib/supabase';
 
 export default function BramsFruitCatalogPage() {
@@ -94,11 +94,15 @@ export default function BramsFruitCatalogPage() {
               className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="aspect-square bg-[var(--color-bg)] relative">
-                <ImageWithFallback
+                <ProductImage
                   src={getImageUrl(group.image_url)}
                   alt={group.product_name}
-                  fallback="/images/fallbacks/default.jpg"
-                  className="w-full h-full object-cover"
+                  productName={group.product_name}
+                  brand="Brams Fruit"
+                  color={group.colors[0]}
+                  category={group.category}
+                  aspectRatio="1/1"
+                  className="w-full h-full"
                 />
               </div>
 
