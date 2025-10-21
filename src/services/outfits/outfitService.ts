@@ -134,10 +134,10 @@ class OutfitService {
   private mapDatabaseProduct(dbProduct: any): Product {
     return {
       id: dbProduct.id,
-      name: dbProduct.name,
+      name: dbProduct.name || dbProduct.title,
       brand: dbProduct.brand,
       price: dbProduct.price,
-      imageUrl: dbProduct.image_url,
+      imageUrl: dbProduct.image_url || dbProduct.imageUrl,
       category: dbProduct.category,
       type: dbProduct.type,
       gender: dbProduct.gender,
@@ -145,8 +145,8 @@ class OutfitService {
       sizes: dbProduct.sizes || [],
       tags: dbProduct.tags || [],
       retailer: dbProduct.retailer,
-      affiliateUrl: dbProduct.affiliate_url,
-      productUrl: dbProduct.product_url,
+      affiliateUrl: dbProduct.affiliate_url || dbProduct.affiliateUrl,
+      productUrl: dbProduct.product_url || dbProduct.productUrl,
       description: dbProduct.description,
       inStock: dbProduct.in_stock ?? true,
       rating: dbProduct.rating,

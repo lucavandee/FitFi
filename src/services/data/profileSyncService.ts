@@ -43,7 +43,6 @@ class ProfileSyncService {
           .maybeSingle();
 
         if (error) {
-          console.error('[ProfileSync] Error fetching from Supabase:', error);
           return this.getLocalProfile();
         }
 
@@ -64,7 +63,6 @@ class ProfileSyncService {
             .maybeSingle();
 
           if (error) {
-            console.error('[ProfileSync] Error fetching by session:', error);
             return this.getLocalProfile();
           }
 
@@ -79,14 +77,12 @@ class ProfileSyncService {
 
       return this.getLocalProfile();
     } catch (error) {
-      console.error('[ProfileSync] Exception in getProfile:', error);
       return this.getLocalProfile();
     }
   }
 
   async syncLocalToRemote(): Promise<boolean> {
     if (this.syncInProgress) {
-      console.log('[ProfileSync] Sync already in progress');
       return false;
     }
 
@@ -94,7 +90,6 @@ class ProfileSyncService {
     if (syncStatus === 'synced') {
       const lastSync = localStorage.getItem(LAST_SYNC_KEY);
       if (lastSync && Date.now() - parseInt(lastSync) < CACHE_DURATION) {
-        console.log('[ProfileSync] Recently synced, skipping');
         return true;
       }
     }
@@ -104,14 +99,12 @@ class ProfileSyncService {
     try {
       const client = supabase();
       if (!client) {
-        console.log('[ProfileSync] No Supabase client available');
         this.syncInProgress = false;
         return false;
       }
 
       const localProfile = this.getLocalProfile();
       if (!localProfile || !localProfile.quiz_answers) {
-        console.log('[ProfileSync] No local data to sync');
         this.syncInProgress = false;
         return false;
       }
@@ -143,19 +136,15 @@ class ProfileSyncService {
         .insert(profileData);
 
       if (error) {
-        console.error('[ProfileSync] Error syncing to Supabase:', error);
         localStorage.setItem(SYNC_STATUS_KEY, 'error');
         this.syncInProgress = false;
         return false;
       }
-
-      console.log('[ProfileSync] Successfully synced to Supabase');
       localStorage.setItem(SYNC_STATUS_KEY, 'synced');
       localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
       this.syncInProgress = false;
       return true;
     } catch (error) {
-      console.error('[ProfileSync] Exception during sync:', error);
       localStorage.setItem(SYNC_STATUS_KEY, 'error');
       this.syncInProgress = false;
       return false;
@@ -171,12 +160,10 @@ class ProfileSyncService {
     const status = this.getSyncStatus();
 
     if (status === 'pending' || status === 'error') {
-      console.log('[ProfileSync] Auto-syncing pending data...');
       await this.syncLocalToRemote();
     } else if (status === 'synced') {
       const lastSync = localStorage.getItem(LAST_SYNC_KEY);
       if (!lastSync || Date.now() - parseInt(lastSync) > CACHE_DURATION) {
-        console.log('[ProfileSync] Cache expired, refreshing...');
         await this.getProfile();
       }
     }
@@ -206,7 +193,6 @@ class ProfileSyncService {
         completed_at: completedAt ? new Date(parseInt(completedAt)).toISOString() : undefined,
       };
     } catch (error) {
-      console.error('[ProfileSync] Error reading local profile:', error);
       return null;
     }
   }
@@ -227,7 +213,7 @@ class ProfileSyncService {
       }
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
     } catch (error) {
-      console.error('[ProfileSync] Error caching profile:', error);
+      // Silent fail
     }
   }
 

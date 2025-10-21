@@ -45,7 +45,7 @@ function ProductCard({ product }: { product: Product }) {
       className="flex-shrink-0 w-48 bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow transition"
       onClick={() => track("rail:click", { id: product.id, retailer: product.retailer })}
     >
-      <ImageWithFallback src={product.imageUrl || (product as any).image} alt={title} ratio="portrait" />
+      <ImageWithFallback src={(product as any).image_url || product.imageUrl || (product as any).image} alt={title} ratio="portrait" />
       <div className="p-2">
         <div className="text-sm font-medium line-clamp-2">{title}</div>
         <div className="mt-1 flex items-center justify-between">
