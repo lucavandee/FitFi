@@ -65,21 +65,25 @@ export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult
         }
 
         const productRecord = {
-          sku: product.sku,
-          name: product.product_name,
-          description: `${product.product_name} - ${product.material_composition || 'Premium Quality'}`,
-          image_url: product.image_url,
-          price: product.retail_price,
-          original_price: product.wholesale_price,
+          sku: product.sku || `BF-${product.product_id}`,
+          name: product.product_name || 'Unnamed Product',
+          description: product.material_composition
+            ? `${product.product_name} - ${product.material_composition}`
+            : product.product_name || 'Premium Quality Fashion Item',
+          image_url: product.image_url || null,
+          price: product.retail_price || 0,
+          original_price: product.wholesale_price || null,
           retailer: 'Brams Fruit',
-          category: product.category,
+          category: product.category || 'clothing',
           brand: 'Brams Fruit',
-          gender: product.gender === 'Male' ? 'men' : 'women',
-          type: product.sub_category || product.category,
-          colors: [product.color],
-          sizes: [product.size],
+          gender: product.gender?.toLowerCase() === 'male' ? 'male' :
+                  product.gender?.toLowerCase() === 'female' ? 'female' : 'unisex',
+          type: product.sub_category || product.category || 'clothing',
+          colors: product.color ? [product.color] : [],
+          sizes: product.size ? [product.size] : [],
           in_stock: true,
-          affiliate_url: product.affiliate_link,
+          affiliate_url: product.affiliate_link || null,
+          product_url: product.affiliate_link || null,
           tags: [product.department, product.color_family, product.category].filter(Boolean)
         };
 
@@ -92,7 +96,14 @@ export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult
 
         if (error) {
           failed++;
-          errors.push(`Row ${i + 2}: ${error.message}`);
+          console.error(`Import error for row ${i + 2}:`, {
+            error: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+            productData: productRecord
+          });
+          errors.push(`Row ${i + 2} (${productRecord.sku}): ${error.message}`);
         } else {
           imported++;
         }
