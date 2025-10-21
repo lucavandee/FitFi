@@ -37,7 +37,7 @@ const AdminProductsPage  = lazy(() => import("@/pages/AdminProductsPage"));
 const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const AdminBramsFruitPage = lazy(() => import("@/pages/AdminBramsFruitPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
-const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPage"));
+const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 const WithSeo = {

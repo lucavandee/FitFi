@@ -9,15 +9,19 @@ export default function BramsFruitCatalogPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('[BramsFruit] Component mounted');
     loadData();
   }, []);
 
   const loadData = async () => {
     setLoading(true);
+    setError(null);
 
     try {
+      console.log('[BramsFruit] Fetching products...');
       const [productsData, categoriesData] = await Promise.all([
         getBramsFruitProductGroups(),
         getBramsFruitCategories(),
@@ -30,6 +34,7 @@ export default function BramsFruitCatalogPage() {
       setCategories(['all', ...categoriesData.categories]);
     } catch (err) {
       console.error('[BramsFruit] Error loading data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load products');
     } finally {
       setLoading(false);
     }
@@ -61,6 +66,25 @@ export default function BramsFruitCatalogPage() {
           <div className="text-center">
             <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
             <p className="mt-4 text-[var(--color-text-secondary)]">Loading products...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center">
+            <div className="text-red-500 text-xl mb-4">Error loading products</div>
+            <p className="text-[var(--color-text-secondary)] mb-6">{error}</p>
+            <button
+              onClick={() => loadData()}
+              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
