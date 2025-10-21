@@ -75,8 +75,8 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       const sessionId = sessionStorage.getItem('fitfi_session_id');
 
       await CalibrationService.recordFeedback({
-        user_id: userId,
-        session_id: !userId ? sessionId || undefined : undefined,
+        user_id: userId || undefined,
+        session_id: sessionId || undefined,
         outfit_data: outfit.items,
         feedback: feedbackType,
         response_time_ms: responseTimeMs,

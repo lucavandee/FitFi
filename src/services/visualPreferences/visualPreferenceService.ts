@@ -160,8 +160,7 @@ export class VisualPreferenceService {
 
     let query = client
       .from('style_profiles')
-      .select('visual_preference_embedding')
-      .single();
+      .select('visual_preference_embedding');
 
     if (userId) {
       query = query.eq('user_id', userId);
@@ -171,7 +170,7 @@ export class VisualPreferenceService {
       return null;
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.maybeSingle();
 
     if (error) {
       console.error('Failed to fetch visual embedding:', error);
@@ -269,7 +268,13 @@ export class VisualPreferenceService {
   static async recordInsight(
     insight: Omit<NovaSwipeInsight, 'id' | 'created_at'>
   ): Promise<void> {
-    const { error } = await supabase
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ Cannot record insight - no client');
+      return;
+    }
+
+    const { error } = await client
       .from('nova_swipe_insights')
       .insert(insight);
 
@@ -280,7 +285,13 @@ export class VisualPreferenceService {
   }
 
   static async dismissInsight(insightId: string): Promise<void> {
-    const { error } = await supabase
+    const client = this.getClient();
+    if (!client) {
+      console.warn('⚠️ Cannot dismiss insight - no client');
+      return;
+    }
+
+    const { error } = await client
       .from('nova_swipe_insights')
       .update({
         dismissed_at: new Date().toISOString()
@@ -297,7 +308,12 @@ export class VisualPreferenceService {
     userId?: string,
     sessionId?: string
   ): Promise<NovaSwipeInsight[]> {
-    const { data, error } = await supabase.rpc('get_user_insight_history', {
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    const { data, error } = await client.rpc('get_user_insight_history', {
       p_user_id: userId || null,
       p_session_id: sessionId || null
     });
@@ -317,7 +333,12 @@ export class VisualPreferenceService {
     avg_confidence: number;
     dismissal_rate: number;
   }>> {
-    const { data, error } = await supabase.rpc('get_insight_effectiveness');
+    const client = this.getClient();
+    if (!client) {
+      return [];
+    }
+
+    const { data, error } = await client.rpc('get_insight_effectiveness');
 
     if (error) {
       console.error('Failed to fetch insight effectiveness:', error);

@@ -264,8 +264,8 @@ export default function EnhancedResultsPage() {
                             {outfit.products!.slice(0, 4).map((product, idx) => (
                               <div key={idx} className="relative aspect-square overflow-hidden rounded-lg">
                                 <SmartImage
-                                  src={product.imageUrl || '/images/outfit-fallback.jpg'}
-                                  alt={product.name || ''}
+                                  src={product.imageUrl || (product as any).image_url || '/images/outfit-fallback.jpg'}
+                                  alt={product.name || product.title || ''}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
