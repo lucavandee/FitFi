@@ -37,7 +37,11 @@ export async function fetchProducts(_opts?: {
   }
 
   try {
-    let query = client.from('products').select('*').eq('in_stock', true);
+    let query = client
+      .from('products')
+      .select('*')
+      .eq('in_stock', true)
+      .not('image_url', 'is', null);
 
     if (_opts?.gender && _opts.gender !== 'unisex') {
       query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
