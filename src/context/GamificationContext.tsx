@@ -106,7 +106,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           .from('user_gamification')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (!error && gamificationData) {
           setData({
