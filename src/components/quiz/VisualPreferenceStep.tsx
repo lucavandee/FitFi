@@ -42,7 +42,12 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
         .order('display_order', { ascending: true })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching mood photos:', error);
+        throw error;
+      }
+
+      console.log('✅ Mood photos fetched:', data?.length || 0, 'photos');
 
       // If no photos in database, use placeholder data
       if (!data || data.length === 0) {
