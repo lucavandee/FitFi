@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "lucide-react";
@@ -31,11 +31,27 @@ type QuizPhase = 'questions' | 'swipes' | 'calibration';
 
 export default function OnboardingFlowPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phase, setPhase] = useState<QuizPhase>('questions');
   const [sessionId] = useState(() => localStorage.getItem('ff_session_id') || crypto.randomUUID());
+
+  useEffect(() => {
+    const stepParam = searchParams.get('step');
+    if (stepParam === 'visual') {
+      setPhase('swipes');
+      const existingAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+      if (existingAnswers) {
+        try {
+          setAnswers(JSON.parse(existingAnswers));
+        } catch (err) {
+          console.error('Failed to load existing answers:', err);
+        }
+      }
+    }
+  }, [searchParams]);
 
   const totalSteps = quizSteps.length + 2;
   const step = quizSteps[currentStep];

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, SkipForward } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
@@ -18,6 +18,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
   const [novaInsight, setNovaInsight] = useState<string | null>(null);
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
@@ -89,11 +90,35 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
     }
   };
 
+  const handleSkip = async () => {
+    try {
+      const { getSupabase } = await import('@/lib/supabase');
+      const client = getSupabase();
+
+      if (client && user) {
+        await client
+          .from('style_profiles')
+          .upsert({
+            user_id: user.id,
+            visual_preference_skipped: true,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id'
+          });
+      }
+
+      localStorage.setItem('ff_visual_pref_skipped', 'true');
+      onComplete();
+    } catch (err) {
+      console.error('Failed to save skip status:', err);
+      onComplete();
+    }
+  };
+
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
 
-    // Prevent swipes beyond 10
     if (swipeCount >= 10) {
       onComplete();
       return;
@@ -323,7 +348,59 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
         <p className="text-xs text-[var(--color-muted)]">
           Of gebruik de knoppen onderaan
         </p>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          onClick={() => setShowSkipConfirm(true)}
+          className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+        >
+          <SkipForward className="w-4 h-4" />
+          <span>Dit stap overslaan</span>
+        </motion.button>
       </motion.div>
+
+      <AnimatePresence>
+        {showSkipConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowSkipConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 max-w-md w-full shadow-[var(--shadow-soft)]"
+            >
+              <h3 className="text-xl font-semibold text-[var(--color-text)] mb-2">
+                Deze stap overslaan?
+              </h3>
+              <p className="text-[var(--color-muted)] mb-6">
+                Je kunt je stijlvoorkeuren later altijd verfijnen via het dashboard. Dit helpt wel om je aanbevelingen te personaliseren.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowSkipConfirm(false)}
+                  className="flex-1 px-4 py-2.5 border border-[var(--color-border)] rounded-lg text-[var(--color-text)] hover:bg-[var(--overlay-hover)] transition-colors"
+                >
+                  Terug naar swipen
+                </button>
+                <button
+                  onClick={handleSkip}
+                  className="flex-1 px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                >
+                  Overslaan
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

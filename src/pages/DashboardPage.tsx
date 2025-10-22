@@ -17,6 +17,7 @@ import Button from "@/components/ui/Button";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
+import { RefineStyleWidget } from "@/components/dashboard/RefineStyleWidget";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import toast from "react-hot-toast";
@@ -214,6 +215,11 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <section className="ff-section">
         <div className="ff-container">
+          {/* Refine Style Widget */}
+          <div className="mb-8">
+            <RefineStyleWidget />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {/* Outfits */}
             <article className="card card-hover">
