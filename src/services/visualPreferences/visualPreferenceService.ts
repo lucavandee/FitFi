@@ -1,23 +1,24 @@
 import { getSupabase } from '@/lib/supabase';
 
 export interface MoodPhoto {
-  id: string;
+  id: number;
   image_url: string;
-  style_tags: string[];
+  mood_tags: string[];
   archetype_weights: Record<string, number>;
-  color_palette: string[];
-  occasion: string;
-  season: string;
+  dominant_colors: string[];
+  style_attributes: Record<string, number>;
   active: boolean;
   display_order: number;
+  created_at?: string;
 }
 
 export interface StyleSwipe {
-  id?: string;
+  id?: number;
   user_id?: string;
   session_id?: string;
-  mood_photo_id: string;
+  mood_photo_id: number;
   swipe_direction: 'left' | 'right';
+  swipe_order?: number;
   response_time_ms: number;
   created_at?: string;
 }
