@@ -84,47 +84,77 @@ export function RefineStyleWidget() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] rounded-[var(--radius-lg)] p-6 text-white shadow-[var(--shadow-soft)]"
+      className="relative overflow-hidden rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
     >
-      <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-          <Sparkles className="w-6 h-6" />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-1">
-            {skipped ? 'Verfijn je stijl' : 'Voltooi je stijlprofiel'}
-          </h3>
-          <p className="text-white/90 text-sm mb-4">
-            {skipped
-              ? 'Swipe door 10 outfits en laat Nova je stijl leren kennen voor betere aanbevelingen.'
-              : isPartiallyComplete
-              ? `Je bent al begonnen! Nog ${10 - swipeCount} van 10 swipes te gaan.`
-              : 'Begin met swipen om je stijl te verfijnen.'}
-          </p>
-          <button
-            onClick={handleRefineStyle}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[var(--ff-color-primary-700)] rounded-lg font-medium hover:bg-white/90 transition-colors text-sm"
-          >
-            <span>{isPartiallyComplete ? 'Verder gaan' : 'Start nu'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)]/40 via-transparent to-[var(--ff-color-accent-100)]/30 opacity-60" />
 
-          {isPartiallyComplete && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-xs text-white/80 mb-1">
-                <span>Voortgang</span>
-                <span>{swipeCount}/10</span>
-              </div>
-              <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-white"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(swipeCount / 10) * 100}%` }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                />
-              </div>
-            </div>
-          )}
+      <div className="relative p-6">
+        <div className="flex items-start gap-4">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+            className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)] flex items-center justify-center shadow-lg"
+          >
+            <Sparkles className="w-7 h-7 text-white" />
+          </motion.div>
+
+          <div className="flex-1">
+            <motion.h3
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 }}
+              className="text-xl font-bold text-[var(--color-text)] mb-1.5"
+            >
+              {skipped ? 'Verfijn je stijl' : 'Voltooi je stijlprofiel'}
+            </motion.h3>
+
+            <motion.p
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-[var(--color-muted)] text-sm leading-relaxed mb-5"
+            >
+              {skipped
+                ? 'Swipe door 10 outfits en laat Nova je stijl leren kennen voor betere aanbevelingen.'
+                : isPartiallyComplete
+                ? `Je bent al begonnen! Nog ${10 - swipeCount} van 10 swipes te gaan.`
+                : 'Begin met swipen om je stijl te verfijnen.'}
+            </motion.p>
+
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              onClick={handleRefineStyle}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:from-[var(--ff-color-primary-700)] hover:to-[var(--ff-color-primary-800)] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm"
+            >
+              <span>{isPartiallyComplete ? 'Verder gaan' : 'Start nu'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+
+            {isPartiallyComplete && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ delay: 0.3 }}
+                className="mt-5 pt-4 border-t border-[var(--color-border)]"
+              >
+                <div className="flex items-center justify-between text-xs font-medium text-[var(--color-text)] mb-2">
+                  <span>Voortgang</span>
+                  <span className="text-[var(--ff-color-primary-700)]">{swipeCount}/10</span>
+                </div>
+                <div className="h-2 bg-[var(--ff-color-primary-100)] rounded-full overflow-hidden shadow-inner">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)] rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(swipeCount / 10) * 100}%` }}
+                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
