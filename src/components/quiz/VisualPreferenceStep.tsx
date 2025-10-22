@@ -10,9 +10,12 @@ import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualP
 interface VisualPreferenceStepProps {
   onComplete: () => void;
   onSwipe?: (photoId: number, direction: 'left' | 'right') => void;
+  userGender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say';
+  sessionId?: string;
+  onBack?: () => void;
 }
 
-export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceStepProps) {
+export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: VisualPreferenceStepProps) {
   const [moodPhotos, setMoodPhotos] = useState<MoodPhoto[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -24,7 +27,14 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
 
   useEffect(() => {
     loadMoodPhotos();
-  }, []);
+  }, [userGender]);
+
+  const determineGenderForQuery = (gender?: string): 'male' | 'female' | null => {
+    if (!gender) return null;
+    if (gender === 'male') return 'male';
+    if (gender === 'female') return 'female';
+    return null;
+  };
 
   const loadMoodPhotos = async () => {
     try {
@@ -36,10 +46,19 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
         throw new Error('Supabase not available');
       }
 
-      const { data, error } = await client
+      const genderForQuery = determineGenderForQuery(userGender);
+
+      let query = client
         .from('mood_photos')
         .select('*')
-        .eq('active', true)
+        .eq('active', true);
+
+      if (genderForQuery) {
+        query = query.eq('gender', genderForQuery);
+        console.log(`🎯 Filtering mood photos for gender: ${genderForQuery}`);
+      }
+
+      const { data, error } = await query
         .order('display_order', { ascending: true })
         .limit(10);
 
@@ -48,10 +67,26 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
         throw error;
       }
 
-      console.log('✅ Mood photos fetched:', data?.length || 0, 'photos');
+      let photos = data || [];
 
-      // If no photos in database, use placeholder data
-      if (!data || data.length === 0) {
+      if (photos.length < 10 && genderForQuery) {
+        console.log(`⚠️ Only ${photos.length} photos for ${genderForQuery}, adding unisex photos`);
+        const { data: unisexData } = await client
+          .from('mood_photos')
+          .select('*')
+          .eq('active', true)
+          .eq('gender', 'unisex')
+          .order('display_order', { ascending: true })
+          .limit(10 - photos.length);
+
+        if (unisexData) {
+          photos = [...photos, ...unisexData];
+        }
+      }
+
+      console.log(`✅ Mood photos fetched: ${photos.length} photos (gender: ${genderForQuery || 'all'})`);
+
+      if (photos.length === 0) {
         console.warn('⚠️ No mood photos in database, using placeholders');
         const placeholderPhotos: MoodPhoto[] = [
           { id: 1, image_url: '/images/fallbacks/default.jpg', mood_tags: ['casual', 'relaxed'], archetype_weights: { casual: 0.8 }, dominant_colors: ['#000'], style_attributes: { formality: 0.3 }, active: true, display_order: 1 },
@@ -67,7 +102,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe }: VisualPreferenceSt
         ];
         setMoodPhotos(placeholderPhotos);
       } else {
-        setMoodPhotos(data);
+        setMoodPhotos(photos);
       }
     } catch (err) {
       console.error('Failed to load mood photos:', err);

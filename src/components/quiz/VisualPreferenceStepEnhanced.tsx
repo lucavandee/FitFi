@@ -22,9 +22,10 @@ interface CachedMoodPhotos {
 interface VisualPreferenceStepProps {
   onComplete: () => void;
   onSwipe?: (photoId: string, direction: 'left' | 'right') => void;
+  userGender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say';
 }
 
-function VisualPreferenceStepInner({ onComplete, onSwipe }: VisualPreferenceStepProps) {
+function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPreferenceStepProps) {
   const [moodPhotos, setMoodPhotos] = useState<MoodPhoto[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,7 @@ function VisualPreferenceStepInner({ onComplete, onSwipe }: VisualPreferenceStep
 
   useEffect(() => {
     loadMoodPhotos();
-  }, []);
+  }, [userGender]);
 
   const logTelemetry = (event: string, data: Record<string, any>) => {
     try {
@@ -96,6 +97,13 @@ function VisualPreferenceStepInner({ onComplete, onSwipe }: VisualPreferenceStep
     }
   };
 
+  const determineGenderForQuery = (gender?: string): 'male' | 'female' | null => {
+    if (!gender) return null;
+    if (gender === 'male') return 'male';
+    if (gender === 'female') return 'female';
+    return null;
+  };
+
   const getPlaceholderPhotos = (): MoodPhoto[] => [
     { id: 'placeholder-1', image_url: '/images/fallbacks/default.jpg', tags: ['casual'], mood: 'relaxed', style_archetype: 'casual', active: true, display_order: 1 },
     { id: 'placeholder-2', image_url: '/images/fallbacks/default.jpg', tags: ['formal'], mood: 'confident', style_archetype: 'classic', active: true, display_order: 2 },
@@ -127,25 +135,50 @@ function VisualPreferenceStepInner({ onComplete, onSwipe }: VisualPreferenceStep
         throw new Error('Supabase not available');
       }
 
-      const { data, error } = await client
+      const genderForQuery = determineGenderForQuery(userGender);
+
+      let query = client
         .from('mood_photos')
         .select('*')
-        .eq('active', true)
+        .eq('active', true);
+
+      if (genderForQuery) {
+        query = query.eq('gender', genderForQuery);
+      }
+
+      const { data, error } = await query
         .order('display_order', { ascending: true })
         .limit(10);
 
       if (error) throw error;
 
-      if (!data || data.length === 0) {
+      let photos = data || [];
+
+      if (photos.length < 10 && genderForQuery) {
+        console.log(`⚠️ Only ${photos.length} photos for ${genderForQuery}, adding unisex photos`);
+        const { data: unisexData } = await client
+          .from('mood_photos')
+          .select('*')
+          .eq('active', true)
+          .eq('gender', 'unisex')
+          .order('display_order', { ascending: true })
+          .limit(10 - photos.length);
+
+        if (unisexData) {
+          photos = [...photos, ...unisexData];
+        }
+      }
+
+      if (photos.length === 0) {
         console.warn('⚠️ No mood photos in database, using placeholders');
         const placeholderPhotos = getPlaceholderPhotos();
         setMoodPhotos(placeholderPhotos);
         cacheMoodPhotos(placeholderPhotos);
-        logTelemetry('using_placeholders', { reason: 'no_data' });
+        logTelemetry('using_placeholders', { reason: 'no_data', gender: genderForQuery });
       } else {
-        setMoodPhotos(data);
-        cacheMoodPhotos(data);
-        logTelemetry('photos_loaded', { count: data.length, source: 'database' });
+        setMoodPhotos(photos);
+        cacheMoodPhotos(photos);
+        logTelemetry('photos_loaded', { count: photos.length, source: 'database', gender: genderForQuery });
       }
     } catch (err) {
       console.error(`Failed to load mood photos (attempt ${retryCount + 1}/${MAX_LOAD_RETRIES}):`, err);

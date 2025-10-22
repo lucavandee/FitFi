@@ -278,6 +278,7 @@ export default function OnboardingFlowPage() {
           sessionId={sessionId}
           onComplete={handleSwipesComplete}
           onBack={handleBack}
+          userGender={answers.gender as 'male' | 'female' | 'non-binary' | 'prefer-not-to-say'}
         />
       </motion.main>
     );
