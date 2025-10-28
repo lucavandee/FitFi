@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, Eye, EyeOff, Trash2, Filter } from 'lucide-react';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
 
 interface MoodPhoto {
@@ -15,25 +15,29 @@ interface MoodPhoto {
 }
 
 export default function AdminMoodPhotosPage() {
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { user } = useUser();
   const [photos, setPhotos] = useState<MoodPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterGender, setFilterGender] = useState<'all' | 'male' | 'female' | 'unisex'>('all');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
 
+  const isAdmin = user?.email?.endsWith('@fitfi.ai') || false;
+
   useEffect(() => {
-    if (isAdmin) {
+    if (user) {
       loadPhotos();
     }
-  }, [isAdmin]);
+  }, [user]);
 
   const loadPhotos = async () => {
+    setLoading(true);
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
 
       if (!client) {
-        toast.error('Supabase not available');
+        toast.error('Database niet beschikbaar');
+        setLoading(false);
         return;
       }
 
@@ -56,14 +60,15 @@ export default function AdminMoodPhotosPage() {
 
       if (error) {
         console.error('Error loading photos:', error);
-        toast.error('Failed to load photos');
+        toast.error('Fout bij laden foto\'s');
+        setLoading(false);
         return;
       }
 
       setPhotos(data || []);
     } catch (err) {
       console.error('Failed to load photos:', err);
-      toast.error('Error loading photos');
+      toast.error('Fout bij laden foto\'s');
     } finally {
       setLoading(false);
     }
@@ -80,20 +85,20 @@ export default function AdminMoodPhotosPage() {
         .eq('id', id);
 
       if (error) {
-        toast.error('Failed to update photo');
+        toast.error('Fout bij updaten');
         return;
       }
 
-      toast.success(currentActive ? 'Photo deactivated' : 'Photo activated');
+      toast.success(currentActive ? 'Gedeactiveerd' : 'Geactiveerd');
       loadPhotos();
     } catch (err) {
       console.error('Error toggling active:', err);
-      toast.error('Error updating photo');
+      toast.error('Fout bij updaten');
     }
   };
 
   const deletePhoto = async (id: number) => {
-    if (!confirm('Are you sure you want to DELETE this photo? This cannot be undone.')) {
+    if (!confirm('Weet je zeker dat je deze foto wilt VERWIJDEREN? Dit kan niet ongedaan worden.')) {
       return;
     }
 
@@ -107,24 +112,24 @@ export default function AdminMoodPhotosPage() {
         .eq('id', id);
 
       if (error) {
-        toast.error('Failed to delete photo');
+        toast.error('Fout bij verwijderen');
         return;
       }
 
-      toast.success('Photo deleted');
+      toast.success('Foto verwijderd');
       loadPhotos();
     } catch (err) {
       console.error('Error deleting photo:', err);
-      toast.error('Error deleting photo');
+      toast.error('Fout bij verwijderen');
     }
   };
 
-  if (adminLoading || loading) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-2 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-[var(--color-muted)]">Loading...</p>
+          <p className="text-[var(--color-muted)]">Laden...</p>
         </div>
       </div>
     );
@@ -132,17 +137,21 @@ export default function AdminMoodPhotosPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">Access Denied</h1>
-          <p className="text-[var(--color-muted)]">You need admin privileges to access this page.</p>
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">Geen Toegang</h1>
+          <p className="text-[var(--color-muted)] mb-4">
+            Je hebt admin rechten nodig om deze pagina te bekijken.
+          </p>
+          <p className="text-sm text-[var(--color-muted)]">
+            Ingelogd als: {user.email}
+          </p>
         </div>
       </div>
     );
   }
 
-  const filteredPhotos = photos;
   const activeCount = photos.filter(p => p.active).length;
   const inactiveCount = photos.filter(p => !p.active).length;
   const maleCount = photos.filter(p => p.gender === 'male').length;
@@ -153,20 +162,20 @@ export default function AdminMoodPhotosPage() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
-            Mood Photos Moderation
+            Mood Photos Moderatie
           </h1>
           <p className="text-[var(--color-muted)]">
-            Review and manage mood photos for the visual preference quiz
+            Review en beheer mood photos voor de visual preference quiz
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-            <div className="text-sm text-[var(--color-muted)] mb-1">Total Photos</div>
+            <div className="text-sm text-[var(--color-muted)] mb-1">Totaal</div>
             <div className="text-2xl font-bold text-[var(--color-text)]">{photos.length}</div>
           </div>
           <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-            <div className="text-sm text-[var(--color-muted)] mb-1">Active</div>
+            <div className="text-sm text-[var(--color-muted)] mb-1">Actief</div>
             <div className="text-2xl font-bold text-green-600">{activeCount}</div>
           </div>
           <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
@@ -184,55 +193,60 @@ export default function AdminMoodPhotosPage() {
             <Filter className="w-5 h-5 text-[var(--color-muted)]" />
             <h2 className="font-semibold text-[var(--color-text)]">Filters</h2>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <select
               value={filterGender}
               onChange={(e) => {
                 setFilterGender(e.target.value as any);
-                loadPhotos();
               }}
               className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
             >
-              <option value="all">All Genders</option>
-              <option value="male">Male Only</option>
-              <option value="female">Female Only</option>
-              <option value="unisex">Unisex Only</option>
+              <option value="all">Alle Genders</option>
+              <option value="male">Alleen Male</option>
+              <option value="female">Alleen Female</option>
+              <option value="unisex">Alleen Unisex</option>
             </select>
             <select
               value={filterActive}
               onChange={(e) => {
                 setFilterActive(e.target.value as any);
-                loadPhotos();
               }}
               className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
             >
-              <option value="all">All Status</option>
-              <option value="active">Active Only</option>
-              <option value="inactive">Inactive Only</option>
+              <option value="all">Alle Status</option>
+              <option value="active">Alleen Actief</option>
+              <option value="inactive">Alleen Inactief</option>
             </select>
             <button
               onClick={loadPhotos}
-              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
+              disabled={loading}
+              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 disabled:opacity-50"
             >
-              Refresh
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              Ververs
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPhotos.map((photo) => (
-            <PhotoCard
-              key={photo.id}
-              photo={photo}
-              onToggleActive={toggleActive}
-              onDelete={deletePhoto}
-            />
-          ))}
-        </div>
-
-        {filteredPhotos.length === 0 && (
+        {loading ? (
           <div className="text-center py-12">
-            <p className="text-[var(--color-muted)]">No photos found with current filters</p>
+            <div className="animate-spin w-8 h-8 border-2 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+            <p className="text-[var(--color-muted)]">Foto's laden...</p>
+          </div>
+        ) : photos.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-[var(--color-muted)]">Geen foto's gevonden met deze filters</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {photos.map((photo) => (
+              <PhotoCard
+                key={photo.id}
+                photo={photo}
+                onToggleActive={toggleActive}
+                onDelete={deletePhoto}
+              />
+            ))}
           </div>
         )}
       </div>
@@ -275,7 +289,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-[var(--color-muted)]">
               <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">Image failed to load</p>
+              <p className="text-sm">Foto laadt niet</p>
             </div>
           </div>
         )}
@@ -292,7 +306,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
             {photo.gender}
           </span>
           <span className="text-xs text-[var(--color-muted)]">
-            Order: {photo.display_order}
+            ID: {photo.id}
           </span>
         </div>
 
@@ -310,7 +324,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
         <div className="flex gap-2">
           <button
             onClick={() => onToggleActive(photo.id, photo.active)}
-            className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
               photo.active
                 ? 'bg-red-100 text-red-700 hover:bg-red-200'
                 : 'bg-green-100 text-green-700 hover:bg-green-200'
@@ -319,19 +333,19 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
             {photo.active ? (
               <>
                 <EyeOff className="w-4 h-4 inline mr-1" />
-                Deactivate
+                Deactiveer
               </>
             ) : (
               <>
                 <Eye className="w-4 h-4 inline mr-1" />
-                Activate
+                Activeer
               </>
             )}
           </button>
           <button
             onClick={() => onDelete(photo.id)}
             className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors"
-            title="Delete permanently"
+            title="Verwijder permanent"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -343,7 +357,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
           rel="noopener noreferrer"
           className="block mt-2 text-xs text-[var(--ff-color-primary-700)] hover:underline truncate"
         >
-          View original
+          View origineel →
         </a>
       </div>
     </motion.div>
