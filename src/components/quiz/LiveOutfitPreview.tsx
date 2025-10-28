@@ -1,14 +1,54 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, Sparkles } from 'lucide-react';
+import { Eye, Sparkles, Bookmark, BookmarkCheck } from 'lucide-react';
 import type { QuickOutfit, QuickOutfitItem } from '@/services/visualPreferences/quickOutfitGenerator';
 import { getStyleEmoji } from '@/services/visualPreferences/quickOutfitGenerator';
+import { previewOutfitService } from '@/services/previewOutfits/previewOutfitService';
+import { useUser } from '@/context/UserContext';
+import toast from 'react-hot-toast';
 
 interface LiveOutfitPreviewProps {
   outfit: QuickOutfit | null;
   isVisible: boolean;
+  swipeCount?: number;
+  sessionId?: string;
 }
 
-export function LiveOutfitPreview({ outfit, isVisible }: LiveOutfitPreviewProps) {
+export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId }: LiveOutfitPreviewProps) {
+  const { user } = useUser();
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!user || !outfit || isSaved) return;
+
+    setIsSaving(true);
+
+    try {
+      const saved = await previewOutfitService.savePreviewOutfit({
+        userId: user.id,
+        sessionId,
+        outfit,
+        swipeCount
+      });
+
+      if (saved) {
+        setIsSaved(true);
+        toast.success('Preview outfit opgeslagen! 🎉', {
+          icon: '📌',
+          duration: 3000
+        });
+      } else {
+        toast.error('Kon preview niet opslaan');
+      }
+    } catch (err) {
+      console.error('Error saving preview:', err);
+      toast.error('Er ging iets mis');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (!isVisible || !outfit) return null;
 
   const items = [
@@ -44,10 +84,26 @@ export function LiveOutfitPreview({ outfit, isVisible }: LiveOutfitPreviewProps)
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.3, type: 'spring' }}
-              className="ml-auto text-lg"
+              className="text-lg"
             >
               {outfit.top && getStyleEmoji(outfit.top.style)}
             </motion.span>
+
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.5, type: 'spring' }}
+              onClick={handleSave}
+              disabled={isSaving || isSaved}
+              className="ml-auto p-2 rounded-lg hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={isSaved ? 'Opgeslagen!' : 'Preview opslaan'}
+            >
+              {isSaved ? (
+                <BookmarkCheck className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+              ) : (
+                <Bookmark className="w-4 h-4 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)]" />
+              )}
+            </motion.button>
           </div>
 
           <motion.p

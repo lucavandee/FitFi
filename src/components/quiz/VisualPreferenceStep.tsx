@@ -457,6 +457,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       <LiveOutfitPreview
         outfit={previewOutfit}
         isVisible={showPreview}
+        swipeCount={swipeCount}
       />
 
       <motion.div
