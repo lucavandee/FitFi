@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
-import { Sparkles, Loader2, SkipForward } from 'lucide-react';
+import { StyleDNAVisualizer } from './StyleDNAVisualizer';
+import { Sparkles, Loader2, SkipForward, RotateCcw, PartyPopper } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
@@ -22,6 +23,9 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   const [swipeCount, setSwipeCount] = useState(0);
   const [novaInsight, setNovaInsight] = useState<string | null>(null);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const [styleDNA, setStyleDNA] = useState<Record<string, number>>({});
+  const [swipeHistory, setSwipeHistory] = useState<Array<{ photo: MoodPhoto; direction: 'left' | 'right'; index: number }>>([]);
+  const [showCelebration, setShowCelebration] = useState(false);
   const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
@@ -150,19 +154,70 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
     }
   };
 
+  const updateStyleDNA = (photo: MoodPhoto, direction: 'left' | 'right') => {
+    if (direction === 'right' && photo.archetype_weights) {
+      setStyleDNA(prev => {
+        const updated = { ...prev };
+        Object.entries(photo.archetype_weights).forEach(([style, weight]) => {
+          const numWeight = typeof weight === 'number' ? weight : 0;
+          updated[style] = (updated[style] || 0) + numWeight;
+        });
+
+        const total = Object.values(updated).reduce((sum, val) => sum + val, 0);
+        if (total > 0) {
+          Object.keys(updated).forEach(key => {
+            updated[key] = Math.round((updated[key] / total) * 100);
+          });
+        }
+
+        return updated;
+      });
+    }
+  };
+
+  const handleUndo = () => {
+    if (swipeHistory.length === 0) return;
+
+    const lastSwipe = swipeHistory[swipeHistory.length - 1];
+    setSwipeHistory(prev => prev.slice(0, -1));
+    setCurrentIndex(lastSwipe.index);
+    setSwipeCount(prev => prev - 1);
+
+    if (lastSwipe.direction === 'right' && lastSwipe.photo.archetype_weights) {
+      setStyleDNA(prev => {
+        const updated = { ...prev };
+        Object.entries(lastSwipe.photo.archetype_weights).forEach(([style, weight]) => {
+          const numWeight = typeof weight === 'number' ? weight : 0;
+          updated[style] = Math.max(0, (updated[style] || 0) - numWeight);
+        });
+        return updated;
+      });
+    }
+  };
+
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
 
     if (swipeCount >= 10) {
-      onComplete();
+      setShowCelebration(true);
+      setTimeout(() => {
+        onComplete();
+      }, 1500);
       return;
     }
 
     const newSwipeCount = swipeCount + 1;
     setSwipeCount(newSwipeCount);
 
-    // Create swipe record
+    setSwipeHistory(prev => [...prev, {
+      photo: currentPhoto,
+      direction,
+      index: currentIndex
+    }]);
+
+    updateStyleDNA(currentPhoto, direction);
+
     const swipeRecord: StyleSwipe = {
       user_id: user?.id,
       session_id: !user ? (sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID()) : undefined,
@@ -171,7 +226,6 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       response_time_ms: responseTimeMs
     };
 
-    // Add to analyzer
     analyzerRef.current.addSwipe(currentPhoto, swipeRecord);
 
     try {
@@ -296,6 +350,44 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {showCelebration && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+              className="text-center"
+            >
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 0.5, repeat: 3 }}
+                className="text-6xl mb-4"
+              >
+                <PartyPopper className="w-20 h-20 text-[var(--ff-color-primary-700)] mx-auto" />
+              </motion.div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Perfect! 🎉
+              </h3>
+              <p className="text-white/80">
+                Je stijlprofiel is compleet!
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <StyleDNAVisualizer
+        styleDNA={styleDNA}
+        swipeCount={swipeCount}
+        totalSwipes={10}
+        isVisible={swipeCount > 0}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -384,16 +476,30 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
           Of gebruik de knoppen onderaan
         </p>
 
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          onClick={() => setShowSkipConfirm(true)}
-          className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
-        >
-          <SkipForward className="w-4 h-4" />
-          <span>Dit stap overslaan</span>
-        </motion.button>
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            onClick={handleUndo}
+            disabled={swipeHistory.length === 0}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed border border-[var(--color-border)] rounded-lg"
+          >
+            <RotateCcw className="w-4 h-4" />
+            <span>Vorige</span>
+          </motion.button>
+
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            onClick={() => setShowSkipConfirm(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+          >
+            <SkipForward className="w-4 h-4" />
+            <span>Overslaan</span>
+          </motion.button>
+        </div>
       </motion.div>
 
       <AnimatePresence>
