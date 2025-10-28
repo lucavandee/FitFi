@@ -60,19 +60,20 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
 
       const genderForQuery = determineGenderForQuery(userGender);
 
-      let query = client
-        .from('mood_photos')
-        .select('*')
-        .eq('active', true);
-
-      if (genderForQuery) {
-        query = query.eq('gender', genderForQuery);
-        console.log(`🎯 Filtering mood photos for gender: ${genderForQuery}`);
+      if (!genderForQuery) {
+        console.error('❌ CRITICAL: No valid gender provided for mood photos');
+        throw new Error('Gender is required for mood photos');
       }
 
-      const { data, error } = await query
+      console.log(`🎯 Loading mood photos for gender: ${genderForQuery}`);
+
+      const { data, error } = await client
+        .from('mood_photos')
+        .select('*')
+        .eq('active', true)
+        .eq('gender', genderForQuery)
         .order('display_order', { ascending: true })
-        .limit(10);
+        .limit(20);
 
       if (error) {
         console.error('❌ Error fetching mood photos:', error);
@@ -81,8 +82,17 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
 
       let photos = data || [];
 
-      if (photos.length < 10 && genderForQuery) {
-        console.log(`⚠️ Only ${photos.length} photos for ${genderForQuery}, adding unisex photos`);
+      console.log(`📸 Loaded ${photos.length} photos for ${genderForQuery}`);
+
+      const genderMismatch = photos.filter(p => p.gender !== genderForQuery);
+      if (genderMismatch.length > 0) {
+        console.error(`❌ CRITICAL: ${genderMismatch.length} photos have wrong gender!`, genderMismatch);
+        photos = photos.filter(p => p.gender === genderForQuery);
+      }
+
+      if (photos.length < 10) {
+        console.warn(`⚠️ Only ${photos.length} photos for ${genderForQuery} - NEED MORE CONTENT!`);
+
         const { data: unisexData } = await client
           .from('mood_photos')
           .select('*')
@@ -91,12 +101,15 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
           .order('display_order', { ascending: true })
           .limit(10 - photos.length);
 
-        if (unisexData) {
+        if (unisexData && unisexData.length > 0) {
+          console.log(`📦 Adding ${unisexData.length} unisex photos as fallback`);
           photos = [...photos, ...unisexData];
+        } else {
+          console.error(`❌ CRITICAL: Not enough photos! Only ${photos.length} available`);
         }
       }
 
-      console.log(`✅ Mood photos fetched: ${photos.length} photos (gender: ${genderForQuery || 'all'})`);
+      console.log(`✅ Final photo count: ${photos.length} photos for ${genderForQuery}`);
 
       if (photos.length === 0) {
         console.warn('⚠️ No mood photos in database, using placeholders');

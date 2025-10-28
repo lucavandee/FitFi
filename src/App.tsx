@@ -38,6 +38,7 @@ const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const AdminBramsFruitPage = lazy(() => import("@/pages/AdminBramsFruitPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminZalandoImportPage = lazy(() => import("@/pages/AdminZalandoImportPage"));
+const AdminMoodPhotosPage = lazy(() => import("@/pages/AdminMoodPhotosPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
@@ -66,6 +67,7 @@ const WithSeo = {
   AdminBramsFruit: () => (<><Seo title="Brams Fruit Admin — FitFi" description="Brams Fruit product management." path="/admin/brams-fruit" noindex /><AdminBramsFruitPage /></>),
   AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
   AdminZalandoImport: () => (<><Seo title="Zalando Import — FitFi Admin" description="Import Zalando products to unified catalog." path="/admin/zalando-import" noindex /><AdminZalandoImportPage /></>),
+  AdminMoodPhotos: () => (<><Seo title="Mood Photos Moderation — FitFi Admin" description="Review and moderate mood photos for visual preference quiz." path="/admin/mood-photos" noindex /><AdminMoodPhotosPage /></>),
   AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
@@ -122,6 +124,7 @@ export default function App() {
                 <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
                 <Route path="/admin/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruit /></RequireAuth>} />
                 <Route path="/admin/zalando-import" element={<RequireAuth><WithSeo.AdminZalandoImport /></RequireAuth>} />
+                <Route path="/admin/mood-photos" element={<RequireAuth><WithSeo.AdminMoodPhotos /></RequireAuth>} />
                 <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
 
                 {/* 404 */}
