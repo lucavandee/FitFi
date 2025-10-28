@@ -6,6 +6,7 @@ import { StyleDNAVisualizer } from './StyleDNAVisualizer';
 import { Sparkles, Loader2, SkipForward, RotateCcw, PartyPopper } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
+import { loadAdaptivePhotos, generateAdaptationInsight } from '@/services/visualPreferences/adaptiveLoader';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
 
 interface VisualPreferenceStepProps {
@@ -18,6 +19,7 @@ interface VisualPreferenceStepProps {
 
 export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: VisualPreferenceStepProps) {
   const [moodPhotos, setMoodPhotos] = useState<MoodPhoto[]>([]);
+  const [allPhotos, setAllPhotos] = useState<MoodPhoto[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
@@ -26,6 +28,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   const [styleDNA, setStyleDNA] = useState<Record<string, number>>({});
   const [swipeHistory, setSwipeHistory] = useState<Array<{ photo: MoodPhoto; direction: 'left' | 'right'; index: number }>>([]);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [hasAdapted, setHasAdapted] = useState(false);
   const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
@@ -104,9 +107,11 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
           { id: 9, image_url: '/images/fallbacks/default.jpg', mood_tags: ['romantic', 'soft'], archetype_weights: { romantic: 0.8 }, dominant_colors: ['#FFC0CB'], style_attributes: { formality: 0.6 }, active: true, display_order: 9 },
           { id: 10, image_url: '/images/fallbacks/default.jpg', mood_tags: ['urban', 'street'], archetype_weights: { urban: 0.8 }, dominant_colors: ['#808080'], style_attributes: { formality: 0.3 }, active: true, display_order: 10 },
         ];
-        setMoodPhotos(placeholderPhotos);
+        setAllPhotos(placeholderPhotos);
+        setMoodPhotos(placeholderPhotos.slice(0, 10));
       } else {
-        setMoodPhotos(photos);
+        setAllPhotos(photos);
+        setMoodPhotos(photos.slice(0, 10));
       }
     } catch (err) {
       console.error('Failed to load mood photos:', err);
@@ -263,6 +268,36 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       setTimeout(() => {
         setNovaInsight(insight.message);
       }, 600);
+    }
+
+    // ADAPTIVE LOADING: After swipe 3, adapt remaining photos
+    if (newSwipeCount === 3 && !hasAdapted && allPhotos.length > 0) {
+      const pattern = analyzerRef.current.getPattern();
+
+      if (pattern.shouldAdapt) {
+        console.log('🎯 Adapting photos based on pattern:', pattern.topArchetypes);
+
+        const alreadyShownIds = moodPhotos.slice(0, 3).map(p => p.id);
+        const adaptivePhotos = loadAdaptivePhotos({
+          pattern,
+          gender: userGender || 'male',
+          excludeIds: alreadyShownIds,
+          count: 7,
+          allPhotos
+        });
+
+        setMoodPhotos([...moodPhotos.slice(0, 3), ...adaptivePhotos]);
+        setHasAdapted(true);
+
+        const adaptationMessage = generateAdaptationInsight(pattern);
+        if (adaptationMessage) {
+          setTimeout(() => {
+            setNovaInsight(adaptationMessage);
+          }, 800);
+        }
+
+        console.log('✅ Loaded', adaptivePhotos.length, 'adaptive photos');
+      }
     }
 
     // Complete after 10 swipes

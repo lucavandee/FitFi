@@ -6,6 +6,9 @@ export interface SwipePattern {
   avgResponseTime: number;
   confidence: number;
   likeRate: number;
+  shouldAdapt?: boolean;
+  archetypeWeights?: Record<string, number>;
+  topArchetypes?: string[];
 }
 
 export interface NovaInsight {
@@ -33,7 +36,10 @@ export class SwipeAnalyzer {
         preferredStyles: [],
         avgResponseTime: 0,
         confidence: 0,
-        likeRate: 0
+        likeRate: 0,
+        shouldAdapt: false,
+        archetypeWeights: {},
+        topArchetypes: []
       };
     }
 
@@ -63,6 +69,23 @@ export class SwipeAnalyzer {
       .slice(0, 3)
       .map(([tag]) => tag);
 
+    // Analyze archetype weights from liked photos (NEW!)
+    const archetypeWeights: Record<string, number> = {};
+    likes.forEach(({ photo }) => {
+      if (photo.archetype_weights) {
+        Object.entries(photo.archetype_weights).forEach(([archetype, weight]) => {
+          const numWeight = typeof weight === 'number' ? weight : 0;
+          archetypeWeights[archetype] = (archetypeWeights[archetype] || 0) + numWeight;
+        });
+      }
+    });
+
+    // Get top 3 archetypes
+    const topArchetypes = Object.entries(archetypeWeights)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([archetype]) => archetype);
+
     // Calculate average response time
     const avgResponseTime = this.swipes.reduce((sum, s) =>
       sum + (s.swipe.response_time_ms || 0), 0
@@ -73,12 +96,24 @@ export class SwipeAnalyzer {
 
     const likeRate = likes.length / total;
 
+    // Should adapt if:
+    // - At least 3 swipes done
+    // - Like rate is between 0.33 and 0.8 (not too picky, not liking everything)
+    // - Clear top archetype (at least 2 likes in same archetype)
+    const shouldAdapt = total >= 3 &&
+                        likeRate >= 0.33 &&
+                        likeRate <= 0.8 &&
+                        topArchetypes.length > 0;
+
     return {
       dominantColors,
       preferredStyles,
       avgResponseTime,
       confidence,
-      likeRate
+      likeRate,
+      shouldAdapt,
+      archetypeWeights,
+      topArchetypes
     };
   }
 
