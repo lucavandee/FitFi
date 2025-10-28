@@ -1,0 +1,191 @@
+import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, Sparkles } from 'lucide-react';
+import type { QuickOutfit, QuickOutfitItem } from '@/services/visualPreferences/quickOutfitGenerator';
+import { getStyleEmoji } from '@/services/visualPreferences/quickOutfitGenerator';
+
+interface LiveOutfitPreviewProps {
+  outfit: QuickOutfit | null;
+  isVisible: boolean;
+}
+
+export function LiveOutfitPreview({ outfit, isVisible }: LiveOutfitPreviewProps) {
+  if (!isVisible || !outfit) return null;
+
+  const items = [
+    { item: outfit.top, delay: 0 },
+    { item: outfit.bottom, delay: 0.15 },
+    { item: outfit.footwear, delay: 0.3 }
+  ].filter(({ item }) => item);
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.5 }}
+        className="mt-6 px-4"
+      >
+        <motion.div
+          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-soft)]"
+          layoutId="outfit-preview-card"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+            >
+              <Eye className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+            </motion.div>
+            <h3 className="text-sm font-semibold text-[var(--color-text)]">
+              Jouw Stijl Preview
+            </h3>
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: 'spring' }}
+              className="ml-auto text-lg"
+            >
+              {outfit.top && getStyleEmoji(outfit.top.style)}
+            </motion.span>
+          </div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-xs text-[var(--color-muted)] mb-4"
+          >
+            {outfit.styleDescription}
+          </motion.p>
+
+          <div className="grid grid-cols-3 gap-3">
+            {items.map(({ item, delay }) => (
+              <OutfitItemCard
+                key={item!.id}
+                item={item!}
+                delay={delay}
+              />
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-4 pt-3 border-t border-[var(--color-border)]"
+          >
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[var(--color-muted)]">
+                Confidence
+              </span>
+              <div className="flex items-center gap-2">
+                <div className="w-20 h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${outfit.confidence * 100}%` }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="h-full bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)]"
+                  />
+                </div>
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                  className="text-[var(--color-text)] font-medium"
+                >
+                  {Math.round(outfit.confidence * 100)}%
+                </motion.span>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mt-3 flex items-center justify-center gap-1.5 text-xs text-[var(--color-muted)]"
+          >
+            <Sparkles className="w-3 h-3" />
+            <span>Blijf swipen voor betere matches!</span>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+interface OutfitItemCardProps {
+  item: QuickOutfitItem;
+  delay: number;
+}
+
+function OutfitItemCard({ item, delay }: OutfitItemCardProps) {
+  const categoryLabels: Record<string, string> = {
+    top: 'Top',
+    bottom: 'Broek',
+    footwear: 'Schoenen',
+    accessory: 'Accessoire'
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{
+        delay,
+        type: 'spring',
+        stiffness: 200,
+        damping: 15
+      }}
+      className="relative"
+    >
+      <div className="aspect-[3/4] bg-[var(--color-bg)] rounded-lg overflow-hidden border border-[var(--color-border)] relative">
+        <motion.div
+          initial={{ scale: 1.2, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.9 }}
+          transition={{ delay: delay + 0.2, duration: 0.5 }}
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(135deg, ${item.color}40, ${item.color}20)`
+          }}
+        />
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: delay + 0.3 }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          <div
+            className="w-12 h-12 rounded-full"
+            style={{
+              backgroundColor: item.color,
+              boxShadow: `0 4px 12px ${item.color}40`
+            }}
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: delay + 0.4 }}
+          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2"
+        >
+          <p className="text-[10px] font-medium text-white truncate">
+            {item.name}
+          </p>
+        </motion.div>
+      </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: delay + 0.5 }}
+        className="text-[10px] text-[var(--color-muted)] text-center mt-1"
+      >
+        {categoryLabels[item.category]}
+      </motion.p>
+    </motion.div>
+  );
+}

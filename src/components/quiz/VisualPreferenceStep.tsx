@@ -3,11 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
 import { StyleDNAVisualizer } from './StyleDNAVisualizer';
+import { LiveOutfitPreview } from './LiveOutfitPreview';
 import { Sparkles, Loader2, SkipForward, RotateCcw, PartyPopper } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import { loadAdaptivePhotos, generateAdaptationInsight } from '@/services/visualPreferences/adaptiveLoader';
+import { generateQuickOutfit } from '@/services/visualPreferences/quickOutfitGenerator';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
+import type { QuickOutfit } from '@/services/visualPreferences/quickOutfitGenerator';
 
 interface VisualPreferenceStepProps {
   onComplete: () => void;
@@ -29,6 +32,8 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   const [swipeHistory, setSwipeHistory] = useState<Array<{ photo: MoodPhoto; direction: 'left' | 'right'; index: number }>>([]);
   const [showCelebration, setShowCelebration] = useState(false);
   const [hasAdapted, setHasAdapted] = useState(false);
+  const [previewOutfit, setPreviewOutfit] = useState<QuickOutfit | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
@@ -300,6 +305,32 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       }
     }
 
+    // LIVE OUTFIT PREVIEW: After swipe 5, generate and show preview
+    if (newSwipeCount === 5 && !showPreview) {
+      const pattern = analyzerRef.current.getPattern();
+      const outfit = generateQuickOutfit(pattern);
+
+      if (outfit) {
+        console.log('👗 Generating live outfit preview:', outfit);
+        setPreviewOutfit(outfit);
+        setShowPreview(true);
+
+        setTimeout(() => {
+          setNovaInsight('Kijk! Dit past bij jouw stijl. Blijf swipen voor meer precisie! ✨');
+        }, 1000);
+      }
+    }
+
+    // Update preview outfit as user keeps swiping (swipes 6-10)
+    if (newSwipeCount > 5 && newSwipeCount < 10 && showPreview) {
+      const pattern = analyzerRef.current.getPattern();
+      const updatedOutfit = generateQuickOutfit(pattern);
+
+      if (updatedOutfit) {
+        setPreviewOutfit(updatedOutfit);
+      }
+    }
+
     // Complete after 10 swipes
     if (newSwipeCount >= 10) {
       setTimeout(() => {
@@ -421,6 +452,11 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         swipeCount={swipeCount}
         totalSwipes={10}
         isVisible={swipeCount > 0}
+      />
+
+      <LiveOutfitPreview
+        outfit={previewOutfit}
+        isVisible={showPreview}
       />
 
       <motion.div
