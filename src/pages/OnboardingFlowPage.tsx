@@ -194,6 +194,18 @@ export default function OnboardingFlowPage() {
       }
 
       if (client && userId) {
+        if (answers.gender) {
+          try {
+            await client
+              .from('profiles')
+              .update({ gender: answers.gender })
+              .eq('id', userId);
+            console.log('✅ [OnboardingFlow] Gender updated in profiles');
+          } catch (genderError) {
+            console.warn('⚠️ [OnboardingFlow] Could not update gender in profiles:', genderError);
+          }
+        }
+
         const savePromise = saveToSupabase(client, user, sessionId, result);
 
         toast.promise(

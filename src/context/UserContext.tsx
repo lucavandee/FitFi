@@ -87,9 +87,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: userData.email
         });
 
-        // Fetch tier and admin status asynchronously (non-blocking)
+        // Fetch tier, admin status, and gender asynchronously (non-blocking)
         sb.from('profiles')
-          .select('tier, is_admin')
+          .select('tier, is_admin, gender')
           .eq('id', session.user.id)
           .maybeSingle()
           .then(({ data: profile, error }) => {
@@ -106,7 +106,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const updated = prev ? {
                   ...prev,
                   tier: profile.tier as 'free' | 'premium' | 'founder',
-                  isAdmin: profile.is_admin === true
+                  isAdmin: profile.is_admin === true,
+                  gender: profile.gender as 'male' | 'female' | undefined
                 } : null;
                 console.log('✅ [UserContext] User state after update:', {
                   hasUser: !!updated,
@@ -150,9 +151,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: userData.email
         });
 
-        // Fetch tier and admin status asynchronously (non-blocking)
+        // Fetch tier, admin status, and gender asynchronously (non-blocking)
         sb.from('profiles')
-          .select('tier, is_admin')
+          .select('tier, is_admin, gender')
           .eq('id', session.user.id)
           .maybeSingle()
           .then(({ data: profile, error }) => {
@@ -169,7 +170,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const updated = prev ? {
                   ...prev,
                   tier: profile.tier as 'free' | 'premium' | 'founder',
-                  isAdmin: profile.is_admin === true
+                  isAdmin: profile.is_admin === true,
+                  gender: profile.gender as 'male' | 'female' | undefined
                 } : null;
                 console.log('✅ [UserContext] User state after update (onAuthStateChange):', {
                   hasUser: !!updated,
