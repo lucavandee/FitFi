@@ -95,7 +95,11 @@ export default function AdminMoodPhotosPage() {
 
       console.log('✅ Update succeeded:', data);
       toast.success(currentActive ? 'Gedeactiveerd' : 'Geactiveerd');
-      loadPhotos();
+
+      // Update local state immediately
+      setPhotos(prev => prev.map(p =>
+        p.id === id ? { ...p, active: !currentActive } : p
+      ));
     } catch (err) {
       console.error('💥 Error toggling active:', err);
       toast.error('Fout bij updaten: ' + (err as Error).message);
@@ -154,7 +158,9 @@ export default function AdminMoodPhotosPage() {
       }
 
       toast.success('Foto succesvol verwijderd');
-      loadPhotos();
+
+      // Remove from local state immediately
+      setPhotos(prev => prev.filter(p => p.id !== id));
     } catch (err) {
       console.error('💥 Delete error:', err);
       toast.error('Fout bij verwijderen: ' + (err as Error).message);
