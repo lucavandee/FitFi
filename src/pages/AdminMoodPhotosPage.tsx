@@ -107,17 +107,38 @@ export default function AdminMoodPhotosPage() {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
 
-      const { error } = await client
+      const photo = photos.find(p => p.id === id);
+      if (!photo) {
+        toast.error('Foto niet gevonden');
+        return;
+      }
+
+      const { error: dbError } = await client
         .from('mood_photos')
         .delete()
         .eq('id', id);
 
-      if (error) {
-        toast.error('Fout bij verwijderen');
+      if (dbError) {
+        console.error('Database delete error:', dbError);
+        toast.error('Fout bij verwijderen uit database: ' + dbError.message);
         return;
       }
 
-      toast.success('Foto verwijderd');
+      if (photo.image_url.includes('supabase')) {
+        const urlParts = photo.image_url.split('/mood-photos/');
+        if (urlParts.length === 2) {
+          const filePath = urlParts[1];
+          const { error: storageError } = await client.storage
+            .from('mood-photos')
+            .remove([filePath]);
+
+          if (storageError) {
+            console.warn('Storage delete warning:', storageError);
+          }
+        }
+      }
+
+      toast.success('Foto succesvol verwijderd');
       loadPhotos();
     } catch (err) {
       console.error('Error deleting photo:', err);
