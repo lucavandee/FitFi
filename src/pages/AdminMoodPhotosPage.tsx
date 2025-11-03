@@ -74,30 +74,39 @@ export default function AdminMoodPhotosPage() {
   };
 
   const toggleActive = async (id: number, currentActive: boolean) => {
+    console.log('🔄 Toggle active called:', { id, currentActive, newValue: !currentActive });
+
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
 
-      const { error } = await client
+      console.log('📡 Sending update request...');
+      const { data, error } = await client
         .from('mood_photos')
         .update({ active: !currentActive })
-        .eq('id', id);
+        .eq('id', id)
+        .select();
 
       if (error) {
-        toast.error('Fout bij updaten');
+        console.error('❌ Update failed:', error);
+        toast.error('Fout bij updaten: ' + error.message);
         return;
       }
 
+      console.log('✅ Update succeeded:', data);
       toast.success(currentActive ? 'Gedeactiveerd' : 'Geactiveerd');
       loadPhotos();
     } catch (err) {
-      console.error('Error toggling active:', err);
-      toast.error('Fout bij updaten');
+      console.error('💥 Error toggling active:', err);
+      toast.error('Fout bij updaten: ' + (err as Error).message);
     }
   };
 
   const deletePhoto = async (id: number) => {
+    console.log('🗑️ Delete photo called:', { id });
+
     if (!confirm('Weet je zeker dat je deze foto wilt VERWIJDEREN? Dit kan niet ongedaan worden.')) {
+      console.log('❌ Delete cancelled by user');
       return;
     }
 
@@ -107,31 +116,39 @@ export default function AdminMoodPhotosPage() {
 
       const photo = photos.find(p => p.id === id);
       if (!photo) {
+        console.error('❌ Photo not found in local state');
         toast.error('Foto niet gevonden');
         return;
       }
 
+      console.log('📡 Deleting from database...', { id, url: photo.image_url });
       const { error: dbError } = await client
         .from('mood_photos')
         .delete()
         .eq('id', id);
 
       if (dbError) {
-        console.error('Database delete error:', dbError);
+        console.error('❌ Database delete failed:', dbError);
         toast.error('Fout bij verwijderen uit database: ' + dbError.message);
         return;
       }
+
+      console.log('✅ Database delete succeeded');
 
       if (photo.image_url.includes('supabase')) {
         const urlParts = photo.image_url.split('/mood-photos/');
         if (urlParts.length === 2) {
           const filePath = urlParts[1];
+          console.log('🗄️ Deleting from storage...', { filePath });
+
           const { error: storageError } = await client.storage
             .from('mood-photos')
             .remove([filePath]);
 
           if (storageError) {
-            console.warn('Storage delete warning:', storageError);
+            console.warn('⚠️ Storage delete warning:', storageError);
+          } else {
+            console.log('✅ Storage delete succeeded');
           }
         }
       }
@@ -139,8 +156,8 @@ export default function AdminMoodPhotosPage() {
       toast.success('Foto succesvol verwijderd');
       loadPhotos();
     } catch (err) {
-      console.error('Error deleting photo:', err);
-      toast.error('Fout bij verwijderen');
+      console.error('💥 Delete error:', err);
+      toast.error('Fout bij verwijderen: ' + (err as Error).message);
     }
   };
 
