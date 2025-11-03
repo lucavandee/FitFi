@@ -13,10 +13,21 @@ interface ImportStats {
 }
 
 export default function AdminZalandoImportPage() {
-  const { isAdmin, user } = useIsAdmin();
+  const { isAdmin, user, isLoading: authLoading } = useIsAdmin();
   const navigate = useNavigate();
   const [importing, setImporting] = useState(false);
   const [stats, setStats] = useState<ImportStats | null>(null);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAdmin) {
     return (

@@ -122,20 +122,24 @@ const adminModules: AdminModule[] = [
 ];
 
 export default function AdminDashboardPage() {
-  const { isAdmin, user } = useIsAdmin();
+  const { isAdmin, user, isLoading: authLoading } = useIsAdmin();
   const navigate = useNavigate();
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!isAdmin) {
+      console.log('❌ Not admin, redirecting to home');
       navigate('/');
       return;
     }
 
+    console.log('✅ Admin verified, loading metrics');
     loadMetrics();
     logAdminAction('view_admin_dashboard');
-  }, [isAdmin, navigate]);
+  }, [isAdmin, authLoading, navigate]);
 
   const loadMetrics = async () => {
     setLoading(true);
@@ -143,6 +147,17 @@ export default function AdminDashboardPage() {
     if (data) setMetrics(data);
     setLoading(false);
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAdmin) {
     return null;

@@ -6,10 +6,11 @@ import { useUser } from "@/context/UserContext";
  * Admin status is automatically granted to @fitfi.ai email addresses
  */
 export function useIsAdmin() {
-  const { user } = useUser();
+  const { user, status } = useUser();
 
   // Check is_admin from database (set by trigger for @fitfi.ai emails)
   const isAdmin = !!user?.isAdmin;
+  const isLoading = status === 'loading';
 
-  return { isAdmin, user };
+  return { isAdmin, user, isLoading };
 }

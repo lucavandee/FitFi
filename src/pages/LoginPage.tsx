@@ -80,7 +80,33 @@ export default function LoginPage() {
         const success = await login(email, password);
 
         if (success) {
-          nav(fromPath || "/dashboard");
+          setTimeout(async () => {
+            try {
+              const { getSupabase } = await import('@/lib/supabase');
+              const client = getSupabase();
+
+              const { data: { user: authUser } } = await client.auth.getUser();
+              if (!authUser) {
+                nav(fromPath || "/dashboard");
+                return;
+              }
+
+              const { data: profile } = await client
+                .from('profiles')
+                .select('is_admin')
+                .eq('id', authUser.id)
+                .maybeSingle();
+
+              if (profile?.is_admin === true) {
+                nav("/admin");
+              } else {
+                nav(fromPath || "/dashboard");
+              }
+            } catch (navError) {
+              console.error('Navigation error:', navError);
+              nav(fromPath || "/dashboard");
+            }
+          }, 200);
         } else {
           setError("Login mislukt. Controleer je e-mail en wachtwoord.");
         }

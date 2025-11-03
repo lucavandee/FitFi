@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X } from 'lucide-react';
-import { useUser } from '@/context/UserContext';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 
 interface MoodPhoto {
@@ -15,17 +15,15 @@ interface MoodPhoto {
 }
 
 export default function AdminMoodPhotosPage() {
-  const { user } = useUser();
+  const { isAdmin, user, isLoading: authLoading } = useIsAdmin();
   const [photos, setPhotos] = useState<MoodPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterGender, setFilterGender] = useState<'all' | 'male' | 'female' | 'unisex'>('all');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  const isAdmin = user?.email?.endsWith('@fitfi.ai') || false;
-
   useEffect(() => {
-    if (user) {
+    if (!authLoading && user) {
       loadPhotos();
     }
   }, [user]);
@@ -146,12 +144,12 @@ export default function AdminMoodPhotosPage() {
     }
   };
 
-  if (!user) {
+  if (authLoading || !user) {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-2 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-[var(--color-muted)]">Laden...</p>
+          <p className="text-[var(--color-muted)]">Admin verificatie...</p>
         </div>
       </div>
     );
