@@ -500,41 +500,33 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
         return;
       }
 
-      const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${gender}/${fileName}`;
-
-      const { error: uploadError } = await client.storage
-        .from('mood-photos')
-        .upload(filePath, selectedFile, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        toast.error('Fout bij uploaden: ' + uploadError.message);
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) {
+        toast.error('Niet ingelogd');
         setUploading(false);
         return;
       }
 
-      const { data: { publicUrl } } = client.storage
-        .from('mood-photos')
-        .getPublicUrl(filePath);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('gender', gender);
+      formData.append('moodTags', JSON.stringify(moodTags));
+      formData.append('displayOrder', displayOrder.toString());
 
-      const { error: dbError } = await client
-        .from('mood_photos')
-        .insert({
-          image_url: publicUrl,
-          gender: gender,
-          mood_tags: moodTags,
-          active: true,
-          display_order: displayOrder
-        });
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const response = await fetch(`${supabaseUrl}/functions/v1/admin-upload-mood-photo`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: formData
+      });
 
-      if (dbError) {
-        console.error('Database error:', dbError);
-        toast.error('Fout bij opslaan in database');
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Upload error:', result);
+        toast.error('Fout bij uploaden: ' + (result.error || 'Onbekende fout'));
         setUploading(false);
         return;
       }
