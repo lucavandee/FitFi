@@ -500,9 +500,17 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
         return;
       }
 
-      const { data: { session } } = await client.auth.getSession();
-      if (!session) {
-        toast.error('Niet ingelogd');
+      const { data: sessionData, error: sessionError } = await client.auth.getSession();
+
+      console.log('📍 Session check:', {
+        hasSession: !!sessionData?.session,
+        hasAccessToken: !!sessionData?.session?.access_token,
+        error: sessionError
+      });
+
+      if (sessionError || !sessionData?.session?.access_token) {
+        console.error('Session error:', sessionError);
+        toast.error('Sessie verlopen - log opnieuw in');
         setUploading(false);
         return;
       }
@@ -514,10 +522,19 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       formData.append('displayOrder', displayOrder.toString());
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      console.log('🚀 Calling Edge Function:', {
+        url: `${supabaseUrl}/functions/v1/admin-upload-mood-photo`,
+        hasToken: !!sessionData.session.access_token,
+        hasAnonKey: !!anonKey
+      });
+
       const response = await fetch(`${supabaseUrl}/functions/v1/admin-upload-mood-photo`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${sessionData.session.access_token}`,
+          'apikey': anonKey
         },
         body: formData
       });
@@ -535,7 +552,7 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       onSuccess();
     } catch (err) {
       console.error('Upload failed:', err);
-      toast.error('Er ging iets mis bij uploaden');
+      toast.error('Er ging iets mis bij uploaden: ' + (err as Error).message);
       setUploading(false);
     }
   };
