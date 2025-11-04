@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
+import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
 
 interface MoodPhoto {
   id: number;
@@ -491,8 +492,7 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
     setUploading(true);
 
     try {
-      const { getSupabase } = await import('@/lib/supabase');
-      const client = getSupabase();
+      const client = getSupabaseClient();
 
       if (!client) {
         toast.error('Database niet beschikbaar');
