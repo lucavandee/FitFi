@@ -69,6 +69,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (session?.user) {
+        // Get isAdmin from JWT app_metadata (most reliable source)
+        const isAdminFromJWT = session.user.app_metadata?.is_admin === true;
+
         // Set user immediately with default tier
         const userData = {
           id: session.user.id,
@@ -76,7 +79,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: session.user.email || '',
           gender: session.user.user_metadata?.gender,
           role: session.user.user_metadata?.role || 'user',
-          tier: 'free' as const
+          tier: 'free' as const,
+          isAdmin: isAdminFromJWT
         };
 
         setUser(userData);
@@ -84,7 +88,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log('✅ [UserContext] User authenticated:', {
           id: userData.id.substring(0, 8) + '...',
-          email: userData.email
+          email: userData.email,
+          isAdmin: isAdminFromJWT,
+          hasAppMetadata: !!session.user.app_metadata
         });
 
         // Fetch tier, admin status, and gender asynchronously (non-blocking)
@@ -106,12 +112,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const updated = prev ? {
                   ...prev,
                   tier: profile.tier as 'free' | 'premium' | 'founder',
-                  isAdmin: profile.is_admin === true,
+                  // KEEP isAdmin from JWT (already set), don't overwrite with DB value
                   gender: profile.gender as 'male' | 'female' | undefined
                 } : null;
                 console.log('✅ [UserContext] User state after update:', {
                   hasUser: !!updated,
                   isAdmin: updated?.isAdmin,
+                  tier: updated?.tier,
                   email: updated?.email
                 });
                 return updated;
@@ -133,6 +140,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes (non-blocking)
     const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
+        // Get isAdmin from JWT app_metadata (most reliable source)
+        const isAdminFromJWT = session.user.app_metadata?.is_admin === true;
+
         // Set user immediately with default tier
         const userData = {
           id: session.user.id,
@@ -140,13 +150,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: session.user.email || '',
           gender: session.user.user_metadata?.gender,
           role: session.user.user_metadata?.role || 'user',
-          tier: 'free' as const
+          tier: 'free' as const,
+          isAdmin: isAdminFromJWT
         };
 
         setUser(userData);
         setStatus('authenticated');
 
         console.log('✅ [UserContext] User authenticated:', {
+          isAdmin: isAdminFromJWT,
           id: userData.id.substring(0, 8) + '...',
           email: userData.email
         });
@@ -170,7 +182,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const updated = prev ? {
                   ...prev,
                   tier: profile.tier as 'free' | 'premium' | 'founder',
-                  isAdmin: profile.is_admin === true,
+                  // KEEP isAdmin from JWT (already set), don't overwrite with DB value
                   gender: profile.gender as 'male' | 'female' | undefined
                 } : null;
                 console.log('✅ [UserContext] User state after update (onAuthStateChange):', {
