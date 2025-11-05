@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X } from 'lucide-react';
+import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X, Sparkles, Check } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
@@ -440,6 +440,9 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
   const [tagInput, setTagInput] = useState('');
   const [displayOrder, setDisplayOrder] = useState<number>(1);
   const [uploading, setUploading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+  const [aiReasoning, setAiReasoning] = useState<string>('');
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -476,6 +479,113 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
 
   const removeTag = (tag: string) => {
     setMoodTags(moodTags.filter(t => t !== tag));
+  };
+
+  const analyzeWithAI = async () => {
+    if (!selectedFile) {
+      toast.error('Selecteer eerst een foto');
+      return;
+    }
+
+    setAnalyzing(true);
+    setAiSuggestions([]);
+    setAiReasoning('');
+
+    try {
+      const client = getSupabaseClient();
+      if (!client) {
+        toast.error('Database niet beschikbaar');
+        setAnalyzing(false);
+        return;
+      }
+
+      const { data: sessionData } = await client.auth.getSession();
+      if (!sessionData?.session?.access_token) {
+        toast.error('Sessie verlopen');
+        setAnalyzing(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      formData.append('gender', gender);
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      console.log('🤖 Analyzing image with AI...');
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/analyze-mood-photo`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${sessionData.session.access_token}`,
+          'apikey': anonKey
+        },
+        body: formData,
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('AI analysis error:', errorText);
+        toast.error('AI analyse mislukt');
+        setAnalyzing(false);
+        return;
+      }
+
+      const result = await response.json();
+      console.log('✅ AI analysis complete:', result);
+
+      if (result.success && result.moodTags) {
+        setAiSuggestions(result.moodTags);
+        setAiReasoning(result.reasoning || '');
+        toast.success(`${result.moodTags.length} tags gesuggereerd door AI!`);
+      } else {
+        toast.error('Geen tags gevonden');
+      }
+
+      setAnalyzing(false);
+    } catch (err) {
+      console.error('AI analysis failed:', err);
+      if (err instanceof Error && err.name === 'AbortError') {
+        toast.error('AI analyse timeout');
+      } else {
+        toast.error('AI analyse mislukt: ' + (err as Error).message);
+      }
+      setAnalyzing(false);
+    }
+  };
+
+  const acceptAiSuggestion = (tag: string) => {
+    if (moodTags.includes(tag)) {
+      toast.error('Tag is al toegevoegd');
+      return;
+    }
+    if (moodTags.length >= 6) {
+      toast.error('Maximum 6 tags');
+      return;
+    }
+    setMoodTags([...moodTags, tag]);
+    toast.success(`"${tag}" toegevoegd`);
+  };
+
+  const acceptAllAiSuggestions = () => {
+    const newTags = aiSuggestions.filter(tag => !moodTags.includes(tag));
+    const available = 6 - moodTags.length;
+    const toAdd = newTags.slice(0, available);
+
+    if (toAdd.length === 0) {
+      toast.error('Alle suggesties zijn al toegevoegd');
+      return;
+    }
+
+    setMoodTags([...moodTags, ...toAdd]);
+    toast.success(`${toAdd.length} tags toegevoegd`);
   };
 
   const handleUpload = async () => {
@@ -742,6 +852,80 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
                     </span>
                   ))}
                 </div>
+
+                {selectedFile && (
+                  <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-purple-600" />
+                        <h4 className="font-semibold text-[var(--color-text)]">AI Suggestions</h4>
+                      </div>
+                      <button
+                        onClick={analyzeWithAI}
+                        disabled={analyzing || !selectedFile}
+                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 flex items-center gap-2 text-sm font-medium shadow-lg shadow-purple-500/30"
+                      >
+                        {analyzing ? (
+                          <>
+                            <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4" />
+                            Analyze with AI
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {aiSuggestions.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-[var(--color-muted)]">
+                            AI found {aiSuggestions.length} relevant tags
+                          </p>
+                          <button
+                            onClick={acceptAllAiSuggestions}
+                            className="text-xs px-3 py-1 bg-white/80 dark:bg-gray-800/80 text-purple-700 dark:text-purple-300 rounded-full hover:bg-white dark:hover:bg-gray-800 transition-colors font-medium"
+                          >
+                            Accept All
+                          </button>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          {aiSuggestions.map((tag) => (
+                            <button
+                              key={tag}
+                              onClick={() => acceptAiSuggestion(tag)}
+                              disabled={moodTags.includes(tag)}
+                              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                moodTags.includes(tag)
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 cursor-not-allowed'
+                                  : 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 cursor-pointer shadow-sm'
+                              }`}
+                            >
+                              {tag}
+                              {moodTags.includes(tag) && <Check className="w-3 h-3 inline ml-1" />}
+                            </button>
+                          ))}
+                        </div>
+
+                        {aiReasoning && (
+                          <div className="text-xs text-[var(--color-muted)] italic p-2 bg-white/50 dark:bg-gray-800/50 rounded">
+                            <strong>AI reasoning:</strong> {aiReasoning}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!analyzing && aiSuggestions.length === 0 && (
+                      <p className="text-sm text-[var(--color-muted)] text-center">
+                        Click "Analyze with AI" to get mood tag suggestions based on the image
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 <details className="text-sm">
                   <summary className="text-[var(--color-muted)] cursor-pointer hover:text-[var(--color-text)]">
