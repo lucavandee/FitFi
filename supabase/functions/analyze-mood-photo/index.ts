@@ -52,13 +52,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .maybeSingle();
+    // Check admin status from JWT app_metadata (avoids RLS recursion)
+    const isAdmin = user.app_metadata?.is_admin === true;
 
-    if (!profile?.is_admin) {
+    if (!isAdmin) {
+      console.log('❌ Not admin:', { userId: user.id, appMetadata: user.app_metadata });
       return new Response(
         JSON.stringify({ error: 'Admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -118,25 +116,7 @@ Deno.serve(async (req: Request) => {
 
     console.log('🤖 Calling OpenAI Vision API...');
 
-    const prompt = `Analyze this fashion outfit image and suggest mood tags that describe its style and aesthetic.
-
-Gender context: ${gender || 'unisex'}
-
-Available tags to choose from:
-${allTags.join(', ')}
-
-Requirements:
-1. Select 5-8 tags that best describe the outfit's style, mood, and aesthetic
-2. Consider: overall vibe, color palette, fit, formality, styling approach
-3. Think about what makes this outfit distinctive
-4. Consider the gender context when relevant
-
-Respond in JSON format:
-{
-  "moodTags": ["tag1", "tag2", ...],
-  "confidence": 0.85,
-  "reasoning": "Brief explanation of why these tags fit"
-}`;
+    const prompt = `Analyze this fashion outfit image and suggest mood tags that describe its style and aesthetic.\n\nGender context: ${gender || 'unisex'}\n\nAvailable tags to choose from:\n${allTags.join(', ')}\n\nRequirements:\n1. Select 5-8 tags that best describe the outfit's style, mood, and aesthetic\n2. Consider: overall vibe, color palette, fit, formality, styling approach\n3. Think about what makes this outfit distinctive\n4. Consider the gender context when relevant\n\nRespond in JSON format:\n{\n  "moodTags": ["tag1", "tag2", ...],\n  "confidence": 0.85,\n  "reasoning": "Brief explanation of why these tags fit"\n}`;
 
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
