@@ -48,8 +48,8 @@ Deno.serve(async (req: Request) => {
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('is_admin')
-      .eq('user_id', user.id)
-      .single();
+      .eq('id', user.id)
+      .maybeSingle();
 
     if (profileError || !profile?.is_admin) {
       return new Response(
