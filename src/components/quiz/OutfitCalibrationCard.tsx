@@ -1,18 +1,23 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Minus } from 'lucide-react';
+import { Check, X, Minus, RefreshCw, Heart } from 'lucide-react';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import SmartImage from '@/components/ui/SmartImage';
+import { useSaveOutfit } from '@/hooks/useSaveOutfit';
+import toast from 'react-hot-toast';
 
 interface OutfitCalibrationCardProps {
   outfit: CalibrationOutfit;
   onFeedback: (feedback: 'spot_on' | 'not_for_me' | 'maybe', responseTimeMs: number) => void;
+  onSwapItem?: (category: 'top' | 'bottom' | 'shoes') => Promise<void>;
   disabled?: boolean;
+  swappingCategory?: 'top' | 'bottom' | 'shoes' | null;
 }
 
-export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCalibrationCardProps) {
+export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled, swappingCategory }: OutfitCalibrationCardProps) {
   const [startTime] = useState(Date.now());
   const [selectedFeedback, setSelectedFeedback] = useState<'spot_on' | 'not_for_me' | 'maybe' | null>(null);
+  const { saveOutfit, isSaving } = useSaveOutfit();
 
   const handleFeedback = (feedback: 'spot_on' | 'not_for_me' | 'maybe') => {
     if (disabled || selectedFeedback) return;
@@ -20,6 +25,24 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
     const responseTime = Date.now() - startTime;
     setSelectedFeedback(feedback);
     onFeedback(feedback, responseTime);
+  };
+
+  const handleSaveOutfit = async () => {
+    try {
+      await saveOutfit({
+        items: outfit.items,
+        archetype: Object.keys(outfit.archetypes)[0] || 'minimal',
+        occasion: outfit.occasion,
+        colors: outfit.dominantColors
+      });
+      toast.success('Outfit opgeslagen! 💚', {
+        duration: 3000,
+        position: 'bottom-center'
+      });
+    } catch (err) {
+      toast.error('Kon outfit niet opslaan');
+      console.error(err);
+    }
   };
 
   const totalPrice = Object.values(outfit.items)
@@ -84,16 +107,30 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
         </div>
 
         <div className="space-y-4 p-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-[var(--color-text)]">
-                {outfit.title}
-              </h3>
-              <p className="text-sm text-[var(--color-muted)] mt-1">
-                {outfit.occasion === 'work' ? 'Perfect voor werk' : 'Casual daily look'}
-              </p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-[var(--color-text)]">
+                    {outfit.title}
+                  </h3>
+                  <p className="text-sm text-[var(--color-muted)] mt-1">
+                    {outfit.occasion === 'work' ? 'Perfect voor werk' : 'Casual daily look'}
+                  </p>
+                </div>
+                <motion.button
+                  onClick={handleSaveOutfit}
+                  disabled={isSaving || disabled}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="w-9 h-9 rounded-full bg-white border-2 border-[var(--color-border)] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0"
+                  title="Bewaar outfit"
+                >
+                  <Heart className="w-4 h-4 text-[var(--color-muted)] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
+                </motion.button>
+              </div>
             </div>
-            <div className="text-right">
+            <div className="text-right flex-shrink-0">
               <div className="text-sm text-[var(--color-muted)]">Totaal</div>
               <div className="text-lg font-semibold text-[var(--color-text)]">
                 €{formattedTotal}
@@ -107,6 +144,10 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
                 name={outfit.items.top.name}
                 brand={outfit.items.top.brand}
                 price={outfit.items.top.price}
+                category="top"
+                onSwap={onSwapItem}
+                isSwapping={swappingCategory === 'top'}
+                disabled={disabled || selectedFeedback !== null}
               />
             )}
             {outfit.items.bottom && (
@@ -114,6 +155,10 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
                 name={outfit.items.bottom.name}
                 brand={outfit.items.bottom.brand}
                 price={outfit.items.bottom.price}
+                category="bottom"
+                onSwap={onSwapItem}
+                isSwapping={swappingCategory === 'bottom'}
+                disabled={disabled || selectedFeedback !== null}
               />
             )}
             {outfit.items.shoes && (
@@ -121,17 +166,56 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
                 name={outfit.items.shoes.name}
                 brand={outfit.items.shoes.brand}
                 price={outfit.items.shoes.price}
+                category="shoes"
+                onSwap={onSwapItem}
+                isSwapping={swappingCategory === 'shoes'}
+                disabled={disabled || selectedFeedback !== null}
               />
             )}
           </div>
 
-          <div className="pt-4 border-t border-[var(--color-border)]">
-            <p className="text-sm font-medium text-[var(--ff-color-primary-700)] mb-2">
-              Waarom dit bij je past:
-            </p>
-            <p className="text-sm text-[var(--color-text)] leading-relaxed">
-              {outfit.explanation}
-            </p>
+          <div className="pt-4 border-t border-[var(--color-border)] space-y-3">
+            <div>
+              <p className="text-sm font-medium text-[var(--ff-color-primary-700)] mb-2">
+                Waarom dit bij je past:
+              </p>
+              <p className="text-sm text-[var(--color-text)] leading-relaxed">
+                {outfit.explanation}
+              </p>
+            </div>
+
+            {outfit.colorHarmony && outfit.colorHarmony.harmony !== 'acceptable' && (
+              <div className={`p-3 rounded-[var(--radius-lg)] ${
+                outfit.colorHarmony.harmony === 'excellent' ? 'bg-green-50 border border-green-200' :
+                outfit.colorHarmony.harmony === 'good' ? 'bg-blue-50 border border-blue-200' :
+                'bg-yellow-50 border border-yellow-200'
+              }`}>
+                <div className="flex items-start gap-2">
+                  <div className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                    outfit.colorHarmony.harmony === 'excellent' ? 'bg-green-200 text-green-800' :
+                    outfit.colorHarmony.harmony === 'good' ? 'bg-blue-200 text-blue-800' :
+                    'bg-yellow-200 text-yellow-800'
+                  }`}>
+                    {outfit.colorHarmony.score}/100
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-[var(--color-text)] leading-relaxed">
+                      {outfit.colorHarmony.explanation}
+                    </p>
+                    {outfit.colorHarmony.tips && outfit.colorHarmony.tips.length > 0 && (
+                      <ul className="mt-2 space-y-1">
+                        {outfit.colorHarmony.tips.map((tip, idx) => (
+                          <li key={idx} className="text-xs text-[var(--color-muted)] flex items-start gap-1">
+                            <span className="text-[var(--ff-color-primary-700)]">•</span>
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-3">
@@ -209,7 +293,17 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
   );
 }
 
-function OutfitItem({ name, brand, price }: { name: string; brand: string; price: number }) {
+interface OutfitItemProps {
+  name: string;
+  brand: string;
+  price: number;
+  category?: 'top' | 'bottom' | 'shoes';
+  onSwap?: (category: 'top' | 'bottom' | 'shoes') => Promise<void>;
+  isSwapping?: boolean;
+  disabled?: boolean;
+}
+
+function OutfitItem({ name, brand, price, category, onSwap, isSwapping, disabled }: OutfitItemProps) {
   const formattedPrice = Math.round(price * 100) / 100;
 
   return (
@@ -217,13 +311,27 @@ function OutfitItem({ name, brand, price }: { name: string; brand: string; price
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex items-start justify-between text-sm"
+      className="flex items-start justify-between gap-3 text-sm group"
     >
-      <div className="flex-1">
-        <div className="font-medium text-[var(--color-text)]">{name}</div>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-[var(--color-text)] truncate">{name}</div>
         <div className="text-[var(--color-muted)] text-xs mt-0.5">{brand}</div>
       </div>
-      <div className="text-[var(--color-text)] font-medium">€{formattedPrice.toFixed(2)}</div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="text-[var(--color-text)] font-medium">€{formattedPrice.toFixed(2)}</div>
+        {onSwap && category && (
+          <motion.button
+            onClick={() => !disabled && !isSwapping && onSwap(category)}
+            disabled={disabled || isSwapping}
+            whileHover={!disabled && !isSwapping ? { scale: 1.1 } : {}}
+            whileTap={!disabled && !isSwapping ? { scale: 0.9 } : {}}
+            className="w-7 h-7 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center hover:border-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-700)] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
+            title="Vervang dit item"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSwapping ? 'animate-spin' : ''}`} />
+          </motion.button>
+        )}
+      </div>
     </motion.div>
   );
 }

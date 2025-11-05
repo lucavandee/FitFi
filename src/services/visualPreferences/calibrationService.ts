@@ -1,6 +1,7 @@
 import { getSupabase } from '@/lib/supabase';
 import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 import type { ArchetypeWeights } from '@/types/style';
+import { ColorHarmonyService } from './colorHarmony';
 
 export interface CalibrationOutfit {
   id: string;
@@ -15,6 +16,12 @@ export interface CalibrationOutfit {
   dominantColors: string[];
   occasion: string;
   explanation: string;
+  colorHarmony?: {
+    score: number;
+    harmony: 'excellent' | 'good' | 'acceptable' | 'poor';
+    explanation: string;
+    tips?: string[];
+  };
 }
 
 export interface CalibrationFeedback {
@@ -31,6 +38,29 @@ export interface CalibrationFeedback {
 }
 
 export class CalibrationService {
+  /**
+   * Swap a single item in an outfit with an alternative
+   */
+  static async swapOutfitItem(
+    outfit: CalibrationOutfit,
+    category: 'top' | 'bottom' | 'shoes',
+    quizData?: any
+  ): Promise<{ name: string; brand: string; price: number; image_url: string } | null> {
+    const gender = quizData?.gender;
+    const archetype = Object.keys(outfit.archetypes)[0] || 'minimal';
+
+    // Get a new product for this category
+    const newItem = await this.fetchProductForSlot(
+      category === 'shoes' ? 'footwear' : category,
+      archetype,
+      outfit.occasion,
+      gender,
+      quizData?.budgetRange
+    );
+
+    return newItem;
+  }
+
   /**
    * Generate 3 calibration outfits based on visual preferences
    */
@@ -121,10 +151,13 @@ export class CalibrationService {
 
     // Fetch real products from database
     const [topProduct, bottomProduct, shoesProduct] = await Promise.all([
-      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender),
-      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender),
-      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender)
+      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange),
+      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange),
+      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange)
     ]);
+
+    // Validate color harmony
+    const colorHarmony = ColorHarmonyService.validateOutfitColors(template.colors);
 
     return {
       id: `calibration-${index}`,
@@ -152,6 +185,7 @@ export class CalibrationService {
       archetypes: weights,
       dominantColors: template.colors,
       occasion: template.occasion,
+      colorHarmony,
       explanation: `Deze look combineert ${template.description}. Perfect voor jouw voorkeur voor ${mainArchetype.replace(/_/g, ' ')}.`
     };
   }
@@ -202,7 +236,8 @@ export class CalibrationService {
     category: string,
     archetype: string,
     occasion: string,
-    gender?: string
+    gender?: string,
+    budgetRange?: number
   ): Promise<{ name: string; brand: string; price: number; image_url: string } | null> {
     const supabase = getSupabase();
     if (!supabase) {
@@ -218,6 +253,9 @@ export class CalibrationService {
     // Map occasion to style attributes
     const styleKeywords = this.getStyleKeywordsForArchetype(archetype, occasion);
 
+    // Calculate price range based on budget
+    const priceRange = this.getPriceRangeForCategory(category, budgetRange);
+
     // Build query
     let query = supabase
       .from('products')
@@ -229,6 +267,13 @@ export class CalibrationService {
     // Filter by gender if provided
     if (gender) {
       query = query.or(`gender.eq.${gender},gender.eq.unisex`);
+    }
+
+    // Filter by price range
+    if (priceRange) {
+      query = query
+        .gte('price', priceRange.min)
+        .lte('price', priceRange.max);
     }
 
     const { data, error } = await query;
@@ -243,7 +288,10 @@ export class CalibrationService {
       };
     }
 
-    // Score products based on style match
+    // Get brand affinity data (if available)
+    const brandAffinity = await this.getBrandAffinityMap(supabase);
+
+    // Score products based on style match + brand affinity
     const scoredProducts = data.map(product => {
       let score = 0;
 
@@ -272,6 +320,13 @@ export class CalibrationService {
         score += 1;
       }
 
+      // Brand affinity boost
+      if (product.brand && brandAffinity[product.brand.toLowerCase()]) {
+        const affinityScore = brandAffinity[product.brand.toLowerCase()];
+        // Scale affinity (max +5 bonus)
+        score += Math.min(5, Math.floor(affinityScore / 10));
+      }
+
       return { ...product, score };
     });
 
@@ -289,6 +344,72 @@ export class CalibrationService {
       brand: selectedProduct.brand || 'Fashion Brand',
       price: selectedProduct.price || (category === 'footwear' ? 129 : 79),
       image_url: selectedProduct.image_url
+    };
+  }
+
+  /**
+   * Get brand affinity map from database
+   */
+  private static async getBrandAffinityMap(supabase: any): Promise<Record<string, number>> {
+    try {
+      const userId = (await supabase.auth.getUser()).data.user?.id;
+      const sessionId = sessionStorage?.getItem?.('fitfi_session_id');
+
+      if (!userId && !sessionId) {
+        return {};
+      }
+
+      let query = supabase
+        .from('brand_preferences')
+        .select('brand, affinity_score');
+
+      if (userId) {
+        query = query.eq('user_id', userId);
+      } else if (sessionId) {
+        query = query.eq('session_id', sessionId);
+      }
+
+      const { data, error } = await query;
+
+      if (error || !data) {
+        return {};
+      }
+
+      const affinityMap: Record<string, number> = {};
+      data.forEach((row: any) => {
+        if (row.brand && row.affinity_score > 0) {
+          affinityMap[row.brand.toLowerCase()] = row.affinity_score;
+        }
+      });
+
+      return affinityMap;
+    } catch (err) {
+      console.warn('Failed to fetch brand affinity:', err);
+      return {};
+    }
+  }
+
+  /**
+   * Calculate price range for a category based on user budget
+   */
+  private static getPriceRangeForCategory(
+    category: string,
+    budgetRange?: number
+  ): { min: number; max: number } | null {
+    if (!budgetRange) return null;
+
+    // Category multipliers (relative to base budget)
+    const multipliers: Record<string, { min: number; max: number }> = {
+      'top': { min: 0.6, max: 1.4 },       // €24-€56 for budget €40
+      'bottom': { min: 0.8, max: 1.6 },    // €32-€64 for budget €40
+      'footwear': { min: 1.2, max: 2.0 }   // €48-€80 for budget €40
+    };
+
+    const multiplier = multipliers[category] || { min: 0.5, max: 1.5 };
+
+    return {
+      min: Math.round(budgetRange * multiplier.min),
+      max: Math.round(budgetRange * multiplier.max)
     };
   }
 

@@ -20,6 +20,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
+  const [swappingState, setSwappingState] = useState<{ outfitId: string; category: 'top' | 'bottom' | 'shoes' } | null>(null);
   const { user } = useUser();
   const loadedRef = useRef(false);
 
@@ -96,6 +97,64 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       console.error('Failed to load calibration outfits:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSwapItem = async (outfitId: string, category: 'top' | 'bottom' | 'shoes') => {
+    const outfit = outfits.find(o => o.id === outfitId);
+    if (!outfit) return;
+
+    setSwappingState({ outfitId, category });
+
+    try {
+      const newItem = await CalibrationService.swapOutfitItem(outfit, category, quizData);
+
+      if (newItem) {
+        setOutfits(prev => prev.map(o => {
+          if (o.id === outfitId) {
+            return {
+              ...o,
+              items: {
+                ...o.items,
+                [category]: newItem
+              }
+            };
+          }
+          return o;
+        }));
+
+        // Update cache
+        const cachedData = sessionStorage.getItem(OUTFIT_CACHE_KEY);
+        if (cachedData) {
+          try {
+            const parsed = JSON.parse(cachedData);
+            const updatedOutfits = parsed.outfits.map((o: CalibrationOutfit) => {
+              if (o.id === outfitId) {
+                return {
+                  ...o,
+                  items: {
+                    ...o.items,
+                    [category]: newItem
+                  }
+                };
+              }
+              return o;
+            });
+            sessionStorage.setItem(OUTFIT_CACHE_KEY, JSON.stringify({
+              outfits: updatedOutfits,
+              timestamp: parsed.timestamp
+            }));
+          } catch (e) {
+            console.warn('Failed to update cache:', e);
+          }
+        }
+
+        console.log(`✅ Swapped ${category} in outfit ${outfitId}:`, newItem.name);
+      }
+    } catch (err) {
+      console.error('Failed to swap item:', err);
+    } finally {
+      setSwappingState(null);
     }
   };
 
@@ -229,7 +288,9 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
             onFeedback={(feedbackType, responseTimeMs) =>
               handleFeedback(outfit.id, feedbackType, responseTimeMs)
             }
-            disabled={applying}
+            onSwapItem={(category) => handleSwapItem(outfit.id, category)}
+            swappingCategory={swappingState?.outfitId === outfit.id ? swappingState.category : null}
+            disabled={applying || (swappingState !== null && swappingState.outfitId !== outfit.id)}
           />
         ))}
       </div>
