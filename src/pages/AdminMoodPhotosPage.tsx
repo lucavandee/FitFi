@@ -530,29 +530,54 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
         hasAnonKey: !!anonKey
       });
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       const response = await fetch(`${supabaseUrl}/functions/v1/admin-upload-mood-photo`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionData.session.access_token}`,
           'apikey': anonKey
         },
-        body: formData
+        body: formData,
+        signal: controller.signal
       });
 
-      const result = await response.json();
+      clearTimeout(timeoutId);
+
+      console.log('📦 Response status:', response.status);
 
       if (!response.ok) {
-        console.error('Upload error:', result);
-        toast.error('Fout bij uploaden: ' + (result.error || 'Onbekende fout'));
+        const errorText = await response.text();
+        console.error('Upload error:', { status: response.status, body: errorText });
+
+        let errorMsg = 'Onbekende fout';
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMsg = errorJson.error || errorMsg;
+        } catch {
+          errorMsg = errorText || errorMsg;
+        }
+
+        toast.error('Fout bij uploaden: ' + errorMsg);
         setUploading(false);
         return;
       }
+
+      const result = await response.json();
+      console.log('✅ Upload success:', result);
 
       toast.success('Foto succesvol toegevoegd!');
       onSuccess();
     } catch (err) {
       console.error('Upload failed:', err);
-      toast.error('Er ging iets mis bij uploaden: ' + (err as Error).message);
+
+      if (err instanceof Error && err.name === 'AbortError') {
+        toast.error('Upload timeout (30s) - controleer je internetverbinding');
+      } else {
+        toast.error('Er ging iets mis bij uploaden: ' + (err as Error).message);
+      }
+
       setUploading(false);
     }
   };

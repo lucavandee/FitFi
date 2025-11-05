@@ -7,6 +7,8 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req: Request) => {
+  console.log('🚀 Function called:', req.method);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
@@ -14,6 +16,8 @@ Deno.serve(async (req: Request) => {
   try {
     // Get JWT from Authorization header
     const authHeader = req.headers.get('Authorization');
+    console.log('🔐 Auth header present:', !!authHeader);
+
     if (!authHeader) {
       return new Response(
         JSON.stringify({ error: 'Missing authorization header' }),
@@ -22,9 +26,24 @@ Deno.serve(async (req: Request) => {
     }
 
     // Create Supabase client with service role for admin operations
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    console.log('🔧 Env check:', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!serviceRoleKey
+    });
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      supabaseUrl,
+      serviceRoleKey,
       {
         auth: {
           autoRefreshToken: false,
@@ -35,47 +54,85 @@ Deno.serve(async (req: Request) => {
 
     // Verify the user's JWT and check if admin
     const token = authHeader.replace('Bearer ', '');
+    console.log('👤 Getting user from token...');
+
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+
+    console.log('👤 User check:', {
+      hasUser: !!user,
+      userId: user?.id?.substring(0, 8),
+      error: authError?.message
+    });
 
     if (authError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
+        JSON.stringify({ error: 'Invalid token: ' + (authError?.message || 'no user') }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Check if user is admin
+    console.log('🔍 Checking admin status...');
+
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)
       .maybeSingle();
 
-    if (profileError || !profile?.is_admin) {
+    console.log('👔 Profile check:', {
+      hasProfile: !!profile,
+      isAdmin: profile?.is_admin,
+      error: profileError?.message
+    });
+
+    if (profileError) {
+      return new Response(
+        JSON.stringify({ error: 'Profile lookup failed: ' + profileError.message }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!profile?.is_admin) {
       return new Response(
         JSON.stringify({ error: 'Not authorized - admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    console.log('✅ Admin verified, parsing form data...');
+
     // Parse multipart form data
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const gender = formData.get('gender') as string;
-    const moodTags = JSON.parse(formData.get('moodTags') as string);
-    const displayOrder = parseInt(formData.get('displayOrder') as string);
+    const moodTagsStr = formData.get('moodTags') as string;
+    const displayOrderStr = formData.get('displayOrder') as string;
 
-    if (!file || !gender || !moodTags || !displayOrder) {
+    console.log('📋 Form data:', {
+      hasFile: !!file,
+      fileName: file?.name,
+      gender,
+      hasTags: !!moodTagsStr,
+      displayOrder: displayOrderStr
+    });
+
+    if (!file || !gender || !moodTagsStr || !displayOrderStr) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    const moodTags = JSON.parse(moodTagsStr);
+    const displayOrder = parseInt(displayOrderStr);
+
     // Generate unique filename
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = `${gender}/${fileName}`;
+
+    console.log('📤 Uploading to storage:', filePath);
 
     // Upload to storage using service role (bypasses RLS)
     const fileBuffer = await file.arrayBuffer();
@@ -88,17 +145,21 @@ Deno.serve(async (req: Request) => {
       });
 
     if (uploadError) {
-      console.error('Upload error:', uploadError);
+      console.error('❌ Upload error:', uploadError);
       return new Response(
         JSON.stringify({ error: 'Upload failed: ' + uploadError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    console.log('✅ File uploaded, getting public URL...');
+
     // Get public URL
     const { data: { publicUrl } } = supabaseAdmin.storage
       .from('mood-photos')
       .getPublicUrl(filePath);
+
+    console.log('💾 Inserting into database...');
 
     // Insert into database using service role
     const { data, error: dbError } = await supabaseAdmin
@@ -114,7 +175,7 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (dbError) {
-      console.error('Database error:', dbError);
+      console.error('❌ Database error:', dbError);
       // Try to clean up uploaded file
       await supabaseAdmin.storage.from('mood-photos').remove([filePath]);
       return new Response(
@@ -123,13 +184,15 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log('✅ Success! Photo ID:', data.id);
+
     return new Response(
       JSON.stringify({ success: true, data }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (err) {
-    console.error('Function error:', err);
+    console.error('❌ Function error:', err);
     return new Response(
       JSON.stringify({ error: 'Internal server error: ' + (err as Error).message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
