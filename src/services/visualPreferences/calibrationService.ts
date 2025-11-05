@@ -34,10 +34,10 @@ export class CalibrationService {
   /**
    * Generate 3 calibration outfits based on visual preferences
    */
-  static generateCalibrationOutfits(
+  static async generateCalibrationOutfits(
     visualEmbedding: VisualPreferenceEmbedding,
     quizData?: any
-  ): CalibrationOutfit[] {
+  ): Promise<CalibrationOutfit[]> {
     // Get top 3 archetypes from visual preferences
     const topArchetypes = Object.entries(visualEmbedding)
       .sort(([, a], [, b]) => b - a)
@@ -46,7 +46,8 @@ export class CalibrationService {
     const outfits: CalibrationOutfit[] = [];
 
     // Generate 3 distinct outfits
-    topArchetypes.forEach(([mainArchetype, score], index) => {
+    for (let index = 0; index < topArchetypes.length; index++) {
+      const [mainArchetype, score] = topArchetypes[index];
       const archetypeWeights: ArchetypeWeights = {
         [mainArchetype]: score / 100,
         // Add complementary archetype
@@ -55,7 +56,7 @@ export class CalibrationService {
         } : {})
       };
 
-      const outfit = this.createOutfitFromArchetype(
+      const outfit = await this.createOutfitFromArchetype(
         mainArchetype,
         archetypeWeights,
         index,
@@ -63,17 +64,17 @@ export class CalibrationService {
       );
 
       outfits.push(outfit);
-    });
+    }
 
     return outfits;
   }
 
-  private static createOutfitFromArchetype(
+  private static async createOutfitFromArchetype(
     mainArchetype: string,
     weights: ArchetypeWeights,
     index: number,
     quizData?: any
-  ): CalibrationOutfit {
+  ): Promise<CalibrationOutfit> {
     const archetypeTemplates: Record<string, {
       colors: string[];
       occasion: string;
@@ -118,29 +119,35 @@ export class CalibrationService {
 
     const template = archetypeTemplates[mainArchetype] || archetypeTemplates['minimal'];
 
+    // Fetch real products from database
+    const [topProduct, bottomProduct, shoesProduct] = await Promise.all([
+      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender),
+      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender),
+      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender)
+    ]);
+
     return {
       id: `calibration-${index}`,
       title: `Look ${index + 1}`,
       items: {
-        // Placeholder items (in real app, these would come from product database)
-        top: {
-          name: this.getTopForArchetype(mainArchetype),
-          brand: 'Example Brand',
-          price: 79,
-          image_url: '/images/fallbacks/top.jpg'
-        },
-        bottom: {
-          name: this.getBottomForArchetype(mainArchetype),
-          brand: 'Example Brand',
-          price: 89,
-          image_url: '/images/fallbacks/bottom.jpg'
-        },
-        shoes: {
-          name: this.getShoesForArchetype(mainArchetype),
-          brand: 'Example Brand',
-          price: 129,
-          image_url: '/images/fallbacks/footwear.jpg'
-        }
+        top: topProduct ? {
+          name: topProduct.name,
+          brand: topProduct.brand || 'Fashion Brand',
+          price: topProduct.price || 79,
+          image_url: topProduct.image_url
+        } : undefined,
+        bottom: bottomProduct ? {
+          name: bottomProduct.name,
+          brand: bottomProduct.brand || 'Fashion Brand',
+          price: bottomProduct.price || 89,
+          image_url: bottomProduct.image_url
+        } : undefined,
+        shoes: shoesProduct ? {
+          name: shoesProduct.name,
+          brand: shoesProduct.brand || 'Fashion Brand',
+          price: shoesProduct.price || 129,
+          image_url: shoesProduct.image_url
+        } : undefined
       },
       archetypes: weights,
       dominantColors: template.colors,
@@ -186,6 +193,72 @@ export class CalibrationService {
       'preppy': 'Canvas Boat Shoes'
     };
     return shoes[archetype] || 'Classic Sneakers';
+  }
+
+  /**
+   * Fetch a real product from database for a specific slot
+   */
+  private static async fetchProductForSlot(
+    category: string,
+    archetype: string,
+    occasion: string,
+    gender?: string
+  ): Promise<{ name: string; brand: string; price: number; image_url: string } | null> {
+    const supabase = getSupabase();
+    if (!supabase) {
+      console.warn('⚠️ Supabase unavailable, using fallback');
+      return {
+        name: this.getFallbackName(category, archetype),
+        brand: 'Example Brand',
+        price: category === 'footwear' ? 129 : 79,
+        image_url: `/images/fallbacks/${category}.jpg`
+      };
+    }
+
+    // Build query
+    let query = supabase
+      .from('products')
+      .select('id, name, brand, price, image_url')
+      .eq('category', category)
+      .not('image_url', 'is', null)
+      .limit(10);
+
+    // Filter by gender if provided
+    if (gender) {
+      query = query.or(`gender.eq.${gender},gender.eq.unisex`);
+    }
+
+    const { data, error } = await query;
+
+    if (error || !data || data.length === 0) {
+      console.warn(`⚠️ No products found for ${category}, using fallback`);
+      return {
+        name: this.getFallbackName(category, archetype),
+        brand: 'Example Brand',
+        price: category === 'footwear' ? 129 : 79,
+        image_url: `/images/fallbacks/${category}.jpg`
+      };
+    }
+
+    // Pick a random product from the results
+    const randomProduct = data[Math.floor(Math.random() * data.length)];
+
+    return {
+      name: randomProduct.name,
+      brand: randomProduct.brand || 'Fashion Brand',
+      price: randomProduct.price || (category === 'footwear' ? 129 : 79),
+      image_url: randomProduct.image_url
+    };
+  }
+
+  /**
+   * Get fallback product name
+   */
+  private static getFallbackName(category: string, archetype: string): string {
+    if (category === 'top') return this.getTopForArchetype(archetype);
+    if (category === 'bottom') return this.getBottomForArchetype(archetype);
+    if (category === 'footwear') return this.getShoesForArchetype(archetype);
+    return 'Fashion Item';
   }
 
   /**

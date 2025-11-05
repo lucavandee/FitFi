@@ -42,13 +42,13 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           classic: 60,
           casual: 50
         };
-        const generatedOutfits = CalibrationService.generateCalibrationOutfits(
+        const generatedOutfits = await CalibrationService.generateCalibrationOutfits(
           defaultEmbedding,
           quizData
         );
         setOutfits(generatedOutfits);
       } else {
-        const generatedOutfits = CalibrationService.generateCalibrationOutfits(
+        const generatedOutfits = await CalibrationService.generateCalibrationOutfits(
           embedding,
           quizData
         );
