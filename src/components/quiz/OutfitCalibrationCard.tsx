@@ -30,11 +30,57 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-      whileHover={{ y: -4, boxShadow: 'var(--shadow-lg)' }}
-      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] overflow-hidden shadow-[var(--shadow-soft)]"
+      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lg)] transition-shadow duration-300"
     >
-      <div className="grid md:grid-cols-2 gap-6 p-6">
-        <div className="space-y-4">
+      <div className="grid md:grid-cols-[1.2fr_1fr] gap-0">
+        <div className="relative aspect-[4/5] md:aspect-auto">
+          <div className="absolute inset-0 grid grid-cols-2 gap-2 p-6">
+            {outfit.items.top && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 }}
+                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
+              >
+                <img
+                  src={outfit.items.top.image_url}
+                  alt={outfit.items.top.name}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+            {outfit.items.bottom && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
+              >
+                <img
+                  src={outfit.items.bottom.image_url}
+                  alt={outfit.items.bottom.name}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+            {outfit.items.shoes && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="col-span-2 aspect-[2/1] bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
+              >
+                <img
+                  src={outfit.items.shoes.image_url}
+                  alt={outfit.items.shoes.name}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4 p-6">
           <div className="flex items-start justify-between">
             <div>
               <h3 className="text-lg font-semibold text-[var(--color-text)]">
@@ -84,54 +130,22 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
               {outfit.explanation}
             </p>
           </div>
-        </div>
-
-        <div className="flex flex-col justify-between">
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            {outfit.items.top && (
-              <div className="aspect-square bg-[var(--color-bg)] rounded-[var(--radius-lg)] overflow-hidden">
-                <img
-                  src={outfit.items.top.image_url}
-                  alt={outfit.items.top.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            {outfit.items.bottom && (
-              <div className="aspect-square bg-[var(--color-bg)] rounded-[var(--radius-lg)] overflow-hidden">
-                <img
-                  src={outfit.items.bottom.image_url}
-                  alt={outfit.items.bottom.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            {outfit.items.shoes && (
-              <div className="aspect-square bg-[var(--color-bg)] rounded-[var(--radius-lg)] overflow-hidden col-span-2">
-                <img
-                  src={outfit.items.shoes.image_url}
-                  alt={outfit.items.shoes.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-          </div>
 
           <div className="space-y-3">
             <motion.button
               onClick={() => handleFeedback('spot_on')}
               disabled={disabled || selectedFeedback !== null}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
               animate={
                 selectedFeedback === 'spot_on'
-                  ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                  ? { scale: [1, 1.08, 1], transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] } }
                   : {}
               }
-              className={`w-full py-3 px-4 rounded-[var(--radius-xl)] font-semibold transition-all flex items-center justify-center gap-2 ${
+              className={`w-full py-4 px-4 rounded-[var(--radius-xl)] font-semibold transition-all flex items-center justify-center gap-2 relative overflow-hidden ${
                 selectedFeedback === 'spot_on'
-                  ? 'bg-green-500 text-white shadow-lg'
-                  : 'bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-green-500 hover:text-green-600'
+                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-xl shadow-green-500/30'
+                  : 'bg-white text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-green-500 hover:text-green-600 hover:shadow-md'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <motion.div
@@ -153,13 +167,13 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
               whileTap={{ scale: 0.98 }}
               animate={
                 selectedFeedback === 'maybe'
-                  ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                  ? { scale: [1, 1.05, 1], transition: { duration: 0.4 } }
                   : {}
               }
-              className={`w-full py-2 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
+              className={`w-full py-3 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
                   ? 'bg-[var(--ff-color-primary-600)] text-white shadow-lg'
-                  : 'bg-transparent text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)]'
+                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] hover:shadow-sm'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" />
@@ -173,13 +187,13 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
               whileTap={{ scale: 0.98 }}
               animate={
                 selectedFeedback === 'not_for_me'
-                  ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                  ? { scale: [1, 1.05, 1], transition: { duration: 0.4 } }
                   : {}
               }
-              className={`w-full py-2 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
+              className={`w-full py-3 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'not_for_me'
                   ? 'bg-red-500 text-white shadow-lg'
-                  : 'bg-transparent text-[var(--color-muted)] border border-[var(--color-border)] hover:border-red-500 hover:text-red-600'
+                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-red-500 hover:text-red-600 hover:shadow-sm'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <X className="w-4 h-4" />

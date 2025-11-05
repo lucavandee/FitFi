@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { CalibrationService } from '@/services/visualPreferences/calibrationService';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
@@ -136,20 +137,45 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           </span>
         </div>
 
-        <h2 className="text-3xl font-bold text-[var(--color-text)] mb-3">
+        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3">
           Zo ziet jouw stijl er volgens mij uit
         </h2>
-        <p className="text-[var(--color-muted)] max-w-2xl mx-auto">
+        <p className="text-[var(--color-muted)] max-w-2xl mx-auto text-lg">
           Nova heeft 3 outfits voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
         </p>
 
-        {feedbackCount > 0 && (
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span className="text-sm font-medium text-green-700">
-              {feedbackCount} van {outfits.length} beoordeeld
+        {/* Progress Bar */}
+        <div className="mt-6 max-w-md mx-auto">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-[var(--color-text)]">
+              Voortgang
+            </span>
+            <span className="text-sm font-medium text-[var(--ff-color-primary-700)]">
+              {feedbackCount} / {outfits.length}
             </span>
           </div>
+          <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${(feedbackCount / outfits.length) * 100}%` }}
+              transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-full"
+            />
+          </div>
+        </div>
+
+        {allRated && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/30"
+          >
+            <CheckCircle2 className="w-5 h-5" />
+            <span className="font-semibold">
+              Perfect! Alle outfits beoordeeld
+            </span>
+          </motion.div>
         )}
       </div>
 
@@ -167,11 +193,18 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       </div>
 
       {allRated && (
-        <div className="text-center">
-          <button
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-center"
+        >
+          <motion.button
             onClick={handleContinue}
             disabled={applying}
-            className="ff-btn ff-btn-primary inline-flex items-center gap-2 px-8 py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="ff-btn ff-btn-primary inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
           >
             {applying ? (
               <>
@@ -180,23 +213,27 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
               </>
             ) : (
               <>
-                Doorgaan naar resultaten
+                Bekijk je persoonlijke stijlrapport
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
-          </button>
-          <p className="text-xs text-[var(--color-muted)] mt-3">
+          </motion.button>
+          <p className="text-sm text-[var(--color-muted)] mt-4">
             Je feedback wordt gebruikt om je aanbevelingen te verfijnen
           </p>
-        </div>
+        </motion.div>
       )}
 
       {!allRated && feedbackCount > 0 && (
-        <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
           <p className="text-sm text-[var(--color-muted)]">
-            Beoordeel alle outfits om door te gaan
+            Nog {outfits.length - feedbackCount} {outfits.length - feedbackCount === 1 ? 'outfit' : 'outfits'} te beoordelen
           </p>
-        </div>
+        </motion.div>
       )}
     </div>
   );
