@@ -518,7 +518,7 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-      const response = await fetch(`${supabaseUrl}/functions/v1/analyze-mood-photo`, {
+      const response = await fetch(`${supabaseUrl}/functions/v1/ai-mood-tags`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionData.session.access_token}`,
