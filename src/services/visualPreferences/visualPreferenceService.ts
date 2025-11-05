@@ -156,6 +156,7 @@ export class VisualPreferenceService {
   ): Promise<VisualPreferenceEmbedding | null> {
     const client = this.getClient();
     if (!client) {
+      console.warn('⚠️ No Supabase client for visual embedding');
       return null;
     }
 
@@ -168,17 +169,31 @@ export class VisualPreferenceService {
     } else if (sessionId) {
       query = query.eq('session_id', sessionId);
     } else {
+      console.warn('⚠️ No userId or sessionId provided for visual embedding');
       return null;
     }
 
     const { data, error } = await query.maybeSingle();
 
     if (error) {
-      console.error('Failed to fetch visual embedding:', error);
+      console.error('❌ Failed to fetch visual embedding from style_profiles:', error);
       return null;
     }
 
-    return data?.visual_preference_embedding || null;
+    if (!data) {
+      console.warn('⚠️ No style_profile found - user may not have completed swipes yet');
+      return null;
+    }
+
+    const embedding = data.visual_preference_embedding;
+
+    if (!embedding || Object.keys(embedding).length === 0) {
+      console.warn('⚠️ Empty visual embedding in profile - computing from swipes...');
+      return await this.computeVisualEmbedding(userId, sessionId);
+    }
+
+    console.log('✅ Visual embedding loaded from profile:', embedding);
+    return embedding;
   }
 
   static async markSwipeSessionComplete(

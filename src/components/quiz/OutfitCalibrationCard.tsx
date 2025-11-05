@@ -25,6 +25,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
     .filter(Boolean)
     .reduce((sum, item) => sum + (item?.price || 0), 0);
 
+  const formattedTotal = Math.round(totalPrice);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -93,7 +95,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
             <div className="text-right">
               <div className="text-sm text-[var(--color-muted)]">Totaal</div>
               <div className="text-lg font-semibold text-[var(--color-text)]">
-                €{totalPrice}
+                €{formattedTotal}
               </div>
             </div>
           </div>
@@ -207,6 +209,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
 }
 
 function OutfitItem({ name, brand, price }: { name: string; brand: string; price: number }) {
+  const formattedPrice = Math.round(price * 100) / 100;
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -10 }}
@@ -218,7 +222,7 @@ function OutfitItem({ name, brand, price }: { name: string; brand: string; price
         <div className="font-medium text-[var(--color-text)]">{name}</div>
         <div className="text-[var(--color-muted)] text-xs mt-0.5">{brand}</div>
       </div>
-      <div className="text-[var(--color-text)] font-medium">€{price}</div>
+      <div className="text-[var(--color-text)] font-medium">€{formattedPrice.toFixed(2)}</div>
     </motion.div>
   );
 }
