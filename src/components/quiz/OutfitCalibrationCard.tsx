@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, X, Minus } from 'lucide-react';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
+import SmartImage from '@/components/ui/SmartImage';
 
 interface OutfitCalibrationCardProps {
   outfit: CalibrationOutfit;
@@ -44,7 +45,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
                 transition={{ delay: 0.1 }}
                 className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
               >
-                <img
+                <SmartImage
                   src={outfit.items.top.image_url}
                   alt={outfit.items.top.name}
                   className="w-full h-full object-cover"
@@ -58,7 +59,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
                 transition={{ delay: 0.2 }}
                 className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
               >
-                <img
+                <SmartImage
                   src={outfit.items.bottom.image_url}
                   alt={outfit.items.bottom.name}
                   className="w-full h-full object-cover"
@@ -72,7 +73,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, disabled }: OutfitCa
                 transition={{ delay: 0.3 }}
                 className="col-span-2 aspect-[2/1] bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
               >
-                <img
+                <SmartImage
                   src={outfit.items.shoes.image_url}
                   alt={outfit.items.shoes.name}
                   className="w-full h-full object-cover"

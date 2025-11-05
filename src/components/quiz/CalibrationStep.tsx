@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
 import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -12,15 +12,22 @@ interface CalibrationStepProps {
   quizData?: any;
 }
 
+const OUTFIT_CACHE_KEY = 'fitfi_calibration_outfits';
+const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
 export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) {
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const { user } = useUser();
+  const loadedRef = useRef(false);
 
   useEffect(() => {
-    loadCalibrationOutfits();
+    if (!loadedRef.current) {
+      loadedRef.current = true;
+      loadCalibrationOutfits();
+    }
   }, []);
 
   const loadCalibrationOutfits = async () => {
@@ -28,11 +35,31 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       const userId = user?.id;
       const sessionId = sessionStorage.getItem('fitfi_session_id');
 
+      // Check cache first
+      const cachedData = sessionStorage.getItem(OUTFIT_CACHE_KEY);
+      if (cachedData) {
+        try {
+          const { outfits: cachedOutfits, timestamp } = JSON.parse(cachedData);
+          const age = Date.now() - timestamp;
+
+          if (age < CACHE_DURATION_MS && cachedOutfits.length === 3) {
+            console.log('✅ Using cached calibration outfits');
+            setOutfits(cachedOutfits);
+            setLoading(false);
+            return;
+          }
+        } catch (parseErr) {
+          console.warn('Failed to parse cached outfits, regenerating...');
+        }
+      }
+
       // Fetch visual preference embedding
       const embedding = await VisualPreferenceService.getVisualEmbeddingFromProfile(
         userId,
         sessionId || undefined
       );
+
+      let generatedOutfits: CalibrationOutfit[];
 
       if (!embedding || Object.keys(embedding).length === 0) {
         console.warn('No visual preferences found, using defaults');
@@ -42,17 +69,28 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           classic: 60,
           casual: 50
         };
-        const generatedOutfits = await CalibrationService.generateCalibrationOutfits(
+        generatedOutfits = await CalibrationService.generateCalibrationOutfits(
           defaultEmbedding,
           quizData
         );
-        setOutfits(generatedOutfits);
       } else {
-        const generatedOutfits = await CalibrationService.generateCalibrationOutfits(
+        generatedOutfits = await CalibrationService.generateCalibrationOutfits(
           embedding,
           quizData
         );
-        setOutfits(generatedOutfits);
+      }
+
+      setOutfits(generatedOutfits);
+
+      // Cache for next time
+      try {
+        sessionStorage.setItem(OUTFIT_CACHE_KEY, JSON.stringify({
+          outfits: generatedOutfits,
+          timestamp: Date.now()
+        }));
+        console.log('✅ Cached calibration outfits');
+      } catch (cacheErr) {
+        console.warn('Failed to cache outfits:', cacheErr);
       }
     } catch (err) {
       console.error('Failed to load calibration outfits:', err);
@@ -102,6 +140,10 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
         userId,
         !userId ? sessionId || undefined : undefined
       );
+
+      // Clear cache after successful completion
+      sessionStorage.removeItem(OUTFIT_CACHE_KEY);
+      console.log('✅ Cleared calibration cache after completion');
 
       // Short delay for UI feedback
       setTimeout(() => {

@@ -215,13 +215,16 @@ export class CalibrationService {
       };
     }
 
+    // Map occasion to style attributes
+    const styleKeywords = this.getStyleKeywordsForArchetype(archetype, occasion);
+
     // Build query
     let query = supabase
       .from('products')
-      .select('id, name, brand, price, image_url')
+      .select('id, name, brand, price, image_url, style, tags')
       .eq('category', category)
       .not('image_url', 'is', null)
-      .limit(10);
+      .limit(50);
 
     // Filter by gender if provided
     if (gender) {
@@ -240,15 +243,78 @@ export class CalibrationService {
       };
     }
 
-    // Pick a random product from the results
-    const randomProduct = data[Math.floor(Math.random() * data.length)];
+    // Score products based on style match
+    const scoredProducts = data.map(product => {
+      let score = 0;
+
+      // Match on style field
+      if (product.style) {
+        const productStyle = product.style.toLowerCase();
+        styleKeywords.forEach(keyword => {
+          if (productStyle.includes(keyword.toLowerCase())) {
+            score += 3;
+          }
+        });
+      }
+
+      // Match on tags
+      if (product.tags && Array.isArray(product.tags)) {
+        const productTags = product.tags.map((t: string) => t.toLowerCase());
+        styleKeywords.forEach(keyword => {
+          if (productTags.some(tag => tag.includes(keyword.toLowerCase()))) {
+            score += 2;
+          }
+        });
+      }
+
+      // Match archetype in name (bonus)
+      if (product.name.toLowerCase().includes(archetype.replace(/_/g, ' ').toLowerCase())) {
+        score += 1;
+      }
+
+      return { ...product, score };
+    });
+
+    // Sort by score and pick from top matches
+    scoredProducts.sort((a, b) => b.score - a.score);
+
+    // Take top 10 or all if less, then pick random
+    const topMatches = scoredProducts.slice(0, Math.min(10, scoredProducts.length));
+    const selectedProduct = topMatches[Math.floor(Math.random() * topMatches.length)];
+
+    console.log(`✅ Product match for ${category} (archetype: ${archetype}, score: ${selectedProduct.score}):`, selectedProduct.name);
 
     return {
-      name: randomProduct.name,
-      brand: randomProduct.brand || 'Fashion Brand',
-      price: randomProduct.price || (category === 'footwear' ? 129 : 79),
-      image_url: randomProduct.image_url
+      name: selectedProduct.name,
+      brand: selectedProduct.brand || 'Fashion Brand',
+      price: selectedProduct.price || (category === 'footwear' ? 129 : 79),
+      image_url: selectedProduct.image_url
     };
+  }
+
+  /**
+   * Get style keywords for archetype and occasion
+   */
+  private static getStyleKeywordsForArchetype(archetype: string, occasion: string): string[] {
+    const archetypeKeywords: Record<string, string[]> = {
+      'scandi_minimal': ['minimal', 'clean', 'simple', 'nordic', 'scandinavian', 'basic', 'essential'],
+      'italian_smart_casual': ['smart', 'casual', 'elegant', 'refined', 'structured', 'tailored', 'classic'],
+      'street_refined': ['street', 'urban', 'modern', 'contemporary', 'oversized', 'relaxed', 'premium'],
+      'classic': ['classic', 'timeless', 'traditional', 'formal', 'dress', 'oxford', 'elegant'],
+      'minimal': ['minimal', 'minimalist', 'basic', 'essential', 'clean', 'simple', 'pure'],
+      'bohemian': ['bohemian', 'boho', 'free', 'flowing', 'relaxed', 'layered', 'ethnic'],
+      'preppy': ['preppy', 'collegiate', 'polo', 'nautical', 'ivy', 'classic', 'stripe']
+    };
+
+    const occasionKeywords: Record<string, string[]> = {
+      'work': ['formal', 'business', 'office', 'professional', 'dress', 'smart'],
+      'casual': ['casual', 'everyday', 'relaxed', 'comfortable', 'leisure', 'weekend']
+    };
+
+    const keywords = archetypeKeywords[archetype] || ['casual', 'basic'];
+    const occasionWords = occasionKeywords[occasion] || [];
+
+    return [...keywords, ...occasionWords];
   }
 
   /**
