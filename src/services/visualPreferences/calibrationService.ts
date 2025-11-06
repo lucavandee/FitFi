@@ -256,16 +256,14 @@ export class CalibrationService {
     // Calculate price range based on budget
     const priceRange = this.getPriceRangeForCategory(category, budgetRange);
 
-    // Build query
+    // Build query - PREFER Brams Fruit first
     let query = supabase
       .from('products')
-      .select('id, name, brand, price, image_url, style, tags')
+      .select('id, name, brand, price, image_url, style, tags, gender')
       .eq('category', category)
-      .limit(50);
+      .limit(100);
 
-    // Note: We don't filter NULL image_urls - SmartImage component handles fallback gracefully
-
-    // Filter by gender if provided
+    // CRITICAL: Filter by gender FIRST (before brand preference)
     if (gender) {
       query = query.or(`gender.eq.${gender},gender.eq.unisex`);
     }
@@ -292,9 +290,14 @@ export class CalibrationService {
     // Get brand affinity data (if available)
     const brandAffinity = await this.getBrandAffinityMap(supabase);
 
-    // Score products based on style match + brand affinity
+    // Score products based on style match + brand affinity + BRAMS FRUIT PREFERENCE
     const scoredProducts = data.map(product => {
       let score = 0;
+
+      // CRITICAL: Brams Fruit gets massive boost
+      if (product.brand === 'Brams Fruit') {
+        score += 100;
+      }
 
       // Match on style field
       if (product.style) {
@@ -338,7 +341,7 @@ export class CalibrationService {
     const topMatches = scoredProducts.slice(0, Math.min(10, scoredProducts.length));
     const selectedProduct = topMatches[Math.floor(Math.random() * topMatches.length)];
 
-    console.log(`✅ Product match for ${category} (archetype: ${archetype}, score: ${selectedProduct.score}):`, selectedProduct.name);
+    console.log(`✅ Product match for ${category} (archetype: ${archetype}, score: ${selectedProduct.score}):`, selectedProduct.name, 'by', selectedProduct.brand);
 
     return {
       name: selectedProduct.name,
