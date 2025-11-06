@@ -261,8 +261,9 @@ export class CalibrationService {
       .from('products')
       .select('id, name, brand, price, image_url, style, tags')
       .eq('category', category)
-      .not('image_url', 'is', null)
       .limit(50);
+
+    // Note: We don't filter NULL image_urls - SmartImage component handles fallback gracefully
 
     // Filter by gender if provided
     if (gender) {
