@@ -1,22 +1,49 @@
 import React from "react";
 
 type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
-  fallbackColor?: string; // optioneel
+  fallbackColor?: string;
 };
 
-const SmartImage: React.FC<Props> = ({ fallbackColor, style, ...rest }) => {
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  top: "linear-gradient(135deg, #F5F0E8 0%, #E8DCC8 100%)",
+  bottom: "linear-gradient(135deg, #D8CABA 0%, #C4B5A0 100%)",
+  footwear: "linear-gradient(135deg, #A6886A 0%, #8B7355 100%)",
+  outerwear: "linear-gradient(135deg, #E8DCC8 0%, #D8CABA 100%)",
+  accessory: "linear-gradient(135deg, #F5F0E8 0%, #E8DCC8 100%)",
+  default: "linear-gradient(135deg, #F5F0E8 0%, #D8CABA 100%)"
+};
+
+function getCategoryFromUrl(src?: string): string {
+  if (!src) return "default";
+  if (src.includes("/top.jpg") || src.includes("category=top")) return "top";
+  if (src.includes("/bottom.jpg") || src.includes("category=bottom")) return "bottom";
+  if (src.includes("/footwear.jpg") || src.includes("category=footwear")) return "footwear";
+  if (src.includes("/outerwear.jpg") || src.includes("category=outerwear")) return "outerwear";
+  if (src.includes("/accessory.jpg") || src.includes("category=accessory")) return "accessory";
+  return "default";
+}
+
+const SmartImage: React.FC<Props> = ({ fallbackColor, style, src, alt, ...rest }) => {
   const [err, setErr] = React.useState(false);
 
   if (err) {
+    const category = getCategoryFromUrl(src);
+    const gradient = CATEGORY_GRADIENTS[category] || CATEGORY_GRADIENTS.default;
+
     return (
       <div
         aria-hidden="true"
+        role="img"
+        aria-label={alt || "Product afbeelding"}
         style={{
           ...style,
           width: "100%",
           height: "100%",
-          background: fallbackColor ?? "linear-gradient(180deg,#0E2337 0%,#0C1A2A 100%)",
-          borderRadius: "12px"
+          background: fallbackColor ?? gradient,
+          borderRadius: "12px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}
       />
     );
@@ -26,7 +53,10 @@ const SmartImage: React.FC<Props> = ({ fallbackColor, style, ...rest }) => {
     <img
       loading="lazy"
       decoding="async"
+      src={src}
+      alt={alt}
       onError={() => setErr(true)}
+      style={style}
       {...rest}
     />
   );

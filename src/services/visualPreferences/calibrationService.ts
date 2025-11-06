@@ -290,8 +290,24 @@ export class CalibrationService {
     // Get brand affinity data (if available)
     const brandAffinity = await this.getBrandAffinityMap(supabase);
 
+    // CRITICAL: Filter out products that don't match gender (safety check)
+    const genderFilteredData = data.filter(product => {
+      if (!gender) return true;
+      return product.gender === gender || product.gender === 'unisex';
+    });
+
+    if (genderFilteredData.length === 0) {
+      console.warn(`⚠️ No gender-appropriate products found for ${category} (gender: ${gender}), using fallback`);
+      return {
+        name: this.getFallbackName(category, archetype),
+        brand: 'Example Brand',
+        price: category === 'footwear' ? 129 : 79,
+        image_url: `/images/fallbacks/${category}.jpg`
+      };
+    }
+
     // Score products based on style match + brand affinity + BRAMS FRUIT PREFERENCE
-    const scoredProducts = data.map(product => {
+    const scoredProducts = genderFilteredData.map(product => {
       let score = 0;
 
       // CRITICAL: Brams Fruit gets massive boost
@@ -337,8 +353,22 @@ export class CalibrationService {
     // Sort by score and pick from top matches
     scoredProducts.sort((a, b) => b.score - a.score);
 
+    // CRITICAL: Filter out products that exceed budget (if specified)
+    let budgetFilteredProducts = scoredProducts;
+    if (priceRange) {
+      budgetFilteredProducts = scoredProducts.filter(p =>
+        parseFloat(p.price) >= priceRange.min && parseFloat(p.price) <= priceRange.max
+      );
+
+      // If no products in budget, relax constraint but warn
+      if (budgetFilteredProducts.length === 0) {
+        console.warn(`⚠️ No products in budget range €${priceRange.min}-€${priceRange.max}, relaxing constraint`);
+        budgetFilteredProducts = scoredProducts;
+      }
+    }
+
     // Take top 10 or all if less, then pick random
-    const topMatches = scoredProducts.slice(0, Math.min(10, scoredProducts.length));
+    const topMatches = budgetFilteredProducts.slice(0, Math.min(10, budgetFilteredProducts.length));
     const selectedProduct = topMatches[Math.floor(Math.random() * topMatches.length)];
 
     console.log(`✅ Product match for ${category} (archetype: ${archetype}, score: ${selectedProduct.score}):`, selectedProduct.name, 'by', selectedProduct.brand);
