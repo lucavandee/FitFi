@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import { Check, Sparkles, Clock, Shield, Target, TrendingUp, Zap } from "lucide-react";
+import { HeroMinimal } from "@/components/landing/HeroMinimal";
 import { StyleReportPreview } from "@/components/landing/StyleReportPreview";
 
 export default function LandingPage() {
@@ -24,110 +25,8 @@ export default function LandingPage() {
         </script>
       </Helmet>
 
-      {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-
-        <div className="ff-container relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-            <div className="space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] shadow-sm">
-                <span className="w-2 h-2 bg-[var(--ff-color-primary-600)] rounded-full animate-pulse" />
-                GRATIS AI STYLE REPORT
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-[var(--color-text)] leading-[1.1]">
-                Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> over je zegt
-              </h1>
-
-              <p className="text-lg sm:text-xl lg:text-2xl text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
-                Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, kleuren en 6–12 outfits.
-                <strong className="text-[var(--color-text)] font-semibold"> Direct toepasbaar.</strong>
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <NavLink
-                  to="/onboarding"
-                  data-event="cta_start_free_home_hero"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-600)] text-white font-semibold rounded-[var(--radius-xl)] hover:bg-[var(--ff-color-primary-700)] transition-colors shadow-lg"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Start 2-min quiz
-                </NavLink>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 pt-8">
-                <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[var(--ff-color-success-600)] flex items-center justify-center shadow-xl">
-                    <Check className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">100% Gratis</div>
-                </div>
-                <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[var(--ff-color-primary-600)] flex items-center justify-center shadow-xl">
-                    <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">Privacy-first</div>
-                </div>
-                <div className="flex flex-col items-center lg:items-start gap-3">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl">
-                    <Clock className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)]">2 min setup</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative flex justify-center lg:justify-end">
-              <div className="relative group w-full max-w-lg mx-auto lg:mx-0">
-                <div className="absolute -inset-4 bg-gradient-to-r from-[var(--ff-color-primary-500)] via-[var(--ff-color-turquoise)] to-[var(--ff-color-accent-500)] rounded-3xl opacity-20 blur-2xl" />
-
-                <figure className="relative group-hover:scale-[1.02] transition-transform duration-500 mb-24 lg:mb-28">
-                  <StyleReportPreview />
-
-                  <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 hidden lg:flex gap-4 items-center">
-                    <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float">
-                      <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] rounded-xl flex items-center justify-center shadow-lg">
-                          <Target className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-xs text-[var(--color-text)]">Archetype</div>
-                          <div className="text-xs text-gray-600">Modern Minimal</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-2000">
-                      <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-500)] rounded-xl flex items-center justify-center shadow-lg">
-                          <Sparkles className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-xs text-[var(--color-text)]">AI Powered</div>
-                          <div className="text-xs text-gray-600">Smart matching</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="backdrop-blur-md bg-white/90 rounded-2xl px-6 py-3 shadow-2xl border border-[var(--color-border)] animate-float animation-delay-4000">
-                      <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-turquoise)] to-[var(--ff-color-primary-500)] rounded-xl flex items-center justify-center shadow-lg">
-                          <Zap className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-xs text-[var(--color-text)]">Outfits</div>
-                          <div className="text-xs text-gray-600">6-12 looks</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </figure>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* HERO SECTION - Minimal LCP-optimized */}
+      <HeroMinimal />
 
       {/* FEATURES BENTO GRID */}
       <section className="ff-section py-24">
