@@ -229,13 +229,36 @@ export default function AdminBramsFruitPage() {
 
           {/* Image Upload */}
           <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
-              Upload Product Images
-            </h2>
-            <p className="text-sm text-[var(--color-text-secondary)] mb-4">
-              Upload product images. File names should match the style code (e.g., "900-Black.jpg").
-              Multiple files can be selected at once.
-            </p>
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--color-text)]">
+                  Upload Product Images
+                </h2>
+                <p className="text-sm text-[var(--color-text-secondary)] mt-2">
+                  Upload product images. File names should match the style code (e.g., "900-Black.jpg").
+                  Multiple files can be selected at once.
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/admin/images')}
+                className="flex-shrink-0 px-4 py-2 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
+              >
+                → Nieuwe Image Manager
+              </button>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-900 font-medium">
+                💡 <strong>Nieuw:</strong> Gebruik de nieuwe{' '}
+                <button
+                  onClick={() => navigate('/admin/images')}
+                  className="underline hover:no-underline font-semibold"
+                >
+                  Image Manager
+                </button>
+                {' '}voor bulk uploads met drag & drop, SKU auto-detectie en real-time validatie!
+              </p>
+            </div>
 
             <label className="block">
               <input
