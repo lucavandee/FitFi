@@ -24,9 +24,7 @@ function useLockBody(lock: boolean) {
 
 const links: Array<{ to: string; label: string }> = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
-  { to: "/prijzen", label: "Prijzen" },
-  { to: "/over-ons", label: "Over ons" },
-  { to: "/blog", label: "Blog" },
+  { to: "/results", label: "Voorbeeld" },
   { to: "/veelgestelde-vragen", label: "FAQ" },
 ];
 
@@ -78,58 +76,60 @@ export default function Navbar() {
           <span className="text-base font-semibold tracking-wide">FitFi</span>
         </a>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-2" aria-label="Hoofdmenu">
-          {links.map((l) => (
-            <NavChip key={l.to} to={l.to} label={l.label} />
-          ))}
-        </nav>
+        {/* Desktop nav - Right aligned */}
+        <div className="hidden md:flex items-center gap-2 ml-auto">
+          <nav className="flex items-center gap-2" aria-label="Hoofdmenu">
+            {links.map((l) => (
+              <NavChip key={l.to} to={l.to} label={l.label} />
+            ))}
+          </nav>
 
-        {/* CTA's + Mobile toggle */}
-        <div className="flex items-center gap-2">
-          {!isAuthed ? (
-            <>
-              <a href="/inloggen" className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
-                Log in
-              </a>
-              <a href="/results" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
-                Start gratis
-              </a>
-            </>
-          ) : (
-            <>
-              <a href="/dashboard" className="hidden sm:inline-flex ff-btn ff-btn-primary h-9" data-event="nav_dashboard">
-                Dashboard
-              </a>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="hidden sm:inline-flex ff-btn ff-btn-secondary h-9"
-                data-event="nav_logout"
-              >
-                Uitloggen
-              </button>
-              <div
-                aria-label="Account"
-                className="hidden sm:inline-flex items-center justify-center h-9 w-9 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)]"
-              >
-                <span className="text-sm font-semibold">{userInitial}</span>
-              </div>
-            </>
-          )}
-
-          {/* Mobile toggle */}
-          <button
-            type="button"
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)]"
-            aria-label={open ? "Menu sluiten" : "Menu openen"}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
-          </button>
+          {/* CTA's */}
+          <div className="flex items-center gap-2">
+            {!isAuthed ? (
+              <>
+                <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
+                  Inloggen
+                </a>
+                <a href="/onboarding" className="inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
+                  Begin gratis
+                </a>
+              </>
+            ) : (
+              <>
+                <a href="/dashboard" className="inline-flex ff-btn ff-btn-primary h-9" data-event="nav_dashboard">
+                  Dashboard
+                </a>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="inline-flex ff-btn ff-btn-secondary h-9"
+                  data-event="nav_logout"
+                >
+                  Uitloggen
+                </button>
+                <div
+                  aria-label="Account"
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)]"
+                >
+                  <span className="text-sm font-semibold">{userInitial}</span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
+
+        {/* Mobile toggle */}
+        <button
+          type="button"
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)] ml-2"
+          aria-label={open ? "Menu sluiten" : "Menu openen"}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
+        </button>
       </div>
 
       {/* Mobile sheet */}

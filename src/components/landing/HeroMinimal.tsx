@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ArrowRight, Shield, Zap, BookOpen } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
+import { events } from '@/utils/ga4';
 
 export function HeroMinimal() {
   const { user } = useUser();
@@ -8,11 +9,16 @@ export function HeroMinimal() {
 
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    events.cta_click_hero_primary('A');
     if (user) {
       navigate('/onboarding');
     } else {
       navigate('/register');
     }
+  };
+
+  const handleExampleClick = () => {
+    events.cta_click_hero_secondary('A');
   };
 
   return (
@@ -50,6 +56,7 @@ export function HeroMinimal() {
 
               <NavLink
                 to="/hoe-het-werkt"
+                onClick={handleExampleClick}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-[var(--color-border)] hover:border-[var(--ff-color-primary-700)] text-[var(--color-text)] rounded-[var(--radius-xl)] font-semibold transition-all hover:scale-[1.02]"
               >
                 Bekijk voorbeeld
