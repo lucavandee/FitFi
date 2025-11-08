@@ -1,9 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Sparkles, CheckCircle, Eye } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle, Eye, Share2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { getSeedOutfits } from "@/lib/quiz/seeds";
-import { OutfitVisualCompact } from "@/components/outfits/OutfitVisual";
 import type { ColorProfile } from "@/lib/quiz/types";
 
 const DEMO_COLOR_PROFILE: ColorProfile = {
@@ -26,6 +26,31 @@ export default function ResultsPreviewPage() {
   const seeds = React.useMemo(() => {
     return getSeedOutfits(DEMO_COLOR_PROFILE, DEMO_ARCHETYPE);
   }, []);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = "Bekijk dit FitFi voorbeeldrapport";
+    const text = "Ontdek hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die écht bij je passen.";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+        toast.success("Gedeeld!");
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          console.error("Share error:", err);
+        }
+      }
+    } else if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link gekopieerd!");
+      } catch (err) {
+        console.error("Clipboard error:", err);
+        toast.error("Kon link niet kopiëren");
+      }
+    }
+  };
 
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
@@ -133,33 +158,76 @@ export default function ResultsPreviewPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ff-color-text)]">
               Jouw outfit-aanbevelingen
             </h2>
-            <p className="text-lg text-[var(--color-text)]/70">
+            <p className="text-lg text-[var(--color-text)]/70 mb-4">
               Deze looks zijn speciaal samengesteld voor jouw stijlprofiel
             </p>
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] text-[var(--color-text)] rounded-lg font-semibold text-sm transition-all hover:scale-105"
+            >
+              <Share2 className="w-4 h-4" />
+              Deel dit voorbeeld
+            </button>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {seeds.slice(0, 6).map((outfit, idx) => (
               <div
                 key={idx}
-                className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
+                className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02] animate-in fade-in slide-in-from-bottom-4"
+                style={{ animationDelay: `${idx * 100}ms` }}
               >
                 {/* Outfit Visual */}
-                <div className="aspect-[3/4] bg-[var(--color-bg-subtle)] p-6">
-                  <OutfitVisualCompact outfit={outfit} />
+                <div className="aspect-[3/4] bg-gradient-to-br from-[var(--color-bg-subtle)] to-[var(--ff-color-primary-50)] p-6 relative overflow-hidden">
+                  {outfit.pieces && outfit.pieces.length > 0 ? (
+                    <div className="space-y-6 flex flex-col items-center justify-center h-full">
+                      {outfit.pieces.slice(0, 3).map((piece, pieceIdx) => (
+                        <div key={pieceIdx} className="flex flex-col items-center group/piece hover:scale-110 transition-transform duration-200 cursor-pointer">
+                          <div
+                            className="w-20 h-20 rounded-full shadow-lg mb-2 border-4 border-white transition-all group-hover/piece:shadow-2xl group-hover/piece:w-24 group-hover/piece:h-24"
+                            style={{ backgroundColor: piece.color }}
+                          />
+                          <span className="text-xs font-semibold text-[var(--color-text)]/70 capitalize opacity-0 group-hover/piece:opacity-100 transition-opacity">
+                            {piece.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center space-y-3">
+                        <div className="w-20 h-20 mx-auto rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <Sparkles className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
+                        </div>
+                        <p className="text-sm font-medium text-[var(--color-text)]/70">
+                          {outfit.vibe || "Outfit"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--ff-color-primary-600)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
 
                 {/* Outfit Info */}
                 <div className="p-6 space-y-3">
-                  <h3 className="font-semibold text-lg text-[var(--ff-color-text)]">
-                    {outfit.name || `Outfit ${idx + 1}`}
+                  <h3 className="font-semibold text-lg text-[var(--ff-color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors">
+                    {outfit.title || `Outfit ${idx + 1}`}
                   </h3>
                   <p className="text-sm text-[var(--color-text)]/70 line-clamp-2">
-                    {outfit.explanation || "Een stijlvolle combinatie die perfect past bij jouw profiel."}
+                    {outfit.notes || "Een stijlvolle combinatie die perfect past bij jouw profiel."}
                   </p>
-                  <div className="flex items-center gap-2 text-sm text-[var(--ff-color-primary-600)] font-medium">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Matcht met jouw stijl</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-[var(--ff-color-primary-600)] font-medium">
+                      <Sparkles className="w-4 h-4" />
+                      <span>{outfit.vibe || "Perfect match"}</span>
+                    </div>
+                    {outfit.tags && outfit.tags.length > 0 && (
+                      <span className="text-xs px-2 py-1 bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-full font-medium">
+                        {outfit.tags[0]}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
