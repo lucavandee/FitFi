@@ -52,21 +52,33 @@ export function FeatureBlocksV4() {
             {/* Visual Element */}
             <div className={`relative ${feature.reversed ? 'lg:col-start-2' : ''}`}>
 
-              {/* Main gradient block */}
+              {/* Main visual block */}
               <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.visualGradient}`}></div>
+                {/* For "Resultaat in 2 minuten" feature: show iPhone image, otherwise gradient */}
+                {index === 1 ? (
+                  <img
+                    src="/images/0b7da518-a822-4b0b-aa3c-2bb819a78d1e.webp"
+                    alt="FitFi app op iPhone met outfit voorbeelden"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${feature.visualGradient}`}></div>
 
-                {/* Pattern overlay */}
-                <div className="absolute inset-0 opacity-20" style={{
-                  backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px)`
-                }}></div>
+                    {/* Pattern overlay */}
+                    <div className="absolute inset-0 opacity-20" style={{
+                      backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px)`
+                    }}></div>
 
-                {/* Large icon in center */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-48 h-48 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center border-4 border-white/30 rotate-12 shadow-2xl">
-                    <feature.icon className="w-24 h-24 text-white -rotate-12" strokeWidth={1.5} />
-                  </div>
-                </div>
+                    {/* Large icon in center */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-48 h-48 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center border-4 border-white/30 rotate-12 shadow-2xl">
+                        <feature.icon className="w-24 h-24 text-white -rotate-12" strokeWidth={1.5} />
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Floating stats card */}
                 <div className="absolute -bottom-8 -right-8 bg-white rounded-3xl shadow-2xl p-8 border-2 border-[var(--color-border)]">
