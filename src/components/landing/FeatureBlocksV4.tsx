@@ -1,4 +1,5 @@
 import { Palette, Zap } from 'lucide-react';
+import SmartImage from '@/components/ui/SmartImage';
 
 const features = [
   {
@@ -56,18 +57,16 @@ export function FeatureBlocksV4() {
               <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl">
                 {/* Use specific images for each feature */}
                 {index === 0 ? (
-                  <img
+                  <SmartImage
                     src="/images/f0d15c22-1ffb-46cd-9df4-904d03748413.webp"
                     alt="Minimalistisch design met zachte kleuren en vinkjes"
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 ) : index === 1 ? (
-                  <img
+                  <SmartImage
                     src="/images/0b7da518-a822-4b0b-aa3c-2bb819a78d1e.webp"
                     alt="FitFi app op iPhone met outfit voorbeelden"
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 ) : (
                   <>
