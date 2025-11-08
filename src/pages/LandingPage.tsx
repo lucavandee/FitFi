@@ -4,10 +4,8 @@ import { HeroV3 } from "@/components/landing/HeroV3";
 import { SocialProofV3 } from "@/components/landing/SocialProofV3";
 import { RealOutfitShowcase } from "@/components/landing/RealOutfitShowcase";
 import { FeatureBlocksV4 } from "@/components/landing/FeatureBlocksV4";
-import { FAQVisual } from "@/components/landing/FAQVisual";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { StickyCTA } from "@/components/landing/StickyCTA";
-import "@/styles/landing-animations.css";
 
 export default function LandingPage() {
   return (
@@ -61,9 +59,6 @@ export default function LandingPage() {
 
       {/* FEATURE BLOCKS V4 - Reduced to 2 (Color + Speed) */}
       <FeatureBlocksV4 />
-
-      {/* FAQ - Visual accordion */}
-      <FAQVisual />
 
       {/* FINAL CTA - Big conversion push */}
       <FinalCTA />
