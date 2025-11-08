@@ -23,7 +23,7 @@ export default function LandingPage() {
           property="og:description"
           content="AI vindt wat past. Style Report in 2 minuten, gratis."
         />
-        <meta property="og:image" content="/images/ChatGPT Image 8 nov 2025, 12_26_16.webp" />
+        <meta property="og:image" content="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp" />
         <meta property="og:type" content="website" />
 
         <script type="application/ld+json">
