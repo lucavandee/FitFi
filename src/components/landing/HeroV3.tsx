@@ -21,23 +21,18 @@ export function HeroV3() {
   return (
     <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[var(--color-bg)]">
 
-      {/* Background - Using local hero image */}
+      {/* Background - Premium couple with phone showing outfit */}
       <div className="absolute inset-0">
-        <picture>
-          <source media="(min-width: 1024px)" srcSet="/hero/hero-style-report-lg.webp" />
-          <source media="(min-width: 768px)" srcSet="/hero/hero-style-report-md.webp" />
-          <source media="(min-width: 640px)" srcSet="/hero/hero-style-report-sm.webp" />
-          <img
-            src="/hero/hero-style-report-xs.webp"
-            alt="Style Report Preview"
-            className="w-full h-full object-cover object-center"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </picture>
+        <img
+          src="/images/ChatGPT Image 8 nov 2025, 12_26_16.webp"
+          alt="Stijlvolle kleding en AI outfit preview op telefoon"
+          className="w-full h-full object-cover object-center"
+          loading="eager"
+          fetchPriority="high"
+        />
 
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
+        {/* Subtle overlay for text readability - lighter since image is already neutral tones */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
       </div>
 
       {/* Content */}
