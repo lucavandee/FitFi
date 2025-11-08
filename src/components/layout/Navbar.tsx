@@ -93,7 +93,7 @@ export default function Navbar() {
                 <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
                   Inloggen
                 </a>
-                <a href="/onboarding" className="inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
+                <a href="/registreren" className="inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
                   Begin gratis
                 </a>
               </>
@@ -166,7 +166,7 @@ export default function Navbar() {
           {!isAuthed ? (
             <div className="mt-3 grid grid-cols-2 gap-2">
               <a href="/inloggen" className="ff-btn ff-btn-secondary h-10 w-full">Log in</a>
-              <a href="/results" className="ff-btn ff-btn-primary h-10 w-full">Start gratis</a>
+              <a href="/registreren" className="ff-btn ff-btn-primary h-10 w-full">Start gratis</a>
             </div>
           ) : (
             <div className="mt-3 grid grid-cols-3 gap-2">
