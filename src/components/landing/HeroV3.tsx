@@ -15,7 +15,7 @@ export function HeroV3() {
   };
 
   const handleExampleClick = () => {
-    navigate('/results');
+    navigate('/results/preview');
   };
 
   return (

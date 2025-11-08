@@ -28,6 +28,7 @@ const CookiesPage        = lazy(() => import("@/pages/CookiesPage"));
 const DisclosurePage     = lazy(() => import("@/pages/DisclosurePage"));
 const OnboardingFlow     = lazy(() => import("@/pages/OnboardingFlowPage"));
 const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
+const ResultsPreview     = lazy(() => import("@/pages/ResultsPreviewPage"));
 const LoginPage          = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));
 const DashboardPage      = lazy(() => import("@/pages/DashboardPage"));
@@ -58,6 +59,7 @@ const WithSeo = {
   Disclosure: () => (<><Seo title="Disclosure — FitFi" description="Transparantieverklaring." path="/disclosure" /><DisclosurePage /></>),
   Onboarding: () => (<><Seo title="Start je Style Report — FitFi" description="Beantwoord enkele vragen en ontdek je perfecte stijl." path="/onboarding" /><OnboardingFlow /></>),
   Results:    () => (<><Seo title="Jouw resultaten — FitFi" description="Outfits en uitleg waarom ze voor je werken." path="/results" /><EnhancedResults /></>),
+  ResultsPreview: () => (<><Seo title="Voorbeeld Style Report — FitFi" description="Bekijk een voorbeeld van je persoonlijke stijlprofiel met outfit-aanbevelingen." path="/results/preview" /><ResultsPreview /></>),
   Login:      () => (<><Seo title="Inloggen — FitFi" description="Log in om je stijlresultaten te zien." path="/inloggen" /><LoginPage /></>),
   Register:   () => (<><Seo title="Registreren — FitFi" description="Maak je account aan en start gratis." path="/registreren" /><RegisterPage /></>),
   Dashboard:  () => (<><Seo title="Dashboard — FitFi" description="Snel overzicht en acties." path="/dashboard" /><DashboardPage /></>),
@@ -118,6 +120,7 @@ export default function App() {
                 <Route path="/dashboard" element={<RequireAuth><WithSeo.Dashboard /></RequireAuth>} />
                 <Route path="/profile" element={<RequireAuth><WithSeo.Profile /></RequireAuth>} />
                 <Route path="/results" element={<RequireAuth><WithSeo.Results /></RequireAuth>} />
+                <Route path="/results/preview" element={<WithSeo.ResultsPreview />} />
 
                 {/* Admin */}
                 <Route path="/admin" element={<RequireAuth><WithSeo.AdminDashboard /></RequireAuth>} />

@@ -65,7 +65,7 @@ export function Hero() {
 
               <Button
                 as={NavLink}
-                to="/hoe-het-werkt"
+                to="/results/preview"
                 variant="ghost"
                 size="lg"
                 className="border border-[var(--ff-color-border)] hover:border-[var(--ff-color-primary-300)] px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
