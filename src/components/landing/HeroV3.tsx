@@ -50,24 +50,20 @@ export function HeroV3() {
             AI-powered stijladvies
           </div>
 
-          {/* H1 - Massive & Bold */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight mb-8">
-            Ontdek outfits<br />
-            die{' '}
+          {/* H1 - Short & Punchy */}
+          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.95] tracking-tight mb-8">
+            Outfits die{' '}
             <span className="relative inline-block">
               <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-accent-300)] via-white to-[var(--ff-color-primary-300)] bg-clip-text text-transparent">
-                perfect
+                kloppen
               </span>
               <span className="absolute -bottom-2 left-0 right-0 h-3 bg-[var(--ff-color-accent-400)] opacity-30 blur-sm"></span>
             </span>
-            {' '}bij<br />
-            je passen
           </h1>
 
-          {/* Subline */}
-          <p className="text-xl sm:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-3xl mb-12 font-light">
-            Persoonlijk Style Report met kleuren die flatteren, snit die respecteert,
-            en 6–12 complete looks. <span className="font-semibold">In 2 minuten.</span>
+          {/* Subline - Short & Direct */}
+          <p className="text-2xl sm:text-3xl lg:text-4xl text-white/95 leading-tight max-w-2xl mb-12 font-light">
+            AI vindt wat past. <span className="font-bold">2 minuten, gratis.</span>
           </p>
 
           {/* CTAs */}
@@ -76,7 +72,7 @@ export function HeroV3() {
               onClick={handleStartClick}
               className="group inline-flex items-center justify-center gap-3 px-10 py-6 bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-2xl font-bold text-xl shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
             >
-              Begin je stijlreis
+              Start nu
               <ArrowRight className="w-7 h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </button>
 

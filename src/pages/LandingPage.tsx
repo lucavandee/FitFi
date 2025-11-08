@@ -1,27 +1,27 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { HeroV3 } from "@/components/landing/HeroV3";
-import { OutfitShowcaseV3 } from "@/components/landing/OutfitShowcaseV3";
-import { FeatureBlocksV3 } from "@/components/landing/FeatureBlocksV3";
-import { AnimatedFlow } from "@/components/landing/AnimatedFlow";
 import { SocialProofV3 } from "@/components/landing/SocialProofV3";
+import { RealOutfitShowcase } from "@/components/landing/RealOutfitShowcase";
+import { FeatureBlocksV4 } from "@/components/landing/FeatureBlocksV4";
 import { FAQVisual } from "@/components/landing/FAQVisual";
 import { FinalCTA } from "@/components/landing/FinalCTA";
+import { StickyCTA } from "@/components/landing/StickyCTA";
 import "@/styles/landing-animations.css";
 
 export default function LandingPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-hidden">
       <Helmet>
-        <title>FitFi — Ontdek outfits die perfect bij je passen | AI-powered stijladvies</title>
+        <title>FitFi — Outfits die kloppen | AI stijladvies in 2 minuten</title>
         <meta
           name="description"
-          content="Persoonlijk Style Report met kleuren die flatteren, snit die respecteert, en 6–12 complete looks. In 2 minuten. Gratis start, privacy-first."
+          content="AI vindt wat past. Persoonlijk Style Report met 6–12 complete outfits. 2 minuten, gratis."
         />
-        <meta property="og:title" content="FitFi — Ontdek outfits die perfect bij je passen" />
+        <meta property="og:title" content="FitFi — Outfits die kloppen" />
         <meta
           property="og:description"
-          content="AI-powered stijladvies in 2 minuten. Krijg je persoonlijke Style Report met outfits die kloppen."
+          content="AI vindt wat past. Style Report in 2 minuten, gratis."
         />
         <meta property="og:image" content="/hero/hero-style-report-lg.webp" />
         <meta property="og:type" content="website" />
@@ -50,26 +50,26 @@ export default function LandingPage() {
         </script>
       </Helmet>
 
-      {/* HERO V3 - Full-screen with local image */}
+      {/* HERO V3 - Short & punchy */}
       <HeroV3 />
 
-      {/* OUTFIT SHOWCASE V3 - CSS gradient cards */}
-      <OutfitShowcaseV3 />
-
-      {/* FEATURE BLOCKS V3 - Visual gradient blocks */}
-      <FeatureBlocksV3 />
-
-      {/* ANIMATED FLOW - How it works */}
-      <AnimatedFlow />
-
-      {/* SOCIAL PROOF V3 - Testimonials with gradient avatars */}
+      {/* SOCIAL PROOF V3 - Testimonials FIRST for credibility */}
       <SocialProofV3 />
+
+      {/* REAL OUTFIT SHOWCASE - Actual clothing items */}
+      <RealOutfitShowcase />
+
+      {/* FEATURE BLOCKS V4 - Reduced to 2 (Color + Speed) */}
+      <FeatureBlocksV4 />
 
       {/* FAQ - Visual accordion */}
       <FAQVisual />
 
       {/* FINAL CTA - Big conversion push */}
       <FinalCTA />
+
+      {/* STICKY CTA - Always accessible after scroll */}
+      <StickyCTA />
 
     </main>
   );
