@@ -4,44 +4,44 @@ import NewsletterSignup from "@/components/marketing/NewsletterSignup";
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-white/10">
+    <footer className="mt-20 bg-white border-t border-[var(--color-border)]">
       {/* Newsletter section */}
-      <Container className="py-12 border-b border-white/10">
+      <Container className="py-16 border-b border-[var(--color-border)]">
         <div className="max-w-2xl mx-auto">
-          <NewsletterSignup variant="dark" />
+          <NewsletterSignup variant="light" />
         </div>
       </Container>
 
-      <Container className="py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 text-[14px] text-[var(--fitfi-muted)]">
+      <Container className="py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 text-sm">
         <div className="sm:col-span-2 lg:col-span-1">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-6 h-6 rounded-lg ff-grad" />
-            <strong className="text-white">FitFi</strong>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)]" />
+            <strong className="text-[var(--color-text)] text-lg font-bold">FitFi</strong>
           </div>
-          <p className="leading-relaxed">Wij vertalen je smaak naar outfits die kloppen — met uitleg, combinaties en shopbare items.</p>
+          <p className="leading-relaxed text-[var(--color-text)]/70">Wij vertalen je smaak naar outfits die kloppen — met uitleg, combinaties en shopbare items.</p>
         </div>
-        <div className="grid gap-2">
-          <strong className="text-white/90">Product</strong>
-          <a href="/hoe-het-werkt" className="hover:text-white transition-colors">Hoe het werkt</a>
-          <a href="/prijzen" className="hover:text-white transition-colors">Prijzen</a>
-          <a href="/results" className="hover:text-white transition-colors">Voorbeeld resultaten</a>
-          <a href="/veelgestelde-vragen" className="hover:text-white transition-colors">Veelgestelde vragen</a>
+        <div className="grid gap-3">
+          <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Product</strong>
+          <a href="/hoe-het-werkt" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Hoe het werkt</a>
+          <a href="/prijzen" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Prijzen</a>
+          <a href="/results" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Voorbeeld resultaten</a>
+          <a href="/veelgestelde-vragen" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">FAQ</a>
         </div>
-        <div className="grid gap-2">
-          <strong className="text-white/90">Bedrijf</strong>
-          <a href="/over-ons" className="hover:text-white transition-colors">Over ons</a>
-          <a href="/blog" className="hover:text-white transition-colors">Blog</a>
-          <a href="/contact" className="hover:text-white transition-colors">Contact</a>
+        <div className="grid gap-3">
+          <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Bedrijf</strong>
+          <a href="/over-ons" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Over ons</a>
+          <a href="/blog" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Blog</a>
+          <a href="/contact" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Contact</a>
         </div>
-        <div className="grid gap-2">
-          <strong className="text-white/90">Juridisch</strong>
-          <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
-          <a href="/algemene-voorwaarden" className="hover:text-white transition-colors">Voorwaarden</a>
-          <a href="/cookies" className="hover:text-white transition-colors">Cookies</a>
+        <div className="grid gap-3">
+          <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Juridisch</strong>
+          <a href="/privacy" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Privacy</a>
+          <a href="/algemene-voorwaarden" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Voorwaarden</a>
+          <a href="/cookies" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Cookies</a>
         </div>
       </Container>
-      <Container className="py-6 border-t border-white/10 text-xs text-[var(--fitfi-muted)]">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+      <Container className="py-6 border-t border-[var(--color-border)] bg-[var(--ff-color-primary-25)]">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 text-xs text-[var(--color-text)]/60">
           <p>© {new Date().getFullYear()} FitFi · Alle rechten voorbehouden.</p>
           <p>Keizersgracht 520 H · 1017 EK Amsterdam</p>
         </div>

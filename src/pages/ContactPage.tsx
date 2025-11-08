@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
-import { Mail, MessageCircle, Users, Clock, Send, MapPin, Phone, Sparkles } from "lucide-react";
+import { Mail, MessageCircle, Users, Clock, Send, MapPin, Sparkles, CheckCircle } from "lucide-react";
 
 type Topic = "algemeen" | "pers" | "partners" | "feedback" | "bug";
 const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
@@ -39,84 +39,77 @@ export default function ContactPage() {
   }
 
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+    <main id="main" className="bg-[var(--color-bg)]">
       <Breadcrumbs />
 
-      {/* Premium Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-20 md:py-32">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-[var(--ff-color-primary-200)] rounded-full opacity-20 blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-[var(--ff-color-accent-200)] rounded-full opacity-20 blur-3xl"></div>
+      {/* Hero Section - Light & Airy */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-[var(--ff-color-primary-25)] to-white py-24 md:py-32 lg:py-40">
+        {/* Subtle decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+          <div className="absolute top-40 -right-20 w-96 h-96 bg-[var(--ff-color-primary-200)] rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl"></div>
         </div>
 
         <div className="ff-container relative">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-lg">
+            {/* Simple badge */}
+            <div className="inline-flex items-center gap-2.5 px-6 py-3 bg-white rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-8 shadow-sm border border-[var(--color-border)]">
               <MessageCircle className="w-4 h-4" />
-              Neem contact op
+              Contact
             </div>
 
-            {/* H1 */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[var(--color-text)] leading-tight tracking-tight mb-6">
+            {/* Large, clean heading */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-[var(--color-text)] leading-[1.1] tracking-tight mb-8">
               We horen graag{' '}
-              <span className="relative inline-block">
-                <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                  van je
-                </span>
-                <span className="absolute -bottom-2 left-0 right-0 h-3 bg-[var(--ff-color-accent-400)] opacity-30 blur-sm"></span>
-              </span>
+              <span className="text-[var(--ff-color-primary-600)]">van je</span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-xl sm:text-2xl md:text-3xl text-[var(--color-text)]/80 leading-relaxed max-w-3xl mx-auto mb-10">
-              Vragen over stijl, partnerships, of gewoon een idee? We reageren persoonlijk — geen chatbots, gewoon mensen.
+            {/* Clean subtitle */}
+            <p className="text-xl md:text-2xl text-[var(--color-text)]/70 leading-relaxed max-w-2xl mx-auto mb-12">
+              Vragen over stijl, partnerships, of gewoon een idee? We reageren persoonlijk binnen 24 uur.
             </p>
 
-            {/* Quick stats */}
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-[var(--color-text)]/70">
+            {/* Trust badges - minimal */}
+            <div className="flex flex-wrap items-center justify-center gap-8 text-[var(--color-text)]/60 text-sm">
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span className="text-sm font-semibold">Binnen 24 uur</span>
+                <span className="font-medium">Reactie binnen 24u</span>
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span className="text-sm font-semibold">Persoonlijk contact</span>
+                <span className="font-medium">Persoonlijk team</span>
               </div>
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span className="text-sm font-semibold">Premium support</span>
+                <CheckCircle className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                <span className="font-medium">Privacy first</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Two-column layout: Form + Contact Info */}
-      <section className="ff-container py-16 md:py-24">
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
+      {/* Content Section - Clean two-column */}
+      <section className="ff-container py-20 md:py-28">
+        <div className="grid lg:grid-cols-12 gap-16 lg:gap-20 max-w-7xl mx-auto">
 
-          {/* Left: Contact Form */}
-          <div className="lg:col-span-3">
-            <div className="rounded-2xl bg-white shadow-xl border border-[var(--color-border)] overflow-hidden">
-              <div className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] p-8 text-white">
-                <h2 className="text-3xl font-bold mb-2">Stuur een bericht</h2>
-                <p className="text-white/90">We openen je mailapp — privacy first, geen tracking.</p>
-              </div>
+          {/* Form Column - 60% */}
+          <div className="lg:col-span-7">
+            <div className="rounded-3xl bg-white shadow-sm border border-[var(--color-border)] p-8 md:p-10">
+              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-3">Stuur een bericht</h2>
+              <p className="text-[var(--color-text)]/60 mb-8">We openen je mailapp — privacy first, geen tracking.</p>
 
-              <form className="p-8 space-y-6" onSubmit={handleSubmit} noValidate>
-                <div className="grid sm:grid-cols-2 gap-6">
+              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+                <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
-                      Naam *
+                    <label htmlFor="name" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
+                      Naam
                     </label>
                     <input
                       id="name"
                       name="name"
                       type="text"
                       autoComplete="name"
-                      className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all"
+                      className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
                       placeholder="Jouw naam"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -126,22 +119,22 @@ export default function ContactPage() {
                       required
                     />
                     {touched.name && errors.name && (
-                      <p id="err-name" className="mt-2 text-sm text-[var(--ff-color-error-600)] flex items-center gap-1">
+                      <p id="err-name" className="mt-2 text-sm text-red-600">
                         {errors.name}
                       </p>
                     )}
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
-                      E-mail *
+                    <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
+                      E-mail
                     </label>
                     <input
                       id="email"
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all"
+                      className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
                       placeholder="je@email.nl"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -151,7 +144,7 @@ export default function ContactPage() {
                       required
                     />
                     {touched.email && errors.email && (
-                      <p id="err-email" className="mt-2 text-sm text-[var(--ff-color-error-600)]">
+                      <p id="err-email" className="mt-2 text-sm text-red-600">
                         {errors.email}
                       </p>
                     )}
@@ -159,13 +152,13 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="topic" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+                  <label htmlFor="topic" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
                     Onderwerp
                   </label>
                   <select
                     id="topic"
                     name="topic"
-                    className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all"
+                    className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value as Topic)}
                   >
@@ -178,14 +171,14 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
-                    Bericht *
+                  <label htmlFor="message" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
+                    Bericht
                   </label>
                   <textarea
                     id="message"
                     name="message"
                     rows={6}
-                    className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all resize-none"
+                    className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all resize-none"
                     placeholder="Waar kunnen we je mee helpen?"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -195,31 +188,30 @@ export default function ContactPage() {
                     required
                   />
                   {touched.message && errors.message && (
-                    <p id="err-message" className="mt-2 text-sm text-[var(--ff-color-error-600)]">
+                    <p id="err-message" className="mt-2 text-sm text-red-600">
                       {errors.message}
                     </p>
                   )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 pt-2">
                   <button
                     type="submit"
                     disabled={hasErrors && Object.keys(touched).length > 0}
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                    title="Verzend via je eigen mailapp"
+                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-base shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send className="h-5 w-5" aria-hidden />
+                    <Send className="h-5 w-5" />
                     Verstuur bericht
                   </button>
                   <NavLink
                     to="/veelgestelde-vragen"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-[var(--color-surface)] hover:bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-bold text-lg transition-all duration-300 hover:border-[var(--ff-color-primary-500)]"
+                    className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-2xl font-semibold text-base transition-all duration-200"
                   >
                     Bekijk FAQ
                   </NavLink>
                 </div>
 
-                <p className="text-sm text-[var(--color-text)]/60 flex items-start gap-2">
+                <p className="text-sm text-[var(--color-text)]/50 flex items-start gap-2 pt-2">
                   <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>Je mailapp opent automatisch met jouw bericht. Wij ontvangen geen data via deze website.</span>
                 </p>
@@ -227,31 +219,31 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Right: Contact Info & Trust Signals */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* Info Column - 40% */}
+          <div className="lg:col-span-5 space-y-6">
 
-            {/* Direct contact */}
-            <div className="rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] p-8 text-white shadow-xl">
-              <h3 className="text-2xl font-bold mb-6">Direct contact</h3>
-              <div className="space-y-6">
+            {/* Contact Info Card */}
+            <div className="rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white p-8 border border-[var(--color-border)]">
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-6">Direct contact</h3>
+              <div className="space-y-5">
                 {EMAIL && (
                   <a
                     href={`mailto:${EMAIL}`}
-                    className="flex items-start gap-4 p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-all group"
+                    className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl hover:bg-white transition-all group border border-[var(--color-border)]"
                   >
-                    <Mail className="w-6 h-6 flex-shrink-0 mt-1 group-hover:scale-110 transition-transform" />
+                    <Mail className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)] group-hover:scale-110 transition-transform" />
                     <div>
-                      <div className="font-semibold mb-1">Email</div>
-                      <div className="text-white/90 text-sm">{EMAIL}</div>
+                      <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Email</div>
+                      <div className="text-[var(--color-text)]/70 text-sm">{EMAIL}</div>
                     </div>
                   </a>
                 )}
 
-                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl">
-                  <MapPin className="w-6 h-6 flex-shrink-0 mt-1" />
+                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border border-[var(--color-border)]">
+                  <MapPin className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
                   <div>
-                    <div className="font-semibold mb-1">Adres</div>
-                    <div className="text-white/90 text-sm">
+                    <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Adres</div>
+                    <div className="text-[var(--color-text)]/70 text-sm leading-relaxed">
                       Keizersgracht 520 H<br />
                       1017 EK Amsterdam<br />
                       Nederland
@@ -259,11 +251,11 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl">
-                  <Clock className="w-6 h-6 flex-shrink-0 mt-1" />
+                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border border-[var(--color-border)]">
+                  <Clock className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
                   <div>
-                    <div className="font-semibold mb-1">Reactietijd</div>
-                    <div className="text-white/90 text-sm">
+                    <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Reactietijd</div>
+                    <div className="text-[var(--color-text)]/70 text-sm">
                       Binnen 24 uur op werkdagen
                     </div>
                   </div>
@@ -271,46 +263,46 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Quick links cards */}
+            {/* Quick Links */}
             <div className="space-y-4">
               <NavLink
                 to="/veelgestelde-vragen"
-                className="group block p-6 rounded-2xl bg-white border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:shadow-lg transition-all"
+                className="group block p-6 rounded-2xl bg-white border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <MessageCircle className="w-8 h-8 text-[var(--ff-color-primary-600)]" />
-                  <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                  <MessageCircle className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+                  <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
                 </div>
-                <h3 className="text-lg font-bold text-[var(--color-text)] mb-2">Veelgestelde vragen</h3>
-                <p className="text-sm text-[var(--color-text)]/70">
+                <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Veelgestelde vragen</h3>
+                <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
                   Vind snel antwoorden op de meest gestelde vragen over FitFi.
                 </p>
               </NavLink>
 
               <NavLink
                 to="/over-ons"
-                className="group block p-6 rounded-2xl bg-white border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:shadow-lg transition-all"
+                className="group block p-6 rounded-2xl bg-white border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <Users className="w-8 h-8 text-[var(--ff-color-primary-600)]" />
-                  <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                  <Users className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+                  <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
                 </div>
-                <h3 className="text-lg font-bold text-[var(--color-text)] mb-2">Over ons</h3>
-                <p className="text-sm text-[var(--color-text)]/70">
+                <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Over ons</h3>
+                <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
                   Leer meer over het team achter FitFi en onze missie.
                 </p>
               </NavLink>
 
               <NavLink
                 to="/results"
-                className="group block p-6 rounded-2xl bg-gradient-to-br from-[var(--ff-color-accent-50)] to-[var(--ff-color-primary-50)] border-2 border-[var(--ff-color-primary-200)] hover:border-[var(--ff-color-primary-500)] hover:shadow-lg transition-all"
+                className="group block p-6 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white border border-[var(--ff-color-primary-200)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <Sparkles className="w-8 h-8 text-[var(--ff-color-primary-600)]" />
-                  <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                  <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+                  <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
                 </div>
-                <h3 className="text-lg font-bold text-[var(--color-text)] mb-2">Probeer gratis</h3>
-                <p className="text-sm text-[var(--color-text)]/70">
+                <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Probeer gratis</h3>
+                <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
                   Nog geen stijlprofiel? Start nu en ontdek jouw perfecte outfits.
                 </p>
               </NavLink>
