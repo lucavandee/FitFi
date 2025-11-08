@@ -54,8 +54,15 @@ export function FeatureBlocksV4() {
 
               {/* Main visual block */}
               <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl">
-                {/* For "Resultaat in 2 minuten" feature: show iPhone image, otherwise gradient */}
-                {index === 1 ? (
+                {/* Use specific images for each feature */}
+                {index === 0 ? (
+                  <img
+                    src="/images/f0d15c22-1ffb-46cd-9df4-904d03748413.webp"
+                    alt="Minimalistisch design met zachte kleuren en vinkjes"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : index === 1 ? (
                   <img
                     src="/images/0b7da518-a822-4b0b-aa3c-2bb819a78d1e.webp"
                     alt="FitFi app op iPhone met outfit voorbeelden"
