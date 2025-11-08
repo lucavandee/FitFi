@@ -67,14 +67,31 @@ const RegisterPage: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🔵 [RegisterPage] Form submitted');
+
     setTouched({ email: true, password: true });
     setError(null);
 
-    if (!canSubmit) {
-      setError("Vul je gegevens correct in en accepteer de voorwaarden.");
+    // Validate fields
+    if (!isEmail(email)) {
+      console.log('❌ [RegisterPage] Invalid email');
+      setError("Voer een geldig e-mailadres in.");
       return;
     }
 
+    if (password.length < 8) {
+      console.log('❌ [RegisterPage] Password too short');
+      setError("Wachtwoord moet minimaal 8 tekens zijn.");
+      return;
+    }
+
+    if (!accepted) {
+      console.log('❌ [RegisterPage] Terms not accepted');
+      setError("Accepteer de voorwaarden om verder te gaan.");
+      return;
+    }
+
+    console.log('✅ [RegisterPage] Validation passed, starting registration...');
     setLoading(true);
 
     try {
@@ -86,11 +103,12 @@ const RegisterPage: React.FC = () => {
         toast.success('Account aangemaakt! Je bent nu ingelogd.');
 
         setTimeout(() => {
+          console.log('➡️ [RegisterPage] Redirecting to onboarding...');
           navigate('/onboarding');
         }, 500);
       } else {
         console.error('❌ [RegisterPage] Registration failed');
-        setError('Er ging iets mis bij het aanmaken van je account. Probeer het opnieuw.');
+        setError('Er ging iets mis bij het aanmaken van je account. Mogelijk bestaat dit e-mailadres al.');
         toast.error('Account aanmaken mislukt');
       }
     } catch (err) {
