@@ -14,6 +14,7 @@ import {
   X
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
@@ -108,6 +109,8 @@ export default function DashboardPage() {
         <title>Dashboard - FitFi</title>
         <meta name="description" content="Jouw persoonlijke style dashboard met outfits, favorieten en styling tips." />
       </Helmet>
+
+      <Breadcrumbs />
 
       {/* Success Banner */}
       {showSuccessBanner && (

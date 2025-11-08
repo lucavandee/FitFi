@@ -2,6 +2,7 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import PostHeader from "@/components/blog/PostHeader";
+import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { blogPosts } from "@/data/blogPosts";
 
 /**
@@ -69,6 +70,12 @@ export default function BlogPostPage() {
     <>
       <Seo title={post.title} description={post.excerpt} />
       <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+        <Breadcrumbs
+          items={[
+            { label: "Blog", path: "/blog" },
+            { label: post.title, path: `/blog/${post.id}` }
+          ]}
+        />
         <section className="ff-container py-10 sm:py-12">
           <PostHeader
             title={post.title}

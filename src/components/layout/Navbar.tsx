@@ -28,6 +28,7 @@ const links: Array<{ to: string; label: string }> = [
   { to: "/results", label: "Voorbeeld" },
   { to: "/blog", label: "Blog" },
   { to: "/veelgestelde-vragen", label: "FAQ" },
+  { to: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { useUser } from '../context/UserContext';
 import { EmbeddingInsights } from '@/components/profile/EmbeddingInsights';
 import { EmbeddingTimeline } from '@/components/profile/EmbeddingTimeline';
@@ -25,6 +26,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
+      <Breadcrumbs />
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>

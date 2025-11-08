@@ -1,9 +1,17 @@
 import React from "react";
 import Container from "./Container";
+import NewsletterSignup from "@/components/marketing/NewsletterSignup";
 
 export default function SiteFooter() {
   return (
     <footer className="mt-20 border-t border-white/10">
+      {/* Newsletter section */}
+      <Container className="py-12 border-b border-white/10">
+        <div className="max-w-2xl mx-auto">
+          <NewsletterSignup variant="dark" />
+        </div>
+      </Container>
+
       <Container className="py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 text-[14px] text-[var(--fitfi-muted)]">
         <div className="sm:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-3 mb-3">
