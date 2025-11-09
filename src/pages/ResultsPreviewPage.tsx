@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Sparkles, CheckCircle, Eye, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -23,14 +23,22 @@ const DEMO_COLOR_PROFILE: ColorProfile = {
 const DEMO_ARCHETYPE = "Smart Casual";
 
 export default function ResultsPreviewPage() {
+  const [searchParams] = useSearchParams();
+  const userName = searchParams.get('name') || searchParams.get('naam');
+  const isPersonalized = !!userName;
+
   const seeds = React.useMemo(() => {
     return getSeedOutfits(DEMO_COLOR_PROFILE, DEMO_ARCHETYPE);
   }, []);
 
   const handleShare = async () => {
     const url = window.location.href;
-    const title = "Bekijk dit FitFi voorbeeldrapport";
-    const text = "Ontdek hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die écht bij je passen.";
+    const title = isPersonalized
+      ? `Bekijk ${userName}'s FitFi Style Report`
+      : "Bekijk dit FitFi voorbeeldrapport";
+    const text = isPersonalized
+      ? `Zo zou ${userName}'s persoonlijke stijlrapport eruitzien. Ontdek ook jouw stijl met FitFi!`
+      : "Ontdek hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die écht bij je passen.";
 
     if (navigator.share) {
       try {
@@ -55,7 +63,7 @@ export default function ResultsPreviewPage() {
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
-        <title>Voorbeeld Style Report – FitFi</title>
+        <title>{isPersonalized ? `${userName}'s Style Report – FitFi` : 'Voorbeeld Style Report – FitFi'}</title>
         <meta name="description" content="Bekijk een voorbeeld van je persoonlijke stijlprofiel met outfit-aanbevelingen." />
       </Helmet>
 
@@ -66,7 +74,9 @@ export default function ResultsPreviewPage() {
             <div className="flex items-center gap-2">
               <Eye className="w-5 h-5" />
               <p className="text-sm font-medium">
-                Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.
+                {isPersonalized
+                  ? `Hé ${userName}! Dit zou jouw Style Report zijn. Doe de quiz voor je échte resultaten.`
+                  : 'Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.'}
               </p>
             </div>
             <NavLink
@@ -85,19 +95,32 @@ export default function ResultsPreviewPage() {
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-100)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)]">
             <Sparkles className="w-4 h-4" />
-            Voorbeeld Style Report
+            {isPersonalized ? `${userName}'s Style Report` : 'Voorbeeld Style Report'}
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--ff-color-text)] leading-tight">
-            Jouw persoonlijke{" "}
-            <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-              Style Report
-            </span>
+            {isPersonalized ? (
+              <>
+                Zo zou{' '}
+                <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
+                  jouw rapport
+                </span>{' '}
+                eruitzien, {userName}
+              </>
+            ) : (
+              <>
+                Jouw persoonlijke{" "}
+                <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
+                  Style Report
+                </span>
+              </>
+            )}
           </h1>
 
           <p className="text-lg text-[var(--color-text)]/70 max-w-2xl mx-auto">
-            Dit is hoe jouw rapport eruit ziet na het invullen van de 2-minuten quiz.
-            Ontdek je stijl, kleuren en persoonlijke outfit-aanbevelingen.
+            {isPersonalized
+              ? `Na 2 minuten krijg je ${userName}, jouw persoonlijke stijlanalyse met uitleg, kleuren en outfits die écht bij je passen.`
+              : 'Dit is hoe jouw rapport eruit ziet na het invullen van de 2-minuten quiz. Ontdek je stijl, kleuren en persoonlijke outfit-aanbevelingen.'}
           </p>
         </div>
       </section>
@@ -107,7 +130,7 @@ export default function ResultsPreviewPage() {
         <div className="max-w-4xl mx-auto">
           <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-bold mb-6 text-[var(--ff-color-text)]">
-              Je stijlprofiel: {DEMO_ARCHETYPE}
+              {isPersonalized ? `${userName}'s stijlprofiel` : 'Je stijlprofiel'}: {DEMO_ARCHETYPE}
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -241,16 +264,19 @@ export default function ResultsPreviewPage() {
         <div className="max-w-3xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-2xl p-8 md:p-12 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-6">
             <Sparkles className="w-4 h-4" />
-            Maak het persoonlijk
+            {isPersonalized ? `Klaar ${userName}?` : 'Maak het persoonlijk'}
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ff-color-text)]">
-            Klaar voor jouw eigen rapport?
+            {isPersonalized
+              ? `${userName}, krijg jouw échte Style Report`
+              : 'Klaar voor jouw eigen rapport?'}
           </h2>
 
           <p className="text-lg text-[var(--color-text)]/70 mb-8">
-            Beantwoord 10 snelle vragen en ontdek binnen 2 minuten welke outfits écht bij je passen.
-            Gratis, zonder verplichtingen.
+            {isPersonalized
+              ? `Start de quiz ${userName}, en binnen 2 minuten zie je welke outfits écht bij jou passen. Gratis, zonder verplichtingen.`
+              : 'Beantwoord 10 snelle vragen en ontdek binnen 2 minuten welke outfits écht bij je passen. Gratis, zonder verplichtingen.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
