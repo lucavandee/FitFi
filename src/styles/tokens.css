@@ -16,6 +16,7 @@
   --ff-color-primary-300: #CEB39A;   /* muted accents */
   --ff-color-primary-400: #B89B82;   /* soft highlights */
   --ff-color-primary-500: #A6886A;   /* base brand color */
+  --ff-color-primary-500-rgb: 166, 136, 106; /* RGB for opacity */
   --ff-color-primary-600: #8F7459;   /* hover states */
   --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
   --ff-color-primary-800: #5C4937;   /* dark accents */

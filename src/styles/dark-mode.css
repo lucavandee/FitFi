@@ -1,0 +1,90 @@
+/* ============================================
+   DARK MODE THEME
+   ============================================ */
+
+[data-theme="dark"] {
+  /* Background & Surfaces */
+  --color-bg: #0F1115;
+  --color-surface: #1A1D24;
+  --color-surface-elevated: #24272F;
+
+  /* Text */
+  --color-text: #E8E8EA;
+  --color-text-muted: #9CA3AF;
+  --color-muted: #9CA3AF;
+
+  /* Primary - Lighter for dark mode */
+  --ff-color-primary-25: #1A1815;
+  --ff-color-primary-50: #2A2520;
+  --ff-color-primary-100: #3E3125;
+  --ff-color-primary-200: #5C4937;
+  --ff-color-primary-300: #7A614A;
+  --ff-color-primary-400: #8F7459;
+  --ff-color-primary-500: #A6886A;
+  --ff-color-primary-500-rgb: 166, 136, 106;
+  --ff-color-primary-600: #B89B82;
+  --ff-color-primary-700: #CEB39A;
+  --ff-color-primary-800: #E0C9B3;
+  --ff-color-primary-900: #EDD9C8;
+
+  /* Accent */
+  --ff-color-accent-50: #2A2520;
+  --ff-color-accent-100: #3E3125;
+  --ff-color-accent-200: #4F463C;
+  --ff-color-accent-300: #6D6053;
+  --ff-color-accent-400: #8A7A6A;
+  --ff-color-accent-500: #A89682;
+  --ff-color-accent-600: #B8A898;
+  --ff-color-accent-700: #C9B8A6;
+  --ff-color-accent-800: #D8CABA;
+  --ff-color-accent-900: #DFD4C8;
+
+  /* Border */
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Shadows */
+  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow-ring: 0 0 0 4px rgba(166, 136, 106, 0.3);
+
+  /* Status colors adjusted for dark */
+  --ff-color-success-600: #22C55E;
+  --ff-color-warning-600: #F59E0B;
+  --ff-color-danger-600: #EF4444;
+}
+
+/* Dark mode image adjustments */
+[data-theme="dark"] img:not([data-no-invert]) {
+  filter: brightness(0.9) contrast(1.05);
+}
+
+/* Card styles for dark mode */
+[data-theme="dark"] .card,
+[data-theme="dark"] .bg-white {
+  background-color: var(--color-surface);
+}
+
+[data-theme="dark"] .bg-\\[var\\(--color-surface\\)\\] {
+  background-color: var(--color-surface-elevated);
+}
+
+/* Gradient overlays for dark mode */
+[data-theme="dark"] .gradient-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 17, 21, 0) 0%,
+    rgba(15, 17, 21, 0.8) 100%
+  );
+}
+
+/* Smooth transition for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Preserve immediate transitions where needed */
+.no-theme-transition,
+.no-theme-transition * {
+  transition-property: transform, opacity, box-shadow !important;
+}

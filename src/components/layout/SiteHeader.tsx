@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
+import { ThemeToggleCompact } from "@/components/ui/ThemeToggle";
 
 const NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
@@ -31,20 +32,23 @@ export default function SiteHeader() {
           </NavLink>
 
           {/* Desktop navigatie */}
-          <ul className="hidden md:flex items-center gap-5">
-            {NAV_LINKS.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) =>
-                    ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          <div className="hidden md:flex items-center gap-5">
+            <ul className="flex items-center gap-5">
+              {NAV_LINKS.map((item) => (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={({ isActive }) =>
+                      ["ff-navlink", isActive ? "ff-nav-active" : ""].join(" ")
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+            <ThemeToggleCompact />
+          </div>
 
           {/* Mobiele trigger — puur via CSS-breakpoint */}
           <button
