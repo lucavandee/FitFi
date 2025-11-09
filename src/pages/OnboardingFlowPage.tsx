@@ -10,6 +10,7 @@ import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
 import { VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStep";
 import { CalibrationStep } from "@/components/quiz/CalibrationStep";
+import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import toast from "react-hot-toast";
 
@@ -37,6 +38,10 @@ export default function OnboardingFlowPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phase, setPhase] = useState<QuizPhase>('questions');
   const [sessionId] = useState(() => localStorage.getItem('ff_session_id') || crypto.randomUUID());
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(() => {
+    return !!localStorage.getItem('ff_email_captured');
+  });
 
   useEffect(() => {
     const stepParam = searchParams.get('step');
@@ -91,6 +96,10 @@ export default function OnboardingFlowPage() {
   const handleNext = () => {
     if (currentStep < quizSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
+
+      if (currentStep === 2 && !emailCaptured && !showEmailCapture) {
+        setShowEmailCapture(true);
+      }
     } else if (phase === 'questions') {
       setPhase('swipes');
     } else if (phase === 'swipes') {
@@ -381,6 +390,17 @@ export default function OnboardingFlowPage() {
       {/* Question Content */}
       <div className="ff-container py-12 md:py-20">
         <div className="max-w-3xl mx-auto">
+
+          {/* Email Capture Prompt - Show at step 3 */}
+          {showEmailCapture && currentStep === 3 && (
+            <EmailCapturePrompt
+              onDismiss={() => setShowEmailCapture(false)}
+              onEmailSaved={(email) => {
+                setEmailCaptured(true);
+                setShowEmailCapture(false);
+              }}
+            />
+          )}
 
           {/* Question Header */}
           <div className="text-center mb-12">

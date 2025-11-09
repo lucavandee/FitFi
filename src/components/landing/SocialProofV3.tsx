@@ -13,21 +13,21 @@ const testimonials: Testimonial[] = [
     name: 'Marieke',
     age: 32,
     quote: 'Eindelijk stijladvies dat niet overdreven is. Praktisch en echt bruikbaar. De uitleg waarom iets bij me past was eye-opening.',
-    gradient: 'from-pink-400 to-rose-500',
+    gradient: 'from-[var(--ff-color-primary-300)] to-[var(--ff-color-accent-400)]',
     rating: 5
   },
   {
     name: 'Thomas',
     age: 28,
     quote: 'De kleuren die FitFi voorstelde klopten meteen. Vrienden vroegen of ik een personal shopper had. Nope, gewoon 2 minuten quiz.',
-    gradient: 'from-blue-400 to-indigo-500',
+    gradient: 'from-[var(--ff-color-accent-300)] to-[var(--ff-color-primary-500)]',
     rating: 5
   },
   {
     name: 'Lisa',
     age: 35,
     quote: 'Als moeder heb ik geen tijd voor urenlang shoppen. FitFi gaf me in 2 minuten een duidelijke richting. Outfits kloppen gewoon.',
-    gradient: 'from-purple-400 to-pink-500',
+    gradient: 'from-[var(--ff-cta-400)] to-[var(--ff-color-primary-600)]',
     rating: 5
   }
 ];

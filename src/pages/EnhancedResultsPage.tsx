@@ -7,6 +7,9 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
 import { OutfitVisualCompact } from "@/components/outfits/OutfitVisual";
 import { useOutfits } from "@/hooks/useOutfits";
+import { useExitIntent } from "@/hooks/useExitIntent";
+import { useUser } from "@/context/UserContext";
+import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
 import SmartImage from "@/components/ui/SmartImage";
 import type { Outfit } from "@/services/data/types";
 
@@ -20,6 +23,13 @@ function readJson<T>(key: string): T | null {
 }
 
 export default function EnhancedResultsPage() {
+  const { user } = useUser();
+  const { shouldShow: showExitIntent, dismiss: dismissExitIntent } = useExitIntent({
+    enabled: !user,
+    maxDisplays: 1,
+    threshold: 50,
+  });
+
   React.useEffect(() => {
     try {
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
@@ -97,6 +107,13 @@ export default function EnhancedResultsPage() {
         <title>Jouw Style Report – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
       </Helmet>
+
+      {/* Exit Intent Modal */}
+      <SaveOutfitsModal
+        isOpen={showExitIntent}
+        onClose={dismissExitIntent}
+        outfitCount={displayOutfits.length}
+      />
 
       <Breadcrumbs />
 

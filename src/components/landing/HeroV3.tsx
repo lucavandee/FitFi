@@ -1,10 +1,30 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, Users } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabaseClient';
 
 export function HeroV3() {
   const { user } = useUser();
   const navigate = useNavigate();
+
+  const { data: todayCount } = useQuery({
+    queryKey: ['profiles-today'],
+    queryFn: async () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const { count, error } = await supabase
+        .from('style_profiles')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', today.toISOString());
+
+      if (error) throw error;
+      return count || 0;
+    },
+    staleTime: 60000,
+    refetchInterval: 60000,
+  });
 
   const handleStartClick = () => {
     if (user) {
@@ -82,6 +102,14 @@ export function HeroV3() {
 
           {/* Trust indicators */}
           <div className="flex flex-wrap items-center gap-5 sm:gap-8 mt-8 sm:mt-10 text-white/90">
+            {todayCount !== undefined && todayCount > 0 && (
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
+                <span className="font-semibold text-base sm:text-lg">
+                  <span className="text-green-400">{todayCount}</span> {todayCount === 1 ? 'persoon deed' : 'mensen deden'} vandaag de quiz
+                </span>
+              </div>
+            )}
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -97,14 +125,6 @@ export function HeroV3() {
                 </svg>
               </div>
               <span className="font-semibold text-base sm:text-lg">~2 minuten</span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <span className="font-semibold text-base sm:text-lg">Privacy-first</span>
             </div>
           </div>
 
