@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GA4 Test - FitFi</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1 { color: #333; margin-top: 0; }
+    h2 { color: #666; font-size: 18px; margin-top: 30px; }
+    .status {
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-weight: 500;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    button {
+      background: #A6886A;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #8f7158;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    .check-list {
+      list-style: none;
+      padding: 0;
+    }
+    .check-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .check-list li:before {
+      content: "□ ";
+      color: #999;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    .check-list li.checked:before {
+      content: "✓ ";
+      color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔍 Google Analytics 4 - Test Dashboard</h1>
+    <p>Deze pagina helpt je om te controleren of GA4 correct werkt op FitFi.</p>
+  </div>
+
+  <div class="card">
+    <h2>📋 Setup Checklist</h2>
+    <ul class="check-list" id="checklist">
+      <li data-check="env">VITE_GTAG_ID environment variable ingesteld</li>
+      <li data-check="gtag">window.gtag functie beschikbaar</li>
+      <li data-check="datalayer">window.dataLayer array bestaat</li>
+      <li data-check="consent">Analytics consent gegeven</li>
+      <li data-check="script">GA4 script geladen</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🔧 Status</h2>
+    <div id="status"></div>
+
+    <h2>🧪 Test Events</h2>
+    <p>Klik op de buttons om test events te versturen. Check ze in GA4 Realtime.</p>
+    <button onclick="testPageView()">Test Page View</button>
+    <button onclick="testCTAClick()">Test CTA Click</button>
+    <button onclick="testCustomEvent()">Test Custom Event</button>
+
+    <h2>📊 Console Output</h2>
+    <div id="console" style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 13px; max-height: 300px; overflow-y: auto;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🚀 Next Steps</h2>
+    <ol>
+      <li>Open <strong>Google Analytics</strong> dashboard</li>
+      <li>Navigate to <strong>Reports → Realtime</strong></li>
+      <li>Klik op de test buttons hierboven</li>
+      <li>Events verschijnen binnen 30 seconden in Realtime</li>
+    </ol>
+
+    <p><strong>Zie geen events?</strong> Check de troubleshooting sectie in <code>GOOGLE_ANALYTICS_SETUP.md</code></p>
+  </div>
+
+  <script>
+    // Console logger
+    const consoleDiv = document.getElementById('console');
+    const originalLog = console.log;
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      const line = args.map(a =>
+        typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
+      ).join(' ');
+      consoleDiv.innerHTML += `<div style="margin: 5px 0;">> ${line}</div>`;
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    };
+
+    // Status logger
+    function showStatus(message, type = 'success') {
+      const statusDiv = document.getElementById('status');
+      statusDiv.innerHTML += `<div class="status ${type}">${message}</div>`;
+    }
+
+    // Check item
+    function checkItem(id) {
+      const item = document.querySelector(`[data-check="${id}"]`);
+      if (item) item.classList.add('checked');
+    }
+
+    // Run checks
+    console.log('=== FitFi GA4 Test Dashboard ===');
+    console.log('Starting diagnostics...\n');
+
+    // Check 1: Environment variable
+    const gtagId = import.meta?.env?.VITE_GTAG_ID;
+    if (gtagId) {
+      console.log('✓ VITE_GTAG_ID found:', gtagId);
+      showStatus(`✓ GA4 Measurement ID: ${gtagId}`, 'success');
+      checkItem('env');
+    } else {
+      console.log('✗ VITE_GTAG_ID not found');
+      showStatus('✗ VITE_GTAG_ID niet ingesteld. Voeg toe aan .env', 'error');
+    }
+
+    // Check 2: gtag function
+    setTimeout(() => {
+      if (window.gtag) {
+        console.log('✓ window.gtag function exists');
+        showStatus('✓ GA4 script loaded successfully', 'success');
+        checkItem('gtag');
+        checkItem('script');
+      } else {
+        console.log('✗ window.gtag not found');
+        showStatus('⚠ GA4 script not loaded. Check consent or wait a moment...', 'warning');
+      }
+
+      // Check 3: dataLayer
+      if (window.dataLayer) {
+        console.log('✓ window.dataLayer exists');
+        console.log('dataLayer entries:', window.dataLayer.length);
+        checkItem('datalayer');
+      } else {
+        console.log('✗ window.dataLayer not found');
+      }
+
+      // Check 4: Consent
+      try {
+        const prefs = localStorage.getItem('ff_cookie_prefs');
+        if (prefs) {
+          const parsed = JSON.parse(prefs);
+          console.log('Cookie preferences:', parsed);
+          if (parsed.analytics) {
+            console.log('✓ Analytics consent granted');
+            showStatus('✓ Analytics consent granted', 'success');
+            checkItem('consent');
+          } else {
+            console.log('✗ Analytics consent not granted');
+            showStatus('⚠ Analytics consent niet gegeven. Accepteer cookies in de banner.', 'warning');
+          }
+        } else {
+          console.log('⚠ No cookie preferences found yet');
+          showStatus('⚠ Geen cookie preferences. Accepteer cookies eerst.', 'warning');
+        }
+      } catch (e) {
+        console.error('Error checking consent:', e);
+      }
+
+      console.log('\n=== Ready for testing ===');
+    }, 1000);
+
+    // Test functions
+    function testPageView() {
+      if (!window.gtag) {
+        alert('GA4 not loaded. Accept cookies first!');
+        return;
+      }
+      window.gtag('event', 'page_view', {
+        page_path: '/test',
+        page_title: 'GA4 Test Page'
+      });
+      console.log('📊 Sent: page_view event');
+      showStatus('📊 Page view event sent to GA4', 'success');
+    }
+
+    function testCTAClick() {
+      if (!window.gtag) {
+        alert('GA4 not loaded. Accept cookies first!');
+        return;
+      }
+      window.gtag('event', 'cta_click_test', {
+        button_location: 'test_dashboard',
+        button_text: 'Test CTA Click'
+      });
+      console.log('🖱️ Sent: cta_click_test event');
+      showStatus('🖱️ CTA click event sent to GA4', 'success');
+    }
+
+    function testCustomEvent() {
+      if (!window.gtag) {
+        alert('GA4 not loaded. Accept cookies first!');
+        return;
+      }
+      window.gtag('event', 'test_custom_event', {
+        event_category: 'testing',
+        event_label: 'manual_test',
+        value: 1
+      });
+      console.log('⚡ Sent: test_custom_event');
+      showStatus('⚡ Custom event sent to GA4', 'success');
+    }
+  </script>
+</body>
+</html>

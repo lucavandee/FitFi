@@ -30,8 +30,26 @@ Dit project is onderdeel van het FitFi-platform en haalt automatisch productdata
 git clone https://github.com/lucavandee/fitfi-zalando-scraper.git
 cd fitfi-zalando-scraper
 npm install
-
 ```
+
+### ⚙️ Environment Setup
+
+Kopieer `.env.example` naar `.env` en vul je credentials in:
+
+```bash
+cp .env.example .env
+```
+
+**Required voor productie:**
+- `VITE_SUPABASE_URL` - Je Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Je Supabase anon key
+
+**Optioneel:**
+- `VITE_GTAG_ID` - Google Analytics 4 measurement ID (voor tracking)
+- `VITE_AWIN_ENABLED` - AWIN affiliate tracking (default: false)
+- `VITE_CONTACT_EMAIL` - Contact email adres
+
+📖 **Zie [GOOGLE_ANALYTICS_SETUP.md](./GOOGLE_ANALYTICS_SETUP.md) voor gedetailleerde GA4 setup.**
 
 ## 🤖 **Advanced ML & Analytics Features**
 
