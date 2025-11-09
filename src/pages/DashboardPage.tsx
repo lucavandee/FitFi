@@ -19,6 +19,7 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { RefineStyleWidget } from "@/components/dashboard/RefineStyleWidget";
+import { GamificationDashboardMini } from "@/components/gamification/GamificationDashboardMini";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import toast from "react-hot-toast";
@@ -400,6 +401,15 @@ export default function DashboardPage() {
                     Upgrade
                   </Button>
                 </div>
+              </article>
+
+              {/* Gamification */}
+              <article className="card">
+                <h3 className="card-title mb-4 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-[var(--ff-color-accent-600)]" />
+                  Jouw Vooruitgang
+                </h3>
+                <GamificationDashboardMini />
               </article>
 
               {/* Support */}
