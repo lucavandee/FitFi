@@ -15,7 +15,8 @@ import {
   Zap,
   Crown,
   Target,
-  Clock
+  Clock,
+  Trophy
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
