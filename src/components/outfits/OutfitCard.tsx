@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SmartImage from '@/components/media/SmartImage';
 import RequireAuth from '@/components/auth/RequireAuth';
@@ -218,16 +219,52 @@ export default function OutfitCard({
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div 
-      className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-[#89CFF0] focus-within:ring-offset-2"
+    <motion.div
+      className="group relative rounded-3xl border-2 border-gray-200 bg-white p-5 shadow-lg hover:shadow-2xl transition-all focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-500 overflow-hidden"
       data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
       aria-describedby={descId}
-      >
-      <div className="relative rounded-xl overflow-hidden mb-3">
-        <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/5]">
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+      whileHover={{
+        y: -8,
+        transition: { type: 'spring', stiffness: 400, damping: 20 }
+      }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+    >
+      {/* Gradient overlay on hover */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
+
+      {/* Match score badge floating */}
+      {outfit.matchPercentage && outfit.matchPercentage > 80 && (
+        <motion.div
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg text-sm font-bold"
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', damping: 15, delay: 0.2 }}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>{Math.round(outfit.matchPercentage)}%</span>
+        </motion.div>
+      )}
+
+      <div className="relative rounded-2xl overflow-hidden mb-4">
+        <motion.div
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/5] shadow-inner"
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        >
           <SmartImage
             src={outfit.imageUrl}
             alt={outfit.title || 'Outfit'}
@@ -236,9 +273,17 @@ export default function OutfitCard({
             aspect="4/5"
             containerClassName="w-full h-full"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
-            imgClassName="hover:scale-105 transition-transform duration-300"
+            imgClassName="hover:scale-110 transition-transform duration-500 ease-out"
           />
-        </div>
+
+          {/* Image overlay gradient on hover */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.div>
       </div>
       
       <div className="space-y-3">
@@ -384,73 +429,100 @@ export default function OutfitCard({
           </div>
         )}
         
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <motion.div
+          className="mt-4 grid grid-cols-2 gap-2 relative z-10"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
           <RequireAuth cta="Inloggen om te bewaren">
-            <button 
+            <motion.button
               aria-label="Bewaar look"
               aria-busy={saveOutfit.isPending}
               title="Bewaar deze look"
-              onClick={handleSave} 
+              onClick={handleSave}
               disabled={saveOutfit.isPending}
-              className={`btn-secondary px-3 py-2 border rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-offset-2 overflow-hidden ${
                 saveOutfit.isSuccess || saved
-                  ? 'border-[#89CFF0] bg-[#89CFF0] text-white focus:ring-[#89CFF0]' 
-                  : 'border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white focus:ring-[#89CFF0]'
+                  ? 'border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white focus:ring-blue-500/20 shadow-lg'
+                  : 'border-blue-500 text-blue-600 hover:bg-blue-50 focus:ring-blue-500/20'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+              whileHover={!saveOutfit.isPending ? { scale: 1.03, y: -2 } : {}}
+              whileTap={!saveOutfit.isPending ? { scale: 0.97 } : {}}
             >
-              <Heart className={`w-3 h-3 inline mr-1 ${saveOutfit.isSuccess || saved ? 'fill-current' : ''} ${saveOutfit.isPending ? 'animate-pulse' : ''}`} />
-              {saveOutfit.isSuccess ? 'Bewaard ✓' : saveOutfit.isPending ? 'Bewaren…' : 'Bewaar'}
-            </button>
+              <motion.div
+                className="flex items-center justify-center gap-1.5"
+                animate={saveOutfit.isSuccess || saved ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
+                <Heart className={`w-4 h-4 ${saveOutfit.isSuccess || saved ? 'fill-current' : ''} ${saveOutfit.isPending ? 'animate-pulse' : ''}`} />
+                <span>{saveOutfit.isSuccess ? 'Bewaard ✓' : saveOutfit.isPending ? 'Bewaren…' : 'Bewaar'}</span>
+              </motion.div>
+            </motion.button>
           </RequireAuth>
-          
+
           <RequireAuth cta="Inloggen voor meer looks">
-            <button 
+            <motion.button
               aria-label="Meer zoals dit"
               aria-busy={isProcessing.like}
               title="Voeg vergelijkbare outfits toe aan je feed"
-              onClick={handleMoreLikeThis} 
+              onClick={handleMoreLikeThis}
               disabled={isProcessing.like}
-              className={`btn-secondary px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-green-500 text-green-600 hover:bg-green-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
               }`}
+              whileHover={!isProcessing.like ? { scale: 1.03, y: -2 } : {}}
+              whileTap={!isProcessing.like ? { scale: 0.97 } : {}}
             >
-              <ThumbsUp className={`w-3 h-3 inline mr-1 ${isProcessing.like ? 'animate-pulse' : ''}`} />
-              Meer zoals dit
-            </button>
+              <div className="flex items-center justify-center gap-1.5">
+                <ThumbsUp className={`w-4 h-4 ${isProcessing.like ? 'animate-pulse' : ''}`} />
+                <span className="hidden sm:inline">Meer zoals dit</span>
+                <span className="sm:hidden">Meer</span>
+              </div>
+            </motion.button>
           </RequireAuth>
-          
+
           <RequireAuth cta="Inloggen voor feedback">
-            <button 
+            <motion.button
               aria-label="Niet mijn stijl"
               aria-busy={isProcessing.dislike}
               title="Verberg dit type outfit uit je feed"
-              onClick={handleDislike} 
+              onClick={handleDislike}
               disabled={isProcessing.dislike}
-              className={`btn-ghost text-muted-foreground px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-red-500 text-red-600 hover:bg-red-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:ring-offset-2 ${
                 isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
               }`}
+              whileHover={!isProcessing.dislike ? { scale: 1.03, y: -2 } : {}}
+              whileTap={!isProcessing.dislike ? { scale: 0.97 } : {}}
             >
-              <ThumbsDown className={`w-3 h-3 inline mr-1 ${isProcessing.dislike ? 'animate-pulse' : ''}`} />
-              Niet mijn stijl
-            </button>
+              <div className="flex items-center justify-center gap-1.5">
+                <ThumbsDown className={`w-4 h-4 ${isProcessing.dislike ? 'animate-pulse' : ''}`} />
+                <span className="hidden sm:inline">Niet mijn stijl</span>
+                <span className="sm:hidden">Niet</span>
+              </div>
+            </motion.button>
           </RequireAuth>
-          
+
           <RequireAuth cta="Inloggen voor uitleg">
-            <button 
+            <motion.button
               aria-label="Laat Nova dit outfit uitleggen"
               aria-busy={isProcessing.explain}
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
-              onClick={handleExplain} 
+              onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`btn-secondary px-3 py-2 border border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0]/10 rounded-xl text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#89CFF0] focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-purple-500 text-purple-600 hover:bg-purple-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
+              whileHover={!isProcessing.explain ? { scale: 1.03, y: -2 } : {}}
+              whileTap={!isProcessing.explain ? { scale: 0.97 } : {}}
             >
-              <MessageCircle className={`w-3 h-3 inline mr-1 ${isProcessing.explain ? 'animate-pulse' : ''}`} />
-              {showExplanation ? 'Verberg uitleg' : 'Leg uit'}
-            </button>
+              <div className="flex items-center justify-center gap-1.5">
+                <MessageCircle className={`w-4 h-4 ${isProcessing.explain ? 'animate-pulse' : ''}`} />
+                <span>{showExplanation ? 'Verberg' : 'Leg uit'}</span>
+              </div>
+            </motion.button>
           </RequireAuth>
-        </div>
+        </motion.div>
       </div>
       
       <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
