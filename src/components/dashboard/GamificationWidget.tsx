@@ -5,6 +5,7 @@ import { Trophy, Star, Zap, Target, TrendingUp, ArrowRight, Crown, Award, Sparkl
 import { useQuery } from '@tanstack/react-query';
 import { gamificationService } from '@/services/gamification/gamificationService';
 import { useUser } from '@/context/UserContext';
+import { StreakCalendar } from '@/components/gamification/StreakCalendar';
 
 export function GamificationWidget() {
   const { user } = useUser();
@@ -21,6 +22,17 @@ export function GamificationWidget() {
     queryFn: () => gamificationService.getUserAchievements(user!.id),
     enabled: !!user,
     staleTime: 60000,
+  });
+
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  const { data: activityDates = [] } = useQuery({
+    queryKey: ['activityDates', user?.id, firstDayOfMonth.toISOString(), lastDayOfMonth.toISOString()],
+    queryFn: () => gamificationService.getActivityDates(user!.id, firstDayOfMonth, lastDayOfMonth),
+    enabled: !!user,
+    staleTime: 30000,
   });
 
   if (!user || isLoading) {
@@ -184,6 +196,13 @@ export function GamificationWidget() {
           </div>
         </div>
       )}
+
+      {/* Streak Calendar */}
+      <StreakCalendar
+        activeDates={activityDates}
+        currentStreak={stats.daily_streak}
+        longestStreak={stats.longest_streak}
+      />
 
       {/* Next Milestones Preview */}
       <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] dark:from-[var(--ff-color-primary-900/20)] dark:to-[var(--ff-color-accent-900/20)] rounded-3xl p-6 shadow-xl border-2 border-[var(--color-border)]">

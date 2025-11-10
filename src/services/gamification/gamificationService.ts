@@ -303,4 +303,54 @@ export const gamificationService = {
       xpToNext: nextLevel ? nextLevel.minPoints - currentXP : 0,
     };
   },
+
+  async getActivityDates(
+    userId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Date[]> {
+    const client = supabase();
+    if (!client) return [];
+
+    try {
+      const { data, error } = await client.rpc('get_user_activity_dates', {
+        p_user_id: userId,
+        p_start_date: startDate.toISOString().split('T')[0],
+        p_end_date: endDate.toISOString().split('T')[0],
+      });
+
+      if (error) {
+        console.error('Error fetching activity dates:', error);
+        return [];
+      }
+
+      if (!data) return [];
+
+      return data.map((row: { activity_date: string }) => new Date(row.activity_date));
+    } catch (err) {
+      console.error('Error in getActivityDates:', err);
+      return [];
+    }
+  },
+
+  async logDailyCheckin(userId: string): Promise<boolean> {
+    const client = supabase();
+    if (!client) return false;
+
+    try {
+      const { data, error } = await client.rpc('log_daily_checkin', {
+        p_user_id: userId,
+      });
+
+      if (error) {
+        console.error('Error logging daily check-in:', error);
+        return false;
+      }
+
+      return data === true;
+    } catch (err) {
+      console.error('Error in logDailyCheckin:', err);
+      return false;
+    }
+  },
 };
