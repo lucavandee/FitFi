@@ -13,6 +13,7 @@ import ChatPanel from "@/components/nova/ChatPanel";
 import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
 import AwinMasterTag from "@/components/affiliate/AwinMasterTag";
 import { NotificationProvider } from "@/context/NotificationContext";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 
 // Lazy pages
 const LandingPage        = lazy(() => import("@/pages/LandingPage"));
@@ -143,6 +144,7 @@ export default function App() {
           <Footer />
           <ChatPanel />
           <NovaLauncher />
+          <InstallPrompt />
           <AnalyticsLoader />
         </ErrorBoundary>
       </div>

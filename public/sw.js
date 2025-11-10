@@ -116,3 +116,104 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    const { title, body, icon, badge, data: customData } = data;
+
+    const options = {
+      body: body || '',
+      icon: icon || '/icons/icon-192.png',
+      badge: badge || '/icons/icon-192.png',
+      vibrate: [200, 100, 200],
+      data: customData || {},
+      actions: [
+        {
+          action: 'open',
+          title: 'Bekijken',
+        },
+        {
+          action: 'close',
+          title: 'Sluiten',
+        },
+      ],
+    };
+
+    event.waitUntil(self.registration.showNotification(title || 'FitFi', options));
+  } catch (error) {
+    console.error('[SW] Push notification error:', error);
+  }
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'close') {
+    return;
+  }
+
+  const urlToOpen = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === urlToOpen && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
+
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-outfit-saves') {
+    event.waitUntil(syncOutfitSaves());
+  }
+  if (event.tag === 'sync-preferences') {
+    event.waitUntil(syncPreferences());
+  }
+});
+
+async function syncOutfitSaves() {
+  try {
+    const cache = await caches.open('pending-actions');
+    const requests = await cache.keys();
+
+    const saveRequests = requests.filter((req) => req.url.includes('saved_outfits'));
+
+    for (const request of saveRequests) {
+      const response = await fetch(request.clone());
+      if (response.ok) {
+        await cache.delete(request);
+      }
+    }
+  } catch (error) {
+    console.error('[SW] Sync outfit saves failed:', error);
+  }
+}
+
+async function syncPreferences() {
+  try {
+    const cache = await caches.open('pending-actions');
+    const requests = await cache.keys();
+
+    const prefRequests = requests.filter((req) =>
+      req.url.includes('notification_preferences') || req.url.includes('style_profiles')
+    );
+
+    for (const request of prefRequests) {
+      const response = await fetch(request.clone());
+      if (response.ok) {
+        await cache.delete(request);
+      }
+    }
+  } catch (error) {
+    console.error('[SW] Sync preferences failed:', error);
+  }
+}

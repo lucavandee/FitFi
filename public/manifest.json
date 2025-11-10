@@ -1,10 +1,16 @@
 {
-  "name": "FitFi",
+  "name": "FitFi — AI Style Report",
   "short_name": "FitFi",
-  "start_url": "/",
+  "description": "Persoonlijk stijladvies van AI. Start de quiz en ontvang direct outfits met uitleg — zonder ruis.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#0D1B2A",
+  "orientation": "portrait-primary",
+  "theme_color": "#A6886A",
+  "background_color": "#FAFAF8",
+  "categories": ["lifestyle", "shopping", "personalization"],
+  "lang": "nl-NL",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -18,5 +24,76 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/images/hero-style-report.png",
+      "sizes": "1200x800",
+      "type": "image/png",
+      "label": "FitFi Style Report"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Quiz",
+      "short_name": "Quiz",
+      "description": "Begin met de stijlquiz",
+      "url": "/results?source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Bekijk je dashboard",
+      "url": "/dashboard?source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Saved Outfits",
+      "short_name": "Outfits",
+      "description": "Bekijk opgeslagen outfits",
+      "url": "/dashboard?tab=outfits&source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "image",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  },
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone"],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }
