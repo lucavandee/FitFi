@@ -48,7 +48,7 @@ export function HeroV3() {
           alt="Stijlvol gekleed stel, vrouw met telefoon bekijkt outfit advies"
           className="w-full h-full object-cover object-[center_30%] sm:object-[center_40%] md:object-center"
           loading="eager"
-          fetchPriority="high"
+          fetchpriority="high"
         />
 
         {/* Gradient overlay for text readability - stronger on mobile for better contrast */}
