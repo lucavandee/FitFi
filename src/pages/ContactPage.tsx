@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { Mail, MessageCircle, Users, Clock, Send, MapPin, Sparkles, CheckCircle } from "lucide-react";
 
@@ -8,6 +9,20 @@ const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
 
 function encode(str: string) {
   return encodeURIComponent(str).replace(/%20/g, "+");
+}
+
+function TrustBadge({ icon, text, delay }: { icon: React.ReactNode; text: string; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay }}
+      className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[var(--color-border)] shadow-sm hover-scale"
+    >
+      <div className="text-[var(--ff-color-primary-600)]">{icon}</div>
+      <span className="font-semibold text-[var(--color-text)] text-sm">{text}</span>
+    </motion.div>
+  );
 }
 
 export default function ContactPage() {
@@ -42,48 +57,69 @@ export default function ContactPage() {
     <main id="main" className="bg-[var(--color-bg)]">
       <Breadcrumbs />
 
-      {/* Hero Section - Light & Airy */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-white via-[var(--ff-color-primary-25)] to-white py-24 md:py-32 lg:py-40">
-        {/* Subtle decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-          <div className="absolute top-40 -right-20 w-96 h-96 bg-[var(--ff-color-primary-200)] rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl"></div>
+      {/* Hero Section - Premium with animations */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 lg:py-40 border-b-2 border-[var(--color-border)]">
+        {/* Animated decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.3 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="absolute top-20 -right-32 w-[600px] h-[600px] bg-gradient-to-br from-[var(--ff-color-primary-300)] to-[var(--ff-color-accent-300)] rounded-full blur-3xl"
+          />
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.2 }}
+            transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
+            className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-gradient-to-tr from-[var(--ff-color-accent-300)] to-[var(--ff-color-primary-300)] rounded-full blur-3xl"
+          />
         </div>
 
         <div className="ff-container relative">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Simple badge */}
-            <div className="inline-flex items-center gap-2.5 px-6 py-3 bg-white rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-8 shadow-sm border border-[var(--color-border)]">
+            {/* Animated badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2.5 px-6 py-3 bg-white/90 backdrop-blur-sm rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-8 shadow-lg border-2 border-[var(--ff-color-primary-200)] hover-lift"
+            >
               <MessageCircle className="w-4 h-4" />
               Contact
-            </div>
+            </motion.div>
 
-            {/* Large, clean heading */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-[var(--color-text)] leading-[1.1] tracking-tight mb-8">
+            {/* Large, animated heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-5xl sm:text-6xl md:text-7xl font-bold text-[var(--color-text)] leading-[1.1] tracking-tight mb-8"
+            >
               We horen graag{' '}
-              <span className="text-[var(--ff-color-primary-600)]">van je</span>
-            </h1>
+              <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">van je</span>
+            </motion.h1>
 
-            {/* Clean subtitle */}
-            <p className="text-xl md:text-2xl text-[var(--color-text)]/70 leading-relaxed max-w-2xl mx-auto mb-12">
+            {/* Animated subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-xl md:text-2xl text-[var(--color-text)]/70 leading-relaxed max-w-2xl mx-auto mb-12"
+            >
               Vragen over stijl, partnerships, of gewoon een idee? We reageren persoonlijk binnen 24 uur.
-            </p>
+            </motion.p>
 
-            {/* Trust badges - minimal */}
-            <div className="flex flex-wrap items-center justify-center gap-8 text-[var(--color-text)]/60 text-sm">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span className="font-medium">Reactie binnen 24u</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span className="font-medium">Persoonlijk team</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span className="font-medium">Privacy first</span>
-              </div>
-            </div>
+            {/* Trust badges - animated */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex flex-wrap items-center justify-center gap-6 md:gap-8"
+            >
+              <TrustBadge icon={<Clock className="w-5 h-5" />} text="Reactie binnen 24u" delay={0.4} />
+              <TrustBadge icon={<Users className="w-5 h-5" />} text="Persoonlijk team" delay={0.5} />
+              <TrustBadge icon={<CheckCircle className="w-5 h-5" />} text="Privacy first" delay={0.6} />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -93,10 +129,22 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-12 gap-16 lg:gap-20 max-w-7xl mx-auto">
 
           {/* Form Column - 60% */}
-          <div className="lg:col-span-7">
-            <div className="rounded-3xl bg-white shadow-sm border border-[var(--color-border)] p-8 md:p-10">
-              <h2 className="text-3xl font-bold text-[var(--color-text)] mb-3">Stuur een bericht</h2>
-              <p className="text-[var(--color-text)]/60 mb-8">We openen je mailapp — privacy first, geen tracking.</p>
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="lg:col-span-7"
+          >
+            <div className="rounded-3xl bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-[var(--color-border)] p-8 md:p-10 hover-lift">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg">
+                  <Send className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-[var(--color-text)]">Stuur een bericht</h2>
+                  <p className="text-sm text-[var(--color-text)]/60">Privacy first, geen tracking</p>
+                </div>
+              </div>
 
               <form className="space-y-6" onSubmit={handleSubmit} noValidate>
                 <div className="grid sm:grid-cols-2 gap-5">
@@ -109,7 +157,7 @@ export default function ContactPage() {
                       name="name"
                       type="text"
                       autoComplete="name"
-                      className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
+                      className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
                       placeholder="Jouw naam"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -134,7 +182,7 @@ export default function ContactPage() {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
+                      className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
                       placeholder="je@email.nl"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -158,7 +206,7 @@ export default function ContactPage() {
                   <select
                     id="topic"
                     name="topic"
-                    className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
+                    className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value as Topic)}
                   >
@@ -178,7 +226,7 @@ export default function ContactPage() {
                     id="message"
                     name="message"
                     rows={6}
-                    className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all resize-none"
+                    className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all resize-none"
                     placeholder="Waar kunnen we je mee helpen?"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -195,17 +243,19 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <button
+                  <motion.button
                     type="submit"
                     disabled={hasErrors && Object.keys(touched).length > 0}
-                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-base shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] hover:from-[var(--ff-color-primary-600)] hover:to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-base shadow-xl hover:shadow-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="h-5 w-5" />
                     Verstuur bericht
-                  </button>
+                  </motion.button>
                   <NavLink
                     to="/veelgestelde-vragen"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-2xl font-semibold text-base transition-all duration-200"
+                    className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-2xl font-semibold text-base transition-all duration-200 hover-lift"
                   >
                     Bekijk FAQ
                   </NavLink>
@@ -217,29 +267,40 @@ export default function ContactPage() {
                 </p>
               </form>
             </div>
-          </div>
+          </motion.div>
 
           {/* Info Column - 40% */}
-          <div className="lg:col-span-5 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="lg:col-span-5 space-y-6"
+          >
 
             {/* Contact Info Card */}
-            <div className="rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white p-8 border border-[var(--color-border)]">
-              <h3 className="text-xl font-bold text-[var(--color-text)] mb-6">Direct contact</h3>
+            <div className="rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white p-8 border-2 border-[var(--color-border)] shadow-xl hover-lift">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-[var(--color-text)]">Direct contact</h3>
+              </div>
               <div className="space-y-5">
                 {EMAIL && (
-                  <a
+                  <motion.a
                     href={`mailto:${EMAIL}`}
-                    className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl hover:bg-white transition-all group border border-[var(--color-border)]"
+                    whileHover={{ scale: 1.02 }}
+                    className="flex items-start gap-4 p-4 bg-white/90 backdrop-blur-sm rounded-2xl hover:bg-white transition-all group border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-md hover:shadow-lg"
                   >
                     <Mail className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)] group-hover:scale-110 transition-transform" />
                     <div>
                       <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Email</div>
                       <div className="text-[var(--color-text)]/70 text-sm">{EMAIL}</div>
                     </div>
-                  </a>
+                  </motion.a>
                 )}
 
-                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border border-[var(--color-border)]">
+                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)]">
                   <MapPin className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
                   <div>
                     <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Adres</div>
@@ -251,7 +312,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border border-[var(--color-border)]">
+                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)]">
                   <Clock className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
                   <div>
                     <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Reactietijd</div>
@@ -265,49 +326,67 @@ export default function ContactPage() {
 
             {/* Quick Links */}
             <div className="space-y-4">
-              <NavLink
-                to="/veelgestelde-vragen"
-                className="group block p-6 rounded-2xl bg-white border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md transition-all"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <MessageCircle className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                  <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
-                </div>
-                <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Veelgestelde vragen</h3>
-                <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                  Vind snel antwoorden op de meest gestelde vragen over FitFi.
-                </p>
-              </NavLink>
+                <NavLink
+                  to="/veelgestelde-vragen"
+                  className="group block p-6 rounded-2xl bg-white border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-xl transition-all hover-lift"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <MessageCircle className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+                    <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
+                  </div>
+                  <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Veelgestelde vragen</h3>
+                  <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
+                    Vind snel antwoorden op de meest gestelde vragen over FitFi.
+                  </p>
+                </NavLink>
+              </motion.div>
 
-              <NavLink
-                to="/over-ons"
-                className="group block p-6 rounded-2xl bg-white border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md transition-all"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <Users className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                  <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
-                </div>
-                <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Over ons</h3>
-                <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                  Leer meer over het team achter FitFi en onze missie.
-                </p>
-              </NavLink>
+                <NavLink
+                  to="/over-ons"
+                  className="group block p-6 rounded-2xl bg-white border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-xl transition-all hover-lift"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Users className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+                    <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
+                  </div>
+                  <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Over ons</h3>
+                  <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
+                    Leer meer over het team achter FitFi en onze missie.
+                  </p>
+                </NavLink>
+              </motion.div>
 
-              <NavLink
-                to="/results"
-                className="group block p-6 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white border border-[var(--ff-color-primary-200)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md transition-all"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                  <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
-                </div>
-                <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Probeer gratis</h3>
-                <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                  Nog geen stijlprofiel? Start nu en ontdek jouw perfecte outfits.
-                </p>
-              </NavLink>
+                <NavLink
+                  to="/results"
+                  className="group block p-6 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-300)] hover:border-[var(--ff-color-primary-400)] hover:shadow-xl transition-all hover-lift"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+                    <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
+                  </div>
+                  <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Probeer gratis</h3>
+                  <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
+                    Nog geen stijlprofiel? Start nu en ontdek jouw perfecte outfits.
+                  </p>
+                </NavLink>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>
