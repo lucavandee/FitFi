@@ -45,4 +45,21 @@
     background: linear-gradient(90deg, theme(colors.accent), theme(colors.text-dark));
     opacity: 0.9;
   }
+
+  /* Text gradient utility */
+  .text-gradient {
+    background: linear-gradient(
+      to right,
+      var(--ff-color-primary-600),
+      var(--ff-color-accent-600)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Override gray-600 globally for dark mode compatibility */
+  .text-gray-600 {
+    color: var(--color-muted) !important;
+  }
 }
