@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
@@ -508,57 +509,83 @@ const NovaChat: React.FC = () => {
   };
   const renderMessage = (message: Message) => {
     const isUser = message.role === 'user';
-    
+
     return (
-      <div
+      <motion.div
         key={message.id}
-        className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}
+        className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
       >
-        <div
+        <motion.div
           className={[
-            'max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-3 py-2 shadow-sm',
-            isUser ? 'ml-auto bg-[var(--ff-bubble-user)] text-ink shadow-[0_2px_12px_rgba(13,27,42,0.04)]'
-              : 'mr-auto bg-[var(--ff-bubble-assistant)] text-ink shadow-[0_2px_12px_rgba(13,27,42,0.04)]'
+            'max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-4 py-3 shadow-lg relative overflow-hidden',
+            isUser
+              ? 'ml-auto bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-blue-500/20'
+              : 'mr-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-gray-200/50 dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700'
           ].join(' ')}
+          whileHover={{ scale: 1.01, boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         >
+          {/* Subtle gradient overlay for assistant messages */}
+          {!isUser && (
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 pointer-events-none" />
+          )}
+
           {/* Assistant message header with copy button */}
           {!isUser && (
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-3 relative z-10">
               <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 bg-[#89CFF0] rounded-full flex items-center justify-center">
-                  <Bot className="w-3 h-3 text-white" />
-                </div>
-                <span className="text-sm font-medium text-[#89CFF0]">Nova</span>
-                <span className="px-2 py-0.5 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-xs font-medium">
+                <motion.div
+                  className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Bot className="w-4 h-4 text-white" />
+                </motion.div>
+                <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
+                <span className="px-2 py-0.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full text-xs font-bold shadow-md">
                   AI
                 </span>
               </div>
-              
-              <button
+
+              <motion.button
                 onClick={() => handleCopyMessage(message.content)}
-                className="p-1 rounded hover:bg-white/50 transition-colors opacity-60 hover:opacity-100"
+                className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors opacity-60 hover:opacity-100 relative z-10"
                 title="Kopieer antwoord"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Copy className="w-4 h-4" />
-              </button>
+                <Copy className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </motion.button>
             </div>
           )}
-          
+
           {/* Message content */}
-          <div className="prose prose-sm max-w-none">
+          <div className={`prose prose-sm max-w-none relative z-10 ${isUser ? 'text-white' : ''}`}>
             {isUser ? (
-              <p className="mb-0">{message.content}</p>
+              <p className="mb-0 font-medium">{message.content}</p>
             ) : (
-              <div 
+              <div
                 className="nova-content"
-                dangerouslySetInnerHTML={{ 
-                  __html: mdLite(message.content) 
-                }} 
+                dangerouslySetInnerHTML={{
+                  __html: mdLite(message.content)
+                }}
               />
             )}
           </div>
-        </div>
-      </div>
+
+          {/* User message timestamp */}
+          {isUser && (
+            <div className="mt-2 text-right">
+              <span className="text-xs text-white/70">
+                {new Date(message.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+          )}
+        </motion.div>
+      </motion.div>
     );
   };
 
@@ -572,37 +599,83 @@ const NovaChat: React.FC = () => {
         {messages.map(renderMessage)}
         
         {/* Typing indicators */}
-        {showTypingDelay && (
-          <div className="flex justify-start mb-3 sm:mb-4">
-            <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-3 py-2 bg-[var(--ff-bubble-assistant)] shadow-sm">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-5 h-5 bg-[#89CFF0] rounded-full flex items-center justify-center">
-                  <Bot className="w-3 h-3 text-white" />
+        <AnimatePresence>
+          {showTypingDelay && (
+            <motion.div
+              className="flex justify-start mb-4"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            >
+              <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-4 py-3 bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 pointer-events-none" />
+                <div className="flex items-center space-x-2 mb-3 relative z-10">
+                  <motion.div
+                    className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Bot className="w-4 h-4 text-white" />
+                  </motion.div>
+                  <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
                 </div>
-                <span className="text-sm font-medium text-[#89CFF0]">Nova</span>
-              </div>
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {isTyping && !showTypingDelay && (
-          <div className="flex justify-start mb-3 sm:mb-4">
-            <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-3 py-2 bg-[var(--ff-bubble-assistant)] shadow-sm">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-5 h-5 bg-[#89CFF0] rounded-full flex items-center justify-center">
-                  <Bot className="w-3 h-3 text-white" />
+                <div className="flex space-x-1.5 relative z-10">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+                      animate={{
+                        y: [0, -8, 0],
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 0.8,
+                        repeat: Infinity,
+                        delay: i * 0.15,
+                        ease: "easeInOut",
+                      }}
+                    />
+                  ))}
                 </div>
-                <span className="text-sm font-medium text-[#89CFF0]">Nova</span>
               </div>
-              <TypingSkeleton />
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+
+          {isTyping && !showTypingDelay && (
+            <motion.div
+              className="flex justify-start mb-4"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            >
+              <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-4 py-3 bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 pointer-events-none" />
+                <div className="flex items-center space-x-2 mb-3 relative z-10">
+                  <motion.div
+                    className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Bot className="w-4 h-4 text-white" />
+                  </motion.div>
+                  <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
+                  <motion.span
+                    className="text-xs text-gray-500 dark:text-gray-400"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    aan het typen...
+                  </motion.span>
+                </div>
+                <div className="relative z-10">
+                  <TypingSkeleton />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* Outfit cards */}
         {cards && (
@@ -615,47 +688,84 @@ const NovaChat: React.FC = () => {
       </div>
 
       {/* Input form */}
-      <div className="border-t bg-white/80 backdrop-blur-sm p-3 sm:p-4">
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <div className="flex-1 relative">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Vraag Nova om styling advies..."
-              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-12 rounded-xl border border-gray-200 focus:border-[#89CFF0] focus:ring-2 focus:ring-[#89CFF0]/20 outline-none transition-all text-sm sm:text-base"
-              disabled={isLoading}
-            />
-            {input && (
-              <button
-                type="button"
-                onClick={() => setInput('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <X className="w-4 h-4 text-gray-400" />
-              </button>
-            )}
+      <div className="border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-white to-blue-50/50 dark:from-gray-800 dark:to-blue-900/10 backdrop-blur-xl p-4 sm:p-5 shadow-lg">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative group">
+            <motion.div
+              className="relative"
+              whileFocus={{ scale: 1.01 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Vraag Nova om styling advies..."
+                className="w-full px-5 py-4 pr-12 rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-sm sm:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
+                disabled={isLoading}
+              />
+              {/* Animated gradient border on focus */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-focus-within:opacity-20 blur-xl transition-opacity pointer-events-none" />
+
+              {input && (
+                <motion.button
+                  type="button"
+                  onClick={() => setInput('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                >
+                  <X className="w-4 h-4 text-gray-400" />
+                </motion.button>
+              )}
+            </motion.div>
           </div>
-          
+
           {isLoading ? (
-            <button
+            <motion.button
               type="button"
               onClick={handleAbort}
-              className="px-4 py-2.5 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors flex items-center justify-center gap-2 text-sm sm:text-base min-w-[100px] sm:min-w-auto"
+              className="px-6 py-4 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-2xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base min-w-[110px] shadow-lg shadow-red-500/30 font-bold"
+              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(239, 68, 68, 0.4)' }}
+              whileTap={{ scale: 0.95 }}
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
               <span>Stop</span>
-            </button>
+            </motion.button>
           ) : (
-            <button
+            <motion.button
               type="submit"
               disabled={!input.trim()}
-              className="px-4 py-2.5 sm:py-3 bg-[#89CFF0] hover:bg-[#7BB8E0] disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center gap-2 text-sm sm:text-base min-w-[100px] sm:min-w-auto"
+              className="relative px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-2xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base min-w-[120px] shadow-xl shadow-blue-500/30 font-bold overflow-hidden group"
+              whileHover={input.trim() ? { scale: 1.05, boxShadow: '0 10px 40px rgba(59, 130, 246, 0.5)' } : {}}
+              whileTap={input.trim() ? { scale: 0.95 } : {}}
             >
-              <Send className="w-4 h-4" />
-              <span>Verstuur</span>
-            </button>
+              {/* Shine effect */}
+              {input.trim() && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  initial={{ x: '-200%' }}
+                  animate={{ x: '200%' }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatDelay: 1,
+                    ease: 'linear',
+                  }}
+                />
+              )}
+              <motion.div
+                animate={input.trim() ? { rotate: [0, -10, 10, 0] } : {}}
+                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+              >
+                <Send className="w-5 h-5 relative z-10" />
+              </motion.div>
+              <span className="relative z-10">Verstuur</span>
+            </motion.button>
           )}
         </form>
       </div>
