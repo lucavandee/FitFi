@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Search, Filter, Calendar, User, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { blogPosts, categories, type BlogPost } from '@/data/blogPosts';
@@ -46,17 +47,57 @@ const BlogPage: React.FC = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
+        {/* Animated gradient blobs */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+              x: [0, 50, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, -90, 0],
+              x: [0, -30, 0],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-[var(--ff-color-accent-400)] to-[var(--ff-color-primary-400)] rounded-full blur-3xl"
+          />
+        </div>
+
         <div className="ff-container relative">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight"
+            >
               Stijl & Mode
-              <span className="block text-[var(--ff-color-primary-600)]">Inzichten</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Ontdek de nieuwste trends, stijltips en mode-inzichten van onze experts. 
+              <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Inzichten</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
+            >
+              Ontdek de nieuwste trends, stijltips en mode-inzichten van onze experts.
               Van seizoenstrends tot tijdloze stijladvies.
-            </p>
+            </motion.p>
           </div>
         </div>
       </section>
@@ -65,19 +106,29 @@ const BlogPage: React.FC = () => {
       <section className="ff-container py-12">
         <div className="max-w-4xl mx-auto">
           {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto mb-8">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative max-w-2xl mx-auto mb-8"
+          >
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-muted)] w-5 h-5" />
             <input
               type="text"
               placeholder="Zoek artikelen..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-6 py-4 rounded-xl border border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-transparent text-lg shadow-sm"
+              className="w-full pl-12 pr-6 py-4 rounded-xl border-2 border-[var(--color-border)] bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-transparent text-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow"
             />
-          </div>
+          </motion.div>
 
           {/* Filter chips */}
-          <div className="flex flex-wrap justify-center gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex flex-wrap justify-center gap-3"
+          >
             <button
               onClick={() => setSelectedCategory('all')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
@@ -101,7 +152,7 @@ const BlogPage: React.FC = () => {
                 {category}
               </button>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -109,9 +160,18 @@ const BlogPage: React.FC = () => {
       <section className="ff-container pb-16">
         {/* Featured Post */}
         {featuredPost && (
-          <div className="mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-16"
+          >
             <h2 className="text-3xl font-bold text-[var(--color-text)] mb-8 text-center">Uitgelicht artikel</h2>
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lifted)] overflow-hidden hover:shadow-[var(--shadow-elevated)] transition-shadow duration-300 border-2 border-[var(--color-border)]"
+            >
               <div className="md:flex">
                 <div className="md:w-1/2">
                   <img
@@ -129,7 +189,7 @@ const BlogPage: React.FC = () => {
                   <h3 className="text-3xl font-bold text-[var(--color-text)] mb-4 leading-tight">
                     {featuredPost.title}
                   </h3>
-                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-lg text-[var(--color-muted)] mb-6 leading-relaxed">
                     {featuredPost.excerpt}
                   </p>
                   <div className="flex items-center justify-between">
@@ -141,7 +201,7 @@ const BlogPage: React.FC = () => {
                       />
                       <div>
                         <p className="font-medium text-[var(--color-text)]">{featuredPost.author.name}</p>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
                           <Calendar className="w-4 h-4" />
                           <span>{featuredPost.date}</span>
                         </div>
@@ -157,16 +217,24 @@ const BlogPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Blog Posts Grid */}
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-[var(--color-text)] mb-8 text-center">Alle artikelen</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post) => (
-              <article key={post.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            {regularPosts.map((post, index) => (
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                whileHover={{ y: -8 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lifted)] overflow-hidden hover:shadow-[var(--shadow-elevated)] transition-all duration-300 border-2 border-[var(--color-border)]"
+              >
                 <img
                   src={post.image}
                   alt={post.title}
@@ -181,11 +249,11 @@ const BlogPage: React.FC = () => {
                   <h3 className="text-xl font-bold text-[var(--color-text)] mb-3 leading-tight">
                     {post.title}
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-[var(--color-muted)] mb-4">
                     {post.excerpt}
                   </p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
                       <User className="w-4 h-4" />
                       <span>{post.author.name}</span>
                       <span>•</span>
@@ -194,26 +262,32 @@ const BlogPage: React.FC = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => navigate(`/blog/${post.slug}`)} 
+                      onClick={() => navigate(`/blog/${post.slug}`)}
                     >
                       Lees meer
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </div>
 
         {/* Newsletter Section */}
-        <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-800)] rounded-2xl p-12 text-center overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-800)] rounded-2xl p-12 text-center overflow-hidden border-2 border-[var(--ff-color-primary-700)] shadow-[var(--shadow-elevated)]"
+        >
           {/* Background decoration */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
           </div>
-          
+
           <div className="relative">
             <Mail className="w-12 h-12 text-white/80 mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Blijf op de hoogte</h2>
@@ -239,7 +313,7 @@ const BlogPage: React.FC = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
