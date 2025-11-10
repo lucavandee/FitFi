@@ -2,13 +2,15 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trophy, Star, Zap, Target, TrendingUp, ArrowRight, Crown, Award, Sparkles } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { gamificationService } from '@/services/gamification/gamificationService';
 import { useUser } from '@/context/UserContext';
 import { StreakCalendar } from '@/components/gamification/StreakCalendar';
+import { WeeklyChallengeTracker } from '@/components/gamification/WeeklyChallengeTracker';
 
 export function GamificationWidget() {
   const { user } = useUser();
+  const queryClient = useQueryClient();
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ['gamification', user?.id],
@@ -197,11 +199,18 @@ export function GamificationWidget() {
         </div>
       )}
 
+      {/* Weekly Outfit Challenge */}
+      <WeeklyChallengeTracker />
+
       {/* Streak Calendar */}
       <StreakCalendar
         activeDates={activityDates}
         currentStreak={stats.daily_streak}
         longestStreak={stats.longest_streak}
+        onCheckinComplete={() => {
+          queryClient.invalidateQueries({ queryKey: ['activityDates', user?.id] });
+          queryClient.invalidateQueries({ queryKey: ['gamification', user?.id] });
+        }}
       />
 
       {/* Next Milestones Preview */}

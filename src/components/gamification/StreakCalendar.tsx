@@ -1,6 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { CheckCircle2, Circle, Flame, Trophy } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Circle, Flame, Trophy, Sparkles } from 'lucide-react';
+import { gamificationService } from '@/services/gamification/gamificationService';
+import { useUser } from '@/context/UserContext';
+import toast from 'react-hot-toast';
 
 interface ActivityDay {
   date: Date;
@@ -16,6 +19,7 @@ interface StreakCalendarProps {
   currentStreak: number;
   longestStreak?: number;
   className?: string;
+  onCheckinComplete?: () => void;
 }
 
 export function StreakCalendar({
@@ -23,7 +27,11 @@ export function StreakCalendar({
   currentStreak,
   longestStreak = 0,
   className = '',
+  onCheckinComplete,
 }: StreakCalendarProps) {
+  const { user } = useUser();
+  const [isChecking, setIsChecking] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
@@ -35,6 +43,34 @@ export function StreakCalendar({
   const activeDatesSet = new Set(
     activeDates.map((d) => d.toISOString().split('T')[0])
   );
+
+  const todayStr = today.toISOString().split('T')[0];
+  const hasCheckedInToday = activeDatesSet.has(todayStr);
+
+  const handleDailyCheckin = async () => {
+    if (!user || isChecking || hasCheckedInToday) return;
+
+    setIsChecking(true);
+    try {
+      const success = await gamificationService.logDailyCheckin(user.id);
+      if (success) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+        toast.success('Dagelijkse check-in gelukt! +10 XP', {
+          icon: '🔥',
+          duration: 4000,
+        });
+        onCheckinComplete?.();
+      } else {
+        toast.error('Check-in mislukt, probeer opnieuw');
+      }
+    } catch (err) {
+      console.error('Error during check-in:', err);
+      toast.error('Check-in mislukt');
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const days: ActivityDay[] = [];
   const daysInMonth = lastDayOfMonth.getDate();
@@ -80,7 +116,37 @@ export function StreakCalendar({
   };
 
   return (
-    <div className={`bg-white dark:bg-[var(--color-surface)] rounded-2xl p-6 shadow-lg border-2 border-[var(--color-border)] ${className}`}>
+    <div className={`bg-white dark:bg-[var(--color-surface)] rounded-2xl p-6 shadow-lg border-2 border-[var(--color-border)] relative overflow-hidden ${className}`}>
+      {/* Confetti effect */}
+      <AnimatePresence>
+        {showConfetti && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 pointer-events-none z-10"
+          >
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ y: 0, x: Math.random() * 400, opacity: 1 }}
+                animate={{
+                  y: 400,
+                  x: Math.random() * 400,
+                  opacity: 0,
+                  rotate: Math.random() * 360,
+                }}
+                transition={{ duration: 2, delay: Math.random() * 0.5 }}
+                className="absolute w-2 h-2 rounded-full"
+                style={{
+                  background: ['var(--ff-color-primary-500)', 'var(--ff-color-accent-500)', 'var(--ff-color-primary-600)'][i % 3],
+                }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex items-center justify-between mb-4">
         <div>
           <h4 className="text-lg font-bold text-[var(--color-text)] flex items-center gap-2">
@@ -109,6 +175,45 @@ export function StreakCalendar({
           )}
         </div>
       </div>
+
+      {/* Daily Check-in Button */}
+      {!hasCheckedInToday && (
+        <motion.button
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleDailyCheckin}
+          disabled={isChecking}
+          className="w-full mb-4 py-3 px-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isChecking ? (
+            <>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              >
+                <Sparkles className="w-5 h-5" />
+              </motion.div>
+              Aan het checken...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-5 h-5" />
+              Check in vandaag (+10 XP)
+            </>
+          )}
+        </motion.button>
+      )}
+
+      {hasCheckedInToday && (
+        <div className="mb-4 py-3 px-4 bg-gradient-to-r from-[var(--ff-color-accent-50)] to-[var(--ff-color-primary-50)] border-2 border-[var(--ff-color-accent-300)] rounded-xl flex items-center justify-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-[var(--ff-color-accent-600)]" />
+          <span className="font-semibold text-[var(--ff-color-accent-700)]">
+            Check-in compleet vandaag!
+          </span>
+        </div>
+      )}
 
       {isStreakMilestone(currentStreak) && (
         <motion.div
