@@ -23,7 +23,6 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { RefineStyleWidget } from "@/components/dashboard/RefineStyleWidget";
-import { GamificationWidget } from "@/components/dashboard/GamificationWidget";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
@@ -349,17 +348,64 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Gamification - Premium Widget */}
+          {/* Gamification - Premium Card */}
           <div className="mb-12 fade-in-up" data-tour="gamification">
-            <div className="mb-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2">
-                Jouw <span className="text-gradient">Progressie</span>
-              </h2>
-              <p className="text-[var(--color-muted)]">
-                Verdien XP, unlock achievements en level up je style
-              </p>
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-8 shadow-xl border-2 border-purple-200 dark:border-purple-800 relative overflow-hidden">
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-400/10 rounded-full blur-3xl" />
+
+              <div className="relative">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white shadow-lg">
+                    <Trophy className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold text-[var(--color-text)] mb-1">
+                      Jouw <span className="text-gradient">Progressie</span>
+                    </h2>
+                    <p className="text-[var(--color-muted)]">
+                      Verdien XP, unlock achievements en level up je style
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl p-6 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <span className="text-sm font-semibold text-[var(--color-muted)]">Total XP</span>
+                    </div>
+                    <p className="text-3xl font-bold text-[var(--color-text)]">2,450</p>
+                  </div>
+
+                  <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl p-6 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Crown className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                      <span className="text-sm font-semibold text-[var(--color-muted)]">Level</span>
+                    </div>
+                    <p className="text-3xl font-bold text-[var(--color-text)]">8</p>
+                  </div>
+
+                  <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl p-6 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <span className="text-sm font-semibold text-[var(--color-muted)]">Achievements</span>
+                    </div>
+                    <p className="text-3xl font-bold text-[var(--color-text)]">12/24</p>
+                  </div>
+                </div>
+
+                <NavLink
+                  to="/profile"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg hover-lift w-full sm:w-auto"
+                >
+                  <Target className="w-5 h-5" />
+                  Bekijk volledige stats
+                  <ArrowRight className="w-5 h-5" />
+                </NavLink>
+              </div>
             </div>
-            <GamificationWidget />
           </div>
 
           {/* Subscription Management */}
