@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import PageHero from "@/components/marketing/PageHero";
-import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
-import { CircleHelp as HelpCircle, ShieldCheck, Lock, CreditCard, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CircleHelp as HelpCircle, ShieldCheck, Lock, CreditCard, Clock, Plus, Minus } from "lucide-react";
 
 type QA = { q: string; a: React.ReactNode };
 
@@ -129,42 +128,139 @@ const FAQ_PRODUCT: QA[] = [
   },
 ];
 
+function FAQSection({ title, items, delay = 0 }: { title: string; items: QA[]; delay?: number }) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay }}
+      className="ff-container py-8"
+    >
+      <h2 className="font-heading text-2xl text-[var(--color-text)] mb-4">{title}</h2>
+      <div className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] overflow-hidden">
+        {items.map((item, i) => (
+          <FAQItem key={i} item={item} index={i} />
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+function FAQItem({ item, index }: { item: QA; index: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="border-t border-[var(--color-border)] first:border-t-0"
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full p-6 flex items-center justify-between gap-4 text-left hover:bg-[var(--ff-color-primary-50)] transition-colors group"
+      >
+        <span className="font-heading text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors">
+          {item.q}
+        </span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="flex-shrink-0"
+        >
+          {isOpen ? (
+            <Minus className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+          ) : (
+            <Plus className="w-5 h-5 text-[var(--color-muted)] group-hover:text-[var(--ff-color-primary-600)] transition-colors" />
+          )}
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6 text-[var(--color-text)]/80 leading-relaxed">
+              {item.a}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 export default function FAQPage() {
-  const fadeIntro = useFadeInOnVisible<HTMLDivElement>({ threshold: 0.15 });
-  const fadeGrid = useFadeInOnVisible<HTMLDivElement>({ threshold: 0.15 });
-  const fadeGen = useFadeInOnVisible<HTMLDivElement>({ threshold: 0.15 });
-  const fadePri = useFadeInOnVisible<HTMLDivElement>({ threshold: 0.15 });
-  const fadePrice = useFadeInOnVisible<HTMLDivElement>({ threshold: 0.15 });
-  const fadeProd = useFadeInOnVisible<HTMLDivElement>({ threshold: 0.15 });
 
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-primary-25)] py-24 md:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
+        {/* Animated gradient blobs */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+              x: [0, 50, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, -90, 0],
+              x: [0, -30, 0],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-[var(--ff-color-accent-400)] to-[var(--ff-color-primary-400)] rounded-full blur-3xl"
+          />
+        </div>
+
         <div className="ff-container relative">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
-              Veelgestelde
-              <span className="block text-[var(--ff-color-primary-600)]">Vragen</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+                Veelgestelde
+                <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
+                  Vragen
+                </span>
+              </h1>
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
+            >
               Kort, duidelijk en premium — zonder ruis. Staat je vraag er niet tussen? Laat het ons weten.
-            </p>
+            </motion.p>
           </div>
         </div>
       </section>
 
-      {/* Snapshot-kaarten: vertrouwen en duidelijkheid */}
-      <section className="ff-container py-8">
-        <div
-          ref={fadeGrid.ref as any}
-          style={{
-            opacity: fadeGrid.visible ? 1 : 0,
-            transform: fadeGrid.visible ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 600ms ease, transform 600ms ease",
-          }}
-          className="grid gap-6 md:grid-cols-3"
-        >
+      {/* Trust badges with animations */}
+      <section className="ff-container py-12">
+        <div className="grid gap-6 md:grid-cols-3">
           {[
             {
               icon: ShieldCheck,
@@ -187,151 +283,79 @@ export default function FAQPage() {
           ].map((c, i) => {
             const Icon = c.icon;
             return (
-              <article
+              <motion.article
                 key={i}
-                className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] border border-[var(--color-border)]"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -4 }}
+                className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm p-8 shadow-[var(--shadow-lifted)] border border-[var(--color-border)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
               >
-                <Icon className="h-5 w-5 text-[var(--color-text)]/70" aria-hidden />
-                <h3 className="font-heading text-lg mt-3">{c.title}</h3>
-                <p className="text-[var(--color-text)]/80 mt-2">{c.body}</p>
-              </article>
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
+                >
+                  <Icon className="h-6 w-6 text-white" aria-hidden />
+                </motion.div>
+                <h3 className="font-heading text-xl mb-2 text-[var(--color-text)]">{c.title}</h3>
+                <p className="text-[var(--color-muted)] leading-relaxed">{c.body}</p>
+              </motion.article>
             );
           })}
         </div>
       </section>
 
-      {/* Algemene vragen */}
-      <section className="ff-container py-4">
-        <h2 className="font-heading text-2xl text-[var(--color-text)] mb-3">Algemeen</h2>
-        <div
-          ref={fadeGen.ref as any}
-          style={{
-            opacity: fadeGen.visible ? 1 : 0,
-            transform: fadeGen.visible ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 600ms ease, transform 600ms ease",
-          }}
-          className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
-        >
-          {FAQ_GENERAL.map((item, i) => (
-            <details
-              key={i}
-              className="border-t border-[var(--color-border)] first:border-t-0 p-4"
-            >
-              <summary className="cursor-pointer font-heading text-[var(--color-text)]">
-                {item.q}
-              </summary>
-              <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-            </details>
-          ))}
-        </div>
-      </section>
+      {/* FAQ Sections with animated accordions */}
+      <FAQSection title="Algemeen" items={FAQ_GENERAL} delay={0} />
+      <FAQSection title="Privacy & data" items={FAQ_PRIVACY} delay={0.1} />
+      <FAQSection title="Prijzen & abonnementen" items={FAQ_PRICING} delay={0.2} />
+      <FAQSection title="Product & gebruik" items={FAQ_PRODUCT} delay={0.3} />
 
-      {/* Privacy & data */}
-      <section className="ff-container py-8">
-        <h2 className="font-heading text-2xl text-[var(--color-text)] mb-3">
-          Privacy & data
-        </h2>
-        <div
-          ref={fadePri.ref as any}
-          style={{
-            opacity: fadePri.visible ? 1 : 0,
-            transform: fadePri.visible ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 600ms ease, transform 600ms ease",
-          }}
-          className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
+      {/* CTA Section */}
+      <section className="ff-container py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="rounded-[var(--radius-2xl)] bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] p-8 md:p-12 border-2 border-[var(--color-border)] shadow-[var(--shadow-elevated)] relative overflow-hidden"
         >
-          {FAQ_PRIVACY.map((item, i) => (
-            <details
-              key={i}
-              className="border-t border-[var(--color-border)] first:border-t-0 p-4"
-            >
-              <summary className="cursor-pointer font-heading text-[var(--color-text)]">
-                {item.q}
-              </summary>
-              <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-            </details>
-          ))}
-        </div>
-      </section>
+          {/* Decorative gradient blob */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl opacity-20" />
 
-      {/* Prijzen & abonnementen */}
-      <section className="ff-container py-8">
-        <h2 className="font-heading text-2xl text-[var(--color-text)] mb-3">
-          Prijzen & abonnementen
-        </h2>
-        <div
-          ref={fadePrice.ref as any}
-          style={{
-            opacity: fadePrice.visible ? 1 : 0,
-            transform: fadePrice.visible ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 600ms ease, transform 600ms ease",
-          }}
-          className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
-        >
-          {FAQ_PRICING.map((item, i) => (
-            <details
-              key={i}
-              className="border-t border-[var(--color-border)] first:border-t-0 p-4"
+          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg flex-shrink-0"
             >
-              <summary className="cursor-pointer font-heading text-[var(--color-text)]">
-                {item.q}
-              </summary>
-              <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      {/* Product & gebruik */}
-      <section className="ff-container py-8">
-        <h2 className="font-heading text-2xl text-[var(--color-text)] mb-3">
-          Product & gebruik
-        </h2>
-        <div
-          ref={fadeProd.ref as any}
-          style={{
-            opacity: fadeProd.visible ? 1 : 0,
-            transform: fadeProd.visible ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 600ms ease, transform 600ms ease",
-          }}
-          className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]"
-        >
-          {FAQ_PRODUCT.map((item, i) => (
-            <details
-              key={i}
-              className="border-t border-[var(--color-border)] first:border-t-0 p-4"
-            >
-              <summary className="cursor-pointer font-heading text-[var(--color-text)]">
-                {item.q}
-              </summary>
-              <div className="mt-2 text-[var(--color-text)]/80">{item.a}</div>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      {/* Hulp nodig? */}
-      <section className="ff-container pb-12">
-        <div className="rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
-          <div className="flex items-start gap-3">
-            <HelpCircle className="h-5 w-5 text-[var(--color-text)]/70" aria-hidden />
-            <div>
-              <h2 className="font-heading text-xl">Nog een vraag?</h2>
-              <p className="mt-1 text-[var(--color-text)]/80">
+              <HelpCircle className="h-8 w-8 text-white" aria-hidden />
+            </motion.div>
+            <div className="flex-1">
+              <h2 className="font-heading text-2xl md:text-3xl text-[var(--color-text)] mb-2">
+                Nog een vraag?
+              </h2>
+              <p className="text-[var(--color-muted)] text-lg leading-relaxed">
                 We helpen je graag verder. Bekijk de prijzen of start direct —
                 opzeggen kan altijd.
               </p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <NavLink to="/prijzen" className="ff-btn ff-btn-secondary">
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <NavLink to="/prijzen" className="ff-btn ff-btn-secondary px-6 py-3">
                   Bekijk prijzen
                 </NavLink>
-                <NavLink to="/results" className="ff-btn ff-btn-primary">
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <NavLink to="/results" className="ff-btn ff-btn-primary px-6 py-3">
                   Start gratis
                 </NavLink>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
     </main>
   );
