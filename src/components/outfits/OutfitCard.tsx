@@ -223,7 +223,7 @@ export default function OutfitCard({
 
   return (
     <motion.div
-      className="group relative rounded-3xl border-2 border-[var(--ff-border-default)] bg-white p-5 shadow-lg hover:shadow-2xl transition-all focus-within:ring-4 focus-within:ring-[var(--ff-brand-500)]/20 focus-within:border-[var(--ff-brand-500)] overflow-hidden"
+      className="group relative rounded-3xl border-2 border-gray-200 bg-white p-5 shadow-lg hover:shadow-2xl transition-all focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-500 overflow-hidden"
       data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
@@ -240,7 +240,7 @@ export default function OutfitCard({
     >
       {/* Gradient overlay on hover */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[var(--ff-brand-50)] via-[var(--ff-accent-50)] to-[var(--ff-brand-100)] pointer-events-none"
+        className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
@@ -249,7 +249,7 @@ export default function OutfitCard({
       {/* Match score badge floating */}
       {outfit.matchPercentage && outfit.matchPercentage > 80 && (
         <motion.div
-          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-[var(--ff-brand-600)] to-[var(--ff-brand-700)] text-white rounded-full shadow-lg text-sm font-bold"
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg text-sm font-bold"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 15, delay: 0.2 }}
@@ -444,8 +444,8 @@ export default function OutfitCard({
               disabled={saveOutfit.isPending}
               className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-offset-2 overflow-hidden ${
                 saveOutfit.isSuccess || saved
-                  ? 'border-[var(--ff-brand-600)] bg-gradient-to-r from-[var(--ff-brand-600)] to-[var(--ff-brand-700)] text-white focus:ring-[var(--ff-brand-500)]/20 shadow-lg'
-                  : 'border-[var(--ff-brand-600)] text-[var(--ff-brand-600)] hover:bg-[var(--ff-brand-50)] focus:ring-[var(--ff-brand-500)]/20'
+                  ? 'border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white focus:ring-blue-500/20 shadow-lg'
+                  : 'border-blue-500 text-blue-600 hover:bg-blue-50 focus:ring-blue-500/20'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               whileHover={!saveOutfit.isPending ? { scale: 1.03, y: -2 } : {}}
               whileTap={!saveOutfit.isPending ? { scale: 0.97 } : {}}
@@ -468,7 +468,7 @@ export default function OutfitCard({
               title="Voeg vergelijkbare outfits toe aan je feed"
               onClick={handleMoreLikeThis}
               disabled={isProcessing.like}
-              className={`px-4 py-2.5 border-2 border-[var(--ff-success-600)] text-[var(--ff-success-600)] hover:bg-[var(--ff-success-50)] rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[var(--ff-success-500)]/20 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-green-500 text-green-600 hover:bg-green-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.like ? { scale: 1.03, y: -2 } : {}}
@@ -489,7 +489,7 @@ export default function OutfitCard({
               title="Verberg dit type outfit uit je feed"
               onClick={handleDislike}
               disabled={isProcessing.dislike}
-              className={`px-4 py-2.5 border-2 border-[var(--ff-error-600)] text-[var(--ff-error-600)] hover:bg-[var(--ff-error-50)] rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[var(--ff-error-500)]/20 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-red-500 text-red-600 hover:bg-red-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:ring-offset-2 ${
                 isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.dislike ? { scale: 1.03, y: -2 } : {}}
@@ -510,7 +510,7 @@ export default function OutfitCard({
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`px-4 py-2.5 border-2 border-[var(--ff-accent-600)] text-[var(--ff-accent-600)] hover:bg-[var(--ff-accent-50)] rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[var(--ff-accent-500)]/20 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-purple-500 text-purple-600 hover:bg-purple-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.explain ? { scale: 1.03, y: -2 } : {}}

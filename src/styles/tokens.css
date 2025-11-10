@@ -1,376 +1,143 @@
 /* src/styles/tokens.css */
-/* FitFi Premium Design System v2.0 — Apple × Lululemon × OpenAI */
-/* Warm, sophisticated, accessible — NO purple/indigo */
-
+/* FitFi vNext — Light/Neutral Beige — CANONIEK */
 :root {
-  /* ============================================
-     COLOR SYSTEM — Warm Neutrals + Soft Blue
-     ============================================ */
+  /* Palet */
+  --color-bg: #F7F3EC;
+  --color-surface: #FFFFFF;
+  --color-text: #1E2333;
+  --color-text-muted: #4A5568;  /* Darker for better contrast (AA compliant) */
+  --color-muted: #4A5568;
 
-  /* Backgrounds — Warm Cream/Beige */
-  --ff-bg-app: #FAF8F5;              /* lightest cream background */
-  --ff-bg-page: #F7F3EC;             /* page background */
-  --ff-bg-surface: #FFFFFF;          /* card/surface background */
-  --ff-bg-elevated: #FFFFFF;         /* elevated surface (modal, dropdown) */
-  --ff-bg-overlay: rgba(30, 35, 51, 0.85); /* modal/drawer overlay */
+  --color-primary: #A6886A;          /* brand taupe (semantisch) */
+  --ff-color-primary-25: #FAF8F5;    /* ultra light tint */
+  --ff-color-primary-50: #F6EFE9;    /* light background/card tints */
+  --ff-color-primary-100: #EDD9C8;   /* lighter backgrounds */
+  --ff-color-primary-200: #E0C9B3;   /* subtle borders */
+  --ff-color-primary-300: #CEB39A;   /* muted accents */
+  --ff-color-primary-400: #B89B82;   /* soft highlights */
+  --ff-color-primary-500: #A6886A;   /* base brand color */
+  --ff-color-primary-500-rgb: 166, 136, 106; /* RGB for opacity */
+  --ff-color-primary-600: #8F7459;   /* hover states */
+  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
+  --ff-color-primary-800: #5C4937;   /* dark accents */
+  --ff-color-primary-900: #3E3125;   /* darkest */
 
-  /* Text Colors — High Contrast */
-  --ff-text-primary: #1A1E2E;        /* main text (AAA) */
-  --ff-text-secondary: #4A5568;      /* secondary text (AA) */
-  --ff-text-tertiary: #6B7280;       /* muted text */
-  --ff-text-quaternary: #9CA3AF;     /* placeholder text */
-  --ff-text-inverse: #FFFFFF;        /* text on dark backgrounds */
+  --color-accent: #D8CABA;
+  --ff-color-accent-50: #F5F1EC;     /* light accent tints */
+  --ff-color-accent-100: #EBE4DC;    /* subtle backgrounds */
+  --ff-color-accent-200: #DFD4C8;    /* soft borders */
+  --ff-color-accent-300: #D8CABA;    /* base accent */
+  --ff-color-accent-400: #C9B8A6;    /* accent variations */
+  --ff-color-accent-500: #B8A898;    /* medium accent */
+  --ff-color-accent-600: #A89682;    /* darker accent */
+  --ff-color-accent-700: #8A7A6A;    /* deep accent */
+  --ff-color-accent-800: #6D6053;    /* very dark */
+  --ff-color-accent-900: #4F463C;    /* darkest accent */
 
-  /* Brand Colors — Warm Taupe/Beige (NO purple!) */
-  --ff-brand-50: #FAF8F5;
-  --ff-brand-100: #F6EFE9;
-  --ff-brand-200: #EDD9C8;
-  --ff-brand-300: #E0C9B3;
-  --ff-brand-400: #CEB39A;
-  --ff-brand-500: #A6886A;           /* primary brand */
-  --ff-brand-600: #8F7459;           /* hover */
-  --ff-brand-700: #7A614A;           /* active/pressed */
-  --ff-brand-800: #5C4937;
-  --ff-brand-900: #3E3125;
+  --color-border: rgba(30, 35, 51, 0.08);
 
-  /* Accent Colors — Soft Blue (used sparingly) */
-  --ff-accent-50: #F0F9FF;
-  --ff-accent-100: #E0F2FE;
-  --ff-accent-200: #BAE6FD;
-  --ff-accent-300: #7DD3FC;
-  --ff-accent-400: #38BDF8;
-  --ff-accent-500: #0EA5E9;          /* soft blue accent */
-  --ff-accent-600: #0284C7;
-  --ff-accent-700: #0369A1;
-  --ff-accent-800: #075985;
-  --ff-accent-900: #0C4A6E;
+  /* Status colors with full scales */
+  --color-success: #16A34A;
+  --ff-color-success-50: #F0FDF4;
+  --ff-color-success-100: #DCFCE7;
+  --ff-color-success-200: #BBF7D0;
+  --ff-color-success-300: #86EFAC;
+  --ff-color-success-400: #4ADE80;
+  --ff-color-success-500: #22C55E;
+  --ff-color-success-600: #16A34A;   /* main success */
+  --ff-color-success-700: #15803D;
+  --ff-color-success-800: #166534;
+  --ff-color-success-900: #14532D;
 
-  /* Semantic Colors — Status/Feedback */
-  --ff-success-50: #F0FDF4;
-  --ff-success-500: #22C55E;
-  --ff-success-600: #16A34A;
-  --ff-success-700: #15803D;
+  --color-warning: #D97706;
+  --ff-color-warning-50: #FFFBEB;
+  --ff-color-warning-600: #D97706;   /* main warning */
 
-  --ff-warning-50: #FFFBEB;
-  --ff-warning-500: #F59E0B;
-  --ff-warning-600: #D97706;
-  --ff-warning-700: #B45309;
+  --color-danger: #DC2626;
+  --ff-color-danger-50: #FEF2F2;
+  --ff-color-danger-600: #DC2626;    /* main danger */
 
-  --ff-error-50: #FEF2F2;
-  --ff-error-500: #EF4444;
-  --ff-error-600: #DC2626;
-  --ff-error-700: #B91C1C;
+  /* Additional utility colors */
+  --ff-color-turquoise: #40E0D0;     /* accent color for special elements */
+  --ff-color-secondary-600: #6B7280; /* neutral secondary */
 
-  --ff-info-50: #EFF6FF;
-  --ff-info-500: #3B82F6;
-  --ff-info-600: #2563EB;
-  --ff-info-700: #1D4ED8;
+  /* Overlays */
+  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
+  --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
 
-  /* Borders — Subtle & Refined */
-  --ff-border-subtle: rgba(30, 35, 51, 0.06);
-  --ff-border-default: rgba(30, 35, 51, 0.12);
-  --ff-border-medium: rgba(30, 35, 51, 0.18);
-  --ff-border-strong: rgba(30, 35, 51, 0.24);
+  /* ============ TOKENS: CTA (Start gratis) ============ */
+  /* Basis warm bruin; tint/tonen voor states & surfaces */
+  --ff-cta-50:  #F6EFE9;
+  --ff-cta-100: #EEE2D7;
+  --ff-cta-200: #E2D0BF;
+  --ff-cta-300: #CEB39A;
+  --ff-cta-400: #B98F71;
+  --ff-cta-500: #9D6E52;   /* ≈ huidige Start gratis */
+  --ff-cta-600: #8A6048;   /* hover */
+  --ff-cta-700: #724E3B;   /* active/focus ring donker */
+  --ff-cta-800: #5C3E2E;
+  --ff-cta-900: #493123;
 
-  /* ============================================
-     PREMIUM SHADOWS — Apple-Inspired
-     ============================================ */
+  /* Tekst op CTA-vlakken */
+  --ff-cta-contrast: #FFFFFF;
 
-  --ff-shadow-xs: 0 1px 2px rgba(30, 35, 51, 0.04);
-  --ff-shadow-sm: 0 2px 4px rgba(30, 35, 51, 0.06),
-                   0 1px 2px rgba(30, 35, 51, 0.03);
-  --ff-shadow-md: 0 4px 8px rgba(30, 35, 51, 0.08),
-                   0 2px 4px rgba(30, 35, 51, 0.04);
-  --ff-shadow-lg: 0 8px 16px rgba(30, 35, 51, 0.10),
-                   0 4px 8px rgba(30, 35, 51, 0.05);
-  --ff-shadow-xl: 0 16px 32px rgba(30, 35, 51, 0.12),
-                   0 8px 16px rgba(30, 35, 51, 0.06);
-  --ff-shadow-2xl: 0 24px 48px rgba(30, 35, 51, 0.14),
-                    0 12px 24px rgba(30, 35, 51, 0.07);
+  /* Neutrale inkt & border die mooi samengaan met CTA */
+  --ff-ink-600: #1D2430;
+  --ff-ink-500: #2B3342;
+  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
 
-  /* Focus Rings */
-  --ff-shadow-focus-brand: 0 0 0 3px rgba(166, 136, 106, 0.20),
-                            0 0 0 1px rgba(166, 136, 106, 0.30);
-  --ff-shadow-focus-accent: 0 0 0 3px rgba(14, 165, 233, 0.20),
-                             0 0 0 1px rgba(14, 165, 233, 0.30);
-  --ff-shadow-focus-error: 0 0 0 3px rgba(239, 68, 68, 0.20),
-                            0 0 0 1px rgba(239, 68, 68, 0.30);
+  /* Accent color - matches "Start gratis" button */
+  --ff-color-accent: #9C745E;
+  --ff-color-accent-contrast: #fff;
 
-  /* ============================================
-     GLASSMORPHISM — Premium Cards
-     ============================================ */
-
-  --ff-glass-bg: rgba(255, 255, 255, 0.70);
-  --ff-glass-border: rgba(255, 255, 255, 0.18);
-  --ff-glass-shadow: 0 8px 32px rgba(30, 35, 51, 0.08);
-  --ff-glass-blur: blur(12px);
-
-  /* ============================================
-     GRADIENTS — Warm & Sophisticated
-     ============================================ */
-
-  /* Background Gradients */
-  --ff-gradient-page: linear-gradient(180deg,
-    #FAF8F5 0%,
-    #F7F3EC 50%,
-    #F6EFE9 100%
+  /* Links consistent with accent */
+  --ff-link: var(--ff-color-accent);
+  --ff-link-hover: color-mix(
+    in oklab,
+    var(--ff-color-accent) 84%,
+    black 16%
+  );
+  --ff-focus: color-mix(
+    in oklab,
+    var(--ff-color-accent) 20%,
+    white 80%
   );
 
-  --ff-gradient-hero: linear-gradient(135deg,
-    #FAF8F5 0%,
-    #F6EFE9 50%,
-    #EDD9C8 100%
-  );
+  /* Radii */
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
 
-  /* Brand Gradients */
-  --ff-gradient-brand: linear-gradient(135deg,
-    #A6886A 0%,
-    #8F7459 100%
-  );
+  /* Shadows */
+  --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
+  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
 
-  --ff-gradient-brand-soft: linear-gradient(135deg,
-    #F6EFE9 0%,
-    #EDD9C8 100%
-  );
-
-  /* Accent Gradients */
-  --ff-gradient-accent: linear-gradient(135deg,
-    #0EA5E9 0%,
-    #0284C7 100%
-  );
-
-  --ff-gradient-accent-soft: linear-gradient(135deg,
-    #E0F2FE 0%,
-    #BAE6FD 100%
-  );
-
-  /* Premium Shimmer */
-  --ff-gradient-shimmer: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.5) 50%,
-    transparent 100%
-  );
-
-  /* ============================================
-     SPACING SCALE — 8px Grid System
-     ============================================ */
-
-  --ff-space-0: 0;
-  --ff-space-1: 0.25rem;   /* 4px */
-  --ff-space-2: 0.5rem;    /* 8px */
-  --ff-space-3: 0.75rem;   /* 12px */
-  --ff-space-4: 1rem;      /* 16px */
-  --ff-space-5: 1.25rem;   /* 20px */
-  --ff-space-6: 1.5rem;    /* 24px */
-  --ff-space-8: 2rem;      /* 32px */
-  --ff-space-10: 2.5rem;   /* 40px */
-  --ff-space-12: 3rem;     /* 48px */
-  --ff-space-16: 4rem;     /* 64px */
-  --ff-space-20: 5rem;     /* 80px */
-  --ff-space-24: 6rem;     /* 96px */
-
-  /* ============================================
-     BORDER RADIUS — Consistent Roundness
-     ============================================ */
-
-  --ff-radius-xs: 0.25rem;   /* 4px */
-  --ff-radius-sm: 0.5rem;    /* 8px */
-  --ff-radius-md: 0.75rem;   /* 12px */
-  --ff-radius-lg: 1rem;      /* 16px */
-  --ff-radius-xl: 1.25rem;   /* 20px */
-  --ff-radius-2xl: 1.5rem;   /* 24px */
-  --ff-radius-3xl: 2rem;     /* 32px */
-  --ff-radius-full: 9999px;  /* pill shape */
-
-  /* ============================================
-     TYPOGRAPHY — Premium Scale
-     ============================================ */
-
-  /* Font Sizes */
-  --ff-text-xs: 0.75rem;     /* 12px */
-  --ff-text-sm: 0.875rem;    /* 14px */
-  --ff-text-base: 1rem;      /* 16px */
-  --ff-text-lg: 1.125rem;    /* 18px */
-  --ff-text-xl: 1.25rem;     /* 20px */
-  --ff-text-2xl: 1.5rem;     /* 24px */
-  --ff-text-3xl: 1.875rem;   /* 30px */
-  --ff-text-4xl: 2.25rem;    /* 36px */
-  --ff-text-5xl: 3rem;       /* 48px */
-  --ff-text-6xl: 3.75rem;    /* 60px */
-
-  /* Font Weights */
-  --ff-weight-regular: 400;
-  --ff-weight-medium: 500;
-  --ff-weight-semibold: 600;
-  --ff-weight-bold: 700;
-
-  /* Line Heights */
-  --ff-leading-tight: 1.2;
-  --ff-leading-snug: 1.375;
-  --ff-leading-normal: 1.5;
-  --ff-leading-relaxed: 1.625;
-  --ff-leading-loose: 2;
-
-  /* Letter Spacing */
-  --ff-tracking-tighter: -0.05em;
-  --ff-tracking-tight: -0.025em;
-  --ff-tracking-normal: 0;
-  --ff-tracking-wide: 0.025em;
-  --ff-tracking-wider: 0.05em;
-
-  /* ============================================
-     ANIMATION — Smooth & Natural
-     ============================================ */
-
-  /* Durations */
-  --ff-duration-instant: 50ms;
-  --ff-duration-fast: 150ms;
-  --ff-duration-normal: 250ms;
-  --ff-duration-slow: 350ms;
-  --ff-duration-slower: 500ms;
-
-  /* Easing Functions — Apple-style */
-  --ff-ease-linear: linear;
-  --ff-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ff-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --ff-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ff-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ff-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-  /* ============================================
-     Z-INDEX SCALE — Consistent Layering
-     ============================================ */
-
-  --ff-z-base: 0;
-  --ff-z-dropdown: 1000;
-  --ff-z-sticky: 1100;
-  --ff-z-fixed: 1200;
-  --ff-z-modal-backdrop: 1300;
-  --ff-z-modal: 1400;
-  --ff-z-popover: 1500;
-  --ff-z-tooltip: 1600;
-  --ff-z-toast: 1700;
-
-  /* ============================================
-     LAYOUT — Max Widths & Breakpoints
-     ============================================ */
-
-  --ff-max-width-xs: 20rem;      /* 320px */
-  --ff-max-width-sm: 24rem;      /* 384px */
-  --ff-max-width-md: 28rem;      /* 448px */
-  --ff-max-width-lg: 32rem;      /* 512px */
-  --ff-max-width-xl: 36rem;      /* 576px */
-  --ff-max-width-2xl: 42rem;     /* 672px */
-  --ff-max-width-3xl: 48rem;     /* 768px */
-  --ff-max-width-4xl: 56rem;     /* 896px */
-  --ff-max-width-5xl: 64rem;     /* 1024px */
-  --ff-max-width-6xl: 72rem;     /* 1152px */
-  --ff-max-width-7xl: 80rem;     /* 1280px */
-
-  /* ============================================
-     LEGACY SUPPORT — Backwards Compatibility
-     ============================================ */
-
-  --color-bg: var(--ff-bg-page);
-  --color-surface: var(--ff-bg-surface);
-  --color-text: var(--ff-text-primary);
-  --color-text-muted: var(--ff-text-secondary);
-  --color-primary: var(--ff-brand-500);
-  --color-accent: var(--ff-accent-500);
-  --color-border: var(--ff-border-default);
-  --color-success: var(--ff-success-600);
-  --color-warning: var(--ff-warning-600);
-  --color-danger: var(--ff-error-600);
-  --radius-lg: var(--ff-radius-lg);
-  --shadow-soft: var(--ff-shadow-md);
-  --shadow-ring: var(--ff-shadow-focus-brand);
+  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
+  font-synthesis-weight: none;
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
-
+/* Basiselementen */
 body {
-  background: var(--ff-bg-page);
-  color: var(--ff-text-primary);
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  font-size: var(--ff-text-base);
-  line-height: var(--ff-leading-normal);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-
-/* Premium Card */
+/* Cards */
 .ff-card {
-  background: var(--ff-bg-surface);
-  border: 1px solid var(--ff-border-subtle);
-  border-radius: var(--ff-radius-xl);
-  box-shadow: var(--ff-shadow-sm);
-  transition: box-shadow var(--ff-duration-normal) var(--ff-ease-out);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
 }
 
-.ff-card:hover {
-  box-shadow: var(--ff-shadow-lg);
-}
+/* CTA – solid (AA) */
+.ff-cta { background: var(--ff-color-primary-700); color: #fff; }
+.ff-cta:hover { background: var(--ff-color-primary-600); }
 
-/* Glass Card */
-.ff-card-glass {
-  background: var(--ff-glass-bg);
-  border: 1px solid var(--ff-glass-border);
-  border-radius: var(--ff-radius-xl);
-  box-shadow: var(--ff-glass-shadow);
-  backdrop-filter: var(--ff-glass-blur);
-  -webkit-backdrop-filter: var(--ff-glass-blur);
-}
+/* Focus-ring tokenized */
+.ff-focus { outline: none; box-shadow: var(--shadow-ring); }
 
-/* Focus States */
-.ff-focus-brand:focus-visible {
-  outline: none;
-  box-shadow: var(--ff-shadow-focus-brand);
-}
-
-.ff-focus-accent:focus-visible {
-  outline: none;
-  box-shadow: var(--ff-shadow-focus-accent);
-}
-
-/* Premium Gradients */
-.ff-gradient-text-brand {
-  background: var(--ff-gradient-brand);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-.ff-gradient-text-accent {
-  background: var(--ff-gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* Smooth Transitions */
-.ff-transition {
-  transition-property: all;
-  transition-duration: var(--ff-duration-normal);
-  transition-timing-function: var(--ff-ease-out);
-}
-
-.ff-transition-colors {
-  transition-property: color, background-color, border-color;
-  transition-duration: var(--ff-duration-fast);
-  transition-timing-function: var(--ff-ease-out);
-}
-
-.ff-transition-transform {
-  transition-property: transform;
-  transition-duration: var(--ff-duration-normal);
-  transition-timing-function: var(--ff-ease-spring);
-}
+/* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */

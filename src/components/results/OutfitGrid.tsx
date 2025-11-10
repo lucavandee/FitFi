@@ -33,12 +33,12 @@ const OutfitGrid: React.FC<{ outfits: Outfit[] }> = ({ outfits }) => {
       <div className="ff-container">
         <motion.h2
           id="outfits-title"
-          className="text-3xl font-bold mb-6 text-[var(--ff-text-primary)]"
+          className="text-3xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', damping: 25 }}
         >
-          Outfits die nu werken voor jou
+          Outfits die nu werken voor jou ✨
         </motion.h2>
         <motion.div
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
