@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleHelp as HelpCircle, ShieldCheck, Lock, CreditCard, Clock, Plus, Minus } from "lucide-react";
+import { CircleHelp as HelpCircle, ShieldCheck, Lock, CreditCard, Clock, Plus, Minus, Search, ThumbsUp, ThumbsDown, Hash } from "lucide-react";
 
-type QA = { q: string; a: React.ReactNode };
+type QA = { q: string; a: React.ReactNode; id: string; category: string };
 
 const FAQ_GENERAL: QA[] = [
   {

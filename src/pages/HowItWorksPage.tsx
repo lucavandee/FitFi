@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import { CircleCheck as CheckCircle, Sparkles, Target, Zap, Clock, Shield } from "lucide-react";
 
 export default function HowItWorksPage() {
@@ -15,42 +16,98 @@ export default function HowItWorksPage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[var(--color-bg)] py-24 md:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
+        {/* Animated gradient blobs */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+              x: [0, 50, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, -90, 0],
+              x: [0, -30, 0],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-[var(--ff-color-accent-400)] to-[var(--ff-color-primary-400)] rounded-full blur-3xl"
+          />
+        </div>
+
         <div className="ff-container relative">
-          <div className="max-w-4xl mx-auto text-center fade-in-up">
+          <div className="max-w-4xl mx-auto text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-surface)] backdrop-blur-sm rounded-full text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-lg border border-[var(--color-border)]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-sm rounded-full text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-lg border border-[var(--color-border)]"
+            >
               <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
               Zo werkt het
-            </div>
+            </motion.div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight"
+            >
               Van quiz naar outfits{' '}
               <span className="relative inline-block">
                 <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
                   in 2 minuten
                 </span>
               </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
+            >
               In 3 eenvoudige stappen van persoonlijkheidsquiz naar gepersonaliseerde outfits. Geen gedoe, wel resultaat.
-            </p>
+            </motion.p>
           </div>
         </div>
       </section>
 
       {/* Steps Section */}
-      <section className="py-20 bg-[var(--color-surface)]">
+      <section className="py-20 bg-[var(--color-bg)]">
         <div className="ff-container">
-          <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-3 stagger-fade-in">
+          <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-3">
 
             {/* Step 1 */}
-            <div className="bg-[var(--color-bg)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)] hover-lift card-interactive">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0 }}
+              whileHover={{ y: -8 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
-                  <Target className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                </div>
-                <div className="text-4xl font-bold text-gray-600">01</div>
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg"
+                >
+                  <Target className="w-7 h-7 text-white" />
+                </motion.div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">01</div>
               </div>
 
               <h3 className="text-2xl font-bold mb-3 text-[var(--color-text)]">Persoonlijkheidsquiz</h3>
@@ -73,15 +130,26 @@ export default function HowItWorksPage() {
                   <span className="text-[var(--color-text)]">Binnen 2 min</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 2 */}
-            <div className="bg-[var(--color-bg)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)] hover-lift card-interactive">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -8 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
-                  <Zap className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                </div>
-                <div className="text-4xl font-bold text-gray-600">02</div>
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg"
+                >
+                  <Zap className="w-7 h-7 text-white" />
+                </motion.div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">02</div>
               </div>
 
               <h3 className="text-2xl font-bold mb-3 text-[var(--color-text)]">AI Analyse</h3>
@@ -104,15 +172,26 @@ export default function HowItWorksPage() {
                   <span>Helder resultaat</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 3 */}
-            <div className="bg-[var(--color-bg)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)] hover-lift card-interactive">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -8 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                </div>
-                <div className="text-4xl font-bold text-gray-600">03</div>
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg"
+                >
+                  <Sparkles className="w-7 h-7 text-white" />
+                </motion.div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">03</div>
               </div>
 
               <h3 className="text-2xl font-bold mb-3 text-[var(--color-text)]">Jouw Style Report</h3>
@@ -135,7 +214,7 @@ export default function HowItWorksPage() {
                   <span>Uitleg per item</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -152,99 +231,178 @@ export default function HowItWorksPage() {
             </p>
           </div>
 
-          <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-fade-in">
-            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] hover-lift">
-              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-              </div>
+          <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0 }}
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
+              >
+                <Target className="w-6 h-6 text-white" />
+              </motion.div>
               <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">Stijlarchetype</h3>
               <p className="text-[var(--color-muted)]">
                 Je unieke stijlpersoonlijkheid met uitgebreide uitleg over wat dit betekent voor je kledingkeuzes.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] hover-lift">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] mb-4"></div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] shadow-lg mb-4"
+              />
               <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">Kleurenpalet</h3>
               <p className="text-[var(--color-muted)]">
                 Jouw perfecte kleuren die je huid laten stralen en je persoonlijkheid versterken.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] hover-lift">
-              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-4">
-                <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
+              >
+                <Sparkles className="w-6 h-6 text-white" />
+              </motion.div>
               <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">Complete Outfits</h3>
               <p className="text-[var(--color-muted)]">
                 6-12 volledige looks voor verschillende gelegenheden, van casual tot formeel.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] hover-lift">
-              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-4">
-                <CheckCircle className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
+              >
+                <CheckCircle className="w-6 h-6 text-white" />
+              </motion.div>
               <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">Shoplinks</h3>
               <p className="text-[var(--color-muted)]">
                 Directe links naar alle items zodat je meteen kunt shoppen wat bij je past.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] hover-lift">
-              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-4">
-                <Zap className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
+              >
+                <Zap className="w-6 h-6 text-white" />
+              </motion.div>
               <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">Styling Tips</h3>
               <p className="text-[var(--color-muted)]">
                 Praktische tips over hoe je items combineert en je stijl verder ontwikkelt.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] hover-lift">
-              <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              whileHover={{ y: -4 }}
+              className="bg-white/80 backdrop-blur-sm rounded-[var(--radius-2xl)] border-2 border-[var(--color-border)] p-6 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
+              >
+                <Shield className="w-6 h-6 text-white" />
+              </motion.div>
               <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">Privacy-First</h3>
               <p className="text-[var(--color-muted)]">
                 Geen foto's nodig, geen persoonlijke data opgeslagen. Jouw privacy staat voorop.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-[var(--color-surface)]">
+      <section className="py-20 bg-[var(--color-bg)]">
         <div className="ff-container">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center shadow-xl hover-lift">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[var(--color-text)]">
-              Klaar voor jouw <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Style Report</span>?
-            </h2>
-            <p className="text-xl text-[var(--color-muted)] mb-8">
-              Start nu en ontdek binnen 2 minuten welke stijl perfect bij je past.
-            </p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center shadow-[var(--shadow-elevated)] border-2 border-[var(--color-border)] relative overflow-hidden"
+          >
+            {/* Decorative gradient blob */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl opacity-20" />
 
-            <NavLink
-              to="/onboarding"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift focus-ring-premium mb-8"
-              data-event="cta_start_free_how_it_works"
-            >
-              <Sparkles className="w-5 h-5" />
-              Start gratis Style Report
-            </NavLink>
+            <div className="relative">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[var(--color-text)]">
+                Klaar voor jouw <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Style Report</span>?
+              </h2>
+              <p className="text-xl text-[var(--color-muted)] mb-8">
+                Start nu en ontdek binnen 2 minuten welke stijl perfect bij je past.
+              </p>
 
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-[var(--color-muted)]">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                <span>100% Gratis</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                <span>Direct resultaat</span>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <NavLink
+                  to="/onboarding"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg focus-ring-premium mb-8"
+                  data-event="cta_start_free_how_it_works"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Start gratis Style Report
+                </NavLink>
+              </motion.div>
+
+              <div className="flex flex-wrap justify-center gap-6 text-sm text-[var(--color-muted)]">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
+                  <span>100% Gratis</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
+                  <span>Direct resultaat</span>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </main>
