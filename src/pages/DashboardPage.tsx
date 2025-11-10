@@ -23,7 +23,8 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { RefineStyleWidget } from "@/components/dashboard/RefineStyleWidget";
-import { GamificationDashboardMini } from "@/components/gamification/GamificationDashboardMini";
+import { GamificationWidget } from "@/components/dashboard/GamificationWidget";
+import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import toast from "react-hot-toast";
@@ -112,6 +113,8 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
+      <OnboardingTour />
+
       <Helmet>
         <title>Dashboard - FitFi</title>
         <meta name="description" content="Jouw persoonlijke style dashboard met outfits, favorieten en styling tips." />
@@ -284,7 +287,7 @@ export default function DashboardPage() {
       <section className="py-12 bg-[var(--color-surface)]">
         <div className="ff-container">
           {/* Refine Style Widget */}
-          <div className="mb-12 fade-in-up">
+          <div className="mb-12 fade-in-up" data-tour="refine-style">
             <RefineStyleWidget />
           </div>
 
@@ -346,9 +349,17 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Gamification */}
-          <div className="mb-12 fade-in-up">
-            <GamificationDashboardMini />
+          {/* Gamification - Premium Widget */}
+          <div className="mb-12 fade-in-up" data-tour="gamification">
+            <div className="mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2">
+                Jouw <span className="text-gradient">Progressie</span>
+              </h2>
+              <p className="text-[var(--color-muted)]">
+                Verdien XP, unlock achievements en level up je style
+              </p>
+            </div>
+            <GamificationWidget />
           </div>
 
           {/* Subscription Management */}

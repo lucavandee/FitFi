@@ -12,6 +12,7 @@ import NovaLauncher from "@/components/nova/NovaLauncher";
 import ChatPanel from "@/components/nova/ChatPanel";
 import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
 import AwinMasterTag from "@/components/affiliate/AwinMasterTag";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 // Lazy pages
 const LandingPage        = lazy(() => import("@/pages/LandingPage"));
@@ -79,11 +80,12 @@ const WithSeo = {
 export default function App() {
   return (
     <NovaChatProvider>
-      <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
-        <ErrorBoundary>
-          <ProfileSyncInitializer />
-          <AwinMasterTag />
-          <Navbar />
+      <NotificationProvider>
+        <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+          <ErrorBoundary>
+            <ProfileSyncInitializer />
+            <AwinMasterTag />
+            <Navbar />
           <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
             <main id="main">
               <Routes>
@@ -144,6 +146,7 @@ export default function App() {
           <AnalyticsLoader />
         </ErrorBoundary>
       </div>
+      </NotificationProvider>
     </NovaChatProvider>
   );
 }

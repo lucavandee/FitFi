@@ -12,6 +12,7 @@ export default function ChatLauncherPro() {
     <Portal id="fitfi-portal-launcher-pro" z={2147483647}>
       <div
         data-testid="nova-chat-launcher"
+        data-tour="nova-launcher"
         style={{
           position: "fixed",
           right: "24px",
