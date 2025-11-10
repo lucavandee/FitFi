@@ -106,25 +106,25 @@ export function GamificationWidget() {
               icon={<Trophy className="w-5 h-5" />}
               label="Achievements"
               value={stats.achievements_count}
-              gradient="from-yellow-400 to-orange-500"
+              gradient="from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
             />
             <MiniStatCard
               icon={<Zap className="w-5 h-5" />}
               label="Streak"
               value={`${stats.daily_streak}d`}
-              gradient="from-orange-400 to-red-500"
+              gradient="from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-700)]"
             />
             <MiniStatCard
               icon={<Target className="w-5 h-5" />}
               label="Challenges"
               value={stats.challenges_completed}
-              gradient="from-blue-400 to-purple-500"
+              gradient="from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)]"
             />
             <MiniStatCard
               icon={<Star className="w-5 h-5" />}
               label="Outfits"
               value={stats.outfits_saved}
-              gradient="from-pink-400 to-rose-500"
+              gradient="from-[var(--ff-color-accent-600)] to-[var(--ff-color-primary-600)]"
             />
           </div>
 
@@ -166,7 +166,7 @@ export function GamificationWidget() {
                 transition={{ delay: index * 0.1 }}
                 className="flex items-center gap-4 p-4 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border border-[var(--color-border)] hover-lift"
               >
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg flex-shrink-0">
                   <span className="text-2xl">{achievement.achievement_icon}</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -186,9 +186,9 @@ export function GamificationWidget() {
       )}
 
       {/* Next Milestones Preview */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-6 shadow-xl border-2 border-purple-200 dark:border-purple-800">
+      <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] dark:from-[var(--ff-color-primary-900/20)] dark:to-[var(--ff-color-accent-900/20)] rounded-3xl p-6 shadow-xl border-2 border-[var(--color-border)]">
         <h4 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-purple-600" />
+          <TrendingUp className="w-5 h-5 text-[var(--ff-color-accent-600)]" />
           Komende Milestones
         </h4>
         <div className="space-y-3">
@@ -273,13 +273,13 @@ function MilestoneItem({
             </div>
           </div>
         </div>
-        <div className="px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-lg">
+        <div className="px-2 py-1 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white text-xs font-bold rounded-lg">
           {reward}
         </div>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-2 bg-[var(--color-border)] rounded-full overflow-hidden">
         <motion.div
-          className={`h-full ${isComplete ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-purple-500 to-pink-500'}`}
+          className={`h-full ${isComplete ? 'bg-gradient-to-r from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-700)]' : 'bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]'}`}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 1, ease: 'easeOut' }}
