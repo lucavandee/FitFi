@@ -23,14 +23,51 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: false,
       target: 'es2022',
+      cssCodeSplit: true,
       rollupOptions: {
         external: [],
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-ui': ['lucide-react', 'react-hot-toast', 'react-helmet-async'],
-            'vendor-data': ['@tanstack/react-query', '@supabase/supabase-js'],
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+                return 'vendor-react';
+              }
+              if (id.includes('framer-motion')) {
+                return 'vendor-motion';
+              }
+              if (id.includes('lucide-react') || id.includes('react-hot-toast') || id.includes('react-helmet')) {
+                return 'vendor-ui';
+              }
+              if (id.includes('@tanstack') || id.includes('@supabase')) {
+                return 'vendor-data';
+              }
+              if (id.includes('xlsx')) {
+                return 'vendor-xlsx';
+              }
+              return 'vendor-misc';
+            }
+            if (id.includes('/pages/Admin')) {
+              return 'admin';
+            }
+            if (id.includes('/services/bramsFruit')) {
+              return 'brams-fruit';
+            }
+            if (id.includes('/components/nova') || id.includes('/services/nova')) {
+              return 'nova-ai';
+            }
           },
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]',
+        },
+      },
+      chunkSizeWarningLimit: 1000,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info'],
         },
       },
     },

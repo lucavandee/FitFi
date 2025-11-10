@@ -17,12 +17,14 @@ import "@/utils/migrateQuizToDatabase";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@/context/UserContext";
 import { GamificationProvider } from "@/context/GamificationContext";
+import { registerServiceWorker } from "@/utils/serviceWorker";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+  registerServiceWorker();
     <HelmetProvider>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
