@@ -12,6 +12,11 @@
 - Redirect naar home als niet-admin
 - Duidelijke console error messages
 
+### 3. Netlify build error opgelost
+- `pwaHealthCheck.ts` import verwijderd uit main.tsx
+- Bestand was niet in git gecommit
+- Build slaagt nu zonder errors (34.89s)
+
 ## 🔧 WAAROM JE NOG "registerServiceWorker();" ZIET
 
 Dit is **BROWSER CACHE**. De tekst komt NIET van de nieuwe build.
@@ -69,7 +74,8 @@ Na hard refresh en admin setup:
 
 ## 🚀 BUILD STATUS
 
-✅ Build succesvol (33.4s)
+✅ Build succesvol (34.89s)
+✅ Netlify deploy error opgelost
 ✅ Alle console.logs verwijderd uit production code
 ✅ Service Worker alleen in production mode
 ✅ Admin verificatie actief

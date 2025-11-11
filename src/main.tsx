@@ -21,13 +21,11 @@ import { OnboardingProvider } from "@/context/OnboardingContext";
 
 // Performance & PWA
 import { registerServiceWorker } from "@/utils/serviceWorker.ts";
-import { startPWAHealthMonitoring } from "@/utils/pwaHealthCheck.ts";
 
 // Initialize optimizations (production only)
 if (typeof window !== 'undefined' && import.meta.env.PROD) {
   try {
     registerServiceWorker();
-    startPWAHealthMonitoring();
   } catch (error) {
     // Silently fail - PWA features are optional
   }
