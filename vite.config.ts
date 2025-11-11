@@ -35,8 +35,11 @@ export default defineConfig(({ mode }) => {
               if (id.includes('framer-motion')) {
                 return 'vendor-motion';
               }
-              if (id.includes('@tanstack') || id.includes('@supabase')) {
-                return 'vendor-data';
+              if (id.includes('@supabase')) {
+                return 'vendor-supabase';
+              }
+              if (id.includes('@tanstack')) {
+                return 'vendor-query';
               }
               if (id.includes('xlsx')) {
                 return 'vendor-xlsx';
