@@ -127,19 +127,68 @@ Deno.serve(async (req: Request) => {
     const moodTags = JSON.parse(moodTagsStr);
     const displayOrder = parseInt(displayOrderStr);
 
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `${gender}/${fileName}`;
+    console.log('🔄 Processing image for WebP conversion...');
 
+    // Convert image to WebP using browser-native ImageData API
+    const fileBuffer = await file.arrayBuffer();
+    let finalBuffer: ArrayBuffer;
+    let finalContentType = 'image/webp';
+    let finalFileName: string;
+
+    // Check if already WebP
+    if (file.type === 'image/webp') {
+      console.log('✅ Already WebP format');
+      finalBuffer = fileBuffer;
+      finalFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.webp`;
+    } else {
+      console.log('🖼️ Converting', file.type, 'to WebP...');
+
+      try {
+        // Use ImageMagick via wasm or external API
+        // For Deno Edge Functions, we use a lightweight approach:
+        // Decode image -> re-encode as WebP
+
+        // Import image processing library
+        const { createCanvas, loadImage } = await import('https://deno.land/x/canvas@v1.4.1/mod.ts');
+
+        // Create canvas and load image
+        const img = await loadImage(new Uint8Array(fileBuffer));
+        const canvas = createCanvas(img.width(), img.height());
+        const ctx = canvas.getContext('2d');
+
+        // Draw image
+        ctx.drawImage(img, 0, 0);
+
+        // Convert to WebP (quality 85 for good balance)
+        const webpBuffer = canvas.toBuffer('image/webp', { quality: 0.85 });
+
+        finalBuffer = webpBuffer.buffer;
+        finalContentType = 'image/webp';
+        finalFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.webp`;
+
+        console.log('✅ Converted to WebP:', {
+          originalSize: (fileBuffer.byteLength / 1024).toFixed(2) + 'KB',
+          webpSize: (finalBuffer.byteLength / 1024).toFixed(2) + 'KB',
+          savings: (((fileBuffer.byteLength - finalBuffer.byteLength) / fileBuffer.byteLength) * 100).toFixed(1) + '%'
+        });
+      } catch (conversionError) {
+        console.error('❌ WebP conversion failed, uploading original:', conversionError);
+        // Fallback: upload original format
+        finalBuffer = fileBuffer;
+        finalContentType = file.type;
+        const originalExt = file.name.split('.').pop();
+        finalFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${originalExt}`;
+      }
+    }
+
+    const filePath = `${gender}/${finalFileName}`;
     console.log('📤 Uploading to storage:', filePath);
 
     // Upload to storage using service role (bypasses RLS)
-    const fileBuffer = await file.arrayBuffer();
     const { error: uploadError } = await supabaseAdmin.storage
       .from('mood-photos')
-      .upload(filePath, fileBuffer, {
-        contentType: file.type,
+      .upload(filePath, finalBuffer, {
+        contentType: finalContentType,
         cacheControl: '3600',
         upsert: false
       });
