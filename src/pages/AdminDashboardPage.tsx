@@ -19,7 +19,8 @@ import {
   ArrowRight,
   Activity,
   TrendingUp,
-  Award
+  Award,
+  Smartphone
 } from 'lucide-react';
 
 interface AdminModule {
@@ -98,6 +99,16 @@ const adminModules: AdminModule[] = [
     icon: FileText,
     route: '/admin/audit',
     color: 'from-slate-500 to-zinc-500',
+    badge: 'Dashboard Tab',
+    status: 'active'
+  },
+  {
+    id: 'pwa',
+    title: 'PWA & Push Notificaties',
+    description: 'Monitor installaties en verstuur push notificaties',
+    icon: Smartphone,
+    route: '/admin/pwa',
+    color: 'from-indigo-500 to-purple-500',
     badge: 'Dashboard Tab',
     status: 'active'
   },
@@ -331,7 +342,8 @@ export default function AdminDashboardPage() {
               </h3>
               <ul className="space-y-2 text-sm text-[var(--color-muted)]">
                 <li>• <strong>Mood Photos:</strong> Upload en beheer visual preference photos voor de quiz</li>
-                <li>• <strong>Gebruikers Tab:</strong> Sommige modules hebben tabs in dit dashboard (klik hier op "Dashboard" in navbar)</li>
+                <li>• <strong>PWA & Push:</strong> Monitor app installaties en verstuur push notificaties naar gebruikers</li>
+                <li>• <strong>Gebruikers Tab:</strong> Sommige modules hebben tabs in dit dashboard (gebruik navbar om te wisselen)</li>
                 <li>• <strong>Brams Fruit:</strong> Import producten via Excel upload</li>
                 <li>• <strong>Coming Soon:</strong> Modules in ontwikkeling komen binnenkort beschikbaar</li>
               </ul>
