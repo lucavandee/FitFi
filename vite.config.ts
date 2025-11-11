@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
                 return 'vendor-motion';
               }
               if (id.includes('lucide-react') || id.includes('react-hot-toast') || id.includes('react-helmet')) {
-                return 'vendor-ui';
+                return 'vendor-misc';
               }
               if (id.includes('@tanstack') || id.includes('@supabase')) {
                 return 'vendor-data';
@@ -46,13 +46,10 @@ export default defineConfig(({ mode }) => {
               }
               return 'vendor-misc';
             }
-            if (id.includes('/pages/Admin')) {
-              return 'admin';
-            }
             if (id.includes('/services/bramsFruit')) {
               return 'brams-fruit';
             }
-            if (id.includes('/components/nova') || id.includes('/services/nova')) {
+            if (id.includes('/components/nova') || id.includes('/services/nova') || id.includes('/ai/nova')) {
               return 'nova-ai';
             }
           },
