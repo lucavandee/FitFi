@@ -51,10 +51,8 @@ export default function AdminUsersPage() {
       setLoading(true);
       const sb = supabase();
 
-      const { data, error } = await sb
-        .from('profiles')
-        .select('id, email, full_name, tier, is_admin, created_at, last_sign_in, quiz_completed')
-        .order('created_at', { ascending: false });
+      // Call admin function that returns merged user data
+      const { data, error } = await sb.rpc('get_admin_users');
 
       if (error) {
         console.error('[AdminUsers] Error loading users:', error);
@@ -65,11 +63,12 @@ export default function AdminUsersPage() {
       setUsers(data || []);
 
       // Calculate stats
-      const total = data?.length || 0;
-      const free = data?.filter(u => u.tier === 'free').length || 0;
-      const premium = data?.filter(u => u.tier === 'premium').length || 0;
-      const founder = data?.filter(u => u.tier === 'founder').length || 0;
-      const admins = data?.filter(u => u.is_admin).length || 0;
+      const userData = data || [];
+      const total = userData.length;
+      const free = userData.filter(u => u.tier === 'free').length;
+      const premium = userData.filter(u => u.tier === 'premium').length;
+      const founder = userData.filter(u => u.tier === 'founder').length;
+      const admins = userData.filter(u => u.is_admin).length;
 
       setStats({ total, free, premium, founder, admins });
     } catch (error) {
