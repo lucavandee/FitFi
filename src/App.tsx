@@ -44,6 +44,8 @@ const AdminZalandoImportPage = lazy(() => import("@/pages/AdminZalandoImportPage
 const AdminMoodPhotosPage = lazy(() => import("@/pages/AdminMoodPhotosPage"));
 const AdminImageManagerPage = lazy(() => import("@/pages/AdminImageManagerPage"));
 const AdminPWADashboard = lazy(() => import("@/pages/AdminPWADashboard"));
+const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
+const AdminAuditPage = lazy(() => import("@/pages/AdminAuditPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
@@ -76,6 +78,8 @@ const WithSeo = {
   AdminMoodPhotos: () => (<><Seo title="Mood Photos Moderation — FitFi Admin" description="Review and moderate mood photos for visual preference quiz." path="/admin/mood-photos" noindex /><AdminMoodPhotosPage /></>),
   AdminImageManager: () => (<><Seo title="Image Manager — FitFi Admin" description="Bulk upload product images with SKU matching." path="/admin/images" noindex /><AdminImageManagerPage /></>),
   AdminPWADashboard: () => (<><Seo title="PWA Dashboard — FitFi Admin" description="Monitor PWA installations and push notifications." path="/admin/pwa" noindex /><AdminPWADashboard /></>),
+  AdminUsers: () => (<><Seo title="Gebruikersbeheer — FitFi Admin" description="Beheer alle gebruikers en hun toegang." path="/admin/users" noindex /><AdminUsersPage /></>),
+  AdminAudit: () => (<><Seo title="Audit Log — FitFi Admin" description="Bekijk alle gebruikersactiviteit en systeemgebeurtenissen." path="/admin/audit" noindex /><AdminAuditPage /></>),
   AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
@@ -137,7 +141,8 @@ export default function App() {
                 <Route path="/admin/mood-photos" element={<RequireAuth><WithSeo.AdminMoodPhotos /></RequireAuth>} />
                 <Route path="/admin/images" element={<RequireAuth><WithSeo.AdminImageManager /></RequireAuth>} />
                 <Route path="/admin/pwa" element={<RequireAuth><WithSeo.AdminPWADashboard /></RequireAuth>} />
-                <Route path="/admin/pwa-test" element={<WithSeo.AdminPWADashboard />} />
+                <Route path="/admin/users" element={<RequireAuth><WithSeo.AdminUsers /></RequireAuth>} />
+                <Route path="/admin/audit" element={<RequireAuth><WithSeo.AdminAudit /></RequireAuth>} />
                 <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
 
                 {/* 404 */}
