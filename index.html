@@ -9,8 +9,7 @@
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="dns-prefetch" href="https://supabase.co">
 
-    <!-- Preload critical assets -->
-    <link rel="modulepreload" href="/src/main.tsx" as="script">
+    <!-- Prefetch common routes -->
     <link rel="prefetch" href="/results" as="document">
     <link rel="prefetch" href="/prijzen" as="document">
 
@@ -33,6 +32,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script type="module" src="/src/components/nova/boot.tsx"></script>
   </body>
 </html>
