@@ -1350,8 +1350,7 @@ Man in black t-shirt, layered silver chain necklaces, rings, bracelet, watch, ex
 ```
 **Tags:** `statement-accessories, jewelry, chains, expressive, styled`
 **Color:** `#000000, #C0C0C0, #A8A8A8`
-
----
+`---
 
 ### AS 7: MODERNITEIT (3 foto's)
 
