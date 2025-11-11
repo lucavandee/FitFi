@@ -6,15 +6,12 @@ export function registerServiceWorker(): void {
           scope: '/',
         });
 
-        console.log('[SW] Service Worker registered:', registration.scope);
-
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (!newWorker) return;
 
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[SW] New content available, please refresh.');
               if (confirm('Nieuwe versie beschikbaar! Pagina herladen?')) {
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
                 window.location.reload();
@@ -23,7 +20,7 @@ export function registerServiceWorker(): void {
           });
         });
       } catch (error) {
-        console.error('[SW] Registration failed:', error);
+        // Silent fail in production
       }
     });
 

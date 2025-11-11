@@ -48,11 +48,13 @@ export default function AdminPWADashboard() {
     if (authLoading) return;
 
     if (!isAdmin) {
-      console.log('❌ Not admin, redirecting to home');
-      navigate('/');
+      console.error('[AdminPWA] Access denied - user is not admin');
+      console.error('[AdminPWA] Redirecting to home...');
+      navigate('/', { replace: true });
       return;
     }
 
+    console.log('[AdminPWA] Admin verified, loading dashboard...');
     loadStats();
     loadRecentNotifications();
   }, [isAdmin, authLoading, navigate]);
