@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Smartphone, Bell, BellOff, TrendingUp, Users,
   Activity, CheckCircle, XCircle, Send, BarChart3
 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 
 interface PWAStats {
@@ -28,6 +30,8 @@ interface NotificationLog {
 }
 
 export default function AdminPWADashboard() {
+  const { isAdmin, isLoading: authLoading } = useIsAdmin();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<PWAStats | null>(null);
   const [recentNotifications, setRecentNotifications] = useState<NotificationLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,9 +45,17 @@ export default function AdminPWADashboard() {
   });
 
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!isAdmin) {
+      console.log('❌ Not admin, redirecting to home');
+      navigate('/');
+      return;
+    }
+
     loadStats();
     loadRecentNotifications();
-  }, []);
+  }, [isAdmin, authLoading, navigate]);
 
   const loadStats = async () => {
     try {
@@ -165,6 +177,21 @@ export default function AdminPWADashboard() {
       setSendLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return null;
+  }
 
   if (loading) {
     return (
