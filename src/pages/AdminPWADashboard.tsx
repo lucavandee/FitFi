@@ -30,12 +30,13 @@ interface NotificationLog {
 }
 
 export default function AdminPWADashboard() {
-  const { isAdmin, isLoading: authLoading } = useIsAdmin();
+  const { isAdmin, user, isLoading: authLoading } = useIsAdmin();
   const navigate = useNavigate();
   const [stats, setStats] = useState<PWAStats | null>(null);
   const [recentNotifications, setRecentNotifications] = useState<NotificationLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [sendLoading, setSendLoading] = useState(false);
+  const [jwtData, setJwtData] = useState<any>(null);
 
   const [notification, setNotification] = useState({
     title: '',
@@ -45,10 +46,31 @@ export default function AdminPWADashboard() {
   });
 
   useEffect(() => {
+    // Debug: Check JWT data
+    const checkJWT = async () => {
+      const sb = supabase();
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        const jwtInfo = {
+          email: session.user.email,
+          app_metadata: session.user.app_metadata,
+          user_metadata: session.user.user_metadata,
+          isAdminFromJWT: session.user.app_metadata?.is_admin,
+        };
+        console.log('[AdminPWA] JWT Debug Info:', jwtInfo);
+        setJwtData(jwtInfo);
+      }
+    };
+    checkJWT();
+  }, []);
+
+  useEffect(() => {
     if (authLoading) return;
 
     if (!isAdmin) {
       console.error('[AdminPWA] Access denied - user is not admin');
+      console.error('[AdminPWA] User object:', user);
+      console.error('[AdminPWA] JWT data:', jwtData);
       // Don't redirect - show access denied message instead
       return;
     }
@@ -56,7 +78,7 @@ export default function AdminPWADashboard() {
     console.log('[AdminPWA] Admin verified, loading dashboard...');
     loadStats();
     loadRecentNotifications();
-  }, [isAdmin, authLoading, navigate]);
+  }, [isAdmin, authLoading, navigate, user, jwtData]);
 
   const loadStats = async () => {
     try {
@@ -193,7 +215,7 @@ export default function AdminPWADashboard() {
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6">
-        <div className="max-w-md text-center">
+        <div className="max-w-2xl text-center">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
             <XCircle className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
           </div>
@@ -203,17 +225,28 @@ export default function AdminPWADashboard() {
           <p className="text-[var(--color-muted)] mb-6">
             Je hebt geen admin rechten om deze pagina te bekijken.
           </p>
+
+          {jwtData && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-left text-sm mb-6">
+              <p className="font-medium text-red-900 mb-2">🔍 DEBUG INFO:</p>
+              <pre className="text-xs overflow-x-auto whitespace-pre-wrap text-red-800">
+                {JSON.stringify(jwtData, null, 2)}
+              </pre>
+            </div>
+          )}
+
           <div className="bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] rounded-lg p-4 text-left text-sm text-[var(--color-muted)] mb-6">
             <p className="font-medium text-[var(--color-text)] mb-2">Voor developers:</p>
-            <p>Voer dit SQL script uit in Supabase:</p>
+            <p className="mb-2">Je bent ingelogd als: <strong>{user?.email || 'onbekend'}</strong></p>
+            <p className="mb-2">Voer dit SQL script uit in Supabase SQL Editor:</p>
             <pre className="mt-2 p-2 bg-white/50 rounded text-xs overflow-x-auto">
 {`UPDATE auth.users
 SET raw_app_metadata =
   COALESCE(raw_app_metadata, '{}'::jsonb)
   || '{"is_admin": true}'::jsonb
-WHERE email = 'jouw@email.com';`}
+WHERE email = '${user?.email || 'jouw@email.com'}';`}
             </pre>
-            <p className="mt-2 text-xs">Log daarna uit en weer in.</p>
+            <p className="mt-2 text-xs font-medium">⚠️ BELANGRIJK: Log daarna UIT en weer IN om de JWT te vernieuwen!</p>
           </div>
           <a
             href="/"
