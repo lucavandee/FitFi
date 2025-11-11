@@ -4,6 +4,7 @@ import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X,
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
+import '@/utils/convertMoodPhotosToWebP';
 
 interface MoodPhoto {
   id: number;
@@ -22,6 +23,7 @@ export default function AdminMoodPhotosPage() {
   const [filterGender, setFilterGender] = useState<'all' | 'male' | 'female' | 'unisex'>('all');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) {
