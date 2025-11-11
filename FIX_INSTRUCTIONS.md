@@ -15,7 +15,12 @@
 ### 3. Netlify build error opgelost
 - `pwaHealthCheck.ts` import verwijderd uit main.tsx
 - Bestand was niet in git gecommit
-- Build slaagt nu zonder errors (34.89s)
+- Build slaagt nu zonder errors (35.12s)
+
+### 4. Access Denied pagina toegevoegd
+- /admin/pwa toont nu een duidelijke "Geen toegang" pagina
+- Inclusief SQL script voor admin setup
+- Geen 404 meer, maar duidelijke user experience
 
 ## 🔧 WAAROM JE NOG "registerServiceWorker();" ZIET
 
@@ -41,18 +46,21 @@ Dit is **BROWSER CACHE**. De tekst komt NIET van de nieuwe build.
    - Klik "Clear site data"
    - Reload pagina
 
-## 🔧 WAAROM /admin/pwa 404 GEEFT
+## 🔧 WAAROM /admin/pwa "GEEN TOEGANG" TOONT
 
-Je bent NIET ingelogd als admin. De pagina redirect automatisch naar home.
+Je bent NIET ingelogd als admin. De pagina toont nu een duidelijk "Access Denied" bericht met instructies.
 
 ### Oplossing:
+
+De pagina zelf toont het SQL script dat je moet uitvoeren! Maar hier is het nogmaals:
 
 Voer dit uit in Supabase SQL Editor:
 
 \`\`\`sql
 UPDATE auth.users
 SET raw_app_metadata =
-  raw_app_metadata || '{"is_admin": true}'::jsonb
+  COALESCE(raw_app_metadata, '{}'::jsonb)
+  || '{"is_admin": true}'::jsonb
 WHERE email = 'JOUW_EMAIL@HIER.COM';
 \`\`\`
 
@@ -74,8 +82,9 @@ Na hard refresh en admin setup:
 
 ## 🚀 BUILD STATUS
 
-✅ Build succesvol (34.89s)
+✅ Build succesvol (35.12s)
 ✅ Netlify deploy error opgelost
+✅ Access Denied pagina toegevoegd voor admin routes
 ✅ Alle console.logs verwijderd uit production code
 ✅ Service Worker alleen in production mode
 ✅ Admin verificatie actief

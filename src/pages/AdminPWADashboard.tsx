@@ -49,8 +49,7 @@ export default function AdminPWADashboard() {
 
     if (!isAdmin) {
       console.error('[AdminPWA] Access denied - user is not admin');
-      console.error('[AdminPWA] Redirecting to home...');
-      navigate('/', { replace: true });
+      // Don't redirect - show access denied message instead
       return;
     }
 
@@ -192,7 +191,39 @@ export default function AdminPWADashboard() {
   }
 
   if (!isAdmin) {
-    return null;
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6">
+        <div className="max-w-md text-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
+            <XCircle className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
+          </div>
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3">
+            Geen toegang
+          </h1>
+          <p className="text-[var(--color-muted)] mb-6">
+            Je hebt geen admin rechten om deze pagina te bekijken.
+          </p>
+          <div className="bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] rounded-lg p-4 text-left text-sm text-[var(--color-muted)] mb-6">
+            <p className="font-medium text-[var(--color-text)] mb-2">Voor developers:</p>
+            <p>Voer dit SQL script uit in Supabase:</p>
+            <pre className="mt-2 p-2 bg-white/50 rounded text-xs overflow-x-auto">
+{`UPDATE auth.users
+SET raw_app_metadata =
+  COALESCE(raw_app_metadata, '{}'::jsonb)
+  || '{"is_admin": true}'::jsonb
+WHERE email = 'jouw@email.com';`}
+            </pre>
+            <p className="mt-2 text-xs">Log daarna uit en weer in.</p>
+          </div>
+          <a
+            href="/"
+            className="ff-btn ff-btn-primary inline-flex items-center gap-2"
+          >
+            Terug naar home
+          </a>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
