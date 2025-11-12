@@ -17,10 +17,18 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   useEffect(() => {
-    loadSavedOutfits();
+    if (userId) {
+      loadSavedOutfits();
+    } else {
+      setIsLoading(false);
+    }
   }, [userId]);
 
   const loadSavedOutfits = async () => {
+    if (!userId) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
       const outfits = await savedOutfitsService.getSavedOutfits(userId);

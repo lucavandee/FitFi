@@ -434,7 +434,7 @@ export default function DashboardPage() {
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>
-              <SavedOutfitsGallery />
+              {userId && <SavedOutfitsGallery userId={userId} />}
             </div>
           )}
         </div>
