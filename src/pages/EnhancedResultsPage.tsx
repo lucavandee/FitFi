@@ -6,7 +6,6 @@ import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
-import { OutfitVisualCompact } from "@/components/outfits/OutfitVisual";
 import { useOutfits } from "@/hooks/useOutfits";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
@@ -482,7 +481,20 @@ export default function EnhancedResultsPage() {
                       >
                         {/* Image Container */}
                         <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
-                          <OutfitVisualCompact outfit={outfit} />
+                          {outfit && 'image' in outfit && outfit.image ? (
+                            <img
+                              src={outfit.image}
+                              alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
+                              <div className="text-center p-8">
+                                <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
+                                <p className="text-sm text-gray-600 font-medium">Outfit {idx + 1}</p>
+                              </div>
+                            </div>
+                          )}
 
                           {/* Overlay Actions */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">

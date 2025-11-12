@@ -84,12 +84,12 @@ const adminModules: AdminModule[] = [
   },
   {
     id: 'analytics',
-    title: 'Analytics',
-    description: 'Bekijk metrics, conversie en user flows',
+    title: 'Swipe Analytics',
+    description: 'Bekijk mood photo performance en swipe patterns',
     icon: BarChart3,
     route: '/admin/analytics',
     color: 'from-teal-500 to-cyan-500',
-    badge: 'Dashboard Tab',
+    badge: 'Nieuw',
     status: 'active'
   },
   {

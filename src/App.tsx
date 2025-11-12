@@ -46,6 +46,7 @@ const AdminImageManagerPage = lazy(() => import("@/pages/AdminImageManagerPage")
 const AdminPWADashboard = lazy(() => import("@/pages/AdminPWADashboard"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const AdminAuditPage = lazy(() => import("@/pages/AdminAuditPage"));
+const AdminSwipeAnalyticsPage = lazy(() => import("@/pages/AdminSwipeAnalyticsPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
@@ -80,6 +81,7 @@ const WithSeo = {
   AdminPWADashboard: () => (<><Seo title="PWA Dashboard — FitFi Admin" description="Monitor PWA installations and push notifications." path="/admin/pwa" noindex /><AdminPWADashboard /></>),
   AdminUsers: () => (<><Seo title="Gebruikersbeheer — FitFi Admin" description="Beheer alle gebruikers en hun toegang." path="/admin/users" noindex /><AdminUsersPage /></>),
   AdminAudit: () => (<><Seo title="Audit Log — FitFi Admin" description="Bekijk alle gebruikersactiviteit en systeemgebeurtenissen." path="/admin/audit" noindex /><AdminAuditPage /></>),
+  AdminSwipeAnalytics: () => (<><Seo title="Swipe Analytics — FitFi Admin" description="Bekijk swipe patterns en photo performance analytics." path="/admin/analytics" noindex /><AdminSwipeAnalyticsPage /></>),
   AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
@@ -143,6 +145,7 @@ export default function App() {
                 <Route path="/admin/pwa" element={<RequireAuth><WithSeo.AdminPWADashboard /></RequireAuth>} />
                 <Route path="/admin/users" element={<RequireAuth><WithSeo.AdminUsers /></RequireAuth>} />
                 <Route path="/admin/audit" element={<RequireAuth><WithSeo.AdminAudit /></RequireAuth>} />
+                <Route path="/admin/analytics" element={<RequireAuth><WithSeo.AdminSwipeAnalytics /></RequireAuth>} />
                 <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
 
                 {/* 404 */}
