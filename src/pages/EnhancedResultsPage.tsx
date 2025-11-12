@@ -59,19 +59,28 @@ export default function EnhancedResultsPage() {
   }, []);
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
-  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE) ?? "Smart Casual";
+  const archetypeRaw = readJson<Archetype>(LS_KEYS.ARCHETYPE);
   const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
 
   const hasCompletedQuiz = !!answers;
 
+  // Parse archetype safely - can be string or object
+  const archetypeName = React.useMemo(() => {
+    if (!archetypeRaw) return "Smart Casual";
+    if (typeof archetypeRaw === 'string') return archetypeRaw;
+    if (archetypeRaw && typeof archetypeRaw === 'object' && 'name' in archetypeRaw) {
+      return archetypeRaw.name;
+    }
+    return "Smart Casual";
+  }, [archetypeRaw]);
+
   const { data: realOutfits, loading: outfitsLoading } = useOutfits({
-    archetype: typeof archetype === 'string' ? archetype : archetype?.name,
+    archetype: archetypeName,
     limit: 9,
     enabled: hasCompletedQuiz
   });
 
   const seeds: OutfitSeed[] = React.useMemo(() => {
-    const archetypeName = typeof archetype === 'string' ? archetype : archetype?.name || 'Smart Casual';
     if (color) return getSeedOutfits(color, archetypeName);
     return getSeedOutfits(
       {
@@ -85,7 +94,7 @@ export default function EnhancedResultsPage() {
       },
       "Smart Casual"
     );
-  }, [color, archetype]);
+  }, [color, archetypeName]);
 
   const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
     if (realOutfits && realOutfits.length > 0) {
@@ -122,8 +131,6 @@ export default function EnhancedResultsPage() {
       setShowShareModal(true);
     }
   }
-
-  const archetypeName = typeof archetype === 'string' ? archetype : archetype?.name || 'Smart Casual';
 
   return (
     <main className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">

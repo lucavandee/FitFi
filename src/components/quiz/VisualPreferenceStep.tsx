@@ -72,8 +72,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         .select('*')
         .eq('active', true)
         .eq('gender', genderForQuery)
-        .order('display_order', { ascending: true })
-        .limit(20);
+        .order('display_order', { ascending: true });
 
       if (error) {
         console.error('❌ Error fetching mood photos:', error);
@@ -129,7 +128,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         setMoodPhotos(placeholderPhotos.slice(0, 10));
       } else {
         setAllPhotos(photos);
-        setMoodPhotos(photos.slice(0, 10));
+        setMoodPhotos(photos);
       }
     } catch (err) {
       console.error('Failed to load mood photos:', err);
