@@ -12,6 +12,8 @@ import { VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStep";
 import { CalibrationStep } from "@/components/quiz/CalibrationStep";
 import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
+import { CircularProgressIndicator } from "@/components/quiz/CircularProgressIndicator";
+import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -402,21 +404,35 @@ export default function OnboardingFlowPage() {
             />
           )}
 
-          {/* Question Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-50)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-600)] mb-6">
-              <Sparkles className="w-4 h-4" />
-              Vraag {currentStep + 1}
-            </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              {step.title}
-            </h1>
-            {step.description && (
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                {step.description}
-              </p>
-            )}
+          {/* Circular Progress Indicator - Premium */}
+          <div className="flex justify-center mb-12">
+            <CircularProgressIndicator
+              currentStep={currentStep + 1}
+              totalSteps={quizSteps.length}
+              stepLabels={quizSteps.map(s => s.title.split(' ').slice(0, 2).join(' '))}
+            />
           </div>
+
+          {/* Question Header */}
+          <AnimatedQuestionTransition
+            questionKey={currentStep}
+            direction="forward"
+          >
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-50)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-600)] mb-6">
+                <Sparkles className="w-4 h-4" />
+                Vraag {currentStep + 1}
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                {step.title}
+              </h1>
+              {step.description && (
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  {step.description}
+                </p>
+              )}
+            </div>
+          </AnimatedQuestionTransition>
 
           {/* Answer Options */}
           <div className="space-y-4 mb-12">
