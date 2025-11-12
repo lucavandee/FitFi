@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Download } from "lucide-react";
+import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Download, X } from "lucide-react";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
@@ -111,6 +111,7 @@ export default function EnhancedResultsPage() {
   });
 
   const [showShareModal, setShowShareModal] = React.useState(false);
+  const [selectedOutfit, setSelectedOutfit] = React.useState<(Outfit | OutfitSeed) | null>(null);
 
   function toggleFav(id: string) {
     setFavs((curr) => {
@@ -512,14 +513,17 @@ export default function EnhancedResultsPage() {
                                 {isFav ? <Heart className="w-5 h-5 fill-current" /> : <Heart className="w-5 h-5" />}
                               </motion.button>
 
-                              <motion.a
+                              <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                href="#"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedOutfit(outfit);
+                                }}
                                 className="px-6 py-3 bg-white text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white transition-all"
                               >
                                 Bekijk details
-                              </motion.a>
+                              </motion.button>
                             </div>
                           </div>
                         </div>
@@ -560,6 +564,130 @@ export default function EnhancedResultsPage() {
           </div>
         </section>
       )}
+
+      {/* Outfit Detail Modal */}
+      <AnimatePresence>
+        {selectedOutfit && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedOutfit(null)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[var(--color-surface)] rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            >
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h3 className="text-3xl font-bold mb-2">
+                    {'name' in selectedOutfit ? selectedOutfit.name : `Outfit Details`}
+                  </h3>
+                  <p className="text-gray-600">
+                    Perfect voor {archetypeName.toLowerCase()} stijl
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedOutfit(null)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Image */}
+              {selectedOutfit && 'image' in selectedOutfit && selectedOutfit.image && (
+                <div className="mb-6 rounded-2xl overflow-hidden">
+                  <img
+                    src={selectedOutfit.image}
+                    alt={'name' in selectedOutfit ? selectedOutfit.name : 'Outfit'}
+                    className="w-full h-auto"
+                  />
+                </div>
+              )}
+
+              {/* Details */}
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Waarom dit outfit?</h4>
+                  <p className="text-gray-700">
+                    Dit outfit is speciaal voor jou samengesteld op basis van je stijlvoorkeuren en kleurprofiel.
+                    De combinatie past perfect bij {archetypeName.toLowerCase()} en benadrukt jouw unieke style DNA.
+                  </p>
+                </div>
+
+                {color && (
+                  <div>
+                    <h4 className="font-semibold text-lg mb-2">Kleuradvies</h4>
+                    <p className="text-gray-700">
+                      Gebaseerd op jouw kleurprofiel "{color.paletteName}" hebben we kleuren gekozen die jouw
+                      natuurlijke uitstraling versterken.
+                    </p>
+                  </div>
+                )}
+
+                {'products' in selectedOutfit && selectedOutfit.products && selectedOutfit.products.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-lg mb-3">Producten in dit outfit</h4>
+                    <div className="space-y-2">
+                      {selectedOutfit.products.map((product: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                            {product.image_url && (
+                              <img
+                                src={product.image_url}
+                                alt={product.name || 'Product'}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate">
+                              {product.name || `Product ${idx + 1}`}
+                            </p>
+                            {product.brand && (
+                              <p className="text-xs text-gray-500">{product.brand}</p>
+                            )}
+                          </div>
+                          {product.price && (
+                            <div className="text-right">
+                              <p className="font-semibold">€{product.price}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-8">
+                <button
+                  onClick={() => {
+                    const id = 'id' in selectedOutfit ? String(selectedOutfit.id) : `seed-${displayOutfits.indexOf(selectedOutfit)}`;
+                    toggleFav(id);
+                  }}
+                  className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-200)] transition-colors flex items-center justify-center gap-2"
+                >
+                  <Heart className="w-5 h-5" />
+                  Bewaar outfit
+                </button>
+                <button
+                  onClick={() => setSelectedOutfit(null)}
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                >
+                  Sluiten
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Share Modal */}
       <AnimatePresence>
