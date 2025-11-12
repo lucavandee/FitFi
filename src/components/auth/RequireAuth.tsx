@@ -11,6 +11,12 @@ export default function RequireAuth({ children }: { children: React.ReactElement
   const loc = useLocation();
   const { user, status } = useUser();
 
+  console.log('🔐 [RequireAuth] Checking auth:', {
+    status,
+    hasUser: !!user,
+    path: loc.pathname
+  });
+
   // Show loading state while checking auth
   if (status === 'loading') {
     return (

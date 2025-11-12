@@ -47,28 +47,38 @@ interface UserCtx {
 const UserContext = createContext<UserCtx | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log('🔧 [UserContext] Provider mounting');
+
   const [user, setUser] = useState<FitFiUser | null>(null);
   const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
-  
+
   // Determine if user is a member (has account = member for now)
   const isMember = status === 'authenticated' && !!user?.id;
 
   useEffect(() => {
+    console.log('🔧 [UserContext] useEffect running', { hasSb: !!sb });
+
     if (!sb) {
+      console.warn('⚠️ [UserContext] No Supabase client - setting unauthenticated');
       setStatus('unauthenticated');
       return;
     }
 
-    // Get initial session
-    sb.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('🔍 [UserContext] getSession result:', {
-        hasSession: !!session,
-        hasUser: !!session?.user,
-        userId: session?.user?.id?.substring(0, 8) + '...' || 'none',
-        error: error?.message || 'none'
-      });
+    let isSubscriptionActive = true;
 
-      if (session?.user) {
+    // Get initial session
+    sb.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        if (!isSubscriptionActive) return; // Component unmounted
+
+        console.log('🔍 [UserContext] getSession result:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          userId: session?.user?.id?.substring(0, 8) + '...' || 'none',
+          error: error?.message || 'none'
+        });
+
+        if (session?.user) {
         // Get isAdmin from JWT app_metadata (most reliable source)
         const isAdminFromJWT = session.user.app_metadata?.is_admin === true;
 
@@ -135,10 +145,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setStatus('unauthenticated');
         console.log('🔓 [UserContext] No session - user logged out');
       }
+    })
+    .catch(err => {
+      console.error('❌ [UserContext] getSession failed:', err);
+      setStatus('unauthenticated');
     });
 
     // Listen for auth changes (non-blocking)
     const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+      if (!isSubscriptionActive) return; // Component unmounted
+
+      console.log('🔄 [UserContext] Auth state changed:', event);
       if (session?.user) {
         // Get isAdmin from JWT app_metadata (most reliable source)
         const isAdminFromJWT = session.user.app_metadata?.is_admin === true;
@@ -211,7 +228,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('🧹 [UserContext] Cleaning up subscription');
+      isSubscriptionActive = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
