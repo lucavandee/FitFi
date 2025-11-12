@@ -3,6 +3,8 @@ import PremiumCard from "@/components/ui/PremiumCard";
 import PremiumChip from "@/components/ui/PremiumChip";
 import PremiumButton from "@/components/ui/PremiumButton";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import { ExplainBadge } from "@/components/outfits/ExplainBadge";
+import { useEnhancedNova } from "@/hooks/useEnhancedNova";
 
 interface OutfitItem {
   id: string;
@@ -29,12 +31,13 @@ interface PremiumOutfitCardProps {
   onShare?: (outfitId: string) => void;
 }
 
-export default function PremiumOutfitCard({ 
-  outfit, 
-  onSave, 
-  onShare 
+export default function PremiumOutfitCard({
+  outfit,
+  onSave,
+  onShare
 }: PremiumOutfitCardProps) {
   const explainRef = useRef<HTMLDivElement>(null);
+  const { context: novaContext } = useEnhancedNova();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -66,13 +69,24 @@ export default function PremiumOutfitCard({
             <h3 className="text-lg font-semibold text-white mb-1">
               {outfit.name}
             </h3>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <PremiumChip variant="accent" size="sm">
                 {outfit.occasion}
               </PremiumChip>
               <PremiumChip variant="default" size="sm">
                 {outfit.style}
               </PremiumChip>
+              {novaContext && outfit.explanation && (
+                <ExplainBadge
+                  explanation={outfit.explanation}
+                  reasons={[
+                    `Past bij je ${novaContext.archetype} stijl`,
+                    `Matcht met je ${novaContext.colorProfile.undertone} undertone`,
+                    `Perfect voor ${outfit.occasion}`
+                  ]}
+                  compact={true}
+                />
+              )}
             </div>
           </div>
           <div className="text-right">

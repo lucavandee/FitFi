@@ -35,6 +35,9 @@ import { PreferenceEvolutionChart } from "@/components/dashboard/PreferenceEvolu
 import { AnimatedStatCard } from "@/components/dashboard/AnimatedStatCard";
 import { PremiumGamificationPanel } from "@/components/dashboard/PremiumGamificationPanel";
 import { EnhancedSavedOutfitsGallery } from "@/components/dashboard/EnhancedSavedOutfitsGallery";
+import { PhotoAnalysisWidget } from "@/components/dashboard/PhotoAnalysisWidget";
+import { NovaProactiveSuggestion, generateProactiveSuggestions } from "@/components/nova/NovaProactiveSuggestion";
+import { useEnhancedNova } from "@/hooks/useEnhancedNova";
 import type { StyleProfile } from "@/engine/types";
 
 function readJson<T>(key: string): T | null {
@@ -48,6 +51,7 @@ export default function DashboardPage() {
   const [userId, setUserId] = React.useState<string | undefined>();
   const [showSuccessBanner, setShowSuccessBanner] = React.useState(false);
   const [userName, setUserName] = React.useState<string>("");
+  const { context: novaContext } = useEnhancedNova();
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
@@ -288,6 +292,26 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Nova Proactive Suggestions */}
+      {novaContext && (
+        <section className="py-8">
+          <div className="ff-container">
+            <NovaProactiveSuggestion
+              suggestions={generateProactiveSuggestions(novaContext).filter(s => s.context.includes("dashboard"))}
+              maxVisible={2}
+              position="inline"
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Photo Analysis Widget */}
+      <section className="py-8 bg-[var(--color-bg)]">
+        <div className="ff-container">
+          <PhotoAnalysisWidget />
         </div>
       </section>
 

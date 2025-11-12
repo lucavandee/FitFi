@@ -10,6 +10,7 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import NovaLauncher from "@/components/nova/NovaLauncher";
 import ChatPanel from "@/components/nova/ChatPanel";
+import { NovaFloatingHelper } from "@/components/nova/NovaFloatingHelper";
 import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
 import AwinMasterTag from "@/components/affiliate/AwinMasterTag";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -156,6 +157,7 @@ export default function App() {
           <Footer />
           <ChatPanel />
           <NovaLauncher />
+          <NovaFloatingHelper />
           <InstallPrompt />
           <AnalyticsLoader />
         </ErrorBoundary>
