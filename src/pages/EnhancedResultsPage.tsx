@@ -13,6 +13,9 @@ import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
 import SmartImage from "@/components/ui/SmartImage";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
+import { OutfitFilters, type FilterOptions } from "@/components/results/OutfitFilters";
+import { OutfitZoomModal } from "@/components/results/OutfitZoomModal";
+import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/outfits/PremiumOutfitCard";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -112,6 +115,16 @@ export default function EnhancedResultsPage() {
 
   const [showShareModal, setShowShareModal] = React.useState(false);
   const [selectedOutfit, setSelectedOutfit] = React.useState<(Outfit | OutfitSeed) | null>(null);
+  const [showZoomModal, setShowZoomModal] = React.useState(false);
+  const [zoomedOutfit, setZoomedOutfit] = React.useState<any | null>(null);
+
+  const [filters, setFilters] = React.useState<FilterOptions>({
+    categories: [],
+    seasons: [],
+    colors: [],
+    sortBy: "match",
+    viewMode: "grid-2",
+  });
 
   function toggleFav(id: string) {
     setFavs((curr) => {
