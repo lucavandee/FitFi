@@ -495,7 +495,7 @@ Woman in simple black slip dress, no additional layers, minimal styling, clean s
   "formality": 70,
   "boldness": 40,
   "structure": 60,
-  "comfort": 85,
+  "comfort": 85,`m
   "minimal": 95,
   "trendy": 70,
   "classic": 80,
