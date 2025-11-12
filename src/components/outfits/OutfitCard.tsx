@@ -528,6 +528,6 @@ export default function OutfitCard({
       <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
         <strong>Waarom dit werkt:</strong> de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
-    </div>
+    </motion.div>
   );
 }
