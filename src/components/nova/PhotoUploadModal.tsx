@@ -59,8 +59,20 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
       onAnalysisComplete?.(result);
       handleClose();
     } catch (error) {
-      console.error("[PhotoUpload] Error:", error);
-      toast.error("Analyse mislukt. Probeer opnieuw.");
+      console.error("[PhotoUpload] Full error:", error);
+
+      // Show detailed error message
+      const errorMessage = error instanceof Error ? error.message : "Onbekende fout";
+
+      if (errorMessage.includes("OPENAI_API_KEY")) {
+        toast.error("OpenAI API key niet geconfigureerd. Vraag admin om dit op te lossen.");
+      } else if (errorMessage.includes("Failed to upload")) {
+        toast.error("Upload mislukt. Check je internet connectie.");
+      } else if (errorMessage.includes("authenticate")) {
+        toast.error("Je moet ingelogd zijn. Log opnieuw in.");
+      } else {
+        toast.error(`Analyse mislukt: ${errorMessage}`);
+      }
     } finally {
       setIsAnalyzing(false);
     }

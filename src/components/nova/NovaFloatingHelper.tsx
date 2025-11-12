@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Sparkles, X, MessageCircle, Lightbulb, TrendingUp } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useNovaChat } from "./NovaChatProvider";
 
 interface ContextualTip {
   page: string;
@@ -29,6 +30,8 @@ const contextualTips: ContextualTip[] = [
 
 export function NovaFloatingHelper() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { setOpen: openNova } = useNovaChat();
   const [isVisible, setIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [currentTip, setCurrentTip] = useState<ContextualTip | null>(null);
@@ -174,11 +177,23 @@ export function NovaFloatingHelper() {
 
             {/* Quick Actions */}
             <div className="flex items-center gap-2 p-4 border-t border-[var(--color-border)] bg-[var(--color-bg)]">
-              <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors">
+              <button
+                onClick={() => {
+                  openNova(true);
+                  setIsMinimized(true);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors"
+              >
                 <MessageCircle className="w-3 h-3" />
                 Chat
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors">
+              <button
+                onClick={() => {
+                  navigate('/results');
+                  setIsMinimized(true);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors"
+              >
                 <TrendingUp className="w-3 h-3" />
                 Trends
               </button>

@@ -175,18 +175,26 @@ export async function getUserPhotoAnalyses(
   userId: string,
   limit = 10
 ): Promise<PhotoAnalysisResult[]> {
-  const { data, error } = await supabase()
-    .from("photo_analyses")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(limit);
+  try {
+    const { data, error } = await supabase()
+      .from("photo_analyses")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
 
-  if (error) {
-    throw new Error(`Failed to fetch analyses: ${error.message}`);
+    if (error) {
+      console.error("[getUserPhotoAnalyses] Database error:", error);
+      // Return empty array instead of throwing - graceful degradation
+      return [];
+    }
+
+    return (data || []) as PhotoAnalysisResult[];
+  } catch (err) {
+    console.error("[getUserPhotoAnalyses] Unexpected error:", err);
+    // Return empty array for graceful degradation
+    return [];
   }
-
-  return (data || []) as PhotoAnalysisResult[];
 }
 
 /**

@@ -25,7 +25,7 @@ export function usePhotoAnalysis() {
     } catch (err) {
       console.error("[usePhotoAnalysis] Error loading:", err);
       setError(err instanceof Error ? err.message : "Failed to load analyses");
-      toast.error("Kon analyses niet laden");
+      // Don't show error toast for empty state - it's normal for new users
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,9 @@ export function usePhotoAnalysis() {
   };
 
   useEffect(() => {
-    loadAnalyses();
+    if (user) {
+      loadAnalyses();
+    }
   }, [user]);
 
   return {
