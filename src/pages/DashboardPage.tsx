@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, useSearchParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
 import {
   Sparkles,
   Heart,
@@ -21,13 +22,20 @@ import {
 import Button from "@/components/ui/Button";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
-import SavedOutfitsGallery from "@/components/dashboard/SavedOutfitsGallery";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { RefineStyleWidget } from "@/components/dashboard/RefineStyleWidget";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import toast from "react-hot-toast";
+import { StyleDNARadar } from "@/components/dashboard/StyleDNARadar";
+import { ColorHarmonyGrid } from "@/components/dashboard/ColorHarmonyGrid";
+import { BrandAffinityMap } from "@/components/dashboard/BrandAffinityMap";
+import { PreferenceEvolutionChart } from "@/components/dashboard/PreferenceEvolutionChart";
+import { AnimatedStatCard } from "@/components/dashboard/AnimatedStatCard";
+import { PremiumGamificationPanel } from "@/components/dashboard/PremiumGamificationPanel";
+import { EnhancedSavedOutfitsGallery } from "@/components/dashboard/EnhancedSavedOutfitsGallery";
+import type { StyleProfile } from "@/engine/types";
 
 function readJson<T>(key: string): T | null {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : null; } catch { return null; }
@@ -291,122 +299,69 @@ export default function DashboardPage() {
             <RefineStyleWidget />
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 stagger-fade-in">
+          {/* Stats Grid - Premium Animated */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <AnimatedStatCard
+              icon={<Shirt className="w-6 h-6" />}
+              label="Outfits"
+              value={outfitCount}
+              trend={{
+                value: 12,
+                isPositive: true,
+                label: "deze week",
+              }}
+              gradient="from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
+              delay={0}
+            />
 
-            {/* Outfits Card */}
-            <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white dark:from-[var(--ff-color-primary-900)]/20 dark:to-[var(--color-bg)] rounded-2xl p-6 shadow-lg hover-lift card-interactive border-2 border-[var(--color-border)]">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-600)] flex items-center justify-center shadow-md">
-                  <Shirt className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-4xl font-bold text-[var(--color-text)]">{outfitCount}</div>
-              </div>
-              <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">Outfits</h3>
-              <p className="text-sm text-[var(--color-muted)]">Gepersonaliseerd voor jou</p>
-            </div>
+            <AnimatedStatCard
+              icon={<Heart className="w-6 h-6" />}
+              label="Favorieten"
+              value={favCount}
+              trend={{
+                value: 8,
+                isPositive: true,
+                label: "nieuwe saves",
+              }}
+              gradient="from-pink-500 to-pink-600"
+              delay={0.1}
+            />
 
-            {/* Favorites Card */}
-            <div className="bg-gradient-to-br from-pink-50 to-white dark:from-pink-900/20 dark:to-[var(--color-bg)] rounded-2xl p-6 shadow-lg hover-lift card-interactive border-2 border-[var(--color-border)]">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-pink-500 flex items-center justify-center shadow-md">
-                  <Heart className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-4xl font-bold text-[var(--color-text)]">{favCount}</div>
-              </div>
-              <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">Favorieten</h3>
-              <p className="text-sm text-[var(--color-muted)]">Je saved looks</p>
-            </div>
+            <AnimatedStatCard
+              icon={<Target className="w-6 h-6" />}
+              label="Profiel"
+              value={hasQuizData ? 100 : 0}
+              suffix="%"
+              trend={
+                hasQuizData
+                  ? undefined
+                  : {
+                      value: 100,
+                      isPositive: true,
+                      label: "te voltooien",
+                    }
+              }
+              gradient="from-emerald-500 to-emerald-600"
+              delay={0.2}
+            />
 
-            {/* Profile Progress Card */}
-            <div className="bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-900/20 dark:to-[var(--color-bg)] rounded-2xl p-6 shadow-lg hover-lift card-interactive border-2 border-[var(--color-border)]">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-4xl font-bold text-[var(--color-text)]">
-                  {hasQuizData ? "100" : "0"}%
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">Profiel</h3>
-              <p className="text-sm text-[var(--color-muted)]">
-                {hasQuizData ? "Helemaal klaar!" : "Start de quiz"}
-              </p>
-            </div>
-
-            {/* Activity Card */}
-            <div className="bg-gradient-to-br from-[var(--ff-color-accent-50)] to-white dark:from-[var(--ff-color-accent-900)]/20 dark:to-[var(--color-bg)] rounded-2xl p-6 shadow-lg hover-lift card-interactive border-2 border-[var(--color-border)]">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-accent-600)] flex items-center justify-center shadow-md">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-4xl font-bold text-[var(--color-text)]">
-                  {hasQuizData ? "12" : "0"}
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">Activiteit</h3>
-              <p className="text-sm text-[var(--color-muted)]">Views deze week</p>
-            </div>
+            <AnimatedStatCard
+              icon={<Zap className="w-6 h-6" />}
+              label="Activiteit"
+              value={hasQuizData ? 12 : 0}
+              trend={{
+                value: 24,
+                isPositive: true,
+                label: "vs vorige week",
+              }}
+              gradient="from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-700)]"
+              delay={0.3}
+            />
           </div>
 
-          {/* Gamification - Premium Card */}
+          {/* Gamification - Premium Panel with Real Data */}
           <div className="mb-12 fade-in-up" data-tour="gamification">
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-8 shadow-xl border-2 border-purple-200 dark:border-purple-800 relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-400/10 rounded-full blur-3xl" />
-
-              <div className="relative">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white shadow-lg">
-                    <Trophy className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h2 className="text-3xl font-bold text-[var(--color-text)] mb-1">
-                      Jouw <span className="text-gradient">Progressie</span>
-                    </h2>
-                    <p className="text-[var(--color-muted)]">
-                      Verdien XP, unlock achievements en level up je style
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl p-6 backdrop-blur-sm">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      <span className="text-sm font-semibold text-[var(--color-muted)]">Total XP</span>
-                    </div>
-                    <p className="text-3xl font-bold text-[var(--color-text)]">2,450</p>
-                  </div>
-
-                  <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl p-6 backdrop-blur-sm">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Crown className="w-6 h-6 text-pink-600 dark:text-pink-400" />
-                      <span className="text-sm font-semibold text-[var(--color-muted)]">Level</span>
-                    </div>
-                    <p className="text-3xl font-bold text-[var(--color-text)]">8</p>
-                  </div>
-
-                  <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl p-6 backdrop-blur-sm">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                      <span className="text-sm font-semibold text-[var(--color-muted)]">Achievements</span>
-                    </div>
-                    <p className="text-3xl font-bold text-[var(--color-text)]">12/24</p>
-                  </div>
-                </div>
-
-                <NavLink
-                  to="/profile"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg hover-lift w-full sm:w-auto"
-                >
-                  <Target className="w-5 h-5" />
-                  Bekijk volledige stats
-                  <ArrowRight className="w-5 h-5" />
-                </NavLink>
-              </div>
-            </div>
+            <PremiumGamificationPanel userId={userId} />
           </div>
 
           {/* Subscription Management */}
@@ -414,8 +369,8 @@ export default function DashboardPage() {
             <SubscriptionManager />
           </div>
 
-          {/* Saved Outfits Gallery */}
-          {hasQuizData && (
+          {/* Saved Outfits Gallery - Enhanced */}
+          {hasQuizData && userId && (
             <div className="fade-in-up">
               <div className="flex items-center justify-between mb-8">
                 <div>
@@ -434,28 +389,47 @@ export default function DashboardPage() {
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>
-              {userId && <SavedOutfitsGallery userId={userId} />}
+              <EnhancedSavedOutfitsGallery userId={userId} />
             </div>
           )}
         </div>
       </section>
 
-      {/* Quick Actions - Floating */}
+      {/* Quick Actions - Enhanced Floating Buttons */}
       <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
-        <NavLink
-          to="/onboarding"
-          className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-700)] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform hover-glow"
-          title="Opnieuw doen"
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+          className="group relative"
         >
-          <RefreshCw className="w-6 h-6" />
-        </NavLink>
-        <NavLink
-          to="/profile"
-          className="w-14 h-14 rounded-full bg-[var(--color-surface)] text-[var(--color-text)] flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-2 border-[var(--color-border)]"
-          title="Instellingen"
+          <NavLink
+            to="/onboarding"
+            className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-700)] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all hover:shadow-[0_0_30px_rgba(var(--ff-color-primary-rgb),0.5)] relative"
+          >
+            <RefreshCw className="w-6 h-6" />
+          </NavLink>
+          <div className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Quiz opnieuw doen
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+          className="group relative"
         >
-          <Settings className="w-6 h-6" />
-        </NavLink>
+          <NavLink
+            to="/profile"
+            className="w-14 h-14 rounded-full bg-[var(--color-surface)] text-[var(--color-text)] flex items-center justify-center shadow-xl hover:scale-110 transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)]"
+          >
+            <Settings className="w-6 h-6" />
+          </NavLink>
+          <div className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Profiel instellingen
+          </div>
+        </motion.div>
       </div>
     </main>
   );
