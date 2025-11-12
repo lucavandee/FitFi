@@ -221,14 +221,6 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
 
-    if (swipeCount >= 10) {
-      setShowCelebration(true);
-      setTimeout(() => {
-        onComplete();
-      }, 1500);
-      return;
-    }
-
     const newSwipeCount = swipeCount + 1;
     setSwipeCount(newSwipeCount);
 
@@ -333,8 +325,8 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       }
     }
 
-    // Update preview outfit as user keeps swiping (swipes 6-10)
-    if (newSwipeCount > 5 && newSwipeCount < 10 && showPreview) {
+    // Update preview outfit as user keeps swiping
+    if (newSwipeCount > 5 && newSwipeCount < moodPhotos.length && showPreview) {
       const pattern = analyzerRef.current.getPattern();
       const updatedOutfit = generateQuickOutfit(pattern);
 
@@ -343,24 +335,17 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       }
     }
 
-    // Complete after 10 swipes
-    if (newSwipeCount >= 10) {
-      setTimeout(() => {
-        onComplete();
-      }, 500);
-      return;
-    }
-
     // Move to next photo
     if (currentIndex < moodPhotos.length - 1) {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
       }, 100);
     } else {
-      // Out of photos before 10 swipes - still complete
+      // All photos swiped - complete!
+      setShowCelebration(true);
       setTimeout(() => {
         onComplete();
-      }, 500);
+      }, 1500);
     }
   };
 
@@ -462,7 +447,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       <StyleDNAVisualizer
         styleDNA={styleDNA}
         swipeCount={swipeCount}
-        totalSwipes={10}
+        totalSwipes={moodPhotos.length}
         isVisible={swipeCount > 0}
       />
 
