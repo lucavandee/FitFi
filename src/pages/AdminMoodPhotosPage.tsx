@@ -5,6 +5,7 @@ import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
 import '@/utils/convertMoodPhotosToWebP';
+import { convertImageToWebP, supportsWebP } from '@/utils/convertImageToWebP';
 
 interface MoodPhoto {
   id: number;
@@ -604,6 +605,26 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
     setUploading(true);
 
     try {
+      // Step 1: Convert to WebP (client-side)
+      let fileToUpload = selectedFile;
+
+      if (supportsWebP() && selectedFile.type !== 'image/webp') {
+        console.log('🔄 Converting image to WebP...');
+        const convertToast = toast.loading('Foto converteren naar WebP...');
+
+        try {
+          fileToUpload = await convertImageToWebP(selectedFile, 0.85);
+          toast.dismiss(convertToast);
+          toast.success(`WebP conversie: ${((selectedFile.size - fileToUpload.size) / selectedFile.size * 100).toFixed(0)}% kleiner!`, {
+            duration: 2000
+          });
+        } catch (conversionError) {
+          console.warn('⚠️ WebP conversion failed, uploading original:', conversionError);
+          toast.dismiss(convertToast);
+          toast('Uploading origineel formaat...', { icon: '⚠️' });
+        }
+      }
+
       const client = getSupabaseClient();
 
       if (!client) {
@@ -628,7 +649,7 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       }
 
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      formData.append('file', fileToUpload);
       formData.append('gender', gender);
       formData.append('moodTags', JSON.stringify(moodTags));
       formData.append('displayOrder', displayOrder.toString());
