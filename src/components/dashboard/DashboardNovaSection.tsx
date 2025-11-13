@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, X, Sparkles, Loader } from 'lucide-react';
+import { Send, Bot, X, Sparkles, Shirt, User, ShoppingBag, Zap } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
 import { useNovaConn } from '@/components/ai/NovaConnection';
@@ -46,6 +46,19 @@ interface Message {
   timestamp: number;
 }
 
+const contextModes = [
+  { id: 'outfits' as NovaMode, label: 'Outfits', icon: Shirt, color: 'from-blue-500 to-blue-600' },
+  { id: 'archetype' as NovaMode, label: 'Stijl', icon: User, color: 'from-purple-500 to-purple-600' },
+  { id: 'shop' as NovaMode, label: 'Shop', icon: ShoppingBag, color: 'from-pink-500 to-pink-600' }
+];
+
+const suggestionChips = [
+  { icon: Sparkles, text: 'Geef me een outfit voor een date night', mode: 'outfits' as NovaMode },
+  { icon: User, text: 'Wat is mijn stijlarchetype?', mode: 'archetype' as NovaMode },
+  { icon: ShoppingBag, text: 'Toon me trending items', mode: 'shop' as NovaMode },
+  { icon: Zap, text: 'Wat zijn mijn beste kleuren?', mode: 'archetype' as NovaMode }
+];
+
 export function DashboardNovaSection() {
   const { user } = useUser();
   const conn = useNovaConn();
@@ -62,19 +75,89 @@ export function DashboardNovaSection() {
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [loginPromptReason, setLoginPromptReason] = useState<'auth' | 'quiz' | 'rate_limit'>('auth');
   const [usageInfo, setUsageInfo] = useState<{ current: number; limit: number; remaining: number } | undefined>();
-  const [contextMode] = useState<NovaMode>('outfits');
+  const [contextMode, setContextMode] = useState<NovaMode>('outfits');
   const userTier = getUserTier();
 
+  // Load conversation history from Supabase
   useEffect(() => {
-    if (user?.name && messages.length === 0) {
-      setMessages([{
-        id: 'greeting',
-        role: 'assistant',
-        content: `Hoi ${user.name}! 👋 Ik ben Nova, je AI-stylist. Ik kan je helpen met outfit-advies, kleurencombinaties, en stijltips. Wat wil je vandaag weten?`,
-        timestamp: Date.now()
-      }]);
-    }
-  }, [user?.name]);
+    const loadConversation = async () => {
+      if (!user?.id || user.id === 'anon') return;
+
+      try {
+        const { supabase } = await import('@/lib/supabaseClient');
+        const sb = supabase();
+
+        const { data, error } = await sb
+          .from('nova_conversations')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (error) {
+          console.warn('[Nova] Failed to load conversation:', error);
+          return;
+        }
+
+        if (data?.messages && Array.isArray(data.messages)) {
+          const historyMessages = data.messages.slice(-10).map((msg: any, idx: number) => ({
+            id: msg.id || `history-${idx}`,
+            role: msg.role || 'assistant',
+            content: msg.content || '',
+            timestamp: msg.timestamp || Date.now()
+          }));
+          setMessages(historyMessages);
+          return;
+        }
+      } catch (err) {
+        console.warn('[Nova] Error loading conversation:', err);
+      }
+
+      // Default greeting
+      if (user?.name && messages.length === 0) {
+        setMessages([{
+          id: 'greeting',
+          role: 'assistant',
+          content: `Hoi ${user.name}! 👋 Ik ben Nova, je AI-stylist. Ik kan je helpen met outfit-advies, kleurencombinaties, en stijltips. Wat wil je vandaag weten?`,
+          timestamp: Date.now()
+        }]);
+      }
+    };
+
+    loadConversation();
+  }, [user?.id, user?.name]);
+
+  // Save conversation to Supabase
+  useEffect(() => {
+    const saveConversation = async () => {
+      if (!user?.id || user.id === 'anon' || messages.length === 0) return;
+
+      try {
+        const { supabase } = await import('@/lib/supabaseClient');
+        const sb = supabase();
+
+        await sb.from('nova_conversations').upsert({
+          user_id: user.id,
+          messages: messages.map(m => ({
+            id: m.id,
+            role: m.role,
+            content: m.content,
+            timestamp: m.timestamp
+          })),
+          context_mode: contextMode,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
+      } catch (err) {
+        console.warn('[Nova] Failed to save conversation:', err);
+      }
+    };
+
+    const timeoutId = setTimeout(saveConversation, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [messages, user?.id, contextMode]);
 
   useEffect(() => {
     scrollToBottom();
@@ -87,6 +170,12 @@ export function DashboardNovaSection() {
         behavior: 'smooth'
       });
     }
+  };
+
+  const handleSuggestionClick = (suggestion: typeof suggestionChips[0]) => {
+    setContextMode(suggestion.mode);
+    setInput(suggestion.text);
+    inputRef.current?.focus();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -262,20 +351,71 @@ export function DashboardNovaSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Header */}
+          {/* Header with Context Switcher */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-b border-[var(--color-border)] px-6 py-4">
-            <div className="flex items-center gap-3">
-              <motion.div
-                className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-              >
-                <Sparkles className="w-5 h-5 text-white" />
-              </motion.div>
-              <div>
-                <h2 className="text-xl font-bold text-[var(--color-text)]">Chat met Nova</h2>
-                <p className="text-sm text-[var(--color-text-muted)]">Je persoonlijke AI-stylist</p>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <motion.div
+                  className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <Sparkles className="w-5 h-5 text-white" />
+                </motion.div>
+                <div>
+                  <h2 className="text-xl font-bold text-[var(--color-text)]">Chat met Nova</h2>
+                  <p className="text-sm text-[var(--color-text-muted)]">Je persoonlijke AI-stylist</p>
+                </div>
+              </div>
+
+              {/* Context Switcher */}
+              <div className="flex gap-2">
+                {contextModes.map((mode) => {
+                  const Icon = mode.icon;
+                  const isActive = contextMode === mode.id;
+                  return (
+                    <motion.button
+                      key={mode.id}
+                      onClick={() => setContextMode(mode.id)}
+                      className={[
+                        'px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 transition-all',
+                        isActive
+                          ? `bg-gradient-to-r ${mode.color} text-white shadow-lg`
+                          : 'bg-white dark:bg-gray-800 text-[var(--color-text)] border border-[var(--color-border)] hover:border-blue-300'
+                      ].join(' ')}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{mode.label}</span>
+                    </motion.button>
+                  );
+                })}
               </div>
             </div>
+
+            {/* Suggestion Chips */}
+            {messages.length <= 1 && (
+              <div className="flex flex-wrap gap-2">
+                {suggestionChips.map((chip, idx) => {
+                  const ChipIcon = chip.icon;
+                  return (
+                    <motion.button
+                      key={idx}
+                      onClick={() => handleSuggestionClick(chip)}
+                      className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-[var(--color-border)] rounded-full text-xs font-medium text-[var(--color-text)] hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all flex items-center gap-1.5"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <ChipIcon className="w-3 h-3" />
+                      {chip.text}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Messages */}
@@ -302,9 +442,13 @@ export function DashboardNovaSection() {
                 >
                   {message.role === 'assistant' && (
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                      <motion.div
+                        className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                      >
                         <Bot className="w-3.5 h-3.5 text-white" />
-                      </div>
+                      </motion.div>
                       <span className="text-xs font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
                     </div>
                   )}
@@ -320,7 +464,7 @@ export function DashboardNovaSection() {
               </motion.div>
             ))}
 
-            {/* Typing indicator */}
+            {/* Enhanced Typing indicator */}
             <AnimatePresence>
               {isTyping && (
                 <motion.div
@@ -333,13 +477,19 @@ export function DashboardNovaSection() {
                     <div className="flex items-center gap-2 mb-2">
                       <motion.div
                         className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                        animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                        transition={{ rotate: { duration: 2, repeat: Infinity, ease: 'linear' }, scale: { duration: 1, repeat: Infinity } }}
                       >
                         <Bot className="w-3.5 h-3.5 text-white" />
                       </motion.div>
                       <span className="text-xs font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
-                      <span className="text-xs text-[var(--color-text-muted)]">aan het typen...</span>
+                      <motion.span
+                        className="text-xs text-[var(--color-text-muted)]"
+                        animate={{ opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        aan het typen...
+                      </motion.span>
                     </div>
                     <TypingSkeleton />
                   </div>
