@@ -27,7 +27,14 @@ export default function ChatPanel() {
     await send(text);
   };
 
-  if (!isOpen) return null;
+  console.log('[ChatPanel] Rendering. isOpen =', isOpen);
+
+  if (!isOpen) {
+    console.log('[ChatPanel] Not rendering - isOpen is false');
+    return null;
+  }
+
+  console.log('[ChatPanel] Rendering panel!');
 
   const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
