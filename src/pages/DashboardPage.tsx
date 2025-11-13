@@ -262,7 +262,7 @@ export default function DashboardPage() {
                       </p>
                     )}
 
-                    {color && (
+                    {color && color.palette && Array.isArray(color.palette) && (
                       <div className="border-t-2 border-[var(--color-border)] pt-6 mt-6">
                         <p className="text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide mb-3">Jouw Kleuren</p>
                         <div className="flex gap-2 flex-wrap">
