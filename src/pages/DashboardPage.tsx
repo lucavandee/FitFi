@@ -38,7 +38,23 @@ import { DashboardNovaSection } from "@/components/dashboard/DashboardNovaSectio
 import type { StyleProfile } from "@/engine/types";
 
 function readJson<T>(key: string): T | null {
-  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : null; } catch { return null; }
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } catch (e) {
+    console.warn(`[Dashboard] Failed to read ${key}:`, e);
+    return null;
+  }
+}
+
+function safeGetArray<T>(obj: any, key: string): T[] {
+  try {
+    const val = obj?.[key];
+    return Array.isArray(val) ? val : [];
+  } catch {
+    return [];
+  }
 }
 
 export default function DashboardPage() {
@@ -70,12 +86,19 @@ export default function DashboardPage() {
         const email = data?.user?.email || "";
         const name = email.split("@")[0];
         setUserName(name.charAt(0).toUpperCase() + name.slice(1));
+      }).catch(err => {
+        console.warn('[Dashboard] Failed to get user:', err);
       });
     }
   }, []);
 
   const ts = React.useMemo(() => {
-    try { const raw = localStorage.getItem(LS_KEYS.RESULTS_TS); return raw ? parseInt(raw, 10) : null; } catch { return null; }
+    try {
+      const raw = localStorage.getItem(LS_KEYS.RESULTS_TS);
+      return raw ? parseInt(raw, 10) : null;
+    } catch {
+      return null;
+    }
   }, []);
 
   const outfitCount = outfitsData?.length || 0;
@@ -84,7 +107,7 @@ export default function DashboardPage() {
   React.useEffect(() => {
     try {
       const favs = JSON.parse(localStorage.getItem("ff_fav_outfits") || "[]") as string[];
-      setFavCount(favs.length);
+      setFavCount(Array.isArray(favs) ? favs.length : 0);
     } catch {
       setFavCount(0);
     }
@@ -120,6 +143,15 @@ export default function DashboardPage() {
     setShowSuccessBanner(false);
     navigate('/dashboard', { replace: true });
   };
+
+  const colorPalette = React.useMemo(() => {
+    if (!color) return [];
+    if (!color.palette) return [];
+    if (!Array.isArray(color.palette)) return [];
+    return color.palette.slice(0, 6);
+  }, [color]);
+
+  const hasColorPalette = colorPalette.length > 0;
 
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
@@ -252,21 +284,21 @@ export default function DashboardPage() {
                       </div>
                       <div>
                         <p className="text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide">Je Stijlarchetype</p>
-                        <h3 className="text-2xl font-bold text-[var(--color-text)]">{archetype.name}</h3>
+                        <h3 className="text-2xl font-bold text-[var(--color-text)]">{archetype.name || "Onbekend"}</h3>
                       </div>
                     </div>
 
-                    {archetype.description && (
+                    {archetype.description && typeof archetype.description === 'string' && (
                       <p className="text-[var(--color-muted)] mb-6 leading-relaxed">
                         {archetype.description.substring(0, 120)}...
                       </p>
                     )}
 
-                    {color && color.palette && Array.isArray(color.palette) && (
+                    {hasColorPalette && (
                       <div className="border-t-2 border-[var(--color-border)] pt-6 mt-6">
                         <p className="text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide mb-3">Jouw Kleuren</p>
                         <div className="flex gap-2 flex-wrap">
-                          {color.palette.slice(0, 6).map((c, i) => (
+                          {colorPalette.map((c, i) => (
                             <div
                               key={i}
                               className="w-10 h-10 rounded-lg shadow-md hover:scale-110 transition-transform"
