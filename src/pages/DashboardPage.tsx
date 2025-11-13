@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useSearchParams, useNavigate } from "react-router-dom";
+import { NavLink, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import {
@@ -47,6 +47,7 @@ function readJson<T>(key: string): T | null {
 export default function DashboardPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [favCount, setFavCount] = React.useState(0);
   const [userId, setUserId] = React.useState<string | undefined>();
   const [showSuccessBanner, setShowSuccessBanner] = React.useState(false);
@@ -300,7 +301,7 @@ export default function DashboardPage() {
         <section className="py-8">
           <div className="ff-container">
             <NovaProactiveSuggestion
-              suggestions={generateProactiveSuggestions(novaContext).filter(s => s.context.includes("dashboard"))}
+              suggestions={generateProactiveSuggestions(novaContext, location.pathname).filter(s => s.context.includes("dashboard"))}
               maxVisible={2}
               position="inline"
             />

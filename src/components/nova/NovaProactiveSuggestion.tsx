@@ -142,10 +142,48 @@ export function NovaProactiveSuggestion({
 }
 
 /**
- * Generate proactive suggestions based on user behavior
+ * Generate proactive suggestions based on user behavior and page context
  */
-export function generateProactiveSuggestions(userContext: any): ProactiveSuggestion[] {
+export function generateProactiveSuggestions(userContext: any, currentPath?: string): ProactiveSuggestion[] {
   const suggestions: ProactiveSuggestion[] = [];
+
+  // CONTEXTUAL TIPS (from FloatingHelper - now integrated!)
+
+  // On Results page
+  if (currentPath?.startsWith('/results')) {
+    suggestions.push({
+      id: "results-swipe-tip",
+      title: "Swipe om te leren!",
+      message: "Swipe naar rechts op outfits die je leuk vindt - zo leer ik je smaak steeds beter kennen!",
+      icon: "heart",
+      priority: 11,
+      context: ["results"],
+    });
+  }
+
+  // On Dashboard page
+  if (currentPath?.startsWith('/dashboard')) {
+    suggestions.push({
+      id: "dashboard-swipe-tip",
+      title: "Verbeter je aanbevelingen!",
+      message: "Hoe meer je swiped, hoe slimmer mijn aanbevelingen worden. Probeer 50+ swipes voor beste resultaten!",
+      icon: "trend",
+      priority: 11,
+      context: ["dashboard"],
+    });
+  }
+
+  // On Onboarding page
+  if (currentPath?.startsWith('/onboarding')) {
+    suggestions.push({
+      id: "onboarding-honesty-tip",
+      title: "Wees eerlijk!",
+      message: "Wees eerlijk in je antwoorden - dit helpt mij om perfect bij jouw stijl aan te sluiten.",
+      icon: "sparkles",
+      priority: 12,
+      context: ["onboarding"],
+    });
+  }
 
   // No swipe data
   if (!userContext?.recentSwipes || userContext.recentSwipes.swipeCount < 10) {
