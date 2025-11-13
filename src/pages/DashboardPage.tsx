@@ -38,6 +38,7 @@ import { EnhancedSavedOutfitsGallery } from "@/components/dashboard/EnhancedSave
 import { PhotoAnalysisWidget } from "@/components/dashboard/PhotoAnalysisWidget";
 import { NovaProactiveSuggestion, generateProactiveSuggestions } from "@/components/nova/NovaProactiveSuggestion";
 import { useEnhancedNova } from "@/hooks/useEnhancedNova";
+import { DashboardNovaSection } from "@/components/dashboard/DashboardNovaSection";
 import type { StyleProfile } from "@/engine/types";
 
 function readJson<T>(key: string): T | null {
@@ -296,18 +297,8 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Nova Proactive Suggestions */}
-      {novaContext && (
-        <section className="py-8">
-          <div className="ff-container">
-            <NovaProactiveSuggestion
-              suggestions={generateProactiveSuggestions(novaContext, location.pathname).filter(s => s.context.includes("dashboard"))}
-              maxVisible={2}
-              position="inline"
-            />
-          </div>
-        </section>
-      )}
+      {/* Nova Chat - Embedded */}
+      <DashboardNovaSection />
 
       {/* Photo Analysis Widget */}
       <section className="py-8 bg-[var(--color-bg)]">
