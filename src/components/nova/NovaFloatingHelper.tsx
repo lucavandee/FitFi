@@ -82,7 +82,7 @@ export function NovaFloatingHelper() {
   return (
     <AnimatePresence>
       <motion.div
-        drag
+        drag={isMinimized}
         dragMomentum={false}
         dragElastic={0.1}
         onDragEnd={handleDragEnd}
@@ -94,8 +94,8 @@ export function NovaFloatingHelper() {
           y: position.y,
         }}
         exit={{ opacity: 0, scale: 0.8 }}
-        className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing"
-        style={{ touchAction: "none" }}
+        className={`fixed bottom-6 right-6 z-50 ${isMinimized ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        style={{ touchAction: isMinimized ? "none" : "auto" }}
       >
         {isMinimized ? (
           // Minimized Bubble
@@ -121,7 +121,15 @@ export function NovaFloatingHelper() {
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-              <div className="flex items-center gap-3">
+              {/* Drag Handle (left side) */}
+              <motion.div
+                drag
+                dragMomentum={false}
+                dragElastic={0.1}
+                onDragEnd={handleDragEnd}
+                className="flex items-center gap-3 cursor-grab active:cursor-grabbing flex-1"
+                style={{ touchAction: "none" }}
+              >
                 <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
@@ -129,12 +137,17 @@ export function NovaFloatingHelper() {
                   <div className="font-bold text-sm text-[var(--color-text)]">Nova</div>
                   <div className="text-xs text-[var(--color-text-muted)]">Je style assistent</div>
                 </div>
-              </div>
+              </motion.div>
 
+              {/* Buttons (not draggable) */}
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setIsMinimized(true)}
-                  className="w-8 h-8 rounded-lg hover:bg-[var(--color-bg)] flex items-center justify-center transition-colors"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMinimized(true);
+                  }}
+                  className="w-8 h-8 rounded-lg hover:bg-[var(--color-bg)] flex items-center justify-center transition-colors cursor-pointer"
                   title="Minimaliseren"
                 >
                   <svg
@@ -147,8 +160,12 @@ export function NovaFloatingHelper() {
                   </svg>
                 </button>
                 <button
-                  onClick={handleDismiss}
-                  className="w-8 h-8 rounded-lg hover:bg-[var(--color-bg)] flex items-center justify-center transition-colors"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDismiss();
+                  }}
+                  className="w-8 h-8 rounded-lg hover:bg-[var(--color-bg)] flex items-center justify-center transition-colors cursor-pointer"
                   title="Sluiten"
                 >
                   <X className="w-4 h-4 text-[var(--color-text-muted)]" />
@@ -178,21 +195,29 @@ export function NovaFloatingHelper() {
             {/* Quick Actions */}
             <div className="flex items-center gap-2 p-4 border-t border-[var(--color-border)] bg-[var(--color-bg)]">
               <button
-                onClick={() => {
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   openNova(true);
                   setIsMinimized(true);
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
               >
                 <MessageCircle className="w-3 h-3" />
                 Chat
               </button>
               <button
-                onClick={() => {
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   navigate('/results');
                   setIsMinimized(true);
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
               >
                 <TrendingUp className="w-3 h-3" />
                 Trends
