@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, X, Sparkles, Shirt, User, ShoppingBag, Zap } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
-import { useNovaConn } from '@/components/ai/NovaConnection';
+import { useNovaConn, NovaConnectionProvider } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import OutfitCards from '@/components/ai/OutfitCards';
 import type { NovaOutfitsPayload } from '@/lib/outfitSchema';
@@ -59,7 +59,7 @@ const suggestionChips = [
   { icon: Zap, text: 'Wat zijn mijn beste kleuren?', mode: 'archetype' as NovaMode }
 ];
 
-export function DashboardNovaSection() {
+function DashboardNovaSectionInner() {
   const { user } = useUser();
   const conn = useNovaConn();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -576,5 +576,13 @@ export function DashboardNovaSection() {
         tier={userTier}
       />
     </section>
+  );
+}
+
+export function DashboardNovaSection() {
+  return (
+    <NovaConnectionProvider>
+      <DashboardNovaSectionInner />
+    </NovaConnectionProvider>
   );
 }
