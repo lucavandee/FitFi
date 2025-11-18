@@ -34,8 +34,9 @@ import { EnhancedSavedOutfitsGallery } from "@/components/dashboard/EnhancedSave
 import { PhotoAnalysisWidget } from "@/components/dashboard/PhotoAnalysisWidget";
 import { NovaProactiveSuggestion, generateProactiveSuggestions } from "@/components/nova/NovaProactiveSuggestion";
 import { useEnhancedNova } from "@/hooks/useEnhancedNova";
-import { DashboardNovaSection } from "@/components/dashboard/DashboardNovaSection";
 import type { StyleProfile } from "@/engine/types";
+import { NovaInsightCard } from "@/components/Dashboard/NovaInsightCard";
+import { generateAmbientInsights } from "@/services/nova/ambientInsights";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -152,6 +153,17 @@ export default function DashboardPage() {
   }, [color]);
 
   const hasColorPalette = colorPalette.length > 0;
+
+  const novaInsights = React.useMemo(() => {
+    return generateAmbientInsights({
+      hasQuizData,
+      outfitCount,
+      favCount,
+      archetype: archetype?.name,
+      colorPalette,
+      photoAnalyzed: false
+    });
+  }, [hasQuizData, outfitCount, favCount, archetype, colorPalette]);
 
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
@@ -325,8 +337,41 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Nova Chat - Embedded */}
-      <DashboardNovaSection />
+      {/* Nova Ambient Intelligence */}
+      {novaInsights.length > 0 && (
+        <section className="py-12 bg-[var(--color-bg)]">
+          <div className="ff-container">
+            <div className="mb-8 fade-in-up">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-100)] dark:bg-[var(--ff-color-primary-900)] rounded-full">
+                  <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                  <span className="text-sm font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wide">Nova AI Insights</span>
+                </div>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)]">
+                Slim advies, speciaal voor <span className="text-gradient">jou</span>
+              </h2>
+              <p className="text-[var(--color-muted)] mt-2">
+                Ontdek gepersonaliseerde styling tips op basis van jouw profiel
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {novaInsights.slice(0, 3).map((insight, idx) => (
+                <NovaInsightCard
+                  key={idx}
+                  type={insight.type}
+                  insight={insight.insight}
+                  action={insight.action}
+                  actionLink={insight.actionLink}
+                  confidence={insight.confidence}
+                  priority={insight.priority}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Photo Analysis Widget */}
       <section className="py-8 bg-[var(--color-bg)]">
