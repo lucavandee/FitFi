@@ -38,8 +38,7 @@ import type { StyleProfile } from "@/engine/types";
 import { generateAmbientInsights } from "@/services/nova/ambientInsights";
 import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@/services/nova/dismissedInsightsService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { DashboardHero } from "@/components/dashboard/DashboardHero";
-import { DashboardInsights } from "@/components/dashboard/DashboardInsights";
+import { NovaInsightCard } from "@/components/Dashboard/NovaInsightCard";
 
 function readJson<T>(key: string): T | null {
   try {
