@@ -367,22 +367,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Smart Daily Recommendation */}
-      {hasQuizData && savedOutfits.length > 0 && (
-        <section className="py-8 bg-[var(--color-bg)]">
-          <div className="ff-container">
-            <div className="max-w-2xl mx-auto fade-in-up">
-              <SmartDailyRecommendation
-                outfits={savedOutfits}
-                userProfile={{
-                  archetype: archetype?.name,
-                  colorPalette
-                }}
-              />
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Smart Daily Recommendation - Temporarily disabled */}
 
       {/* Nova Ambient Intelligence */}
       {novaInsights.length > 0 && (
