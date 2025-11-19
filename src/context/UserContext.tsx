@@ -8,6 +8,7 @@ export interface FitFiUser {
   id: string;
   name: string;
   email: string;
+  created_at?: string;
   gender?: 'male' | 'female';
   role?: string;
   isPremium?: boolean;
@@ -103,9 +104,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           hasAppMetadata: !!session.user.app_metadata
         });
 
-        // Fetch tier, admin status, and gender asynchronously (non-blocking)
+        // Fetch tier, admin status, gender, and created_at asynchronously (non-blocking)
         sb.from('profiles')
-          .select('tier, is_admin, gender')
+          .select('tier, is_admin, gender, created_at')
           .eq('id', session.user.id)
           .maybeSingle()
           .then(({ data: profile, error }) => {
@@ -123,7 +124,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   ...prev,
                   tier: profile.tier as 'free' | 'premium' | 'founder',
                   // KEEP isAdmin from JWT (already set), don't overwrite with DB value
-                  gender: profile.gender as 'male' | 'female' | undefined
+                  gender: profile.gender as 'male' | 'female' | undefined,
+                  created_at: profile.created_at
                 } : null;
                 console.log('✅ [UserContext] User state after update:', {
                   hasUser: !!updated,
@@ -180,9 +182,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: userData.email
         });
 
-        // Fetch tier, admin status, and gender asynchronously (non-blocking)
+        // Fetch tier, admin status, gender, and created_at asynchronously (non-blocking)
         sb.from('profiles')
-          .select('tier, is_admin, gender')
+          .select('tier, is_admin, gender, created_at')
           .eq('id', session.user.id)
           .maybeSingle()
           .then(({ data: profile, error }) => {
@@ -200,7 +202,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   ...prev,
                   tier: profile.tier as 'free' | 'premium' | 'founder',
                   // KEEP isAdmin from JWT (already set), don't overwrite with DB value
-                  gender: profile.gender as 'male' | 'female' | undefined
+                  gender: profile.gender as 'male' | 'female' | undefined,
+                  created_at: profile.created_at
                 } : null;
                 console.log('✅ [UserContext] User state after update (onAuthStateChange):', {
                   hasUser: !!updated,
