@@ -80,7 +80,7 @@ export default function PricingPage() {
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
         <title>Prijzen – FitFi</title>
-        <meta name="description" content="Kies het plan dat bij jou past. Start gratis of kies Premium of Founder voor meer features. Transparant en zonder verborgen kosten." />
+        <meta name="description" content="Kies het plan dat bij jou past. Start gratis of kies Premium of Founder voor meer features." />
         <link rel="canonical" href="https://fitfi.ai/prijzen" />
       </Helmet>
 
@@ -119,7 +119,7 @@ export default function PricingPage() {
               <span className="block text-[var(--ff-color-primary-600)]">jouw stijl</span> past
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Begin gratis. Upgrade wanneer je wilt. Geen verrassingen.
+              Begin gratis. Upgrade wanneer je wilt.
             </p>
           </div>
         </div>

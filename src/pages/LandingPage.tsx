@@ -11,7 +11,7 @@ export default function LandingPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-hidden">
       <Helmet>
-        <title>FitFi — Outfits voor jou | AI stijladvies </title>
+        <title>FitFi — Outfits voor jou | AI stijladvies</title>
         <meta
           name="description"
           content="Vind je stijl. Style Report met outfits die bij je passen."

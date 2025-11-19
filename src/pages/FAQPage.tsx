@@ -272,7 +272,7 @@ export default function FAQPage() {
               icon: CreditCard,
               title: "Eerlijk geprijsd",
               body:
-                "Begin gratis. Upgraden kan later — zonder kleine lettertjes of verplichtingen.",
+                "Begin gratis. Upgraden kan later.",
             },
             {
               icon: Clock,

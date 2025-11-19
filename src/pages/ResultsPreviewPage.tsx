@@ -38,7 +38,7 @@ export default function ResultsPreviewPage() {
       : "Bekijk dit FitFi voorbeeldrapport";
     const text = isPersonalized
       ? `Zo zou ${userName}'s stijlrapport eruitzien. Zie ook jouw stijl met FitFi!`
-      : "Hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die bij je passen.";
+      : "Hoe FitFi je stijl analyseert en outfits samenstelt die bij je passen.";
 
     if (navigator.share) {
       try {
@@ -64,7 +64,7 @@ export default function ResultsPreviewPage() {
     <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
         <title>{isPersonalized ? `${userName}'s Style Report – FitFi` : 'Voorbeeld Style Report – FitFi'}</title>
-        <meta name="description" content="Bekijk een voorbeeld van je persoonlijke stijlprofiel met outfit-aanbevelingen." />
+        <meta name="description" content="Bekijk een voorbeeld van je stijlprofiel met outfit-aanbevelingen." />
       </Helmet>
 
       {/* Preview Banner */}

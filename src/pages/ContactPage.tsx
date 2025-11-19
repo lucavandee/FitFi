@@ -106,7 +106,7 @@ export default function ContactPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-xl md:text-2xl text-[var(--color-text)]/70 leading-relaxed max-w-2xl mx-auto mb-12"
             >
-              Vragen over stijl, partnerships, of gewoon een idee? We reageren persoonlijk binnen 24 uur.
+              Vragen over stijl, partnerships, of gewoon een idee? We reageren binnen 24 uur.
             </motion.p>
 
             {/* Trust badges - animated */}

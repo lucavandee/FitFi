@@ -11,7 +11,7 @@ export default function HowItWorksPage() {
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
         <meta
           name="description"
-          content="Hoe FitFi in 3 stappen jouw AI Style Report maakt. Van quiz tot outfits ."
+          content="Hoe FitFi in 3 stappen jouw AI Style Report maakt. Van quiz tot outfits."
         />
       </Helmet>
 

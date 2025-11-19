@@ -140,7 +140,7 @@ export default function LoginPage() {
             Log in
           </h1>
           <p className="text-lg text-[var(--color-text)]/70">
-            Toegang tot je persoonlijke stijladvies
+            Toegang tot je stijladvies
           </p>
         </div>
 

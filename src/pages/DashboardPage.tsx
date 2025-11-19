@@ -201,7 +201,7 @@ export default function DashboardPage() {
 
       <Helmet>
         <title>Dashboard - FitFi</title>
-        <meta name="description" content="Jouw persoonlijke style dashboard met outfits, favorieten en styling tips." />
+        <meta name="description" content="Jouw style dashboard met outfits, favorieten en styling tips." />
       </Helmet>
 
       {/* Success Banner */}
