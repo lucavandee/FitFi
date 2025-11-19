@@ -4,6 +4,22 @@ import { Heart, Filter, Grid3x3, List, Calendar, TrendingUp } from "lucide-react
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { NovaMatchBadge } from "@/components/outfits/NovaMatchBadge";
+import { calculateMatchScore } from "@/services/outfits/matchScoreCalculator";
+
+const LS_KEYS = {
+  ARCHETYPE: 'ff_archetype',
+  COLOR_PROFILE: 'ff_color_profile'
+};
+
+function readJson<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 interface SavedOutfit {
   id: string;
@@ -166,7 +182,29 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
 }
 
 function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
-  const matchScore = outfit.outfit_data?.matchScore || Math.floor(85 + Math.random() * 10);
+  const archetype = readJson<any>(LS_KEYS.ARCHETYPE);
+  const colorProfile = readJson<any>(LS_KEYS.COLOR_PROFILE);
+
+  const matchScore = useMemo(() => {
+    if (outfit.outfit_data?.matchScore) {
+      return outfit.outfit_data.matchScore;
+    }
+
+    const breakdown = calculateMatchScore({
+      outfit: {
+        items: outfit.outfit_data?.items || [],
+        style: outfit.outfit_data?.style || archetype?.name,
+        colors: outfit.outfit_data?.colors || [],
+        season: outfit.outfit_data?.season
+      },
+      userProfile: {
+        archetype: archetype?.name,
+        colorPalette: colorProfile?.palette || []
+      }
+    });
+
+    return breakdown.total;
+  }, [outfit, archetype, colorProfile]);
 
   return (
     <motion.div
@@ -207,7 +245,29 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
 }
 
 function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number }) {
-  const matchScore = outfit.outfit_data?.matchScore || Math.floor(85 + Math.random() * 10);
+  const archetype = readJson<any>(LS_KEYS.ARCHETYPE);
+  const colorProfile = readJson<any>(LS_KEYS.COLOR_PROFILE);
+
+  const matchScore = useMemo(() => {
+    if (outfit.outfit_data?.matchScore) {
+      return outfit.outfit_data.matchScore;
+    }
+
+    const breakdown = calculateMatchScore({
+      outfit: {
+        items: outfit.outfit_data?.items || [],
+        style: outfit.outfit_data?.style || archetype?.name,
+        colors: outfit.outfit_data?.colors || [],
+        season: outfit.outfit_data?.season
+      },
+      userProfile: {
+        archetype: archetype?.name,
+        colorPalette: colorProfile?.palette || []
+      }
+    });
+
+    return breakdown.total;
+  }, [outfit, archetype, colorProfile]);
 
   return (
     <motion.div

@@ -19,10 +19,25 @@ interface UserContext {
   photoAnalyzed?: boolean;
 }
 
+function getTimeOfDay(): 'morning' | 'afternoon' | 'evening' | 'night' {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'afternoon';
+  if (hour >= 17 && hour < 22) return 'evening';
+  return 'night';
+}
+
+function getDayOfWeek(): 'weekday' | 'weekend' {
+  const day = new Date().getDay();
+  return (day === 0 || day === 6) ? 'weekend' : 'weekday';
+}
+
 export function generateAmbientInsights(context: UserContext): AmbientInsight[] {
   const insights: AmbientInsight[] = [];
   const now = new Date();
   const month = now.getMonth();
+  const timeOfDay = getTimeOfDay();
+  const dayType = getDayOfWeek();
 
   if (!context.hasQuizData) {
     insights.push({
@@ -44,6 +59,44 @@ export function generateAmbientInsights(context: UserContext): AmbientInsight[] 
       actionLink: '/dashboard',
       confidence: 0.95,
       priority: 'high'
+    });
+  }
+
+  if (timeOfDay === 'morning' && dayType === 'weekday' && context.outfitCount > 0) {
+    insights.push({
+      type: 'upcoming-event',
+      insight: 'Goede morgen! Start je werkdag met een van je opgeslagen professionele looks',
+      action: 'Bekijk work outfits',
+      actionLink: '/results?occasion=work',
+      confidence: 0.93,
+      priority: 'high'
+    });
+  } else if (timeOfDay === 'morning' && dayType === 'weekend') {
+    insights.push({
+      type: 'style-tip',
+      insight: 'Weekend vibes! Perfect moment om casual looks te ontdekken',
+      action: 'Casual outfits',
+      actionLink: '/results?occasion=casual',
+      confidence: 0.90,
+      priority: 'medium'
+    });
+  } else if (timeOfDay === 'evening' && context.outfitCount > 0) {
+    insights.push({
+      type: 'personal-goal',
+      insight: 'Bereid je voor op morgen - bekijk je outfit opties voor overmorgen',
+      action: 'Plan je week',
+      actionLink: '/dashboard',
+      confidence: 0.85,
+      priority: 'medium'
+    });
+  } else if (timeOfDay === 'afternoon' && context.favCount < 10) {
+    insights.push({
+      type: 'personal-goal',
+      insight: `Nog ${10 - context.favCount} outfits te ontdekken vandaag - blijf je streak gaande!`,
+      action: 'Ontdek meer',
+      actionLink: '/results',
+      confidence: 0.88,
+      priority: 'medium'
     });
   }
 

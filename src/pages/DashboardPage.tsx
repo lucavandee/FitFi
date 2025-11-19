@@ -35,10 +35,11 @@ import { PhotoAnalysisWidget } from "@/components/dashboard/PhotoAnalysisWidget"
 import { NovaProactiveSuggestion, generateProactiveSuggestions } from "@/components/nova/NovaProactiveSuggestion";
 import { useEnhancedNova } from "@/hooks/useEnhancedNova";
 import type { StyleProfile } from "@/engine/types";
-import { NovaInsightCard } from "@/components/Dashboard/NovaInsightCard";
 import { generateAmbientInsights } from "@/services/nova/ambientInsights";
 import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@/services/nova/dismissedInsightsService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { DashboardHero } from "@/components/dashboard/DashboardHero";
+import { DashboardInsights } from "@/components/dashboard/DashboardInsights";
 
 function readJson<T>(key: string): T | null {
   try {
