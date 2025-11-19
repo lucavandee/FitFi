@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Sparkles, Sun, Cloud, Calendar } from 'lucide-react';
-import { OutfitCard } from '@/components/outfits/OutfitCard';
+import OutfitCard from '@/components/outfits/OutfitCard';
 import type { Outfit } from '@/engine/types';
 
 interface SmartDailyRecommendationProps {

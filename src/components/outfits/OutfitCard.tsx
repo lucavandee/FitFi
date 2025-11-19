@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
-import SmartImage from '@/components/media/SmartImage';
+import { LazyImage } from '@/components/ui/LazyImage';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { isSaved } from '../../services/engagement';
 import { generateOutfitExplanation, generateNovaExplanation } from '@/engine/explainOutfit';
@@ -265,15 +265,12 @@ export default function OutfitCard({
           whileHover={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
-          <SmartImage
+          <LazyImage
             src={outfit.imageUrl}
             alt={outfit.title || 'Outfit'}
-            id={outfit.id}
-            kind="outfit"
-            aspect="4/5"
-            containerClassName="w-full h-full"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
-            imgClassName="hover:scale-110 transition-transform duration-500 ease-out"
+            className="w-full h-full"
+            fallback="/placeholder.png"
+            onLoad={() => setLoaded(true)}
           />
 
           {/* Image overlay gradient on hover */}

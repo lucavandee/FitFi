@@ -39,6 +39,7 @@ import { generateAmbientInsights } from "@/services/nova/ambientInsights";
 import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@/services/nova/dismissedInsightsService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { NovaInsightCard } from "@/components/Dashboard/NovaInsightCard";
+import { SmartDailyRecommendation } from "@/components/dashboard/SmartDailyRecommendation";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -365,6 +366,23 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {/* Smart Daily Recommendation */}
+      {hasQuizData && savedOutfits.length > 0 && (
+        <section className="py-8 bg-[var(--color-bg)]">
+          <div className="ff-container">
+            <div className="max-w-2xl mx-auto fade-in-up">
+              <SmartDailyRecommendation
+                outfits={savedOutfits}
+                userProfile={{
+                  archetype: archetype?.name,
+                  colorPalette
+                }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Nova Ambient Intelligence */}
       {novaInsights.length > 0 && (

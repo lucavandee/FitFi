@@ -5,6 +5,7 @@ import PremiumButton from "@/components/ui/PremiumButton";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { ExplainBadge } from "@/components/outfits/ExplainBadge";
 import { useEnhancedNova } from "@/hooks/useEnhancedNova";
+import { MatchFeedbackWidget } from "@/components/outfits/MatchFeedbackWidget";
 
 interface OutfitItem {
   id: string;
@@ -26,6 +27,7 @@ interface PremiumOutfitCardProps {
     occasion: string;
     style: string;
     explanation?: string;
+    matchPercentage?: number;
   };
   onSave?: (outfitId: string) => void;
   onShare?: (outfitId: string) => void;
@@ -146,9 +148,9 @@ export default function PremiumOutfitCard({
 
         {/* Actions */}
         <div className="flex items-center gap-3 pt-2">
-          <PremiumButton 
-            variant="primary" 
-            size="sm" 
+          <PremiumButton
+            variant="primary"
+            size="sm"
             className="flex-1"
             onClick={() => onSave?.(outfit.id)}
           >
@@ -157,9 +159,9 @@ export default function PremiumOutfitCard({
             </svg>
             Bewaren
           </PremiumButton>
-          
-          <PremiumButton 
-            variant="ghost" 
+
+          <PremiumButton
+            variant="ghost"
             size="sm"
             onClick={() => onShare?.(outfit.id)}
           >
@@ -169,8 +171,19 @@ export default function PremiumOutfitCard({
             Delen
           </PremiumButton>
         </div>
+
+        {/* Match Feedback */}
+        {outfit.matchPercentage && (
+          <div className="mt-4 pt-4 border-t border-white/10">
+            <MatchFeedbackWidget
+              outfitId={outfit.id}
+              shownScore={outfit.matchPercentage}
+              compact
+            />
+          </div>
+        )}
       </div>
-      
+
       <div className="explain">
       <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
       </div>
