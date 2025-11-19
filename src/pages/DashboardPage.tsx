@@ -369,26 +369,23 @@ export default function DashboardPage() {
 
       {/* Smart Daily Recommendation - Temporarily disabled */}
 
-      {/* Nova Ambient Intelligence */}
-      {novaInsights.length > 0 && (
-        <section className="py-12 bg-[var(--color-bg)]">
+      {/* Nova Ambient Intelligence - Only show if user has completed quiz */}
+      {novaInsights.length > 0 && hasQuizData && (
+        <section className="py-8 bg-[var(--color-bg)]">
           <div className="ff-container">
-            <div className="mb-8 fade-in-up">
+            <div className="mb-6 fade-in-up">
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-100)] dark:bg-[var(--ff-color-primary-900)] rounded-full">
                   <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-                  <span className="text-sm font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wide">Nova AI Insights</span>
+                  <span className="text-sm font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wide">Styling Tips</span>
                 </div>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)]">
-                Slim advies, speciaal voor <span className="text-gradient">jou</span>
+              <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)]">
+                Persoonlijk advies
               </h2>
-              <p className="text-[var(--color-muted)] mt-2">
-                Styling tips op basis van jouw profiel
-              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {novaInsights.slice(0, 3).map((insight, idx) => (
                 <NovaInsightCard
                   key={idx}
@@ -406,23 +403,27 @@ export default function DashboardPage() {
         </section>
       )}
 
-      {/* Photo Analysis Widget */}
-      <section className="py-8 bg-[var(--color-bg)]">
-        <div className="ff-container">
-          <PhotoAnalysisWidget />
-        </div>
-      </section>
+      {/* Photo Analysis Widget - Only for users who completed quiz */}
+      {hasQuizData && (
+        <section className="py-8 bg-[var(--color-bg)]">
+          <div className="ff-container">
+            <PhotoAnalysisWidget />
+          </div>
+        </section>
+      )}
 
       {/* Stats Cards - Premium Design */}
       <section className="py-12 bg-[var(--color-surface)]">
         <div className="ff-container">
-          {/* Refine Style Widget */}
-          <div className="mb-12 fade-in-up" data-tour="refine-style">
-            <RefineStyleWidget />
-          </div>
+          {/* Refine Style Widget - Only for users with quiz data */}
+          {hasQuizData && (
+            <div className="mb-12 fade-in-up" data-tour="refine-style">
+              <RefineStyleWidget />
+            </div>
+          )}
 
-          {/* Stats Grid - Premium Animated */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {/* Stats Grid - Simplified */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <AnimatedStatCard
               icon={<Shirt className="w-6 h-6" />}
               label="Outfits"
@@ -467,24 +468,14 @@ export default function DashboardPage() {
               delay={0.2}
             />
 
-            <AnimatedStatCard
-              icon={<Zap className="w-6 h-6" />}
-              label="Activiteit"
-              value={hasQuizData ? 12 : 0}
-              trend={{
-                value: 24,
-                isPositive: true,
-                label: "vs vorige week",
-              }}
-              gradient="from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-700)]"
-              delay={0.3}
-            />
           </div>
 
-          {/* Gamification - Premium Panel with Real Data */}
-          <div className="mb-12 fade-in-up" data-tour="gamification">
-            <PremiumGamificationPanel userId={userId} />
-          </div>
+          {/* Gamification - Only show if user has quiz data */}
+          {hasQuizData && userId && (
+            <div className="mb-12 fade-in-up" data-tour="gamification">
+              <PremiumGamificationPanel userId={userId} />
+            </div>
+          )}
 
           {/* Subscription Management */}
           <div className="mb-12 fade-in-up">

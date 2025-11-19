@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -18,10 +18,13 @@ import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { useUser } from '../context/UserContext';
 import { supabase } from '@/lib/supabaseClient';
 import { Helmet } from 'react-helmet-async';
+import { QuizResetModal } from '@/components/profile/QuizResetModal';
+import { EmailPreferences } from '@/components/profile/EmailPreferences';
 
 const ProfilePage: React.FC = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
+  const [showResetModal, setShowResetModal] = useState(false);
 
   const { data: styleProfile } = useQuery({
     queryKey: ['styleProfile', user?.id],
@@ -177,15 +180,13 @@ const ProfilePage: React.FC = () => {
                 <Palette className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
                 Jouw stijl
               </h3>
-              <Button
-                onClick={() => navigate('/onboarding')}
-                variant="ghost"
-                size="sm"
-                className="text-[var(--ff-color-primary-600)]"
+              <button
+                onClick={() => setShowResetModal(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-50)] dark:hover:bg-[var(--ff-color-primary-900)] rounded-lg transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 Opnieuw doen
-              </Button>
+              </button>
             </div>
 
             {styleProfile.dominant_archetype && (
@@ -253,15 +254,43 @@ const ProfilePage: React.FC = () => {
               description="Bekijk je outfits en favorieten"
               to="/dashboard"
             />
-            <ActionButton
-              icon={<RefreshCw className="w-5 h-5" />}
-              label="Quiz opnieuw doen"
-              description="Update je stijlprofiel"
-              to="/onboarding"
-            />
+            <button
+              onClick={() => setShowResetModal(true)}
+              className="flex items-start gap-4 p-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[var(--color-bg)] hover:border-[var(--ff-color-primary-300)] transition-all group text-left w-full"
+            >
+              <div className="p-2 bg-[var(--ff-color-primary-100)] dark:bg-[var(--ff-color-primary-900)] rounded-lg group-hover:scale-110 transition-transform">
+                <RefreshCw className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+              </div>
+              <div>
+                <div className="font-semibold text-[var(--color-text)] mb-1">
+                  Quiz opnieuw doen
+                </div>
+                <div className="text-sm text-[var(--color-muted)]">
+                  Update je stijlprofiel
+                </div>
+              </div>
+            </button>
           </div>
         </motion.div>
+
+        {/* Email Preferences */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <EmailPreferences />
+        </motion.div>
       </div>
+
+      {/* Quiz Reset Modal */}
+      {user && (
+        <QuizResetModal
+          isOpen={showResetModal}
+          onClose={() => setShowResetModal(false)}
+          userId={user.id}
+        />
+      )}
     </div>
   );
 };

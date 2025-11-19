@@ -18,53 +18,49 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-primary flex items-center justify-center p-4">
-      <div className="bg-accent text-text-dark p-6 rounded-2xl shadow-lg max-w-md w-full text-center">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangle className="text-red-600" size={32} />
+    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
+      <div className="bg-[var(--color-surface)] p-8 rounded-3xl shadow-2xl max-w-md w-full text-center border-2 border-[var(--color-border)]">
+        <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle className="text-red-600 dark:text-red-400" size={40} />
         </div>
-        
-        <h1 className="text-2xl font-bold text-red-600 mb-4">
-          Oeps! Er ging iets mis
+
+        <h1 className="text-3xl font-bold text-[var(--color-text)] mb-3">
+          Even geduld...
         </h1>
-        
-        <p className="text-gray-600 mb-6">
-          Er is een onverwachte fout opgetreden. Probeer de pagina te vernieuwen of ga terug naar de homepage.
+
+        <p className="text-[var(--color-muted)] mb-8 leading-relaxed">
+          Er is iets misgegaan. We hebben dit genoteerd en gaan ermee aan de slag.
         </p>
         
         {showDetails && (
-          <div className="bg-gray-50 p-4 rounded-lg mb-6 text-left">
-            <h3 className="font-semibold text-sm mb-2">Technische details:</h3>
-            <p className="text-xs text-gray-600 font-mono break-all">
+          <div className="bg-[var(--color-bg)] p-4 rounded-xl mb-6 text-left border border-[var(--color-border)]">
+            <h3 className="font-semibold text-sm mb-2 text-[var(--color-text)]">Technische details:</h3>
+            <p className="text-xs text-[var(--color-muted)] font-mono break-all">
               {error.message}
             </p>
           </div>
         )}
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button
-            variant="primary"
+
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
             onClick={resetErrorBoundary}
-            icon={<RefreshCw size={16} />}
-            iconPosition="left"
-            className="flex-1"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg"
           >
+            <RefreshCw size={18} />
             Probeer opnieuw
-          </Button>
-          
-          <Button
-            variant="secondary"
+          </button>
+
+          <button
             onClick={handleGoHome}
-            icon={<Home size={16} />}
-            iconPosition="left"
-            className="flex-1"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-surface)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-bg)] transition-all border-2 border-[var(--color-border)]"
           >
+            <Home size={18} />
             Naar homepage
-          </Button>
+          </button>
         </div>
-        
-        <p className="text-xs text-gray-500 mt-4">
-          Als het probleem aanhoudt, neem dan contact op met onze support.
+
+        <p className="text-sm text-[var(--color-muted)] mt-6">
+          Blijft het probleem? Neem contact met ons op.
         </p>
       </div>
     </div>
