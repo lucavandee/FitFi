@@ -26,7 +26,7 @@ const testimonials: Testimonial[] = [
   {
     name: 'Lisa',
     age: 35,
-    quote: 'Als moeder heb ik geen tijd voor urenlang shoppen. FitFi gaf me in 2 minuten een duidelijke richting. Outfits kloppen gewoon.',
+    quote: 'Als moeder heb ik geen tijd voor urenlang shoppen. FitFi gaf me  een duidelijke richting. Outfits kloppen gewoon.',
     gradient: 'from-[var(--ff-cta-400)] to-[var(--ff-color-primary-600)]',
     rating: 5
   }

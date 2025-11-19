@@ -4,7 +4,7 @@ import { Clock, Palette, ShieldCheck } from "lucide-react";
 const items = [
   { icon: Clock, title: "Supersnel", text: "In 2 minuten een helder advies." },
   { icon: Palette, title: "Persoonlijk", text: "Outfits op maat van jouw smaak." },
-  { icon: ShieldCheck, title: "Privacy-first", text: "We gaan zorgvuldig met je data om." },
+  { icon: ShieldCheck, title: "", text: "We gaan zorgvuldig met je data om." },
 ];
 
 const FeaturesTrio: React.FC = () => {

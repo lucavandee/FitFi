@@ -3,7 +3,7 @@ import { Sparkles, ClipboardCheck, ShoppingBag } from "lucide-react";
 
 const steps = [
   { icon: Sparkles, title: "Beantwoord 6 vragen", text: "Vertel je stijlvoorkeuren en doelen." },
-  { icon: ClipboardCheck, title: "Ontvang je rapport", text: "Persoonlijk profiel + outfits in 2 minuten." },
+  { icon: ClipboardCheck, title: "Ontvang je rapport", text: "Persoonlijk profiel + outfits ." },
   { icon: ShoppingBag, title: "Shop slimmer", text: "Kies wat past bij silhouet en kleuren." },
 ];
 

@@ -28,9 +28,9 @@ const HowItWorksEditorial: React.FC<Props> = ({ onStart, onExample }) => {
       <div className="ff-container">
         <header className="section-header anim-fade-up">
           <p className="kicker">Hoe het werkt</p>
-          <h2 id="hiw-title" className="section-title">Rustig, helder en direct toepasbaar</h2>
+          <h2 id="hiw-title" className="section-title">Van quiz naar outfits</h2>
           <p id="hiw-intro" className="section-intro">
-            In enkele minuten heb je een stijlprofiel, outfits en shoplinks — zonder ruis.
+            Vul de quiz in en krijg een stijlprofiel met outfits.
           </p>
         </header>
 

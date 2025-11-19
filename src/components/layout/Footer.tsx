@@ -23,7 +23,7 @@ export default function Footer() {
           <div className="space-y-3">
             <div className="font-heading text-lg text-[var(--color-text)]">FitFi</div>
             <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-              AI-gedreven stijladvies. Premium, nuchter en persoonlijk.
+              Stijladvies op basis van je voorkeuren.
             </p>
           </div>
 

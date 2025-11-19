@@ -408,7 +408,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                 onChange={(e) => setNotification({ ...notification, body: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]"
                 rows={3}
-                placeholder="We hebben 3 nieuwe outfits gevonden die perfect bij je stijl passen."
+                placeholder="We hebben 3 nieuwe outfits gevonden die bij je stijl passen."
               />
             </div>
 

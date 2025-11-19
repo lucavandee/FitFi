@@ -38,7 +38,7 @@ export default function ResultsPreviewPage() {
       : "Bekijk dit FitFi voorbeeldrapport";
     const text = isPersonalized
       ? `Zo zou ${userName}'s stijlrapport eruitzien. Zie ook jouw stijl met FitFi!`
-      : "Hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die écht bij je passen.";
+      : "Hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die bij je passen.";
 
     if (navigator.share) {
       try {
@@ -75,7 +75,7 @@ export default function ResultsPreviewPage() {
               <Eye className="w-5 h-5" />
               <p className="text-sm font-medium">
                 {isPersonalized
-                  ? `Hé ${userName}! Dit zou jouw Style Report zijn. Doe de quiz voor je échte resultaten.`
+                  ? `Hé ${userName}! Dit zou jouw Style Report zijn. Doe de quiz voor je resultaten.`
                   : 'Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.'}
               </p>
             </div>
@@ -119,8 +119,8 @@ export default function ResultsPreviewPage() {
 
           <p className="text-lg text-[var(--color-text)]/70 max-w-2xl mx-auto">
             {isPersonalized
-              ? `Na 2 minuten krijg je ${userName}, jouw persoonlijke stijlanalyse met uitleg, kleuren en outfits die écht bij je passen.`
-              : 'Dit is hoe jouw rapport eruit ziet na het invullen van de 2-minuten quiz. Je stijl, kleuren en outfit-aanbevelingen.'}
+              ? `${userName}, zo ziet jouw stijlanalyse eruit: kleuren en outfits die bij je passen.`
+              : 'Dit is hoe jouw rapport eruit ziet na het invullen van de quiz. Je stijl, kleuren en outfit-aanbevelingen.'}
           </p>
         </div>
       </section>
@@ -269,14 +269,14 @@ export default function ResultsPreviewPage() {
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ff-color-text)]">
             {isPersonalized
-              ? `${userName}, krijg jouw échte Style Report`
+              ? `${userName}, krijg jouw Style Report`
               : 'Klaar voor jouw eigen rapport?'}
           </h2>
 
           <p className="text-lg text-[var(--color-text)]/70 mb-8">
             {isPersonalized
-              ? `Start de quiz ${userName}, en binnen 2 minuten zie je welke outfits écht bij jou passen. Gratis, zonder verplichtingen.`
-              : 'Beantwoord 10 snelle vragen en zie binnen 2 minuten welke outfits bij je passen. Gratis, zonder verplichtingen.'}
+              ? `Start de quiz ${userName}, en zie je welke outfits bij je passen. Gratis.`
+              : 'Beantwoord 10 snelle vragen en zie welke outfits bij je passen. Gratis.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -296,21 +296,7 @@ export default function ResultsPreviewPage() {
             </NavLink>
           </div>
 
-          {/* Trust Indicators */}
-          <div className="flex flex-wrap justify-center gap-6 mt-8 pt-8 border-t border-[var(--ff-color-primary-200)]">
-            <div className="flex items-center gap-2 text-sm text-[var(--color-text)]/60">
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" />
-              <span>100% gratis</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-[var(--color-text)]/60">
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" />
-              <span>Geen creditcard nodig</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-[var(--color-text)]/60">
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" />
-              <span>Resultaat in 2 minuten</span>
-            </div>
-          </div>
+          {/* Removed trust badges */}
         </div>
       </section>
     </main>

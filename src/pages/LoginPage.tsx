@@ -374,7 +374,7 @@ export default function LoginPage() {
           <span className="text-gray-300">•</span>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-green-600" />
-            <span>Privacy-first</span>
+            <span></span>
           </div>
         </div>
 

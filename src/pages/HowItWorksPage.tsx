@@ -11,7 +11,7 @@ export default function HowItWorksPage() {
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
         <meta
           name="description"
-          content="Hoe FitFi in 3 stappen jouw AI Style Report maakt. Van quiz tot outfits in 2 minuten."
+          content="Hoe FitFi in 3 stappen jouw AI Style Report maakt. Van quiz tot outfits ."
         />
       </Helmet>
 
@@ -66,10 +66,10 @@ export default function HowItWorksPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight"
             >
-              Van quiz naar outfits{' '}
+              Van{' '}
               <span className="relative inline-block">
                 <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                  in 2 minuten
+                  quiz naar outfits
                 </span>
               </span>
             </motion.h1>
@@ -79,7 +79,7 @@ export default function HowItWorksPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              In 3 stappen van persoonlijkheidsquiz naar outfits. Geen gedoe, wel resultaat.
+              In 3 stappen van quiz naar outfits.
             </motion.p>
           </div>
         </div>
@@ -377,7 +377,7 @@ export default function HowItWorksPage() {
                 Klaar voor jouw <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Style Report</span>?
               </h2>
               <p className="text-xl text-[var(--color-muted)] mb-8">
-                Start nu en zie binnen 2 minuten welke stijl bij je past.
+                Start nu en zie welke stijl bij je past.
               </p>
 
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -394,7 +394,7 @@ export default function HowItWorksPage() {
               <div className="flex flex-wrap justify-center gap-6 text-sm text-[var(--color-muted)]">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                  <span>100% Gratis</span>
+                  <span>Gratis</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />

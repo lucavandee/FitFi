@@ -69,7 +69,7 @@ export function FinalCTA() {
               <div className="w-1.5 h-1.5 rounded-full bg-white/50"></div>
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                <span className="text-sm font-medium">Privacy-first</span>
+                <span className="text-sm font-medium"></span>
               </div>
               <div className="w-1.5 h-1.5 rounded-full bg-white/50"></div>
               <div className="flex items-center gap-2">

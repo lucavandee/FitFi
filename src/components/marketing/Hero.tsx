@@ -16,7 +16,7 @@ export default function Hero() {
           <span className="ff-tag">AI-styling • Uitleg bij elke look</span>
           <h1 className="mt-4">Jouw persoonlijke stylist — aangedreven door AI</h1>
           <p className="mt-4 text-[var(--fitfi-muted)] text-[16px] leading-7">
-            Wij vertalen je smaak naar outfits die kloppen. Slim, betaalbaar en direct shopbaar —
+            Wij vertalen je smaak naar outfits voor jou. Slim, betaalbaar en direct shopbaar —
             inclusief korte uitleg waarom het werkt.
           </p>
           <div className="mt-6 flex items-center gap-10">

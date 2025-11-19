@@ -222,7 +222,7 @@ export default function NovaLoginPrompt({
         {/* Trust Indicators */}
         <div className="mt-6 pt-4 border-t border-gray-200 text-center">
           <div className="flex justify-center space-x-4 text-xs text-gray-500">
-            <span>✓ 100% Gratis</span>
+            <span>✓ Gratis</span>
             <span>✓ Geen creditcard</span>
             <span>✓ Direct toegang</span>
           </div>

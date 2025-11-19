@@ -139,7 +139,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
             {/* Privacy note */}
             <p className="text-xs text-center text-[var(--color-muted)] mt-6 flex items-center justify-center gap-2">
               <span className="text-green-600">🔒</span>
-              Gratis account • Geen betaalgegevens nodig • Privacy-first
+              Gratis account • Geen betaalgegevens nodig • 
             </p>
           </div>
         </motion.div>

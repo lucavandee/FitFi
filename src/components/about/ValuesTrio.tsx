@@ -9,7 +9,7 @@ const ValuesTrio: React.FC<Props> = ({ className = "" }) => {
   const values = [
     {
       icon: Shield,
-      title: "Privacy-first",
+      title: "",
       text: "Jouw data blijft van jou. Geen tracking, geen verkoop aan derden. Transparant over wat we wel en niet doen.",
     },
     {

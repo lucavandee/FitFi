@@ -24,7 +24,7 @@ const HeroStacked: React.FC<Props> = ({
   imageAlt = "Voorbeeld van het AI Style Report met outfits in FitFi",
   kicker = "GRATIS AI STYLE REPORT",
   title = "Wat is jouw stijl over je zegt",
-  lead = "Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.",
+  lead = "Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, .",
 }) => {
   return (
     <section className="ff-section hero-stack-wrap alt-bg" aria-labelledby="hero-stack-title">
@@ -47,9 +47,9 @@ const HeroStacked: React.FC<Props> = ({
           {/* USP-rail */}
           <ul className="usp-rail" aria-label="Belangrijkste voordelen">
             <li className="usp-chip">100% gratis</li>
-            <li className="usp-chip">Klaar in 2 min</li>
+            <li className="usp-chip"></li>
             <li className="usp-chip">Outfits + shoplinks</li>
-            <li className="usp-chip">Privacy-first</li>
+            <li className="usp-chip"></li>
           </ul>
 
           {/* Trust & privacy badges (compact, consistent) */}

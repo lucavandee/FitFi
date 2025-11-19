@@ -18,7 +18,7 @@ export default function SiteFooter() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)]" />
             <strong className="text-[var(--color-text)] text-lg font-bold">FitFi</strong>
           </div>
-          <p className="leading-relaxed text-[var(--color-text)]/70">Wij vertalen je smaak naar outfits die kloppen — met uitleg, combinaties en shopbare items.</p>
+          <p className="leading-relaxed text-[var(--color-text)]/70">Wij vertalen je smaak naar outfits voor jou — met uitleg, combinaties en shopbare items.</p>
         </div>
         <div className="grid gap-3">
           <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Product</strong>

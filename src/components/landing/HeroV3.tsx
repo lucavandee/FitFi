@@ -78,7 +78,7 @@ export function HeroV3() {
 
           {/* Subline - Short & Direct */}
           <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 leading-relaxed sm:leading-tight max-w-2xl mb-10 sm:mb-12 font-light">
-            AI vindt wat past. <span className="font-bold">2 minuten, gratis.</span>
+            Vind je stijl. <span className="font-bold">Gratis.</span>
           </p>
 
           {/* CTAs */}

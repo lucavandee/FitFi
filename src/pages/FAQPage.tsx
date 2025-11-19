@@ -11,7 +11,7 @@ const FAQ_GENERAL: QA[] = [
     a: (
       <>
         Je beantwoordt 6 korte vragen en ontvangt direct meerdere outfits met uitleg
-        (waarom dit werkt voor jou) en shoplinks zonder ruis. Je hoeft geen account te
+        (waarom dit werkt voor jou) en shoplinks . Je hoeft geen account te
         maken om te starten.
       </>
     ),
@@ -42,7 +42,7 @@ const FAQ_PRIVACY: QA[] = [
     q: "Hoe gaan jullie met mijn data om?",
     a: (
       <>
-        Privacy-first. We verwerken alleen wat strikt nodig is om je advies te tonen en
+        . We verwerken alleen wat strikt nodig is om je advies te tonen en
         bewaren niets onnodigs. Geen doorverkoop van gegevens. Je kunt altijd contact
         opnemen als je iets wilt laten verwijderen.
       </>
@@ -252,7 +252,7 @@ export default function FAQPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              Kort, duidelijk en premium — zonder ruis. Staat je vraag er niet tussen? Laat het ons weten.
+              Kort, duidelijk en premium — . Staat je vraag er niet tussen? Laat het ons weten.
             </motion.p>
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function FAQPage() {
           {[
             {
               icon: ShieldCheck,
-              title: "Privacy-first",
+              title: "",
               body:
                 "We verwerken alleen wat nodig is en verkopen niets door. Transparant en zorgvuldig.",
             },

@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
 **Laatst bijgewerkt:** 13 oktober 2025
 
-FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren. Privacy-first betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
+FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren.  betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
 
 ## 1. Wie is verantwoordelijk?
 

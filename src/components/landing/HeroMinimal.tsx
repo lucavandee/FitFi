@@ -67,7 +67,7 @@ export function HeroMinimal() {
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 pt-2">
               <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
                 <Shield className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-                <span>Privacy-first</span>
+                <span></span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
                 <Zap className="w-4 h-4 text-[var(--ff-color-primary-700)]" />

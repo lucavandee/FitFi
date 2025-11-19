@@ -36,11 +36,11 @@ export function ClosingCTA() {
           <div className="flex flex-wrap justify-center gap-6 text-sm mt-8">
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-              <span>100% Gratis</span>
+              <span>Gratis</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-              <span>2 min setup</span>
+              <span></span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-[var(--ff-color-success-600)]" />

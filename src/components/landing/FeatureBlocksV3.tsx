@@ -38,7 +38,7 @@ const features = [
   {
     icon: Shield,
     iconBg: 'from-emerald-500 to-teal-600',
-    title: 'Privacy-first gebouwd',
+    title: ' gebouwd',
     description: 'We verzamelen alleen wat nodig is voor je stijladvies. Geen doorverkoop van data, geen verrassingen. 1-klik verwijderen, altijd en zonder vragen. GDPR-compliant en transparant.',
     stats: [
       { label: 'Data veilig', value: '100%' },

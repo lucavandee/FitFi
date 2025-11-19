@@ -22,7 +22,7 @@ const features = [
   {
     icon: Zap,
     iconBg: 'from-yellow-500 to-orange-600',
-    title: 'Resultaat in 2 minuten',
+    title: 'Resultaat ',
     description: 'Geen eindeloze vragenlijsten. Beantwoord 6–12 vragen en krijg direct je persoonlijke Style Report met complete outfits.',
     stats: [
       { label: 'Gemiddelde tijd', value: '2 min' },

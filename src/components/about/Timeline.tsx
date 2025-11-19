@@ -33,7 +33,7 @@ const Timeline: React.FC = () => {
       <div className="ff-container">
         <header className="section-header">
           <p className="kicker">Roadmap</p>
-          <h2 id="timeline-title" className="section-title">Stap voor stap, zonder ruis</h2>
+          <h2 id="timeline-title" className="section-title">Stap voor stap, </h2>
           <p className="section-intro">Kleine, doordachte releases die direct waarde opleveren.</p>
         </header>
 

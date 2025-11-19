@@ -139,7 +139,7 @@ const RegisterPage: React.FC = () => {
             Start in 1 minuut
           </h1>
           <p className="text-lg text-[var(--color-text)]/70">
-            Outfits die écht bij je passen
+            Outfits die bij je passen
           </p>
         </div>
 

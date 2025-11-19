@@ -59,7 +59,7 @@ const Features: React.FC = () => {
           </h2>
           
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Helder, persoonlijk en direct toepasbaar.
+            Je krijgt concrete voorbeelden.
             Zo werkt FitFi.
           </p>
         </div>

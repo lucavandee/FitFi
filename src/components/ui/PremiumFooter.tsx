@@ -11,7 +11,7 @@ export default function PremiumFooter() {
               <span className="font-heading text-lg">FitFi</span>
             </div>
             <p className="text-sm opacity-80">
-              Persoonlijke outfits zonder ruis. Privacy-first & nuchter.
+              Persoonlijke outfits .  & nuchter.
             </p>
           </div>
 

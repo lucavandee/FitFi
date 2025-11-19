@@ -73,9 +73,9 @@ const ResultsPremium: React.FC = () => {
 
         <ul className="chips" aria-label="USP's">
           <li className="chip chip--active">100% gratis</li>
-          <li className="chip">Klaar in 2 min</li>
+          <li className="chip"></li>
           <li className="chip">Outfits + shoplinks</li>
-          <li className="chip">Privacy-first</li>
+          <li className="chip"></li>
         </ul>
       </section>
 

@@ -44,7 +44,7 @@ const TeamSection: React.FC = () => {
           <p className="kicker">Team</p>
           <h2 id="team-title" className="section-title">Mensen achter FitFi</h2>
           <p className="section-intro">
-            Klein team, groot kompas: duidelijke stijl zonder ruis — met respect voor privacy.
+            Klein team, groot kompas: duidelijke stijl  — met respect voor privacy.
           </p>
         </header>
 

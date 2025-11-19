@@ -29,13 +29,7 @@ export function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[80vh]">
           {/* Left Column - Content */}
           <div className="text-center lg:text-left space-y-8">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-surface)] backdrop-blur-sm border border-[var(--ff-color-border)] rounded-full shadow-sm">
-              <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-              <span className="text-sm font-medium text-[var(--ff-color-text-secondary)]">
-                GRATIS AI STYLE REPORT
-              </span>
-            </div>
+            {/* Removed marketing badge */}
 
             {/* Main Headline */}
             <div className="space-y-4">
@@ -47,8 +41,7 @@ export function Hero() {
               </h1>
               
               <p className="text-lg sm:text-xl text-[var(--ff-color-text-secondary)] max-w-2xl">
-                Binnen 2 minuten krijg je een persoonlijk rapport met uitleg, 
-                kleuren en 6–12 outfits. <strong>Helder uitgelegd, direct toepasbaar.</strong>
+                Vul een korte quiz in. Je krijgt een rapport met kleuren en outfits die bij je passen.
               </p>
             </div>
 
@@ -59,7 +52,7 @@ export function Hero() {
                 size="lg"
                 className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                Start 2-min stijlquiz
+                Begin quiz
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
 
@@ -74,21 +67,7 @@ export function Hero() {
               </Button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center lg:justify-start gap-6 pt-4">
-              <div className="flex items-center gap-2 text-sm text-[var(--ff-color-text-secondary)]">
-                <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />
-                <span>100% Gratis</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[var(--ff-color-text-secondary)]">
-                <Shield className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                <span>Privacy-first</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[var(--ff-color-text-secondary)]">
-                <Clock className="w-5 h-5 text-[var(--ff-color-accent-600)]" />
-                <span>2 min setup</span>
-              </div>
-            </div>
+            {/* Removed trust badges */}
           </div>
 
           {/* Right Column - Phone Mockup with Floating Elements */}
