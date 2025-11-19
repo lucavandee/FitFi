@@ -5,14 +5,49 @@ interface NovaMatchBadgeProps {
   score: number;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   showIcon?: boolean;
+  breakdown?: {
+    archetype?: number;
+    color?: number;
+    style?: number;
+    season?: number;
+    occasion?: number;
+  };
 }
 
 export const NovaMatchBadge: React.FC<NovaMatchBadgeProps> = ({
   score,
   size = 'md',
-  showIcon = true
+  showIcon = true,
+  breakdown
 }) => {
   const clampedScore = Math.max(0, Math.min(100, score));
+
+  // Generate detailed tooltip from breakdown
+  const generateTooltip = () => {
+    if (!breakdown) {
+      return `Nova AI Match: ${clampedScore}% - Deze outfit past bij jouw stijl`;
+    }
+
+    const parts: string[] = [`Match: ${clampedScore}%`];
+
+    if (breakdown.archetype !== undefined) {
+      parts.push(`Archetype: ${Math.round(breakdown.archetype * 100)}%`);
+    }
+    if (breakdown.color !== undefined) {
+      parts.push(`Kleur: ${Math.round(breakdown.color * 100)}%`);
+    }
+    if (breakdown.style !== undefined) {
+      parts.push(`Stijl: ${Math.round(breakdown.style * 100)}%`);
+    }
+    if (breakdown.season !== undefined) {
+      parts.push(`Seizoen: ${Math.round(breakdown.season * 100)}%`);
+    }
+    if (breakdown.occasion !== undefined) {
+      parts.push(`Gelegenheid: ${Math.round(breakdown.occasion * 100)}%`);
+    }
+
+    return parts.join(' • ');
+  };
 
   const getScoreColor = (s: number) => {
     if (s >= 90) return 'from-green-500 to-emerald-500';
@@ -56,7 +91,7 @@ export const NovaMatchBadge: React.FC<NovaMatchBadgeProps> = ({
   return (
     <div
       className={`inline-flex items-center ${sizeClasses[size]} ${bgColor} rounded-full font-bold ${textColor} shadow-sm`}
-      title={`Nova AI Match: ${clampedScore}% - Deze outfit past perfect bij jouw stijl`}
+      title={generateTooltip()}
     >
       {showIcon && <Sparkles className={iconSizes[size]} />}
       <span>{clampedScore}%</span>

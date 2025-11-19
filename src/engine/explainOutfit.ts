@@ -1,4 +1,5 @@
 import { Outfit, UserProfile } from './types';
+import { calculateMatchScore } from '@/services/outfits/matchScoreCalculator';
 
 /**
  * Generates a human-readable explanation for why an outfit matches a user's style
@@ -127,16 +128,59 @@ export function generateNovaExplanation(
   // Add styling tip
   explanation += 'Pro tip: ';
   
-  const tips = [
-    'draag dit met zelfvertrouwen - dat maakt het verschil!',
-    'voeg een persoonlijk accent toe met je favoriete accessoire.',
-    'de kleuren in deze outfit laten je huid stralen.',
-    'deze pasvorm flatteert jouw lichaamsbouw optimaal.',
-    'perfect voor jouw lifestyle en persoonlijkheid!'
-  ];
-  
-  const randomTip = tips[Math.floor(Math.random() * tips.length)];
-  explanation += randomTip;
+  // Calculate real match score breakdown
+  let scoreBreakdown: { archetype?: number; color?: number; style?: number; season?: number } = {};
+
+  if (userProfile) {
+    try {
+      const matchResult = calculateMatchScore({
+        outfit: {
+          style: outfit.archetype,
+          colors: outfit.colors || [],
+          occasion: outfit.occasion,
+          season: outfit.season,
+          items: outfit.products || []
+        },
+        userProfile: {
+          archetype: userProfile.archetype,
+          colorPalette: userProfile.colorPalette || [],
+          preferences: {
+            styles: userProfile.stylePreferences ? Object.keys(userProfile.stylePreferences) : [],
+            occasions: []
+          }
+        }
+      });
+      scoreBreakdown = matchResult.breakdown;
+    } catch (e) {
+      console.warn('Match score calculation failed:', e);
+    }
+  }
+
+  // Generate intelligent tip based on score breakdown
+  const tips: string[] = [];
+
+  if (scoreBreakdown.archetype && scoreBreakdown.archetype >= 0.9) {
+    tips.push('deze stijl past extreem goed bij jouw archetype!');
+  }
+  if (scoreBreakdown.color && scoreBreakdown.color >= 0.9) {
+    tips.push('de kleuren in deze outfit laten je huid perfect stralen.');
+  }
+  if (scoreBreakdown.season && scoreBreakdown.season >= 0.9) {
+    tips.push('perfect getimed voor het huidige seizoen!');
+  }
+
+  // Fallback tips if no high scores
+  if (tips.length === 0) {
+    tips.push(
+      'draag dit met zelfvertrouwen - dat maakt het verschil!',
+      'voeg een persoonlijk accent toe met je favoriete accessoire.',
+      'deze pasvorm flatteert jouw lichaamsbouw optimaal.',
+      'perfect voor jouw lifestyle en persoonlijkheid!'
+    );
+  }
+
+  const selectedTip = tips[0];
+  explanation += selectedTip;
   
   // Add match percentage context
   const matchPercentage = outfit.matchPercentage || 75;
