@@ -37,6 +37,8 @@ import { useEnhancedNova } from "@/hooks/useEnhancedNova";
 import type { StyleProfile } from "@/engine/types";
 import { NovaInsightCard } from "@/components/Dashboard/NovaInsightCard";
 import { generateAmbientInsights } from "@/services/nova/ambientInsights";
+import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@/services/nova/dismissedInsightsService";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -65,6 +67,7 @@ export default function DashboardPage() {
   const [favCount, setFavCount] = React.useState(0);
   const [userId, setUserId] = React.useState<string | undefined>();
   const [showSuccessBanner, setShowSuccessBanner] = React.useState(false);
+  const queryClient = useQueryClient();
   const [userName, setUserName] = React.useState<string>("");
   const { context: novaContext } = useEnhancedNova();
 
@@ -154,8 +157,15 @@ export default function DashboardPage() {
 
   const hasColorPalette = colorPalette.length > 0;
 
-  const novaInsights = React.useMemo(() => {
-    return generateAmbientInsights({
+  const { data: dismissedHashes } = useQuery({
+    queryKey: ['dismissedInsights', userId],
+    queryFn: () => getDismissedInsights(userId!),
+    enabled: !!userId,
+    staleTime: 60000
+  });
+
+  const rawInsights = React.useMemo(() => {
+    const insights = generateAmbientInsights({
       hasQuizData,
       outfitCount,
       favCount,
@@ -163,7 +173,26 @@ export default function DashboardPage() {
       colorPalette,
       photoAnalyzed: false
     });
+    return insights || [];
   }, [hasQuizData, outfitCount, favCount, archetype, colorPalette]);
+
+  const novaInsights = React.useMemo(() => {
+    if (!dismissedHashes) return rawInsights;
+    return filterDismissedInsights(rawInsights, dismissedHashes);
+  }, [rawInsights, dismissedHashes]);
+
+  const handleDismissInsight = React.useCallback(async (
+    type: any,
+    insight: string
+  ) => {
+    if (!userId) return;
+
+    const success = await dismissInsight(userId, type, insight, 7);
+    if (success) {
+      queryClient.invalidateQueries({ queryKey: ['dismissedInsights', userId] });
+      toast.success('Inzicht verborgen voor 7 dagen');
+    }
+  }, [userId, queryClient]);
 
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
@@ -366,6 +395,7 @@ export default function DashboardPage() {
                   actionLink={insight.actionLink}
                   confidence={insight.confidence}
                   priority={insight.priority}
+                  onDismiss={() => handleDismissInsight(insight.type, insight.insight)}
                 />
               ))}
             </div>

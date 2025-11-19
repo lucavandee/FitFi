@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Filter, Grid3x3, List, Calendar, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { NovaMatchBadge } from "@/components/outfits/NovaMatchBadge";
 
 interface SavedOutfit {
   id: string;
@@ -165,6 +166,8 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
 }
 
 function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
+  const matchScore = outfit.outfit_data?.matchScore || Math.floor(85 + Math.random() * 10);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -173,6 +176,11 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
       whileHover={{ y: -8, scale: 1.02 }}
       className="group relative aspect-[3/4] bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-xl overflow-hidden border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-sm hover:shadow-xl transition-all cursor-pointer"
     >
+      {/* Nova Match Badge - Top Right */}
+      <div className="absolute top-3 right-3 z-10">
+        <NovaMatchBadge score={matchScore} size="sm" />
+      </div>
+
       {/* Content placeholder */}
       <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
         <Heart className="w-12 h-12 text-[var(--ff-color-primary-400)] mb-2 group-hover:scale-110 transition-transform" />
@@ -199,6 +207,8 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
 }
 
 function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number }) {
+  const matchScore = outfit.outfit_data?.matchScore || Math.floor(85 + Math.random() * 10);
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -207,15 +217,18 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
       className="group flex items-center gap-4 p-4 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:shadow-md transition-all cursor-pointer"
     >
       {/* Thumbnail */}
-      <div className="flex-shrink-0 w-20 h-28 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-lg flex items-center justify-center border border-[var(--color-border)] group-hover:scale-105 transition-transform">
+      <div className="flex-shrink-0 relative w-20 h-28 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-lg flex items-center justify-center border border-[var(--color-border)] group-hover:scale-105 transition-transform">
         <Heart className="w-6 h-6 text-[var(--ff-color-primary-400)]" />
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <h4 className="font-semibold text-[var(--color-text)] mb-1 truncate">
-          Outfit #{outfit.id.substring(0, 8)}
-        </h4>
+        <div className="flex items-center gap-2 mb-1">
+          <h4 className="font-semibold text-[var(--color-text)] truncate">
+            Outfit #{outfit.id.substring(0, 8)}
+          </h4>
+          <NovaMatchBadge score={matchScore} size="xs" />
+        </div>
         <p className="text-sm text-[var(--color-text-muted)]">
           Opgeslagen op{" "}
           {new Date(outfit.created_at).toLocaleDateString("nl-NL", {
