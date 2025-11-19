@@ -40,9 +40,9 @@ export function Hero() {
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--ff-color-text)] leading-tight">
-                Ontdek wat{' '}
+                Wat is{' '}
                 <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-secondary-600)] bg-clip-text text-transparent">
-                  jouw stijl is
+                  jouw stijl?
                 </span>
               </h1>
               

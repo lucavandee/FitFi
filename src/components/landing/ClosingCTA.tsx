@@ -20,7 +20,7 @@ export function ClosingCTA() {
       <div className="ff-container">
         <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ontdek wat jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> is
+            Wat is jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> is
           </h2>
           <p className="text-xl text-gray-600 mb-8">
             8 vragen, 2 minuten. Direct je rapport met kleuren, stijl en concrete outfits die je kunt samenstellen.

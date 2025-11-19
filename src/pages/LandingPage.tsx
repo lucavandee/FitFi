@@ -29,7 +29,7 @@ export default function LandingPage() {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "FitFi",
-            "description": "AI-powered stijladvies — Ontdek outfits die perfect bij je passen",
+            "description": "AI-powered stijladvies — Outfits die bij je passen",
             "url": "https://fitfi.nl",
             "applicationCategory": "LifestyleApplication",
             "operatingSystem": "Web",

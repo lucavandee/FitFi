@@ -66,7 +66,7 @@ export const blogPosts: BlogPost[] = [
     id: '5',
     title: 'Van Dag naar Avond: Transitie Outfits',
     excerpt: 'Simpele trucs om je dag-outfit om te toveren tot een avondlook.',
-    content: 'Met een paar slimme aanpassingen transformeer je elke dag-outfit...',
+    content: 'Met een paar slimme aanpassingen verbeter je elke dag-outfit...',
     author: 'Mara Visser',
     date: '2024-01-05',
     category: 'Stijltips',

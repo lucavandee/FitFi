@@ -21,7 +21,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
     {
       id: 'personality',
       title: "Persoonlijkheidsanalyse",
-      description: "Ontdek wat jouw stijlkeuzes vertellen over jouw karakter",
+      description: "Wat is jouw stijlkeuzes vertellen over jouw karakter",
       image: "https://images.pexels.com/photos/5935748/pexels-photo-5935748.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
       quote: "Jouw voorkeur voor minimalisme toont leiderschapspotentieel."
     },
@@ -165,7 +165,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
         <div className="text-center mt-12">
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Dit is slechts een voorproefje. Jouw volledige AI Style Report bevat nog veel meer 
-            gepersonaliseerde inzichten en aanbevelingen.
+            inzichten en aanbevelingen.
           </p>
         </div>
       </div>

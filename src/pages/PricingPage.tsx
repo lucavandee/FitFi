@@ -322,7 +322,7 @@ export default function PricingPage() {
         <div className="ff-container">
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Klaar om je <span className="text-[var(--ff-color-primary-600)]">perfecte stijl</span> te ontdekken?
+              Klaar om je <span className="text-[var(--ff-color-primary-600)]">stijl</span> te vinden?
             </h2>
             <p className="text-xl text-gray-600 mb-8">
               Start nu gratis. Geen creditcard vereist.

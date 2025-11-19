@@ -12,7 +12,7 @@ const Features: React.FC = () => {
     {
       icon: Palette,
       title: 'Jouw kleurenpalet',
-      description: 'Ontdek welke kleuren bij jou passen. Met uitleg waarom, zodat je het zelf kunt toepassen.',
+      description: 'Welke kleuren bij jou passen. Met uitleg waarom, zodat je het zelf kunt toepassen.',
       gradient: 'from-teal-500 to-blue-500'
     },
     {

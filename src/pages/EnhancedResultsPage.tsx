@@ -291,9 +291,9 @@ export default function EnhancedResultsPage() {
                   transition={{ duration: 0.8, delay: 0.1 }}
                   className="text-5xl md:text-6xl lg:text-8xl font-bold mb-8 leading-[1.1]"
                 >
-                  Ontdek jouw
+                  Jouw
                   <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                    perfecte stijl
+                    stijl
                   </span>
                 </motion.h1>
 

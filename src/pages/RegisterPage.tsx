@@ -124,7 +124,7 @@ const RegisterPage: React.FC = () => {
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-[var(--ff-color-primary-50)] flex items-center justify-center px-4 py-12">
       <Seo
         title="Registreren — FitFi"
-        description="Maak een gratis FitFi account en ontdek outfits die écht bij je passen."
+        description="Maak een gratis FitFi account en zie outfits die bij je passen."
         path="/registreren"
       />
 

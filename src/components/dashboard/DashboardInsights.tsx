@@ -27,7 +27,7 @@ export const DashboardInsights: React.FC<DashboardInsightsProps> = ({
               Slim advies, speciaal voor jou
             </h2>
             <p className="text-lg text-[var(--color-text-muted)] max-w-2xl mx-auto">
-              Ontdek gepersonaliseerde styling tips op basis van jouw profiel
+              Styling tips op basis van jouw profiel
             </p>
           </div>
 

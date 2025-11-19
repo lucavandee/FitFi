@@ -47,7 +47,7 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
 
               <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-8 max-w-2xl leading-relaxed">
                 {hasQuizData
-                  ? "Jouw gepersonaliseerde stijlreis in één overzicht"
+                  ? "Jouw stijlreis in één overzicht"
                   : "Start je stijlreis met onze slimme quiz"}
               </p>
 

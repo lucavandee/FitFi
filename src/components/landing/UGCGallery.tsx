@@ -51,7 +51,7 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
             Echte verhalen van onze community
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ontdek hoe anderen hun AI Style Report hebben gebruikt om hun stijl en zelfvertrouwen te transformeren
+            Hoe anderen hun AI Style Report hebben gebruikt om hun stijl en zelfvertrouwen te transformeren
           </p>
         </div>
         
@@ -129,7 +129,7 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
               Deel jouw verhaal
             </h3>
             <p className="text-gray-600 mb-4">
-              Laat zien hoe Nova jouw stijl heeft getransformeerd en inspireer anderen
+              Laat zien hoe Nova jouw stijl heeft verbeterd en inspireer anderen
             </p>
             <div className="text-sm text-gray-500">
               Gebruik <span className="font-medium text-[#bfae9f]">#NovaKnows</span> en tag <span className="font-medium">@fitfi</span>

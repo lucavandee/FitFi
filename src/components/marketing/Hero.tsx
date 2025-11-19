@@ -33,7 +33,7 @@ export default function Hero() {
         <div className="ff-card p-3">
           <div className="aspect-[4/3] w-full rounded-[14px] overflow-hidden border border-white/10 ff-grad" />
           <div className="px-3 pb-3 pt-2 text-sm text-[var(--fitfi-muted)]">
-            Live preview van een gepersonaliseerde outfit
+            Live preview van een outfit
           </div>
         </div>
       </Container>

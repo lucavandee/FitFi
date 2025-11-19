@@ -11,7 +11,7 @@ export default function HowItWorksPage() {
         <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
         <meta
           name="description"
-          content="Ontdek hoe FitFi in 3 eenvoudige stappen jouw persoonlijke AI Style Report maakt. Van quiz tot outfits in 2 minuten."
+          content="Hoe FitFi in 3 stappen jouw AI Style Report maakt. Van quiz tot outfits in 2 minuten."
         />
       </Helmet>
 
@@ -79,7 +79,7 @@ export default function HowItWorksPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              In 3 eenvoudige stappen van persoonlijkheidsquiz naar gepersonaliseerde outfits. Geen gedoe, wel resultaat.
+              In 3 stappen van persoonlijkheidsquiz naar outfits. Geen gedoe, wel resultaat.
             </motion.p>
           </div>
         </div>
@@ -377,7 +377,7 @@ export default function HowItWorksPage() {
                 Klaar voor jouw <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Style Report</span>?
               </h2>
               <p className="text-xl text-[var(--color-muted)] mb-8">
-                Start nu en ontdek binnen 2 minuten welke stijl perfect bij je past.
+                Start nu en zie binnen 2 minuten welke stijl bij je past.
               </p>
 
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

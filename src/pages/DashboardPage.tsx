@@ -264,8 +264,8 @@ export default function DashboardPage() {
                 {/* Subtitle */}
                 <p className="text-xl md:text-2xl text-[var(--color-muted)] mb-8 max-w-2xl leading-relaxed">
                   {hasQuizData
-                    ? `Je Style Report is klaar met ${outfitCount} gepersonaliseerde outfits`
-                    : "Start de quiz om je persoonlijke style report te ontdekken"
+                    ? `Je Style Report is klaar met ${outfitCount} outfits`
+                    : "Start de quiz om je style report te krijgen"
                   }
                 </p>
 
@@ -384,7 +384,7 @@ export default function DashboardPage() {
                 Slim advies, speciaal voor <span className="text-gradient">jou</span>
               </h2>
               <p className="text-[var(--color-muted)] mt-2">
-                Ontdek gepersonaliseerde styling tips op basis van jouw profiel
+                Styling tips op basis van jouw profiel
               </p>
             </div>
 
@@ -500,7 +500,7 @@ export default function DashboardPage() {
                     Jouw <span className="text-gradient">Outfits</span>
                   </h2>
                   <p className="text-[var(--color-muted)]">
-                    Gepersonaliseerde looks speciaal voor jou samengesteld
+                    Looks op basis van jouw stijl
                   </p>
                 </div>
                 <NavLink

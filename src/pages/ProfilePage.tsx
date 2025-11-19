@@ -213,7 +213,7 @@ const ProfilePage: React.FC = () => {
                   Nog geen opgeslagen outfits
                 </p>
                 <Button as={Link} to="/dashboard" variant="primary" size="sm">
-                  Ontdek outfits
+                  Zie outfits
                 </Button>
               </div>
             )}

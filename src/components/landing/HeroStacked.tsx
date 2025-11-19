@@ -23,7 +23,7 @@ const HeroStacked: React.FC<Props> = ({
   imageId = "hero-main",
   imageAlt = "Voorbeeld van het AI Style Report met outfits in FitFi",
   kicker = "GRATIS AI STYLE REPORT",
-  title = "Ontdek wat jouw stijl over je zegt",
+  title = "Wat is jouw stijl over je zegt",
   lead = "Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, zonder ruis.",
 }) => {
   return (

@@ -381,7 +381,7 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Probeer gratis</h3>
                   <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                    Nog geen stijlprofiel? Start nu en ontdek jouw perfecte outfits.
+                    Nog geen stijlprofiel? Start nu en zie jouw outfits.
                   </p>
                 </NavLink>
               </motion.div>

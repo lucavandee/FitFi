@@ -1,0 +1,37 @@
+# AI Text Replacements - Patterns to Replace
+
+## BlogPage.tsx
+- "Ontdek de nieuwste trends" → "De nieuwste trends"
+- "mode-inzichten van onze experts" → "mode-inzichten"
+
+## ContactPage.tsx
+- "Start nu en ontdek jouw perfecte outfits" → "Start nu en zie jouw outfits"
+
+## LandingPage.tsx
+- "Ontdek outfits die perfect bij je passen" → "Outfits die bij je passen"
+
+## PricingPage.tsx
+- "perfecte stijl te ontdekken" → "stijl te vinden"
+
+## ProfilePage.tsx
+- "Ontdek outfits" → "Zie outfits"
+
+## RegisterPage.tsx
+- "ontdek outfits die écht bij je passen" → "zie outfits die bij je passen"
+
+## OnboardingFlowPage.tsx
+- "ontdek welke stijl perfect bij je past" → "zie welke stijl bij je past"
+
+## ResultsPreviewPage.tsx
+- "Ontdek ook jouw stijl" → "Zie ook jouw stijl"
+- "Ontdek hoe FitFi" → "Hoe FitFi"
+- "Ontdek je stijl, kleuren en persoonlijke outfit-aanbevelingen" → "Je stijl, kleuren en outfit-aanbevelingen"
+- "ontdek binnen 2 minuten welke outfits écht bij je passen" → "zie binnen 2 minuten welke outfits bij je passen"
+- "persoonlijke stijlrapport" → "stijlrapport"
+
+## EnhancedResultsPage.tsx
+- "Ontdek jouw" → "Jouw"
+
+## Landing components
+- "Ontdek wat" → "Wat is"
+- "getransformeerd" → "verbeterd"

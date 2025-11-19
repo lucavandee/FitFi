@@ -43,7 +43,7 @@ const BlogPage: React.FC = () => {
     <div className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
         <title>Blog - FitFi.ai</title>
-        <meta name="description" content="Ontdek de nieuwste trends, tips en inzichten over stijl en mode op de FitFi blog." />
+        <meta name="description" content="De nieuwste trends, tips en inzichten over stijl en mode op de FitFi blog." />
       </Helmet>
 
       {/* Hero Section */}
@@ -95,7 +95,7 @@ const BlogPage: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              Ontdek de nieuwste trends, stijltips en mode-inzichten van onze experts.
+              De nieuwste trends, stijltips en mode-inzichten van onze experts.
               Van seizoenstrends tot tijdloze stijladvies.
             </motion.p>
           </div>

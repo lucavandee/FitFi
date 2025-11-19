@@ -39,7 +39,7 @@ export const ResultsEmptyState: React.FC<ResultsEmptyStateProps> = ({
         Nog geen outfits
       </h3>
       <p className="text-[var(--color-text-muted)] mb-6 max-w-md mx-auto">
-        Voltooi eerst de stijlquiz om je gepersonaliseerde outfit aanbevelingen te ontvangen.
+        Voltooi eerst de stijlquiz om je outfit aanbevelingen te ontvangen.
       </p>
       <NavLink to="/onboarding">
         <Button variant="primary">

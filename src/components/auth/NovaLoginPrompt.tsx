@@ -62,9 +62,9 @@ export default function NovaLoginPrompt({
       return {
         icon: <Sparkles className="w-8 h-8 text-white" />,
         title: 'Voltooi eerst je stijlprofiel',
-        description: 'Nova heeft jouw stijlprofiel nodig om gepersonaliseerd advies te geven. Het duurt slechts 2 minuten!',
+        description: 'Nova heeft jouw stijlprofiel nodig om advies te geven. Het duurt slechts 2 minuten!',
         benefits: [
-          'Ontdek jouw lichaamsvorm',
+          'Jouw lichaamsvorm',
           'Upload een foto voor kleuradvies',
           'Selecteer jouw stijlvoorkeuren',
           'Ontvang persoonlijk advies van Nova'

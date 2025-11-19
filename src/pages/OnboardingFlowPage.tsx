@@ -343,7 +343,7 @@ export default function OnboardingFlowPage() {
     <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
         <title>Start je Style Report – FitFi</title>
-        <meta name="description" content="Beantwoord enkele vragen en ontdek welke stijl perfect bij je past." />
+        <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
       </Helmet>
 
       {/* Progress Bar with Milestones */}

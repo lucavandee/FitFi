@@ -37,8 +37,8 @@ export default function ResultsPreviewPage() {
       ? `Bekijk ${userName}'s FitFi Style Report`
       : "Bekijk dit FitFi voorbeeldrapport";
     const text = isPersonalized
-      ? `Zo zou ${userName}'s persoonlijke stijlrapport eruitzien. Ontdek ook jouw stijl met FitFi!`
-      : "Ontdek hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die écht bij je passen.";
+      ? `Zo zou ${userName}'s stijlrapport eruitzien. Zie ook jouw stijl met FitFi!`
+      : "Hoe FitFi je persoonlijke stijl analyseert en outfits samenstelt die écht bij je passen.";
 
     if (navigator.share) {
       try {
@@ -120,7 +120,7 @@ export default function ResultsPreviewPage() {
           <p className="text-lg text-[var(--color-text)]/70 max-w-2xl mx-auto">
             {isPersonalized
               ? `Na 2 minuten krijg je ${userName}, jouw persoonlijke stijlanalyse met uitleg, kleuren en outfits die écht bij je passen.`
-              : 'Dit is hoe jouw rapport eruit ziet na het invullen van de 2-minuten quiz. Ontdek je stijl, kleuren en persoonlijke outfit-aanbevelingen.'}
+              : 'Dit is hoe jouw rapport eruit ziet na het invullen van de 2-minuten quiz. Je stijl, kleuren en outfit-aanbevelingen.'}
           </p>
         </div>
       </section>
@@ -276,7 +276,7 @@ export default function ResultsPreviewPage() {
           <p className="text-lg text-[var(--color-text)]/70 mb-8">
             {isPersonalized
               ? `Start de quiz ${userName}, en binnen 2 minuten zie je welke outfits écht bij jou passen. Gratis, zonder verplichtingen.`
-              : 'Beantwoord 10 snelle vragen en ontdek binnen 2 minuten welke outfits écht bij je passen. Gratis, zonder verplichtingen.'}
+              : 'Beantwoord 10 snelle vragen en zie binnen 2 minuten welke outfits bij je passen. Gratis, zonder verplichtingen.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
