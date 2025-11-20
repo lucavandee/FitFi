@@ -16,6 +16,7 @@ import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
 import { OutfitFilters, type FilterOptions } from "@/components/results/OutfitFilters";
 import { OutfitZoomModal } from "@/components/results/OutfitZoomModal";
 import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/outfits/PremiumOutfitCard";
+import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -76,6 +77,68 @@ export default function EnhancedResultsPage() {
     return "Smart Casual";
   }, [archetypeRaw]);
 
+  // ✅ GENERATE STYLE PROFILE FROM QUIZ + SWIPES
+  const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
+  const [profileLoading, setProfileLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!answers) return;
+
+    async function generateProfile() {
+      setProfileLoading(true);
+      try {
+        // Get session ID from localStorage for anonymous users
+        const sessionId = user?.id || localStorage.getItem('ff_session_id') || crypto.randomUUID();
+        if (!user?.id) {
+          localStorage.setItem('ff_session_id', sessionId);
+        }
+
+        console.log('[EnhancedResultsPage] Generating style profile with:', {
+          hasQuiz: !!answers,
+          userId: user?.id,
+          sessionId: !user?.id ? sessionId : undefined
+        });
+
+        const result = await StyleProfileGenerator.generateStyleProfile(
+          answers,
+          user?.id,
+          !user?.id ? sessionId : undefined
+        );
+
+        console.log('[EnhancedResultsPage] ✅ Style profile generated:', result);
+
+        setGeneratedProfile(result.colorProfile);
+
+        // Save to localStorage for future use
+        try {
+          localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.colorProfile));
+        } catch (e) {
+          console.warn('Could not save color profile to localStorage', e);
+        }
+      } catch (error) {
+        console.error('[EnhancedResultsPage] Failed to generate style profile:', error);
+      } finally {
+        setProfileLoading(false);
+      }
+    }
+
+    // Only generate if we don't have a saved color profile
+    if (!color) {
+      generateProfile();
+    }
+  }, [answers, user?.id, color]);
+
+  // Use generated profile if available, otherwise fallback to saved or default
+  const activeColorProfile = generatedProfile || color || {
+    temperature: "neutraal",
+    value: "medium",
+    contrast: "laag",
+    chroma: "zacht",
+    season: "zomer",
+    paletteName: "Soft Cool Tonals (neutraal)",
+    notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
+  };
+
   const { data: realOutfits, loading: outfitsLoading } = useOutfits({
     archetype: archetypeName,
     limit: 9,
@@ -83,20 +146,8 @@ export default function EnhancedResultsPage() {
   });
 
   const seeds: OutfitSeed[] = React.useMemo(() => {
-    if (color) return getSeedOutfits(color, archetypeName);
-    return getSeedOutfits(
-      {
-        temperature: "neutraal",
-        value: "medium",
-        contrast: "laag",
-        chroma: "zacht",
-        season: "zomer",
-        paletteName: "Soft Cool Tonals (neutraal)",
-        notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
-      },
-      "Smart Casual"
-    );
-  }, [color, archetypeName]);
+    return getSeedOutfits(activeColorProfile, archetypeName);
+  }, [activeColorProfile, archetypeName]);
 
   const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
     if (realOutfits && realOutfits.length > 0) {
@@ -352,7 +403,7 @@ export default function EnhancedResultsPage() {
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold mb-6">
                   Perfect afgestemd
-                  <span className="block text-[var(--ff-color-primary-600)] mt-2">{color.paletteName}</span>
+                  <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                   Elk element is zorgvuldig geanalyseerd om jouw unieke stijl te bepalen
@@ -383,8 +434,8 @@ export default function EnhancedResultsPage() {
                   >
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-500)] mb-6"></div>
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Seizoen</h3>
-                    <p className="text-3xl font-bold capitalize mb-2">{color.season}</p>
-                    <p className="text-sm text-gray-600 capitalize">{color.temperature} tonen</p>
+                    <p className="text-3xl font-bold capitalize mb-2">{activeColorProfile.season}</p>
+                    <p className="text-sm text-gray-600 capitalize">{activeColorProfile.temperature} tonen</p>
                   </motion.div>
                 </AnimatedSection>
 
@@ -411,7 +462,7 @@ export default function EnhancedResultsPage() {
                       <Sparkles className="w-7 h-7 text-white" />
                     </div>
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Chroma</h3>
-                    <p className="text-3xl font-bold capitalize mb-2">{color.chroma}</p>
+                    <p className="text-3xl font-bold capitalize mb-2">{activeColorProfile.chroma}</p>
                     <p className="text-sm text-gray-600">Kleurintensiteit</p>
                   </motion.div>
                 </AnimatedSection>
@@ -637,7 +688,7 @@ export default function EnhancedResultsPage() {
                   <div>
                     <h4 className="font-semibold text-lg mb-2">Kleuradvies</h4>
                     <p className="text-gray-700">
-                      Gebaseerd op jouw kleurprofiel "{color.paletteName}" hebben we kleuren gekozen die jouw
+                      Gebaseerd op jouw kleurprofiel "{activeColorProfile.paletteName}" hebben we kleuren gekozen die jouw
                       natuurlijke uitstraling versterken.
                     </p>
                   </div>
