@@ -8,6 +8,7 @@ export interface FilterOptions {
   colors: string[];
   sortBy: "match" | "recent" | "popular";
   viewMode: "grid-2" | "grid-3" | "list";
+  occasion?: string;
 }
 
 interface OutfitFiltersProps {
@@ -23,6 +24,8 @@ const CATEGORIES = [
   { id: "sport", label: "Sport", icon: "🏃" },
   { id: "party", label: "Feest", icon: "🎉" },
   { id: "work", label: "Werk", icon: "💼" },
+  { id: "date", label: "Date", icon: "💕" },
+  { id: "travel", label: "Reizen", icon: "✈️" },
 ];
 
 const SEASONS = [

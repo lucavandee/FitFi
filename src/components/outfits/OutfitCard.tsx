@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
 import RequireAuth from '@/components/auth/RequireAuth';
-import { isSaved } from '../../services/engagement';
+import { isSaved, toggleSave } from '../../services/engagement';
 import { generateOutfitExplanation, generateNovaExplanation } from '@/engine/explainOutfit';
 import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';
@@ -12,6 +12,9 @@ import { useSaveOutfit } from '@/hooks/useSaveOutfit';
 import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
 import { trackOutfitExplain } from '@/hooks/useABTesting';
 import { useEffect, useRef } from 'react';
+import { ColorHarmonyBadge } from '@/components/outfits/ColorHarmonyBadge';
+import { calculateOutfitColorHarmony } from '@/engine/colorHarmony';
+import { trackSave, trackLike, trackView } from '@/services/ml/interactionTrackingService';
 
 interface OutfitCardProps {
   outfit: {
@@ -24,6 +27,7 @@ interface OutfitCardProps {
     dominantColorName?: string;
     archetype?: string;
     tags?: string[];
+    products?: Array<{ colors?: string[] }>;
   };
   onSave?: () => void;
   onDislike?: () => void;
@@ -66,6 +70,7 @@ export default function OutfitCard({
       ([entry]) => {
         if (entry.isIntersecting) {
           trackOutfitExplain(outfit.id);
+          trackView(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
         }
       },
       { threshold: 0.5 }
@@ -76,23 +81,31 @@ export default function OutfitCard({
     }
 
     return () => observer.disconnect();
-  }, [outfit.id]);
+  }, [outfit.id, outfit.archetype]);
+
+  const harmonyScore = useMemo(() => {
+    if (!outfit.products || outfit.products.length === 0) return 0;
+    const colors = outfit.products.map(p => p.colors || []);
+    return calculateOutfitColorHarmony(colors);
+  }, [outfit.products]);
 
   const handleSave = () => {
     if (isProcessing.save || saveOutfit.isPending) return;
-    
+
     if (!user?.id) {
       track('save_click_unauth', { outfit_id: outfit.id });
       window.location.href = '/inloggen?returnTo=/feed';
       return;
     }
-    
+
+    trackSave(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
+
     // Use optimistic save hook with fallback to local storage
     try {
-      saveOutfit.mutate({ 
-        outfit: outfit as any, 
-        userId: user.id, 
-        idempotencyKey: `${user.id}:${outfit.id}` 
+      saveOutfit.mutate({
+        outfit: outfit as any,
+        userId: user.id,
+        idempotencyKey: `${user.id}:${outfit.id}`
       });
     } catch (error) {
       // Fallback to local storage
@@ -119,16 +132,18 @@ export default function OutfitCard({
 
   const handleMoreLikeThis = () => {
     if (isProcessing.like) return;
-    
+
     setIsProcessing(prev => ({ ...prev, like: true }));
-    
+
+    trackLike(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
+
     // Track similar request
-    track('request_similar', { 
+    track('request_similar', {
       outfit_id: outfit.id,
       outfit_title: outfit.title,
       outfit_archetype: outfit.archetype
     });
-    
+
     onMoreLikeThis?.();
     
     // Re-enable button after 200ms
@@ -257,6 +272,13 @@ export default function OutfitCard({
           <Sparkles className="w-4 h-4" />
           <span>{Math.round(outfit.matchPercentage)}%</span>
         </motion.div>
+      )}
+
+      {/* Color Harmony Badge */}
+      {harmonyScore > 0.7 && (
+        <div className="absolute top-3 left-3 z-10">
+          <ColorHarmonyBadge harmonyScore={harmonyScore} compact />
+        </div>
       )}
 
       <div className="relative rounded-2xl overflow-hidden mb-4">
