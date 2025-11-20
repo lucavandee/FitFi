@@ -6,6 +6,7 @@ import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "luc
 import { quizSteps, getSizeFieldsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
+import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
 import { VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStep";
@@ -178,21 +179,60 @@ export default function OnboardingFlowPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
+      // Use old computeResult for archetype (still valid)
       const result = computeResult(answers as any);
 
+      // Get user/session for swipe data
+      const client = supabase();
+      let userId: string | null = null;
+
+      if (client?.auth) {
+        try {
+          const { data } = await client.auth.getUser();
+          userId = data?.user?.id || null;
+        } catch (e) {
+          console.warn('Could not get user for profile generation', e);
+        }
+      }
+
+      // ✅ GENERATE COLOR PROFILE FROM QUIZ + SWIPES
+      console.log('[OnboardingFlow] Generating style profile from quiz + swipes...');
+      let colorProfile = result.color; // fallback
+
+      try {
+        const profileResult = await StyleProfileGenerator.generateStyleProfile(
+          answers as any,
+          userId || undefined,
+          !userId ? sessionId : undefined
+        );
+
+        colorProfile = profileResult.colorProfile;
+
+        console.log('[OnboardingFlow] ✅ Style profile generated:', {
+          temperature: colorProfile.temperature,
+          chroma: colorProfile.chroma,
+          contrast: colorProfile.contrast,
+          paletteName: colorProfile.paletteName,
+          confidence: profileResult.confidence,
+          dataSource: profileResult.dataSource
+        });
+      } catch (profileError) {
+        console.error('[OnboardingFlow] Failed to generate style profile, using quiz-only fallback:', profileError);
+        // Keep result.color as fallback
+      }
+
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
-      localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.color));
+      localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(colorProfile));
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(result.archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
       localStorage.setItem('ff_session_id', sessionId);
 
-      const client = supabase();
+      // client and userId already declared above
       let syncSuccess = false;
-      let userId: string | null = null;
       let user: any = null;
 
-      if (client?.auth) {
+      if (client?.auth && !userId) {
         try {
           const { data } = await client.auth.getUser();
           user = data?.user || null;
@@ -200,7 +240,14 @@ export default function OnboardingFlowPage() {
         } catch (authError) {
           console.warn('⚠️ [OnboardingFlow] Could not get user, continuing with local save only:', authError);
         }
-      } else {
+      } else if (userId && client?.auth) {
+        try {
+          const { data } = await client.auth.getUser();
+          user = data?.user || null;
+        } catch (authError) {
+          console.warn('⚠️ [OnboardingFlow] Could not get user object:', authError);
+        }
+      } else if (!client) {
         console.warn('⚠️ [OnboardingFlow] Supabase client not available, using local storage only');
       }
 
@@ -217,7 +264,13 @@ export default function OnboardingFlowPage() {
           }
         }
 
-        const savePromise = saveToSupabase(client, user, sessionId, result);
+        // Update result with new color profile
+        const updatedResult = {
+          ...result,
+          color: colorProfile
+        };
+
+        const savePromise = saveToSupabase(client, user, sessionId, updatedResult);
 
         toast.promise(
           savePromise,
