@@ -72,12 +72,16 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
         };
         generatedOutfits = await CalibrationService.generateCalibrationOutfits(
           defaultEmbedding,
-          quizData
+          quizData,
+          userId,
+          sessionId || undefined
         );
       } else {
         generatedOutfits = await CalibrationService.generateCalibrationOutfits(
           embedding,
-          quizData
+          quizData,
+          userId,
+          sessionId || undefined
         );
       }
 

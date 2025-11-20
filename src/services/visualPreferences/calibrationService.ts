@@ -66,12 +66,18 @@ export class CalibrationService {
    */
   static async generateCalibrationOutfits(
     visualEmbedding: VisualPreferenceEmbedding,
-    quizData?: any
+    quizData?: any,
+    userId?: string,
+    sessionId?: string
   ): Promise<CalibrationOutfit[]> {
     // Get top 3 archetypes from visual preferences
     const topArchetypes = Object.entries(visualEmbedding)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 3);
+
+    // ✅ GET SWIPE COLORS
+    const swipeColors = await this.getSwipeColors(userId, sessionId);
+    console.log('[CalibrationService] User swipe colors:', swipeColors);
 
     const outfits: CalibrationOutfit[] = [];
 
@@ -90,7 +96,8 @@ export class CalibrationService {
         mainArchetype,
         archetypeWeights,
         index,
-        quizData
+        quizData,
+        swipeColors
       );
 
       outfits.push(outfit);
@@ -103,7 +110,8 @@ export class CalibrationService {
     mainArchetype: string,
     weights: ArchetypeWeights,
     index: number,
-    quizData?: any
+    quizData?: any,
+    swipeColors?: string[]
   ): Promise<CalibrationOutfit> {
     const archetypeTemplates: Record<string, {
       colors: string[];
@@ -149,11 +157,11 @@ export class CalibrationService {
 
     const template = archetypeTemplates[mainArchetype] || archetypeTemplates['minimal'];
 
-    // Fetch real products from database
+    // Fetch real products from database with color matching
     const [topProduct, bottomProduct, shoesProduct] = await Promise.all([
-      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange),
-      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange),
-      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange)
+      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
+      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
+      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors)
     ]);
 
     // Validate color harmony
@@ -237,7 +245,8 @@ export class CalibrationService {
     archetype: string,
     occasion: string,
     gender?: string,
-    budgetRange?: number
+    budgetRange?: number,
+    swipeColors?: string[]
   ): Promise<{ name: string; brand: string; price: number; image_url: string } | null> {
     const supabase = getSupabase();
     if (!supabase) {
@@ -345,6 +354,34 @@ export class CalibrationService {
         const affinityScore = brandAffinity[product.brand.toLowerCase()];
         // Scale affinity (max +5 bonus)
         score += Math.min(5, Math.floor(affinityScore / 10));
+      }
+
+      // ✅ COLOR MATCHING (CRITICAL)
+      if (swipeColors && swipeColors.length > 0) {
+        const productColors = this.extractProductColors(product);
+
+        // BONUS for matching swipe colors
+        const matchCount = productColors.filter(pc =>
+          swipeColors.some(sc => this.colorsMatch(pc, sc))
+        ).length;
+
+        if (matchCount > 0) {
+          score += matchCount * 15;  // Heavy bonus for color match
+          console.log(`  ✅ Color match for ${product.name}: ${matchCount} colors matched`);
+        }
+
+        // PENALTY for non-matching colors (especially bright/statement colors)
+        const unwantedColors = ['navy', 'indigo', 'red', 'blue', 'green', 'yellow', 'orange', 'pink', 'purple'];
+        const hasUnwantedColor = productColors.some(pc => {
+          const normalized = pc.toLowerCase();
+          return unwantedColors.some(uw => normalized.includes(uw)) &&
+                 !swipeColors.some(sc => this.colorsMatch(pc, sc));
+        });
+
+        if (hasUnwantedColor) {
+          score -= 25;  // Strong penalty for wrong colors
+          console.log(`  ❌ Color mismatch for ${product.name}: has unwanted colors`);
+        }
       }
 
       return { ...product, score };
@@ -617,5 +654,177 @@ export class CalibrationService {
     }
 
     return data || [];
+  }
+
+  /**
+   * Get swipe colors from user's liked mood photos
+   */
+  private static async getSwipeColors(
+    userId?: string,
+    sessionId?: string
+  ): Promise<string[]> {
+    const supabase = getSupabase();
+    if (!supabase || (!userId && !sessionId)) {
+      return [];
+    }
+
+    try {
+      // Get liked swipes
+      let swipeQuery = supabase
+        .from('style_swipes')
+        .select('mood_photo_id')
+        .eq('swipe_direction', 'right');
+
+      if (userId) {
+        swipeQuery = swipeQuery.eq('user_id', userId);
+      } else if (sessionId) {
+        swipeQuery = swipeQuery.eq('session_id', sessionId);
+      }
+
+      const { data: swipes, error: swipeError } = await swipeQuery;
+
+      if (swipeError || !swipes || swipes.length === 0) {
+        console.warn('[CalibrationService] No swipes found for color extraction');
+        return [];
+      }
+
+      // Get mood photos for liked swipes
+      const photoIds = swipes.map(s => s.mood_photo_id);
+      const { data: photos, error: photoError } = await supabase
+        .from('mood_photos')
+        .select('dominant_colors')
+        .in('id', photoIds);
+
+      if (photoError || !photos) {
+        console.warn('[CalibrationService] No mood photos found');
+        return [];
+      }
+
+      // Extract all dominant colors
+      const allColors: string[] = [];
+      photos.forEach(photo => {
+        if (photo.dominant_colors && Array.isArray(photo.dominant_colors)) {
+          photo.dominant_colors.forEach(color => {
+            const normalized = this.normalizeColorName(color);
+            if (normalized && !allColors.includes(normalized)) {
+              allColors.push(normalized);
+            }
+          });
+        }
+      });
+
+      console.log('[CalibrationService] Extracted swipe colors:', allColors);
+      return allColors;
+    } catch (err) {
+      console.error('[CalibrationService] Error getting swipe colors:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Extract colors from product data
+   */
+  private static extractProductColors(product: any): string[] {
+    const colors: string[] = [];
+
+    // Check colors field
+    if (product.colors && Array.isArray(product.colors)) {
+      colors.push(...product.colors.map((c: string) => this.normalizeColorName(c)));
+    }
+
+    // Check dominant_colors field
+    if (product.dominant_colors && Array.isArray(product.dominant_colors)) {
+      colors.push(...product.dominant_colors.map((c: string) => this.normalizeColorName(c)));
+    }
+
+    // Extract from name
+    const nameColors = this.extractColorsFromText(product.name || '');
+    colors.push(...nameColors);
+
+    // Extract from tags
+    if (product.tags && Array.isArray(product.tags)) {
+      product.tags.forEach((tag: string) => {
+        const tagColors = this.extractColorsFromText(tag);
+        colors.push(...tagColors);
+      });
+    }
+
+    return [...new Set(colors.filter(c => c))];
+  }
+
+  /**
+   * Extract color names from text
+   */
+  private static extractColorsFromText(text: string): string[] {
+    const colorKeywords = [
+      'zwart', 'black', 'wit', 'white', 'grijs', 'grey', 'gray',
+      'beige', 'camel', 'bruin', 'brown',
+      'navy', 'blauw', 'blue', 'indigo',
+      'rood', 'red', 'groen', 'green',
+      'geel', 'yellow', 'oranje', 'orange',
+      'roze', 'pink', 'paars', 'purple'
+    ];
+
+    const normalized = text.toLowerCase();
+    return colorKeywords.filter(keyword => normalized.includes(keyword))
+      .map(k => this.normalizeColorName(k))
+      .filter(c => c) as string[];
+  }
+
+  /**
+   * Normalize color names to consistent format
+   */
+  private static normalizeColorName(color: string): string {
+    if (!color) return '';
+
+    const normalized = color.toLowerCase().trim();
+
+    const colorMap: Record<string, string> = {
+      'black': 'zwart',
+      'white': 'wit',
+      'gray': 'grijs',
+      'grey': 'grijs',
+      'beige': 'beige',
+      'camel': 'camel',
+      'brown': 'bruin',
+      'navy': 'navy',
+      'blue': 'blauw',
+      'indigo': 'indigo',
+      'red': 'rood',
+      'green': 'groen',
+      'yellow': 'geel',
+      'orange': 'oranje',
+      'pink': 'roze',
+      'purple': 'paars'
+    };
+
+    return colorMap[normalized] || normalized;
+  }
+
+  /**
+   * Check if two colors match (with fuzzy matching)
+   */
+  private static colorsMatch(color1: string, color2: string): boolean {
+    const c1 = color1.toLowerCase().trim();
+    const c2 = color2.toLowerCase().trim();
+
+    // Exact match
+    if (c1 === c2) return true;
+
+    // Fuzzy matches
+    const fuzzyGroups = [
+      ['zwart', 'black', 'antraciet', 'charcoal'],
+      ['wit', 'white', 'off-white', 'ecru'],
+      ['grijs', 'grey', 'gray', 'zilver', 'silver'],
+      ['beige', 'camel', 'zand', 'sand', 'tan'],
+      ['navy', 'donkerblauw', 'marine'],
+      ['blauw', 'blue'],
+      ['rood', 'red'],
+      ['bruin', 'brown']
+    ];
+
+    return fuzzyGroups.some(group =>
+      group.includes(c1) && group.includes(c2)
+    );
   }
 }
