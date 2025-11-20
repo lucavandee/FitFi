@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink, Heart, Info } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
 import SmartImage from '@/components/media/SmartImage';
@@ -8,6 +8,7 @@ import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
 import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven } from '@/utils/affiliate';
 import toast from 'react-hot-toast';
 import { useUser } from '@/context/UserContext';
+import { trackView, trackLike, trackSave as trackSaveInteraction, trackClick } from '@/services/ml/interactionTrackingService';
 
 interface ProductCardProps {
   id: string;
@@ -17,6 +18,9 @@ interface ProductCardProps {
   imageUrl: string;
   deeplink: string;
   className?: string;
+  outfitId?: string;
+  position?: number;
+  context?: Record<string, any>;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -26,13 +30,38 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   imageUrl,
   deeplink,
-  className = ''
+  className = '',
+  outfitId,
+  position,
+  context = {}
 }) => {
   const { saveOutfit } = useGamification();
   const { user } = useUser();
 
+  // Track view on mount (ML interaction tracking)
+  useEffect(() => {
+    trackView(id, {
+      outfitId,
+      position,
+      page: 'ProductCard',
+      brand,
+      price,
+      ...context
+    });
+  }, [id, outfitId, position, brand, price]);
+
   const handleSave = async () => {
     try {
+      // Track save interaction for ML
+      trackSaveInteraction(id, {
+        outfitId,
+        position,
+        page: 'ProductCard',
+        brand,
+        price,
+        ...context
+      });
+
       await saveOutfit();
       toast.success('Product bewaard!');
     } catch (error) {
@@ -44,6 +73,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const handleClick = async () => {
+    // Track click interaction for ML
+    trackClick(id, {
+      outfitId,
+      position,
+      page: 'ProductCard',
+      brand,
+      price,
+      source: 'shop_button',
+      ...context
+    });
+
     trackProductClick({
       id: id,
       title: title,
