@@ -69,31 +69,34 @@ class OutfitService {
     count: number = 6
   ): Promise<GeneratedOutfit[]> {
     try {
-      let products = await this.getProducts();
+      // Get all products - filtering is now done in recommendationEngine
+      const products = await this.getProducts();
 
-      const userGender = quizAnswers.gender || getUserGender();
-      if (userGender && userGender !== 'unisex') {
-        products = filterByGender(products, userGender);
-        console.log(`[OutfitService] Filtered to ${products.length} ${userGender} products`);
-      }
+      console.log(`[OutfitService] Loaded ${products.length} products from database`);
 
-      if (products.length < 10) {
-        console.warn('[OutfitService] Not enough products, using fallback');
+      if (products.length === 0) {
+        console.error('[OutfitService] No products available');
         return [];
       }
 
+      // Generate outfits - recommendationEngine handles ALL filtering
       const outfits = generateRecommendationsFromAnswers(
         quizAnswers,
         products,
         count
       );
 
+      if (outfits.length === 0) {
+        console.warn('[OutfitService] No outfits generated - likely insufficient products after filtering');
+        return [];
+      }
+
       const outfitsWithExplanations = outfits.map((outfit) => ({
         ...outfit,
         explanation: this.generateExplanation(outfit, quizAnswers),
       }));
 
-      console.log(`[OutfitService] Generated ${outfitsWithExplanations.length} outfits`);
+      console.log(`[OutfitService] Successfully generated ${outfitsWithExplanations.length} outfits`);
       return outfitsWithExplanations;
     } catch (error) {
       console.error('[OutfitService] Error generating outfits:', error);

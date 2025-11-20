@@ -2,6 +2,9 @@ import { Product, UserProfile, Outfit, StylePreferences } from './types';
 import { filterAndSortProducts } from './filterAndSortProducts';
 import generateOutfits from './generateOutfits';
 import { analyzeUserProfile, determineArchetypesFromAnswers } from './profile-mapping';
+import { filterProducts, getFilteringStats, type FilterCriteria } from './productFiltering';
+import { shuffleProductsByCategory } from './productShuffling';
+import { handleInsufficientProducts, getCategoryCounts, formatSuggestionMessage } from './insufficientProductsHandler';
 
 /**
  * Main recommendation engine that generates personalized outfit recommendations
@@ -72,7 +75,8 @@ export function generateRecommendations(
 
 /**
  * Generates recommendations based on quiz answers
- * 
+ * WITH PROPER FILTERING FOR GENDER, BUDGET, AND VALIDATION
+ *
  * @param answers - User's quiz answers
  * @param products - Available products
  * @param count - Number of recommendations to generate
@@ -83,13 +87,61 @@ export function generateRecommendationsFromAnswers(
   products: Product[],
   count: number = 3
 ): Outfit[] {
+  console.log('[RecommendationEngine] Starting with', products.length, 'products');
+  console.log('[RecommendationEngine] Quiz answers:', {
+    gender: answers.gender,
+    budget: answers.budget,
+    archetype: answers.archetype,
+    occasions: answers.occasions
+  });
+
+  // CRITICAL: Apply comprehensive filtering FIRST
+  const filterCriteria: FilterCriteria = {
+    gender: answers.gender,
+    budget: answers.budget,
+    // Future: add more criteria based on quiz answers
+  };
+
+  const filterResult = filterProducts(products, filterCriteria);
+
+  // Log detailed filtering stats
+  console.log(getFilteringStats(filterResult));
+
+  // Check if we have enough products after filtering
+  if (filterResult.products.length < 10) {
+    console.error('[RecommendationEngine] INSUFFICIENT PRODUCTS after filtering!');
+    console.error(`Only ${filterResult.products.length} products available for outfit generation`);
+    console.error('Filter criteria:', filterCriteria);
+
+    // Analyze the situation and provide intelligent suggestions
+    const categoryCounts = getCategoryCounts(filterResult.products);
+    const suggestion = handleInsufficientProducts({
+      totalProducts: products.length,
+      filteredProducts: filterResult.products.length,
+      criteria: filterCriteria,
+      categoryCounts
+    });
+
+    // Log the suggestion for debugging
+    console.warn('[RecommendationEngine] Suggestion:', formatSuggestionMessage(suggestion));
+
+    // TODO: Return suggestion to UI instead of empty array
+    // For now, return empty array - caller should handle this
+    return [];
+  }
+
   // Convert quiz answers to archetype profile
   const { primaryArchetype, secondaryArchetype, mixFactor } = determineArchetypesFromAnswers(answers);
-  
-  // Generate outfits
+
+  console.log('[RecommendationEngine] Generating outfits with archetype:', primaryArchetype);
+
+  // Shuffle products by category for variety
+  const shuffledProducts = shuffleProductsByCategory(filterResult.products);
+
+  // Generate outfits with FILTERED and SHUFFLED products
   const outfits = generateOutfits(
     primaryArchetype,
-    products,
+    shuffledProducts, // ✅ USE FILTERED AND SHUFFLED PRODUCTS
     count,
     secondaryArchetype,
     mixFactor,
@@ -100,6 +152,8 @@ export function generateRecommendationsFromAnswers(
       enforceCompletion: true
     }
   );
+
+  console.log(`[RecommendationEngine] Successfully generated ${outfits.length} outfits`);
 
   return outfits;
 }
