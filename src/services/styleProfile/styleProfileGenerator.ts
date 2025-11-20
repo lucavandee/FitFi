@@ -1,16 +1,22 @@
 import { VisualPreferenceService, type MoodPhoto } from '../visualPreferences/visualPreferenceService';
+import { ArchetypeDetector } from './archetypeDetector';
 import type { ColorProfile } from '@/lib/quiz/types';
+import type { ArchetypeKey } from '@/config/archetypes';
 
 export interface QuizColorAnswers {
   colorPreference?: string;
   colorTemp?: string;
   neutrals?: boolean;
+  style?: string[];
+  fit?: string;
+  goals?: string[];
   [key: string]: any;
 }
 
 export interface StyleProfileResult {
   colorProfile: ColorProfile;
-  archetype: string;
+  archetype: ArchetypeKey;
+  secondaryArchetype: ArchetypeKey | null;
   confidence: number;
   dataSource: 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback';
 }
@@ -31,26 +37,45 @@ export class StyleProfileGenerator {
     });
 
     // 1. Get swipe data if available
-    const swipes = userId || sessionId
+    const swipeData = userId || sessionId
       ? await this.getSwipeData(userId, sessionId)
       : null;
 
-    // 2. Analyze colors from both sources
+    // 2. ✅ DETECT ARCHETYPE FROM QUIZ + SWIPES
+    const archetypeResult = ArchetypeDetector.detect(
+      quizAnswers,
+      swipeData ? {
+        photos: swipeData.photos,
+        likedCount: swipeData.swipes.length,
+        rejectedCount: 0
+      } : null
+    );
+
+    console.log('[StyleProfileGenerator] Archetype detected:', {
+      primary: archetypeResult.primary,
+      secondary: archetypeResult.secondary,
+      confidence: archetypeResult.confidence
+    });
+
+    // 3. Analyze colors from both sources
     const quizColors = this.analyzeQuizColors(quizAnswers);
-    const swipeColors = swipes ? this.analyzeSwipeColors(swipes) : null;
+    const swipeColors = swipeData ? this.analyzeSwipeColors(swipeData) : null;
 
     console.log('[StyleProfileGenerator] Color analysis:', {
       quizColors,
       swipeColors
     });
 
-    // 3. Combine data with priority: swipes > quiz > fallback
+    // 4. Combine data with priority: swipes > quiz > fallback
     const colorProfile = this.combineColorData(quizColors, swipeColors);
 
-    // 4. Calculate confidence based on data sources
-    const confidence = this.calculateConfidence(quizColors, swipeColors);
+    // 5. Calculate confidence based on data sources
+    const confidence = Math.max(
+      this.calculateConfidence(quizColors, swipeColors),
+      archetypeResult.confidence
+    );
 
-    // 5. Determine data source
+    // 6. Determine data source
     let dataSource: StyleProfileResult['dataSource'] = 'fallback';
     if (quizColors && swipeColors) {
       dataSource = 'quiz+swipes';
@@ -61,6 +86,8 @@ export class StyleProfileGenerator {
     }
 
     console.log('[StyleProfileGenerator] ✅ Style profile generated:', {
+      archetype: archetypeResult.primary,
+      secondaryArchetype: archetypeResult.secondary,
       temperature: colorProfile.temperature,
       chroma: colorProfile.chroma,
       contrast: colorProfile.contrast,
@@ -71,7 +98,8 @@ export class StyleProfileGenerator {
 
     return {
       colorProfile,
-      archetype: quizAnswers.archetype || 'Smart Casual',
+      archetype: archetypeResult.primary,
+      secondaryArchetype: archetypeResult.secondary,
       confidence,
       dataSource
     };

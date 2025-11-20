@@ -432,18 +432,27 @@ export class CalibrationService {
   ): { min: number; max: number } | null {
     if (!budgetRange) return null;
 
-    // Category multipliers (relative to base budget)
+    // ✅ STRICT BUDGET ENFORCEMENT
+    // NO ITEM should EVER exceed user's max budget per item
+    // Category multipliers now represent PERCENTAGE of budget, not multipliers above 1.0
+
+    // For €425 budget:
+    // - top: €127.5 - €425 (30%-100%)
+    // - bottom: €212.5 - €425 (50%-100%)
+    // - footwear: €255 - €425 (60%-100%)
+
     const multipliers: Record<string, { min: number; max: number }> = {
-      'top': { min: 0.6, max: 1.4 },       // €24-€56 for budget €40
-      'bottom': { min: 0.8, max: 1.6 },    // €32-€64 for budget €40
-      'footwear': { min: 1.2, max: 2.0 }   // €48-€80 for budget €40
+      'top': { min: 0.3, max: 1.0 },       // 30%-100% of budget
+      'bottom': { min: 0.5, max: 1.0 },    // 50%-100% of budget
+      'footwear': { min: 0.6, max: 1.0 }   // 60%-100% of budget (shoes are often pricier)
     };
 
-    const multiplier = multipliers[category] || { min: 0.5, max: 1.5 };
+    const multiplier = multipliers[category] || { min: 0.3, max: 1.0 };
 
+    // ✅ CRITICAL: max NEVER exceeds budgetRange
     return {
       min: Math.round(budgetRange * multiplier.min),
-      max: Math.round(budgetRange * multiplier.max)
+      max: Math.min(Math.round(budgetRange * multiplier.max), budgetRange)
     };
   }
 
