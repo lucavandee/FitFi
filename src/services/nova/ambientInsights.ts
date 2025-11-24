@@ -56,7 +56,7 @@ export function generateAmbientInsights(context: UserContext): AmbientInsight[] 
       type: 'color-advice',
       insight: 'Upload een foto voor gepersonaliseerd kleuradvies',
       action: 'Foto uploaden',
-      actionLink: '/dashboard',
+      actionLink: '/profile',
       confidence: 0.95,
       priority: 'high'
     });
@@ -85,7 +85,7 @@ export function generateAmbientInsights(context: UserContext): AmbientInsight[] 
       type: 'personal-goal',
       insight: 'Bereid je voor op morgen - bekijk je outfit opties voor overmorgen',
       action: 'Plan je week',
-      actionLink: '/dashboard',
+      actionLink: '/results',
       confidence: 0.85,
       priority: 'medium'
     });
