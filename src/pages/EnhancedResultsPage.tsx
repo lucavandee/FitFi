@@ -67,6 +67,14 @@ export default function EnhancedResultsPage() {
 
   const hasCompletedQuiz = !!answers;
 
+  // CRITICAL: If no quiz data, redirect to onboarding
+  React.useEffect(() => {
+    if (!hasCompletedQuiz) {
+      console.warn('[EnhancedResultsPage] No quiz data found, redirecting to onboarding');
+      window.location.href = '/onboarding';
+    }
+  }, [hasCompletedQuiz]);
+
   // Parse archetype safely - can be string or object
   const archetypeName = React.useMemo(() => {
     if (!archetypeRaw) return "Smart Casual";
@@ -116,7 +124,9 @@ export default function EnhancedResultsPage() {
           console.warn('Could not save color profile to localStorage', e);
         }
       } catch (error) {
-        console.error('[EnhancedResultsPage] Failed to generate style profile:', error);
+        console.error('[EnhancedResultsPage] ❌ CRITICAL: Failed to generate style profile:', error);
+        // Don't crash - just use fallback color profile
+        setGeneratedProfile(null);
       } finally {
         setProfileLoading(false);
       }
@@ -146,14 +156,28 @@ export default function EnhancedResultsPage() {
   });
 
   const seeds: OutfitSeed[] = React.useMemo(() => {
-    return getSeedOutfits(activeColorProfile, archetypeName);
+    try {
+      return getSeedOutfits(activeColorProfile, archetypeName) || [];
+    } catch (error) {
+      console.error('[EnhancedResultsPage] Error generating seed outfits:', error);
+      return [];
+    }
   }, [activeColorProfile, archetypeName]);
 
   const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
-    if (realOutfits && realOutfits.length > 0) {
-      return realOutfits;
+    try {
+      if (realOutfits && Array.isArray(realOutfits) && realOutfits.length > 0) {
+        return realOutfits;
+      }
+      if (seeds && Array.isArray(seeds) && seeds.length > 0) {
+        return seeds;
+      }
+      // Absolute fallback
+      return [];
+    } catch (error) {
+      console.error('[EnhancedResultsPage] Error in displayOutfits:', error);
+      return [];
     }
-    return seeds;
   }, [realOutfits, seeds]);
 
   const [favs, setFavs] = React.useState<string[]>(() => {
@@ -206,7 +230,7 @@ export default function EnhancedResultsPage() {
       <SaveOutfitsModal
         isOpen={showExitIntent}
         onClose={dismissExitIntent}
-        outfitCount={displayOutfits.length}
+        outfitCount={displayOutfits?.length || 0}
       />
 
       <Breadcrumbs />
@@ -282,7 +306,7 @@ export default function EnhancedResultsPage() {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   className="text-xl md:text-2xl lg:text-3xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
                 >
-                  We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits.length} unieke outfits</strong> samengesteld die perfect
+                  We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} unieke outfits</strong> samengesteld die perfect
                   <br className="hidden md:block" /> bij jouw {archetypeName} stijl passen
                 </motion.p>
 
