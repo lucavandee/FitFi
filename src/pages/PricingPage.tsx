@@ -77,9 +77,15 @@ export default function PricingPage() {
     }
   };
 
-  const premiumPrice = isLoading ? '9,99' : premiumProduct?.price || '9.99';
-  const founderPrice = isLoading ? '149' : founderProduct?.price || '149';
-  const breakEvenMonths = Math.ceil(parseFloat(founderPrice.replace(',', '.')) / parseFloat(premiumPrice.replace(',', '.')));
+  const premiumPriceNum = premiumProduct?.price || 9.99;
+  const founderPriceNum = founderProduct?.price || 149;
+
+  const premiumPrice = isLoading ? '9,99' : premiumPriceNum.toFixed(2).replace('.', ',');
+  const founderPrice = isLoading ? '149' : Math.round(founderPriceNum).toString();
+
+  const breakEvenMonths = premiumPriceNum > 0
+    ? Math.ceil(founderPriceNum / premiumPriceNum)
+    : 15;
 
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
