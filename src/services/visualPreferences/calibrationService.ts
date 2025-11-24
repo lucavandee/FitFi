@@ -268,21 +268,17 @@ export class CalibrationService {
     // Build query - PREFER Brams Fruit first
     let query = supabase
       .from('products')
-      .select('id, name, brand, price, image_url, style, tags, gender')
+      .select('id, name, brand, price, image_url, style, tags, gender, colors, dominant_colors')
       .eq('category', category)
-      .limit(100);
+      .limit(200); // Increased limit to account for client-side filtering
 
     // CRITICAL: Filter by gender FIRST (before brand preference)
     if (gender) {
       query = query.or(`gender.eq.${gender},gender.eq.unisex`);
     }
 
-    // Filter by price range
-    if (priceRange) {
-      query = query
-        .gte('price', priceRange.min)
-        .lte('price', priceRange.max);
-    }
+    // NOTE: Price filtering CANNOT be done in Supabase query because price is TEXT
+    // We must filter client-side after fetching
 
     const { data, error } = await query;
 
@@ -299,14 +295,29 @@ export class CalibrationService {
     // Get brand affinity data (if available)
     const brandAffinity = await this.getBrandAffinityMap(supabase);
 
-    // CRITICAL: Filter out products that don't match gender (safety check)
-    const genderFilteredData = data.filter(product => {
-      if (!gender) return true;
-      return product.gender === gender || product.gender === 'unisex';
+    // CRITICAL: Filter by gender AND BUDGET (client-side)
+    let filteredData = data.filter(product => {
+      // Gender filter
+      if (gender && product.gender !== gender && product.gender !== 'unisex') {
+        return false;
+      }
+
+      // BUDGET FILTER (CRITICAL - price is stored as TEXT in DB)
+      if (priceRange) {
+        const productPrice = parseFloat(product.price);
+        if (isNaN(productPrice) || productPrice < priceRange.min || productPrice > priceRange.max) {
+          console.log(`  ❌ Budget filter: ${product.name} (€${product.price}) exceeds range €${priceRange.min}-€${priceRange.max}`);
+          return false;
+        }
+      }
+
+      return true;
     });
 
-    if (genderFilteredData.length === 0) {
-      console.warn(`⚠️ No gender-appropriate products found for ${category} (gender: ${gender}), using fallback`);
+    console.log(`[CalibrationService] After budget filter: ${filteredData.length} products (was ${data.length})`);
+
+    if (filteredData.length === 0) {
+      console.warn(`⚠️ No products found after gender+budget filtering for ${category} (gender: ${gender}, budget: ${priceRange?.min}-${priceRange?.max})`);
       return {
         name: this.getFallbackName(category, archetype),
         brand: 'Example Brand',
@@ -316,7 +327,7 @@ export class CalibrationService {
     }
 
     // Score products based on style match + brand affinity + BRAMS FRUIT PREFERENCE
-    const scoredProducts = genderFilteredData.map(product => {
+    const scoredProducts = filteredData.map(product => {
       let score = 0;
 
       // CRITICAL: Brams Fruit gets massive boost
