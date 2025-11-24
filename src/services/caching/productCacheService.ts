@@ -210,7 +210,7 @@ class ProductCacheService {
         id: p.id,
         name: p.name,
         brand: p.brand,
-        price: p.price,
+        price: typeof p.price === 'number' ? p.price : parseFloat(p.price) || 0,
         imageUrl: p.image_url,
         category: p.category,
         type: p.type,

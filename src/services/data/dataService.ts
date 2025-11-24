@@ -65,7 +65,7 @@ export async function fetchProducts(_opts?: {
       title: p.name || p.title,
       name: p.name || p.title,
       brand: p.brand,
-      price: p.price,
+      price: typeof p.price === 'number' ? p.price : parseFloat(p.price) || 0,
       imageUrl: p.image_url,
       image: p.image_url,
       url: p.product_url || p.affiliate_url || '#',
