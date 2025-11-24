@@ -7,6 +7,16 @@ import type { Outfit, Product } from './types';
 
 export type Occasion = 'work' | 'casual' | 'formal' | 'date' | 'party' | 'sports' | 'travel';
 
+export const OCCASION_LABELS: Record<Occasion, { title: string; context: string }> = {
+  work: { title: 'Kantoor', context: 'Zakelijke meeting of werkdag' },
+  casual: { title: 'Casual dag uit', context: 'Lunch, koffie, boodschappen' },
+  formal: { title: 'Formeel event', context: 'Gala, bruiloft, theater' },
+  date: { title: 'Date', context: 'Restaurant, borrel of diner' },
+  party: { title: 'Feest / uitgaan', context: 'Bar, club, avondje uit' },
+  sports: { title: 'Sport / actief', context: 'Gym, hardlopen, workout' },
+  travel: { title: 'Op reis', context: 'Vliegtuig, stadstrip, vakantie' }
+};
+
 export interface OccasionRules {
   requiredFormality: number; // 0-1, where 1 = most formal
   preferredStyles: string[];

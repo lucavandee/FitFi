@@ -20,8 +20,8 @@ interface Outfit {
 const outfits: Outfit[] = [
   {
     id: 'work',
-    title: 'Werk',
-    context: 'Professioneel & zelfverzekerd',
+    title: 'Kantoor',
+    context: 'Zakelijke meeting of werkdag',
     icon: Briefcase,
     gradient: 'from-slate-50 to-slate-100',
     border: 'border-slate-300',
@@ -34,8 +34,8 @@ const outfits: Outfit[] = [
   },
   {
     id: 'weekend',
-    title: 'Weekend',
-    context: 'Relaxed & toegankelijk',
+    title: 'Casual dag uit',
+    context: 'Lunch, koffie, boodschappen',
     icon: Coffee,
     gradient: 'from-amber-50 to-orange-50',
     border: 'border-orange-300',
@@ -47,12 +47,12 @@ const outfits: Outfit[] = [
     ]
   },
   {
-    id: 'evening',
-    title: 'Avond',
-    context: 'Verfijnd, niet overdreven',
+    id: 'date',
+    title: 'Date',
+    context: 'Restaurant, borrel of diner',
     icon: Moon,
-    gradient: 'from-indigo-50 to-purple-50',
-    border: 'border-indigo-300',
+    gradient: 'from-slate-50 to-blue-50',
+    border: 'border-slate-300',
     items: [
       { type: 'top', color: 'bg-slate-800', label: 'Donkerblauwe trui' },
       { type: 'bottom', color: 'bg-slate-900', label: 'Zwarte chino' },

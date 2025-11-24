@@ -13,8 +13,8 @@ interface OutfitCard {
 const outfits: OutfitCard[] = [
   {
     id: 'work',
-    title: 'Werk',
-    context: 'Professioneel & zelfverzekerd',
+    title: 'Kantoor',
+    context: 'Zakelijke meeting of werkdag',
     icon: Briefcase,
     gradient: 'from-slate-800 via-slate-700 to-slate-900',
     why: [
@@ -25,8 +25,8 @@ const outfits: OutfitCard[] = [
   },
   {
     id: 'weekend',
-    title: 'Weekend',
-    context: 'Relaxed & toegankelijk',
+    title: 'Casual dag uit',
+    context: 'Lunch, koffie, boodschappen',
     icon: Coffee,
     gradient: 'from-amber-700 via-orange-600 to-red-700',
     why: [
@@ -36,11 +36,11 @@ const outfits: OutfitCard[] = [
     ]
   },
   {
-    id: 'evening',
-    title: 'Avond',
-    context: 'Verfijnd, niet overdreven',
+    id: 'date',
+    title: 'Date',
+    context: 'Restaurant, borrel of diner',
     icon: Moon,
-    gradient: 'from-indigo-900 via-purple-800 to-indigo-950',
+    gradient: 'from-slate-800 via-slate-700 to-slate-900',
     why: [
       'Gedempte tinten stralen rust uit',
       'Regular fit combineert comfort met stijl',

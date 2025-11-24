@@ -23,45 +23,45 @@ const OCCASIONS: Array<{
   },
   {
     value: 'work',
-    label: 'Werk',
+    label: 'Kantoor',
     icon: <Briefcase className="w-4 h-4" />,
-    description: 'Professioneel & formeel'
+    description: 'Zakelijke meeting of werkdag'
   },
   {
     value: 'casual',
-    label: 'Casual',
+    label: 'Casual dag uit',
     icon: <Coffee className="w-4 h-4" />,
-    description: 'Relaxed & comfortabel'
+    description: 'Lunch, koffie, boodschappen'
   },
   {
     value: 'date',
     label: 'Date',
     icon: <Heart className="w-4 h-4" />,
-    description: 'Romantisch & elegant'
+    description: 'Restaurant, borrel of diner'
   },
   {
     value: 'party',
-    label: 'Party',
+    label: 'Feest / uitgaan',
     icon: <PartyPopper className="w-4 h-4" />,
-    description: 'Feestelijk & opvallend'
+    description: 'Bar, club, avondje uit'
   },
   {
     value: 'formal',
-    label: 'Formeel',
+    label: 'Formeel event',
     icon: <Sparkles className="w-4 h-4" />,
-    description: 'Zeer formeel & chic'
+    description: 'Gala, bruiloft, theater'
   },
   {
     value: 'sports',
-    label: 'Sport',
+    label: 'Sport / actief',
     icon: <Dumbbell className="w-4 h-4" />,
-    description: 'Actief & functioneel'
+    description: 'Gym, hardlopen, workout'
   },
   {
     value: 'travel',
-    label: 'Reizen',
+    label: 'Op reis',
     icon: <Plane className="w-4 h-4" />,
-    description: 'Comfortabel & praktisch'
+    description: 'Vliegtuig, stadstrip, vakantie'
   }
 ];
 
