@@ -179,9 +179,6 @@ export default function OnboardingFlowPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Use old computeResult for archetype (still valid)
-      const result = computeResult(answers as any);
-
       // Get user/session for swipe data
       const client = supabase();
       let userId: string | null = null;
@@ -195,20 +192,25 @@ export default function OnboardingFlowPage() {
         }
       }
 
-      // ✅ GENERATE COLOR PROFILE FROM QUIZ + SWIPES
+      // ✅ GENERATE COMPLETE STYLE PROFILE FROM QUIZ + SWIPES
       console.log('[OnboardingFlow] Generating style profile from quiz + swipes...');
-      let colorProfile = result.color; // fallback
+      let colorProfile: any;
+      let archetype: any;
+      let profileResult: any;
 
       try {
-        const profileResult = await StyleProfileGenerator.generateStyleProfile(
+        profileResult = await StyleProfileGenerator.generateStyleProfile(
           answers as any,
           userId || undefined,
           !userId ? sessionId : undefined
         );
 
         colorProfile = profileResult.colorProfile;
+        archetype = profileResult.archetype;
 
         console.log('[OnboardingFlow] ✅ Style profile generated:', {
+          archetype: profileResult.archetype,
+          secondaryArchetype: profileResult.secondaryArchetype,
           temperature: colorProfile.temperature,
           chroma: colorProfile.chroma,
           contrast: colorProfile.contrast,
@@ -217,13 +219,16 @@ export default function OnboardingFlowPage() {
           dataSource: profileResult.dataSource
         });
       } catch (profileError) {
-        console.error('[OnboardingFlow] Failed to generate style profile, using quiz-only fallback:', profileError);
-        // Keep result.color as fallback
+        console.error('[OnboardingFlow] Failed to generate style profile, using fallback:', profileError);
+        // Fallback to old logic
+        const fallbackResult = computeResult(answers as any);
+        colorProfile = fallbackResult.color;
+        archetype = fallbackResult.archetype;
       }
 
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
       localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(colorProfile));
-      localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(result.archetype));
+      localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
       localStorage.setItem('ff_session_id', sessionId);
@@ -264,10 +269,10 @@ export default function OnboardingFlowPage() {
           }
         }
 
-        // Update result with new color profile
+        // Create result object with generated profile
         const updatedResult = {
-          ...result,
-          color: colorProfile
+          color: colorProfile,
+          archetype: archetype
         };
 
         const savePromise = saveToSupabase(client, user, sessionId, updatedResult);
