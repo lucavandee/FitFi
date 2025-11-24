@@ -43,13 +43,28 @@ class ProfileSyncService {
           .maybeSingle();
 
         if (error) {
+          console.warn('[ProfileSync] Error fetching profile:', error);
           return this.getLocalProfile();
         }
 
         if (data) {
+          const { data: quizAnswers } = await client
+            .from('quiz_answers')
+            .select('*')
+            .eq('user_id', user.id);
+
+          if (quizAnswers && quizAnswers.length > 0) {
+            const answersMap: any = {};
+            quizAnswers.forEach((qa: any) => {
+              answersMap[qa.question_id] = qa.answer;
+            });
+            data.quiz_answers = { ...data.quiz_answers, ...answersMap };
+          }
+
           this.cacheProfile(data);
           localStorage.setItem(SYNC_STATUS_KEY, 'synced');
           localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
+          console.log('✅ [ProfileSync] Profile loaded from database');
           return data;
         }
       } else {
@@ -77,6 +92,7 @@ class ProfileSyncService {
 
       return this.getLocalProfile();
     } catch (error) {
+      console.error('[ProfileSync] Exception during getProfile:', error);
       return this.getLocalProfile();
     }
   }

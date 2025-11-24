@@ -133,6 +133,31 @@ export default function OnboardingFlowPage() {
     }
   };
 
+  const saveQuizAnswersIndividually = async (
+    client: any,
+    userId: string
+  ): Promise<void> => {
+    try {
+      const answersToSave = Object.entries(answers).map(([key, value]) => ({
+        user_id: userId,
+        question_id: key,
+        answer: value,
+      }));
+
+      for (const answerData of answersToSave) {
+        await client
+          .from('quiz_answers')
+          .upsert(answerData, {
+            onConflict: 'user_id,question_id',
+          });
+      }
+
+      console.log('✅ [OnboardingFlow] Individual quiz answers saved');
+    } catch (error) {
+      console.error('⚠️ [OnboardingFlow] Failed to save individual answers:', error);
+    }
+  };
+
   const saveToSupabase = async (
     client: any,
     user: any,
@@ -166,6 +191,10 @@ export default function OnboardingFlowPage() {
         }
         console.error('❌ [OnboardingFlow] Error saving to Supabase after 3 attempts:', error);
         return false;
+      }
+
+      if (user?.id) {
+        await saveQuizAnswersIndividually(client, user.id);
       }
 
       console.log('✅ [OnboardingFlow] Quiz saved to Supabase successfully!');
