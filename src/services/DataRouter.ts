@@ -1,5 +1,7 @@
 import type { Product, Outfit, Season } from "@/engine";
 import { fetchProducts, fetchOutfits } from "@/services/data/dataService";
+import { outfitService } from "@/services/outfits/outfitService";
+import { LS_KEYS } from "@/lib/quiz/types";
 
 /**
  * Productaanbevelingen (met nette mapping naar engine/Product).
@@ -28,14 +30,39 @@ export async function getRecommendedProducts(opts?: {
 }
 
 /**
- * Outfitaanbevelingen (bouwt desnoods op producten als fallback).
+ * Outfitaanbevelingen - gebruikt OutfitService met recommendation engine.
  */
 export async function getOutfitRecommendations(_userId?: string, opts?: { limit?: number }): Promise<Outfit[]> {
-  const { data } = await fetchOutfits({ limit: opts?.limit });
-  if (data && data.length) return data;
+  try {
+    const quizAnswersRaw = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
 
-  // fallback: bouw 3 outfits uit products
-  const prods = await getRecommendedProducts({ count: 12 });
+    if (!quizAnswersRaw) {
+      console.warn('[DataRouter] No quiz answers found, using fallback');
+      return getFallbackOutfits();
+    }
+
+    const quizAnswers = JSON.parse(quizAnswersRaw);
+
+    const outfits = await outfitService.generateOutfits(
+      quizAnswers,
+      opts?.limit || 6
+    );
+
+    if (outfits && outfits.length > 0) {
+      console.log(`[DataRouter] Generated ${outfits.length} personalized outfits`);
+      return outfits;
+    }
+
+    console.warn('[DataRouter] No outfits generated, using fallback');
+    return getFallbackOutfits();
+  } catch (error) {
+    console.error('[DataRouter] Error generating outfits:', error);
+    return getFallbackOutfits();
+  }
+}
+
+function getFallbackOutfits(): Outfit[] {
+  const prods = [];
   const chunks: Product[][] = [prods.slice(0, 4), prods.slice(4, 8), prods.slice(8, 12)];
   return chunks
     .filter((c) => c.length > 0)
