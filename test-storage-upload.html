@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Storage Upload Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>Supabase Storage Upload Test</h1>
+  <input type="file" id="fileInput" accept="image/*">
+  <button onclick="testUpload()">Test Upload</button>
+  <pre id="output"></pre>
+
+  <script>
+    const SUPABASE_URL = 'https://wojexzgjyhijuxzperhq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvamV4emdqeWhpanV4enBlcmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NTM2NDAsImV4cCI6MjA2NjQyOTY0MH0.nLozOsn1drQPvRuSWRl_gLsh0_EvgtjidiUxpdUnhg0';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function log(msg) {
+      const output = document.getElementById('output');
+      output.textContent += msg + '\n';
+      console.log(msg);
+    }
+
+    async function testUpload() {
+      const output = document.getElementById('output');
+      output.textContent = '';
+
+      try {
+        // 1. Check auth
+        log('=== Step 1: Check Auth ===');
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError) {
+          log('❌ Auth error: ' + authError.message);
+          return;
+        }
+
+        if (!user) {
+          log('❌ Not authenticated. Please log in first.');
+          return;
+        }
+
+        log('✅ Authenticated as: ' + user.id);
+        log('   Email: ' + user.email);
+
+        // 2. Get file
+        log('\n=== Step 2: Get File ===');
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          log('❌ No file selected');
+          return;
+        }
+
+        const file = fileInput.files[0];
+        log('✅ File selected:');
+        log('   Name: ' + file.name);
+        log('   Size: ' + file.size + ' bytes');
+        log('   Type: ' + file.type);
+
+        // 3. Prepare upload
+        log('\n=== Step 3: Prepare Upload ===');
+        const fileExt = file.name.split('.').pop();
+        const fileName = Date.now() + '-' + Math.random().toString(36).substring(7) + '.' + fileExt;
+        const filePath = user.id + '/' + fileName;
+        log('✅ Target path: ' + filePath);
+
+        // 4. Upload
+        log('\n=== Step 4: Upload to Storage ===');
+        const { data, error } = await supabase.storage
+          .from('outfit-photos')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (error) {
+          log('❌ Upload error:');
+          log('   Message: ' + error.message);
+          log('   Status: ' + error.statusCode);
+          log('   Full error: ' + JSON.stringify(error, null, 2));
+          return;
+        }
+
+        log('✅ Upload successful!');
+        log('   Path: ' + data.path);
+        log('   ID: ' + data.id);
+
+        // 5. Get URL
+        log('\n=== Step 5: Get Public URL ===');
+        const { data: { publicUrl } } = supabase.storage
+          .from('outfit-photos')
+          .getPublicUrl(data.path);
+
+        log('✅ Public URL: ' + publicUrl);
+
+        // 6. Test manual URL
+        const manualUrl = SUPABASE_URL + '/storage/v1/object/public/outfit-photos/' + data.path;
+        log('✅ Manual URL: ' + manualUrl);
+
+        // 7. Test URL accessibility
+        log('\n=== Step 6: Test URL Accessibility ===');
+        try {
+          const response = await fetch(publicUrl);
+          if (response.ok) {
+            log('✅ Public URL is accessible (status: ' + response.status + ')');
+          } else {
+            log('❌ Public URL returned status: ' + response.status);
+          }
+        } catch (e) {
+          log('❌ Could not fetch public URL: ' + e.message);
+        }
+
+        try {
+          const response = await fetch(manualUrl);
+          if (response.ok) {
+            log('✅ Manual URL is accessible (status: ' + response.status + ')');
+          } else {
+            log('❌ Manual URL returned status: ' + response.status);
+          }
+        } catch (e) {
+          log('❌ Could not fetch manual URL: ' + e.message);
+        }
+
+      } catch (error) {
+        log('❌ Unexpected error: ' + error.message);
+        console.error('Full error:', error);
+      }
+    }
+
+    // Auto-check auth on load
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        log('⚠️ Not logged in. Please log in to your FitFi account first, then refresh this page.');
+      }
+    });
+  </script>
+</body>
+</html>
