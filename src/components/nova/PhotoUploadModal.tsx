@@ -50,19 +50,29 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
     setIsAnalyzing(true);
 
     try {
+      console.log("[PhotoUploadModal] Starting analysis...", {
+        fileSize: selectedFile.size,
+        fileType: selectedFile.type,
+        fileName: selectedFile.name
+      });
+
       const result = await analyzeOutfitPhoto({
         file: selectedFile,
         userContext: context || undefined,
       });
 
+      console.log("[PhotoUploadModal] Analysis successful:", result);
       toast.success("Analyse voltooid! 🎉");
       onAnalysisComplete?.(result);
       handleClose();
     } catch (error) {
-      console.error("[PhotoUpload] Full error:", error);
+      console.error("[PhotoUploadModal] Analysis failed:", error);
+      console.error("[PhotoUploadModal] Error type:", typeof error);
+      console.error("[PhotoUploadModal] Error constructor:", error?.constructor?.name);
 
       // Show detailed error message
       const errorMessage = error instanceof Error ? error.message : "Onbekende fout";
+      console.error("[PhotoUploadModal] Error message:", errorMessage);
 
       if (errorMessage.includes("OPENAI_API_KEY")) {
         toast.error("OpenAI API key niet geconfigureerd. Vraag admin om dit op te lossen.");
@@ -70,8 +80,16 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
         toast.error("Upload mislukt. Check je internet connectie.");
       } else if (errorMessage.includes("authenticate")) {
         toast.error("Je moet ingelogd zijn. Log opnieuw in.");
+      } else if (errorMessage.includes("Supabase client not initialized")) {
+        toast.error("Database niet beschikbaar. Herlaad de pagina.");
       } else {
-        toast.error(`Analyse mislukt: ${errorMessage}`);
+        // Show the actual error message for debugging
+        toast.error(`Fout: ${errorMessage}`);
+        // Also log to console for developer
+        console.error("[PhotoUploadModal] Full error details:", {
+          message: errorMessage,
+          error: error
+        });
       }
     } finally {
       setIsAnalyzing(false);

@@ -22,14 +22,26 @@ export interface AnalyzePhotoOptions {
  * Upload photo to Supabase storage
  */
 async function uploadPhoto(file: File, userId: string): Promise<string> {
+  console.log("[uploadPhoto] Starting upload for user:", userId);
+  console.log("[uploadPhoto] File details:", {
+    name: file.name,
+    size: file.size,
+    type: file.type
+  });
+
   const fileExt = file.name.split(".").pop();
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
   const filePath = `${userId}/${fileName}`;
 
+  console.log("[uploadPhoto] Target path:", filePath);
+
   const sb = supabase();
   if (!sb) {
+    console.error("[uploadPhoto] Supabase client is null!");
     throw new Error("Supabase client not initialized");
   }
+
+  console.log("[uploadPhoto] Supabase client OK, starting upload...");
 
   const { data, error } = await sb.storage
     .from("outfit-photos")
@@ -39,13 +51,18 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
     });
 
   if (error) {
+    console.error("[uploadPhoto] Upload error:", error);
     throw new Error(`Failed to upload photo: ${error.message}`);
   }
+
+  console.log("[uploadPhoto] Upload successful:", data);
 
   // Get public URL
   const {
     data: { publicUrl },
   } = sb.storage.from("outfit-photos").getPublicUrl(data.path);
+
+  console.log("[uploadPhoto] Public URL:", publicUrl);
 
   return publicUrl;
 }
@@ -158,17 +175,28 @@ export async function analyzeOutfitPhoto(
 
   try {
     // 1. Upload photo
+    console.log("[PhotoAnalysis] Step 1: Uploading photo...");
     const photoUrl = await uploadPhoto(file, user.id);
+    console.log("[PhotoAnalysis] Step 1: Photo uploaded:", photoUrl);
 
     // 2. Analyze with AI
+    console.log("[PhotoAnalysis] Step 2: Calling AI analysis...");
     const analysisResult = await callAnalysisAPI(photoUrl, userContext);
+    console.log("[PhotoAnalysis] Step 2: AI analysis complete:", analysisResult);
 
     // 3. Save to database
+    console.log("[PhotoAnalysis] Step 3: Saving to database...");
     const savedAnalysis = await saveAnalysis(user.id, photoUrl, analysisResult);
+    console.log("[PhotoAnalysis] Step 3: Saved successfully:", savedAnalysis);
 
     return savedAnalysis;
   } catch (error) {
-    console.error("[PhotoAnalysis] Error:", error);
+    console.error("[PhotoAnalysis] Error at step:", error);
+    console.error("[PhotoAnalysis] Full error details:", {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
