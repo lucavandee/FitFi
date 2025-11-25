@@ -319,7 +319,7 @@ export default function DashboardPage() {
               {/* Right: Style Profile Card */}
               {hasQuizData && archetype && (
                 <div className="w-full lg:w-auto slide-in-right">
-                  <div className="bg-gradient-to-br from-white/90 to-white/70 dark:from-[var(--color-surface)]/90 dark:to-[var(--color-surface)]/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border-2 border-white/50 dark:border-[var(--color-border)] hover-lift card-interactive max-w-md">
+                  <div className="bg-gradient-to-br from-white/90 to-white/70 dark:from-[var(--color-surface)]/90 dark:to-[var(--color-surface)]/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border-2 border-white/50 dark:border-[var(--color-border)] hover-lift max-w-md">
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-lg">
                         <Crown className="w-8 h-8 text-white" />
