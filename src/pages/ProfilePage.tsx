@@ -19,9 +19,7 @@ import {
   Zap,
   Crown,
   Star,
-  ChevronRight,
-  Camera,
-  Edit3
+  ChevronRight
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import Button from '../components/ui/Button';
@@ -44,7 +42,6 @@ const ProfilePage: React.FC = () => {
     const loadProfile = async () => {
       try {
         const profile = await profileSyncService.getProfile();
-        console.log('[ProfilePage] Loaded profile:', profile);
         setSyncedProfile(profile);
       } catch (error) {
         console.error('[ProfilePage] Error loading profile:', error);
@@ -56,7 +53,7 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
-  const { data: styleProfile, isLoading: profileLoading } = useQuery({
+  const { data: styleProfile } = useQuery({
     queryKey: ['styleProfile', user?.id],
     queryFn: async () => {
       const client = supabase();
@@ -184,7 +181,6 @@ const ProfilePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-600)] shadow-2xl"
         >
-          {/* Animated Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
               backgroundImage: `radial-gradient(circle at 25% 25%, white 2%, transparent 0%),
@@ -196,7 +192,6 @@ const ProfilePage: React.FC = () => {
           <div className="relative p-8 md:p-12">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex items-start gap-6 flex-1">
-                {/* Avatar */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="relative"
@@ -211,7 +206,6 @@ const ProfilePage: React.FC = () => {
                   )}
                 </motion.div>
 
-                {/* User Info */}
                 <div className="flex-1 min-w-0">
                   <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 truncate">
                     {user.name || user.email?.split('@')[0] || 'Jouw Profiel'}
@@ -229,7 +223,6 @@ const ProfilePage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Level Progress Bar */}
                   <div className="max-w-xs">
                     <div className="flex items-center justify-between text-xs text-white/80 mb-2">
                       <span className="font-semibold">Level {level}</span>
@@ -247,7 +240,6 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center gap-3">
                 <Button
                   onClick={logout}
@@ -262,7 +254,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Stats Overview */}
+        {/* Stats Overview - IMPROVED CONTRAST */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <PremiumStatCard
             icon={<Target className="w-6 h-6" />}
@@ -329,7 +321,6 @@ const ProfilePage: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               className="grid md:grid-cols-2 gap-6"
             >
-              {/* Quick Actions */}
               <PremiumCard title="Snelle Acties" icon={<Sparkles className="w-6 h-6" />}>
                 <div className="space-y-3">
                   <QuickActionButton
@@ -356,7 +347,6 @@ const ProfilePage: React.FC = () => {
                 </div>
               </PremiumCard>
 
-              {/* Settings */}
               <PremiumCard title="Instellingen" icon={<Settings className="w-6 h-6" />}>
                 <EmailPreferences />
               </PremiumCard>
@@ -372,7 +362,6 @@ const ProfilePage: React.FC = () => {
             >
               {hasStyleProfile ? (
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Archetype Card */}
                   <PremiumCard title="Stijlarchetype" icon={<Target className="w-6 h-6" />}>
                     <div className="text-center py-8">
                       <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] dark:from-[var(--ff-color-primary-900)] dark:to-[var(--ff-color-accent-900)] flex items-center justify-center mb-4">
@@ -390,7 +379,6 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </PremiumCard>
 
-                  {/* Color Palette Card */}
                   <PremiumCard title="Kleurpalet" icon={<Palette className="w-6 h-6" />}>
                     {paletteName && (
                       <div className="mb-4">
@@ -522,17 +510,10 @@ function PremiumStatCard({
   onClick?: () => void;
 }) {
   const variantClasses = {
-    success: 'from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 border-emerald-200 dark:border-emerald-800',
-    accent: 'from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-blue-200 dark:border-blue-800',
-    gold: 'from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950 border-amber-200 dark:border-amber-800',
-    neutral: 'from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800 border-gray-200 dark:border-gray-700',
-  };
-
-  const iconVariantClasses = {
-    success: 'text-emerald-600 dark:text-emerald-400',
-    accent: 'text-blue-600 dark:text-blue-400',
-    gold: 'text-amber-600 dark:text-amber-400',
-    neutral: 'text-[var(--color-muted)]',
+    success: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white',
+    accent: 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white',
+    gold: 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white',
+    neutral: 'bg-gradient-to-br from-gray-200 to-slate-300 dark:from-gray-700 dark:to-slate-700 text-gray-900 dark:text-white',
   };
 
   return (
@@ -541,20 +522,20 @@ function PremiumStatCard({
       whileTap={{ scale: onClick ? 0.98 : 1 }}
       onClick={onClick}
       disabled={!onClick}
-      className={`bg-gradient-to-br ${variantClasses[variant]} border-2 rounded-2xl p-5 text-left transition-all shadow-sm hover:shadow-md ${
+      className={`${variantClasses[variant]} rounded-2xl p-5 text-left transition-all shadow-lg hover:shadow-xl ${
         onClick ? 'cursor-pointer' : 'cursor-default'
       }`}
     >
-      <div className={`${iconVariantClasses[variant]} mb-3`}>
+      <div className="opacity-90 mb-3">
         {icon}
       </div>
-      <div className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted)] mb-1">
+      <div className="text-xs font-bold uppercase tracking-wider opacity-90 mb-1">
         {label}
       </div>
-      <div className="text-2xl font-bold text-[var(--color-text)] mb-1">
+      <div className="text-2xl font-bold mb-1">
         {value}
       </div>
-      <div className="text-sm text-[var(--color-muted)] truncate">
+      <div className="text-sm opacity-80 truncate">
         {subValue}
       </div>
     </motion.button>
