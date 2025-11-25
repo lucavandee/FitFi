@@ -43,8 +43,9 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
 
   console.log("[uploadPhoto] Supabase client OK, starting upload...");
 
+  // Use user-photos bucket as workaround (outfit-photos bucket has sync issues)
   const { data, error } = await sb.storage
-    .from("outfit-photos")
+    .from("user-photos")
     .upload(filePath, file, {
       cacheControl: "3600",
       upsert: false,
@@ -57,9 +58,10 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
 
   console.log("[uploadPhoto] Upload successful:", data);
 
-  // For public buckets, construct the URL manually with correct format
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const publicUrl = `${supabaseUrl}/storage/v1/object/public/outfit-photos/${data.path}`;
+  // Construct public URL - user-photos is not public, so we use authenticated URL
+  const {
+    data: { publicUrl },
+  } = sb.storage.from("user-photos").getPublicUrl(data.path);
 
   console.log("[uploadPhoto] Public URL:", publicUrl);
 
