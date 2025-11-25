@@ -84,6 +84,7 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
  * Call Edge Function to analyze photo with OpenAI Vision
  */
 async function callAnalysisAPI(
+  photoBase64: string,
   photoUrl: string,
   userContext?: EnhancedNovaContext
 ): Promise<any> {
@@ -124,6 +125,7 @@ async function callAnalysisAPI(
       apikey: supabaseAnonKey,
     },
     body: JSON.stringify({
+      photoBase64,
       photoUrl,
       userProfile,
     }),
@@ -187,20 +189,29 @@ export async function analyzeOutfitPhoto(
   }
 
   try {
-    // 1. Upload photo
-    console.log("[PhotoAnalysis] Step 1: Uploading photo...");
+    // 1. Convert file to base64 for AI analysis
+    console.log("[PhotoAnalysis] Step 1: Converting to base64...");
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    // 2. Upload photo to storage (for record keeping)
+    console.log("[PhotoAnalysis] Step 2: Uploading photo...");
     const photoUrl = await uploadPhoto(file, user.id);
-    console.log("[PhotoAnalysis] Step 1: Photo uploaded:", photoUrl);
+    console.log("[PhotoAnalysis] Step 2: Photo uploaded:", photoUrl);
 
-    // 2. Analyze with AI
-    console.log("[PhotoAnalysis] Step 2: Calling AI analysis...");
-    const analysisResult = await callAnalysisAPI(photoUrl, userContext);
-    console.log("[PhotoAnalysis] Step 2: AI analysis complete:", analysisResult);
+    // 3. Analyze with AI (using base64)
+    console.log("[PhotoAnalysis] Step 3: Calling AI analysis...");
+    const analysisResult = await callAnalysisAPI(base64, photoUrl, userContext);
+    console.log("[PhotoAnalysis] Step 3: AI analysis complete:", analysisResult);
 
-    // 3. Save to database
-    console.log("[PhotoAnalysis] Step 3: Saving to database...");
+    // 4. Save to database
+    console.log("[PhotoAnalysis] Step 4: Saving to database...");
     const savedAnalysis = await saveAnalysis(user.id, photoUrl, analysisResult);
-    console.log("[PhotoAnalysis] Step 3: Saved successfully:", savedAnalysis);
+    console.log("[PhotoAnalysis] Step 4: Saved successfully:", savedAnalysis);
 
     return savedAnalysis;
   } catch (error) {

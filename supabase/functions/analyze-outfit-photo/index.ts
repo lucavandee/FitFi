@@ -7,7 +7,8 @@ const corsHeaders = {
 };
 
 interface AnalysisRequest {
-  photoUrl: string;
+  photoUrl?: string;
+  photoBase64?: string;
   userProfile?: {
     archetype: string;
     undertone: string;
@@ -28,14 +29,17 @@ Deno.serve(async (req: Request) => {
       throw new Error("OPENAI_API_KEY not configured");
     }
 
-    const { photoUrl, userProfile }: AnalysisRequest = await req.json();
+    const { photoUrl, photoBase64, userProfile }: AnalysisRequest = await req.json();
 
-    if (!photoUrl) {
+    if (!photoUrl && !photoBase64) {
       return new Response(
-        JSON.stringify({ error: "Photo URL is required" }),
+        JSON.stringify({ error: "Photo URL or Base64 is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Use base64 if provided, otherwise use URL
+    const imageData = photoBase64 || photoUrl;
 
     // Build prompt based on user profile
     const profileContext = userProfile
@@ -84,7 +88,7 @@ Wees specifiek en actionable in je feedback.`;
               { type: "text", text: prompt },
               {
                 type: "image_url",
-                image_url: { url: photoUrl },
+                image_url: { url: imageData },
               },
             ],
           },
