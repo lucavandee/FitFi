@@ -53,11 +53,14 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
 
   // Call Edge Function to upload
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
   const response = await fetch(`${supabaseUrl}/functions/v1/upload-outfit-photo`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${session.access_token}`,
+      'apikey': supabaseAnonKey,
     },
     body: JSON.stringify({
       file: base64,
