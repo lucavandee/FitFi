@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import type { EnhancedNovaContext } from "./enhancedUserContext";
 
 export interface PhotoAnalysisResult {
@@ -26,7 +26,12 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
   const filePath = `${userId}/${fileName}`;
 
-  const { data, error } = await supabase.storage
+  const sb = supabase();
+  if (!sb) {
+    throw new Error("Supabase client not initialized");
+  }
+
+  const { data, error } = await sb.storage
     .from("outfit-photos")
     .upload(filePath, file, {
       cacheControl: "3600",
@@ -40,7 +45,7 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
   // Get public URL
   const {
     data: { publicUrl },
-  } = supabase.storage.from("outfit-photos").getPublicUrl(data.path);
+  } = sb.storage.from("outfit-photos").getPublicUrl(data.path);
 
   return publicUrl;
 }
