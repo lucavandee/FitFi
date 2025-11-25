@@ -19,7 +19,7 @@ export interface AnalyzePhotoOptions {
 }
 
 /**
- * Upload photo to Supabase storage
+ * Upload photo via Edge Function (workaround for Storage API bucket sync issues)
  */
 async function uploadPhoto(file: File, userId: string): Promise<string> {
   console.log("[uploadPhoto] Starting upload for user:", userId);
@@ -29,43 +29,52 @@ async function uploadPhoto(file: File, userId: string): Promise<string> {
     type: file.type
   });
 
-  const fileExt = file.name.split(".").pop();
-  const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-  const filePath = `${userId}/${fileName}`;
-
-  console.log("[uploadPhoto] Target path:", filePath);
-
   const sb = supabase();
   if (!sb) {
     console.error("[uploadPhoto] Supabase client is null!");
     throw new Error("Supabase client not initialized");
   }
 
-  console.log("[uploadPhoto] Supabase client OK, starting upload...");
-
-  // Use user-photos bucket as workaround (outfit-photos bucket has sync issues)
-  const { data, error } = await sb.storage
-    .from("user-photos")
-    .upload(filePath, file, {
-      cacheControl: "3600",
-      upsert: false,
-    });
-
-  if (error) {
-    console.error("[uploadPhoto] Upload error:", error);
-    throw new Error(`Failed to upload photo: ${error.message}`);
+  // Get current session for auth token
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error("No active session");
   }
 
-  console.log("[uploadPhoto] Upload successful:", data);
+  // Convert file to base64
+  const base64 = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 
-  // Construct public URL - user-photos is not public, so we use authenticated URL
-  const {
-    data: { publicUrl },
-  } = sb.storage.from("user-photos").getPublicUrl(data.path);
+  console.log("[uploadPhoto] Calling Edge Function...");
 
-  console.log("[uploadPhoto] Public URL:", publicUrl);
+  // Call Edge Function to upload
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const response = await fetch(`${supabaseUrl}/functions/v1/upload-outfit-photo`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({
+      file: base64,
+      filename: file.name,
+    }),
+  });
 
-  return publicUrl;
+  if (!response.ok) {
+    const error = await response.json();
+    console.error("[uploadPhoto] Edge Function error:", error);
+    throw new Error(error.error || "Upload failed");
+  }
+
+  const result = await response.json();
+  console.log("[uploadPhoto] Upload successful:", result);
+
+  return result.url;
 }
 
 /**
