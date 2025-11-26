@@ -51,6 +51,13 @@ export default function AdminUsersPage() {
       setLoading(true);
       const sb = supabase();
 
+      if (!sb) {
+        console.error('[AdminUsers] Supabase client not available - check environment variables');
+        toast.error('Database niet beschikbaar. Controleer of VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY zijn ingesteld.');
+        setLoading(false);
+        return;
+      }
+
       // Call admin function that returns merged user data
       const { data, error } = await sb.rpc('get_admin_users');
 
