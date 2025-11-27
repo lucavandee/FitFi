@@ -15,13 +15,9 @@ import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import { CircularProgressIndicator } from "@/components/quiz/CircularProgressIndicator";
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
-import { QuizMilestoneToast } from "@/components/quiz/QuizMilestoneToast";
-import { useQuizGamification } from "@/hooks/useQuizGamification";
-import { fireConfetti } from "@/utils/confetti";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
-import { NovaOnboardingGuide } from "@/components/quiz/NovaOnboardingGuide";
-import { NovaConversationalPanel } from "@/components/quiz/NovaConversationalPanel";
-import { checkProactiveTriggers, trackNovaInteraction } from "@/utils/novaProactiveTriggers";
+import { NovaInlineReaction } from "@/components/quiz/NovaInlineReaction";
+import { PhaseTransition } from "@/components/quiz/PhaseTransition";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -58,51 +54,14 @@ export default function OnboardingFlowPage() {
     colorProfile: any;
   } | null>(null);
 
-  // Nova state
-  const [novaExpanded, setNovaExpanded] = useState(false);
-  const [showProactiveTrigger, setShowProactiveTrigger] = useState(false);
+  // Nova inline reactions
+  const [showNovaReaction, setShowNovaReaction] = useState(false);
+  const [lastAnsweredField, setLastAnsweredField] = useState<string | null>(null);
 
-  const {
-    showMilestone,
-    showCuriosity,
-    dismissMilestone,
-    dismissCuriosity
-  } = useQuizGamification(currentStep, phase);
+  // Phase transitions
+  const [showTransition, setShowTransition] = useState(false);
+  const [transitionTo, setTransitionTo] = useState<'swipes' | 'calibration' | 'reveal' | null>(null);
 
-  // Check for proactive Nova triggers
-  useEffect(() => {
-    if (phase === 'questions' && !novaExpanded) {
-      const trigger = checkProactiveTriggers(currentStep, answers, phase);
-      if (trigger.shouldTrigger) {
-        setShowProactiveTrigger(true);
-        trackNovaInteraction('proactive_trigger', {
-          reason: trigger.reason,
-          step: currentStep,
-          message: trigger.message
-        });
-
-        // Auto-dismiss after 15 seconds
-        setTimeout(() => setShowProactiveTrigger(false), 15000);
-      }
-    }
-  }, [currentStep, answers, phase, novaExpanded]);
-
-  const handleOpenNovaChat = () => {
-    setNovaExpanded(true);
-    setShowProactiveTrigger(false);
-    trackNovaInteraction('chat_opened', {
-      step: currentStep,
-      phase
-    });
-  };
-
-  const handleCloseNovaChat = () => {
-    setNovaExpanded(false);
-    trackNovaInteraction('chat_closed', {
-      step: currentStep,
-      phase
-    });
-  };
 
   useEffect(() => {
     const stepParam = searchParams.get('step');
@@ -133,6 +92,15 @@ export default function OnboardingFlowPage() {
 
   const handleAnswer = (field: string, value: any) => {
     setAnswers(prev => ({ ...prev, [field]: value }));
+
+    // Show Nova reaction for this answer
+    setLastAnsweredField(field);
+    setShowNovaReaction(true);
+
+    // Auto-hide after 3.5 seconds
+    setTimeout(() => {
+      setShowNovaReaction(false);
+    }, 3500);
   };
 
   const handleMultiSelect = (field: string, value: string) => {
@@ -156,6 +124,8 @@ export default function OnboardingFlowPage() {
   };
 
   const handleNext = () => {
+    setShowNovaReaction(false); // Hide reaction when moving forward
+
     if (currentStep < quizSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
 
@@ -163,9 +133,13 @@ export default function OnboardingFlowPage() {
         setShowEmailCapture(true);
       }
     } else if (phase === 'questions') {
-      setPhase('swipes');
+      // Show transition to swipes
+      setTransitionTo('swipes');
+      setShowTransition(true);
     } else if (phase === 'swipes') {
-      setPhase('calibration');
+      // Show transition to calibration
+      setTransitionTo('calibration');
+      setShowTransition(true);
     } else {
       handleSubmit();
     }
@@ -173,10 +147,19 @@ export default function OnboardingFlowPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleTransitionComplete = () => {
+    setShowTransition(false);
+    if (transitionTo) {
+      setPhase(transitionTo);
+      setTransitionTo(null);
+    }
+  };
+
   const handleSwipesComplete = () => {
     setAnswers(prev => ({ ...prev, visualPreferencesCompleted: true }));
-    setPhase('calibration');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Show transition
+    setTransitionTo('calibration');
+    setShowTransition(true);
   };
 
   const handleCalibrationComplete = () => {
@@ -505,25 +488,6 @@ export default function OnboardingFlowPage() {
 
   return (
     <>
-      {showMilestone && (
-        <QuizMilestoneToast
-          show={true}
-          type={showMilestone.reward.type}
-          message={showMilestone.reward.message}
-          subMessage={showMilestone.reward.subMessage}
-          onComplete={dismissMilestone}
-        />
-      )}
-
-      {showCuriosity && !showMilestone && (
-        <QuizMilestoneToast
-          show={true}
-          type={showCuriosity.type === 'tease' ? 'insight' : showCuriosity.type === 'progress' ? 'preview' : 'unlock'}
-          message={showCuriosity.message}
-          onComplete={dismissCuriosity}
-        />
-      )}
-
       <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
         <Helmet>
           <title>Start je Style Report – FitFi</title>
@@ -538,38 +502,15 @@ export default function OnboardingFlowPage() {
             <span className="text-sm text-gray-600">{Math.round(progress)}% compleet</span>
           </div>
 
-          {/* Progress bar with milestone markers */}
-          <div className="relative h-2 bg-[var(--color-bg)] rounded-full overflow-visible mb-3">
+          {/* Clean progress bar */}
+          <div className="relative h-2 bg-[var(--color-bg)] rounded-full overflow-hidden mb-3">
             <div
               className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out rounded-full"
               style={{ width: `${progress}%` }}
             />
 
-            {/* Milestone markers */}
-            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2">
-              <div className={`w-3 h-3 rounded-full border-2 border-white transition-colors ${progress >= 25 ? 'bg-[var(--ff-color-primary-600)]' : 'bg-gray-300'}`} />
-            </div>
-            <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
-              <div className={`w-3 h-3 rounded-full border-2 border-white transition-colors ${progress >= 50 ? 'bg-[var(--ff-color-primary-600)]' : 'bg-gray-300'}`} />
-            </div>
-            <div className="absolute top-1/2 left-3/4 -translate-y-1/2 -translate-x-1/2">
-              <div className={`w-3 h-3 rounded-full border-2 border-white transition-colors ${progress >= 75 ? 'bg-[var(--ff-color-primary-600)]' : 'bg-gray-300'}`} />
-            </div>
           </div>
 
-          {/* Motivational messaging */}
-          {progress < 30 && (
-            <p className="text-xs text-center text-gray-600">Nog ongeveer 90 seconden...</p>
-          )}
-          {progress >= 30 && progress < 50 && (
-            <p className="text-xs text-center text-gray-600">Je doet het geweldig! Nog {quizSteps.length - currentStep} vragen.</p>
-          )}
-          {progress >= 50 && progress < 70 && (
-            <p className="text-xs text-center font-semibold text-[var(--ff-color-primary-600)]">🎉 Halverwege! Je resultaten komen eraan.</p>
-          )}
-          {progress >= 70 && progress < 100 && (
-            <p className="text-xs text-center font-semibold text-[var(--ff-color-primary-600)]">⚡ Bijna klaar — laatste vragen!</p>
-          )}
         </div>
       </div>
 
@@ -760,6 +701,16 @@ export default function OnboardingFlowPage() {
             )}
           </div>
 
+          {/* Nova Inline Reaction */}
+          {showNovaReaction && lastAnsweredField && answers[lastAnsweredField as keyof QuizAnswers] && (
+            <NovaInlineReaction
+              field={lastAnsweredField}
+              value={answers[lastAnsweredField as keyof QuizAnswers]}
+              allAnswers={answers}
+              onComplete={() => setShowNovaReaction(false)}
+            />
+          )}
+
           {/* Navigation Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
             <button
@@ -801,32 +752,16 @@ export default function OnboardingFlowPage() {
         </div>
       </div>
 
-      {/* Nova Onboarding Guide */}
-      {phase !== 'reveal' && !novaExpanded && (
-        <NovaOnboardingGuide
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-          answers={answers}
-          phase={phase}
-          onOpenChat={handleOpenNovaChat}
-          showProactiveTrigger={showProactiveTrigger}
-        />
-      )}
-
-      {/* Nova Conversational Panel */}
-      {phase !== 'reveal' && (
-        <NovaConversationalPanel
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-          answers={answers}
-          currentQuestion={step}
-          phase={phase}
-          isExpanded={novaExpanded}
-          onToggleExpand={() => setNovaExpanded(!novaExpanded)}
-          onClose={handleCloseNovaChat}
-        />
-      )}
     </main>
+
+      {/* Phase Transition */}
+      {showTransition && transitionTo && (
+        <PhaseTransition
+          fromPhase={phase}
+          toPhase={transitionTo}
+          onContinue={handleTransitionComplete}
+        />
+      )}
     </>
   );
 }
