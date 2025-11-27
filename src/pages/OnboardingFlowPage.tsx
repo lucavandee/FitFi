@@ -89,31 +89,16 @@ export default function OnboardingFlowPage() {
 
   const progress = getProgress();
 
-  const handleAnswer = (field: string, value: any, event?: React.MouseEvent) => {
+  const handleAnswer = (field: string, value: any) => {
     setAnswers(prev => ({ ...prev, [field]: value }));
-
-    if (event) {
-      const rect = (event.target as HTMLElement).getBoundingClientRect();
-      const x = (rect.left + rect.width / 2) / window.innerWidth;
-      const y = (rect.top + rect.height / 2) / window.innerHeight;
-      fireConfetti({ origin: { x, y }, particleCount: 8, spread: 60 });
-    }
   };
 
-  const handleMultiSelect = (field: string, value: string, event?: React.MouseEvent) => {
+  const handleMultiSelect = (field: string, value: string) => {
     setAnswers(prev => {
       const current = (prev[field as keyof QuizAnswers] as string[]) || [];
-      const isAdding = !current.includes(value);
-      const newValue = isAdding
-        ? [...current, value]
-        : current.filter(v => v !== value);
-
-      if (isAdding && event) {
-        const rect = (event.target as HTMLElement).getBoundingClientRect();
-        const x = (rect.left + rect.width / 2) / window.innerWidth;
-        const y = (rect.top + rect.height / 2) / window.innerHeight;
-        fireConfetti({ origin: { x, y }, particleCount: 8, spread: 60 });
-      }
+      const newValue = current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value];
 
       return { ...prev, [field]: newValue };
     });
@@ -601,11 +586,11 @@ export default function OnboardingFlowPage() {
                   return (
                     <button
                       key={option.value}
-                      onClick={(e) => handleMultiSelect(step.field, option.value, e)}
-                      className={`btn-enhanced text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all transform ${
+                      onClick={() => handleMultiSelect(step.field, option.value)}
+                      className={`text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:scale-[1.01]'
+                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
                       }`}
                     >
                       <div className="flex items-start gap-4">
@@ -637,11 +622,11 @@ export default function OnboardingFlowPage() {
                   return (
                     <button
                       key={option.value}
-                      onClick={(e) => handleAnswer(step.field, option.value, e)}
-                      className={`btn-enhanced w-full text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all transform ${
+                      onClick={() => handleAnswer(step.field, option.value)}
+                      className={`w-full text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:scale-[1.01]'
+                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
                       }`}
                     >
                       <div className="flex items-start gap-4">
@@ -738,7 +723,7 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="btn-enhanced btn-secondary-enhanced inline-flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowLeft className="w-5 h-5" />
               Vorige
@@ -747,7 +732,7 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleNext}
               disabled={!canProceed() || isSubmitting}
-              className={`btn-enhanced btn-primary-enhanced inline-flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isSubmitting ? 'loading' : ''}`}
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 'Verwerken...'

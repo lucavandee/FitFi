@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Heart, Wand2, X } from 'lucide-react';
-import { fireConfetti, confettiPresets } from '@/utils/confetti';
 
 interface WelcomeTourProps {
   userName?: string;
@@ -19,8 +18,6 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
     if (hasSeenTour) {
       setIsVisible(false);
       onComplete();
-    } else {
-      fireConfetti(confettiPresets.welcome);
     }
   }, [onComplete]);
 
@@ -162,7 +159,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
                   )}
                   <button
                     onClick={handleNext}
-                    className="btn-enhanced btn-primary-enhanced flex-1 px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                    className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
                   >
                     {step === 'complete' ? 'Start Browsen!' : 'Volgende'}
                   </button>

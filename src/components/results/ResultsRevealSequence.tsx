@@ -10,7 +10,7 @@ interface ResultsRevealSequenceProps {
   onComplete: () => void;
 }
 
-type RevealStage = 'loading' | 'archetypeReveal' | 'confetti' | 'shareCard' | 'complete';
+type RevealStage = 'loading' | 'archetypeReveal' | 'shareCard' | 'complete';
 
 export function ResultsRevealSequence({
   archetype,
@@ -61,15 +61,9 @@ export function ResultsRevealSequence({
 
     if (stage === 'archetypeReveal') {
       setTimeout(() => {
-        setStage('confetti');
-        fireConfetti(confettiPresets.achievement);
-        setTimeout(() => fireConfetti({ origin: { x: 0.3, y: 0.5 } }), 200);
-        setTimeout(() => fireConfetti({ origin: { x: 0.7, y: 0.5 } }), 400);
+        setStage('shareCard');
+        fireConfetti({ particleCount: 30, spread: 60, startVelocity: 20 });
       }, 2500);
-    }
-
-    if (stage === 'confetti') {
-      setTimeout(() => setStage('shareCard'), 1500);
     }
 
     if (stage === 'shareCard') {
@@ -237,7 +231,7 @@ export function ResultsRevealSequence({
           </motion.div>
         )}
 
-        {(stage === 'confetti' || stage === 'shareCard') && (
+        {stage === 'shareCard' && (
           <motion.div
             key="share"
             initial={{ opacity: 0 }}
@@ -289,14 +283,14 @@ export function ResultsRevealSequence({
                         navigator.share({ text, url: window.location.origin });
                       }
                     }}
-                    className="btn-enhanced flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
                     Delen
                   </button>
                   <button
                     onClick={onComplete}
-                    className="btn-enhanced btn-secondary-enhanced flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-colors"
                   >
                     Bekijk Outfits
                   </button>
