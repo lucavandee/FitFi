@@ -70,8 +70,22 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
 
       console.log('[PhotoUpload] Uploading to user-photos bucket:', filePath);
 
-      // Upload directly to storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      // CRITICAL: Create a fresh anonymous client to avoid using cached expired sessions
+      // The default supabase client might have a persisted session from localStorage
+      // that is expired/invalid, causing RLS policy violations
+      const anonClient = await import('@supabase/supabase-js').then(({ createClient }) => {
+        const url = import.meta.env.VITE_SUPABASE_URL;
+        const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        return createClient(url, key, {
+          auth: {
+            persistSession: false, // Don't use any stored session
+            autoRefreshToken: false,
+          }
+        });
+      });
+
+      // Upload directly to storage using the anonymous client
+      const { data: uploadData, error: uploadError } = await anonClient.storage
         .from('user-photos')
         .upload(filePath, file, {
           contentType: file.type,
@@ -84,8 +98,8 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
         throw new Error(uploadError.message || 'Upload failed');
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      // Get public URL using the same anonymous client
+      const { data: { publicUrl } } = anonClient.storage
         .from('user-photos')
         .getPublicUrl(uploadData.path);
 
