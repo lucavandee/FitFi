@@ -82,9 +82,10 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         'apikey': supabaseAnonKey,
+        'X-Session-Id': sessionId,
       };
 
-      // Add auth token if available
+      // Add auth token if available (optional for anonymous users)
       if (authToken) {
         headers['Authorization'] = `Bearer ${authToken}`;
       }

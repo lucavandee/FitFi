@@ -17,13 +17,21 @@ export function NovaInlineReaction({ field, value, allAnswers, onComplete }: Nov
   } | null>(null);
 
   useEffect(() => {
+    // Only show reactions for KEY questions to reduce noise
+    const keyFields = ['gender', 'stylePreferences', 'occasions', 'budgetRange', 'photoUrl'];
+
+    if (!keyFields.includes(field)) {
+      onComplete?.();
+      return;
+    }
+
     const r = getReactionForAnswer(field, value, allAnswers);
     setReaction(r);
 
-    // Auto-complete after 3 seconds
+    // Auto-complete after 2.5 seconds
     const timer = setTimeout(() => {
       onComplete?.();
-    }, 3000);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, [field, value]);
