@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
 import { Sparkles, Loader2 } from 'lucide-react';
@@ -27,7 +27,6 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [isCompleting, setIsCompleting] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -78,7 +77,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         }
       }
 
-      console.log(`Loaded ${photos.length} mood photos`);
+      console.log(`✅ Loaded ${photos.length} mood photos for ${genderForQuery}`);
       setMoodPhotos(photos);
       setLoading(false);
     } catch (err) {
@@ -89,7 +88,9 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
     const currentPhoto = moodPhotos[currentIndex];
-    if (!currentPhoto || isCompleting) return;
+    if (!currentPhoto || showCelebration) return;
+
+    console.log(`📸 Swipe #${swipeCount + 1}/${moodPhotos.length} → ${direction}`);
 
     const newSwipeCount = swipeCount + 1;
     const isLastSwipe = newSwipeCount >= moodPhotos.length;
@@ -121,20 +122,21 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       console.warn('Failed to save swipe:', err);
     }
 
-    // Check if we're done BEFORE moving index
+    // Check if we're done
     if (isLastSwipe) {
-      console.log('🎉 All swipes complete! Navigating to next step...');
-      setIsCompleting(true);
+      console.log('🎉 ALL SWIPES COMPLETE! Starting celebration...');
       setShowCelebration(true);
+
       setTimeout(() => {
+        console.log('✅ Celebration done, calling onComplete()');
         setShowCelebration(false);
-        console.log('✅ Calling onComplete()');
         onComplete();
-      }, 2000);
-      return; // CRITICAL: Stop here, don't increment index
+      }, 2500);
+
+      return;
     }
 
-    // Move to next photo (only if NOT last swipe)
+    // Move to next photo
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
     }, 100);
@@ -167,27 +169,35 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)]">
-      {/* Celebration Overlay */}
+      {/* Celebration Overlay - ALWAYS on top */}
       <AnimatePresence>
         {showCelebration && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md"
+            style={{ pointerEvents: 'none' }}
           >
-            <div className="text-center">
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              className="text-center"
+            >
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                className="text-6xl mb-4"
+                animate={{
+                  rotate: [0, 10, -10, 10, 0],
+                  scale: [1, 1.1, 1, 1.1, 1]
+                }}
+                transition={{ duration: 0.6, repeat: 2 }}
+                className="text-8xl mb-6"
               >
                 🎉
               </motion.div>
-              <h3 className="text-2xl font-bold text-white mb-2">Perfect!</h3>
-              <p className="text-white/80">Je stijlprofiel is compleet!</p>
-            </div>
+              <h3 className="text-3xl font-bold text-white mb-3">Perfect!</h3>
+              <p className="text-xl text-white/90">Je stijlprofiel is compleet!</p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -225,7 +235,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       {/* Swipe Area */}
       <div className="flex-1 flex items-center justify-center px-4 min-h-0">
         <AnimatePresence mode="wait">
-          {currentPhoto && !isCompleting && (
+          {currentPhoto && (
             <SwipeCard
               key={currentPhoto.id}
               imageUrl={currentPhoto.image_url}
