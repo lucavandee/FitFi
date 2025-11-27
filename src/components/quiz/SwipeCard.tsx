@@ -66,7 +66,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             : {}
         }
         whileTap={{ scale: 1.02, cursor: 'grabbing' }}
-        className="absolute w-full max-w-[360px] h-[520px] sm:h-[580px] cursor-grab active:cursor-grabbing"
+        className="absolute w-full max-w-[340px] sm:max-w-[360px] h-[500px] sm:h-[580px] cursor-grab active:cursor-grabbing"
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
           <img

@@ -339,6 +339,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
     if (currentIndex < moodPhotos.length - 1) {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 100);
     } else {
       // All photos swiped - complete!
@@ -507,7 +508,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         </div>
       </motion.div>
 
-      <div className="relative h-[620px]">
+      <div className="relative h-[540px] sm:h-[600px]">
         <AnimatePresence mode="wait">
           {currentPhoto && (
             <SwipeCard

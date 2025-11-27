@@ -110,11 +110,14 @@ export default function OnboardingFlowPage() {
     } else {
       handleSubmit();
     }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSwipesComplete = () => {
     setAnswers(prev => ({ ...prev, visualPreferencesCompleted: true }));
     setPhase('calibration');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCalibrationComplete = () => {
@@ -131,6 +134,7 @@ export default function OnboardingFlowPage() {
     } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const saveQuizAnswersIndividually = async (
