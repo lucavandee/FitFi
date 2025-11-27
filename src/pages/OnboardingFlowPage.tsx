@@ -9,7 +9,7 @@ import { computeResult } from "@/lib/quiz/logic";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
-import { VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStep";
+import { VisualPreferenceStepClean as VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStepClean";
 import { CalibrationStep } from "@/components/quiz/CalibrationStep";
 import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
@@ -493,9 +493,7 @@ export default function OnboardingFlowPage() {
         </motion.div>
 
         <VisualPreferenceStep
-          sessionId={sessionId}
           onComplete={handleSwipesComplete}
-          onBack={handleBack}
           userGender={answers.gender as 'male' | 'female' | 'non-binary' | 'prefer-not-to-say'}
         />
       </motion.main>
