@@ -8,6 +8,7 @@ import {
 import Button from "@/components/ui/Button";
 import Seo from "@/components/seo/Seo";
 import { useUser } from "@/context/UserContext";
+import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
 
 /** Email validation */
@@ -178,6 +179,15 @@ const RegisterPage: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Social Login Buttons */}
+            <SocialLoginButtons
+              mode="register"
+              onSuccess={() => {
+                toast.success('Account succesvol aangemaakt!');
+                navigate('/onboarding');
+              }}
+            />
 
             {/* Name Field */}
             <div>

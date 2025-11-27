@@ -4,6 +4,8 @@ import Button from "@/components/ui/Button";
 import Seo from "@/components/seo/Seo";
 import { Eye, EyeOff, AlertCircle, CheckCircle2, Mail, Sparkles, Shield, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
+import toast from "react-hot-toast";
 
 /** Email validation */
 function isEmail(v: string) {
@@ -185,6 +187,15 @@ export default function LoginPage() {
                 </div>
               </div>
             )}
+
+            {/* Social Login Buttons */}
+            <SocialLoginButtons
+              mode="login"
+              onSuccess={() => {
+                toast.success('Welkom terug!');
+                nav(fromPath || '/dashboard');
+              }}
+            />
 
             {/* Email Field */}
             <div>
