@@ -268,8 +268,17 @@ export default function OnboardingFlowPage() {
         }
       }
 
-      // ✅ GENERATE COMPLETE STYLE PROFILE FROM QUIZ + SWIPES
+      // ✅ GENERATE COMPLETE STYLE PROFILE FROM QUIZ + SWIPES + PHOTO
       console.log('[OnboardingFlow] Generating style profile from quiz + swipes...');
+
+      // Get uploaded photo from localStorage
+      const photoUrl = localStorage.getItem('ff_onboarding_photo_url');
+      const photoAnalysis = localStorage.getItem('ff_onboarding_photo_analysis');
+
+      if (photoUrl) {
+        console.log('[OnboardingFlow] Photo uploaded during onboarding:', photoUrl);
+      }
+
       let colorProfile: any;
       let archetype: any;
       let profileResult: any;
@@ -283,6 +292,22 @@ export default function OnboardingFlowPage() {
 
         colorProfile = profileResult.colorProfile;
         archetype = profileResult.archetype;
+
+        // Enhance color profile with photo analysis if available
+        if (photoAnalysis) {
+          try {
+            const analysis = JSON.parse(photoAnalysis);
+            colorProfile = {
+              ...colorProfile,
+              photoAnalysis: analysis,
+              undertone: analysis.undertone || colorProfile.undertone,
+              seasonalType: analysis.seasonal_type || colorProfile.seasonalType
+            };
+            console.log('[OnboardingFlow] Enhanced color profile with photo analysis');
+          } catch (e) {
+            console.warn('[OnboardingFlow] Failed to parse photo analysis:', e);
+          }
+        }
 
         console.log('[OnboardingFlow] ✅ Style profile generated:', {
           archetype: profileResult.archetype,

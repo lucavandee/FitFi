@@ -13,6 +13,8 @@ import { generateQuickOutfit } from '@/services/visualPreferences/quickOutfitGen
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
 import type { QuickOutfit } from '@/services/visualPreferences/quickOutfitGenerator';
 
+const MAX_SWIPES = 15;
+
 interface VisualPreferenceStepProps {
   onComplete: () => void;
   onSwipe?: (photoId: number, direction: 'left' | 'right') => void;
@@ -74,7 +76,8 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         .select('*')
         .eq('active', true)
         .eq('gender', genderForQuery)
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: true })
+        .limit(MAX_SWIPES);
 
       if (error) {
         console.error('❌ Error fetching mood photos:', error);
@@ -91,8 +94,8 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         photos = photos.filter(p => p.gender === genderForQuery);
       }
 
-      if (photos.length < 10) {
-        console.warn(`⚠️ Only ${photos.length} photos for ${genderForQuery} - NEED MORE CONTENT!`);
+      if (photos.length < MAX_SWIPES) {
+        console.warn(`⚠️ Only ${photos.length} photos for ${genderForQuery} - adding unisex`);
 
         const { data: unisexData } = await client
           .from('mood_photos')
@@ -100,7 +103,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
           .eq('active', true)
           .eq('gender', 'unisex')
           .order('display_order', { ascending: true })
-          .limit(10 - photos.length);
+          .limit(MAX_SWIPES - photos.length);
 
         if (unisexData && unisexData.length > 0) {
           console.log(`📦 Adding ${unisexData.length} unisex photos as fallback`);
@@ -407,7 +410,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-lg mx-auto px-4 py-8"
+      className="max-w-lg mx-auto px-4 h-screen flex flex-col overflow-hidden"
     >
       <AnimatePresence>
         {novaInsight && (
@@ -473,7 +476,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="text-center mb-8"
+        className="text-center mb-4 sm:mb-6 flex-shrink-0"
       >
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -492,11 +495,11 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
           </span>
         </motion.div>
 
-        <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+        <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-2">
           Welke stijl spreekt je aan?
         </h2>
-        <p className="text-[var(--color-muted)] max-w-md mx-auto">
-          Swipe door 10 outfits. Dit helpt Nova om precies te begrijpen wat jouw perfecte stijl is.
+        <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-md mx-auto">
+          Swipe door {moodPhotos.length} outfits. Dit helpt Nova om precies te begrijpen wat jouw perfecte stijl is.
         </p>
 
         <div className="mt-6 max-w-xs mx-auto">
@@ -519,7 +522,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         </div>
       </motion.div>
 
-      <div className="relative h-[540px] sm:h-[600px]">
+      <div className="relative flex-1 flex items-center justify-center min-h-0">
         <AnimatePresence mode="wait">
           {currentPhoto && (
             <SwipeCard
@@ -537,7 +540,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="text-center mt-8 space-y-3"
+        className="text-center mt-4 space-y-2 flex-shrink-0 pb-4"
       >
         <div className="flex items-center justify-center gap-6 text-sm text-[var(--color-muted)]">
           <div className="flex items-center gap-2">
