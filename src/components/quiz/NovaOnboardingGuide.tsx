@@ -8,6 +8,7 @@ interface NovaOnboardingGuideProps {
   answers: Record<string, any>;
   phase: 'questions' | 'swipes' | 'calibration';
   onOpenChat?: () => void;
+  showProactiveTrigger?: boolean;
 }
 
 export function NovaOnboardingGuide({
@@ -15,7 +16,8 @@ export function NovaOnboardingGuide({
   totalSteps,
   answers,
   phase,
-  onOpenChat
+  onOpenChat,
+  showProactiveTrigger = false
 }: NovaOnboardingGuideProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -163,12 +165,16 @@ export function NovaOnboardingGuide({
           )}
 
           {/* CTA for questions */}
-          {onOpenChat && phase === 'questions' && currentStep > 2 && (
+          {onOpenChat && (
             <button
               onClick={onOpenChat}
-              className="mt-3 w-full text-xs py-2 px-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 transition-colors text-[var(--color-text)]/70 hover:text-[var(--color-text)]"
+              className={`mt-3 w-full text-xs py-2 px-3 rounded-[var(--radius-lg)] border transition-colors ${
+                showProactiveTrigger
+                  ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium animate-pulse'
+                  : 'border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 text-[var(--color-text)]/70 hover:text-[var(--color-text)]'
+              }`}
             >
-              💬 Stel me een vraag
+              {showProactiveTrigger ? '✨ Ik heb een tip voor je!' : '💬 Stel me een vraag'}
             </button>
           )}
         </div>

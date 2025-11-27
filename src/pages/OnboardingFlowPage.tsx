@@ -20,6 +20,8 @@ import { useQuizGamification } from "@/hooks/useQuizGamification";
 import { fireConfetti } from "@/utils/confetti";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import { NovaOnboardingGuide } from "@/components/quiz/NovaOnboardingGuide";
+import { NovaConversationalPanel } from "@/components/quiz/NovaConversationalPanel";
+import { checkProactiveTriggers, trackNovaInteraction } from "@/utils/novaProactiveTriggers";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -56,12 +58,51 @@ export default function OnboardingFlowPage() {
     colorProfile: any;
   } | null>(null);
 
+  // Nova state
+  const [novaExpanded, setNovaExpanded] = useState(false);
+  const [showProactiveTrigger, setShowProactiveTrigger] = useState(false);
+
   const {
     showMilestone,
     showCuriosity,
     dismissMilestone,
     dismissCuriosity
   } = useQuizGamification(currentStep, phase);
+
+  // Check for proactive Nova triggers
+  useEffect(() => {
+    if (phase === 'questions' && !novaExpanded) {
+      const trigger = checkProactiveTriggers(currentStep, answers, phase);
+      if (trigger.shouldTrigger) {
+        setShowProactiveTrigger(true);
+        trackNovaInteraction('proactive_trigger', {
+          reason: trigger.reason,
+          step: currentStep,
+          message: trigger.message
+        });
+
+        // Auto-dismiss after 15 seconds
+        setTimeout(() => setShowProactiveTrigger(false), 15000);
+      }
+    }
+  }, [currentStep, answers, phase, novaExpanded]);
+
+  const handleOpenNovaChat = () => {
+    setNovaExpanded(true);
+    setShowProactiveTrigger(false);
+    trackNovaInteraction('chat_opened', {
+      step: currentStep,
+      phase
+    });
+  };
+
+  const handleCloseNovaChat = () => {
+    setNovaExpanded(false);
+    trackNovaInteraction('chat_closed', {
+      step: currentStep,
+      phase
+    });
+  };
 
   useEffect(() => {
     const stepParam = searchParams.get('step');
@@ -761,12 +802,28 @@ export default function OnboardingFlowPage() {
       </div>
 
       {/* Nova Onboarding Guide */}
-      {phase !== 'reveal' && (
+      {phase !== 'reveal' && !novaExpanded && (
         <NovaOnboardingGuide
           currentStep={currentStep}
           totalSteps={totalSteps}
           answers={answers}
           phase={phase}
+          onOpenChat={handleOpenNovaChat}
+          showProactiveTrigger={showProactiveTrigger}
+        />
+      )}
+
+      {/* Nova Conversational Panel */}
+      {phase !== 'reveal' && (
+        <NovaConversationalPanel
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+          answers={answers}
+          currentQuestion={step}
+          phase={phase}
+          isExpanded={novaExpanded}
+          onToggleExpand={() => setNovaExpanded(!novaExpanded)}
+          onClose={handleCloseNovaChat}
         />
       )}
     </main>
