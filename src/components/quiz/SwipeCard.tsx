@@ -47,7 +47,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
   };
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
+    <div className="relative w-full h-full flex flex-col items-center justify-center">
       <motion.div
         ref={cardRef}
         style={{ x, rotate, opacity, scale }}
@@ -66,7 +66,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             : {}
         }
         whileTap={{ scale: 1.02, cursor: 'grabbing' }}
-        className="absolute w-full max-w-[340px] sm:max-w-[360px] h-[500px] sm:h-[580px] cursor-grab active:cursor-grabbing"
+        className="w-full max-w-[340px] sm:max-w-[360px] h-[420px] sm:h-[480px] cursor-grab active:cursor-grabbing flex-shrink-0"
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
           <img
@@ -112,7 +112,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex gap-4 sm:gap-6 z-10"
+        className="flex gap-4 sm:gap-6 z-10 mt-6 sm:mt-8 flex-shrink-0"
       >
         <motion.button
           onClick={() => handleButtonClick('left')}

@@ -247,29 +247,28 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
 
     analyzerRef.current.addSwipe(currentPhoto, swipeRecord);
 
+    // Save swipe to database (fire-and-forget, don't block UX)
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
 
-      if (!client) {
+      if (client) {
+        const sessionId = sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID();
+
+        if (!sessionStorage.getItem('fitfi_session_id')) {
+          sessionStorage.setItem('fitfi_session_id', sessionId);
+        }
+
+        await client.from('style_swipes').insert({
+          user_id: user?.id || null,
+          session_id: !user ? sessionId : null,
+          mood_photo_id: currentPhoto.id,
+          swipe_direction: direction,
+          response_time_ms: responseTimeMs
+        });
+      } else {
         console.warn('⚠️ Swipe not saved - Supabase unavailable (will work locally)');
-        onSwipe?.(currentPhoto.id, direction);
-        return;
       }
-
-      const sessionId = sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID();
-
-      if (!sessionStorage.getItem('fitfi_session_id')) {
-        sessionStorage.setItem('fitfi_session_id', sessionId);
-      }
-
-      await client.from('style_swipes').insert({
-        user_id: user?.id || null,
-        session_id: !user ? sessionId : null,
-        mood_photo_id: currentPhoto.id,
-        swipe_direction: direction,
-        response_time_ms: responseTimeMs
-      });
 
       onSwipe?.(currentPhoto.id, direction);
     } catch (err) {
