@@ -64,7 +64,7 @@ export function QuizMilestoneToast({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -50, scale: 0.9 }}
           transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4"
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-md px-4"
         >
           <div className={`
             bg-gradient-to-r ${getGradient()}
@@ -77,11 +77,11 @@ export function QuizMilestoneToast({
                 {getIcon()}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-white text-lg leading-tight">
+                <h3 className="font-bold text-white text-lg leading-tight break-words">
                   {message}
                 </h3>
                 {subMessage && (
-                  <p className="text-white/90 text-sm mt-1 leading-tight">
+                  <p className="text-white/90 text-sm mt-1 leading-tight break-words">
                     {subMessage}
                   </p>
                 )}
