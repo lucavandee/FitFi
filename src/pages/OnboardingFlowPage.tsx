@@ -581,11 +581,11 @@ export default function OnboardingFlowPage() {
                   return (
                     <button
                       key={option.value}
-                      onClick={() => handleMultiSelect(step.field, option.value)}
-                      className={`text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all ${
+                      onClick={(e) => handleMultiSelect(step.field, option.value, e)}
+                      className={`btn-enhanced text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all transform ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
+                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:scale-[1.01]'
                       }`}
                     >
                       <div className="flex items-start gap-4">
@@ -617,11 +617,11 @@ export default function OnboardingFlowPage() {
                   return (
                     <button
                       key={option.value}
-                      onClick={() => handleAnswer(step.field, option.value)}
-                      className={`w-full text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all ${
+                      onClick={(e) => handleAnswer(step.field, option.value, e)}
+                      className={`btn-enhanced w-full text-left p-6 rounded-[var(--radius-2xl)] border-2 transition-all transform ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
+                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:scale-[1.01]'
                       }`}
                     >
                       <div className="flex items-start gap-4">
@@ -718,7 +718,7 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-enhanced btn-secondary-enhanced inline-flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-[var(--color-border)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowLeft className="w-5 h-5" />
               Vorige
@@ -727,7 +727,7 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleNext}
               disabled={!canProceed() || isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`btn-enhanced btn-primary-enhanced inline-flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isSubmitting ? 'loading' : ''}`}
             >
               {isSubmitting ? (
                 'Verwerken...'
