@@ -53,16 +53,12 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
     const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
     localStorage.setItem('ff_session_id', sessionId);
 
-    // Check if user is authenticated (optional)
-    let userId: string | null = null;
+    // IMPORTANT: For onboarding, ALWAYS use anonymous upload
+    // This avoids RLS issues with expired/invalid sessions
+    // Profile page uses authenticated upload instead
+    const userId: string | null = null; // Force anonymous for onboarding
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      userId = user?.id || null;
-    } catch {
-      // User not authenticated - continue with anonymous upload
-      console.log('[PhotoUpload] No user authenticated, continuing as anonymous');
-    }
+    console.log('[PhotoUpload] Using anonymous upload for onboarding (sessionId:', sessionId, ')');
 
     // DIRECT UPLOAD TO SUPABASE STORAGE
     setUploading(true);
@@ -70,7 +66,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = userId ? `${userId}/${fileName}` : `anon_${sessionId}/${fileName}`;
+      const filePath = `anon_${sessionId}/${fileName}`; // Always anonymous for onboarding
 
       console.log('[PhotoUpload] Uploading to user-photos bucket:', filePath);
 
@@ -95,20 +91,8 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
 
       console.log('[PhotoUpload] Upload successful:', publicUrl);
 
-      // Save photo URL to style_profiles if user is authenticated
-      if (userId) {
-        const { error: updateError } = await supabase
-          .from("style_profiles")
-          .update({ photo_url: publicUrl })
-          .eq("user_id", userId);
-
-        if (updateError) {
-          console.error("Failed to save photo URL:", updateError);
-        }
-      } else {
-        // Store photo URL in localStorage for anonymous users
-        localStorage.setItem('ff_onboarding_photo_url', publicUrl);
-      }
+      // Store photo URL in localStorage (onboarding always uses localStorage)
+      localStorage.setItem('ff_onboarding_photo_url', publicUrl);
 
       setUploading(false);
       setError(null);
@@ -121,8 +105,8 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             photoUrl: publicUrl,
-            userId: userId || sessionId,
-            isAnonymous: !userId
+            userId: sessionId, // Always use sessionId for onboarding
+            isAnonymous: true // Onboarding is always anonymous
           }),
         });
 
@@ -133,10 +117,8 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
         const analysisData: ColorAnalysis = await analysisResponse.json();
         setAnalysis(analysisData);
 
-        // Store analysis for anonymous users
-        if (!userId) {
-          localStorage.setItem('ff_onboarding_photo_analysis', JSON.stringify(analysisData));
-        }
+        // Store analysis in localStorage (onboarding always uses localStorage)
+        localStorage.setItem('ff_onboarding_photo_analysis', JSON.stringify(analysisData));
 
         if (onAnalysisComplete) {
           onAnalysisComplete(analysisData);
