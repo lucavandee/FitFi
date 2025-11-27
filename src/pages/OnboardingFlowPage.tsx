@@ -15,6 +15,8 @@ import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import { CircularProgressIndicator } from "@/components/quiz/CircularProgressIndicator";
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
+import { QuizMilestoneToast } from "@/components/quiz/QuizMilestoneToast";
+import { useQuizGamification } from "@/hooks/useQuizGamification";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -45,6 +47,13 @@ export default function OnboardingFlowPage() {
   const [emailCaptured, setEmailCaptured] = useState(() => {
     return !!localStorage.getItem('ff_email_captured');
   });
+
+  const {
+    showMilestone,
+    showCuriosity,
+    dismissMilestone,
+    dismissCuriosity
+  } = useQuizGamification(currentStep, phase);
 
   useEffect(() => {
     const stepParam = searchParams.get('step');
@@ -431,11 +440,31 @@ export default function OnboardingFlowPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Helmet>
-        <title>Start je Style Report – FitFi</title>
-        <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
-      </Helmet>
+    <>
+      {showMilestone && (
+        <QuizMilestoneToast
+          show={true}
+          type={showMilestone.reward.type}
+          message={showMilestone.reward.message}
+          subMessage={showMilestone.reward.subMessage}
+          onComplete={dismissMilestone}
+        />
+      )}
+
+      {showCuriosity && !showMilestone && (
+        <QuizMilestoneToast
+          show={true}
+          type={showCuriosity.type === 'tease' ? 'insight' : showCuriosity.type === 'progress' ? 'preview' : 'unlock'}
+          message={showCuriosity.message}
+          onComplete={dismissCuriosity}
+        />
+      )}
+
+      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+        <Helmet>
+          <title>Start je Style Report – FitFi</title>
+          <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
+        </Helmet>
 
       {/* Progress Bar with Milestones */}
       <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
@@ -708,5 +737,6 @@ export default function OnboardingFlowPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }
