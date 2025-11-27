@@ -25,6 +25,8 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import { RefineStyleWidget } from "@/components/dashboard/RefineStyleWidget";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { WelcomeTour } from "@/components/dashboard/WelcomeTour";
+import { NovaContextualBubble } from "@/components/nova/NovaContextualBubble";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import toast from "react-hot-toast";
@@ -70,6 +72,8 @@ export default function DashboardPage() {
   const [showSuccessBanner, setShowSuccessBanner] = React.useState(false);
   const queryClient = useQueryClient();
   const [userName, setUserName] = React.useState<string>("");
+  const [showWelcomeTour, setShowWelcomeTour] = React.useState(false);
+  const [showNovaBubble, setShowNovaBubble] = React.useState(false);
   const { context: novaContext } = useEnhancedNova();
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
@@ -95,7 +99,21 @@ export default function DashboardPage() {
         console.warn('[Dashboard] Failed to get user:', err);
       });
     }
-  }, []);
+
+    const hasSeenWelcome = localStorage.getItem('ff_welcome_tour_completed');
+    if (!hasSeenWelcome && hasQuizData) {
+      setShowWelcomeTour(true);
+    }
+  }, [hasQuizData]);
+
+  React.useEffect(() => {
+    if (!showWelcomeTour && hasQuizData) {
+      const timer = setTimeout(() => {
+        setShowNovaBubble(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcomeTour, hasQuizData]);
 
   const ts = React.useMemo(() => {
     try {
@@ -198,6 +216,23 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
       <OnboardingTour />
+
+      {showWelcomeTour && (
+        <WelcomeTour
+          userName={userName}
+          onComplete={() => setShowWelcomeTour(false)}
+        />
+      )}
+
+      {showNovaBubble && (
+        <NovaContextualBubble
+          context="dashboard"
+          onInteract={() => {
+            setShowNovaBubble(false);
+            navigate('/dashboard?nova=true');
+          }}
+        />
+      )}
 
       <Helmet>
         <title>Dashboard - FitFi</title>

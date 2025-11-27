@@ -4,6 +4,7 @@ import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
 import { StyleDNAVisualizer } from './StyleDNAVisualizer';
 import { LiveOutfitPreview } from './LiveOutfitPreview';
+import { SwipeFeedback } from './SwipeFeedback';
 import { Sparkles, Loader2, SkipForward, RotateCcw, PartyPopper } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
@@ -34,6 +35,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   const [hasAdapted, setHasAdapted] = useState(false);
   const [previewOutfit, setPreviewOutfit] = useState<QuickOutfit | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [lastSwipeDirection, setLastSwipeDirection] = useState<'left' | 'right' | null>(null);
   const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
@@ -220,6 +222,9 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
+
+    setLastSwipeDirection(direction);
+    setTimeout(() => setLastSwipeDirection(null), 600);
 
     const newSwipeCount = swipeCount + 1;
     setSwipeCount(newSwipeCount);
@@ -456,6 +461,12 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         outfit={previewOutfit}
         isVisible={showPreview}
         swipeCount={swipeCount}
+      />
+
+      <SwipeFeedback
+        direction={lastSwipeDirection}
+        swipeCount={swipeCount}
+        onAnimationComplete={() => setLastSwipeDirection(null)}
       />
 
       <motion.div

@@ -18,6 +18,7 @@ import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTr
 import { QuizMilestoneToast } from "@/components/quiz/QuizMilestoneToast";
 import { useQuizGamification } from "@/hooks/useQuizGamification";
 import { fireConfetti } from "@/utils/confetti";
+import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -34,7 +35,7 @@ type QuizAnswers = {
   calibrationCompleted?: boolean;
 };
 
-type QuizPhase = 'questions' | 'swipes' | 'calibration';
+type QuizPhase = 'questions' | 'swipes' | 'calibration' | 'reveal';
 
 export default function OnboardingFlowPage() {
   const navigate = useNavigate();
@@ -48,6 +49,11 @@ export default function OnboardingFlowPage() {
   const [emailCaptured, setEmailCaptured] = useState(() => {
     return !!localStorage.getItem('ff_email_captured');
   });
+  const [revealData, setRevealData] = useState<{
+    archetype: string;
+    archetypeDescription: string;
+    colorProfile: any;
+  } | null>(null);
 
   const {
     showMilestone,
@@ -359,9 +365,12 @@ export default function OnboardingFlowPage() {
 
       localStorage.setItem('ff_sync_status', syncSuccess ? 'synced' : 'pending');
 
-      setTimeout(() => {
-        navigate('/results');
-      }, 500);
+      setRevealData({
+        archetype: archetype || 'Balanced Minimalist',
+        archetypeDescription: 'Jouw stijl combineert eenvoud met elegantie. Je waardeert kwaliteit boven kwantiteit.',
+        colorProfile: colorProfile
+      });
+      setPhase('reveal');
     } catch (error) {
       console.error('❌ [OnboardingFlow] Error in handleSubmit:', error);
       toast.error('Er ging iets mis. Je resultaten zijn wel lokaal opgeslagen.');
@@ -369,6 +378,17 @@ export default function OnboardingFlowPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (phase === 'reveal' && revealData) {
+    return (
+      <ResultsRevealSequence
+        archetype={revealData.archetype}
+        archetypeDescription={revealData.archetypeDescription}
+        colorProfile={revealData.colorProfile}
+        onComplete={() => navigate('/results')}
+      />
+    );
+  }
 
   if (phase === 'swipes') {
     return (
