@@ -19,6 +19,7 @@ import { QuizMilestoneToast } from "@/components/quiz/QuizMilestoneToast";
 import { useQuizGamification } from "@/hooks/useQuizGamification";
 import { fireConfetti } from "@/utils/confetti";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
+import { NovaOnboardingGuide } from "@/components/quiz/NovaOnboardingGuide";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -758,6 +759,16 @@ export default function OnboardingFlowPage() {
           )}
         </div>
       </div>
+
+      {/* Nova Onboarding Guide */}
+      {phase !== 'reveal' && (
+        <NovaOnboardingGuide
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+          answers={answers}
+          phase={phase}
+        />
+      )}
     </main>
     </>
   );

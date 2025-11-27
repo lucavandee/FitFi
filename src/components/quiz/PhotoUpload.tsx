@@ -49,64 +49,120 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
     reader.onload = () => onChange((reader.result as string) || null);
     reader.readAsDataURL(file);
 
-    // Get current user
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      setError("Je moet ingelogd zijn om een foto te uploaden");
-      return;
+    // Get session ID (works for both logged-in and anonymous users)
+    const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
+    localStorage.setItem('ff_session_id', sessionId);
+
+    // Check if user is authenticated (optional)
+    let userId: string | null = null;
+    let authToken: string | null = null;
+
+    try {
+      const { data: { user, session } } = await supabase.auth.getUser();
+      userId = user?.id || null;
+      authToken = session?.access_token || null;
+    } catch {
+      // User not authenticated - continue with anonymous upload
     }
 
-    // Upload to Supabase Storage
+    // Upload via Edge Function (works for both authenticated and anonymous)
     setUploading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${user.id}/selfie-${Date.now()}.${fileExt}`;
+      // Convert file to base64
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("user-photos")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      if (uploadError) throw uploadError;
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'apikey': supabaseAnonKey,
+      };
 
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("user-photos").getPublicUrl(fileName);
+      // Add auth token if available
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
 
-      // Save photo URL to style_profiles
-      const { error: updateError } = await supabase
-        .from("style_profiles")
-        .update({ photo_url: publicUrl })
-        .eq("user_id", user.id);
+      const response = await fetch(`${supabaseUrl}/functions/v1/upload-onboarding-photo`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          file: base64,
+          filename: file.name,
+          sessionId,
+        }),
+      });
 
-      if (updateError) {
-        console.error("Failed to save photo URL:", updateError);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const { url: publicUrl } = await response.json();
+
+      // Save photo URL to style_profiles if user is authenticated
+      if (userId) {
+        const { error: updateError } = await supabase
+          .from("style_profiles")
+          .update({ photo_url: publicUrl })
+          .eq("user_id", userId);
+
+        if (updateError) {
+          console.error("Failed to save photo URL:", updateError);
+        }
+      } else {
+        // Store photo URL in localStorage for anonymous users
+        localStorage.setItem('ff_onboarding_photo_url', publicUrl);
       }
 
       setUploading(false);
 
       // Trigger AI color analysis
       setAnalyzing(true);
-      const response = await fetch("/.netlify/functions/analyze-color", {
+      const analysisResponse = await fetch("/.netlify/functions/analyze-color", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoUrl: publicUrl, userId: user.id }),
+        body: JSON.stringify({
+          photoUrl: publicUrl,
+          userId: userId || sessionId,
+          isAnonymous: !userId
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Color analysis failed: ${response.status}`);
+      if (!analysisResponse.ok) {
+        throw new Error(`Color analysis failed: ${analysisResponse.status}`);
       }
 
-      const analysisData: ColorAnalysis = await response.json();
+      const analysisData: ColorAnalysis = await analysisResponse.json();
       setAnalysis(analysisData);
+
+      // Store analysis for anonymous users
+      if (!userId) {
+        localStorage.setItem('ff_onboarding_photo_analysis', JSON.stringify(analysisData));
+      }
 
       if (onAnalysisComplete) {
         onAnalysisComplete(analysisData);
+      }
+
+      // Trigger Nova insight about color analysis
+      if (analysisData && analysisData.seasonal_type) {
+        const novaMessage = `Geweldig! Ik zie dat je een ${analysisData.seasonal_type} kleurtype bent met een ${analysisData.undertone} ondertoon. Dat betekent dat kleuren zoals ${analysisData.best_colors.slice(0, 3).join(', ')} perfect bij je passen!`;
+
+        // Store Nova insight for display
+        const insights = JSON.parse(localStorage.getItem('ff_nova_insights') || '[]');
+        insights.push({
+          type: 'color_analysis',
+          message: novaMessage,
+          timestamp: Date.now()
+        });
+        localStorage.setItem('ff_nova_insights', JSON.stringify(insights));
       }
     } catch (err) {
       console.error("Upload/analysis error:", err);
