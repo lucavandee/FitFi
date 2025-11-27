@@ -156,10 +156,12 @@ export default function OnboardingFlowPage() {
   };
 
   const handleSwipesComplete = () => {
+    console.log('[OnboardingFlow] ✅ handleSwipesComplete called!');
     setAnswers(prev => ({ ...prev, visualPreferencesCompleted: true }));
     // Show transition
     setTransitionTo('calibration');
     setShowTransition(true);
+    console.log('[OnboardingFlow] 🎬 Transition started: swipes → calibration');
   };
 
   const handleCalibrationComplete = async () => {

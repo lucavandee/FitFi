@@ -92,6 +92,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     if (!currentPhoto || isCompleting) return;
 
     const newSwipeCount = swipeCount + 1;
+    const isLastSwipe = newSwipeCount >= moodPhotos.length;
+
     setSwipeCount(newSwipeCount);
 
     // Save to database (non-blocking)
@@ -119,23 +121,23 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       console.warn('Failed to save swipe:', err);
     }
 
-    // Check if we're done
-    if (newSwipeCount >= moodPhotos.length) {
+    // Check if we're done BEFORE moving index
+    if (isLastSwipe) {
+      console.log('🎉 All swipes complete! Navigating to next step...');
       setIsCompleting(true);
       setShowCelebration(true);
       setTimeout(() => {
         setShowCelebration(false);
+        console.log('✅ Calling onComplete()');
         onComplete();
       }, 2000);
-      return;
+      return; // CRITICAL: Stop here, don't increment index
     }
 
-    // Move to next photo
-    if (currentIndex < moodPhotos.length - 1) {
-      setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
-      }, 100);
-    }
+    // Move to next photo (only if NOT last swipe)
+    setTimeout(() => {
+      setCurrentIndex(prev => prev + 1);
+    }, 100);
   };
 
   if (loading) {
