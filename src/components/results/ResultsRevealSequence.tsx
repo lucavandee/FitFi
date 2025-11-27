@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Share2, Download } from 'lucide-react';
 import { fireConfetti, confettiPresets } from '@/utils/confetti';
+import { track } from '@/utils/analytics';
 
 interface ResultsRevealSequenceProps {
   archetype: string;
@@ -23,25 +24,25 @@ export function ResultsRevealSequence({
   const [loadingStep, setLoadingStep] = useState(0);
 
   const loadingSteps = [
-    'Analyseren van jouw antwoorden...',
-    'Berekenen van kleurharmonie...',
-    'Matchen met lichaamstypes...',
-    'Genereren van aanbevelingen...',
-    'Jouw perfecte stijl wordt geactiveerd...'
+    'Jouw antwoorden analyseren...',
+    'Kleurprofiel berekenen...',
+    'Stijlprofiel samenstellen...',
+    'Aanbevelingen genereren...'
   ];
 
   useEffect(() => {
     if (stage === 'loading') {
+      track('results_reveal_started', { archetype });
       const progressInterval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
             clearInterval(progressInterval);
-            setTimeout(() => setStage('archetypeReveal'), 500);
+            setTimeout(() => setStage('archetypeReveal'), 300);
             return 100;
           }
-          return prev + 2;
+          return prev + 2.5;
         });
-      }, 40);
+      }, 30);
 
       const stepInterval = setInterval(() => {
         setLoadingStep(prev => {
@@ -51,7 +52,7 @@ export function ResultsRevealSequence({
           }
           return prev + 1;
         });
-      }, 800);
+      }, 400);
 
       return () => {
         clearInterval(progressInterval);
@@ -60,17 +61,18 @@ export function ResultsRevealSequence({
     }
 
     if (stage === 'archetypeReveal') {
+      track('results_archetype_revealed', { archetype });
       setTimeout(() => {
         setStage('shareCard');
         fireConfetti({ particleCount: 30, spread: 60, startVelocity: 20 });
-      }, 2500);
+      }, 2000);
     }
 
     if (stage === 'shareCard') {
       setTimeout(() => {
         setStage('complete');
         onComplete();
-      }, 3000);
+      }, 2500);
     }
   }, [stage, onComplete]);
 
@@ -153,21 +155,21 @@ export function ResultsRevealSequence({
                 <div className="pt-4 text-xs text-[var(--color-text-secondary)] space-y-1">
                   <motion.div
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: progress > 20 ? 1 : 0 }}
+                    animate={{ opacity: progress > 25 ? 1 : 0 }}
                   >
-                    ✓ 2,847 outfits geanalyseerd
+                    ✓ Antwoorden verwerkt
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: progress > 50 ? 1 : 0 }}
+                    animate={{ opacity: progress > 60 ? 1 : 0 }}
                   >
-                    ✓ Kleurharmonie berekend
+                    ✓ Stijlprofiel samengesteld
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: progress > 80 ? 1 : 0 }}
+                    animate={{ opacity: progress > 90 ? 1 : 0 }}
                   >
-                    ✓ Persoonlijk profiel gemaakt
+                    ✓ Klaar om te delen
                   </motion.div>
                 </div>
               </div>
@@ -254,7 +256,7 @@ export function ResultsRevealSequence({
                     {archetype}
                   </h2>
                   <p className="text-sm text-[var(--color-text-secondary)]">
-                    Jouw persoonlijke stijl DNA
+                    Jouw unieke stijlprofiel
                   </p>
                 </div>
 
@@ -278,7 +280,8 @@ export function ResultsRevealSequence({
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => {
-                      const text = `Ik ben een ${archetype}! Ontdek jouw stijl op FitFi.ai ✨`;
+                      track('results_share_clicked', { archetype });
+                      const text = `Mijn stijl is ${archetype}. Ontdek jouw unieke stijlprofiel op FitFi.ai`;
                       if (navigator.share) {
                         navigator.share({ text, url: window.location.origin });
                       }
@@ -289,7 +292,10 @@ export function ResultsRevealSequence({
                     Delen
                   </button>
                   <button
-                    onClick={onComplete}
+                    onClick={() => {
+                      track('results_view_outfits_clicked', { archetype });
+                      onComplete();
+                    }}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-colors"
                   >
                     Bekijk Outfits

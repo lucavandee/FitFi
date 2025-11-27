@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, MessageCircle } from 'lucide-react';
+import { track } from '@/utils/analytics';
 
 interface NovaContextualBubbleProps {
   context: 'dashboard' | 'results' | 'outfit' | 'profile';
@@ -27,6 +28,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
 
     const timer = setTimeout(() => {
       setIsVisible(true);
+      track('nova_bubble_shown', { context });
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -35,24 +37,24 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
   const getContextualMessage = (ctx: string): string[] => {
     const messages = {
       dashboard: [
-        '👋 Hoi! Ik ben Nova. Wil je dat ik nieuwe outfits voor je maak?',
-        '✨ Klaar om je stijl te ontdekken? Stel me een vraag!',
-        '💡 Tip: Ik kan je helpen met kleurcombinaties en stijladvies!'
+        'Hoi! Ik ben Nova, je AI stylist. Kan ik je ergens mee helpen?',
+        'Heb je vragen over je stijlprofiel? Ik help je graag!',
+        'Klaar om meer outfits te ontdekken? Vraag het me!'
       ],
       results: [
-        '🎨 Mooi! Wil je weten waarom deze outfits bij je passen?',
-        '👗 Zie je iets wat je leuk vindt? Ik leg graag uit waarom het werkt!',
-        '✨ Deze outfits zijn speciaal voor jou gemaakt. Vragen?'
+        'Wil je weten waarom deze outfits bij je passen?',
+        'Heb je vragen over deze aanbevelingen?',
+        'Nieuwsgierig naar alternatieven? Ik help je!'
       ],
       outfit: [
-        '💡 Wil je weten hoe je dit outfit kunt stylen?',
-        '🎯 Ik kan alternatieven voorstellen die ook bij je passen!',
-        '✨ Nieuwsgierig naar meer outfits in deze stijl?'
+        'Wil je weten hoe je dit kunt stylen?',
+        'Kan ik alternatieven voorstellen?',
+        'Heb je vragen over dit outfit?'
       ],
       profile: [
-        '👤 Je profiel ziet er goed uit! Wil je het verfijnen?',
-        '🎨 Klaar om nieuwe stijlen te ontdekken?',
-        '✨ Ik kan je helpen je stijl verder te ontwikkelen!'
+        'Wil je je stijlprofiel verfijnen?',
+        'Klaar om nieuwe stijlen te ontdekken?',
+        'Kan ik je helpen met je profiel?'
       ]
     };
 
@@ -60,6 +62,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
   };
 
   const handleDismiss = () => {
+    track('nova_bubble_dismissed', { context });
     const dismissedKey = `ff_nova_bubble_dismissed_${context}`;
     localStorage.setItem(dismissedKey, 'true');
     setIsVisible(false);
@@ -67,6 +70,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
   };
 
   const handleInteract = () => {
+    track('nova_bubble_clicked', { context });
     setIsVisible(false);
     onInteract?.();
   };

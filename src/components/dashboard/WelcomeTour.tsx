@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Heart, Wand2, X } from 'lucide-react';
+import { track } from '@/utils/analytics';
 
 interface WelcomeTourProps {
   userName?: string;
@@ -18,15 +19,19 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
     if (hasSeenTour) {
       setIsVisible(false);
       onComplete();
+    } else {
+      track('welcome_tour_started');
     }
   }, [onComplete]);
 
   const handleNext = () => {
+    track('welcome_tour_step', { step });
     if (step === 'welcome') setStep('outfits');
     else if (step === 'outfits') setStep('nova');
     else if (step === 'nova') {
       setStep('complete');
       setTimeout(() => {
+        track('welcome_tour_completed');
         localStorage.setItem('ff_welcome_tour_completed', 'true');
         setIsVisible(false);
         onComplete();
@@ -35,6 +40,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
   };
 
   const handleSkip = () => {
+    track('welcome_tour_skipped', { step });
     localStorage.setItem('ff_welcome_tour_completed', 'true');
     setIsVisible(false);
     onComplete();
@@ -45,26 +51,26 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
   const steps = {
     welcome: {
       icon: <Sparkles className="w-12 h-12 text-[var(--ff-color-primary-600)]" />,
-      title: `Welkom${userName ? `, ${userName}` : ''}! 👋`,
-      description: 'Je Style DNA is klaar! Laten we je dashboard verkennen.',
+      title: `Welkom${userName ? `, ${userName}` : ''}!`,
+      description: 'Je stijlprofiel is klaar. Laat me je laten zien hoe je dashboard werkt.',
       highlight: null
     },
     outfits: {
       icon: <Heart className="w-12 h-12 text-[var(--ff-color-primary-600)]" />,
-      title: 'Jouw Persoonlijke Outfits',
-      description: 'Hier vind je outfits die perfect bij jouw stijl passen. Klik om details te zien en te kopen.',
+      title: 'Persoonlijke Aanbevelingen',
+      description: 'Ontdek outfits die bij jouw stijl passen. Klik voor details of om te shoppen.',
       highlight: 'outfits'
     },
     nova: {
       icon: <Wand2 className="w-12 h-12 text-[var(--ff-color-primary-600)]" />,
-      title: 'Meet Nova AI ✨',
-      description: 'Je persoonlijke AI stylist. Stel vragen, krijg advies, of laat Nova nieuwe outfits voor je maken!',
+      title: 'Nova AI Stylist',
+      description: 'Stel vragen, krijg stijladvies, of laat Nova nieuwe combinaties voor je maken.',
       highlight: 'nova'
     },
     complete: {
       icon: <Sparkles className="w-12 h-12 text-[var(--ff-color-primary-600)]" />,
-      title: 'Je Bent Klaar! 🎉',
-      description: 'Begin met browsen of vraag Nova om hulp. Veel plezier!',
+      title: 'Klaar!',
+      description: 'Ontdek je outfits of chat met Nova. Veel plezier!',
       highlight: null
     }
   };
