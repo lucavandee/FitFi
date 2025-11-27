@@ -10,6 +10,7 @@ import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import "./index.css";               // Tailwind + tokens
 import "@/styles/polish.addon.css"; // opt-in polish
+import "@/styles/button-interactions.css"; // button micro-interactions
 
 // Early boot log
 console.log('🚀 [FitFi] App starting...', {

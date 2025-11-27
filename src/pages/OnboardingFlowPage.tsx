@@ -17,6 +17,7 @@ import { CircularProgressIndicator } from "@/components/quiz/CircularProgressInd
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { QuizMilestoneToast } from "@/components/quiz/QuizMilestoneToast";
 import { useQuizGamification } from "@/hooks/useQuizGamification";
+import { fireConfetti } from "@/utils/confetti";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -82,16 +83,32 @@ export default function OnboardingFlowPage() {
 
   const progress = getProgress();
 
-  const handleAnswer = (field: string, value: any) => {
+  const handleAnswer = (field: string, value: any, event?: React.MouseEvent) => {
     setAnswers(prev => ({ ...prev, [field]: value }));
+
+    if (event) {
+      const rect = (event.target as HTMLElement).getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      fireConfetti({ origin: { x, y }, particleCount: 8, spread: 60 });
+    }
   };
 
-  const handleMultiSelect = (field: string, value: string) => {
+  const handleMultiSelect = (field: string, value: string, event?: React.MouseEvent) => {
     setAnswers(prev => {
       const current = (prev[field as keyof QuizAnswers] as string[]) || [];
-      const newValue = current.includes(value)
-        ? current.filter(v => v !== value)
-        : [...current, value];
+      const isAdding = !current.includes(value);
+      const newValue = isAdding
+        ? [...current, value]
+        : current.filter(v => v !== value);
+
+      if (isAdding && event) {
+        const rect = (event.target as HTMLElement).getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+        fireConfetti({ origin: { x, y }, particleCount: 8, spread: 60 });
+      }
+
       return { ...prev, [field]: newValue };
     });
   };
