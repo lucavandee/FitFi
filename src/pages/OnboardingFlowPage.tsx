@@ -162,9 +162,10 @@ export default function OnboardingFlowPage() {
     setShowTransition(true);
   };
 
-  const handleCalibrationComplete = () => {
+  const handleCalibrationComplete = async () => {
+    console.log('[OnboardingFlow] Calibration complete, starting submit...');
     setAnswers(prev => ({ ...prev, calibrationCompleted: true }));
-    handleSubmit();
+    await handleSubmit();
   };
 
   const handleBack = () => {
@@ -380,11 +381,33 @@ export default function OnboardingFlowPage() {
         archetypeDescription: 'Jouw stijl combineert eenvoud met elegantie. Je waardeert kwaliteit boven kwantiteit.',
         colorProfile: colorProfile
       });
+
+      console.log('[OnboardingFlow] Setting phase to reveal...');
       setPhase('reveal');
+      setIsSubmitting(false);
     } catch (error) {
       console.error('❌ [OnboardingFlow] Error in handleSubmit:', error);
-      toast.error('Er ging iets mis. Je resultaten zijn wel lokaal opgeslagen.');
+
+      // Even on error, try to show results with fallback data
+      const fallbackResult = computeResult(answers as any);
+
+      localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
+      localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(fallbackResult.color));
+      localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(fallbackResult.archetype));
+      localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
+      localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
       localStorage.setItem('ff_sync_status', 'pending');
+
+      setRevealData({
+        archetype: fallbackResult.archetype || 'Balanced Minimalist',
+        archetypeDescription: 'Jouw stijl combineert eenvoud met elegantie. Je waardeert kwaliteit boven kwantiteit.',
+        colorProfile: fallbackResult.color
+      });
+
+      toast.error('Er ging iets mis bij het opslaan, maar je resultaten zijn lokaal bewaard.');
+
+      console.log('[OnboardingFlow] Setting phase to reveal (fallback)...');
+      setPhase('reveal');
       setIsSubmitting(false);
     }
   };
@@ -456,11 +479,24 @@ export default function OnboardingFlowPage() {
 
   if (phase === 'calibration') {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] relative">
         <Helmet>
           <title>Verfijn Je Profiel – FitFi</title>
           <meta name="description" content="Rate outfits om je aanbevelingen te perfectioneren" />
         </Helmet>
+
+        {/* Loading Overlay */}
+        {isSubmitting && (
+          <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] p-8 max-w-md text-center shadow-[var(--shadow-elevated)]">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center animate-pulse">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Je Style DNA wordt gegenereerd...</h3>
+              <p className="text-sm text-[var(--color-text)]/70">Dit duurt nog een paar seconden</p>
+            </div>
+          </div>
+        )}
 
         <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
           <div className="ff-container py-4">
