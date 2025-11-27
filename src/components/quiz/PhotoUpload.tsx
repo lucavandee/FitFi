@@ -55,57 +55,45 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
 
     // Check if user is authenticated (optional)
     let userId: string | null = null;
-    let authToken: string | null = null;
 
     try {
-      const { data: { user, session } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       userId = user?.id || null;
-      authToken = session?.access_token || null;
     } catch {
       // User not authenticated - continue with anonymous upload
+      console.log('[PhotoUpload] No user authenticated, continuing as anonymous');
     }
 
-    // Upload via Edge Function (works for both authenticated and anonymous)
+    // DIRECT UPLOAD TO SUPABASE STORAGE
     setUploading(true);
     try {
-      // Convert file to base64
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result as string);
-        r.onerror = reject;
-        r.readAsDataURL(file);
-      });
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = userId ? `${userId}/${fileName}` : `anon_${sessionId}/${fileName}`;
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      console.log('[PhotoUpload] Uploading to user-photos bucket:', filePath);
 
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'apikey': supabaseAnonKey,
-        'X-Session-Id': sessionId,
-      };
+      // Upload directly to storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('user-photos')
+        .upload(filePath, file, {
+          contentType: file.type,
+          cacheControl: '3600',
+          upsert: false,
+        });
 
-      // Add auth token if available (optional for anonymous users)
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
+      if (uploadError) {
+        console.error('[PhotoUpload] Upload error:', uploadError);
+        throw new Error(uploadError.message || 'Upload failed');
       }
 
-      const response = await fetch(`${supabaseUrl}/functions/v1/upload-onboarding-photo`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          file: base64,
-          filename: file.name,
-          sessionId,
-        }),
-      });
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('user-photos')
+        .getPublicUrl(uploadData.path);
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Upload failed');
-      }
-
-      const { url: publicUrl } = await response.json();
+      console.log('[PhotoUpload] Upload successful:', publicUrl);
 
       // Save photo URL to style_profiles if user is authenticated
       if (userId) {
@@ -123,56 +111,64 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       }
 
       setUploading(false);
+      setError(null);
 
-      // Trigger AI color analysis
+      // Optional: Trigger AI color analysis (skip if Netlify function not available)
       setAnalyzing(true);
-      const analysisResponse = await fetch("/.netlify/functions/analyze-color", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          photoUrl: publicUrl,
-          userId: userId || sessionId,
-          isAnonymous: !userId
-        }),
-      });
-
-      if (!analysisResponse.ok) {
-        throw new Error(`Color analysis failed: ${analysisResponse.status}`);
-      }
-
-      const analysisData: ColorAnalysis = await analysisResponse.json();
-      setAnalysis(analysisData);
-
-      // Store analysis for anonymous users
-      if (!userId) {
-        localStorage.setItem('ff_onboarding_photo_analysis', JSON.stringify(analysisData));
-      }
-
-      if (onAnalysisComplete) {
-        onAnalysisComplete(analysisData);
-      }
-
-      // Trigger Nova insight about color analysis
-      if (analysisData && analysisData.seasonal_type) {
-        const novaMessage = `Geweldig! Ik zie dat je een ${analysisData.seasonal_type} kleurtype bent met een ${analysisData.undertone} ondertoon. Dat betekent dat kleuren zoals ${analysisData.best_colors.slice(0, 3).join(', ')} perfect bij je passen!`;
-
-        // Store Nova insight for display
-        const insights = JSON.parse(localStorage.getItem('ff_nova_insights') || '[]');
-        insights.push({
-          type: 'color_analysis',
-          message: novaMessage,
-          timestamp: Date.now()
+      try {
+        const analysisResponse = await fetch("/.netlify/functions/analyze-color", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            photoUrl: publicUrl,
+            userId: userId || sessionId,
+            isAnonymous: !userId
+          }),
         });
-        localStorage.setItem('ff_nova_insights', JSON.stringify(insights));
+
+        if (!analysisResponse.ok) {
+          throw new Error(`Color analysis failed: ${analysisResponse.status}`);
+        }
+
+        const analysisData: ColorAnalysis = await analysisResponse.json();
+        setAnalysis(analysisData);
+
+        // Store analysis for anonymous users
+        if (!userId) {
+          localStorage.setItem('ff_onboarding_photo_analysis', JSON.stringify(analysisData));
+        }
+
+        if (onAnalysisComplete) {
+          onAnalysisComplete(analysisData);
+        }
+
+        // Trigger Nova insight about color analysis
+        if (analysisData && analysisData.seasonal_type) {
+          const novaMessage = `Geweldig! Ik zie dat je een ${analysisData.seasonal_type} kleurtype bent met een ${analysisData.undertone} ondertoon. Dat betekent dat kleuren zoals ${analysisData.best_colors.slice(0, 3).join(', ')} perfect bij je passen!`;
+
+          // Store Nova insight for display
+          const insights = JSON.parse(localStorage.getItem('ff_nova_insights') || '[]');
+          insights.push({
+            type: 'color_analysis',
+            message: novaMessage,
+            timestamp: Date.now()
+          });
+          localStorage.setItem('ff_nova_insights', JSON.stringify(insights));
+        }
+      } catch (analysisError) {
+        console.warn('[PhotoUpload] Analysis failed, but photo uploaded successfully:', analysisError);
+        // Don't throw - photo is uploaded successfully
       }
+
+      setAnalyzing(false);
     } catch (err) {
-      console.error("Upload/analysis error:", err);
+      console.error("[PhotoUpload] Upload failed:", err);
       setError(
         err instanceof Error ? err.message : "Upload mislukt. Probeer opnieuw."
       );
-    } finally {
       setUploading(false);
       setAnalyzing(false);
+      onChange(null); // Clear preview on error
     }
   }
 

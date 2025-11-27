@@ -350,8 +350,9 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       // All photos swiped - complete!
       setShowCelebration(true);
       setTimeout(() => {
+        setShowCelebration(false);
         onComplete();
-      }, 1500);
+      }, 2000);
     }
   };
 
