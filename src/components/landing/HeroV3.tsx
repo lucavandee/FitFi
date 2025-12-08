@@ -70,7 +70,7 @@ export function HeroV3() {
             Outfits die{' '}
             <span className="relative inline-block">
               <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-accent-300)] via-white to-[var(--ff-color-primary-300)] bg-clip-text text-transparent">
-                kloppen
+                werken
               </span>
               <span className="absolute -bottom-2 left-0 right-0 h-3 bg-[var(--ff-color-accent-400)] opacity-30 blur-sm"></span>
             </span>
