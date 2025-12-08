@@ -36,9 +36,9 @@ const SafeWidget: React.FC<SafeWidgetProps> = ({ name, children, className = '' 
         </div>
         <h3 className="font-medium text-gray-900 mb-2">Widget niet beschikbaar</h3>
         <p className="text-sm text-gray-600">Kon {name} niet laden.</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-3 text-sm text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium"
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-3 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 font-medium"
         >
           Probeer opnieuw
         </button>

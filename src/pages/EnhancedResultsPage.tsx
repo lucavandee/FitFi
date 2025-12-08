@@ -17,6 +17,7 @@ import { OutfitFilters, type FilterOptions } from "@/components/results/OutfitFi
 import { OutfitZoomModal } from "@/components/results/OutfitZoomModal";
 import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/outfits/PremiumOutfitCard";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
+import { canonicalUrl } from "@/utils/urls";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -212,7 +213,7 @@ export default function EnhancedResultsPage() {
   }
 
   function sharePage() {
-    const url = typeof window !== "undefined" ? window.location.href : "https://fitfi.ai/results";
+    const url = typeof window !== "undefined" ? window.location.href : canonicalUrl('/results');
     if (navigator.share) {
       navigator.share({ title: "Mijn FitFi Style Report", url }).catch(() => setShowShareModal(true));
     } else {

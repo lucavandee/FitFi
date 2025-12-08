@@ -6,6 +6,7 @@ import { useStripeProducts } from "@/hooks/useStripeProducts";
 import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
+import { canonicalUrl } from "@/utils/urls";
 
 export default function PricingPage() {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export default function PricingPage() {
       <Helmet>
         <title>Prijzen – FitFi</title>
         <meta name="description" content="Kies het plan dat bij jou past. Start gratis of kies Premium voor onbeperkte AI-styling." />
-        <link rel="canonical" href="https://fitfi.ai/prijzen" />
+        <link rel="canonical" href={canonicalUrl('/prijzen')} />
       </Helmet>
 
       {/* Cancel Banner */}

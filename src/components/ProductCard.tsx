@@ -164,7 +164,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={handleClick}
               icon={<ExternalLink size={14} />}
               iconPosition="right"
-              className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] text-xs px-3 py-1"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white text-xs px-3 py-1"
             >
               Bekijk
             </Button>

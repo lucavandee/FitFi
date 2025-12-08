@@ -15,6 +15,7 @@ import { useEffect, useRef } from 'react';
 import { ColorHarmonyBadge } from '@/components/outfits/ColorHarmonyBadge';
 import { calculateOutfitColorHarmony } from '@/engine/colorHarmony';
 import { trackSave, trackLike, trackView } from '@/services/ml/interactionTrackingService';
+import { recordOutfitFeedback } from '@/services/ml/adaptiveWeightService';
 
 interface OutfitCardProps {
   outfit: {
@@ -89,7 +90,7 @@ export default function OutfitCard({
     return calculateOutfitColorHarmony(colors);
   }, [outfit.products]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (isProcessing.save || saveOutfit.isPending) return;
 
     if (!user?.id) {
@@ -99,6 +100,15 @@ export default function OutfitCard({
     }
 
     trackSave(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
+
+    // Record adaptive learning feedback
+    await recordOutfitFeedback({
+      user_id: user.id,
+      outfit_id: outfit.id,
+      liked: true,
+      archetype: outfit.archetype || 'casual_chic',
+      feedback_type: 'save'
+    });
 
     // Use optimistic save hook with fallback to local storage
     try {
@@ -113,29 +123,40 @@ export default function OutfitCard({
       setSaved(newSavedState);
       toast.success(newSavedState ? 'Outfit bewaard!' : 'Outfit verwijderd uit favorieten');
     }
-    
+
     // Track save action
-    track('add_to_favorites', { 
+    track('add_to_favorites', {
       outfit_id: outfit.id,
       outfit_title: outfit.title,
       outfit_archetype: outfit.archetype,
       action: 'add'
     });
-    
+
     // Update local state optimistically
     setSaved(true);
-    
+
     if (onSave) {
       onSave();
     }
   };
 
-  const handleMoreLikeThis = () => {
+  const handleMoreLikeThis = async () => {
     if (isProcessing.like) return;
 
     setIsProcessing(prev => ({ ...prev, like: true }));
 
     trackLike(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
+
+    // Record adaptive learning feedback
+    if (user?.id) {
+      await recordOutfitFeedback({
+        user_id: user.id,
+        outfit_id: outfit.id,
+        liked: true,
+        archetype: outfit.archetype || 'casual_chic',
+        feedback_type: 'like'
+      });
+    }
 
     // Track similar request
     track('request_similar', {
@@ -144,28 +165,41 @@ export default function OutfitCard({
       outfit_archetype: outfit.archetype
     });
 
+    toast.success('We leren van je voorkeur! 🎯');
     onMoreLikeThis?.();
-    
+
     // Re-enable button after 200ms
     setTimeout(() => {
       setIsProcessing(prev => ({ ...prev, like: false }));
     }, 200);
   };
 
-  const handleDislike = () => {
+  const handleDislike = async () => {
     if (isProcessing.dislike) return;
-    
+
     setIsProcessing(prev => ({ ...prev, dislike: true }));
-    
+
     // Track dislike feedback
-    track('feedback_dislike', { 
+    track('feedback_dislike', {
       outfit_id: outfit.id,
       outfit_title: outfit.title,
       outfit_archetype: outfit.archetype
     });
-    
+
+    // Record adaptive learning feedback
+    if (user?.id) {
+      await recordOutfitFeedback({
+        user_id: user.id,
+        outfit_id: outfit.id,
+        liked: false,
+        archetype: outfit.archetype || 'casual_chic',
+        feedback_type: 'dislike'
+      });
+    }
+
+    toast('We passen je aanbevelingen aan 🎨');
     onDislike?.();
-    
+
     // Re-enable button after 200ms
     setTimeout(() => {
       setIsProcessing(prev => ({ ...prev, dislike: false }));
@@ -307,9 +341,9 @@ export default function OutfitCard({
       
       <div className="space-y-3">
         <div>
-          <h3 
+          <h3
             id={titleId}
-            className="text-lg font-medium text-[#0D1B2A] leading-tight"
+            className="text-lg font-medium text-[var(--color-text)] leading-tight"
           >
             {outfit.title}
           </h3>
@@ -334,7 +368,7 @@ export default function OutfitCard({
           <RequireAuth cta="Inloggen voor uitleg">
             <button
               onClick={() => setShowExplanationModal(true)}
-              className="flex items-center space-x-1 text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors"
+              className="flex items-center space-x-1 text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
               aria-label="Waarom deze match?"
             >
               <HelpCircle size={14} />
@@ -366,10 +400,10 @@ export default function OutfitCard({
         
         {/* Explanation */}
         {showExplanation && explanation && (
-          <div className="mt-3 p-3 bg-[#89CFF0]/10 rounded-xl border border-[#89CFF0]/20">
+          <div className="mt-3 p-3 bg-[var(--color-primary)]/10 rounded-xl border border-[var(--color-primary)]/20">
             <div className="flex items-start space-x-2 mb-2">
-              <MessageCircle className="w-4 h-4 text-[#89CFF0] flex-shrink-0 mt-0.5" />
-              <span className="text-sm font-medium text-[#89CFF0]">Nova's uitleg:</span>
+              <MessageCircle className="w-4 h-4 text-[var(--color-primary)] flex-shrink-0 mt-0.5" />
+              <span className="text-sm font-medium text-[var(--color-primary)]">Nova's uitleg:</span>
             </div>
             <p className="text-sm text-gray-700 leading-relaxed">{explanation}</p>
             <button
@@ -400,10 +434,10 @@ export default function OutfitCard({
               </div>
               
               <div className="space-y-4">
-                <div className="bg-[#89CFF0]/10 rounded-2xl p-4">
+                <div className="bg-[var(--color-primary)]/10 rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-2">
-                    <MessageCircle className="w-4 h-4 text-[#89CFF0]" />
-                    <span className="text-sm font-medium text-[#89CFF0]">Nova's analyse:</span>
+                    <MessageCircle className="w-4 h-4 text-[var(--color-primary)]" />
+                    <span className="text-sm font-medium text-[var(--color-primary)]">Nova's analyse:</span>
                   </div>
                   <p className="text-sm text-gray-700 leading-relaxed">
                     {generateNovaExplanation(
@@ -438,7 +472,7 @@ export default function OutfitCard({
                 <div className="text-center">
                   <button
                     onClick={() => setShowExplanationModal(false)}
-                    className="px-6 py-2 bg-[#89CFF0] text-white rounded-2xl hover:bg-[#89CFF0]/90 transition-colors"
+                    className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-2xl hover:bg-[var(--color-primary)]/90 transition-colors"
                   >
                     Begrepen!
                   </button>

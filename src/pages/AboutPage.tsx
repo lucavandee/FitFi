@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Target, Shield, Sparkles } from "lucide-react";
+import { canonicalUrl } from "@/utils/urls";
 
 export default function AboutPage() {
   return (
@@ -13,7 +14,7 @@ export default function AboutPage() {
           name="description"
           content="Wij bouwen een AI-gedreven stylingtool die eerlijk, rustig en effectief is. Leer ons verhaal, onze principes en onze aanpak."
         />
-        <link rel="canonical" href="https://fitfi.ai/over-ons" />
+        <link rel="canonical" href={canonicalUrl('/over-ons')} />
       </Helmet>
 
       {/* Hero Section */}
