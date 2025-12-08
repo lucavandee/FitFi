@@ -323,7 +323,6 @@ export default function HowItWorksPage() {
               {/* Old Way 1 */}
               <div className="bg-[var(--color-bg)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <div className="text-center mb-4">
-                  <div className="text-3xl mb-2">😰</div>
                   <h3 className="font-bold text-lg mb-2">Trial & Error</h3>
                 </div>
                 <ul className="space-y-2 text-sm text-[var(--color-muted)] mb-4">
@@ -340,7 +339,6 @@ export default function HowItWorksPage() {
               {/* Old Way 2 */}
               <div className="bg-[var(--color-bg)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6">
                 <div className="text-center mb-4">
-                  <div className="text-3xl mb-2">💸</div>
                   <h3 className="font-bold text-lg mb-2">Personal Stylist</h3>
                 </div>
                 <ul className="space-y-2 text-sm text-[var(--color-muted)] mb-4">
@@ -357,7 +355,6 @@ export default function HowItWorksPage() {
               {/* FitFi Way */}
               <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-[var(--radius-xl)] border-2 border-[var(--ff-color-primary-400)] p-6 text-white shadow-xl transform scale-105">
                 <div className="text-center mb-4">
-                  <div className="text-3xl mb-2">✨</div>
                   <h3 className="font-bold text-lg mb-2">FitFi</h3>
                 </div>
                 <ul className="space-y-2 text-sm mb-4">
