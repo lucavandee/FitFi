@@ -216,57 +216,58 @@ export default function PricingPage() {
               </article>
 
               {/* Premium Plan - HERO */}
-              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-[var(--radius-2xl)] p-10 md:p-12 shadow-2xl text-white transform lg:scale-105">
+              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl sm:rounded-[var(--radius-2xl)] p-6 sm:p-8 md:p-10 lg:p-12 shadow-2xl text-white transform lg:scale-105">
 
                 {/* Popular Badge */}
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-6 py-2 text-sm font-bold bg-[var(--ff-color-accent-500)] text-white shadow-lg">
+                <div className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 rounded-full px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-bold bg-[var(--ff-color-accent-500)] text-white shadow-lg">
                   🔥 MEEST GEKOZEN
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
 
                   {/* Left: Pricing */}
                   <div>
-                    <header className="mb-8 pt-2">
-                      <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold mb-4">
+                    <header className="mb-6 sm:mb-8 pt-2">
+                      <div className="inline-block px-2.5 sm:px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[10px] xs:text-xs font-bold mb-3 sm:mb-4">
                         ONBEPERKT STYLEN
                       </div>
-                      <h2 className="text-3xl font-bold mb-4">
+                      <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">
                         {isLoading ? 'Premium' : premiumProduct?.name || 'Premium'}
                       </h2>
-                      <div className="flex items-baseline gap-2 mb-3">
-                        <span className="text-6xl font-bold">€{premiumPrice}</span>
-                        <span className="text-xl opacity-90">/maand</span>
+                      <div className="flex items-baseline gap-2 mb-2 sm:mb-3">
+                        <span className="text-5xl sm:text-6xl font-bold">€{premiumPrice}</span>
+                        <span className="text-lg sm:text-xl opacity-90">/maand</span>
                       </div>
-                      <p className="text-white/80 text-sm mb-6">
+                      <p className="text-white/80 text-xs sm:text-sm mb-5 sm:mb-6">
                         Gemiddeld €0,33 per dag — minder dan een koffie
                       </p>
 
                       <button
                         onClick={() => premiumProduct && handleCheckout(premiumProduct.id, 'Premium')}
                         disabled={isLoading || createCheckout.isPending || checkingAuth}
-                        className="w-full px-8 py-4 bg-white text-[var(--ff-color-primary-700)] rounded-[var(--radius-xl)] font-bold hover:bg-white/95 transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl text-lg"
+                        className="w-full px-6 sm:px-8 py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base sm:text-lg hover:bg-white/95 transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98]"
                         data-event="cta_start_premium_pricing"
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            Laden...
+                            <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                            <span className="hidden xs:inline">Laden...</span>
                           </>
                         ) : createCheckout.isPending || checkingAuth ? (
                           <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            Bezig...
+                            <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                            <span className="hidden xs:inline">Bezig...</span>
                           </>
                         ) : (
                           <>
-                            Upgrade naar Premium
-                            <ArrowRight className="w-5 h-5" />
+                            <span className="hidden xs:inline">Upgrade naar Premium</span>
+                            <span className="xs:hidden">Premium</span>
+                            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                           </>
                         )}
                       </button>
 
-                      <p className="text-xs text-white/70 text-center mt-3">
+                      <p className="text-[10px] xs:text-xs text-white/70 text-center mt-2 sm:mt-3">
                         30 dagen geld-terug-garantie • Stop wanneer je wilt
                       </p>
                     </header>
@@ -274,53 +275,53 @@ export default function PricingPage() {
 
                   {/* Right: Benefits */}
                   <div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider mb-4 opacity-90">
+                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 sm:mb-4 opacity-90">
                       Alles van gratis, plus:
                     </h3>
-                    <ul className="space-y-4">
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4" />
+                    <ul className="space-y-3 sm:space-y-4">
+                      <li className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                         </div>
                         <div>
-                          <div className="font-semibold mb-1">Onbeperkte outfits</div>
-                          <div className="text-sm text-white/80">Nieuwe looks voor elke gelegenheid, altijd vers</div>
+                          <div className="font-semibold text-sm sm:text-base mb-1">Onbeperkte outfits</div>
+                          <div className="text-xs sm:text-sm text-white/80">Nieuwe looks voor elke gelegenheid, altijd vers</div>
                         </div>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Zap className="w-4 h-4" />
+                      <li className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
                         </div>
                         <div>
-                          <div className="font-semibold mb-1">Nova AI-assistent</div>
-                          <div className="text-sm text-white/80">Chat met je persoonlijke stijlcoach 24/7</div>
+                          <div className="font-semibold text-sm sm:text-base mb-1">Nova AI-assistent</div>
+                          <div className="text-xs sm:text-sm text-white/80">Chat met je persoonlijke stijlcoach 24/7</div>
                         </div>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Sparkles className="w-4 h-4" />
+                      <li className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                         </div>
                         <div>
-                          <div className="font-semibold mb-1">Geavanceerde kleuranalyse</div>
-                          <div className="text-sm text-white/80">Upload je foto's voor persoonlijk advies</div>
+                          <div className="font-semibold text-sm sm:text-base mb-1">Geavanceerde kleuranalyse</div>
+                          <div className="text-xs sm:text-sm text-white/80">Upload je foto's voor persoonlijk advies</div>
                         </div>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <TrendingUp className="w-4 h-4" />
+                      <li className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                         </div>
                         <div>
-                          <div className="font-semibold mb-1">Smart learning</div>
-                          <div className="text-sm text-white/80">Systeem leert je smaak en wordt beter</div>
+                          <div className="font-semibold text-sm sm:text-base mb-1">Smart learning</div>
+                          <div className="text-xs sm:text-sm text-white/80">Systeem leert je smaak en wordt beter</div>
                         </div>
                       </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Star className="w-4 h-4" />
+                      <li className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Star className="w-3 h-3 sm:w-4 sm:h-4" />
                         </div>
                         <div>
-                          <div className="font-semibold mb-1">Vroege toegang</div>
-                          <div className="text-sm text-white/80">Nieuwe features voor jou het eerst</div>
+                          <div className="font-semibold text-sm sm:text-base mb-1">Vroege toegang</div>
+                          <div className="text-xs sm:text-sm text-white/80">Nieuwe features voor jou het eerst</div>
                         </div>
                       </li>
                     </ul>
@@ -330,37 +331,37 @@ export default function PricingPage() {
             </div>
 
             {/* Founder Plan - Below, Full Width */}
-            <article className="mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[var(--radius-2xl)] p-10 md:p-12 text-white shadow-2xl border border-amber-500/20">
-              <div className="grid md:grid-cols-2 gap-10 items-center">
+            <article className="mt-8 sm:mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl sm:rounded-[var(--radius-2xl)] p-6 sm:p-8 md:p-10 lg:p-12 text-white shadow-2xl border border-amber-500/20">
+              <div className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 items-center">
 
                 {/* Left: Pitch */}
                 <div>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/20 backdrop-blur-sm rounded-full text-sm font-bold mb-6">
-                    <Crown className="w-4 h-4 text-amber-400" />
+                  <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-amber-500/20 backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6">
+                    <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
                     <span className="text-amber-300">EXCLUSIEF LIFETIME</span>
                   </div>
 
-                  <h2 className="text-4xl font-bold mb-4">
+                  <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">
                     Founder
                   </h2>
 
-                  <p className="text-xl text-white/90 mb-6">
+                  <p className="text-base sm:text-lg md:text-xl text-white/90 mb-5 sm:mb-6">
                     Betaal één keer. Gebruik voor altijd. Geen verborgen kosten, ooit.
                   </p>
 
-                  <div className="bg-white/10 backdrop-blur-sm rounded-[var(--radius-xl)] p-6 mb-6">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-5xl font-bold">€{founderPrice}</span>
-                      <span className="text-white/70 line-through text-xl">€999</span>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-[var(--radius-xl)] p-5 sm:p-6 mb-5 sm:mb-6">
+                    <div className="flex items-baseline gap-2 sm:gap-3 mb-2">
+                      <span className="text-4xl sm:text-5xl font-bold">€{founderPrice}</span>
+                      <span className="text-white/70 line-through text-lg sm:text-xl">€999</span>
                     </div>
-                    <p className="text-sm text-white/70 mb-4">Eenmalig • Lifetime toegang</p>
+                    <p className="text-xs sm:text-sm text-white/70 mb-3 sm:mb-4">Eenmalig • Lifetime toegang</p>
 
-                    <div className="pt-4 border-t border-white/20">
-                      <div className="text-sm text-white/80 mb-2">💡 Break-even calculator:</div>
-                      <div className="text-2xl font-bold text-amber-400">
+                    <div className="pt-3 sm:pt-4 border-t border-white/20">
+                      <div className="text-xs sm:text-sm text-white/80 mb-2">💡 Break-even calculator:</div>
+                      <div className="text-xl sm:text-2xl font-bold text-amber-400">
                         {breakEvenMonths} maanden = gratis voor altijd
                       </div>
-                      <div className="text-xs text-white/60 mt-2">
+                      <div className="text-[10px] xs:text-xs text-white/60 mt-2">
                         Na {breakEvenMonths} maanden heb je dit bedrag terugverdiend vs Premium
                       </div>
                     </div>
@@ -369,81 +370,82 @@ export default function PricingPage() {
                   <button
                     onClick={() => founderProduct && handleCheckout(founderProduct.id, 'Founder')}
                     disabled={isLoading || createCheckout.isPending || checkingAuth}
-                    className="w-full px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-[var(--radius-xl)] font-bold hover:from-amber-400 hover:to-amber-500 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl text-lg"
+                    className="w-full px-6 sm:px-8 py-4 min-h-[52px] bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-base sm:text-lg hover:from-amber-400 hover:to-amber-500 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98]"
                     data-event="cta_start_founder_pricing"
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Laden...
+                        <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                        <span className="hidden xs:inline">Laden...</span>
                       </>
                     ) : createCheckout.isPending || checkingAuth ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Bezig...
+                        <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                        <span className="hidden xs:inline">Bezig...</span>
                       </>
                     ) : (
                       <>
-                        <Crown className="w-5 h-5" />
-                        Word Founder lid
+                        <Crown className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="hidden xs:inline">Word Founder lid</span>
+                        <span className="xs:hidden">Founder</span>
                       </>
                     )}
                   </button>
 
-                  <p className="text-xs text-white/50 text-center mt-3">
+                  <p className="text-[10px] xs:text-xs text-white/50 text-center mt-2 sm:mt-3">
                     Beperkt beschikbaar • 30 dagen geld-terug-garantie
                   </p>
                 </div>
 
                 {/* Right: Exclusive Benefits */}
                 <div>
-                  <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-amber-300">
+                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 sm:mb-6 text-amber-300">
                     🏆 Exclusieve voordelen:
                   </h3>
-                  <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-4 h-4 text-amber-400" />
+                  <ul className="space-y-3 sm:space-y-4">
+                    <li className="flex items-start gap-2 sm:gap-3">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" />
                       </div>
                       <div>
-                        <div className="font-semibold mb-1">Lifetime Premium toegang</div>
-                        <div className="text-sm text-white/70">Alle Premium features, voor altijd</div>
+                        <div className="font-semibold text-sm sm:text-base mb-1">Lifetime Premium toegang</div>
+                        <div className="text-xs sm:text-sm text-white/70">Alle Premium features, voor altijd</div>
                       </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Crown className="w-4 h-4 text-amber-400" />
+                    <li className="flex items-start gap-2 sm:gap-3">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" />
                       </div>
                       <div>
-                        <div className="font-semibold mb-1">Founder badge</div>
-                        <div className="text-sm text-white/70">Herkenbaar als early adopter in de community</div>
+                        <div className="font-semibold text-sm sm:text-base mb-1">Founder badge</div>
+                        <div className="text-xs sm:text-sm text-white/70">Herkenbaar als early adopter in de community</div>
                       </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Sparkles className="w-4 h-4 text-amber-400" />
+                    <li className="flex items-start gap-2 sm:gap-3">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" />
                       </div>
                       <div>
-                        <div className="font-semibold mb-1">Beta toegang</div>
-                        <div className="text-sm text-white/70">Test nieuwe features als eerste</div>
+                        <div className="font-semibold text-sm sm:text-base mb-1">Beta toegang</div>
+                        <div className="text-xs sm:text-sm text-white/70">Test nieuwe features als eerste</div>
                       </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Shield className="w-4 h-4 text-amber-400" />
+                    <li className="flex items-start gap-2 sm:gap-3">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" />
                       </div>
                       <div>
-                        <div className="font-semibold mb-1">Prioritaire support</div>
-                        <div className="text-sm text-white/70">Je vragen worden altijd eerst beantwoord</div>
+                        <div className="font-semibold text-sm sm:text-base mb-1">Prioritaire support</div>
+                        <div className="text-xs sm:text-sm text-white/70">Je vragen worden altijd eerst beantwoord</div>
                       </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <TrendingUp className="w-4 h-4 text-amber-400" />
+                    <li className="flex items-start gap-2 sm:gap-3">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" />
                       </div>
                       <div>
-                        <div className="font-semibold mb-1">Invloed op roadmap</div>
-                        <div className="text-sm text-white/70">Help bepalen welke features we bouwen</div>
+                        <div className="font-semibold text-sm sm:text-base mb-1">Invloed op roadmap</div>
+                        <div className="text-xs sm:text-sm text-white/70">Help bepalen welke features we bouwen</div>
                       </div>
                     </li>
                   </ul>
@@ -543,76 +545,76 @@ export default function PricingPage() {
       </section>
 
       {/* Social Proof / Testimonials */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 md:py-20">
         <div className="ff-container">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-4">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4">
               Waarom duizenden kiezen voor FitFi
             </h2>
-            <p className="text-xl text-[var(--color-muted)] text-center mb-12">
+            <p className="text-lg sm:text-xl text-[var(--color-muted)] text-center mb-8 sm:mb-10 md:mb-12">
               Echte resultaten van echte gebruikers
             </p>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
               {/* Testimonial 1 */}
-              <article className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)]">
-                <div className="flex items-center gap-1 mb-4">
+              <article className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center gap-1 mb-3 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-amber-500 fill-amber-500" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
-                <p className="text-[var(--color-text)] mb-6 leading-relaxed">
+                <p className="text-[var(--color-text)] text-sm sm:text-base mb-5 sm:mb-6 leading-relaxed">
                   "Binnen 10 minuten wist ik precies wat me staat. Geen eindeloos scrollen meer — elke aanbeveling klopt."
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)]">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)]">
                     S
                   </div>
                   <div>
-                    <div className="font-semibold text-[var(--color-text)]">Sophie M.</div>
-                    <div className="text-sm text-[var(--color-muted)]">Premium gebruiker</div>
+                    <div className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Sophie M.</div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)]">Premium gebruiker</div>
                   </div>
                 </div>
               </article>
 
               {/* Testimonial 2 */}
-              <article className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)]">
-                <div className="flex items-center gap-1 mb-4">
+              <article className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center gap-1 mb-3 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-amber-500 fill-amber-500" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
-                <p className="text-[var(--color-text)] mb-6 leading-relaxed">
+                <p className="text-[var(--color-text)] text-sm sm:text-base mb-5 sm:mb-6 leading-relaxed">
                   "De Nova AI voelt als een persoonlijke stylist. Het leert mijn smaak en geeft telkens betere suggesties."
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)]">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)]">
                     T
                   </div>
                   <div>
-                    <div className="font-semibold text-[var(--color-text)]">Thomas V.</div>
-                    <div className="text-sm text-[var(--color-muted)]">Founder lid</div>
+                    <div className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Thomas V.</div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)]">Founder lid</div>
                   </div>
                 </div>
               </article>
 
               {/* Testimonial 3 */}
-              <article className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)]">
-                <div className="flex items-center gap-1 mb-4">
+              <article className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center gap-1 mb-3 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-amber-500 fill-amber-500" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
-                <p className="text-[var(--color-text)] mb-6 leading-relaxed">
+                <p className="text-[var(--color-text)] text-sm sm:text-base mb-5 sm:mb-6 leading-relaxed">
                   "Ik bespaarde al 2x de kosten door geen verkeerde aankopen meer te doen. Betaalt zichzelf terug."
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)]">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)]">
                     L
                   </div>
                   <div>
-                    <div className="font-semibold text-[var(--color-text)]">Lisa R.</div>
-                    <div className="text-sm text-[var(--color-muted)]">Premium gebruiker</div>
+                    <div className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Lisa R.</div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)]">Premium gebruiker</div>
                   </div>
                 </div>
               </article>
@@ -622,67 +624,67 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-[var(--color-surface)]/30">
+      <section className="py-12 sm:py-16 md:py-20 bg-[var(--color-surface)]/30">
         <div className="ff-container">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Veelgestelde vragen</h2>
-            <div className="space-y-4">
-              <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 group">
-                <summary className="font-semibold cursor-pointer flex items-center justify-between">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">Veelgestelde vragen</h2>
+            <div className="space-y-3 sm:space-y-4">
+              <details className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 group">
+                <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px]">
                   <span>Wat krijg ik met de gratis versie?</span>
-                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-2" />
                 </summary>
-                <p className="mt-4 text-[var(--color-muted)] leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                   Je krijgt een volledig stijlprofiel en 3 gepersonaliseerde outfits. Perfect om te ervaren hoe FitFi werkt en of het bij jou past.
                 </p>
               </details>
 
-              <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 group">
-                <summary className="font-semibold cursor-pointer flex items-center justify-between">
+              <details className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 group">
+                <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px]">
                   <span>Is Premium maandelijks opzegbaar?</span>
-                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-2" />
                 </summary>
-                <p className="mt-4 text-[var(--color-muted)] leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                   Ja. Je kunt elke maand opzeggen zonder verborgen kosten of kleine lettertjes. Stop wanneer je wilt.
                 </p>
               </details>
 
-              <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 group">
-                <summary className="font-semibold cursor-pointer flex items-center justify-between">
+              <details className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 group">
+                <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px]">
                   <span>Wat is het verschil tussen Premium en Founder?</span>
-                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-2" />
                 </summary>
-                <p className="mt-4 text-[var(--color-muted)] leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                   Premium is een maandelijks abonnement. Founder is een eenmalige betaling voor lifetime toegang plus exclusieve voordelen zoals beta toegang, prioritaire support en invloed op de roadmap. Na {breakEvenMonths} maanden is Founder goedkoper.
                 </p>
               </details>
 
-              <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 group">
-                <summary className="font-semibold cursor-pointer flex items-center justify-between">
+              <details className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 group">
+                <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px]">
                   <span>Is er een geld-terug-garantie?</span>
-                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-2" />
                 </summary>
-                <p className="mt-4 text-[var(--color-muted)] leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                   Ja, 30 dagen geld-terug-garantie voor alle betaalde plannen. Geen vragen gesteld.
                 </p>
               </details>
 
-              <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 group">
-                <summary className="font-semibold cursor-pointer flex items-center justify-between">
+              <details className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 group">
+                <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px]">
                   <span>Hoe werkt de Nova AI-assistent?</span>
-                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-2" />
                 </summary>
-                <p className="mt-4 text-[var(--color-muted)] leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                   Nova is je persoonlijke stijlcoach die je kunt chatten 24/7. Upload foto's, vraag om advies, of laat Nova nieuwe outfits samenstellen op basis van je planning. Het systeem leert van je feedback en wordt steeds beter.
                 </p>
               </details>
 
-              <details className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 group">
-                <summary className="font-semibold cursor-pointer flex items-center justify-between">
+              <details className="bg-[var(--color-surface)] rounded-xl sm:rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 group">
+                <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px]">
                   <span>Betaalt FitFi zich echt terug?</span>
-                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-2" />
                 </summary>
-                <p className="mt-4 text-[var(--color-muted)] leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                   Gemiddeld bespaart een gebruiker €150+ per jaar door minder foute aankopen. Eén verkeerde aankoop die je vermijdt betaalt al 15 maanden Premium. Plus: je bespaart uren zoektijd en frustratie.
                 </p>
               </details>
@@ -692,24 +694,24 @@ export default function PricingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 md:py-20">
         <div className="ff-container">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-[var(--radius-2xl)] p-12 text-center text-white shadow-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-xl sm:rounded-[var(--radius-2xl)] p-8 sm:p-10 md:p-12 text-center text-white shadow-2xl">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
               Klaar om <span className="text-amber-300">vertrouwen</span> te krijgen in je stijl?
             </h2>
-            <p className="text-xl mb-8 opacity-90">
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 opacity-90">
               Start gratis. Geen creditcard vereist. Klaar in 5 minuten.
             </p>
             <NavLink
               to="/onboarding"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[var(--ff-color-primary-700)] rounded-[var(--radius-xl)] font-bold hover:bg-white/95 transition-colors shadow-xl text-lg focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)]"
+              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl sm:rounded-[var(--radius-xl)] font-bold hover:bg-white/95 transition-colors shadow-xl text-base sm:text-lg focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
               data-event="cta_start_free_pricing_final"
             >
-              <Sparkles className="w-5 h-5" />
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
               Start gratis Style Report
             </NavLink>
-            <p className="text-sm opacity-75 mt-4">
+            <p className="text-xs sm:text-sm opacity-75 mt-3 sm:mt-4">
               2.500+ mensen ontdekten al hun stijl • ⭐️ 4.8/5 gemiddelde rating
             </p>
           </div>
