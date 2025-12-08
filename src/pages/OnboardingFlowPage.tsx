@@ -31,6 +31,10 @@ type QuizAnswers = {
   sizes?: any;
   colorAnalysis?: any;
   photoUrl?: string;
+  fit?: string;
+  materials?: string[];
+  goals?: string[];
+  prints?: string;
   visualPreferencesCompleted?: boolean;
   calibrationCompleted?: boolean;
 };

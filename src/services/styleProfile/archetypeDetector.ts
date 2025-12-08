@@ -16,11 +16,12 @@ export interface ArchetypeDetectionResult {
 
 interface QuizInputs {
   style?: string[];
+  stylePreferences?: string[];
   fit?: string;
   comfort?: string;
   goals?: string[];
   occasions?: string[];
-  materials?: string;
+  materials?: string | string[];
   prints?: string;
   [key: string]: any;
 }
@@ -254,9 +255,14 @@ export class ArchetypeDetector {
         reasons.push('Solid/plain preference');
       }
 
-      if (prints.includes('statement') && descriptor.key === 'STREETWEAR') {
+      if (prints.includes('statement') && (descriptor.key === 'STREETWEAR' || descriptor.key === 'AVANT_GARDE')) {
         score += 10;
         reasons.push('Statement prints preference');
+      }
+
+      if (prints.includes('subtiel') && (descriptor.key === 'CLASSIC' || descriptor.key === 'SMART_CASUAL')) {
+        score += 8;
+        reasons.push('Subtle prints preference');
       }
     }
 

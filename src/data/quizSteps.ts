@@ -100,7 +100,7 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 2,
+    id: 3,
     title: 'Welke basiskleuren draag je het liefst?',
     description: 'Kies de kleurencombinatie die het beste bij je past',
     field: 'baseColors',
@@ -135,7 +135,7 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 3,
+    id: 4,
     title: 'Wat beschrijft jouw lichaamsbouw het beste?',
     description: 'Dit helpt ons de meest flatterende pasvorm voor je te vinden',
     field: 'bodyType',
@@ -175,7 +175,7 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 4,
+    id: 5,
     title: 'Voor welke gelegenheden zoek je outfits?',
     description: 'Selecteer alle gelegenheden waarvoor je stijladvies wilt',
     field: 'occasions',
@@ -215,7 +215,7 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     title: 'Wat is jouw budget voor kledingstukken?',
     description: 'Beweeg de slider naar je gemiddelde uitgave per item',
     field: 'budgetRange',
@@ -226,7 +226,7 @@ export const quizSteps: QuizStep[] = [
     step: 25
   },
   {
-    id: 6,
+    id: 7,
     title: 'Wat zijn jouw maten?',
     description: 'Dit helpt ons om producten in jouw maat te vinden',
     field: 'sizes',
@@ -235,7 +235,7 @@ export const quizSteps: QuizStep[] = [
     // sizeFields worden dynamisch gegenereerd op basis van gender
   },
   {
-    id: 7,
+    id: 8,
     title: 'Upload een selfie voor kleurenanalyse',
     description: 'Voor de beste analyse: natuurlijk licht, geen filters, frontaal gezicht',
     field: 'photoUrl',
@@ -243,7 +243,7 @@ export const quizSteps: QuizStep[] = [
     required: false
   },
   {
-    id: 8,
+    id: 9,
     title: 'Welke pasvorm prefereer je?',
     description: 'Kies de pasvorm die het beste bij jouw stijl past',
     field: 'fit',
@@ -273,7 +273,7 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 9,
+    id: 10,
     title: 'Welke materialen spreken je aan?',
     description: 'Selecteer alle materialen die je prettig vindt (meerdere keuzes mogelijk)',
     field: 'materials',
@@ -313,7 +313,7 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 10,
+    id: 11,
     title: 'Wat zijn jouw stijldoelen?',
     description: 'Selecteer alle doelen die belangrijk voor je zijn',
     field: 'goals',
@@ -349,6 +349,36 @@ export const quizSteps: QuizStep[] = [
         value: 'comfort',
         label: 'Comfort prioriteit',
         description: 'Prettig dragen boven alles'
+      }
+    ]
+  },
+  {
+    id: 12,
+    title: 'Welke prints en patronen prefereer je?',
+    description: 'Kies je voorkeur voor patronen in kleding',
+    field: 'prints',
+    type: 'radio',
+    required: false,
+    options: [
+      {
+        value: 'effen',
+        label: 'Effen/Uni',
+        description: 'Geen prints, clean en minimaal'
+      },
+      {
+        value: 'subtiel',
+        label: 'Subtiele prints',
+        description: 'Kleine patronen, strepen, dots'
+      },
+      {
+        value: 'statement',
+        label: 'Statement prints',
+        description: 'Opvallende patronen, bold designs'
+      },
+      {
+        value: 'gemengd',
+        label: 'Mix van alles',
+        description: 'Variatie in prints en patronen'
       }
     ]
   }

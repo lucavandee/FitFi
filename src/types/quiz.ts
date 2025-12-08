@@ -12,6 +12,10 @@ export interface QuizAnswers {
   };
   photoUrl?: string;
   colorAnalysis?: any;
+  fit?: string;
+  materials?: string[];
+  goals?: string[];
+  prints?: string;
 }
 
 export interface QuizStep {
