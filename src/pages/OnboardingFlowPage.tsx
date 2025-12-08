@@ -757,7 +757,32 @@ export default function OnboardingFlowPage() {
                   <div className="text-5xl font-bold text-[var(--ff-color-primary-600)] mb-2">
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
-                  <div className="text-sm text-gray-600">Per kledingstuk</div>
+                  <div className="text-sm text-gray-600 mb-4">Per kledingstuk</div>
+
+                  {/* Numeric Input for Precise Value */}
+                  <div className="flex items-center justify-center gap-3 mt-6 mb-4">
+                    <label htmlFor="budget-input" className="text-sm font-medium text-[var(--color-text)]">
+                      Exact bedrag:
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">€</span>
+                      <input
+                        id="budget-input"
+                        type="number"
+                        min={step.min || 0}
+                        max={step.max || 100}
+                        step={step.step || 1}
+                        value={answers[step.field as keyof QuizAnswers] as number || step.min || 50}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (!isNaN(val) && val >= (step.min || 0) && val <= (step.max || 100)) {
+                            handleAnswer(step.field, val);
+                          }
+                        }}
+                        className="w-24 pl-6 pr-3 py-2 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-center font-semibold focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <input
                   type="range"
