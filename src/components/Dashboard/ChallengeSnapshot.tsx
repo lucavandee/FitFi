@@ -1,6 +1,5 @@
 import React from "react";
 import { useBestChallenge } from "@/hooks/useBestChallenge";
-import { routeTo } from "@/services/navigation/NavigationService";
 import { useUser } from "@/context/UserContext";
 import { useTribeChallenges } from "@/hooks/useTribeChallenges";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
@@ -50,9 +49,9 @@ export const ChallengeSnapshot: React.FC = () => {
         <div className="font-semibold text-gray-900 mb-3">Challenges Snapshot</div>
         <div className="text-center py-4">
           <p className="text-sm text-gray-600 mb-3">Challenge wordt geladen...</p>
-          <a 
-            className="inline-block text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium" 
-            href={routeTo("challenge", best)}
+          <a
+            className="inline-block text-[#89CFF0] hover:text-[#89CFF0]/80 font-medium"
+            href={`/tribes/${best.tribeId}?challengeId=${best.challengeId}`}
           >
             Open challenge →
           </a>

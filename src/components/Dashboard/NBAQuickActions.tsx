@@ -1,6 +1,5 @@
 import React from "react";
 import { computeNextActions } from "@/services/nba/nextBestActions";
-import { routeTo } from "@/services/navigation/NavigationService";
 import { useUser } from "@/context/UserContext";
 import { useBestChallenge } from "@/hooks/useBestChallenge";
 

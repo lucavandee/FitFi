@@ -1,12 +1,13 @@
 import { hashString } from './hash';
 import { IMAGE_WIDTHS, IMAGE_DOMAINS, USE_NETLIFY_IMAGE_CDN } from './imageConfig';
+import { CANONICAL_HOST } from './urls';
 
 export type ImageKind = 'product' | 'outfit' | 'avatar' | 'nova' | 'generic';
 
 export function normalizeUrl(src?: string | null): string | undefined {
   if (!src) return;
   try {
-    const u = new URL(src, typeof window !== 'undefined' ? window.location.origin : 'https://fitfi.ai');
+    const u = new URL(src, typeof window !== 'undefined' ? window.location.origin : CANONICAL_HOST);
     if (u.protocol === 'http:') u.protocol = 'https:';
     return u.toString();
   } catch { return src; }

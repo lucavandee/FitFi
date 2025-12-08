@@ -3,9 +3,12 @@
 
 const RAW_HOST = (import.meta as any).env?.VITE_CANONICAL_HOST as string | undefined;
 
-// Standaard naar productiehost, zonder trailing slash.
+// Standaard naar productiehost (zonder trailing slash).
+// Via env var configureerbaar, maar altijd via deze constante.
 export const CANONICAL_HOST =
-  (RAW_HOST && RAW_HOST.replace(/\/+$/, "")) || "https://fitfi.ai";
+  (RAW_HOST && RAW_HOST.replace(/\/+$/, "")) ||
+  (typeof window !== 'undefined' && window.location?.origin) ||
+  "https://fitfi.ai";
 
 /** Zet een pad of URL om naar een absolute canonical URL op de CANONICAL_HOST. */
 export function canonicalUrl(input?: string): string {
